@@ -1,9 +1,7 @@
-export default function Home() {
+export default function RootLayout({ children }: any) {
   return (
-    <div style={{ padding: 40 }}>
-      <h1>Alpazar Marketplace 🚀</h1>
-      <p>Tani platforma jote është gati për deploy ✅</p>
-    </div>
+    <html>
+      <body>{children}</body>
+    </html>
   );
 }
-commit: add homepage
