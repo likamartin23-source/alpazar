@@ -5,4 +5,3 @@ export default function RootLayout({ children }: any) {
     </html>
   );
 }
-add layout
