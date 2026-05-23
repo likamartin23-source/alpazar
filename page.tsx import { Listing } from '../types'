@@ -59,13 +59,26 @@ export default function Home() {
   }
 
   async function fetchListings() {
-    let query = supabase
-      .from('listings')
-      .select('id,title,price,currency,condition,city,is_premium,images,category_id')
-      .eq('is_active', true)
-      .order('is_premium', { ascending: false })
-      .order('created_at', { ascending: false })
-      .limit(6)
+  let query = supabase
+    .from('listings')
+    .select('*') // merr të gjitha kolonat që përputhen me tipin Listing
+    .eq('is_active', true)
+    .order('is_premium', { ascending: false })
+    .order('created_at', { ascending: false })
+    .limit(6)
+
+  const { data, error } = await query
+
+  if (error) {
+    console.error(error)
+    return
+  }
+
+  if (data) {
+    setListings(data as Listing[])
+  }
+}
+
 
     if (activeCategory !== 'all') {
       const cat = categories.find(c => c.slug === activeCategory)
