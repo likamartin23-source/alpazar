@@ -1,4 +1,4 @@
-﻿import type { Metadata } from 'next'
+import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Alpazar - Shit - Bli - Bej Pazrin Tend',
   description: 'Platforma #1 shqiptare e tregtise dhe shpalljeve online. Zero reklama.',
