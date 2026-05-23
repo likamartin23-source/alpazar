@@ -93,6 +93,34 @@ export default function Admin() {
             </div>
           </>}
 
+          {tab==='payments' && <>
+            <div className="ph"><div className="pt">💳 Menaxhimi i Pagesas</div></div>
+            <div className="card"><div className="ct">Kërkesat për Premium</div>
+              <table>
+                <thead><tr><th>Perdoruesi</th><th>Plan</th><th>Shuma</th><th>Metoda</th><th>Statusi</th><th>Veprime</th></tr></thead>
+                <tbody>
+                  {payments.length===0
+                    ? <tr><td colSpan={6} style={{textAlign:'center',color:'#aaa',padding:20}}>Nuk ka kërkesa aktualisht</td></tr>
+                    : payments.map((p:any)=>(
+                      <tr key={p.id}>
+                        <td>{p.profiles?.full_name||p.profiles?.username||'—'}</td>
+                        <td>{p.plan==='monthly'?'Mujor (1m)':'Vjetor (12m)'}</td>
+                        <td style={{fontWeight:700,color:'#1D9E75'}}>{p.amount_eur}€</td>
+                        <td>{p.payment_method||'—'}</td>
+                        <td><span className={`sb_ ${p.status==='active'?'sa':p.status==='pending'?'sp_':'ss'}`}>{p.status}</span></td>
+                        <td>
+                          {p.status!=='active'&&<button className="ab ba" onClick={async()=>{await supabase.from('premium_subscriptions').update({status:'active'}).eq('id',p.id);await supabase.from('profiles').update({is_premium:true,premium_expires_at:p.end_date}).eq('id',p.user_id);fetchAll()}}>✓ Aktivizo</button>}
+                          {p.status==='active'&&<button className="ab bp" onClick={()=>updateStatus(p.id,'suspended')}>Pezullo</button>}
+                          <button className="ab bd_" onClick={()=>updateStatus(p.id,'cancelled')}>Anulo</button>
+                        </td>
+                      </tr>
+                    ))
+                  }
+                </tbody>
+              </table>
+            </div>
+          </>}
+
           {tab==='methods' && <>
             <div className="ph"><div className="pt">💳 Metodat e Pageses</div></div>
             <div className="card"><div className="ct">Aktivizo / Caktivizo</div>
