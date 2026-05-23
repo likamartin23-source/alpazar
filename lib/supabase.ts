@@ -1,0 +1,5 @@
+﻿import { createClient } from '@supabase/supabase-js'
+const url  = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const akey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+if (!url || !akey) throw new Error('Mungojne variablat Supabase. Kontrollo .env.local')
+export const supabase = createClient(url, akey)
