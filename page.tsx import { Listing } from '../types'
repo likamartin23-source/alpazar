@@ -61,7 +61,7 @@ export default function Home() {
  async function fetchListings() {
   let query = supabase
     .from('listings')
-    .select('*') // merr të gjitha kolonat
+    .select('*') // merr çdo kolonë
     .eq('is_active', true)
     .order('is_premium', { ascending: false })
     .order('created_at', { ascending: false })
@@ -78,6 +78,7 @@ export default function Home() {
     setListings(data as Listing[])
   }
 }
+
 
 
     if (activeCategory !== 'all') {
