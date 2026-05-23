@@ -1,3 +1,4 @@
+// Kategoritë kryesore
 export type Category = {
   id: string
   name: string
@@ -17,6 +18,7 @@ export type PetCategory = {
   listing_count: number
 }
 
+// Listing (shpalljet)
 export type Listing = {
   id: string
   user_id: string
@@ -32,10 +34,11 @@ export type Listing = {
   images: string[]
   views_count: number
   created_at: string
-  profiles?: Profile
-  categories?: Category
+  profiles?: Profile        // lidhje opsionale me profilin
+  categories?: Category     // lidhje opsionale me kategorinë
 }
 
+// Profilet e përdoruesve
 export type Profile = {
   id: string
   username: string
@@ -49,6 +52,7 @@ export type Profile = {
   created_at: string
 }
 
+// Metodat e pagesës
 export type PaymentMethod = {
   id: string
   name: string
@@ -57,6 +61,7 @@ export type PaymentMethod = {
   is_active: boolean
 }
 
+// Konfigurime admin
 export type AdminSetting = {
   id: string
   key: string
@@ -64,6 +69,7 @@ export type AdminSetting = {
   updated_at: string
 }
 
+// Abonimet premium
 export type PremiumSubscription = {
   id: string
   user_id: string
@@ -76,6 +82,7 @@ export type PremiumSubscription = {
   status: 'active' | 'pending' | 'cancelled' | 'suspended'
 }
 
+// Raportet e përdoruesve
 export type Report = {
   id: string
   reporter_id: string
