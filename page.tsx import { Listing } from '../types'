@@ -58,10 +58,10 @@ export default function Home() {
     if (data) setCategories(data)
   }
 
-  async function fetchListings() {
+ async function fetchListings() {
   let query = supabase
     .from('listings')
-    .select('*') // merr të gjitha kolonat që përputhen me tipin Listing
+    .select('*') // merr të gjitha kolonat
     .eq('is_active', true)
     .order('is_premium', { ascending: false })
     .order('created_at', { ascending: false })
