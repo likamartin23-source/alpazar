@@ -14,20 +14,19 @@ export default function ProfilePage() {
   const [msg, setMsg] = useState('')
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data.user) { window.location.href = '/auth/login'; return }
-      setUser(data.user)
-      fetchProfile(data.user.id)
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) { window.location.href = '/auth/login'; return }
+      setUser(session.user)
+      fetchProfile(session.user.id)
     })
   }, [])
 
   async function fetchProfile(uid: string) {
-    const { data: p } = await supabase.from('profiles').select('*').eq('id', uid).single()
-    if (p) {
-      setProfile(p)
-      setForm({ full_name: p.full_name || '', username: p.username || '', city: p.city || '', bio: p.bio || '' })
-    }
-    const { data: ls } = await supabase.from('listings').select('*').eq('user_id', uid).order('created_at', { ascending: false })
+    const [{ data: p }, { data: ls }] = await Promise.all([
+      supabase.from('profiles').select('*').eq('id', uid).single(),
+      supabase.from('listings').select('*').eq('user_id', uid).order('created_at', { ascending: false }),
+    ])
+    if (p) { setProfile(p); setForm({ full_name: p.full_name || '', username: p.username || '', city: p.city || '', bio: p.bio || '' }) }
     if (ls) setMyListings(ls)
     setLoading(false)
   }
@@ -81,14 +80,15 @@ export default function ProfilePage() {
         .topbar-title{font-size:15px;font-weight:700;color:#111;flex:1;}
         .logout{background:#111;color:#F5C842;border:none;border-radius:7px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;}
         .hero{background:#111;padding:24px 16px;text-align:center;}
-        .avatar{width:72px;height:72px;border-radius:50%;background:#F5C842;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 12px;border:3px solid #F5C842;}
-        .avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover;}
+        .avatar{width:72px;height:72px;border-radius:50%;background:#F5C842;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 12px;border:3px solid #F5C842;overflow:hidden;}
+        .avatar img{width:100%;height:100%;object-fit:cover;}
         .name{font-size:18px;font-weight:700;color:#fff;}
         .handle{font-size:12px;color:#888;margin-top:4px;}
         .badges-row{display:flex;gap:8px;justify-content:center;margin-top:10px;}
         .badge{font-size:10px;padding:3px 9px;border-radius:12px;font-weight:700;}
         .b-prem{background:#F5C842;color:#111;}
         .b-pts{background:#E63312;color:#fff;}
+        .b-admin{background:#7C3AED;color:#fff;}
         .stats-row{display:flex;justify-content:space-around;padding:14px 0;background:#1a1a1a;}
         .stat{text-align:center;}
         .stat-n{font-size:18px;font-weight:700;color:#F5C842;}
@@ -123,8 +123,8 @@ export default function ProfilePage() {
         .prem-card h3{color:#F5C842;font-size:15px;font-weight:700;margin-bottom:6px;}
         .prem-card p{color:#888;font-size:11px;margin-bottom:14px;line-height:1.6;}
         .prem-cta{background:#F5C842;color:#111;border:none;border-radius:9px;padding:11px 24px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
-        .email-row{font-size:11px;color:#666;display:flex;align-items:center;gap:6px;margin-top:4px;}
-        .email-row i{color:#888;}
+        .admin-btn{background:#7C3AED;color:#fff;border:none;border-radius:9px;padding:10px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;margin-bottom:12px;}
+        .email-row{font-size:11px;color:#666;display:flex;align-items:center;gap:6px;margin-top:4px;justify-content:center;}
       `}</style>
 
       <div className="wrap">
@@ -142,10 +142,9 @@ export default function ProfilePage() {
           </div>
           <div className="name">{profile?.full_name || profile?.username || 'Përdoruesi'}</div>
           {profile?.username && <div className="handle">@{profile.username}</div>}
-          <div className="email-row" style={{ justifyContent: 'center' }}>
-            <i className="ti ti-mail" />{user?.email}
-          </div>
+          <div className="email-row"><i className="ti ti-mail" />{user?.email}</div>
           <div className="badges-row">
+            {profile?.is_admin && <span className="badge b-admin">🛡 Admin</span>}
             {profile?.is_premium && <span className="badge b-prem">👑 Premium</span>}
             {profile?.gamification_points > 0 && <span className="badge b-pts">⚡ {profile.gamification_points} pikë</span>}
           </div>
@@ -169,10 +168,16 @@ export default function ProfilePage() {
         <div className="body">
           {msg && <div className={`msg-box ${mt}`}>{mm}</div>}
 
+          {profile?.is_admin && (
+            <button className="admin-btn" onClick={() => window.location.href = '/admin'}>
+              🛡 Shko te Paneli i Adminit
+            </button>
+          )}
+
           {!profile?.is_premium && (
             <div className="prem-card">
               <h3>👑 Bëhu Premium — 9.99€/muaj</h3>
-              <p>Dyqan personal · Badge verifikimi · Shpallje të pakufizuara · Statistika të avancuara · Prioritet në listim</p>
+              <p>Dyqan personal · Badge verifikimi · Shpallje të pakufizuara · Statistika të avancuara</p>
               <button className="prem-cta" onClick={() => window.location.href = '/premium'}>Shiko planin →</button>
             </div>
           )}
@@ -195,7 +200,7 @@ export default function ProfilePage() {
                 <label>Qyteti</label>
                 <select value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))}>
                   <option value="">— Zgjidh —</option>
-                  {['Tiranë','Durrës','Vlorë','Shkodër','Elbasan','Fier','Korçë','Berat','Sarandë','Tjetër'].map(c => <option key={c} value={c}>{c}</option>)}
+                  {['Tiranë', 'Durrës', 'Vlorë', 'Shkodër', 'Elbasan', 'Fier', 'Korçë', 'Berat', 'Sarandë', 'Tjetër'].map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
                 <label>Bio</label>
                 <textarea value={form.bio} onChange={e => setForm(f => ({ ...f, bio: e.target.value }))} placeholder="Pak fjalë rreth vetes..." maxLength={300} />

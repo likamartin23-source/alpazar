@@ -15,19 +15,15 @@ export default function ListingPage({ params }: { params: { id: string } }) {
   const [liked, setLiked] = useState(false)
 
   useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => setUser(session?.user ?? null))
     fetchListing()
-    supabase.auth.getUser().then(({ data }) => setUser(data.user))
   }, [])
 
   async function fetchListing() {
-    const { data } = await supabase
-      .from('listings')
-      .select('*')
-      .eq('id', params.id)
-      .single()
+    const { data } = await supabase.from('listings').select('*').eq('id', params.id).single()
     if (data) {
       setListing(data)
-      supabase.from('listings').update({ views_count: (data.views_count || 0) + 1 }).eq('id', data.id)
+      supabase.rpc('increment_listing_views', { lid: data.id })
       if (data.user_id) {
         const { data: p } = await supabase.from('profiles').select('*').eq('id', data.user_id).single()
         if (p) setSeller(p)
@@ -38,7 +34,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
 
   async function sendMessage() {
     if (!user) { window.location.href = '/auth/login'; return }
-    if (!msg.trim()) return
+    if (!msg.trim() || !listing) return
     setSending(true)
     await supabase.from('messages').insert({
       sender_id: user.id,
@@ -46,9 +42,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
       listing_id: listing.id,
       content: msg.trim(),
     })
-    setSending(false)
-    setSent(true)
-    setMsg('')
+    setSending(false); setSent(true); setMsg('')
   }
 
   const fmt = (price: number, cur: string) =>
@@ -59,12 +53,11 @@ export default function ListingPage({ params }: { params: { id: string } }) {
     <div style={{ textAlign: 'center', padding: 60, fontFamily: 'inherit' }}>
       <div style={{ width: 28, height: 28, border: '3px solid #F5C842', borderTopColor: '#E63312', borderRadius: '50%', animation: 'spin .7s linear infinite', margin: '0 auto 10px' }} />
       <style>{`@keyframes spin{to{transform:rotate(360deg);}}`}</style>
-      <p style={{ color: '#888', fontSize: 13 }}>Duke ngarkuar...</p>
     </div>
   )
 
   if (!listing) return (
-    <div style={{ textAlign: 'center', padding: 60, fontFamily: "'Plus Jakarta Sans', system-ui" }}>
+    <div style={{ textAlign: 'center', padding: 60, fontFamily: "'Plus Jakarta Sans',system-ui" }}>
       <p style={{ fontSize: 40, marginBottom: 12 }}>🔍</p>
       <h2 style={{ color: '#111', marginBottom: 8 }}>Shpallja nuk u gjet</h2>
       <a href="/" style={{ color: '#E63312', fontSize: 13 }}>← Kthehu</a>
@@ -85,16 +78,15 @@ export default function ListingPage({ params }: { params: { id: string } }) {
         .topbar-title{font-size:15px;font-weight:700;color:#111;flex:1;}
         .share-btn{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .share-btn i{font-size:16px;color:#111;}
-        .img-wrap{width:100%;height:260px;background:#f9f5e0;display:flex;align-items:center;justify-content:center;position:relative;}
+        .img-wrap{width:100%;height:260px;background:#f9f5e0;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
         .img-wrap img{width:100%;height:100%;object-fit:cover;}
         .img-ph{font-size:60px;}
         .img-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:5px;}
-        .dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.5);}
+        .dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.5);cursor:pointer;}
         .dot.on{background:#fff;}
         .img-nav{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;background:rgba(0,0,0,.4);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .img-nav i{color:#fff;font-size:16px;}
         .like-btn{position:absolute;top:12px;right:12px;width:36px;height:36px;background:#fff;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.15);}
-        .like-btn i{font-size:18px;color:#E63312;}
         .info{padding:16px;}
         .badges{display:flex;gap:5px;margin-bottom:10px;}
         .badge{font-size:10px;padding:3px 8px;border-radius:4px;font-weight:700;}
@@ -112,17 +104,14 @@ export default function ListingPage({ params }: { params: { id: string } }) {
         .seller-card{margin:14px 0;background:#FFFBEA;border:0.5px solid #e0b030;border-radius:11px;padding:12px;}
         .seller-hdr{font-size:11px;font-weight:700;color:#888;margin-bottom:10px;}
         .seller-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-        .avatar{width:44px;height:44px;border-radius:50%;background:#F5C842;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+        .avatar{width:44px;height:44px;border-radius:50%;background:#F5C842;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;overflow:hidden;}
+        .avatar img{width:100%;height:100%;object-fit:cover;}
         .seller-name{font-size:14px;font-weight:700;color:#111;}
         .seller-sub{font-size:11px;color:#888;}
-        .seller-stats{display:flex;gap:12px;}
-        .ss{text-align:center;}
-        .ss-n{font-size:14px;font-weight:700;color:#111;}
-        .ss-l{font-size:9px;color:#888;}
-        .msg-box{border:1.5px solid #e0b030;border-radius:10px;padding:4px 4px 4px 12px;display:flex;align-items:center;gap:6px;margin-top:12px;}
-        .msg-inp{flex:1;border:none;background:transparent;font-size:13px;font-family:inherit;outline:none;color:#111;}
+        .msg-box{border:1.5px solid #e0b030;border-radius:10px;padding:4px 4px 4px 12px;display:flex;align-items:center;gap:6px;margin-top:10px;}
+        .msg-inp{flex:1;border:none;background:transparent;font-size:13px;font-family:inherit;outline:none;color:#111;padding:8px 0;}
         .msg-inp::placeholder{color:#bbb;}
-        .msg-send{background:#E63312;color:#fff;border:none;border-radius:7px;padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;}
+        .msg-send{background:#E63312;color:#fff;border:none;border-radius:7px;padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
         .sent-ok{background:#EAF3DE;border:0.5px solid #97C459;border-radius:8px;padding:10px 14px;font-size:12px;color:#3B6D11;font-weight:600;text-align:center;margin-top:10px;}
         .bottom-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:1px solid #eee;padding:10px 14px;display:flex;gap:8px;z-index:100;}
         .chat-btn{flex:1;background:#E63312;color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;}
@@ -137,7 +126,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
             <i className="ti ti-arrow-left" />
           </button>
           <span className="topbar-title">Shpallja</span>
-          <button className="share-btn" onClick={() => navigator.share?.({ title: listing.title, url: window.location.href })}>
+          <button className="share-btn" onClick={() => navigator.share?.({ title: listing.title, url: window.location.href }).catch(() => {})}>
             <i className="ti ti-share" />
           </button>
         </div>
@@ -165,8 +154,8 @@ export default function ListingPage({ params }: { params: { id: string } }) {
           ) : (
             <span className="img-ph">📦</span>
           )}
-          <button className="like-btn" onClick={() => setLiked(!liked)}>
-            <i className={`ti ti-heart${liked ? '-filled' : ''}`} style={{ color: liked ? '#E63312' : '#ddd' }} />
+          <button className="like-btn" onClick={() => setLiked(l => !l)}>
+            <i className={`ti ti-heart${liked ? '-filled' : ''}`} style={{ fontSize: 18, color: liked ? '#E63312' : '#ddd' }} />
           </button>
         </div>
 
@@ -181,14 +170,8 @@ export default function ListingPage({ params }: { params: { id: string } }) {
           <div className="price">{fmt(listing.price, listing.currency)}</div>
 
           <div className="meta">
-            {listing.city && (
-              <div className="meta-item">
-                <i className="ti ti-map-pin" />{listing.city}
-              </div>
-            )}
-            <div className="meta-item">
-              <i className="ti ti-eye" />{listing.views_count || 0} shikime
-            </div>
+            {listing.city && <div className="meta-item"><i className="ti ti-map-pin" />{listing.city}</div>}
+            <div className="meta-item"><i className="ti ti-eye" />{listing.views_count || 0} shikime</div>
             <div className="meta-item">
               <i className="ti ti-calendar" />
               {new Date(listing.created_at).toLocaleDateString('sq-AL')}
@@ -210,46 +193,44 @@ export default function ListingPage({ params }: { params: { id: string } }) {
                 <div className="seller-hdr">SHITËSI</div>
                 <div className="seller-row">
                   <div className="avatar">
-                    {seller.avatar_url ? <img src={seller.avatar_url} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} alt="" /> : '👤'}
+                    {seller.avatar_url
+                      ? <img src={seller.avatar_url} alt="" />
+                      : '👤'}
                   </div>
                   <div>
                     <div className="seller-name">{seller.full_name || seller.username || 'Shitës'}</div>
                     <div className="seller-sub">
-                      {seller.city && `📍 ${seller.city} · `}
+                      {seller.city ? `📍 ${seller.city} · ` : ''}
                       {seller.is_premium ? '👑 Premium' : 'Anëtar'}
                     </div>
                   </div>
                 </div>
-
-                {!sent ? (
-                  <div className="msg-box">
-                    <input
-                      className="msg-inp"
-                      placeholder="Dërgoji mesazh shitësit..."
-                      value={msg}
-                      onChange={e => setMsg(e.target.value)}
-                      onKeyDown={e => e.key === 'Enter' && sendMessage()}
-                    />
-                    <button className="msg-send" onClick={sendMessage} disabled={sending}>
-                      {sending ? '⏳' : 'Dërgo'}
-                    </button>
-                  </div>
-                ) : (
-                  <div className="sent-ok">✅ Mesazhi u dërgua! Shitësi do të kontaktojë.</div>
+                {user?.id !== listing.user_id && (
+                  !sent ? (
+                    <div className="msg-box">
+                      <input className="msg-inp" placeholder="Dërgoji mesazh shitësit..."
+                        value={msg} onChange={e => setMsg(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && sendMessage()} />
+                      <button className="msg-send" onClick={sendMessage} disabled={sending}>
+                        {sending ? '⏳' : 'Dërgo'}
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="sent-ok">✅ Mesazhi u dërgua! Shitësi do të kontaktojë.</div>
+                  )
                 )}
               </div>
             </>
           )}
         </div>
 
-        {listing.user_id !== user?.id && (
+        {user?.id !== listing.user_id && (
           <div className="bottom-bar">
             <button className="chat-btn" onClick={() => {
               if (!user) { window.location.href = '/auth/login'; return }
               window.location.href = '/messages'
             }}>
-              <i className="ti ti-message" />
-              Kontakto shitësin
+              <i className="ti ti-message" />Kontakto shitësin
             </button>
             {seller?.phone && (
               <button className="call-btn" onClick={() => window.open(`tel:${seller.phone}`)}>

@@ -13,22 +13,21 @@ export default function MessagesPage() {
   const [sending, setSending] = useState(false)
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data.user) { window.location.href = '/auth/login'; return }
-      setUser(data.user)
-      fetchThreads(data.user.id)
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) { window.location.href = '/auth/login'; return }
+      setUser(session.user)
+      fetchThreads(session.user.id)
     })
   }, [])
 
   async function fetchThreads(uid: string) {
     const { data } = await supabase
       .from('messages')
-      .select('*,sender:sender_id(id,full_name,username,avatar_url),receiver:receiver_id(id,full_name,username,avatar_url),listing:listing_id(id,title,images)')
+      .select('*,sender:sender_id(id,full_name,username,avatar_url),receiver:receiver_id(id,full_name,username,avatar_url)')
       .or(`sender_id.eq.${uid},receiver_id.eq.${uid}`)
       .order('created_at', { ascending: false })
 
     if (data) {
-      // Group by conversation partner
       const threadMap = new Map<string, any>()
       for (const m of data) {
         const otherId = m.sender_id === uid ? m.receiver_id : m.sender_id
@@ -51,7 +50,6 @@ export default function MessagesPage() {
       .or(`and(sender_id.eq.${user.id},receiver_id.eq.${thread.otherId}),and(sender_id.eq.${thread.otherId},receiver_id.eq.${user.id})`)
       .order('created_at', { ascending: true })
     if (data) setMessages(data)
-    // Mark as read
     await supabase.from('messages').update({ read: true }).eq('receiver_id', user.id).eq('sender_id', thread.otherId)
   }
 
@@ -88,8 +86,6 @@ export default function MessagesPage() {
         .back i{font-size:18px;color:#111;}
         .topbar-title{font-size:15px;font-weight:700;color:#111;}
         .chat-view{display:flex;flex-direction:column;height:calc(100vh - 48px);}
-        .chat-hdr{background:#fff;padding:12px 14px;border-bottom:1px solid #eee;display:flex;align-items:center;gap:10px;}
-        .chat-name{font-size:14px;font-weight:700;color:#111;}
         .msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;background:#FFFBEA;}
         .bubble{max-width:75%;padding:9px 13px;border-radius:12px;font-size:13px;line-height:1.5;}
         .mine{background:#F5C842;color:#111;align-self:flex-end;border-bottom-right-radius:4px;}
@@ -102,9 +98,10 @@ export default function MessagesPage() {
         .msg-send{width:40px;height:40px;background:#E63312;border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
         .msg-send i{color:#fff;font-size:18px;}
         .thread-list{padding:8px 0;}
-        .thread{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;border-bottom:0.5px solid #f0f0f0;transition:background .1s;}
+        .thread{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;border-bottom:0.5px solid #f0f0f0;}
         .thread:hover{background:#fff;}
-        .t-avatar{width:46px;height:46px;border-radius:50%;background:#F5C842;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+        .t-avatar{width:46px;height:46px;border-radius:50%;background:#F5C842;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;overflow:hidden;}
+        .t-avatar img{width:100%;height:100%;object-fit:cover;}
         .t-info{flex:1;min-width:0;}
         .t-name{font-size:13px;font-weight:700;color:#111;}
         .t-preview{font-size:11px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
@@ -121,7 +118,7 @@ export default function MessagesPage() {
         {selected ? (
           <>
             <div className="topbar">
-              <button className="back" onClick={() => setSelected(null)}>
+              <button className="back" onClick={() => { setSelected(null); fetchThreads(user.id) }}>
                 <i className="ti ti-arrow-left" />
               </button>
               <span className="topbar-title">{displayName(selected.other)}</span>
@@ -138,13 +135,9 @@ export default function MessagesPage() {
                 ))}
               </div>
               <div className="msg-bar">
-                <input
-                  className="msg-inp"
-                  placeholder="Shkruaj mesazhin..."
-                  value={newMsg}
-                  onChange={e => setNewMsg(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && send()}
-                />
+                <input className="msg-inp" placeholder="Shkruaj mesazhin..."
+                  value={newMsg} onChange={e => setNewMsg(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && send()} />
                 <button className="msg-send" onClick={send} disabled={sending}>
                   <i className="ti ti-send" />
                 </button>
@@ -172,7 +165,7 @@ export default function MessagesPage() {
                 {threads.map(t => (
                   <div key={t.otherId} className="thread" onClick={() => openThread(t)}>
                     <div className="t-avatar">
-                      {t.other?.avatar_url ? <img src={t.other.avatar_url} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} alt="" /> : '👤'}
+                      {t.other?.avatar_url ? <img src={t.other.avatar_url} alt="" /> : '👤'}
                     </div>
                     <div className="t-info">
                       <div className="t-name">{displayName(t.other)}</div>

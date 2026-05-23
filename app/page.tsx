@@ -36,7 +36,10 @@ export default function Home() {
 
   useEffect(() => {
     fetchAll()
-    supabase.auth.getUser().then(({ data }) => setUser(data.user))
+    supabase.auth.getSession().then(({ data: { session } }) => setUser(session?.user ?? null))
+    // Keep user in sync on auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => setUser(session?.user ?? null))
+    return () => subscription.unsubscribe()
   }, [])
 
   useEffect(() => {
