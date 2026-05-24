@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="115" fill="#111111"/>
+  <rect width="512" height="512" rx="115" fill="url(#bg)"/>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="512" y2="512">
+      <stop offset="0%" stop-color="#1a1a1a"/>
+      <stop offset="100%" stop-color="#111111"/>
+    </linearGradient>
+  </defs>
+  <!-- Eagle body -->
+  <ellipse cx="256" cy="290" rx="58" ry="75" fill="#F5C842"/>
+  <!-- Eagle head left -->
+  <circle cx="200" cy="168" r="44" fill="#F5C842"/>
+  <!-- Eagle head right -->
+  <circle cx="312" cy="168" r="44" fill="#F5C842"/>
+  <!-- Beaks -->
+  <polygon points="168,178 148,192 168,206" fill="#E63312"/>
+  <polygon points="344,178 364,192 344,206" fill="#E63312"/>
+  <!-- Left wing -->
+  <polygon points="256,260 72,230 96,340 256,326" fill="#F5C842"/>
+  <!-- Right wing -->
+  <polygon points="256,260 440,230 416,340 256,326" fill="#F5C842"/>
+  <!-- Tail feathers -->
+  <polygon points="218,350 298,350 310,432 256,418 202,432" fill="#F5C842"/>
+  <!-- Chest stripe -->
+  <ellipse cx="256" cy="290" rx="22" ry="30" fill="#E63312"/>
+  <!-- Premium badge background -->
+  <rect x="308" y="334" width="158" height="126" rx="28" fill="#F5C842"/>
+  <!-- Premium badge A -->
+  <text x="387" y="430" font-family="Arial Black,sans-serif" font-size="88" font-weight="900" text-anchor="middle" fill="#111">A</text>
+</svg>

@@ -4,6 +4,49 @@ import { useEffect, useState, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import type { Category, Listing, ChatMessage } from '../lib/types'
 
+function InstallBanner() {
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
+  const [show, setShow] = useState(false)
+  const [installed, setInstalled] = useState(false)
+
+  useEffect(() => {
+    // Already installed as PWA
+    if (window.matchMedia('(display-mode: standalone)').matches) return
+    const handler = (e: any) => { e.preventDefault(); setDeferredPrompt(e); setShow(true) }
+    window.addEventListener('beforeinstallprompt', handler)
+    window.addEventListener('appinstalled', () => { setInstalled(true); setShow(false) })
+    return () => window.removeEventListener('beforeinstallprompt', handler)
+  }, [])
+
+  async function install() {
+    if (!deferredPrompt) return
+    deferredPrompt.prompt()
+    const { outcome } = await deferredPrompt.userChoice
+    if (outcome === 'accepted') setInstalled(true)
+    setShow(false)
+  }
+
+  if (!show || installed) return null
+  return (
+    <div style={{
+      position: 'fixed', bottom: 80, left: 10, right: 10, maxWidth: 460, margin: '0 auto',
+      background: 'linear-gradient(135deg,#111,#1c1c1c)', border: '1px solid #F5C842',
+      borderRadius: 16, padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 12,
+      zIndex: 300, boxShadow: '0 8px 32px rgba(0,0,0,.4)',
+    }}>
+      <img src="/icons/icon-72.png" alt="ALPAZAR" style={{ width: 44, height: 44, borderRadius: 10 }} />
+      <div style={{ flex: 1 }}>
+        <div style={{ color: '#F5C842', fontWeight: 700, fontSize: 12 }}>📲 Instalo ALPAZAR</div>
+        <div style={{ color: '#888', fontSize: 10, marginTop: 2 }}>Shto në ekranin kryesor — falas</div>
+      </div>
+      <button onClick={() => setShow(false)} style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', padding: 4, fontSize: 16 }}>✕</button>
+      <button onClick={install} style={{ background: '#F5C842', color: '#111', border: 'none', borderRadius: 9, padding: '8px 14px', fontSize: 12, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap', fontFamily: 'inherit' }}>
+        Instalo
+      </button>
+    </div>
+  )
+}
+
 function AlpazarIcon() {
   return (
     <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
@@ -621,6 +664,7 @@ export default function Home() {
           <i className="ti ti-robot" />
         </button>
       )}
+      <InstallBanner />
     </>
   )
 }
