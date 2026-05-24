@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { supabase } from '../lib/supabase'
-import type { Category, Listing } from '../lib/types'
+import type { Category, Listing, ChatMessage } from '../lib/types'
 
 function AlpazarIcon() {
   return (
@@ -23,9 +23,140 @@ function AlpazarIcon() {
   )
 }
 
+function AIAssistant({ onClose }: { onClose: () => void }) {
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    { role: 'assistant', content: 'Përshëndetje! Unë jam Albi 🤖, asistenti virtual i ALPAZAR. Si mund të të ndihmoj sot?' }
+  ])
+  const [input, setInput] = useState('')
+  const [loading, setLoading] = useState(false)
+  const bottomRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
+
+  async function sendMessage() {
+    const text = input.trim()
+    if (!text || loading) return
+    setInput('')
+    const newMessages: ChatMessage[] = [...messages, { role: 'user', content: text }]
+    setMessages(newMessages)
+    setLoading(true)
+    try {
+      const res = await fetch('/api/ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: newMessages }),
+      })
+      const data = await res.json()
+      setMessages(prev => [...prev, { role: 'assistant', content: data.reply || data.error || 'Gabim i papritur.' }])
+    } catch {
+      setMessages(prev => [...prev, { role: 'assistant', content: 'Gabim lidhjeje. Provo përsëri.' }])
+    }
+    setLoading(false)
+  }
+
+  const QUICK = ['Kërko produkt', 'Si të shes?', 'Çmimet e tregut', 'Dyqan premium']
+
+  return (
+    <div style={{
+      position: 'fixed', bottom: 80, right: 12, left: 12, maxWidth: 456, margin: '0 auto',
+      background: '#111', borderRadius: 18, boxShadow: '0 20px 60px rgba(0,0,0,.4)',
+      zIndex: 200, display: 'flex', flexDirection: 'column', height: 420, overflow: 'hidden',
+      border: '1px solid #333',
+    }}>
+      <div style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ width: 36, height: 36, background: '#F5C842', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <i className="ti ti-robot" style={{ fontSize: 18, color: '#111' }} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ color: '#fff', fontWeight: 700, fontSize: 13 }}>Albi — AI Asistent 🤖</div>
+          <div style={{ color: 'rgba(255,255,255,.7)', fontSize: 10, display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#4ade80', display: 'inline-block' }} />
+            Online · ALPAZAR
+          </div>
+        </div>
+        <button onClick={onClose} style={{ width: 28, height: 28, background: 'rgba(255,255,255,.15)', border: 'none', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <i className="ti ti-x" style={{ fontSize: 14, color: '#fff' }} />
+        </button>
+      </div>
+
+      <div style={{ flex: 1, overflowY: 'auto', padding: '12px 12px 6px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {messages.map((m, i) => (
+          <div key={i} style={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start', gap: 6 }}>
+            {m.role === 'assistant' && (
+              <div style={{ width: 26, height: 26, background: '#F5C842', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 2 }}>
+                <i className="ti ti-robot" style={{ fontSize: 13, color: '#111' }} />
+              </div>
+            )}
+            <div style={{
+              background: m.role === 'user' ? '#E63312' : '#1e1e1e',
+              color: '#fff',
+              borderRadius: m.role === 'user' ? '14px 14px 4px 14px' : '14px 14px 14px 4px',
+              padding: '8px 12px',
+              fontSize: 12,
+              lineHeight: 1.5,
+              maxWidth: '75%',
+              border: m.role === 'assistant' ? '0.5px solid #333' : 'none',
+            }}>
+              {m.content}
+            </div>
+          </div>
+        ))}
+        {loading && (
+          <div style={{ display: 'flex', gap: 6 }}>
+            <div style={{ width: 26, height: 26, background: '#F5C842', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <i className="ti ti-robot" style={{ fontSize: 13, color: '#111' }} />
+            </div>
+            <div style={{ background: '#1e1e1e', border: '0.5px solid #333', borderRadius: '14px 14px 14px 4px', padding: '10px 14px', display: 'flex', gap: 4 }}>
+              {[0,1,2].map(j => (
+                <span key={j} style={{ width: 6, height: 6, borderRadius: '50%', background: '#F5C842', display: 'inline-block', animation: `bounce .9s ${j*0.2}s infinite` }} />
+              ))}
+            </div>
+          </div>
+        )}
+        <div ref={bottomRef} />
+      </div>
+
+      <div style={{ padding: '0 10px 6px', display: 'flex', gap: 5, overflowX: 'auto' }}>
+        {QUICK.map(q => (
+          <button key={q} onClick={() => { setInput(q); }} style={{
+            background: '#1e1e1e', border: '0.5px solid #333', borderRadius: 20, padding: '4px 10px',
+            fontSize: 10, color: '#F5C842', cursor: 'pointer', whiteSpace: 'nowrap', fontFamily: 'inherit',
+          }}>{q}</button>
+        ))}
+      </div>
+
+      <div style={{ padding: '6px 10px 10px', display: 'flex', gap: 8 }}>
+        <input
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && sendMessage()}
+          placeholder="Shkruaj pyetjen tënde..."
+          style={{
+            flex: 1, background: '#1e1e1e', border: '0.5px solid #333', borderRadius: 10,
+            padding: '10px 12px', color: '#fff', fontSize: 12, outline: 'none', fontFamily: 'inherit',
+          }}
+        />
+        <button onClick={sendMessage} disabled={loading} style={{
+          width: 40, background: '#E63312', border: 'none', borderRadius: 10, cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: loading ? .5 : 1,
+        }}>
+          <i className="ti ti-send" style={{ fontSize: 16, color: '#fff' }} />
+        </button>
+      </div>
+
+      <style>{`
+        @keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-5px)} }
+      `}</style>
+    </div>
+  )
+}
+
 export default function Home() {
   const [categories, setCategories] = useState<Category[]>([])
   const [listings, setListings] = useState<Listing[]>([])
+  const [shops, setShops] = useState<any[]>([])
   const [activeCategory, setActiveCategory] = useState('all')
   const [activeFilter, setActiveFilter] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
@@ -33,32 +164,35 @@ export default function Home() {
   const [listingCount, setListingCount] = useState(0)
   const [userCount, setUserCount] = useState(0)
   const [user, setUser] = useState<any>(null)
+  const [showAI, setShowAI] = useState(false)
 
   useEffect(() => {
     fetchAll()
     supabase.auth.getSession().then(({ data: { session } }) => setUser(session?.user ?? null))
-    // Keep user in sync on auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => setUser(session?.user ?? null))
     return () => subscription.unsubscribe()
   }, [])
 
-  useEffect(() => {
-    fetchListings()
-  }, [activeCategory, activeFilter])
+  useEffect(() => { fetchListings() }, [activeCategory, activeFilter])
 
   async function fetchAll() {
     setLoading(true)
-    await Promise.all([fetchCategories(), fetchListings(), fetchCounts()])
+    await Promise.all([fetchCategories(), fetchListings(), fetchCounts(), fetchShops()])
     setLoading(false)
   }
 
   async function fetchCategories() {
-    const { data } = await supabase
-      .from('categories')
-      .select('*')
-      .eq('is_active', true)
-      .order('sort_order')
+    const { data } = await supabase.from('categories').select('*').eq('is_active', true).order('sort_order')
     if (data) setCategories(data)
+  }
+
+  async function fetchShops() {
+    const { data } = await supabase
+      .from('profiles')
+      .select('id,full_name,username,avatar_url,city,shop_name,shop_description,shop_category,shop_banner_url')
+      .eq('is_premium', true)
+      .limit(6)
+    if (data) setShops(data)
   }
 
   async function fetchListings(catSlug = activeCategory, filter = activeFilter) {
@@ -107,128 +241,151 @@ export default function Home() {
     setLoading(false)
   }
 
-  function changeCat(slug: string) {
-    setActiveCategory(slug)
-    fetchListings(slug, activeFilter)
-  }
-
-  function changeFilter(f: string) {
-    setActiveFilter(f)
-    fetchListings(activeCategory, f)
-  }
-
   const fmt = (price: number, cur: string) =>
     !price ? 'Çmim me marrëveshje' :
-    cur === 'EUR' ? `${price.toLocaleString('sq-AL')} €` :
-    `${price.toLocaleString('sq-AL')} L`
+    cur === 'EUR' ? `${price.toLocaleString('sq-AL')} €` : `${price.toLocaleString('sq-AL')} L`
 
   const go = (path: string) => { window.location.href = path }
 
-  const filters = [
-    { id: 'all', label: 'Të gjitha' },
-    { id: 'new', label: 'I ri' },
-    { id: 'used', label: 'I përdorur' },
-    { id: 'premium', label: 'Premium ⭐' },
-  ]
+  const SHOP_COLORS = ['#3B82F6', '#EF4444', '#10B981', '#8B5CF6', '#F59E0B', '#06B6D4']
 
   return (
     <>
       <style>{`
         *{box-sizing:border-box;margin:0;padding:0;}
+        body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
         .wrap{max-width:480px;margin:0 auto;background:#FFFBEA;padding-bottom:80px;}
-        .header{background:#F5C842;position:sticky;top:0;z-index:50;}
+        /* Header */
+        .header{background:linear-gradient(180deg,#F5C842,#f0bc30);position:sticky;top:0;z-index:50;box-shadow:0 2px 8px rgba(0,0,0,.1);}
         .topbar{padding:10px 14px;display:flex;align-items:center;justify-content:space-between;}
         .logo{display:flex;align-items:center;gap:8px;cursor:pointer;}
-        .brand{font-size:20px;font-weight:700;color:#111;letter-spacing:2px;}
+        .brand{font-size:20px;font-weight:800;color:#111;letter-spacing:2px;}
         .nav{display:flex;gap:5px;align-items:center;}
-        .icon-btn{width:32px;height:32px;background:rgba(0,0,0,.10);border-radius:50%;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;}
-        .icon-btn i{font-size:16px;color:#111;}
-        .login-btn{background:#111;color:#F5C842;border:none;border-radius:7px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .icon-btn{width:34px;height:34px;background:rgba(0,0,0,.10);border-radius:50%;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:background .15s;}
+        .icon-btn:hover{background:rgba(0,0,0,.18);}
+        .icon-btn i{font-size:17px;color:#111;}
+        .login-btn{background:#111;color:#F5C842;border:none;border-radius:8px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s;}
+        .login-btn:hover{opacity:.85;}
+        /* Search */
         .searchbar{padding:0 12px 10px;display:flex;gap:8px;}
-        .search-wrap{flex:1;background:#fff;border-radius:9px;display:flex;align-items:center;padding:0 12px;gap:8px;border:0.5px solid #e0b030;}
+        .search-wrap{flex:1;background:#fff;border-radius:10px;display:flex;align-items:center;padding:0 12px;gap:8px;border:1.5px solid rgba(0,0,0,.08);box-shadow:0 1px 4px rgba(0,0,0,.06);}
         .search-wrap i{font-size:15px;color:#bbb;}
-        .search-wrap input{border:none;background:transparent;font-size:13px;color:#111;outline:none;flex:1;padding:9px 0;font-family:inherit;}
+        .search-wrap input{border:none;background:transparent;font-size:13px;color:#111;outline:none;flex:1;padding:10px 0;font-family:inherit;}
         .search-wrap input::placeholder{color:#bbb;}
-        .search-btn{background:#111;color:#F5C842;border:none;border-radius:9px;padding:10px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
-        .cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:0 12px 12px;}
-        .cat-item{background:#fff;border-radius:8px;padding:7px 3px 5px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;border:none;font-family:inherit;transition:all .15s;}
-        .cat-item.active{background:#111;}
-        .cat-item i{font-size:16px;color:#777;}
+        .search-btn{background:#111;color:#F5C842;border:none;border-radius:10px;padding:10px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+        /* Categories */
+        .cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:0 12px 12px;}
+        .cat-item{background:#fff;border-radius:10px;padding:8px 3px 6px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;border:none;font-family:inherit;transition:all .15s;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+        .cat-item:hover{transform:translateY(-1px);}
+        .cat-item.active{background:#111;box-shadow:0 3px 10px rgba(0,0,0,.2);}
+        .cat-item i{font-size:17px;color:#777;}
         .cat-item.active i{color:#F5C842;}
-        .cat-item span{font-size:7px;color:#555;text-align:center;font-weight:500;}
+        .cat-item span{font-size:7.5px;color:#555;text-align:center;font-weight:500;}
         .cat-item.active span{color:#F5C842;font-weight:700;}
+        /* Body */
         .body{padding:0 10px;}
-        .no-ads{background:#EAF3DE;border:0.5px solid #97C459;border-radius:6px;padding:5px 12px;display:flex;align-items:center;gap:6px;margin-bottom:8px;}
+        .no-ads{background:#EAF3DE;border:0.5px solid #97C459;border-radius:7px;padding:6px 12px;display:flex;align-items:center;gap:6px;margin-bottom:10px;}
         .no-ads i{font-size:13px;color:#3B6D11;}
         .no-ads span{font-size:9px;color:#3B6D11;font-weight:700;}
-        .hero{background:#111;border-radius:12px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;position:relative;overflow:hidden;}
-        .hero-stripe{position:absolute;top:0;bottom:0;width:4px;background:#E63312;}
-        .hero h2{color:#F5C842;font-size:13px;font-weight:700;margin-bottom:4px;}
-        .hero p{color:#888;font-size:10px;line-height:1.5;}
-        .hero-stats{display:flex;gap:14px;}
+        /* Hero */
+        .hero{background:linear-gradient(135deg,#111 0%,#1c1c1c 100%);border-radius:16px;padding:16px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;position:relative;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.15);}
+        .hero::before{content:'';position:absolute;top:-20px;right:-20px;width:100px;height:100px;border-radius:50%;background:rgba(230,51,18,.15);}
+        .hero::after{content:'';position:absolute;bottom:-30px;left:-10px;width:80px;height:80px;border-radius:50%;background:rgba(245,200,66,.07);}
+        .hero h2{color:#F5C842;font-size:14px;font-weight:700;margin-bottom:5px;}
+        .hero p{color:#777;font-size:10px;line-height:1.6;}
+        .hero-stats{display:flex;gap:16px;}
         .stat{text-align:center;}
-        .stat-n{color:#F5C842;font-size:16px;font-weight:700;}
-        .stat-l{color:#666;font-size:8px;margin-top:1px;}
-        .ai-bar{background:#111;border-radius:11px;padding:10px 14px;display:flex;align-items:center;gap:9px;border:1px solid #E63312;margin-bottom:8px;}
-        .ai-icon{width:30px;height:30px;background:#F5C842;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .stat-n{color:#F5C842;font-size:18px;font-weight:800;}
+        .stat-l{color:#555;font-size:8px;margin-top:2px;}
+        /* AI bar */
+        .ai-bar{background:linear-gradient(135deg,#111,#1a1a1a);border-radius:13px;padding:11px 14px;display:flex;align-items:center;gap:10px;border:1px solid #E63312;margin-bottom:10px;cursor:pointer;transition:border-color .15s;box-shadow:0 3px 12px rgba(230,51,18,.15);}
+        .ai-bar:hover{border-color:#ff4444;}
+        .ai-icon{width:32px;height:32px;background:#F5C842;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:pulse 2s infinite;}
+        @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(245,200,66,.4)} 50%{box-shadow:0 0 0 6px rgba(245,200,66,0)}}
         .ai-icon i{font-size:15px;color:#111;}
         .ai-text strong{color:#F5C842;font-size:11px;font-weight:700;display:block;}
         .ai-text span{color:#888;font-size:9px;}
-        .ai-btn{background:#E63312;color:#fff;border:none;border-radius:7px;padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;margin-left:auto;}
-        .trust-row{display:flex;gap:5px;margin-bottom:8px;}
-        .trust-card{flex:1;border-radius:7px;padding:6px 7px;display:flex;align-items:center;gap:4px;}
+        .ai-btn{background:#E63312;color:#fff;border:none;border-radius:8px;padding:7px 13px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;margin-left:auto;}
+        /* Trust row */
+        .trust-row{display:flex;gap:6px;margin-bottom:10px;}
+        .trust-card{flex:1;border-radius:9px;padding:7px 8px;display:flex;align-items:center;gap:5px;}
         .tc-green{background:#EAF3DE;border:0.5px solid #97C459;}
         .tc-blue{background:#EEF4FF;border:0.5px solid #85B7EB;}
         .tc-red{background:#FFF0EE;border:0.5px solid #F09595;}
-        .trust-card i{font-size:13px;}
-        .trust-card span{font-size:8px;font-weight:600;}
+        .trust-card i{font-size:14px;}
+        .trust-card span{font-size:8px;font-weight:600;line-height:1.3;}
         .tc-green i,.tc-green span{color:#3B6D11;}
         .tc-blue i,.tc-blue span{color:#185FA5;}
         .tc-red i,.tc-red span{color:#A32D2D;}
-        .filter-row{display:flex;gap:5px;margin-bottom:8px;overflow-x:auto;}
+        /* Shops section */
+        .section-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;}
+        .section-hdr h3{font-size:13px;font-weight:700;color:#111;}
+        .section-hdr a{color:#E63312;font-size:11px;text-decoration:none;cursor:pointer;font-weight:600;}
+        .shops-scroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px;}
+        .shops-scroll::-webkit-scrollbar{display:none;}
+        .shop-mini{width:100px;flex-shrink:0;background:#fff;border-radius:13px;overflow:hidden;cursor:pointer;border:0.5px solid #eee;box-shadow:0 2px 6px rgba(0,0,0,.04);transition:transform .15s;}
+        .shop-mini:hover{transform:translateY(-2px);}
+        .shop-mini:active{transform:scale(.96);}
+        .shop-top{height:44px;display:flex;align-items:flex-end;padding:6px;position:relative;}
+        .shop-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.2);}
+        .shop-prem{position:absolute;top:4px;right:4px;font-size:7px;background:#F5C842;color:#111;padding:1px 5px;border-radius:8px;font-weight:700;}
+        .shop-info{padding:6px 7px 8px;}
+        .shop-nm{font-size:10px;font-weight:700;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .shop-ct{font-size:8.5px;color:#aaa;margin-top:2px;}
+        /* Filter row */
+        .filter-row{display:flex;gap:5px;margin-bottom:10px;overflow-x:auto;}
         .filter-row::-webkit-scrollbar{display:none;}
-        .filter-btn{background:#fff;border:0.5px solid #e0b030;border-radius:20px;padding:5px 12px;font-size:10px;color:#555;white-space:nowrap;flex-shrink:0;cursor:pointer;font-family:inherit;transition:all .12s;}
-        .filter-btn.active{background:#F5C842;border-color:#F5C842;color:#111;font-weight:700;}
-        .section-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
-        .section-hdr span{font-size:13px;font-weight:700;color:#111;}
-        .section-hdr a{color:#E63312;font-size:11px;text-decoration:none;cursor:pointer;}
-        .listings-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px;}
-        .listing-card{background:#fff;border:0.5px solid #eee;border-radius:11px;overflow:hidden;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.04);transition:transform .12s;}
-        .listing-card:active{transform:scale(.98);}
-        .card-img{height:95px;display:flex;align-items:center;justify-content:center;font-size:32px;position:relative;background:#f9f5e0;}
+        .filter-btn{background:#fff;border:0.5px solid #ddd;border-radius:20px;padding:6px 13px;font-size:10px;color:#666;white-space:nowrap;flex-shrink:0;cursor:pointer;font-family:inherit;transition:all .12s;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+        .filter-btn.active{background:#111;border-color:#111;color:#F5C842;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+        /* Listings grid */
+        .listings-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;}
+        .listing-card{background:#fff;border:0.5px solid #eee;border-radius:13px;overflow:hidden;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.04);transition:transform .12s,box-shadow .12s;}
+        .listing-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.08);}
+        .listing-card:active{transform:scale(.97);}
+        .card-img{height:100px;display:flex;align-items:center;justify-content:center;font-size:32px;position:relative;background:linear-gradient(135deg,#f9f5e0,#f5f0d5);}
         .card-img img{width:100%;height:100%;object-fit:cover;}
-        .badge-new{position:absolute;top:5px;left:5px;background:#E63312;color:#fff;font-size:8.5px;padding:2px 6px;border-radius:4px;font-weight:700;}
-        .badge-used{position:absolute;top:5px;left:5px;background:#111;color:#F5C842;font-size:8.5px;padding:2px 6px;border-radius:4px;font-weight:700;}
-        .badge-premium{position:absolute;top:5px;right:5px;background:#F5C842;color:#111;font-size:8.5px;padding:2px 6px;border-radius:4px;font-weight:700;}
+        .badge-new{position:absolute;top:6px;left:6px;background:#E63312;color:#fff;font-size:8.5px;padding:2px 7px;border-radius:5px;font-weight:700;}
+        .badge-used{position:absolute;top:6px;left:6px;background:#111;color:#F5C842;font-size:8.5px;padding:2px 7px;border-radius:5px;font-weight:700;}
+        .badge-premium{position:absolute;top:6px;right:6px;background:#F5C842;color:#111;font-size:8.5px;padding:2px 7px;border-radius:5px;font-weight:700;}
         .card-body{padding:9px 10px;}
         .card-title{font-size:12px;font-weight:700;color:#222;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-        .card-price{font-size:14px;font-weight:700;color:#E63312;margin-bottom:5px;}
+        .card-price{font-size:14px;font-weight:800;color:#E63312;margin-bottom:5px;}
         .card-meta{display:flex;align-items:center;justify-content:space-between;}
-        .card-loc{font-size:10px;color:#999;display:flex;align-items:center;gap:3px;}
-        .card-like{width:22px;height:22px;border:0.5px solid #eee;border-radius:50%;display:flex;align-items:center;justify-content:center;background:none;cursor:pointer;}
+        .card-loc{font-size:10px;color:#aaa;display:flex;align-items:center;gap:3px;}
+        .card-loc i{font-size:11px;}
+        .card-like{width:24px;height:24px;border:0.5px solid #eee;border-radius:50%;display:flex;align-items:center;justify-content:center;background:none;cursor:pointer;transition:border-color .15s;}
+        .card-like:hover{border-color:#E63312;}
         .card-like i{font-size:12px;color:#ddd;}
-        .empty-state{grid-column:1/-1;text-align:center;padding:32px 16px;background:#f9f5e0;border:0.5px solid #eee;border-radius:11px;}
-        .empty-state i{font-size:38px;color:#e0b030;display:block;margin-bottom:8px;}
-        .empty-state h3{font-size:13px;font-weight:700;color:#555;margin-bottom:5px;}
-        .empty-state p{font-size:11px;color:#aaa;line-height:1.6;margin-bottom:12px;}
-        .empty-cta{background:#E63312;color:#fff;border:none;border-radius:9px;padding:9px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
-        .premium-cta{margin-bottom:10px;background:#FFFBEA;border:1.5px solid #F5C842;border-radius:11px;padding:11px 14px;display:flex;align-items:center;gap:9px;}
-        .prem-icon{width:28px;height:28px;background:#F5C842;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-        .prem-icon i{font-size:14px;color:#111;}
+        .empty-state{grid-column:1/-1;text-align:center;padding:36px 16px;background:linear-gradient(135deg,#f9f5e0,#f5f0d5);border:0.5px solid #eee;border-radius:13px;}
+        .empty-state i{font-size:40px;color:#F5C842;display:block;margin-bottom:10px;}
+        .empty-state h3{font-size:14px;font-weight:700;color:#555;margin-bottom:6px;}
+        .empty-state p{font-size:11px;color:#aaa;line-height:1.6;margin-bottom:14px;}
+        .empty-cta{background:#E63312;color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+        /* Premium CTA */
+        .premium-cta{margin-bottom:12px;background:linear-gradient(135deg,#FFFBEA,#fff8d9);border:1.5px solid #F5C842;border-radius:13px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 3px 12px rgba(245,200,66,.15);}
+        .prem-icon{width:30px;height:30px;background:#F5C842;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .prem-icon i{font-size:15px;color:#111;}
         .prem-text strong{font-size:11px;font-weight:700;color:#111;display:block;}
         .prem-text span{font-size:9px;color:#888;}
-        .prem-btn{background:#111;color:#F5C842;border:none;border-radius:7px;padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;margin-left:auto;}
-        .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#111;padding:9px 10px 14px;display:flex;justify-content:space-around;align-items:center;z-index:100;}
-        .nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;color:#555;border:none;background:none;font-family:inherit;cursor:pointer;}
+        .prem-btn{background:#111;color:#F5C842;border:none;border-radius:8px;padding:8px 13px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;margin-left:auto;}
+        /* Bottom nav */
+        .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#111;padding:9px 10px 14px;display:flex;justify-content:space-around;align-items:center;z-index:100;box-shadow:0 -4px 20px rgba(0,0,0,.2);}
+        .nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;color:#555;border:none;background:none;font-family:inherit;cursor:pointer;transition:color .15s;}
         .nav-item.active{color:#F5C842;}
-        .nav-item i{font-size:20px;}
+        .nav-item i{font-size:22px;}
         .nav-item span{font-size:9px;color:inherit;}
-        .nav-add{width:44px;height:44px;background:#E63312;border-radius:50%;display:flex;align-items:center;justify-content:center;border:3px solid #FFFBEA;margin-top:-12px;cursor:pointer;}
-        .nav-add i{font-size:20px;color:#fff;}
-        .loading{text-align:center;padding:30px;color:#888;font-size:13px;}
-        .spinner{display:inline-block;width:28px;height:28px;border:3px solid #F5C842;border-top-color:#E63312;border-radius:50%;animation:spin .7s linear infinite;margin-bottom:8px;display:block;margin:0 auto 8px;}
+        .nav-add{width:46px;height:46px;background:linear-gradient(135deg,#E63312,#c42a0e);border-radius:50%;display:flex;align-items:center;justify-content:center;border:3px solid #FFFBEA;margin-top:-14px;cursor:pointer;box-shadow:0 4px 14px rgba(230,51,18,.4);}
+        .nav-add i{font-size:22px;color:#fff;}
+        /* AI float button */
+        .ai-float{position:fixed;bottom:80px;right:12px;width:50px;height:50px;background:linear-gradient(135deg,#E63312,#c42a0e);border-radius:50%;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;box-shadow:0 6px 20px rgba(230,51,18,.4);z-index:150;animation:float-pulse 2s infinite;}
+        @keyframes float-pulse{0%,100%{box-shadow:0 6px 20px rgba(230,51,18,.4)} 50%{box-shadow:0 8px 28px rgba(230,51,18,.6)}}
+        .ai-float i{font-size:22px;color:#fff;}
+        .loading{text-align:center;padding:32px;color:#888;font-size:13px;}
+        .spinner{display:block;width:28px;height:28px;border:3px solid #F5C842;border-top-color:#E63312;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px;}
         @keyframes spin{to{transform:rotate(360deg);}}
       `}</style>
+
+      {showAI && <AIAssistant onClose={() => setShowAI(false)} />}
 
       <div className="wrap">
         <div className="header">
@@ -263,7 +420,7 @@ export default function Home() {
           </form>
 
           <div className="cat-grid">
-            <button className={`cat-item ${activeCategory === 'all' ? 'active' : ''}`} onClick={() => changeCat('all')}>
+            <button className={`cat-item ${activeCategory === 'all' ? 'active' : ''}`} onClick={() => { setActiveCategory('all'); fetchListings('all', activeFilter) }}>
               <i className="ti ti-layout-grid" />
               <span>Të gjitha</span>
             </button>
@@ -271,7 +428,7 @@ export default function Home() {
               <button
                 key={cat.id}
                 className={`cat-item ${activeCategory === cat.slug ? 'active' : ''}`}
-                onClick={() => changeCat(cat.slug)}
+                onClick={() => { setActiveCategory(cat.slug); fetchListings(cat.slug, activeFilter) }}
               >
                 <i className={`ti ti-${cat.icon}`} />
                 <span>{cat.name}</span>
@@ -283,12 +440,10 @@ export default function Home() {
         <div className="body">
           <div className="no-ads">
             <i className="ti ti-ad-off" />
-            <span>Pa reklama — për të gjithë gjithmonë</span>
+            <span>Pa reklama — për të gjithë gjithmonë falas</span>
           </div>
 
           <div className="hero">
-            <div className="hero-stripe" style={{ left: 0 }} />
-            <div className="hero-stripe" style={{ right: 0 }} />
             <div>
               <h2>🦅 Shit · Bli · Bëj Pazrin Tënd</h2>
               <p>Platforma #1 shqiptare<br />e tregtisë online</p>
@@ -305,13 +460,13 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="ai-bar">
+          <div className="ai-bar" onClick={() => setShowAI(true)}>
             <div className="ai-icon"><i className="ti ti-robot" /></div>
             <div className="ai-text">
-              <strong>AI Asistent · 24/7</strong>
+              <strong>Albi — AI Asistent 🤖 · 24/7</strong>
               <span>Gjej produktin ideal — pyetmë çdo gjë</span>
             </div>
-            <button className="ai-btn" onClick={() => go('/search?ai=1')}>Pyet ↗</button>
+            <button className="ai-btn" onClick={e => { e.stopPropagation(); setShowAI(true) }}>Chat ↗</button>
           </div>
 
           <div className="trust-row">
@@ -326,12 +481,54 @@ export default function Home() {
             </div>
           </div>
 
+          {/* Shops section */}
+          {shops.length > 0 && (
+            <>
+              <div className="section-hdr">
+                <h3>🏪 Dyqane Premium</h3>
+                <a onClick={() => go('/dyqane')}>Të gjitha →</a>
+              </div>
+              <div className="shops-scroll">
+                {shops.map((shop, idx) => {
+                  const col = SHOP_COLORS[idx % SHOP_COLORS.length]
+                  const initials = (shop.shop_name || shop.full_name || '?').slice(0, 2).toUpperCase()
+                  return (
+                    <div key={shop.id} className="shop-mini" onClick={() => go(`/dyqane/${shop.id}`)}>
+                      <div className="shop-top" style={{ background: `linear-gradient(135deg,${col}22,${col}44)` }}>
+                        <div className="shop-av" style={{ background: col }}>
+                          {shop.avatar_url
+                            ? <img src={shop.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                            : initials
+                          }
+                        </div>
+                        <span className="shop-prem">⭐</span>
+                      </div>
+                      <div className="shop-info">
+                        <div className="shop-nm">{shop.shop_name || shop.full_name}</div>
+                        <div className="shop-ct">{shop.city || 'Shqipëri'}</div>
+                      </div>
+                    </div>
+                  )
+                })}
+                <div className="shop-mini" onClick={() => go('/dyqane')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#fff', border: '1.5px dashed #F5C842', cursor: 'pointer' }}>
+                  <i className="ti ti-arrow-right" style={{ fontSize: 20, color: '#E63312' }} />
+                  <div style={{ fontSize: 9, color: '#E63312', fontWeight: 700, marginTop: 4, textAlign: 'center', padding: '0 6px' }}>Shiko të gjitha</div>
+                </div>
+              </div>
+            </>
+          )}
+
           <div className="filter-row">
-            {filters.map(f => (
+            {[
+              { id: 'all', label: 'Të gjitha' },
+              { id: 'new', label: '🆕 I ri' },
+              { id: 'used', label: 'I përdorur' },
+              { id: 'premium', label: '⭐ Premium' },
+            ].map(f => (
               <button
                 key={f.id}
                 className={`filter-btn ${activeFilter === f.id ? 'active' : ''}`}
-                onClick={() => changeFilter(f.id)}
+                onClick={() => { setActiveFilter(f.id); fetchListings(activeCategory, f.id) }}
               >
                 {f.label}
               </button>
@@ -339,8 +536,8 @@ export default function Home() {
           </div>
 
           <div className="section-hdr">
-            <span>🔥 Shpallje të fundit</span>
-            <a onClick={() => changeCat('all')}>Të gjitha →</a>
+            <h3>🔥 Shpallje të fundit</h3>
+            <a onClick={() => { setActiveCategory('all'); fetchListings('all', 'all') }}>Të gjitha →</a>
           </div>
 
           {loading ? (
@@ -376,7 +573,7 @@ export default function Home() {
                       <div className="card-price">{fmt(listing.price, listing.currency)}</div>
                       <div className="card-meta">
                         <span className="card-loc">
-                          <i className="ti ti-map-pin" style={{ fontSize: 11 }} />
+                          <i className="ti ti-map-pin" />
                           {listing.city || 'Shqipëri'}
                         </span>
                         <button className="card-like" onClick={e => { e.stopPropagation(); go(user ? '#' : '/auth/login') }}>
@@ -410,14 +607,20 @@ export default function Home() {
           <div className="nav-add" onClick={() => go(user ? '/listing/new' : '/auth/login')}>
             <i className="ti ti-plus" />
           </div>
-          <button className="nav-item" onClick={() => go(user ? '/messages' : '/auth/login')}>
-            <i className="ti ti-message" /><span>Mesazhe</span>
+          <button className="nav-item" onClick={() => go('/dyqane')}>
+            <i className="ti ti-building-store" /><span>Dyqane</span>
           </button>
           <button className="nav-item" onClick={() => go(user ? '/profile' : '/auth/login')}>
             <i className="ti ti-user" /><span>Profili</span>
           </button>
         </nav>
       </div>
+
+      {!showAI && (
+        <button className="ai-float" onClick={() => setShowAI(true)}>
+          <i className="ti ti-robot" />
+        </button>
+      )}
     </>
   )
 }
