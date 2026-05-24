@@ -1,0 +1,30 @@
+repo/
+ ├── .github/          ← këtu vendoset workflows
+ │    └── workflows/
+ │         └── claude.yml
+ ├── src/              ← kodi burimor
+ ├── README.md         ← dokumentacioni kryesor
+ ├── LICENSE           ← licenca e projektit
+ └── ...
+ name: Claude Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Call Claude API
+        run: |
+          curl https://api.anthropic.com/v1/messages \
+          -H "Authorization: Bearer ${{ secrets.CLAUDE_API_KEY }}" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "model": "claude-3-opus-20240229",
+            "messages": [{"role":"user","content":"Review this PR for issues"}]
+          }'
