@@ -13,10 +13,10 @@ export default function PremiumPage() {
   const [msg, setMsg] = useState('')
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user)
-      if (data.user) {
-        supabase.from('profiles').select('*').eq('id', data.user.id).single().then(({ data: p }) => setProfile(p))
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+      if (session?.user) {
+        supabase.from('profiles').select('*').eq('id', session.user.id).single().then(({ data: p }) => setProfile(p))
       }
     })
     supabase.from('payment_methods').select('*').eq('is_active', true).then(({ data }) => {

@@ -25,9 +25,9 @@ export default function NewListing() {
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data.user) { window.location.href = '/auth/login'; return }
-      setUser(data.user)
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) { window.location.href = '/auth/login'; return }
+      setUser(session.user)
     })
     supabase.from('categories').select('*').eq('is_active', true).order('sort_order').then(({ data }) => {
       if (data) setCategories(data)

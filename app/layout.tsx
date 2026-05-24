@@ -17,6 +17,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body style={{ margin: 0, background: '#FFFBEA', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
         {children}
+        <footer style={{ background: '#111', padding: '22px 16px 28px', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
+          <div style={{ maxWidth: 480, margin: '0 auto', textAlign: 'center' }}>
+            <div style={{ color: '#F5C842', fontWeight: 700, fontSize: 13, letterSpacing: 1, marginBottom: 14 }}>🦅 ALPAZAR</div>
+            <nav style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '6px 14px', marginBottom: 14 }}>
+              <a href="/kushtet" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Kushtet e Përdorimit</a>
+              <a href="/privatesia" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Privatësia</a>
+              <a href="/cookies" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Cookie-t</a>
+              <a href="/rreth-nesh" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Rreth Nesh</a>
+              <a href="/kontakt" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Kontakt</a>
+              <a href="/siguria" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Siguria</a>
+            </nav>
+            <div style={{ fontSize: 10, color: '#444' }}>© 2025 Alpazar · Tiranë, Shqipëri · Të gjitha të drejtat e rezervuara</div>
+          </div>
+        </footer>
       </body>
     </html>
   )
