@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import type { Category, Listing, ChatMessage } from '../lib/types'
+import type { Category, Listing } from '../lib/types'
 
 function InstallBanner() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
@@ -66,136 +66,6 @@ function AlpazarIcon() {
   )
 }
 
-function AIAssistant({ onClose }: { onClose: () => void }) {
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'assistant', content: 'Përshëndetje! Unë jam Albi 🤖, asistenti virtual i ALPAZAR. Si mund të të ndihmoj sot?' }
-  ])
-  const [input, setInput] = useState('')
-  const [loading, setLoading] = useState(false)
-  const bottomRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
-
-  async function sendMessage() {
-    const text = input.trim()
-    if (!text || loading) return
-    setInput('')
-    const newMessages: ChatMessage[] = [...messages, { role: 'user', content: text }]
-    setMessages(newMessages)
-    setLoading(true)
-    try {
-      const res = await fetch('/api/ai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: newMessages }),
-      })
-      const data = await res.json()
-      setMessages(prev => [...prev, { role: 'assistant', content: data.reply || data.error || 'Gabim i papritur.' }])
-    } catch {
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Gabim lidhjeje. Provo përsëri.' }])
-    }
-    setLoading(false)
-  }
-
-  const QUICK = ['Kërko produkt', 'Si të shes?', 'Çmimet e tregut', 'Dyqan premium']
-
-  return (
-    <div style={{
-      position: 'fixed', bottom: 80, right: 12, left: 12, maxWidth: 456, margin: '0 auto',
-      background: '#111', borderRadius: 18, boxShadow: '0 20px 60px rgba(0,0,0,.4)',
-      zIndex: 200, display: 'flex', flexDirection: 'column', height: 420, overflow: 'hidden',
-      border: '1px solid #333',
-    }}>
-      <div style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div style={{ width: 36, height: 36, background: '#F5C842', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          <i className="ti ti-robot" style={{ fontSize: 18, color: '#111' }} />
-        </div>
-        <div style={{ flex: 1 }}>
-          <div style={{ color: '#fff', fontWeight: 700, fontSize: 13 }}>Albi — AI Asistent 🤖</div>
-          <div style={{ color: 'rgba(255,255,255,.7)', fontSize: 10, display: 'flex', alignItems: 'center', gap: 4 }}>
-            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#4ade80', display: 'inline-block' }} />
-            Online · ALPAZAR
-          </div>
-        </div>
-        <button onClick={onClose} style={{ width: 28, height: 28, background: 'rgba(255,255,255,.15)', border: 'none', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <i className="ti ti-x" style={{ fontSize: 14, color: '#fff' }} />
-        </button>
-      </div>
-
-      <div style={{ flex: 1, overflowY: 'auto', padding: '12px 12px 6px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {messages.map((m, i) => (
-          <div key={i} style={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start', gap: 6 }}>
-            {m.role === 'assistant' && (
-              <div style={{ width: 26, height: 26, background: '#F5C842', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 2 }}>
-                <i className="ti ti-robot" style={{ fontSize: 13, color: '#111' }} />
-              </div>
-            )}
-            <div style={{
-              background: m.role === 'user' ? '#E63312' : '#1e1e1e',
-              color: '#fff',
-              borderRadius: m.role === 'user' ? '14px 14px 4px 14px' : '14px 14px 14px 4px',
-              padding: '8px 12px',
-              fontSize: 12,
-              lineHeight: 1.5,
-              maxWidth: '75%',
-              border: m.role === 'assistant' ? '0.5px solid #333' : 'none',
-            }}>
-              {m.content}
-            </div>
-          </div>
-        ))}
-        {loading && (
-          <div style={{ display: 'flex', gap: 6 }}>
-            <div style={{ width: 26, height: 26, background: '#F5C842', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <i className="ti ti-robot" style={{ fontSize: 13, color: '#111' }} />
-            </div>
-            <div style={{ background: '#1e1e1e', border: '0.5px solid #333', borderRadius: '14px 14px 14px 4px', padding: '10px 14px', display: 'flex', gap: 4 }}>
-              {[0,1,2].map(j => (
-                <span key={j} style={{ width: 6, height: 6, borderRadius: '50%', background: '#F5C842', display: 'inline-block', animation: `bounce .9s ${j*0.2}s infinite` }} />
-              ))}
-            </div>
-          </div>
-        )}
-        <div ref={bottomRef} />
-      </div>
-
-      <div style={{ padding: '0 10px 6px', display: 'flex', gap: 5, overflowX: 'auto' }}>
-        {QUICK.map(q => (
-          <button key={q} onClick={() => { setInput(q); }} style={{
-            background: '#1e1e1e', border: '0.5px solid #333', borderRadius: 20, padding: '4px 10px',
-            fontSize: 10, color: '#F5C842', cursor: 'pointer', whiteSpace: 'nowrap', fontFamily: 'inherit',
-          }}>{q}</button>
-        ))}
-      </div>
-
-      <div style={{ padding: '6px 10px 10px', display: 'flex', gap: 8 }}>
-        <input
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && sendMessage()}
-          placeholder="Shkruaj pyetjen tënde..."
-          style={{
-            flex: 1, background: '#1e1e1e', border: '0.5px solid #333', borderRadius: 10,
-            padding: '10px 12px', color: '#fff', fontSize: 12, outline: 'none', fontFamily: 'inherit',
-          }}
-        />
-        <button onClick={sendMessage} disabled={loading} style={{
-          width: 40, background: '#E63312', border: 'none', borderRadius: 10, cursor: 'pointer',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: loading ? .5 : 1,
-        }}>
-          <i className="ti ti-send" style={{ fontSize: 16, color: '#fff' }} />
-        </button>
-      </div>
-
-      <style>{`
-        @keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-5px)} }
-      `}</style>
-    </div>
-  )
-}
-
 export default function Home() {
   const [categories, setCategories] = useState<Category[]>([])
   const [listings, setListings] = useState<Listing[]>([])
@@ -207,7 +77,6 @@ export default function Home() {
   const [listingCount, setListingCount] = useState(0)
   const [userCount, setUserCount] = useState(0)
   const [user, setUser] = useState<any>(null)
-  const [showAI, setShowAI] = useState(false)
 
   useEffect(() => {
     fetchAll()
@@ -428,7 +297,6 @@ export default function Home() {
         @keyframes spin{to{transform:rotate(360deg);}}
       `}</style>
 
-      {showAI && <AIAssistant onClose={() => setShowAI(false)} />}
 
       <div className="wrap">
         <div className="header">
@@ -503,13 +371,13 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="ai-bar" onClick={() => setShowAI(true)}>
+          <div className="ai-bar" onClick={() => go('/asistent')}>
             <div className="ai-icon"><i className="ti ti-robot" /></div>
             <div className="ai-text">
               <strong>Albi — AI Asistent 🤖 · 24/7</strong>
               <span>Gjej produktin ideal — pyetmë çdo gjë</span>
             </div>
-            <button className="ai-btn" onClick={e => { e.stopPropagation(); setShowAI(true) }}>Chat ↗</button>
+            <button className="ai-btn" onClick={e => { e.stopPropagation(); go('/asistent') }}>Chat ↗</button>
           </div>
 
           <div className="trust-row">
@@ -659,11 +527,9 @@ export default function Home() {
         </nav>
       </div>
 
-      {!showAI && (
-        <button className="ai-float" onClick={() => setShowAI(true)}>
-          <i className="ti ti-robot" />
-        </button>
-      )}
+      <button className="ai-float" onClick={() => go('/asistent')}>
+        <i className="ti ti-robot" />
+      </button>
       <InstallBanner />
     </>
   )

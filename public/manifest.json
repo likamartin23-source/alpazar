@@ -25,24 +25,31 @@
   ],
   "shortcuts": [
     {
+      "name": "Albi — AI Asistent",
+      "short_name": "Albi AI",
+      "description": "Chat me asistentin virtual 24/7",
+      "url": "/asistent",
+      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
+    },
+    {
       "name": "Shto Shpallje",
       "short_name": "Shto",
-      "description": "Shto shpallje të re",
+      "description": "Shto shpallje të re falas",
       "url": "/listing/new",
       "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
     },
     {
-      "name": "Kërko",
-      "short_name": "Kërko",
-      "description": "Kërko produktin",
-      "url": "/search",
+      "name": "Dyqane Premium",
+      "short_name": "Dyqane",
+      "description": "Shfleto dyqanet online",
+      "url": "/dyqane",
       "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
     },
     {
-      "name": "Dyqane",
-      "short_name": "Dyqane",
-      "description": "Shfleto dyqanet",
-      "url": "/dyqane",
+      "name": "Mesazhet",
+      "short_name": "Mesazhe",
+      "description": "Chat me shitësit",
+      "url": "/messages",
       "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
     }
   ],
