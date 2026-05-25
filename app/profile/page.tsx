@@ -19,8 +19,9 @@ export default function ProfilePage() {
   const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
   const [myListings, setMyListings] = useState<any[]>([])
+  const [conversations, setConversations] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'profile'|'listings'|'shop'>('profile')
+  const [activeTab, setActiveTab] = useState<'profile'|'listings'|'shop'|'messages'>('profile')
   const [editing, setEditing] = useState(false)
   const [form, setForm] = useState({ full_name: '', username: '', city: '', bio: '' })
   const [shopForm, setShopForm] = useState({ shop_name: '', shop_description: '', shop_category: '', shop_banner_url: '' })
@@ -51,7 +52,40 @@ export default function ProfilePage() {
       setShopForm({ shop_name: p.shop_name || '', shop_description: p.shop_description || '', shop_category: p.shop_category || '', shop_banner_url: p.shop_banner_url || '' })
     }
     if (ls) setMyListings(ls)
+    await fetchConversations(uid)
     setLoading(false)
+  }
+
+  async function fetchConversations(uid: string) {
+    const { data } = await supabase
+      .from('messages')
+      .select('id,sender_id,receiver_id,content,created_at,is_read,listing_id')
+      .or(`sender_id.eq.${uid},receiver_id.eq.${uid}`)
+      .order('created_at', { ascending: false })
+    if (!data || data.length === 0) return
+
+    const threadsMap = new Map<string, any>()
+    for (const msg of data) {
+      const otherId = msg.sender_id === uid ? msg.receiver_id : msg.sender_id
+      if (!threadsMap.has(otherId)) {
+        threadsMap.set(otherId, { otherId, lastMsg: msg, unread: 0 })
+      }
+      if (!msg.is_read && msg.receiver_id === uid) {
+        threadsMap.get(otherId)!.unread++
+      }
+    }
+
+    const otherIds = Array.from(threadsMap.keys())
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id,full_name,username,avatar_url,is_premium,shop_name')
+      .in('id', otherIds)
+    const pm = new Map((profiles || []).map((p: any) => [p.id, p]))
+
+    const convs = Array.from(threadsMap.values())
+      .map(t => ({ ...t, profile: pm.get(t.otherId) || null }))
+      .sort((a, b) => new Date(b.lastMsg.created_at).getTime() - new Date(a.lastMsg.created_at).getTime())
+    setConversations(convs)
   }
 
   async function saveProfile() {
@@ -176,6 +210,29 @@ export default function ProfilePage() {
         .shop-preview-btn{background:#10B981;color:#fff;border:none;border-radius:8px;padding:8px 13px;font-size:11px;font-weight:700;cursor:pointer;margin-left:auto;white-space:nowrap;font-family:inherit;}
         .save-shop-btn{background:#10B981;color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:8px;}
         .save-shop-btn i{font-size:16px;}
+        /* Messages inbox */
+        .tab-badge{display:inline-flex;align-items:center;justify-content:center;background:#E63312;color:#fff;font-size:8px;font-weight:700;width:15px;height:15px;border-radius:50%;margin-left:3px;vertical-align:middle;}
+        .conv-list{display:flex;flex-direction:column;gap:0;}
+        .conv-row{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:0.5px solid #f5f5f0;cursor:pointer;transition:background .1s;}
+        .conv-row:last-child{border:none;}
+        .conv-row:active{background:#f9f5e0;}
+        .conv-av{width:48px;height:48px;border-radius:50%;background:#F5C842;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;overflow:hidden;position:relative;}
+        .conv-av img{width:100%;height:100%;object-fit:cover;}
+        .unread-dot{position:absolute;top:1px;right:1px;width:12px;height:12px;background:#E63312;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:6px;color:#fff;font-weight:700;}
+        .conv-body{flex:1;min-width:0;}
+        .conv-name{font-size:13px;font-weight:700;color:#111;display:flex;align-items:center;gap:5px;}
+        .conv-prem{font-size:8px;background:#F5C842;color:#111;padding:1px 5px;border-radius:6px;font-weight:700;}
+        .conv-preview{font-size:11px;color:#aaa;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .conv-preview.unread{color:#111;font-weight:600;}
+        .conv-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
+        .conv-time{font-size:9px;color:#bbb;}
+        .conv-badge{background:#E63312;color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;min-width:18px;text-align:center;}
+        .inbox-empty{text-align:center;padding:40px 20px;}
+        .inbox-empty i{font-size:44px;color:#F5C842;display:block;margin-bottom:12px;}
+        .inbox-empty p{font-size:12px;color:#aaa;margin-bottom:16px;line-height:1.6;}
+        .inbox-empty-btn{background:#E63312;color:#fff;border:none;border-radius:10px;padding:11px 22px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .open-msgs-btn{width:100%;background:#111;color:#F5C842;border:none;border-radius:11px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;}
+        .open-msgs-btn i{font-size:17px;}
       `}</style>
 
       <div className="wrap">
@@ -224,6 +281,13 @@ export default function ProfilePage() {
           </button>
           <button className={`tab ${activeTab === 'listings' ? 'active' : ''}`} onClick={() => setActiveTab('listings')}>
             <i className="ti ti-package" />Shpalljet
+          </button>
+          <button className={`tab ${activeTab === 'messages' ? 'active' : ''}`} onClick={() => setActiveTab('messages')}>
+            <i className="ti ti-message-circle" />
+            Mesazhet
+            {conversations.some(c => c.unread > 0) && (
+              <span className="tab-badge">{conversations.reduce((s, c) => s + c.unread, 0)}</span>
+            )}
           </button>
           <button className={`tab ${activeTab === 'shop' ? 'active' : ''}`} onClick={() => setActiveTab('shop')}>
             <i className="ti ti-building-store" />Dyqani
@@ -316,6 +380,79 @@ export default function ProfilePage() {
                   ))
                 )}
               </div>
+            </>
+          )}
+
+          {/* Messages Tab */}
+          {activeTab === 'messages' && (
+            <>
+              <div className="card">
+                <div className="card-hdr">
+                  <span className="card-title">💬 Bisedat e mia</span>
+                  <button className="edit-btn" onClick={() => window.location.href = '/messages'}>
+                    Hap →
+                  </button>
+                </div>
+
+                {conversations.length === 0 ? (
+                  <div className="inbox-empty">
+                    <i className="ti ti-messages" />
+                    <p>Nuk ke biseda ende.<br />Kontakto një shitës nga shpalljet!</p>
+                    <button className="inbox-empty-btn" onClick={() => window.location.href = '/'}>
+                      Shfleto shpalljet
+                    </button>
+                  </div>
+                ) : (
+                  <div className="conv-list">
+                    {conversations.map(conv => {
+                      const p = conv.profile
+                      const isMe = conv.lastMsg.sender_id === user?.id
+                      const name = p?.shop_name || p?.full_name || p?.username || 'Përdorues'
+                      const preview = (isMe ? 'Ti: ' : '') + (conv.lastMsg.content?.slice(0, 50) || '...')
+                      const time = new Date(conv.lastMsg.created_at)
+                      const now = new Date()
+                      const diffH = (now.getTime() - time.getTime()) / 3600000
+                      const timeStr = diffH < 1 ? 'Tani'
+                        : diffH < 24 ? `${Math.floor(diffH)}o`
+                        : diffH < 168 ? time.toLocaleDateString('sq-AL', { weekday: 'short' })
+                        : time.toLocaleDateString('sq-AL', { day: 'numeric', month: 'short' })
+
+                      return (
+                        <div key={conv.otherId} className="conv-row"
+                          onClick={() => window.location.href = `/messages?with=${conv.otherId}`}>
+                          <div className="conv-av">
+                            {p?.avatar_url
+                              ? <img src={p.avatar_url} alt={name} />
+                              : name.slice(0, 1).toUpperCase()}
+                            {conv.unread > 0 && (
+                              <span className="unread-dot">{conv.unread > 9 ? '9+' : conv.unread}</span>
+                            )}
+                          </div>
+                          <div className="conv-body">
+                            <div className="conv-name">
+                              {name}
+                              {p?.is_premium && <span className="conv-prem">⭐</span>}
+                            </div>
+                            <div className={`conv-preview ${conv.unread > 0 ? 'unread' : ''}`}>
+                              {preview}
+                            </div>
+                          </div>
+                          <div className="conv-right">
+                            <span className="conv-time">{timeStr}</span>
+                            {conv.unread > 0 && (
+                              <span className="conv-badge">{conv.unread}</span>
+                            )}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+
+              <button className="open-msgs-btn" onClick={() => window.location.href = '/messages'}>
+                <i className="ti ti-messages" /> Hap Mesazherin e Plotë
+              </button>
             </>
           )}
 
