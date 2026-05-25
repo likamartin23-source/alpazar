@@ -78,12 +78,19 @@ export default function Home() {
   const [userCount, setUserCount] = useState(0)
   const [user, setUser] = useState<any>(null)
   const [settings, setSettings] = useState<Record<string, string>>({})
+  const [unreadCount, setUnreadCount] = useState(0)
 
   useEffect(() => {
     fetchAll()
     fetchSettings()
-    supabase.auth.getSession().then(({ data: { session } }) => setUser(session?.user ?? null))
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => setUser(session?.user ?? null))
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+      if (session?.user) fetchUnread(session.user.id)
+    })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      setUser(session?.user ?? null)
+      if (session?.user) fetchUnread(session.user.id)
+    })
 
     // Live admin settings — reflect admin config changes in real time
     const settingsChannel = supabase
@@ -100,6 +107,15 @@ export default function Home() {
   async function fetchSettings() {
     const { data } = await supabase.from('admin_settings').select('key,value')
     if (data) setSettings(Object.fromEntries(data.map((s: any) => [s.key, s.value])))
+  }
+
+  async function fetchUnread(uid: string) {
+    const { count } = await supabase
+      .from('messages')
+      .select('*', { count: 'exact', head: true })
+      .eq('receiver_id', uid)
+      .eq('read', false)
+    setUnreadCount(count || 0)
   }
 
   useEffect(() => { fetchListings() }, [activeCategory, activeFilter])
@@ -203,13 +219,14 @@ export default function Home() {
         .search-wrap input::placeholder{color:#bbb;}
         .search-btn{background:#111;color:#F5C842;border:none;border-radius:10px;padding:10px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
         /* Categories */
-        .cat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:0 10px 8px;}
-        .cat-item{background:#fff;border-radius:8px;padding:5px 2px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;border:none;font-family:inherit;transition:all .15s;box-shadow:0 1px 3px rgba(0,0,0,.05);}
-        .cat-item:hover{transform:translateY(-1px);}
-        .cat-item.active{background:#111;box-shadow:0 3px 10px rgba(0,0,0,.2);}
-        .cat-item i{font-size:11px;color:#777;}
+        .cat-scroll{display:flex;gap:6px;padding:0 10px 10px;overflow-x:auto;scroll-snap-type:x mandatory;}
+        .cat-scroll::-webkit-scrollbar{display:none;}
+        .cat-item{background:#fff;border-radius:20px;padding:6px 12px;display:flex;align-items:center;gap:5px;cursor:pointer;border:1.5px solid transparent;font-family:inherit;transition:all .15s;box-shadow:0 1px 4px rgba(0,0,0,.06);white-space:nowrap;flex-shrink:0;scroll-snap-align:start;}
+        .cat-item:active{transform:scale(.95);}
+        .cat-item.active{background:#111;border-color:#111;box-shadow:0 3px 10px rgba(0,0,0,.2);}
+        .cat-item i{font-size:14px;color:#777;}
         .cat-item.active i{color:#F5C842;}
-        .cat-item span{font-size:6px;color:#555;text-align:center;font-weight:500;}
+        .cat-item span{font-size:11px;color:#555;font-weight:600;}
         .cat-item.active span{color:#F5C842;font-weight:700;}
         /* Body */
         .body{padding:0 10px;}
@@ -298,13 +315,17 @@ export default function Home() {
         .prem-text span{font-size:9px;color:#888;}
         .prem-btn{background:#111;color:#F5C842;border:none;border-radius:8px;padding:8px 13px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;margin-left:auto;}
         /* Bottom nav */
-        .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#111;padding:9px 10px 14px;display:flex;justify-content:space-around;align-items:center;z-index:100;box-shadow:0 -4px 20px rgba(0,0,0,.2);}
-        .nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;color:#555;border:none;background:none;font-family:inherit;cursor:pointer;transition:color .15s;}
+        .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#111;padding:8px 6px 16px;display:flex;justify-content:space-around;align-items:center;z-index:100;box-shadow:0 -4px 20px rgba(0,0,0,.25);border-top:1px solid #1e1e1e;}
+        .nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;color:#556;border:none;background:none;font-family:inherit;cursor:pointer;transition:color .2s;padding:4px 10px;border-radius:12px;position:relative;}
         .nav-item.active{color:#F5C842;}
-        .nav-item i{font-size:22px;}
-        .nav-item span{font-size:9px;color:inherit;}
-        .nav-add{width:46px;height:46px;background:linear-gradient(135deg,#E63312,#c42a0e);border-radius:50%;display:flex;align-items:center;justify-content:center;border:3px solid #FFFBEA;margin-top:-14px;cursor:pointer;box-shadow:0 4px 14px rgba(230,51,18,.4);}
-        .nav-add i{font-size:22px;color:#fff;}
+        .nav-item.active::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(245,200,66,.1);border-radius:12px;}
+        .nav-item i{font-size:22px;transition:transform .2s;}
+        .nav-item.active i{transform:scale(1.12);}
+        .nav-item span{font-size:10px;color:inherit;font-weight:600;}
+        .nav-badge{position:absolute;top:2px;right:6px;background:#E63312;color:#fff;font-size:7px;font-weight:700;border-radius:10px;padding:1px 4px;min-width:14px;text-align:center;line-height:14px;}
+        .nav-add{width:50px;height:50px;background:linear-gradient(135deg,#E63312,#c42a0e);border-radius:50%;display:flex;align-items:center;justify-content:center;border:3px solid #111;margin-top:-18px;cursor:pointer;box-shadow:0 4px 16px rgba(230,51,18,.5);transition:transform .15s,box-shadow .15s;}
+        .nav-add:active{transform:scale(.9);box-shadow:0 2px 8px rgba(230,51,18,.3);}
+        .nav-add i{font-size:24px;color:#fff;}
         /* AI float button */
         .ai-float{position:fixed;bottom:80px;right:12px;width:50px;height:50px;background:linear-gradient(135deg,#E63312,#c42a0e);border-radius:50%;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;box-shadow:0 6px 20px rgba(230,51,18,.4);z-index:150;animation:float-pulse 2s infinite;}
         @keyframes float-pulse{0%,100%{box-shadow:0 6px 20px rgba(230,51,18,.4)} 50%{box-shadow:0 8px 28px rgba(230,51,18,.6)}}
@@ -323,9 +344,12 @@ export default function Home() {
               <span className="brand">{settings.site_name || 'ALPAZAR'}</span>
             </div>
             <div className="nav">
-              <button className="icon-btn" onClick={() => go(user ? '/messages' : '/auth/login')}>
-                <i className="ti ti-bell" />
-              </button>
+              {unreadCount > 0 && (
+                <button className="icon-btn" onClick={() => go(user ? '/messages' : '/auth/login')} style={{ position: 'relative' }}>
+                  <i className="ti ti-bell" />
+                  <span style={{ position: 'absolute', top: 2, right: 2, background: '#E63312', color: '#fff', fontSize: 7, fontWeight: 700, borderRadius: 8, padding: '1px 3px', minWidth: 12, textAlign: 'center', lineHeight: '12px' }}>{unreadCount > 9 ? '9+' : unreadCount}</span>
+                </button>
+              )}
               {user ? (
                 <button className="login-btn" onClick={() => go('/profile')}>Profili</button>
               ) : (
@@ -347,7 +371,7 @@ export default function Home() {
             <button type="submit" className="search-btn">Kërko</button>
           </form>
 
-          <div className="cat-grid">
+          <div className="cat-scroll">
             <button className={`cat-item ${activeCategory === 'all' ? 'active' : ''}`} onClick={() => { setActiveCategory('all'); fetchListings('all', activeFilter) }}>
               <i className="ti ti-layout-grid" />
               <span>Të gjitha</span>
@@ -527,7 +551,7 @@ export default function Home() {
 
         <nav className="bottom-nav">
           <button className="nav-item active">
-            <i className="ti ti-home" /><span>Kreu</span>
+            <i className="ti ti-home-filled" /><span>Kreu</span>
           </button>
           <button className="nav-item" onClick={() => go('/search')}>
             <i className="ti ti-search" /><span>Kërko</span>
@@ -535,11 +559,13 @@ export default function Home() {
           <div className="nav-add" onClick={() => go(user ? '/listing/new' : '/auth/login')}>
             <i className="ti ti-plus" />
           </div>
-          <button className="nav-item" onClick={() => go('/dyqane')}>
-            <i className="ti ti-building-store" /><span>Dyqane</span>
+          <button className="nav-item" onClick={() => go(user ? '/messages' : '/auth/login')} style={{ position: 'relative' }}>
+            <i className="ti ti-message-circle" />
+            {unreadCount > 0 && <span className="nav-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>}
+            <span>Mesazhe</span>
           </button>
           <button className="nav-item" onClick={() => go(user ? '/profile' : '/auth/login')}>
-            <i className="ti ti-user" /><span>Profili</span>
+            <i className="ti ti-user-circle" /><span>Profili</span>
           </button>
         </nav>
       </div>
