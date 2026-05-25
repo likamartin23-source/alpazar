@@ -67,11 +67,6 @@ const CSS = `
   .terms a{color:#888;text-decoration:underline;}
   .pass-wrap{position:relative;}
   .pass-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#aaa;font-size:13px;padding:4px;}
-  .alt-toggle{width:100%;background:none;border:none;color:#888;font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline;margin-bottom:10px;padding:6px;}
-  .alt-toggle:hover{color:#E63312;}
-  .alt-box{background:#FFFBEA;border:1px solid #f0e0a8;border-radius:10px;padding:12px;margin-bottom:10px;}
-  .alt-box label{margin-bottom:6px;}
-  .alt-actions{display:flex;gap:8px;margin-top:10px;}
 `
 
 const OTP_SECONDS = 120
@@ -94,8 +89,6 @@ export default function Auth() {
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
   const [countdown, setCountdown] = useState(0)
   const [expired, setExpired] = useState(false)
-  const [showAlt, setShowAlt] = useState(false)
-  const [altContact, setAltContact] = useState('')
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
 
@@ -164,9 +157,8 @@ export default function Auth() {
   }
 
   // ── SEND OTP (register + forgot) ───────────────────────────────────────────
-  // `target` lets the alternate-channel flow send to a different contact.
-  async function sendOtp(target?: string) {
-    const raw = (target ?? contact).trim()
+  async function sendOtp() {
+    const raw = contact.trim()
     if (!raw) { setMsg('err:Fut emailin ose numrin e telefonit!'); return }
 
     if (mode === 'register') {
@@ -212,14 +204,14 @@ export default function Auth() {
       }
 
       if (error) {
-        setMsg(`err:${error.message}`)
+        const msg = error.message.toLowerCase()
+        if (msg.includes('rate limit') || msg.includes('security purposes')) {
+          setMsg('warn:Provo sërish pas pak çastesh.')
+        } else {
+          setMsg(`err:${error.message}`)
+        }
       } else {
-        // Verification compares against `contact`; keep it in sync with the
-        // channel the code was actually sent to (matters for alt-channel).
-        if (target) setContact(c)
         setStep('otp')
-        setShowAlt(false)
-        setAltContact('')
         startCountdown()
         setOtp(['', '', '', '', '', ''])
         setMsg(`info:Kodi u dërgua te ${c}`)
@@ -252,7 +244,6 @@ export default function Auth() {
 
         if (mode === 'register') {
           const u = data.user
-          const meta = u.user_metadata || {}
           await supabase.from('profiles').upsert({
             id: u.id,
             full_name: `${firstName.trim()} ${lastName.trim()}`,
@@ -509,40 +500,6 @@ export default function Auth() {
               <button className="btn" onClick={verifyOtp} disabled={loading || expired}>
                 {loading ? '⏳ Duke verifikuar...' : '✅ Konfirmo Kodin'}
               </button>
-
-              {/* Alternate channel: didn't get the code? send via the other one */}
-              {!showAlt ? (
-                <button className="alt-toggle" onClick={() => { setShowAlt(true); setAltContact('') }}>
-                  {emailContact ? '📱 Nuk e more me email? Dërgoje me SMS' : '📧 Nuk e more me SMS? Dërgoje me email'}
-                </button>
-              ) : (
-                <div className="alt-box">
-                  <label>{emailContact ? 'Numri i telefonit' : 'Adresa email'}</label>
-                  <input
-                    type="text"
-                    placeholder={emailContact ? '+355 6X XXX XXXX' : 'email@domain.com'}
-                    value={altContact}
-                    onChange={e => setAltContact(e.target.value)}
-                    onKeyDown={e => { if (e.key === 'Enter' && altContact.trim()) sendOtp(altContact) }}
-                  />
-                  <div className="alt-actions">
-                    <button className="btn-ghost" style={{ flex: 1 }} onClick={() => setShowAlt(false)}>Anulo</button>
-                    <button
-                      className="btn"
-                      style={{ flex: 1, margin: 0 }}
-                      disabled={loading || !altContact.trim() || isEmail(altContact) === emailContact}
-                      onClick={() => sendOtp(altContact)}
-                    >
-                      {loading ? '...' : '📨 Dërgo këtu'}
-                    </button>
-                  </div>
-                  {altContact.trim() && isEmail(altContact) === emailContact && (
-                    <p className="hint" style={{ color: '#E63312' }}>
-                      Fut {emailContact ? 'një numër telefoni' : 'një adresë email'} (kanal të ndryshëm nga ai aktual).
-                    </p>
-                  )}
-                </div>
-              )}
 
               <button className="btn-ghost" onClick={resetToForm}>← Ndrysho adresën</button>
             </>
