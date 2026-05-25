@@ -47,12 +47,12 @@ export default function NewListing() {
     const urls: string[] = []
     for (const file of imageFiles) {
       const ext = file.name.split('.').pop()
-      const path = `listings/${user.id}/${Date.now()}.${ext}`
-      const { error } = await supabase.storage.from('listings').upload(path, file, { upsert: true })
-      if (!error) {
-        const { data: { publicUrl } } = supabase.storage.from('listings').getPublicUrl(path)
-        urls.push(publicUrl)
-      }
+      // RLS requires the first path folder to equal the user's UID
+      const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+      const { error } = await supabase.storage.from('listing-images').upload(path, file, { upsert: true })
+      if (error) { console.error('Upload error:', error.message); continue }
+      const { data: { publicUrl } } = supabase.storage.from('listing-images').getPublicUrl(path)
+      urls.push(publicUrl)
     }
     return urls
   }
@@ -65,6 +65,10 @@ export default function NewListing() {
     setLoading(true); setMsg('')
     try {
       const uploadedUrls = imageFiles.length ? await uploadImages() : []
+      if (imageFiles.length && uploadedUrls.length === 0) {
+        setMsg('err:Fotot nuk u ngarkuan. Provo përsëri ose publiko pa foto.')
+        setLoading(false); return
+      }
       const { data, error } = await supabase.from('listings').insert({
         user_id: user.id,
         title: form.title.trim(),

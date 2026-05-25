@@ -59,7 +59,7 @@ export default function ProfilePage() {
   async function fetchConversations(uid: string) {
     const { data } = await supabase
       .from('messages')
-      .select('id,sender_id,receiver_id,content,created_at,is_read,listing_id')
+      .select('id,sender_id,receiver_id,content,created_at,read,listing_id')
       .or(`sender_id.eq.${uid},receiver_id.eq.${uid}`)
       .order('created_at', { ascending: false })
     if (!data || data.length === 0) return
@@ -70,7 +70,7 @@ export default function ProfilePage() {
       if (!threadsMap.has(otherId)) {
         threadsMap.set(otherId, { otherId, lastMsg: msg, unread: 0 })
       }
-      if (!msg.is_read && msg.receiver_id === uid) {
+      if (!msg.read && msg.receiver_id === uid) {
         threadsMap.get(otherId)!.unread++
       }
     }

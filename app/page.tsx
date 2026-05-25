@@ -77,13 +77,30 @@ export default function Home() {
   const [listingCount, setListingCount] = useState(0)
   const [userCount, setUserCount] = useState(0)
   const [user, setUser] = useState<any>(null)
+  const [settings, setSettings] = useState<Record<string, string>>({})
 
   useEffect(() => {
     fetchAll()
+    fetchSettings()
     supabase.auth.getSession().then(({ data: { session } }) => setUser(session?.user ?? null))
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => setUser(session?.user ?? null))
-    return () => subscription.unsubscribe()
+
+    // Live admin settings — reflect admin config changes in real time
+    const settingsChannel = supabase
+      .channel('admin-settings-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'admin_settings' }, () => fetchSettings())
+      .subscribe()
+
+    return () => {
+      subscription.unsubscribe()
+      supabase.removeChannel(settingsChannel)
+    }
   }, [])
+
+  async function fetchSettings() {
+    const { data } = await supabase.from('admin_settings').select('key,value')
+    if (data) setSettings(Object.fromEntries(data.map((s: any) => [s.key, s.value])))
+  }
 
   useEffect(() => { fetchListings() }, [activeCategory, activeFilter])
 
@@ -303,7 +320,7 @@ export default function Home() {
           <div className="topbar">
             <div className="logo" onClick={() => go('/')}>
               <AlpazarIcon />
-              <span className="brand">ALPAZAR</span>
+              <span className="brand">{settings.site_name || 'ALPAZAR'}</span>
             </div>
             <div className="nav">
               <button className="icon-btn" onClick={() => go(user ? '/messages' : '/auth/login')}>
@@ -356,7 +373,7 @@ export default function Home() {
 
           <div className="hero">
             <div>
-              <h2>🦅 Shit · Bli · Bëj Pazrin Tënd</h2>
+              <h2>🦅 {settings.site_slogan || 'Shit · Bli · Bëj Pazrin Tënd'}</h2>
               <p>Platforma #1 shqiptare<br />e tregtisë online</p>
             </div>
             <div className="hero-stats">
@@ -502,7 +519,7 @@ export default function Home() {
             <div className="prem-icon"><i className="ti ti-crown" /></div>
             <div className="prem-text">
               <strong>👑 Bëhu Anëtar Premium</strong>
-              <span>Dyqan · Badge · Shpallje ∞ · 9.99€/muaj</span>
+              <span>Dyqan · Badge · Shpallje ∞ · {settings.premium_monthly_price || '9.99'}€/muaj</span>
             </div>
             <button className="prem-btn" onClick={() => go('/premium')}>Shiko →</button>
           </div>
