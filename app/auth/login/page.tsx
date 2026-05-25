@@ -69,7 +69,7 @@ const CSS = `
   .pass-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#aaa;font-size:13px;padding:4px;}
 `
 
-const OTP_SECONDS = 120
+const OTP_SECONDS = 60
 
 export default function Auth() {
   const [mode, setMode] = useState<Mode>('login')
@@ -307,7 +307,7 @@ export default function Auth() {
   const emailContact = isEmail(contact)
   const mins = Math.floor(countdown / 60)
   const secs = countdown % 60
-  const timeClass = countdown > 60 ? 'ok-c' : countdown > 20 ? 'warn-c' : 'err-c'
+  const timeClass = countdown > 30 ? 'ok-c' : countdown > 10 ? 'warn-c' : 'err-c'
 
   const stepCount = mode === 'forgot' ? 3 : mode === 'register' ? 2 : 1
   const stepIdx = step === 'form' ? 0 : step === 'otp' ? 1 : 2
