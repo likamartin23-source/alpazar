@@ -85,27 +85,47 @@ export default function Auth() {
     return null
   }
 
-  async function sendOtp() {
+  // Registration metadata sent with the auth request so the profile can be
+  // populated automatically after the user confirms.
+  function metadata() {
+    if (mode !== 'register') return {}
+    return {
+      full_name: `${firstName.trim()} ${lastName.trim()}`,
+      first_name: firstName.trim(),
+      last_name: lastName.trim(),
+      age: parseInt(age),
+    }
+  }
+
+  async function send() {
     const err = validate()
     if (err) { setMsg('err:' + err); return }
     setLoading(true); setMsg('')
     try {
       const c = contact.trim()
-      const emailContact = isEmail(c)
-      let error: any
-      if (emailContact) {
-        const res = await supabase.auth.signInWithOtp({ email: c, options: { shouldCreateUser: true } })
-        error = res.error
-      } else {
-        const phone = toE164(c)
-        const res = await supabase.auth.signInWithOtp({ phone, options: { shouldCreateUser: true } })
-        error = res.error
-      }
-      if (error) {
-        setMsg(`err:${error.message}`)
-      } else {
+      if (isEmail(c)) {
+        // Email → 6-digit code (and a magic link as fallback if clicked).
+        const { error } = await supabase.auth.signInWithOtp({
+          email: c,
+          options: {
+            shouldCreateUser: true,
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            data: metadata(),
+          },
+        })
+        if (error) { setMsg(`err:${error.message}`); setLoading(false); return }
         setStep('otp')
-        setMsg(`info:Kodi u dërgua te ${c} ✉️`)
+        setMsg('info:Kodi u dërgua me email 📧')
+        setTimeout(() => inputRefs.current[0]?.focus(), 150)
+      } else {
+        // Phone → SMS one-time code.
+        const { error } = await supabase.auth.signInWithOtp({
+          phone: toE164(c),
+          options: { shouldCreateUser: true, data: metadata() },
+        })
+        if (error) { setMsg(`err:${error.message}`); setLoading(false); return }
+        setStep('otp')
+        setMsg('info:Kodi u dërgua me SMS 📱')
         setTimeout(() => inputRefs.current[0]?.focus(), 150)
       }
     } catch (e: any) {
@@ -121,19 +141,13 @@ export default function Auth() {
     try {
       const c = contact.trim()
       const emailContact = isEmail(c)
-      let data: any, error: any
-      if (emailContact) {
-        const res = await supabase.auth.verifyOtp({ email: c, token: code, type: 'email' })
-        data = res.data; error = res.error
-      } else {
-        const res = await supabase.auth.verifyOtp({ phone: toE164(c), token: code, type: 'sms' })
-        data = res.data; error = res.error
-      }
+      const { data, error } = emailContact
+        ? await supabase.auth.verifyOtp({ email: c, token: code, type: 'email' })
+        : await supabase.auth.verifyOtp({ phone: toE164(c), token: code, type: 'sms' })
       if (error) {
         setMsg(`err:${error.message.includes('expired') || error.message.includes('invalid') ? 'Kodi i gabuar ose ka skaduar! Provo sërish.' : error.message}`)
       } else if (data?.user) {
         if (mode === 'register') {
-          const emailContact = isEmail(c)
           await supabase.from('profiles').upsert({
             id: data.user.id,
             full_name: `${firstName.trim()} ${lastName.trim()}`,
@@ -175,8 +189,7 @@ export default function Auth() {
       const next = Array(6).fill('')
       text.split('').forEach((d, i) => { next[i] = d })
       setOtp(next)
-      const focusIdx = Math.min(text.length, 5)
-      setTimeout(() => inputRefs.current[focusIdx]?.focus(), 0)
+      setTimeout(() => inputRefs.current[Math.min(text.length, 5)]?.focus(), 0)
     }
   }
 
@@ -214,15 +227,15 @@ export default function Auth() {
 
           <div className="steps">
             <div className={`step-dot ${step === 'form' ? 'active' : 'done'}`} />
-            <div className={`step-dot ${step === 'otp' ? 'active' : ''}`} />
+            <div className={`step-dot ${step !== 'form' ? 'active' : ''}`} />
           </div>
 
-          {step === 'form' ? (
+          {step === 'form' && (
             <>
               <h2>{mode === 'login' ? '🔑 Hyr në llogarinë tënde' : '🚀 Regjistrohu falas'}</h2>
               <p className="sub">
                 {mode === 'login'
-                  ? 'Fut emailin ose telefonin — dërgojmë kod konfirmimi automatikisht'
+                  ? 'Fut emailin ose telefonin — dërgojmë konfirmim automatikisht'
                   : 'Krijo llogarinë tënde në ALPAZAR — falas dhe pa fjalëkalim'}
               </p>
 
@@ -233,59 +246,40 @@ export default function Auth() {
                   <div className="row-2">
                     <div className="field">
                       <label>Emri *</label>
-                      <input
-                        type="text"
-                        placeholder="Arta"
-                        value={firstName}
-                        onChange={e => setFirstName(e.target.value)}
-                      />
+                      <input type="text" placeholder="Arta" value={firstName} onChange={e => setFirstName(e.target.value)} />
                     </div>
                     <div className="field">
                       <label>Mbiemri *</label>
-                      <input
-                        type="text"
-                        placeholder="Hoxha"
-                        value={lastName}
-                        onChange={e => setLastName(e.target.value)}
-                      />
+                      <input type="text" placeholder="Hoxha" value={lastName} onChange={e => setLastName(e.target.value)} />
                     </div>
                   </div>
                   <div className="field">
                     <label>Mosha * (min. 16 vjeç)</label>
-                    <input
-                      type="number"
-                      placeholder="25"
-                      value={age}
-                      onChange={e => setAge(e.target.value)}
-                      min="16"
-                      max="120"
-                    />
+                    <input type="number" placeholder="25" value={age} onChange={e => setAge(e.target.value)} min="16" max="120" />
                   </div>
                 </>
               )}
 
               <div className="field">
-                <label>
-                  {mode === 'register' ? 'Email ose Numri i Telefonit *' : 'Email ose Numri i Telefonit'}
-                </label>
+                <label>{mode === 'register' ? 'Email ose Numri i Telefonit *' : 'Email ose Numri i Telefonit'}</label>
                 <input
                   type="text"
                   placeholder="email@domain.com  ose  +355 6X XXX XXXX"
                   value={contact}
                   onChange={e => setContact(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && sendOtp()}
+                  onKeyDown={e => e.key === 'Enter' && send()}
                   autoComplete="email"
                 />
                 <p className="hint">
                   {contact.length > 2
                     ? emailContact
-                      ? '📧 Do të dërgojmë kodin konfirmimit me email'
-                      : '📱 Do të dërgojmë SMS me kodin (formati: +355 6X XXX XXXX)'
+                      ? '📧 Do të marrësh një email me kodin 6-shifror'
+                      : '📱 Do të marrësh një SMS me kodin 6-shifror'
                     : '📧 Email  ·  📱 Telefon (+355...)'}
                 </p>
               </div>
 
-              <button className="btn" onClick={sendOtp} disabled={loading}>
+              <button className="btn" onClick={send} disabled={loading}>
                 {loading ? '⏳ Duke dërguar kodin...' : '📨 Dërgo Kodin'}
               </button>
 
@@ -298,19 +292,17 @@ export default function Auth() {
               {mode === 'register' && (
                 <p className="terms">
                   Duke u regjistruar pranon{' '}
-                  <a href="/kushtet">Kushtet e Përdorimit</a>
-                  {' '}dhe{' '}
+                  <a href="/kushtet">Kushtet e Përdorimit</a> dhe{' '}
                   <a href="/privatesia">Politikën e Privatësisë</a>
                 </p>
               )}
             </>
-          ) : (
+          )}
+
+          {step === 'otp' && (
             <>
               <h2>🔐 Konfirmo Identitetin</h2>
-              <p className="sub">
-                Kodi 6-shifror u dërgua te<br />
-                <strong>{contact}</strong>
-              </p>
+              <p className="sub">Kodi 6-shifror u dërgua te<br /><strong>{contact}</strong></p>
 
               {msg && <div className={`msg ${t}`}>{m}</div>}
 
@@ -320,10 +312,7 @@ export default function Auth() {
                     key={i}
                     ref={el => { inputRefs.current[i] = el }}
                     className={`otp-input${d ? ' filled' : ''}`}
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    maxLength={1}
+                    type="text" inputMode="numeric" pattern="[0-9]*" maxLength={1}
                     value={d}
                     onChange={e => handleOtpChange(i, e.target.value)}
                     onKeyDown={e => handleOtpKeyDown(i, e)}
@@ -338,23 +327,14 @@ export default function Auth() {
 
               <div className="resend">
                 <span>Nuk e more kodin?</span>
-                <button
-                  className="resend-btn"
-                  onClick={() => {
-                    setStep('form')
-                    setOtp(['', '', '', '', '', ''])
-                    setMsg('')
-                  }}
-                >
+                <button className="resend-btn" onClick={() => { setStep('form'); setOtp(['', '', '', '', '', '']); setMsg('') }}>
                   Kthehu & Dërgo sërish
                 </button>
               </div>
             </>
           )}
 
-          <div className="back" onClick={() => window.location.href = '/'}>
-            ← Kthehu te faqja kryesore
-          </div>
+          <div className="back" onClick={() => window.location.href = '/'}>← Kthehu te faqja kryesore</div>
         </div>
       </div>
     </>
