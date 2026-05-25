@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { supabase } from '../../../lib/supabase'
 
 export default function ListingPage({ params }: { params: { id: string } }) {
@@ -9,15 +9,22 @@ export default function ListingPage({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(true)
   const [imgIdx, setImgIdx] = useState(0)
   const [user, setUser] = useState<any>(null)
-  const [msg, setMsg] = useState('')
-  const [sending, setSending] = useState(false)
-  const [sent, setSent] = useState(false)
   const [liked, setLiked] = useState(false)
+  const [albiTooltip, setAlbiTooltip] = useState(false)
+  const tooltipTimer = useRef<ReturnType<typeof setTimeout>>()
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => setUser(session?.user ?? null))
     fetchListing()
   }, [])
+
+  // Auto-show Albi tooltip after 3s to invite questions
+  useEffect(() => {
+    if (!loading && listing) {
+      tooltipTimer.current = setTimeout(() => setAlbiTooltip(true), 3000)
+      return () => clearTimeout(tooltipTimer.current)
+    }
+  }, [loading, listing])
 
   async function fetchListing() {
     const { data } = await supabase.from('listings').select('*').eq('id', params.id).single()
@@ -32,17 +39,13 @@ export default function ListingPage({ params }: { params: { id: string } }) {
     setLoading(false)
   }
 
-  async function sendMessage() {
+  function goToChat() {
     if (!user) { window.location.href = '/auth/login'; return }
-    if (!msg.trim() || !listing) return
-    setSending(true)
-    await supabase.from('messages').insert({
-      sender_id: user.id,
-      receiver_id: listing.user_id,
-      listing_id: listing.id,
-      content: msg.trim(),
-    })
-    setSending(false); setSent(true); setMsg('')
+    window.location.href = `/messages?with=${listing.user_id}`
+  }
+
+  function goToAlbi() {
+    window.location.href = '/asistent'
   }
 
   const fmt = (price: number, cur: string) =>
@@ -65,28 +68,33 @@ export default function ListingPage({ params }: { params: { id: string } }) {
   )
 
   const images = listing.images?.length ? listing.images : []
+  const isOwner = user?.id === listing.user_id
 
   return (
     <>
       <style>{`
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA;}
-        .wrap{max-width:480px;margin:0 auto;background:#fff;min-height:100vh;padding-bottom:120px;}
+        .wrap{max-width:480px;margin:0 auto;background:#fff;min-height:100vh;padding-bottom:100px;}
         .topbar{background:#F5C842;padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
         .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .back i{font-size:18px;color:#111;}
         .topbar-title{font-size:15px;font-weight:700;color:#111;flex:1;}
         .share-btn{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .share-btn i{font-size:16px;color:#111;}
+
+        /* Gallery */
         .img-wrap{width:100%;height:260px;background:#f9f5e0;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
         .img-wrap img{width:100%;height:100%;object-fit:cover;}
         .img-ph{font-size:60px;}
         .img-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:5px;}
-        .dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.5);cursor:pointer;}
-        .dot.on{background:#fff;}
+        .img-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.5);cursor:pointer;}
+        .img-dot.on{background:#fff;}
         .img-nav{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;background:rgba(0,0,0,.4);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .img-nav i{color:#fff;font-size:16px;}
         .like-btn{position:absolute;top:12px;right:12px;width:36px;height:36px;background:#fff;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+
+        /* Info */
         .info{padding:16px;}
         .badges{display:flex;gap:5px;margin-bottom:10px;}
         .badge{font-size:10px;padding:3px 8px;border-radius:4px;font-weight:700;}
@@ -101,23 +109,39 @@ export default function ListingPage({ params }: { params: { id: string } }) {
         .divider{height:1px;background:#f0f0f0;margin:14px 0;}
         .desc-title{font-size:13px;font-weight:700;color:#111;margin-bottom:8px;}
         .desc{font-size:13px;color:#555;line-height:1.7;}
+
+        /* Seller card */
         .seller-card{margin:14px 0;background:#FFFBEA;border:0.5px solid #e0b030;border-radius:11px;padding:12px;}
-        .seller-hdr{font-size:11px;font-weight:700;color:#888;margin-bottom:10px;}
-        .seller-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+        .seller-hdr{font-size:11px;font-weight:700;color:#888;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;}
+        .seller-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
         .avatar{width:44px;height:44px;border-radius:50%;background:#F5C842;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;overflow:hidden;}
         .avatar img{width:100%;height:100%;object-fit:cover;}
         .seller-name{font-size:14px;font-weight:700;color:#111;}
-        .seller-sub{font-size:11px;color:#888;}
-        .msg-box{border:1.5px solid #e0b030;border-radius:10px;padding:4px 4px 4px 12px;display:flex;align-items:center;gap:6px;margin-top:10px;}
-        .msg-inp{flex:1;border:none;background:transparent;font-size:13px;font-family:inherit;outline:none;color:#111;padding:8px 0;}
-        .msg-inp::placeholder{color:#bbb;}
-        .msg-send{background:#E63312;color:#fff;border:none;border-radius:7px;padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
-        .sent-ok{background:#EAF3DE;border:0.5px solid #97C459;border-radius:8px;padding:10px 14px;font-size:12px;color:#3B6D11;font-weight:600;text-align:center;margin-top:10px;}
+        .seller-sub{font-size:11px;color:#888;margin-top:2px;}
+        .contact-btns{display:flex;gap:8px;}
+        .chat-seller-btn{flex:1;background:#111;color:#F5C842;border:none;border-radius:10px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit;transition:opacity .15s;}
+        .chat-seller-btn:active{opacity:.8;}
+        .chat-seller-btn i{font-size:16px;}
+        .call-seller-btn{width:44px;height:44px;background:#E8F5E9;border:none;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .call-seller-btn i{font-size:18px;color:#2E7D32;}
+        .shop-link{display:flex;align-items:center;gap:8px;margin-top:10px;background:#fff;border:0.5px solid #e0b030;border-radius:9px;padding:9px 12px;cursor:pointer;text-decoration:none;}
+        .shop-link-txt{font-size:12px;color:#111;font-weight:600;}
+        .shop-link-sub{font-size:10px;color:#aaa;}
+        .shop-link i{font-size:18px;color:#E63312;margin-left:auto;}
+
+        /* Bottom bar */
         .bottom-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:1px solid #eee;padding:10px 14px;display:flex;gap:8px;z-index:100;}
-        .chat-btn{flex:1;background:#E63312;color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;}
-        .chat-btn i{font-size:18px;}
-        .call-btn{width:48px;height:48px;background:#F5C842;border:none;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-        .call-btn i{font-size:20px;color:#111;}
+        .main-chat-btn{flex:1;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 12px rgba(230,51,18,.3);}
+        .main-chat-btn i{font-size:18px;}
+
+        /* Albi floating button */
+        .albi-fab{position:fixed;bottom:80px;right:14px;z-index:200;display:flex;flex-direction:column;align-items:flex-end;gap:8px;max-width:calc(100vw - 28px);}
+        .albi-tooltip{background:#111;color:#fff;font-size:11px;font-weight:600;padding:8px 13px;border-radius:14px;border-bottom-right-radius:4px;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.3);animation:fadeIn .3s ease;max-width:200px;line-height:1.5;text-align:right;}
+        .albi-tooltip strong{color:#F5C842;display:block;font-size:12px;}
+        .albi-btn{width:52px;height:52px;background:linear-gradient(135deg,#F5C842,#e0b030);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(245,200,66,.5);animation:pulse 2s infinite;}
+        .albi-btn i{font-size:24px;color:#111;}
+        @keyframes pulse{0%,100%{box-shadow:0 4px 16px rgba(245,200,66,.5)}50%{box-shadow:0 4px 24px rgba(245,200,66,.8),0 0 0 8px rgba(245,200,66,.15)}}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
       `}</style>
 
       <div className="wrap">
@@ -131,6 +155,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
           </button>
         </div>
 
+        {/* Image gallery */}
         <div className="img-wrap">
           {images.length > 0 ? (
             <>
@@ -145,7 +170,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
                   </button>
                   <div className="img-dots">
                     {images.map((_: any, i: number) => (
-                      <div key={i} className={`dot ${i === imgIdx ? 'on' : ''}`} onClick={() => setImgIdx(i)} />
+                      <div key={i} className={`img-dot ${i === imgIdx ? 'on' : ''}`} onClick={() => setImgIdx(i)} />
                     ))}
                   </div>
                 </>
@@ -186,11 +211,12 @@ export default function ListingPage({ params }: { params: { id: string } }) {
             </>
           )}
 
-          {seller && (
+          {/* Seller card with direct contact */}
+          {seller && !isOwner && (
             <>
               <div className="divider" />
               <div className="seller-card">
-                <div className="seller-hdr">SHITËSI</div>
+                <div className="seller-hdr">Shitësi</div>
                 <div className="seller-row">
                   <div className="avatar">
                     {seller.avatar_url
@@ -200,45 +226,68 @@ export default function ListingPage({ params }: { params: { id: string } }) {
                   <div>
                     <div className="seller-name">{seller.full_name || seller.username || 'Shitës'}</div>
                     <div className="seller-sub">
-                      {seller.city ? `📍 ${seller.city} · ` : ''}
-                      {seller.is_premium ? '👑 Premium' : 'Anëtar'}
+                      {seller.city ? `📍 ${seller.city}` : ''}
+                      {seller.is_premium ? ' · 👑 Premium' : ''}
                     </div>
                   </div>
                 </div>
-                {user?.id !== listing.user_id && (
-                  !sent ? (
-                    <div className="msg-box">
-                      <input className="msg-inp" placeholder="Dërgoji mesazh shitësit..."
-                        value={msg} onChange={e => setMsg(e.target.value)}
-                        onKeyDown={e => e.key === 'Enter' && sendMessage()} />
-                      <button className="msg-send" onClick={sendMessage} disabled={sending}>
-                        {sending ? '⏳' : 'Dërgo'}
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="sent-ok">✅ Mesazhi u dërgua! Shitësi do të kontaktojë.</div>
-                  )
+                <div className="contact-btns">
+                  <button className="chat-seller-btn" onClick={goToChat}>
+                    <i className="ti ti-message-circle" /> Chat direkt
+                  </button>
+                  {seller.phone && (
+                    <button className="call-seller-btn" onClick={() => window.open(`tel:${seller.phone}`)}>
+                      <i className="ti ti-phone" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Link to seller's shop if premium */}
+                {seller.is_premium && seller.shop_name && (
+                  <a className="shop-link" href={`/dyqane/${seller.id}`}>
+                    <span style={{ fontSize: 20 }}>🏪</span>
+                    <span>
+                      <div className="shop-link-txt">{seller.shop_name}</div>
+                      <div className="shop-link-sub">Shfleto dyqanin e shitësit</div>
+                    </span>
+                    <i className="ti ti-chevron-right" />
+                  </a>
                 )}
               </div>
             </>
           )}
         </div>
+      </div>
 
-        {user?.id !== listing.user_id && (
-          <div className="bottom-bar">
-            <button className="chat-btn" onClick={() => {
-              if (!user) { window.location.href = '/auth/login'; return }
-              window.location.href = '/messages'
-            }}>
-              <i className="ti ti-message" />Kontakto shitësin
+      {/* Bottom CTA — only for non-owners */}
+      {!isOwner && (
+        <div className="bottom-bar">
+          <button className="main-chat-btn" onClick={goToChat}>
+            <i className="ti ti-message-circle" />
+            Kontakto shitësin
+          </button>
+          {seller?.phone && (
+            <button
+              onClick={() => window.open(`tel:${seller.phone}`)}
+              style={{ width: 52, height: 52, background: '#EAF3DE', border: 'none', borderRadius: 12, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+            >
+              <i className="ti ti-phone" style={{ fontSize: 20, color: '#2E7D32' }} />
             </button>
-            {seller?.phone && (
-              <button className="call-btn" onClick={() => window.open(`tel:${seller.phone}`)}>
-                <i className="ti ti-phone" />
-              </button>
-            )}
+          )}
+        </div>
+      )}
+
+      {/* Albi AI floating assistant */}
+      <div className="albi-fab">
+        {albiTooltip && (
+          <div className="albi-tooltip" onClick={goToAlbi} style={{ cursor: 'pointer' }}>
+            <strong>Albi 🤖 — AI Asistent</strong>
+            Ke pyetje për këtë produkt?<br />Pyet Albin tani!
           </div>
         )}
+        <button className="albi-btn" onClick={goToAlbi} title="Pyet Albin — AI Asistent">
+          <i className="ti ti-robot" />
+        </button>
       </div>
     </>
   )
