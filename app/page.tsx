@@ -250,24 +250,24 @@ export default function Home() {
         .filter-btn{background:#fff;border:0.5px solid #ddd;border-radius:20px;padding:6px 13px;font-size:10px;color:#666;white-space:nowrap;flex-shrink:0;cursor:pointer;font-family:inherit;transition:all .12s;box-shadow:0 1px 3px rgba(0,0,0,.04);}
         .filter-btn.active{background:#111;border-color:#111;color:#F5C842;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.15);}
         /* Listings grid */
-        .listings-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;}
-        .listing-card{background:#fff;border:0.5px solid #eee;border-radius:13px;overflow:hidden;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.04);transition:transform .12s,box-shadow .12s;}
+        .listings-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px;}
+        .listing-card{background:#fff;border:0.5px solid #eee;border-radius:10px;overflow:hidden;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.04);transition:transform .12s,box-shadow .12s;}
         .listing-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.08);}
         .listing-card:active{transform:scale(.97);}
-        .card-img{height:100px;display:flex;align-items:center;justify-content:center;font-size:32px;position:relative;background:linear-gradient(135deg,#f9f5e0,#f5f0d5);}
+        .card-img{height:75px;display:flex;align-items:center;justify-content:center;font-size:24px;position:relative;background:linear-gradient(135deg,#f9f5e0,#f5f0d5);}
         .card-img img{width:100%;height:100%;object-fit:cover;}
-        .badge-new{position:absolute;top:6px;left:6px;background:#E63312;color:#fff;font-size:8.5px;padding:2px 7px;border-radius:5px;font-weight:700;}
-        .badge-used{position:absolute;top:6px;left:6px;background:#111;color:#F5C842;font-size:8.5px;padding:2px 7px;border-radius:5px;font-weight:700;}
-        .badge-premium{position:absolute;top:6px;right:6px;background:#F5C842;color:#111;font-size:8.5px;padding:2px 7px;border-radius:5px;font-weight:700;}
-        .card-body{padding:9px 10px;}
-        .card-title{font-size:12px;font-weight:700;color:#222;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-        .card-price{font-size:14px;font-weight:800;color:#E63312;margin-bottom:5px;}
+        .badge-new{position:absolute;top:4px;left:4px;background:#E63312;color:#fff;font-size:6px;padding:2px 5px;border-radius:4px;font-weight:700;}
+        .badge-used{position:absolute;top:4px;left:4px;background:#111;color:#F5C842;font-size:6px;padding:2px 5px;border-radius:4px;font-weight:700;}
+        .badge-premium{position:absolute;top:4px;right:4px;background:#F5C842;color:#111;font-size:6px;padding:2px 5px;border-radius:4px;font-weight:700;}
+        .card-body{padding:7px 8px;}
+        .card-title{font-size:9px;font-weight:700;color:#222;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .card-price{font-size:11px;font-weight:800;color:#E63312;margin-bottom:4px;}
         .card-meta{display:flex;align-items:center;justify-content:space-between;}
-        .card-loc{font-size:10px;color:#aaa;display:flex;align-items:center;gap:3px;}
-        .card-loc i{font-size:11px;}
-        .card-like{width:24px;height:24px;border:0.5px solid #eee;border-radius:50%;display:flex;align-items:center;justify-content:center;background:none;cursor:pointer;transition:border-color .15s;}
+        .card-loc{font-size:7.5px;color:#aaa;display:flex;align-items:center;gap:3px;}
+        .card-loc i{font-size:8px;}
+        .card-like{width:18px;height:18px;border:0.5px solid #eee;border-radius:50%;display:flex;align-items:center;justify-content:center;background:none;cursor:pointer;transition:border-color .15s;}
         .card-like:hover{border-color:#E63312;}
-        .card-like i{font-size:12px;color:#ddd;}
+        .card-like i{font-size:9px;color:#ddd;}
         .empty-state{grid-column:1/-1;text-align:center;padding:36px 16px;background:linear-gradient(135deg,#f9f5e0,#f5f0d5);border:0.5px solid #eee;border-radius:13px;}
         .empty-state i{font-size:40px;color:#F5C842;display:block;margin-bottom:10px;}
         .empty-state h3{font-size:14px;font-weight:700;color:#555;margin-bottom:6px;}
