@@ -9,15 +9,25 @@ const FN_URL = 'https://sopafwfkrxpcdaljddoh.supabase.co/functions/v1'
 
 function detectType(val: string): 'email' | 'phone' | 'unknown' {
   if (val.includes('@')) return 'email'
-  if (/^\+\d{4,}/.test(val) || /^0\d{8,}/.test(val) || /^\d{9,}/.test(val)) return 'phone'
+  const clean = val.replace(/[\s\-().]/g, '')
+  // E.164 (+XXXX), 00-prefix international, Albanian local (06x/07x/6x/7x)
+  if (/^\+\d{7,15}$/.test(clean)) return 'phone'
+  if (/^00\d{9,14}$/.test(clean)) return 'phone'
+  if (/^0[67]\d{7,}$/.test(clean)) return 'phone'
+  if (/^[67]\d{7,}$/.test(clean)) return 'phone'
   return 'unknown'
 }
 
 function toE164(phone: string): string {
   const clean = phone.replace(/[\s\-().]/g, '')
   if (clean.startsWith('+')) return clean
-  if (clean.startsWith('06') || clean.startsWith('07')) return '+355' + clean.slice(1)
-  if (clean.startsWith('6') || clean.startsWith('7')) return '+355' + clean
+  // 00-prefix international (e.g. 0044... → +44...)
+  if (clean.startsWith('00')) return '+' + clean.slice(2)
+  // Albanian mobile: 067xxxxxxx / 069xxxxxxx → +355 67xxxxxxx
+  if (/^0[67]\d{7,}$/.test(clean)) return '+355' + clean.slice(1)
+  // Albanian without leading zero: 67xxxxxxx → +355 67xxxxxxx
+  if (/^[67]\d{7,}$/.test(clean)) return '+355' + clean
+  // Assume missing + for everything else
   return '+' + clean
 }
 
@@ -310,9 +320,9 @@ export default function Auth() {
     ? cType === 'email'
       ? <p className="hint ok">📧 Do të marrësh kodin me <strong>email</strong></p>
       : cType === 'phone'
-        ? <p className="hint ok">📱 Do të marrësh kodin me <strong>SMS</strong></p>
-        : <p className="hint warn">Fut email (user@domain.com) ose nr. telefoni (+355...)</p>
-    : <p className="hint">📧 Email &nbsp;·&nbsp; 📱 Telefon me prefiks (+355, +1, +44...)</p>
+        ? <p className="hint ok">📱 Do të marrësh kodin me <strong>SMS</strong> (çdo numër bote)</p>
+        : <p className="hint warn">Fut email (user@domain.com) ose nr. telefoni me prefiks (+355, +1, +44...)</p>
+    : <p className="hint">📧 Email &nbsp;·&nbsp; 📱 Çdo numër telefoni bote (+355, +1, +44, 00...)</p>
 
   const Logo = (
     <div className="logo">
@@ -506,7 +516,7 @@ export default function Auth() {
                 <label>Email ose Numër Telefoni *</label>
                 <div className="contact-wrap">
                   <input type="text"
-                    placeholder="email@domain.com  ose  +355 6X XXX XXXX"
+                    placeholder="email@domain.com  ose  +355 6X XXX XXXX  ose  +1 212..."
                     value={contact}
                     onChange={e => setContact(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && sendOtp()}
@@ -544,7 +554,7 @@ export default function Auth() {
                 <label>Email ose Numër Telefoni *</label>
                 <div className="contact-wrap">
                   <input type="text"
-                    placeholder="email@domain.com  ose  +355 6X XXX XXXX"
+                    placeholder="email@domain.com  ose  +355 6X XXX XXXX  ose  +1 212..."
                     value={contact}
                     onChange={e => setContact(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && sendOtp()}
