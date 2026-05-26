@@ -287,16 +287,9 @@ export default function ListingPage({ params }: { params: { id: string } }) {
         .shop-link-row span{font-size:12px;font-weight:700;color:#111;}
         .shop-link-row small{font-size:10px;color:#aaa;display:block;margin-top:1px;}
 
-        /* ── INLINE CHAT ── */
-        .chat-section{margin:0 0 0;border-top:3px solid #E63312;}
-        .chat-hdr{background:linear-gradient(135deg,#E63312,#c42a0e);padding:12px 14px;display:flex;align-items:center;gap:10px;}
-        .chat-hdr-av{width:36px;height:36px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#E63312;overflow:hidden;flex-shrink:0;border:2px solid rgba(255,255,255,.4);}
-        .chat-hdr-av img{width:100%;height:100%;object-fit:cover;}
-        .chat-hdr-info{flex:1;}
-        .chat-hdr-name{font-size:13px;font-weight:700;color:#fff;}
-        .chat-hdr-sub{font-size:10px;color:rgba(255,255,255,.7);margin-top:2px;}
-        .chat-hdr-lock{font-size:10px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:4px;}
-        .chat-hdr-lock i{font-size:12px;}
+        /* ── INLINE CHAT (nën profil, pa header shtesë) ── */
+        .chat-inline{border-top:2px solid #E63312;}
+        .sb-chat{background:#E63312;color:#fff;}
         .chat-ref{background:#FFF0EE;border-bottom:0.5px solid #fdd;padding:8px 14px;display:flex;align-items:center;gap:8px;}
         .chat-ref i{font-size:13px;color:#E63312;flex-shrink:0;}
         .chat-ref-text{font-size:11px;color:#333;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -403,9 +396,9 @@ export default function ListingPage({ params }: { params: { id: string } }) {
           <div className="price">{fmt(listing.price, listing.currency)}</div>
 
           <div className="meta">
-            {listing.city   && <div className="meta-item"><i className="ti ti-map-pin" />{listing.city}</div>}
-            <div className="meta-item"><i className="ti ti-eye" />{listing.views_count || 0} shikime</div>
-            <div className="meta-item"><i className="ti ti-calendar" />{new Date(listing.created_at).toLocaleDateString('sq-AL')}</div>
+            {listing.city && <div className="meta-item"><i className="ti ti-map-pin" />{listing.city}</div>}
+            {(listing.views_count || 0) > 0 && <div className="meta-item"><i className="ti ti-eye" />{listing.views_count} shikime</div>}
+            {listing.category && <div className="meta-item"><i className="ti ti-tag" />{CATEGORY_LABELS[listing.category] || listing.category}</div>}
           </div>
 
           {listing.description && (
@@ -416,11 +409,12 @@ export default function ListingPage({ params }: { params: { id: string } }) {
             </>
           )}
 
-          {/* ── PROFILI I SHPALLESIT ── */}
+          {/* ── PROFILI I SHPALLESIT + BISEDA ── */}
           {seller && (
             <>
               <div className="divider" />
-              <div className="seller-block">
+              <div className="seller-block" ref={!isOwner ? chatRef : undefined}>
+                {/* Header: info shitësi + nëse jo pronar, tregon "bisedë private" */}
                 <div className="seller-header">
                   <div className="seller-av">
                     {seller.avatar_url
@@ -440,9 +434,12 @@ export default function ListingPage({ params }: { params: { id: string } }) {
                       {seller.is_premium && <span className="sbadge sb-prem">👑 Premium</span>}
                       {seller.shop_name  && <span className="sbadge sb-shop">🏪 Dyqan</span>}
                       {seller.is_admin   && <span className="sbadge sb-admin">🛡 Admin</span>}
+                      {!isOwner && <span className="sbadge sb-chat">🔒 Bisedë private</span>}
                     </div>
                   </div>
                 </div>
+
+                {/* Stats + bio */}
                 <div className="seller-body">
                   <div className="seller-stats">
                     <span className="stat-chip"><i className="ti ti-package" />{sellerCount} shpallje aktive</span>
@@ -479,121 +476,97 @@ export default function ListingPage({ params }: { params: { id: string } }) {
                     </a>
                   )}
                 </div>
+
+                {/* ── BISEDA E INTEGRUAR (direkt nën profil, pa seksion të ri) ── */}
+                {!isOwner && (
+                  <div className="chat-inline">
+                    {/* Referenca e shpalljes */}
+                    <div className="chat-ref">
+                      <i className="ti ti-bookmark" />
+                      <span className="chat-ref-text">📌 {listing.title}</span>
+                      {listing.price > 0 && (
+                        <span className="chat-ref-price">{fmt(listing.price, listing.currency)}</span>
+                      )}
+                    </div>
+
+                    {!user ? (
+                      <div className="login-prompt">
+                        <p>Hyr në llogarinë tënde për të biseduar me shitësin</p>
+                        <button className="login-prompt-btn"
+                          onClick={() => window.location.href = '/auth/login'}>
+                          🔑 Hyr / Regjistrohu
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="chat-msgs">
+                          {chatMsgs.length === 0 && chatReady ? (
+                            <div className="empty-chat">
+                              <div className="empty-chat-icon">👋</div>
+                              <div className="empty-chat-txt">
+                                Fillo bisedën me shitësin.<br />
+                                Mesazhet janë private dhe të sigurta.
+                              </div>
+                            </div>
+                          ) : (
+                            groups.map((g, gi) => (
+                              <div key={gi}>
+                                <div className="day-sep"><span>{g.date}</span></div>
+                                {g.items.map((msg) => {
+                                  const mine = msg.sender_id === user?.id
+                                  return (
+                                    <div key={msg.id} className={`msg-row ${mine ? 'mine' : 'theirs'}`}>
+                                      <div className="bubble-w">
+                                        <div className="bubble">{msg.content}</div>
+                                        <div className="btime">{fullTime(msg.created_at)}</div>
+                                      </div>
+                                    </div>
+                                  )
+                                })}
+                              </div>
+                            ))
+                          )}
+                          {typingVis && (
+                            <div className="typing-row">
+                              <div className="typing-bbl">
+                                <span className="tdot" /><span className="tdot" /><span className="tdot" />
+                              </div>
+                            </div>
+                          )}
+                          <div ref={chatBottom} style={{ height: 4 }} />
+                        </div>
+
+                        <div className="chat-input-bar">
+                          <div className="chat-input-wrap">
+                            <textarea
+                              ref={inputRef}
+                              rows={1}
+                              placeholder="Shkruaj mesazhin tënd..."
+                              value={draft}
+                              onChange={e => {
+                                setDraft(e.target.value)
+                                e.target.style.height = 'auto'
+                                e.target.style.height = Math.min(e.target.scrollHeight, 80) + 'px'
+                                channelRef.current?.send({ type: 'broadcast', event: 'typing', payload: { userId: user?.id } })
+                              }}
+                              onKeyDown={e => {
+                                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg() }
+                              }}
+                            />
+                          </div>
+                          <button className="chat-send-btn" onClick={sendMsg} disabled={!draft.trim() || sending}>
+                            <i className={`ti ti-${sending ? 'loader-2' : 'send'}`}
+                              style={sending ? { animation: 'spin .7s linear infinite' } : {}} />
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
             </>
           )}
         </div>
-
-        {/* ── BISEDA E INTEGRUAR ── */}
-        {seller && !isOwner && (
-          <div className="chat-section" ref={chatRef}>
-            {/* Header */}
-            <div className="chat-hdr">
-              <div className="chat-hdr-av">
-                {seller.avatar_url
-                  ? <img src={seller.avatar_url} alt="" />
-                  : (seller.shop_name || seller.full_name || '?').slice(0, 1).toUpperCase()}
-              </div>
-              <div className="chat-hdr-info">
-                <div className="chat-hdr-name">
-                  💬 Bisedë me {seller.shop_name || seller.full_name || seller.username || 'shitësin'}
-                </div>
-                <div className="chat-hdr-lock">
-                  <i className="ti ti-lock" /> Private — vetëm ju dhe shitësi e shihni
-                </div>
-              </div>
-            </div>
-
-            {/* Listing reference bar */}
-            <div className="chat-ref">
-              <i className="ti ti-bookmark" />
-              <span className="chat-ref-text">📌 {listing.title}</span>
-              {listing.price > 0 && (
-                <span className="chat-ref-price">{fmt(listing.price, listing.currency)}</span>
-              )}
-            </div>
-
-            {!user ? (
-              /* Not logged in */
-              <div className="login-prompt">
-                <p>Hyr në llogarinë tënde për të biseduar me shitësin</p>
-                <button className="login-prompt-btn"
-                  onClick={() => window.location.href = '/auth/login'}>
-                  🔑 Hyr / Regjistrohu
-                </button>
-              </div>
-            ) : (
-              <>
-                {/* Messages area */}
-                <div className="chat-msgs" ref={msgsRef => {
-                  // keep scroll ref for internal use
-                }}>
-                  {chatMsgs.length === 0 && chatReady ? (
-                    <div className="empty-chat">
-                      <div className="empty-chat-icon">👋</div>
-                      <div className="empty-chat-txt">
-                        Fillo bisedën me shitësin.<br />
-                        Mesazhet janë private dhe të sigurta.
-                      </div>
-                    </div>
-                  ) : (
-                    groups.map((g, gi) => (
-                      <div key={gi}>
-                        <div className="day-sep"><span>{g.date}</span></div>
-                        {g.items.map((msg) => {
-                          const mine = msg.sender_id === user?.id
-                          return (
-                            <div key={msg.id} className={`msg-row ${mine ? 'mine' : 'theirs'}`}>
-                              <div className="bubble-w">
-                                <div className={`bubble ${msg.id?.toString().startsWith('tmp') ? '' : ''}`}>
-                                  {msg.content}
-                                </div>
-                                <div className="btime">{fullTime(msg.created_at)}</div>
-                              </div>
-                            </div>
-                          )
-                        })}
-                      </div>
-                    ))
-                  )}
-                  {typingVis && (
-                    <div className="typing-row">
-                      <div className="typing-bbl">
-                        <span className="tdot" /><span className="tdot" /><span className="tdot" />
-                      </div>
-                    </div>
-                  )}
-                  <div ref={chatBottom} style={{ height: 4 }} />
-                </div>
-
-                {/* Input */}
-                <div className="chat-input-bar">
-                  <div className="chat-input-wrap">
-                    <textarea
-                      ref={inputRef}
-                      rows={1}
-                      placeholder="Shkruaj mesazhin tënd..."
-                      value={draft}
-                      onChange={e => {
-                        setDraft(e.target.value)
-                        e.target.style.height = 'auto'
-                        e.target.style.height = Math.min(e.target.scrollHeight, 80) + 'px'
-                        channelRef.current?.send({ type: 'broadcast', event: 'typing', payload: { userId: user?.id } })
-                      }}
-                      onKeyDown={e => {
-                        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg() }
-                      }}
-                    />
-                  </div>
-                  <button className="chat-send-btn" onClick={sendMsg} disabled={!draft.trim() || sending}>
-                    <i className={`ti ti-${sending ? 'loader-2' : 'send'}`}
-                      style={sending ? { animation: 'spin .7s linear infinite' } : {}} />
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        )}
       </div>
 
       {/* Bottom bar — shko te biseda e plotë */}
