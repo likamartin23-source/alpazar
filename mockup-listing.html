@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mockup — Shpallja v2</title>
+<title>Mockup — Shpallja v3</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -11,7 +11,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#c8c8c8;display:flex
 .phone{width:375px;background:#FFFBEA;border-radius:28px;overflow:hidden;box-shadow:0 12px 48px rgba(0,0,0,.25);position:relative;display:flex;flex-direction:column;max-height:820px;}
 .phone-scroll{overflow-y:auto;flex:1;}
 .phone-scroll::-webkit-scrollbar{display:none;}
-.label{font-size:12px;font-weight:700;color:#555;text-align:center;margin-bottom:12px;background:#fff;padding:5px 16px;border-radius:20px;display:inline-block;letter-spacing:.3px;}
+.label{font-size:12px;font-weight:700;color:#444;text-align:center;margin-bottom:12px;background:#fff;padding:5px 18px;border-radius:20px;display:inline-block;letter-spacing:.3px;}
 .phone-wrap{display:flex;flex-direction:column;align-items:center;}
 
 /* TOPBAR */
@@ -25,56 +25,58 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#c8c8c8;display:flex
 .img-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:54px;}
 .like-btn{position:absolute;top:12px;right:12px;width:36px;height:36px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;border:none;box-shadow:0 2px 8px rgba(0,0,0,.15);}
 
-/* INFO PAD */
-.info{padding:14px 16px;}
+/* INFO */
+.info{padding:14px 16px 0;}
 .badges{display:flex;gap:5px;margin-bottom:8px;}
 .badge{font-size:10px;padding:3px 9px;border-radius:5px;font-weight:700;}
 .b-used{background:#111;color:#F5C842;}
+.b-new{background:#E63312;color:#fff;}
 .b-prem{background:#F5C842;color:#111;}
 .status-active{background:#DCFCE7;color:#166534;font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:7px;display:inline-flex;align-items:center;gap:4px;margin-bottom:8px;}
-.status-sold{background:#F3F4F6;color:#9CA3AF;font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:7px;display:inline-flex;align-items:center;gap:4px;margin-bottom:8px;}
 h1{font-size:18px;font-weight:800;color:#111;margin-bottom:5px;line-height:1.3;}
 .price{font-size:24px;font-weight:800;color:#E63312;margin-bottom:10px;}
+
+/* META + SPECIFIKIMET */
 .meta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:0;}
 .meta-item{display:flex;align-items:center;gap:3px;font-size:11px;color:#666;background:#f5f0e0;padding:3px 8px;border-radius:6px;}
 .meta-item i{font-size:12px;color:#aaa;}
+/* ✅ Gjendja si chip i dukshëm */
+.meta-cond-new{background:#FEE2E2;color:#B91C1C;font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px;display:flex;align-items:center;gap:3px;}
+.meta-cond-used{background:#F3F4F6;color:#374151;font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px;display:flex;align-items:center;gap:3px;}
+
 .divider{height:1px;background:#efe9d6;margin:12px 0;}
 .desc-title{font-size:10.5px;font-weight:700;color:#999;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;}
 .desc{font-size:13px;color:#555;line-height:1.75;}
 
-/* ══ SHITËSI — pa tabelë, i lirshëm ══ */
+/* SHITËSI — pa tabelë, i lirshëm */
 .seller-section{padding:0 16px 16px;}
 .seller-divider-label{font-size:10.5px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
 .seller-divider-label::after{content:'';flex:1;height:1px;background:#ede8d8;}
-
 .seller-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
 .seller-av{width:48px;height:48px;border-radius:50%;background:#F5C842;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;color:#111;flex-shrink:0;border:2.5px solid #F5C842;box-shadow:0 2px 8px rgba(245,200,66,.4);}
-.seller-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
 .seller-main-name{font-size:16px;font-weight:800;color:#111;line-height:1.2;}
 .seller-sub{font-size:11px;color:#999;margin-top:2px;}
 .seller-badges-row{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;}
 .sbadge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:7px;}
 .sb-prem{background:#FEF3C7;color:#92400E;}
 .sb-admin{background:#EDE9FE;color:#5B21B6;}
-.sb-shop{background:#D1FAE5;color:#065F46;}
-
 .seller-stats-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
 .stat-chip{display:flex;align-items:center;gap:4px;font-size:11px;color:#555;padding:4px 9px;border-radius:8px;background:#fff;border:.5px solid #e8e2d0;}
 .stat-chip i{font-size:12px;color:#bbb;}
-
 .seller-bio{font-size:12.5px;color:#666;line-height:1.7;margin-bottom:10px;}
 
+/* ✅ Butoni vetëm "Shiko profilin" — pa telefon jeshil */
 .seller-actions{display:flex;gap:8px;}
 .view-btn{flex:1;background:#111;color:#F5C842;border:none;border-radius:10px;padding:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit;}
-.call-btn{width:42px;height:42px;background:#ECFDF5;border:none;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.call-btn i{font-size:18px;color:#10B981;}
 
-/* ══ CHAT BOTTOM SHEET ══ */
+/* ══ KUTIZË BISEDE — 30% më e vogël ══ */
+/* Origjinali: drag=14px, top=12px, msgs=150px, ref=34px, input=64px → ~280px total
+   -30% → ~196px. Ulim kryesisht padding dhe lartësinë e msgs */
 .cs-panel{
   position:absolute;bottom:0;left:0;right:0;
   background:#fff;
-  border-radius:22px 22px 0 0;
-  box-shadow:0 -6px 32px rgba(0,0,0,.18);
+  border-radius:20px 20px 0 0;
+  box-shadow:0 -6px 32px rgba(0,0,0,.16);
   z-index:300;
   transform:translateY(0);
   transition:transform .35s cubic-bezier(.4,0,.2,1);
@@ -82,49 +84,68 @@ h1{font-size:18px;font-weight:800;color:#111;margin-bottom:5px;line-height:1.3;}
 }
 .cs-panel.hidden{transform:translateY(100%);}
 
-.cs-drag{display:flex;justify-content:center;padding:10px 0 4px;cursor:grab;}
-.cs-drag-bar{width:38px;height:4px;background:#e0e0e0;border-radius:2px;}
+.cs-drag{display:flex;justify-content:center;padding:7px 0 3px;cursor:grab;}
+.cs-drag-bar{width:36px;height:3px;background:#e0e0e0;border-radius:2px;}
 
-.cs-top{display:flex;align-items:center;padding:4px 14px 8px;gap:10px;}
-.cs-av{width:38px;height:38px;border-radius:50%;background:#F5C842;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#111;flex-shrink:0;}
+.cs-top{display:flex;align-items:center;padding:3px 12px 6px;gap:9px;}
+.cs-av{width:32px;height:32px;border-radius:50%;background:#F5C842;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#111;flex-shrink:0;}
 .cs-info{flex:1;}
-.cs-name{font-size:13px;font-weight:700;color:#111;}
-.cs-priv{font-size:10px;color:#E63312;display:flex;align-items:center;gap:3px;margin-top:1px;font-weight:600;}
-.cs-priv i{font-size:11px;}
-.cs-actions{display:flex;align-items:center;gap:6px;}
-.cs-expand-btn{font-size:10px;color:#888;background:#f5f5f5;border:none;border-radius:8px;padding:5px 9px;cursor:pointer;display:flex;align-items:center;gap:3px;font-family:inherit;font-weight:600;}
-.cs-expand-btn i{font-size:12px;}
-.cs-close{width:28px;height:28px;background:#f0f0f0;border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.cs-close i{font-size:13px;color:#888;}
+.cs-name{font-size:12.5px;font-weight:700;color:#111;}
+.cs-priv{font-size:9.5px;color:#E63312;display:flex;align-items:center;gap:3px;margin-top:1px;font-weight:600;}
+.cs-priv i{font-size:10px;}
+.cs-actions{display:flex;align-items:center;gap:5px;}
+.cs-expand-btn{font-size:9.5px;color:#888;background:#f5f5f5;border:none;border-radius:7px;padding:4px 8px;cursor:pointer;display:flex;align-items:center;gap:2px;font-family:inherit;font-weight:600;}
+.cs-expand-btn i{font-size:11px;}
+.cs-close{width:26px;height:26px;background:#f0f0f0;border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.cs-close i{font-size:12px;color:#888;}
 
-/* Mesazhet (të zgjeruara) */
-.cs-msgs{background:#F7F3E8;padding:10px 12px;height:150px;overflow-y:auto;display:flex;flex-direction:column;gap:5px;}
-.m-mine{align-self:flex-end;background:linear-gradient(135deg,#F5C842,#e8b820);color:#111;padding:8px 12px;border-radius:14px 14px 4px 14px;font-size:12px;max-width:78%;line-height:1.5;}
-.m-theirs{align-self:flex-start;background:#fff;color:#111;padding:8px 12px;border-radius:14px 14px 14px 4px;font-size:12px;max-width:78%;box-shadow:0 1px 4px rgba(0,0,0,.07);line-height:1.5;}
+/* Mesazhet (të zgjeruara) — lartësia 30% më e vogël */
+.cs-msgs{background:#F7F3E8;padding:8px 10px;height:105px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;}
+.m-mine{align-self:flex-end;background:linear-gradient(135deg,#F5C842,#e8b820);color:#111;padding:6px 10px;border-radius:12px 12px 3px 12px;font-size:11.5px;max-width:80%;line-height:1.5;}
+.m-theirs{align-self:flex-start;background:#fff;color:#111;padding:6px 10px;border-radius:12px 12px 12px 3px;font-size:11.5px;max-width:80%;box-shadow:0 1px 4px rgba(0,0,0,.07);line-height:1.5;}
 
-.cs-ref{background:#FFF5F3;border-top:.5px solid #FFD5CC;border-bottom:.5px solid #FFD5CC;padding:7px 14px;display:flex;align-items:center;gap:7px;}
-.cs-ref i{font-size:13px;color:#E63312;flex-shrink:0;}
-.cs-ref-text{font-size:11px;color:#444;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.cs-ref-price{font-size:11px;font-weight:800;color:#E63312;white-space:nowrap;}
+/* ✅ Referenca me të dhënat e shpalljes — pre-fill automatik */
+.cs-ref{background:#FFF5F3;border-top:.5px solid #FFD5CC;border-bottom:.5px solid #FFD5CC;padding:6px 12px;display:flex;align-items:center;gap:6px;}
+.cs-ref i{font-size:12px;color:#E63312;flex-shrink:0;}
+.cs-ref-text{font-size:10.5px;color:#444;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cs-ref-price{font-size:10.5px;font-weight:800;color:#E63312;white-space:nowrap;}
 
-.cs-input-bar{background:#fff;padding:10px 12px 14px;display:flex;gap:8px;align-items:flex-end;}
-.cs-input-wrap{flex:1;background:#F5F5F0;border-radius:22px;padding:0 14px;display:flex;align-items:center;border:1.5px solid #eee;}
-.cs-input-wrap input{border:none;background:transparent;font-size:12.5px;color:#111;outline:none;flex:1;padding:10px 0;font-family:inherit;}
-.cs-input-wrap input::placeholder{color:#ccc;}
-.cs-send{width:44px;height:44px;background:linear-gradient(135deg,#E63312,#c42a0e);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 14px rgba(230,51,18,.3);}
-.cs-send i{color:#fff;font-size:18px;}
+.cs-input-bar{background:#fff;padding:8px 10px 12px;display:flex;gap:7px;align-items:flex-end;}
+.cs-input-wrap{flex:1;background:#F5F5F0;border-radius:18px;padding:0 12px;display:flex;align-items:center;border:1.5px solid #eee;}
+/* ✅ Input me mesazhin fillestar PRE-FILL automatik */
+.cs-input-wrap textarea{border:none;background:transparent;font-size:11.5px;color:#111;outline:none;flex:1;padding:8px 0;font-family:inherit;resize:none;line-height:1.45;}
+.cs-input-wrap textarea::placeholder{color:#ccc;}
+.cs-send{width:38px;height:38px;background:linear-gradient(135deg,#E63312,#c42a0e);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 3px 10px rgba(230,51,18,.3);}
+.cs-send i{color:#fff;font-size:16px;}
 
 /* Bottom bar (kur sheet mbyllet) */
 .bottom-bar{position:absolute;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #eee;padding:10px 14px 14px;display:flex;gap:8px;z-index:200;}
 .chat-btn{flex:1;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;font-family:inherit;box-shadow:0 4px 14px rgba(230,51,18,.25);}
-.chat-btn i{font-size:17px;}
+.chat-btn i{font-size:16px;}
+
+/* Legjenda e ndryshimeve */
+.changes{background:#fff;border-radius:16px;padding:18px 20px;max-width:260px;box-shadow:0 4px 20px rgba(0,0,0,.1);}
+.changes h3{font-size:13px;font-weight:800;color:#111;margin-bottom:12px;}
+.ch-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:12px;color:#444;line-height:1.5;}
+.ch-ok{color:#10B981;font-size:14px;flex-shrink:0;margin-top:1px;}
+.ch-rm{color:#E63312;font-size:14px;flex-shrink:0;margin-top:1px;}
 </style>
 </head>
 <body>
 
-<!-- GJENDJA E RE -->
+<div style="display:flex;flex-direction:column;gap:16px;align-self:center;">
+  <div class="changes">
+    <h3>📋 Ndryshimet v3</h3>
+    <div class="ch-item"><span class="ch-rm">✕</span><span>Hiqet butoni jeshil <b>telefon</b> nga shitësi</span></div>
+    <div class="ch-item"><span class="ch-ok">✓</span><span>Shtohet <b>gjendja</b> (I ri / I përdorur) si chip në meta të dhënat</span></div>
+    <div class="ch-item"><span class="ch-ok">✓</span><span>Kutia e bisedës <b>30% më e vogël</b></span></div>
+    <div class="ch-item"><span class="ch-ok">✓</span><span>Mesazhi fillestar <b>pre-fill automatik</b> me të dhënat e shpalljes kur përdoruesi zgjedh të kontaktojë</span></div>
+  </div>
+</div>
+
+<!-- SHPALLJA AKTIVE -->
 <div class="phone-wrap">
-  <div class="label">✨ DIZAJNI I RI — Shpallja në shitje</div>
+  <div class="label">✨ DIZAJNI v3 — Shpallja aktive</div>
   <div class="phone" id="p1">
     <div class="topbar">
       <button class="back"><i class="ti ti-arrow-left" style="font-size:16px"></i></button>
@@ -132,7 +153,7 @@ h1{font-size:18px;font-weight:800;color:#111;margin-bottom:5px;line-height:1.3;}
       <button class="share-btn"><i class="ti ti-share" style="font-size:15px"></i></button>
     </div>
 
-    <div class="phone-scroll" style="padding-bottom:230px;">
+    <div class="phone-scroll" style="padding-bottom:190px;">
       <div class="img-wrap">
         <div class="img-ph">💻</div>
         <button class="like-btn"><i class="ti ti-heart" style="font-size:17px;color:#ddd"></i></button>
@@ -140,13 +161,16 @@ h1{font-size:18px;font-weight:800;color:#111;margin-bottom:5px;line-height:1.3;}
 
       <div class="info">
         <div class="badges">
-          <span class="badge b-used">I përdorur</span>
           <span class="badge b-prem">⭐ Premium</span>
         </div>
         <div class="status-active">🟢 Në shitje</div>
         <h1>MacBook Pro M2 14 inch</h1>
         <div class="price">180,000 L</div>
+
+        <!-- META me GJENDJA e produktit -->
         <div class="meta">
+          <!-- ✅ Gjendja si chip i veçantë -->
+          <div class="meta-cond-used">🔘 I përdorur</div>
           <div class="meta-item"><i class="ti ti-map-pin"></i> Tiranë</div>
           <div class="meta-item"><i class="ti ti-calendar"></i> 23 Maj 2026</div>
           <div class="meta-item"><i class="ti ti-tag"></i> Elektronikë</div>
@@ -156,7 +180,7 @@ h1{font-size:18px;font-weight:800;color:#111;margin-bottom:5px;line-height:1.3;}
         <div class="desc">MacBook Pro M2, 16GB RAM, 512GB SSD. Blerje 6 muaj me parë. Gjendje shumë e mirë.</div>
       </div>
 
-      <!-- SHITËSI — pa tabelë, i lirshëm -->
+      <!-- SHITËSI — pa tabelë, PA buton telefon -->
       <div class="seller-section">
         <div class="divider" style="margin:0 0 12px;"></div>
         <div class="seller-divider-label">Shitësi</div>
@@ -174,23 +198,23 @@ h1{font-size:18px;font-weight:800;color:#111;margin-bottom:5px;line-height:1.3;}
         </div>
 
         <div class="seller-stats-row">
-          <span class="stat-chip"><i class="ti ti-package"></i> 7 shpallje aktive</span>
+          <span class="stat-chip"><i class="ti ti-package"></i> 7 shpallje</span>
           <span class="stat-chip"><i class="ti ti-bolt"></i> 240 pikë</span>
           <span class="stat-chip"><i class="ti ti-at"></i> ardit_s</span>
         </div>
 
-        <div class="seller-bio">Shes elektronikë dhe aksesorë të ndryshëm. Produkte origjinale, çmime të arsyeshme.</div>
+        <div class="seller-bio">Shes elektronikë dhe aksesorë. Produkte origjinale, çmime të arsyeshme.</div>
 
+        <!-- ✅ Vetëm butoni "Shiko profilin" — pa telefon jeshil -->
         <div class="seller-actions">
           <button class="view-btn"><i class="ti ti-user"></i> Shiko profilin</button>
-          <button class="call-btn"><i class="ti ti-phone"></i></button>
         </div>
       </div>
     </div>
 
-    <!-- KUTIZË BISEDE — hapet vetë -->
+    <!-- ✅ KUTIZË BISEDE 30% MË E VOGËL — me pre-fill automatik -->
     <div class="cs-panel" id="cs1">
-      <div class="cs-drag" onclick="toggleExpand('cs1','msgs1','icon1')">
+      <div class="cs-drag" onclick="toggleExpand()">
         <div class="cs-drag-bar"></div>
       </div>
       <div class="cs-top">
@@ -200,125 +224,117 @@ h1{font-size:18px;font-weight:800;color:#111;margin-bottom:5px;line-height:1.3;}
           <div class="cs-priv"><i class="ti ti-lock"></i> Bisedë private</div>
         </div>
         <div class="cs-actions">
-          <button class="cs-expand-btn" onclick="toggleExpand('cs1','msgs1','icon1')">
-            <span id="icon1txt">shiko bisedën</span>
-            <i class="ti ti-chevron-up" id="icon1"></i>
+          <button class="cs-expand-btn" onclick="toggleExpand()">
+            <span id="expTxt">shiko bisedën</span>
+            <i class="ti ti-chevron-up" id="expIcon"></i>
           </button>
-          <button class="cs-close" onclick="closeSheet('cs1','bb1')">
+          <button class="cs-close" onclick="closeSheet()">
             <i class="ti ti-x"></i>
           </button>
         </div>
       </div>
 
+      <!-- Mesazhet (vetëm kur zgjeruar) -->
       <div class="cs-msgs" id="msgs1" style="display:none;">
         <div class="m-mine">Përshëndetje! Jam i interesuar/e për: "MacBook Pro M2 14 inch" — 180,000 L. A është ende në shitje?</div>
-        <div class="m-theirs">Po, është ende në shitje! 😊 Mund të takohemi në Tiranë.</div>
-        <div class="m-mine">Shumë mirë! Kur mund të takohemi?</div>
+        <div class="m-theirs">Po, është ende! Kur mund të takohemi? 😊</div>
+        <div class="m-mine">Nesër pasdite nëse mundeni?</div>
       </div>
 
+      <!-- Referenca e shpalljes -->
       <div class="cs-ref">
         <i class="ti ti-bookmark"></i>
         <span class="cs-ref-text">📌 MacBook Pro M2 14 inch</span>
         <span class="cs-ref-price">180,000 L</span>
       </div>
+
+      <!-- ✅ Input me pre-fill automatik me të dhënat e shpalljes -->
       <div class="cs-input-bar">
         <div class="cs-input-wrap">
-          <input type="text" placeholder="Shkruaj mesazhin tënd..." />
+          <textarea rows="2">Përshëndetje! Jam i interesuar/e për: "MacBook Pro M2 14 inch" — 180,000 L. A është ende në shitje?</textarea>
         </div>
         <button class="cs-send"><i class="ti ti-send"></i></button>
       </div>
     </div>
 
-    <!-- Bottom bar (kur sheet mbyllet) -->
+    <!-- Bottom bar kur sheet mbyllet -->
     <div class="bottom-bar" id="bb1" style="display:none;">
-      <button class="chat-btn" onclick="openSheet('cs1','bb1')">
-        <i class="ti ti-messages"></i> 💬 Fillo bisedën
+      <button class="chat-btn" onclick="openSheet()">
+        <i class="ti ti-messages"></i> 💬 Fillo bisedën me shitësin
       </button>
-      <button class="call-btn" style="flex-shrink:0;"><i class="ti ti-phone"></i></button>
     </div>
   </div>
 </div>
 
-<!-- SHPALLJA E SHITUR -->
+<!-- I RI vs I PERDORUR -->
 <div class="phone-wrap">
-  <div class="label">✅ SHITUR — si duket</div>
-  <div class="phone" id="p2">
+  <div class="label">🆕 I ri vs 🔘 I përdorur — chips</div>
+  <div class="phone">
     <div class="topbar">
       <button class="back"><i class="ti ti-arrow-left" style="font-size:16px"></i></button>
       <span class="topbar-title">Shpallja</span>
       <button class="share-btn"><i class="ti ti-share" style="font-size:15px"></i></button>
     </div>
-
-    <div class="phone-scroll" style="padding-bottom:20px;">
-      <div class="img-wrap" style="filter:grayscale(.5);opacity:.8;">
-        <div class="img-ph">💻</div>
+    <div class="phone-scroll">
+      <div class="img-wrap" style="height:160px;">
+        <div class="img-ph" style="font-size:40px;">📱</div>
+        <button class="like-btn"><i class="ti ti-heart" style="font-size:17px;color:#ddd"></i></button>
       </div>
-
       <div class="info">
-        <div class="badges">
-          <span class="badge b-used">I përdorur</span>
-        </div>
-        <div class="status-sold">✅ Shitur</div>
-        <h1 style="color:#999;">MacBook Pro M2 14 inch</h1>
-        <div class="price" style="color:#bbb;">180,000 L</div>
-        <div class="meta">
-          <div class="meta-item"><i class="ti ti-map-pin"></i> Tiranë</div>
-          <div class="meta-item"><i class="ti ti-calendar"></i> 23 Maj 2026</div>
+        <div class="badges"><span class="badge b-prem">⭐ Premium</span></div>
+        <div class="status-active">🟢 Në shitje</div>
+        <h1 style="font-size:15px;">iPhone 15 Pro</h1>
+        <div class="price" style="font-size:18px;">85,000 L</div>
+        <div class="meta" style="margin-bottom:12px;">
+          <!-- ✅ I RI — chip i kuq -->
+          <div class="meta-cond-new">✨ I ri</div>
+          <div class="meta-item"><i class="ti ti-map-pin"></i> Durrës</div>
+          <div class="meta-item"><i class="ti ti-calendar"></i> 20 Maj 2026</div>
           <div class="meta-item"><i class="ti ti-tag"></i> Elektronikë</div>
         </div>
-        <div class="divider"></div>
-        <div class="desc" style="color:#aaa;">MacBook Pro M2, 16GB RAM, 512GB SSD.</div>
-      </div>
-
-      <div class="seller-section">
-        <div class="divider" style="margin:0 0 12px;"></div>
-        <div class="seller-divider-label">Shitësi</div>
-        <div class="seller-row">
-          <div class="seller-av" style="opacity:.6;">SH</div>
-          <div>
-            <div class="seller-main-name" style="color:#999;">Ardit Shqiptari</div>
-            <div class="seller-sub">📍 Tiranë · Anëtar nga Maj 2024</div>
+        <div style="height:1px;background:#efe9d6;margin:10px 0;"></div>
+        <div style="font-size:10.5px;font-weight:700;color:#bbb;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">Krahasim gjendjeje</div>
+        <div style="display:flex;gap:10px;margin-bottom:12px;">
+          <div style="flex:1;background:#FEE2E2;border-radius:10px;padding:10px;text-align:center;">
+            <div style="font-size:18px;margin-bottom:4px;">✨</div>
+            <div style="font-size:11px;font-weight:700;color:#B91C1C;">I ri</div>
+            <div style="font-size:10px;color:#9B1C1C;margin-top:2px;">Kurrë i përdorur, kutia origjinale</div>
           </div>
-        </div>
-        <div class="seller-actions">
-          <button class="view-btn" style="background:#f5f5f5;color:#aaa;">
-            <i class="ti ti-user"></i> Shiko profilin
-          </button>
+          <div style="flex:1;background:#F3F4F6;border-radius:10px;padding:10px;text-align:center;">
+            <div style="font-size:18px;margin-bottom:4px;">🔘</div>
+            <div style="font-size:11px;font-weight:700;color:#374151;">I përdorur</div>
+            <div style="font-size:10px;color:#6B7280;margin-top:2px;">Përdorur më parë, gjendje e mirë</div>
+          </div>
         </div>
       </div>
     </div>
-    <!-- Pa kutizë bisede kur shitur -->
   </div>
 </div>
 
 <script>
-const expanded = {};
+let exp = false;
+let open = true;
 
-function toggleExpand(panel, msgsId, iconId) {
-  expanded[panel] = !expanded[panel];
-  const msgs = document.getElementById(msgsId);
-  const icon = document.getElementById(iconId);
-  const txt = document.getElementById(iconId + 'txt');
-  if (expanded[panel]) {
-    msgs.style.display = 'flex';
-    msgs.style.flexDirection = 'column';
-    icon.className = 'ti ti-chevron-down';
-    txt.textContent = 'mbyll';
-  } else {
-    msgs.style.display = 'none';
-    icon.className = 'ti ti-chevron-up';
-    txt.textContent = 'shiko bisedën';
-  }
+function toggleExpand() {
+  exp = !exp;
+  const msgs = document.getElementById('msgs1');
+  const icon = document.getElementById('expIcon');
+  const txt = document.getElementById('expTxt');
+  msgs.style.display = exp ? 'flex' : 'none';
+  if (exp) { msgs.style.flexDirection='column'; icon.className='ti ti-chevron-down'; txt.textContent='mbyll'; }
+  else { icon.className='ti ti-chevron-up'; txt.textContent='shiko bisedën'; }
 }
 
-function closeSheet(panelId, bbId) {
-  document.getElementById(panelId).classList.add('hidden');
-  document.getElementById(bbId).style.display = 'flex';
+function closeSheet() {
+  document.getElementById('cs1').classList.add('hidden');
+  document.getElementById('bb1').style.display = 'flex';
+  open = false;
 }
 
-function openSheet(panelId, bbId) {
-  document.getElementById(panelId).classList.remove('hidden');
-  document.getElementById(bbId).style.display = 'none';
+function openSheet() {
+  document.getElementById('cs1').classList.remove('hidden');
+  document.getElementById('bb1').style.display = 'none';
+  open = true;
 }
 </script>
 </body>
