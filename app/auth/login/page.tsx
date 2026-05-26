@@ -50,6 +50,8 @@ const CSS = `
   .btn:disabled{opacity:.6;cursor:not-allowed;}
   .btn-ghost{width:100%;background:none;color:#555;border:1.5px solid #ddd;border-radius:9px;padding:12px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:8px;transition:border .15s;}
   .btn-ghost:hover{border-color:#bbb;}
+  .btn-yellow{width:100%;background:#F5C842;color:#111;border:none;border-radius:9px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:8px;transition:opacity .15s;}
+  .btn-yellow:hover{opacity:.9;}
   .msg{text-align:center;font-size:12px;padding:10px 12px;border-radius:8px;margin-bottom:12px;font-weight:500;line-height:1.5;}
   .ok{background:#EAF3DE;color:#3B6D11;border:0.5px solid #97C459;}
   .err{background:#FFF0EE;color:#E63312;border:0.5px solid #F09595;}
@@ -443,7 +445,7 @@ export default function Auth() {
 
               {/* 2. Regjistrimi — sekondare */}
               <div className="divider">ose</div>
-              <button className="btn-ghost" onClick={() => switchMode('register')}>
+              <button className="btn-yellow" onClick={() => switchMode('register')}>
                 📝 Regjistrohu Falas
               </button>
             </>
