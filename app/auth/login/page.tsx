@@ -10,7 +10,6 @@ const FN_URL = 'https://sopafwfkrxpcdaljddoh.supabase.co/functions/v1'
 function detectType(val: string): 'email' | 'phone' | 'unknown' {
   if (val.includes('@')) return 'email'
   const clean = val.replace(/[\s\-().]/g, '')
-  // E.164 (+XXXX), 00-prefix international, Albanian local (06x/07x/6x/7x)
   if (/^\+\d{7,15}$/.test(clean)) return 'phone'
   if (/^00\d{9,14}$/.test(clean)) return 'phone'
   if (/^0[67]\d{7,}$/.test(clean)) return 'phone'
@@ -21,13 +20,9 @@ function detectType(val: string): 'email' | 'phone' | 'unknown' {
 function toE164(phone: string): string {
   const clean = phone.replace(/[\s\-().]/g, '')
   if (clean.startsWith('+')) return clean
-  // 00-prefix international (e.g. 0044... → +44...)
   if (clean.startsWith('00')) return '+' + clean.slice(2)
-  // Albanian mobile: 067xxxxxxx / 069xxxxxxx → +355 67xxxxxxx
   if (/^0[67]\d{7,}$/.test(clean)) return '+355' + clean.slice(1)
-  // Albanian without leading zero: 67xxxxxxx → +355 67xxxxxxx
   if (/^[67]\d{7,}$/.test(clean)) return '+355' + clean
-  // Assume missing + for everything else
   return '+' + clean
 }
 
@@ -53,7 +48,6 @@ const CSS = `
   .hint.warn{color:#A05000;}
   .btn{width:100%;background:#E63312;color:#fff;border:none;border-radius:9px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px;transition:opacity .15s;}
   .btn:disabled{opacity:.6;cursor:not-allowed;}
-  .btn-sec{width:100%;background:#F5C842;color:#111;border:none;border-radius:9px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px;}
   .btn-ghost{width:100%;background:none;color:#888;border:1.5px solid #eee;border-radius:9px;padding:11px;font-size:13px;cursor:pointer;font-family:inherit;margin-bottom:8px;}
   .btn-ghost:hover{border-color:#ddd;color:#555;}
   .msg{text-align:center;font-size:12px;padding:10px 12px;border-radius:8px;margin-bottom:12px;font-weight:500;line-height:1.5;}
@@ -61,7 +55,7 @@ const CSS = `
   .err{background:#FFF0EE;color:#E63312;border:0.5px solid #F09595;}
   .info{background:#EEF4FF;color:#185FA5;border:0.5px solid #85B7EB;}
   .warn{background:#FFF8EE;color:#A05000;border:0.5px solid #F5C842;}
-  .divider{display:flex;align-items:center;gap:10px;margin:12px 0;color:#ccc;font-size:12px;}
+  .divider{display:flex;align-items:center;gap:10px;margin:10px 0;color:#ccc;font-size:12px;}
   .divider::before,.divider::after{content:'';flex:1;border-top:1px solid #eee;}
   .back{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:14px;color:#888;font-size:12px;cursor:pointer;}
   .back:hover{color:#E63312;}
@@ -89,6 +83,12 @@ const CSS = `
   .pass-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#aaa;font-size:13px;padding:4px;}
   .contact-wrap{position:relative;}
   .contact-type{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;}
+  .register-link{text-align:center;font-size:12px;color:#888;margin-top:4px;}
+  .register-link span{color:#E63312;font-weight:700;cursor:pointer;text-decoration:underline;}
+  .register-link span:hover{color:#c02000;}
+  .forgot-opt{text-align:center;font-size:11px;color:#aaa;margin-top:8px;}
+  .forgot-opt span{color:#888;cursor:pointer;text-decoration:underline;}
+  .forgot-opt span:hover{color:#E63312;}
 `
 
 const OTP_SECONDS = 60 // 1 minutë
@@ -176,7 +176,7 @@ export default function Auth() {
 
     const type = detectType(raw)
     if (type === 'unknown') {
-      setMsg('err:Fut email të vlefshëm ose nr. telefoni me prefiks (+355...)')
+      setMsg('err:Fut email të vlefshëm ose nr. telefoni me prefiks (+355, +1, +44...)')
       return
     }
 
@@ -192,7 +192,6 @@ export default function Auth() {
       })
       const data = await res.json()
       if (!res.ok || data.error) {
-        // SMS not configured → friendly message with email suggestion
         if (data.error === 'sms_not_configured' || data.message?.includes('SMS nuk')) {
           setMsg('err:SMS nuk është aktiv ende. Provoni me adresë email.')
         } else {
@@ -217,7 +216,7 @@ export default function Auth() {
   async function verifyOtp() {
     const code = otp.join('')
     if (code.length !== 6) { setMsg('err:Plotëso kodin 6-shifror!'); return }
-    if (expired) { setMsg('err:Kodi ka skaduar! Kërko një kod të ri.'); return }
+    if (expired) { setMsg('err:Kodi ka skaduar! Klikoje "Ridërgo" për kod të ri.'); return }
     setLoading(true); setMsg('')
     try {
       const res = await fetch(`${FN_URL}/verify-otp`, {
@@ -234,7 +233,6 @@ export default function Auth() {
       })
       const data = await res.json()
       if (!res.ok || data.error) {
-        // If account doesn't exist in login mode → auto-switch to register
         if (mode === 'login' && (res.status === 404 || data.error?.includes('ekziston llogari'))) {
           setStep('form')
           setMode('register')
@@ -312,7 +310,7 @@ export default function Auth() {
   const mins = Math.floor(countdown / 60)
   const secs = countdown % 60
   const timeClass = countdown > 30 ? 'ok-c' : countdown > 10 ? 'warn-c' : 'err-c'
-  const stepCount = mode === 'forgot' ? 3 : mode === 'register' ? 2 : 2
+  const stepCount = mode === 'forgot' ? 3 : 2
   const stepIdx = step === 'form' ? 0 : step === 'otp' ? 1 : 2
   const cType = detectType(contact)
 
@@ -422,7 +420,7 @@ export default function Auth() {
                 <div className="contact-wrap">
                   <input
                     type={showPassLogin ? 'email' : 'text'}
-                    placeholder={showPassLogin ? 'emaili@domain.com' : 'email@domain.com  ose  +355 6X XXX XXXX'}
+                    placeholder={showPassLogin ? 'emaili@domain.com' : 'email@domain.com  ose  +355 6X XXX XXXX  ose  +1 212...'}
                     value={contact}
                     onChange={e => setContact(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && (showPassLogin ? void 0 : sendOtp())}
@@ -469,7 +467,7 @@ export default function Auth() {
               ) : (
                 <>
                   <button className="btn" onClick={sendOtp} disabled={loading}>
-                    {loading ? '⏳ Duke dërguar kodin...' : '📨 Dërgo Kodin'}
+                    {loading ? '⏳ Duke dërguar kodin...' : '📨 Dërgo Kodin e Hyrjes'}
                   </button>
                   <button className="btn-ghost" onClick={() => setShowPassLogin(true)}>
                     🔑 Hyr me fjalëkalim
@@ -478,9 +476,19 @@ export default function Auth() {
               )}
 
               <div className="divider">ose</div>
-              <button className="btn-sec" onClick={() => switchMode('register')}>
-                📝 Regjistrohu falas
-              </button>
+
+              {/* Register — secondary, smaller */}
+              <div className="register-link">
+                Nuk ke llogari? &nbsp;
+                <span onClick={() => switchMode('register')}>Regjistrohu falas →</span>
+              </div>
+
+              {/* Forgot — tertiary, very subtle */}
+              {!showPassLogin && (
+                <div className="forgot-opt">
+                  <span onClick={() => switchMode('forgot')}>Humbëve llogarinë?</span>
+                </div>
+              )}
             </>
           )}
 
@@ -532,7 +540,10 @@ export default function Auth() {
                 {loading ? '⏳ Duke dërguar kodin...' : '📨 Dërgo Kodin'}
               </button>
               <div className="divider">ose</div>
-              <button className="btn-ghost" onClick={() => switchMode('login')}>🔑 Ke llogari? Hyr</button>
+              <div className="register-link">
+                Ke llogari? &nbsp;
+                <span onClick={() => switchMode('login')}>Hyr →</span>
+              </div>
               <p className="terms">
                 Duke u regjistruar pranon{' '}
                 <a href="/kushtet">Kushtet e Përdorimit</a> dhe{' '}
@@ -547,8 +558,8 @@ export default function Auth() {
           {/* ─── FORGOT form ───────────────────────── */}
           {mode === 'forgot' && step === 'form' && (
             <>
-              <h2>🔓 Rivendos Fjalëkalimin</h2>
-              <p className="sub">Fut emailin ose telefonin — dërgojmë kod konfirmimi</p>
+              <h2>🔓 Rikthe Llogarinë</h2>
+              <p className="sub">Fut emailin ose telefonin — dërgojmë kod konfirmimi, pastaj vendos fjalëkalim të ri</p>
 
               <div className="field">
                 <label>Email ose Numër Telefoni *</label>
@@ -567,7 +578,7 @@ export default function Auth() {
               </div>
 
               <button className="btn" onClick={sendOtp} disabled={loading}>
-                {loading ? '⏳ Duke dërguar kodin...' : '📨 Dërgo Kodin'}
+                {loading ? '⏳ Duke dërguar kodin...' : '📨 Dërgo Kodin e Konfirmimit'}
               </button>
               <button className="btn-ghost" onClick={() => switchMode('login')}>← Kthehu te hyrja</button>
             </>

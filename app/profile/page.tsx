@@ -15,6 +15,8 @@ const SHOP_CATEGORIES = [
   { id: 'bukuri', label: 'Bukuri & Shëndet' },
 ]
 
+const FN_URL = 'https://sopafwfkrxpcdaljddoh.supabase.co/functions/v1'
+
 export default function ProfilePage() {
   const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
@@ -29,6 +31,18 @@ export default function ProfilePage() {
   const [savingShop, setSavingShop] = useState(false)
   const [msg, setMsg] = useState('')
   const [shopMsg, setShopMsg] = useState('')
+
+  // Password change
+  const [newPass, setNewPass] = useState('')
+  const [newPass2, setNewPass2] = useState('')
+  const [showNewPass, setShowNewPass] = useState(false)
+  const [savingPass, setSavingPass] = useState(false)
+  const [passMsg, setPassMsg] = useState('')
+
+  // Account deletion
+  const [deleteConfirm, setDeleteConfirm] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [deleteMsg, setDeleteMsg] = useState('')
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -117,6 +131,43 @@ export default function ProfilePage() {
   async function signOut() {
     await supabase.auth.signOut()
     window.location.href = '/'
+  }
+
+  async function changePassword() {
+    if (newPass.length < 6) { setPassMsg('err:Fjalëkalimi duhet të ketë minimumi 6 karaktere!'); return }
+    if (newPass !== newPass2) { setPassMsg('err:Fjalëkalimet nuk përputhen!'); return }
+    setSavingPass(true); setPassMsg('')
+    const { error } = await supabase.auth.updateUser({ password: newPass })
+    if (error) {
+      setPassMsg(`err:${error.message}`)
+    } else {
+      setPassMsg('ok:Fjalëkalimi u ndryshua me sukses!')
+      setNewPass(''); setNewPass2('')
+    }
+    setSavingPass(false)
+  }
+
+  async function deleteAccount() {
+    setDeleting(true); setDeleteMsg('')
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) { setDeleteMsg('err:Sesioni ka skaduar.'); setDeleting(false); return }
+      const res = await fetch(`${FN_URL}/delete-account`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      })
+      const data = await res.json()
+      if (!res.ok || data.error) {
+        setDeleteMsg(`err:${data.error ?? 'Gabim gjatë fshirjes.'}`)
+        setDeleting(false)
+        return
+      }
+      await supabase.auth.signOut()
+      window.location.href = '/?deleted=1'
+    } catch {
+      setDeleteMsg('err:Gabim i papritur. Provo sërish.')
+      setDeleting(false)
+    }
   }
 
   async function deleteListing(id: string) {
@@ -233,6 +284,22 @@ export default function ProfilePage() {
         .inbox-empty-btn{background:#E63312;color:#fff;border:none;border-radius:10px;padding:11px 22px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
         .open-msgs-btn{width:100%;background:#111;color:#F5C842;border:none;border-radius:11px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;}
         .open-msgs-btn i{font-size:17px;}
+        /* Security section */
+        .pass-wrap{position:relative;}
+        .pass-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#aaa;font-size:13px;padding:4px;}
+        .sec-btn{width:100%;background:#111;color:#F5C842;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:12px;}
+        .sec-btn:disabled{opacity:.6;cursor:not-allowed;}
+        .danger-zone{background:#FFF0EE;border:1px solid #F09595;border-radius:13px;padding:16px;margin-bottom:12px;}
+        .danger-title{font-size:13px;font-weight:700;color:#E63312;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+        .danger-desc{font-size:11px;color:#888;line-height:1.6;margin-bottom:12px;}
+        .delete-btn{width:100%;background:#E63312;color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .delete-btn:disabled{opacity:.6;cursor:not-allowed;}
+        .delete-confirm{background:#fff;border:1.5px solid #E63312;border-radius:10px;padding:14px;margin-top:10px;text-align:center;}
+        .delete-confirm p{font-size:12px;color:#111;font-weight:600;margin-bottom:10px;line-height:1.6;}
+        .delete-confirm-btns{display:flex;gap:8px;}
+        .delete-confirm-btns button:first-child{flex:1;background:#E63312;color:#fff;border:none;border-radius:8px;padding:11px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .delete-confirm-btns button:last-child{flex:1;background:#eee;color:#555;border:none;border-radius:8px;padding:11px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;}
+        .msg-sm{font-size:11px;padding:8px 12px;border-radius:8px;margin-top:8px;font-weight:600;}
       `}</style>
 
       <div className="wrap">
@@ -348,6 +415,70 @@ export default function ProfilePage() {
                   <button className="prem-cta" onClick={() => window.location.href = '/premium'}>Shiko planin →</button>
                 </div>
               )}
+
+              {/* ── Ndrysho Fjalëkalimin ── */}
+              <div className="card">
+                <div className="card-hdr">
+                  <span className="card-title">🔒 Ndrysho Fjalëkalimin</span>
+                </div>
+                {passMsg && (
+                  <div className={`msg-box msg-sm ${passMsg.split(':')[0]}`}>{passMsg.split(/:(.+)/)[1]}</div>
+                )}
+                <label>Fjalëkalimi i ri (min. 6 karaktere)</label>
+                <div className="pass-wrap">
+                  <input
+                    type={showNewPass ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    value={newPass}
+                    onChange={e => setNewPass(e.target.value)}
+                    autoComplete="new-password"
+                    style={{ paddingRight: 36 }}
+                  />
+                  <button className="pass-toggle" onClick={() => setShowNewPass(v => !v)}>
+                    {showNewPass ? '🙈' : '👁️'}
+                  </button>
+                </div>
+                <label>Konfirmo fjalëkalimin e ri</label>
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  value={newPass2}
+                  onChange={e => setNewPass2(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && changePassword()}
+                  autoComplete="new-password"
+                />
+                <button className="sec-btn" onClick={changePassword} disabled={savingPass || !newPass || !newPass2}>
+                  {savingPass ? '⏳ Duke ruajtur...' : '🔒 Ndrysho Fjalëkalimin'}
+                </button>
+              </div>
+
+              {/* ── Fshi Llogarinë ── */}
+              <div className="danger-zone">
+                <div className="danger-title">⚠️ Zona e Rrezikshme</div>
+                <div className="danger-desc">
+                  Fshirja e llogarisë është <strong>e pakthyeshme</strong>. Të gjitha shpalljet dhe të dhënat tuaja do të fshihen përgjithmonë.
+                </div>
+                {deleteMsg && (
+                  <div className={`msg-box msg-sm ${deleteMsg.split(':')[0]}`}>{deleteMsg.split(/:(.+)/)[1]}</div>
+                )}
+                {!deleteConfirm ? (
+                  <button className="delete-btn" onClick={() => setDeleteConfirm(true)}>
+                    🗑 Fshi Llogarinë
+                  </button>
+                ) : (
+                  <div className="delete-confirm">
+                    <p>Je i sigurt? Kjo veprim <strong>nuk mund të kthehet</strong>.<br />Të gjitha të dhënat fshihen përgjithmonë.</p>
+                    <div className="delete-confirm-btns">
+                      <button onClick={deleteAccount} disabled={deleting}>
+                        {deleting ? '⏳ Duke fshirë...' : '✅ Po, fshi llogarinë'}
+                      </button>
+                      <button onClick={() => { setDeleteConfirm(false); setDeleteMsg('') }}>
+                        ✕ Anulo
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </>
           )}
 
