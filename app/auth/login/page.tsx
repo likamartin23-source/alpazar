@@ -85,12 +85,17 @@ const CSS = `
   .contact-type{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;}
   .forgot-link{display:block;text-align:center;font-size:11px;color:#aaa;cursor:pointer;margin-top:4px;}
   .forgot-link:hover{color:#E63312;text-decoration:underline;}
+  .sms-fail-box{background:#FFF8EE;border:1.5px solid #F5C842;border-radius:12px;padding:14px;margin-bottom:10px;}
+  .sms-fail-header{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;}
+  .sms-fail-header span{font-size:22px;flex-shrink:0;}
+  .sms-fail-header strong{font-size:13px;font-weight:700;color:#111;display:block;margin-bottom:3px;}
+  .sms-fail-header p{font-size:11px;color:#888;margin:0;line-height:1.5;}
   .sec-row{text-align:center;font-size:12px;color:#888;margin-top:6px;}
   .sec-row a{color:#E63312;font-weight:700;cursor:pointer;text-decoration:none;}
   .sec-row a:hover{text-decoration:underline;}
 `
 
-const OTP_SECONDS = 60
+const OTP_SECONDS = 300
 
 export default function Auth() {
   const [mode, setMode] = useState<Mode>('login')
@@ -538,34 +543,45 @@ export default function Auth() {
                 {contactHint}
               </div>
 
-              <button className="btn" onClick={sendOtp} disabled={loading}>
-                {loading ? '⏳ Duke dërguar kodin...' : '📨 Dërgo Kodin e Konfirmimit'}
-              </button>
-
-              {smsFailMode && (
-                <div style={{ marginTop: 4 }}>
-                  <div className="field" style={{ marginBottom: 8 }}>
-                    <label>📧 Adresa e emailit tuaj</label>
-                    <input type="email" placeholder="email@domain.com"
+              {!smsFailMode ? (
+                <>
+                  <button className="btn" onClick={sendOtp} disabled={loading}>
+                    {loading ? '⏳ Duke dërguar kodin...' : '📨 Dërgo Kodin e Konfirmimit'}
+                  </button>
+                  <div className="sec-row">Ke llogari? &nbsp;<a onClick={() => switchMode('login')}>Hyr →</a></div>
+                  <p className="terms">
+                    Duke u regjistruar pranon{' '}
+                    <a href="/kushtet">Kushtet e Përdorimit</a> dhe{' '}
+                    <a href="/privatesia">Politikën e Privatësisë</a>
+                  </p>
+                </>
+              ) : (
+                <div className="sms-fail-box">
+                  <div className="sms-fail-header">
+                    <span>📱</span>
+                    <div>
+                      <strong>SMS nuk funksionon për {originalPhone}</strong>
+                      <p>Konfirmo regjistrimin me email — numri ruhet në profil.</p>
+                    </div>
+                  </div>
+                  <div className="field" style={{ marginBottom: 10 }}>
+                    <label>📧 Emaili yt *</label>
+                    <input type="email" placeholder="emri@domain.com"
                       value={smsFailEmail}
                       onChange={e => setSmsFailEmail(e.target.value)}
                       onKeyDown={e => e.key === 'Enter' && sendOtpViaEmail()}
-                      autoComplete="email" />
-                    <p className="hint">Kodi do të dërgohet te ky email. Numri i telefonit ruhet në profilin tuaj.</p>
+                      autoComplete="email"
+                      autoFocus />
                   </div>
-                  <button className="btn-yellow" onClick={sendOtpViaEmail} disabled={loading}>
-                    {loading ? '⏳ Duke dërguar...' : '📧 Dërgo Kodin me Email'}
+                  <button className="btn" onClick={sendOtpViaEmail} disabled={loading}>
+                    {loading ? '⏳ Duke dërguar...' : '📧 Dërgo Kodin në Email'}
+                  </button>
+                  <button className="btn-ghost" style={{ marginTop: 6 }}
+                    onClick={() => { setSmsFailMode(false); setMsg('') }}>
+                    ← Ndrysho numrin e telefonit
                   </button>
                 </div>
               )}
-
-              <div className="sec-row">Ke llogari? &nbsp;<a onClick={() => switchMode('login')}>Hyr →</a></div>
-
-              <p className="terms">
-                Duke u regjistruar pranon{' '}
-                <a href="/kushtet">Kushtet e Përdorimit</a> dhe{' '}
-                <a href="/privatesia">Politikën e Privatësisë</a>
-              </p>
             </>
           )}
 
@@ -598,28 +614,44 @@ export default function Auth() {
                 {contactHint}
               </div>
 
-              <button className="btn" onClick={sendOtp} disabled={loading}>
-                {loading ? '⏳ Duke dërguar...' : '📨 Dërgo Kodin e Konfirmimit'}
-              </button>
+              {!smsFailMode ? (
+                <button className="btn" onClick={sendOtp} disabled={loading}>
+                  {loading ? '⏳ Duke dërguar...' : '📨 Dërgo Kodin e Konfirmimit'}
+                </button>
+              ) : null}
 
               {smsFailMode && (
-                <div style={{ marginTop: 4 }}>
-                  <div className="field" style={{ marginBottom: 8 }}>
-                    <label>📧 Adresa e emailit tuaj</label>
-                    <input type="email" placeholder="email@domain.com"
+                <div className="sms-fail-box" style={{ marginTop: 4 }}>
+                  <div className="sms-fail-header">
+                    <span>📱</span>
+                    <div>
+                      <strong>SMS nuk funksionon për {originalPhone}</strong>
+                      <p>Konfirmo me email — numri ruhet në profil.</p>
+                    </div>
+                  </div>
+                  <div className="field" style={{ marginBottom: 10 }}>
+                    <label>📧 Emaili yt *</label>
+                    <input type="email" placeholder="emri@domain.com"
                       value={smsFailEmail}
                       onChange={e => setSmsFailEmail(e.target.value)}
                       onKeyDown={e => e.key === 'Enter' && sendOtpViaEmail()}
-                      autoComplete="email" />
+                      autoComplete="email"
+                      autoFocus />
                     <p className="hint">Kodi do të dërgohet te ky email.</p>
                   </div>
-                  <button className="btn-yellow" onClick={sendOtpViaEmail} disabled={loading}>
-                    {loading ? '⏳ Duke dërguar...' : '📧 Dërgo Kodin me Email'}
+                  <button className="btn" onClick={sendOtpViaEmail} disabled={loading}>
+                    {loading ? '⏳ Duke dërguar...' : '📧 Dërgo Kodin në Email'}
+                  </button>
+                  <button className="btn-ghost" style={{ marginTop: 6 }}
+                    onClick={() => { setSmsFailMode(false); setMsg('') }}>
+                    ← Ndrysho numrin
                   </button>
                 </div>
               )}
 
-              <button className="btn-ghost" onClick={() => switchMode('login')}>← Kthehu te Hyrja</button>
+              {!smsFailMode && (
+                <button className="btn-ghost" onClick={() => switchMode('login')}>← Kthehu te Hyrja</button>
+              )}
             </>
           )}
 
