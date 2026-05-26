@@ -67,7 +67,7 @@ const CSS = `
   .countdown-time.err-c{color:#E63312;}
   .resend-btn{font-size:12px;color:#E63312;font-weight:600;background:none;border:none;cursor:pointer;font-family:inherit;text-decoration:underline;}
   .resend-btn:disabled{color:#bbb;text-decoration:none;cursor:default;}
-  .forgot-link{display:block;text-align:right;font-size:11px;color:#888;cursor:pointer;margin-bottom:14px;margin-top:-8px;text-decoration:underline;}
+  .forgot-link{display:block;text-align:center;font-size:11px;color:#888;cursor:pointer;margin-top:6px;text-decoration:underline;}
   .forgot-link:hover{color:#E63312;}
   .steps{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:16px;}
   .step-dot{width:8px;height:8px;border-radius:50%;background:#eee;}
@@ -86,6 +86,7 @@ const OTP_SECONDS = 60
 export default function Auth() {
   const [mode, setMode] = useState<Mode>('login')
   const [step, setStep] = useState<Step>('form')
+  const [showPassLogin, setShowPassLogin] = useState(false)
 
   const [contact, setContact] = useState('')
   const [password, setPassword] = useState('')
@@ -105,8 +106,6 @@ export default function Auth() {
 
   const [loading, setLoading] = useState(false)
   const [msg, setMsg] = useState('')
-
-  // The normalised identifier sent to the edge function
   const [resolvedId, setResolvedId] = useState('')
 
   useEffect(() => {
@@ -137,12 +136,11 @@ export default function Auth() {
     setMode(m); setStep('form'); setMsg('')
     setContact(''); setPassword(''); setNewPass(''); setNewPass2('')
     setFirstName(''); setLastName(''); setAge(''); setResolvedId('')
-    setOtp(['', '', '', '', '', '']); setExpired(false)
+    setOtp(['', '', '', '', '', '']); setExpired(false); setShowPassLogin(false)
     if (timerRef.current) clearInterval(timerRef.current)
   }
 
-  // ── LOGIN ─────────────────────────────────────────────────────────────────
-  async function login() {
+  async function loginWithPassword() {
     if (!contact.trim() || !password) { setMsg('err:Plotëso emailin dhe fjalëkalimin!'); return }
     setLoading(true); setMsg('')
     const { error } = await supabase.auth.signInWithPassword({ email: contact.trim(), password })
@@ -155,7 +153,6 @@ export default function Auth() {
     setLoading(false)
   }
 
-  // ── SEND OTP ──────────────────────────────────────────────────────────────
   async function sendOtp() {
     const raw = contact.trim()
     if (!raw) { setMsg('err:Fut emailin ose numrin e telefonit!'); return }
@@ -196,13 +193,12 @@ export default function Auth() {
         setMsg(`info:Kodi u dërgua te ${where}`)
         setTimeout(() => inputRefs.current[0]?.focus(), 150)
       }
-    } catch (e: any) {
-      setMsg(`err:${e.message}`)
+    } catch (e: unknown) {
+      setMsg(`err:${e instanceof Error ? e.message : 'Gabim lidhjeje'}`)
     }
     setLoading(false)
   }
 
-  // ── VERIFY OTP ────────────────────────────────────────────────────────────
   async function verifyOtp() {
     const code = otp.join('')
     if (code.length !== 6) { setMsg('err:Plotëso kodin 6-shifror!'); return }
@@ -227,7 +223,6 @@ export default function Auth() {
         return
       }
 
-      // Set session directly from tokens — no magic link
       const { error: sessErr } = await supabase.auth.setSession({
         access_token: data.access_token,
         refresh_token: data.refresh_token,
@@ -236,20 +231,22 @@ export default function Auth() {
 
       if (timerRef.current) clearInterval(timerRef.current)
 
-      if (mode === 'register') {
-        setMsg('ok:Llogaria u krijua! Duke u ridrejtuar...')
-        setTimeout(() => { window.location.href = '/' }, 700)
-      } else {
+      if (mode === 'forgot') {
         setStep('new-pass')
         setMsg('')
+      } else {
+        const okMsg = mode === 'register'
+          ? 'ok:Llogaria u krijua! Duke u ridrejtuar...'
+          : 'ok:Hyrja u krye! Duke u ridrejtuar...'
+        setMsg(okMsg)
+        setTimeout(() => { window.location.href = '/' }, 700)
       }
-    } catch (e: any) {
-      setMsg(`err:${e.message}`)
+    } catch (e: unknown) {
+      setMsg(`err:${e instanceof Error ? e.message : 'Gabim lidhjeje'}`)
     }
     setLoading(false)
   }
 
-  // ── SET NEW PASSWORD ──────────────────────────────────────────────────────
   async function setNewPassword() {
     if (newPass.length < 6) { setMsg('err:Fjalëkalimi duhet të ketë minimumi 6 karaktere!'); return }
     if (newPass !== newPass2) { setMsg('err:Fjalëkalimet nuk përputhen!'); return }
@@ -264,7 +261,6 @@ export default function Auth() {
     setLoading(false)
   }
 
-  // ── OTP HANDLERS ─────────────────────────────────────────────────────────
   function handleOtpChange(i: number, val: string) {
     if (!/^\d*$/.test(val) || expired) return
     const next = [...otp]; next[i] = val.slice(-1); setOtp(next)
@@ -291,7 +287,7 @@ export default function Auth() {
   const mins = Math.floor(countdown / 60)
   const secs = countdown % 60
   const timeClass = countdown > 30 ? 'ok-c' : countdown > 10 ? 'warn-c' : 'err-c'
-  const stepCount = mode === 'forgot' ? 3 : mode === 'register' ? 2 : 1
+  const stepCount = mode === 'forgot' ? 3 : mode === 'register' ? 2 : 2
   const stepIdx = step === 'form' ? 0 : step === 'otp' ? 1 : 2
   const cType = detectType(contact)
 
@@ -303,30 +299,82 @@ export default function Auth() {
         : <p className="hint warn">Fut email (user@domain.com) ose nr. telefoni (+355...)</p>
     : <p className="hint">📧 Email &nbsp;·&nbsp; 📱 Telefon me prefiks (+355, +1, +44...)</p>
 
+  const Logo = (
+    <div className="logo">
+      <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
+        <rect width="40" height="40" rx="10" fill="#E63312"/>
+        <g fill="#111">
+          <ellipse cx="20" cy="22" rx="4" ry="5.5"/>
+          <circle cx="15.5" cy="13" r="3.2"/>
+          <circle cx="24.5" cy="13" r="3.2"/>
+          <polygon points="13,15.5 11,16.5 13,17.5"/>
+          <polygon points="27,15.5 29,16.5 27,17.5"/>
+          <polygon points="20,20 6,18 8,26 20,25"/>
+          <polygon points="20,20 34,18 32,26 20,25"/>
+          <polygon points="17,27 23,27 24,33 20,32 16,33"/>
+        </g>
+        <rect x="24" y="26" width="12" height="10" rx="3" fill="#F5C842"/>
+      </svg>
+      <span className="brand">ALPAZAR</span>
+    </div>
+  )
+
+  const OtpStep = (
+    <>
+      <h2>🔐 Konfirmo Kodin</h2>
+      <p className="sub">
+        Kodi 6-shifror u dërgua te<br />
+        <strong>{resolvedId}</strong><br />
+        {detectType(resolvedId) === 'email' && (
+          <span style={{ fontSize: 10, color: '#aaa' }}>
+            Nëse nuk e gjen, kontrollo Spam / Junk
+          </span>
+        )}
+      </p>
+
+      <div className="countdown">
+        <span style={{ fontSize: 12, color: '#888' }}>
+          {expired ? 'Kodi skadoi' : 'Skadon në:'}
+        </span>
+        <span className={`countdown-time ${expired ? 'err-c' : timeClass}`}>
+          {expired ? '0:00' : `${mins}:${fmt2(secs)}`}
+        </span>
+        <button className="resend-btn" onClick={sendOtp} disabled={loading}>
+          {loading ? '...' : 'Ridërgo'}
+        </button>
+      </div>
+
+      {expired && (
+        <div className="msg warn">Kodi ka skaduar. Klikoje &quot;Ridërgo&quot; për kod të ri.</div>
+      )}
+
+      <div className="otp-row" onPaste={handleOtpPaste}>
+        {otp.map((d, i) => (
+          <input key={i}
+            ref={el => { inputRefs.current[i] = el }}
+            className={`otp-input${d ? ' filled' : ''}`}
+            type="text" inputMode="numeric" pattern="[0-9]*" maxLength={1}
+            value={d} disabled={expired}
+            onChange={e => handleOtpChange(i, e.target.value)}
+            onKeyDown={e => handleOtpKeyDown(i, e)}
+            autoComplete="one-time-code" />
+        ))}
+      </div>
+
+      <button className="btn" onClick={verifyOtp} disabled={loading || expired}>
+        {loading ? '⏳ Duke verifikuar...' : '✅ Konfirmo Kodin'}
+      </button>
+      <button className="btn-ghost" onClick={resetToForm}>← Ndrysho adresën</button>
+    </>
+  )
+
   return (
     <>
       <style>{CSS}</style>
       <div className="wrap">
         <div className="card">
 
-          {/* Logo */}
-          <div className="logo">
-            <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
-              <rect width="40" height="40" rx="10" fill="#E63312"/>
-              <g fill="#111">
-                <ellipse cx="20" cy="22" rx="4" ry="5.5"/>
-                <circle cx="15.5" cy="13" r="3.2"/>
-                <circle cx="24.5" cy="13" r="3.2"/>
-                <polygon points="13,15.5 11,16.5 13,17.5"/>
-                <polygon points="27,15.5 29,16.5 27,17.5"/>
-                <polygon points="20,20 6,18 8,26 20,25"/>
-                <polygon points="20,20 34,18 32,26 20,25"/>
-                <polygon points="17,27 23,27 24,33 20,32 16,33"/>
-              </g>
-              <rect x="24" y="26" width="12" height="10" rx="3" fill="#F5C842"/>
-            </svg>
-            <span className="brand">ALPAZAR</span>
-          </div>
+          {Logo}
 
           {mode !== 'login' && (
             <div className="steps">
@@ -338,45 +386,81 @@ export default function Auth() {
 
           {msg && <div className={`msg ${t}`}>{m}</div>}
 
-          {/* ─── LOGIN ─────────────────────────────── */}
-          {mode === 'login' && (
+          {/* ─── LOGIN form ─────────────────────────── */}
+          {mode === 'login' && step === 'form' && (
             <>
               <h2>🔑 Hyr në llogarinë tënde</h2>
               <p className="sub">ALPAZAR · Shit · Bli · Bëj Pazrin Tënd</p>
 
               <div className="field">
-                <label>Email</label>
-                <input type="email" placeholder="emaili@domain.com" value={contact}
-                  onChange={e => setContact(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && login()} autoComplete="email" />
-              </div>
-
-              <div className="field">
-                <label>Fjalëkalimi</label>
-                <div className="pass-wrap">
-                  <input type={showPass ? 'text' : 'password'} placeholder="••••••••" value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && login()} autoComplete="current-password"
-                    style={{ paddingRight: 36 }} />
-                  <button className="pass-toggle" onClick={() => setShowPass(v => !v)}>
-                    {showPass ? '🙈' : '👁️'}
-                  </button>
+                <label>{showPassLogin ? 'Email' : 'Email ose Numër Telefoni'}</label>
+                <div className="contact-wrap">
+                  <input
+                    type={showPassLogin ? 'email' : 'text'}
+                    placeholder={showPassLogin ? 'emaili@domain.com' : 'email@domain.com  ose  +355 6X XXX XXXX'}
+                    value={contact}
+                    onChange={e => setContact(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && (showPassLogin ? void 0 : sendOtp())}
+                    autoComplete="email"
+                    style={showPassLogin ? {} : { paddingRight: 36 }}
+                  />
+                  {!showPassLogin && (
+                    <span className="contact-type">
+                      {cType === 'email' ? '📧' : cType === 'phone' ? '📱' : ''}
+                    </span>
+                  )}
                 </div>
+                {!showPassLogin && contactHint}
               </div>
 
-              <span className="forgot-link" onClick={() => switchMode('forgot')}>
-                Harrove fjalëkalimin?
-              </span>
+              {showPassLogin && (
+                <div className="field">
+                  <label>Fjalëkalimi</label>
+                  <div className="pass-wrap">
+                    <input type={showPass ? 'text' : 'password'} placeholder="••••••••" value={password}
+                      onChange={e => setPassword(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && loginWithPassword()}
+                      autoComplete="current-password"
+                      style={{ paddingRight: 36 }} />
+                    <button className="pass-toggle" onClick={() => setShowPass(v => !v)}>
+                      {showPass ? '🙈' : '👁️'}
+                    </button>
+                  </div>
+                  <span className="forgot-link" onClick={() => switchMode('forgot')}>
+                    Harrove fjalëkalimin?
+                  </span>
+                </div>
+              )}
 
-              <button className="btn" onClick={login} disabled={loading}>
-                {loading ? '⏳ Duke hyrë...' : '🔑 Hyr'}
-              </button>
+              {showPassLogin ? (
+                <>
+                  <button className="btn" onClick={loginWithPassword} disabled={loading}>
+                    {loading ? '⏳ Duke hyrë...' : '🔑 Hyr'}
+                  </button>
+                  <button className="btn-ghost" onClick={() => setShowPassLogin(false)}>
+                    📨 Hyr me kod njëpërdorshëm
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button className="btn" onClick={sendOtp} disabled={loading}>
+                    {loading ? '⏳ Duke dërguar kodin...' : '📨 Dërgo Kodin'}
+                  </button>
+                  <button className="btn-ghost" onClick={() => setShowPassLogin(true)}>
+                    🔑 Hyr me fjalëkalim
+                  </button>
+                </>
+              )}
+
               <div className="divider">ose</div>
               <button className="btn-sec" onClick={() => switchMode('register')}>
                 📝 Regjistrohu falas
               </button>
             </>
           )}
+
+          {/* ─── LOGIN otp ──────────────────────────── */}
+          {mode === 'login' && step === 'otp' && OtpStep}
 
           {/* ─── REGISTER form ─────────────────────── */}
           {mode === 'register' && step === 'form' && (
@@ -432,6 +516,9 @@ export default function Auth() {
             </>
           )}
 
+          {/* ─── REGISTER otp ──────────────────────── */}
+          {mode === 'register' && step === 'otp' && OtpStep}
+
           {/* ─── FORGOT form ───────────────────────── */}
           {mode === 'forgot' && step === 'form' && (
             <>
@@ -461,55 +548,8 @@ export default function Auth() {
             </>
           )}
 
-          {/* ─── OTP step ──────────────────────────── */}
-          {(mode === 'register' || mode === 'forgot') && step === 'otp' && (
-            <>
-              <h2>🔐 Konfirmo Kodin</h2>
-              <p className="sub">
-                Kodi 6-shifror u dërgua te<br />
-                <strong>{resolvedId}</strong><br />
-                {detectType(resolvedId) === 'email' && (
-                  <span style={{ fontSize: 10, color: '#aaa' }}>
-                    Nëse nuk e gjen, kontrollo Spam / Junk
-                  </span>
-                )}
-              </p>
-
-              <div className="countdown">
-                <span style={{ fontSize: 12, color: '#888' }}>
-                  {expired ? 'Kodi skadoi' : 'Skadon në:'}
-                </span>
-                <span className={`countdown-time ${expired ? 'err-c' : timeClass}`}>
-                  {expired ? '0:00' : `${mins}:${fmt2(secs)}`}
-                </span>
-                <button className="resend-btn" onClick={sendOtp} disabled={loading}>
-                  {loading ? '...' : 'Ridërgo'}
-                </button>
-              </div>
-
-              {expired && (
-                <div className="msg warn">Kodi ka skaduar. Klikoje "Ridërgo" për kod të ri.</div>
-              )}
-
-              <div className="otp-row" onPaste={handleOtpPaste}>
-                {otp.map((d, i) => (
-                  <input key={i}
-                    ref={el => { inputRefs.current[i] = el }}
-                    className={`otp-input${d ? ' filled' : ''}`}
-                    type="text" inputMode="numeric" pattern="[0-9]*" maxLength={1}
-                    value={d} disabled={expired}
-                    onChange={e => handleOtpChange(i, e.target.value)}
-                    onKeyDown={e => handleOtpKeyDown(i, e)}
-                    autoComplete="one-time-code" />
-                ))}
-              </div>
-
-              <button className="btn" onClick={verifyOtp} disabled={loading || expired}>
-                {loading ? '⏳ Duke verifikuar...' : '✅ Konfirmo Kodin'}
-              </button>
-              <button className="btn-ghost" onClick={resetToForm}>← Ndrysho adresën</button>
-            </>
-          )}
+          {/* ─── FORGOT otp ────────────────────────── */}
+          {mode === 'forgot' && step === 'otp' && OtpStep}
 
           {/* ─── new-pass ──────────────────────────── */}
           {mode === 'forgot' && step === 'new-pass' && (
