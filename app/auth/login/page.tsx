@@ -354,7 +354,9 @@ export default function Auth() {
     ? cType === 'email'
       ? <p className="hint ok">📧 Kodi konfirmimit dërgohet me <strong>email</strong></p>
       : cType === 'phone'
-        ? <p className="hint ok">📱 Kodi konfirmimit dërgohet me <strong>SMS</strong></p>
+        ? smsFailMode
+          ? <p className="hint ok">📧 Numri ruhet — kodi dërgohet me <strong>email</strong></p>
+          : <p className="hint ok">📱 Kodi konfirmimit dërgohet me <strong>email</strong> (SMS i padisponueshëm)</p>
         : <p className="hint warn">Fut email (user@domain.com) ose nr. telefoni (+355, +1, +44...)</p>
     : <p className="hint">📧 Email &nbsp;·&nbsp; 📱 Çdo numër telefoni bote (+355, +1, +44...)</p>
 
