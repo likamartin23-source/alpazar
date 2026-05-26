@@ -121,6 +121,11 @@ export default function Auth() {
   const [msg, setMsg] = useState('')
   const [resolvedId, setResolvedId] = useState('')
 
+  // SMS fallback — when SMS is not configured, collect email instead
+  const [smsFailMode, setSmsFailMode] = useState(false)
+  const [smsFailEmail, setSmsFailEmail] = useState('')
+  const [originalPhone, setOriginalPhone] = useState('')
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) window.location.href = '/'
@@ -150,6 +155,7 @@ export default function Auth() {
     setContact(''); setPassword(''); setNewPass(''); setNewPass2('')
     setFirstName(''); setLastName(''); setAge(''); setResolvedId('')
     setOtp(['', '', '', '', '', '']); setExpired(false)
+    setSmsFailMode(false); setSmsFailEmail(''); setOriginalPhone('')
     if (timerRef.current) clearInterval(timerRef.current)
   }
 
@@ -203,7 +209,9 @@ export default function Auth() {
       const data = await res.json()
       if (!res.ok || data.error) {
         if (data.error === 'sms_not_configured') {
-          setMsg('err:SMS nuk është aktiv ende. Provoni me adresë email.')
+          setOriginalPhone(id)
+          setSmsFailMode(true)
+          setMsg('warn:SMS nuk është i konfiguruar. Shkruani emailin tuaj dhe do t\'ju dërgojmë kodin atje.')
         } else {
           setMsg(`err:${data.error ?? 'Gabim gjatë dërgimit.'}`)
         }
@@ -211,6 +219,33 @@ export default function Auth() {
         setStep('otp'); startCountdown(); setOtp(['', '', '', '', '', ''])
         const where = type === 'email' ? `📧 ${id}` : `📱 ${id}`
         setMsg(`info:Kodi u dërgua te ${where}`)
+        setTimeout(() => inputRefs.current[0]?.focus(), 150)
+      }
+    } catch (e: unknown) {
+      setMsg(`err:${e instanceof Error ? e.message : 'Gabim lidhjeje'}`)
+    }
+    setLoading(false)
+  }
+
+  // ── Send OTP via email (SMS fallback) ──────────────────────────────
+  async function sendOtpViaEmail() {
+    const email = smsFailEmail.trim()
+    if (!email || !email.includes('@')) { setMsg('err:Fut adresën e emailit të vlefshëm!'); return }
+    setLoading(true); setMsg('')
+    setResolvedId(email)
+    try {
+      const res = await fetch(`${FN_URL}/send-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier: email }),
+      })
+      const data = await res.json()
+      if (!res.ok || data.error) {
+        setMsg(`err:${data.error ?? 'Gabim gjatë dërgimit.'}`)
+      } else {
+        setSmsFailMode(false)
+        setStep('otp'); startCountdown(); setOtp(['', '', '', '', '', ''])
+        setMsg(`info:Kodi u dërgua te 📧 ${email}`)
         setTimeout(() => inputRefs.current[0]?.focus(), 150)
       }
     } catch (e: unknown) {
@@ -247,6 +282,14 @@ export default function Auth() {
       })
       if (sessErr) { setMsg(`err:${sessErr.message}`); setLoading(false); return }
       if (timerRef.current) clearInterval(timerRef.current)
+
+      // If original input was a phone number but we used email fallback, store phone in profile
+      if (originalPhone) {
+        const { data: { user: currentUser } } = await supabase.auth.getUser()
+        if (currentUser) {
+          await supabase.from('profiles').update({ phone: originalPhone }).eq('id', currentUser.id)
+        }
+      }
 
       if (mode === 'forgot') {
         setStep('new-pass'); setMsg('')
@@ -499,6 +542,23 @@ export default function Auth() {
                 {loading ? '⏳ Duke dërguar kodin...' : '📨 Dërgo Kodin e Konfirmimit'}
               </button>
 
+              {smsFailMode && (
+                <div style={{ marginTop: 4 }}>
+                  <div className="field" style={{ marginBottom: 8 }}>
+                    <label>📧 Adresa e emailit tuaj</label>
+                    <input type="email" placeholder="email@domain.com"
+                      value={smsFailEmail}
+                      onChange={e => setSmsFailEmail(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && sendOtpViaEmail()}
+                      autoComplete="email" />
+                    <p className="hint">Kodi do të dërgohet te ky email. Numri i telefonit ruhet në profilin tuaj.</p>
+                  </div>
+                  <button className="btn-yellow" onClick={sendOtpViaEmail} disabled={loading}>
+                    {loading ? '⏳ Duke dërguar...' : '📧 Dërgo Kodin me Email'}
+                  </button>
+                </div>
+              )}
+
               <div className="sec-row">Ke llogari? &nbsp;<a onClick={() => switchMode('login')}>Hyr →</a></div>
 
               <p className="terms">
@@ -541,6 +601,24 @@ export default function Auth() {
               <button className="btn" onClick={sendOtp} disabled={loading}>
                 {loading ? '⏳ Duke dërguar...' : '📨 Dërgo Kodin e Konfirmimit'}
               </button>
+
+              {smsFailMode && (
+                <div style={{ marginTop: 4 }}>
+                  <div className="field" style={{ marginBottom: 8 }}>
+                    <label>📧 Adresa e emailit tuaj</label>
+                    <input type="email" placeholder="email@domain.com"
+                      value={smsFailEmail}
+                      onChange={e => setSmsFailEmail(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && sendOtpViaEmail()}
+                      autoComplete="email" />
+                    <p className="hint">Kodi do të dërgohet te ky email.</p>
+                  </div>
+                  <button className="btn-yellow" onClick={sendOtpViaEmail} disabled={loading}>
+                    {loading ? '⏳ Duke dërguar...' : '📧 Dërgo Kodin me Email'}
+                  </button>
+                </div>
+              )}
+
               <button className="btn-ghost" onClick={() => switchMode('login')}>← Kthehu te Hyrja</button>
             </>
           )}
