@@ -51,7 +51,7 @@ export default function AsistentPage() {
     setLoading(true)
 
     try {
-      const res = await fetch('/api/ai', {
+      const res = await fetch('https://sopafwfkrxpcdaljddoh.supabase.co/functions/v1/albi-chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: updated }),
