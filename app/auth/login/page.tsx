@@ -85,9 +85,11 @@ const CSS = `
   .contact-type{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;}
   .forgot-link{display:block;text-align:center;font-size:11px;color:#aaa;cursor:pointer;margin-top:4px;}
   .forgot-link:hover{color:#E63312;text-decoration:underline;}
-  .phone-email-box{background:#F8F9FC;border:1.5px solid #dde;border-radius:12px;padding:14px;margin-bottom:10px;}
-  .phone-email-note{font-size:11px;color:#888;margin:0 0 10px;line-height:1.5;}
-  .phone-email-note strong{color:#111;}
+  .sms-fail-box{background:#FFF8EE;border:1.5px solid #F5C842;border-radius:12px;padding:14px;margin-bottom:10px;}
+  .sms-fail-header{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;}
+  .sms-fail-header span{font-size:22px;flex-shrink:0;}
+  .sms-fail-header strong{font-size:13px;font-weight:700;color:#111;display:block;margin-bottom:3px;}
+  .sms-fail-header p{font-size:11px;color:#888;margin:0;line-height:1.5;}
   .sec-row{text-align:center;font-size:12px;color:#888;margin-top:6px;}
   .sec-row a{color:#E63312;font-weight:700;cursor:pointer;text-decoration:none;}
   .sec-row a:hover{text-decoration:underline;}
@@ -230,43 +232,7 @@ export default function Auth() {
     setLoading(false)
   }
 
-  // ── Send OTP directly to email when phone number entered ───────────
-  async function sendOtpWithPhone() {
-    if (mode === 'register') {
-      if (!firstName.trim()) { setMsg('err:Emri është i detyrueshëm!'); return }
-      if (!lastName.trim()) { setMsg('err:Mbiemri është i detyrueshëm!'); return }
-      const ageN = parseInt(age)
-      if (!age || ageN < 16 || ageN > 120) { setMsg('err:Mosha duhet të jetë minimumi 16 vjeç!'); return }
-    }
-    const raw = contact.trim()
-    if (!raw) { setMsg('err:Fut numrin e telefonit!'); return }
-    const phone = toE164(raw)
-    const email = smsFailEmail.trim()
-    if (!email || !email.includes('@')) { setMsg('err:Fut adresën e emailit të vlefshëm!'); return }
-    setOriginalPhone(phone)
-    setResolvedId(email)
-    setLoading(true); setMsg('')
-    try {
-      const res = await fetch(`${FN_URL}/send-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identifier: email }),
-      })
-      const data = await res.json()
-      if (!res.ok || data.error) {
-        setMsg(`err:${data.error ?? 'Gabim gjatë dërgimit.'}`)
-      } else {
-        setStep('otp'); startCountdown(); setOtp(['', '', '', '', '', ''])
-        setMsg(`info:Kodi u dërgua te 📧 ${email}`)
-        setTimeout(() => inputRefs.current[0]?.focus(), 150)
-      }
-    } catch (e: unknown) {
-      setMsg(`err:${e instanceof Error ? e.message : 'Gabim lidhjeje'}`)
-    }
-    setLoading(false)
-  }
-
-  // ── Send OTP via email (SMS fallback legacy) ────────────────────────
+  // ── Send OTP via email (SMS fallback) ──────────────────────────────
   async function sendOtpViaEmail() {
     const email = smsFailEmail.trim()
     if (!email || !email.includes('@')) { setMsg('err:Fut adresën e emailit të vlefshëm!'); return }
@@ -388,7 +354,9 @@ export default function Auth() {
     ? cType === 'email'
       ? <p className="hint ok">📧 Kodi konfirmimit dërgohet me <strong>email</strong></p>
       : cType === 'phone'
-        ? null
+        ? smsFailMode
+          ? <p className="hint ok">📧 Numri ruhet — kodi dërgohet me <strong>email</strong></p>
+          : <p className="hint ok">📱 Kodi konfirmimit dërgohet me <strong>email</strong> (SMS i padisponueshëm)</p>
         : <p className="hint warn">Fut email (user@domain.com) ose nr. telefoni (+355, +1, +44...)</p>
     : <p className="hint">📧 Email &nbsp;·&nbsp; 📱 Çdo numër telefoni bote (+355, +1, +44...)</p>
 
@@ -577,26 +545,7 @@ export default function Auth() {
                 {contactHint}
               </div>
 
-              {cType === 'phone' ? (
-                <div className="phone-email-box">
-                  <p className="phone-email-note">
-                    📱 <strong>{toE164(contact)}</strong> ruhet në profil &nbsp;·&nbsp;
-                    kodi konfirmimit dërgohet me <strong>email</strong>
-                  </p>
-                  <div className="field" style={{ marginBottom: 10 }}>
-                    <label>📧 Emaili yt *</label>
-                    <input type="email" placeholder="emri@domain.com"
-                      value={smsFailEmail}
-                      onChange={e => setSmsFailEmail(e.target.value)}
-                      onKeyDown={e => e.key === 'Enter' && sendOtpWithPhone()}
-                      autoComplete="email" />
-                  </div>
-                  <button className="btn" onClick={sendOtpWithPhone} disabled={loading}>
-                    {loading ? '⏳ Duke dërguar...' : '📨 Dërgo Kodin e Konfirmimit'}
-                  </button>
-                  <div className="sec-row" style={{ marginTop: 8 }}>Ke llogari? &nbsp;<a onClick={() => switchMode('login')}>Hyr →</a></div>
-                </div>
-              ) : (
+              {!smsFailMode ? (
                 <>
                   <button className="btn" onClick={sendOtp} disabled={loading}>
                     {loading ? '⏳ Duke dërguar kodin...' : '📨 Dërgo Kodin e Konfirmimit'}
@@ -608,6 +557,32 @@ export default function Auth() {
                     <a href="/privatesia">Politikën e Privatësisë</a>
                   </p>
                 </>
+              ) : (
+                <div className="sms-fail-box">
+                  <div className="sms-fail-header">
+                    <span>📱</span>
+                    <div>
+                      <strong>SMS nuk funksionon për {originalPhone}</strong>
+                      <p>Konfirmo regjistrimin me email — numri ruhet në profil.</p>
+                    </div>
+                  </div>
+                  <div className="field" style={{ marginBottom: 10 }}>
+                    <label>📧 Emaili yt *</label>
+                    <input type="email" placeholder="emri@domain.com"
+                      value={smsFailEmail}
+                      onChange={e => setSmsFailEmail(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && sendOtpViaEmail()}
+                      autoComplete="email"
+                      autoFocus />
+                  </div>
+                  <button className="btn" onClick={sendOtpViaEmail} disabled={loading}>
+                    {loading ? '⏳ Duke dërguar...' : '📧 Dërgo Kodin në Email'}
+                  </button>
+                  <button className="btn-ghost" style={{ marginTop: 6 }}
+                    onClick={() => { setSmsFailMode(false); setMsg('') }}>
+                    ← Ndrysho numrin e telefonit
+                  </button>
+                </div>
               )}
             </>
           )}
@@ -641,31 +616,44 @@ export default function Auth() {
                 {contactHint}
               </div>
 
-              {cType === 'phone' ? (
-                <div className="phone-email-box">
-                  <p className="phone-email-note">
-                    📱 <strong>{toE164(contact)}</strong> ruhet në profil &nbsp;·&nbsp;
-                    kodi konfirmimit dërgohet me <strong>email</strong>
-                  </p>
+              {!smsFailMode ? (
+                <button className="btn" onClick={sendOtp} disabled={loading}>
+                  {loading ? '⏳ Duke dërguar...' : '📨 Dërgo Kodin e Konfirmimit'}
+                </button>
+              ) : null}
+
+              {smsFailMode && (
+                <div className="sms-fail-box" style={{ marginTop: 4 }}>
+                  <div className="sms-fail-header">
+                    <span>📱</span>
+                    <div>
+                      <strong>SMS nuk funksionon për {originalPhone}</strong>
+                      <p>Konfirmo me email — numri ruhet në profil.</p>
+                    </div>
+                  </div>
                   <div className="field" style={{ marginBottom: 10 }}>
                     <label>📧 Emaili yt *</label>
                     <input type="email" placeholder="emri@domain.com"
                       value={smsFailEmail}
                       onChange={e => setSmsFailEmail(e.target.value)}
-                      onKeyDown={e => e.key === 'Enter' && sendOtpWithPhone()}
-                      autoComplete="email" />
+                      onKeyDown={e => e.key === 'Enter' && sendOtpViaEmail()}
+                      autoComplete="email"
+                      autoFocus />
+                    <p className="hint">Kodi do të dërgohet te ky email.</p>
                   </div>
-                  <button className="btn" onClick={sendOtpWithPhone} disabled={loading}>
-                    {loading ? '⏳ Duke dërguar...' : '📨 Dërgo Kodin e Konfirmimit'}
+                  <button className="btn" onClick={sendOtpViaEmail} disabled={loading}>
+                    {loading ? '⏳ Duke dërguar...' : '📧 Dërgo Kodin në Email'}
+                  </button>
+                  <button className="btn-ghost" style={{ marginTop: 6 }}
+                    onClick={() => { setSmsFailMode(false); setMsg('') }}>
+                    ← Ndrysho numrin
                   </button>
                 </div>
-              ) : (
-                <button className="btn" onClick={sendOtp} disabled={loading}>
-                  {loading ? '⏳ Duke dërguar...' : '📨 Dërgo Kodin e Konfirmimit'}
-                </button>
               )}
 
-              <button className="btn-ghost" onClick={() => switchMode('login')}>← Kthehu te Hyrja</button>
+              {!smsFailMode && (
+                <button className="btn-ghost" onClick={() => switchMode('login')}>← Kthehu te Hyrja</button>
+              )}
             </>
           )}
 
