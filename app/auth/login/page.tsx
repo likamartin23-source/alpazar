@@ -33,7 +33,7 @@ const CSS = `
   body{background:#FFFBEA;}
   .wrap{min-height:100vh;background:#FFFBEA;display:flex;align-items:center;justify-content:center;padding:20px;}
   .card{background:#fff;border-radius:16px;border:1.5px solid #e0b030;padding:28px 24px;width:100%;max-width:400px;box-shadow:0 4px 24px rgba(0,0,0,.06);}
-  .logo{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:18px;}
+  .logo{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:20px;}
   .brand{font-size:24px;font-weight:700;color:#111;letter-spacing:2px;}
   h2{font-size:17px;font-weight:700;color:#111;margin-bottom:5px;text-align:center;}
   .sub{font-size:12px;color:#888;text-align:center;margin-bottom:18px;line-height:1.6;}
@@ -48,14 +48,14 @@ const CSS = `
   .hint.warn{color:#A05000;}
   .btn{width:100%;background:#E63312;color:#fff;border:none;border-radius:9px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px;transition:opacity .15s;}
   .btn:disabled{opacity:.6;cursor:not-allowed;}
-  .btn-ghost{width:100%;background:none;color:#888;border:1.5px solid #eee;border-radius:9px;padding:11px;font-size:13px;cursor:pointer;font-family:inherit;margin-bottom:8px;}
-  .btn-ghost:hover{border-color:#ddd;color:#555;}
+  .btn-ghost{width:100%;background:none;color:#555;border:1.5px solid #ddd;border-radius:9px;padding:12px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:8px;transition:border .15s;}
+  .btn-ghost:hover{border-color:#bbb;}
   .msg{text-align:center;font-size:12px;padding:10px 12px;border-radius:8px;margin-bottom:12px;font-weight:500;line-height:1.5;}
   .ok{background:#EAF3DE;color:#3B6D11;border:0.5px solid #97C459;}
   .err{background:#FFF0EE;color:#E63312;border:0.5px solid #F09595;}
   .info{background:#EEF4FF;color:#185FA5;border:0.5px solid #85B7EB;}
   .warn{background:#FFF8EE;color:#A05000;border:0.5px solid #F5C842;}
-  .divider{display:flex;align-items:center;gap:10px;margin:10px 0;color:#ccc;font-size:12px;}
+  .divider{display:flex;align-items:center;gap:10px;margin:12px 0;color:#ccc;font-size:12px;}
   .divider::before,.divider::after{content:'';flex:1;border-top:1px solid #eee;}
   .back{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:14px;color:#888;font-size:12px;cursor:pointer;}
   .back:hover{color:#E63312;}
@@ -71,42 +71,43 @@ const CSS = `
   .countdown-time.err-c{color:#E63312;}
   .resend-btn{font-size:12px;color:#E63312;font-weight:600;background:none;border:none;cursor:pointer;font-family:inherit;text-decoration:underline;}
   .resend-btn:disabled{color:#bbb;text-decoration:none;cursor:default;}
-  .forgot-link{display:block;text-align:center;font-size:11px;color:#888;cursor:pointer;margin-top:6px;text-decoration:underline;}
-  .forgot-link:hover{color:#E63312;}
   .steps{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:16px;}
   .step-dot{width:8px;height:8px;border-radius:50%;background:#eee;}
   .step-dot.active{background:#E63312;width:20px;border-radius:4px;}
   .step-dot.done{background:#97C459;}
-  .terms{font-size:10px;color:#aaa;text-align:center;margin-top:8px;line-height:1.6;}
+  .terms{font-size:10px;color:#aaa;text-align:center;margin-top:10px;line-height:1.6;}
   .terms a{color:#888;text-decoration:underline;}
   .pass-wrap{position:relative;}
   .pass-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#aaa;font-size:13px;padding:4px;}
   .contact-wrap{position:relative;}
   .contact-type{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;}
-  .register-link{text-align:center;font-size:12px;color:#888;margin-top:4px;}
-  .register-link span{color:#E63312;font-weight:700;cursor:pointer;text-decoration:underline;}
-  .register-link span:hover{color:#c02000;}
-  .forgot-opt{text-align:center;font-size:11px;color:#aaa;margin-top:8px;}
-  .forgot-opt span{color:#888;cursor:pointer;text-decoration:underline;}
-  .forgot-opt span:hover{color:#E63312;}
+  .forgot-link{display:block;text-align:center;font-size:11px;color:#aaa;cursor:pointer;margin-top:4px;}
+  .forgot-link:hover{color:#E63312;text-decoration:underline;}
+  .sec-row{text-align:center;font-size:12px;color:#888;margin-top:6px;}
+  .sec-row a{color:#E63312;font-weight:700;cursor:pointer;text-decoration:none;}
+  .sec-row a:hover{text-decoration:underline;}
 `
 
-const OTP_SECONDS = 60 // 1 minutë
+const OTP_SECONDS = 60
 
 export default function Auth() {
   const [mode, setMode] = useState<Mode>('login')
   const [step, setStep] = useState<Step>('form')
-  const [showPassLogin, setShowPassLogin] = useState(false)
 
+  // login fields
   const [contact, setContact] = useState('')
   const [password, setPassword] = useState('')
   const [showPass, setShowPass] = useState(false)
-  const [newPass, setNewPass] = useState('')
-  const [newPass2, setNewPass2] = useState('')
-  const [showNewPass, setShowNewPass] = useState(false)
+
+  // register extra fields
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [age, setAge] = useState('')
+
+  // new password (forgot flow)
+  const [newPass, setNewPass] = useState('')
+  const [newPass2, setNewPass2] = useState('')
+  const [showNewPass, setShowNewPass] = useState(false)
 
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
   const [countdown, setCountdown] = useState(0)
@@ -146,23 +147,32 @@ export default function Auth() {
     setMode(m); setStep('form'); setMsg('')
     setContact(''); setPassword(''); setNewPass(''); setNewPass2('')
     setFirstName(''); setLastName(''); setAge(''); setResolvedId('')
-    setOtp(['', '', '', '', '', '']); setExpired(false); setShowPassLogin(false)
+    setOtp(['', '', '', '', '', '']); setExpired(false)
     if (timerRef.current) clearInterval(timerRef.current)
   }
 
-  async function loginWithPassword() {
-    if (!contact.trim() || !password) { setMsg('err:Plotëso emailin dhe fjalëkalimin!'); return }
+  // ── 1. LOGIN — email/phone + password ──────────────────────────────
+  async function login() {
+    const raw = contact.trim()
+    if (!raw || !password) { setMsg('err:Plotëso të gjitha fushat!'); return }
     setLoading(true); setMsg('')
-    const { error } = await supabase.auth.signInWithPassword({ email: contact.trim(), password })
+    const type = detectType(raw)
+    const id = type === 'phone' ? toE164(raw) : raw
+    const payload = type === 'phone'
+      ? { phone: id, password }
+      : { email: id, password }
+    const { error } = await supabase.auth.signInWithPassword(payload)
     if (error) {
-      setMsg(`err:${error.message.includes('Invalid') ? 'Email ose fjalëkalim i gabuar!' : error.message}`)
+      const isWrong = error.message.toLowerCase().includes('invalid') || error.message.toLowerCase().includes('credentials')
+      setMsg(`err:${isWrong ? 'Email/telefon ose fjalëkalim i gabuar!' : error.message}`)
     } else {
-      setMsg('ok:Hyrja u krye! Duke të ridrejtuar...')
+      setMsg('ok:Hyrja u krye! Duke u ridrejtuar...')
       setTimeout(() => { window.location.href = '/' }, 600)
     }
     setLoading(false)
   }
 
+  // ── 2 & 3. Send OTP (register / forgot) ────────────────────────────
   async function sendOtp() {
     const raw = contact.trim()
     if (!raw) { setMsg('err:Fut emailin ose numrin e telefonit!'); return }
@@ -179,10 +189,8 @@ export default function Auth() {
       setMsg('err:Fut email të vlefshëm ose nr. telefoni me prefiks (+355, +1, +44...)')
       return
     }
-
     const id = type === 'phone' ? toE164(raw) : raw
     setResolvedId(id)
-
     setLoading(true); setMsg('')
     try {
       const res = await fetch(`${FN_URL}/send-otp`, {
@@ -192,18 +200,14 @@ export default function Auth() {
       })
       const data = await res.json()
       if (!res.ok || data.error) {
-        if (data.error === 'sms_not_configured' || data.message?.includes('SMS nuk')) {
+        if (data.error === 'sms_not_configured') {
           setMsg('err:SMS nuk është aktiv ende. Provoni me adresë email.')
         } else {
           setMsg(`err:${data.error ?? 'Gabim gjatë dërgimit.'}`)
         }
       } else {
-        setStep('otp')
-        startCountdown()
-        setOtp(['', '', '', '', '', ''])
-        const where = type === 'email'
-          ? `📧 ${id} — kontrollo edhe spam`
-          : `📱 ${id}`
+        setStep('otp'); startCountdown(); setOtp(['', '', '', '', '', ''])
+        const where = type === 'email' ? `📧 ${id}` : `📱 ${id}`
         setMsg(`info:Kodi u dërgua te ${where}`)
         setTimeout(() => inputRefs.current[0]?.focus(), 150)
       }
@@ -213,6 +217,7 @@ export default function Auth() {
     setLoading(false)
   }
 
+  // ── Verify OTP (register / forgot) ─────────────────────────────────
   async function verifyOtp() {
     const code = otp.join('')
     if (code.length !== 6) { setMsg('err:Plotëso kodin 6-shifror!'); return }
@@ -223,9 +228,7 @@ export default function Auth() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          identifier: resolvedId,
-          code,
-          mode,
+          identifier: resolvedId, code, mode,
           firstName: firstName.trim() || undefined,
           lastName: lastName.trim() || undefined,
           age: age ? parseInt(age) : undefined,
@@ -233,35 +236,20 @@ export default function Auth() {
       })
       const data = await res.json()
       if (!res.ok || data.error) {
-        if (mode === 'login' && (res.status === 404 || data.error?.includes('ekziston llogari'))) {
-          setStep('form')
-          setMode('register')
-          setOtp(['', '', '', '', '', ''])
-          if (timerRef.current) clearInterval(timerRef.current)
-          setMsg('warn:Nuk ke llogari ende. Plotëso emrin dhe moshën për t\'u regjistruar!')
-          setLoading(false)
-          return
-        }
         setMsg(`err:${data.error ?? 'Kodi i gabuar ose ka skaduar!'}`)
         return
       }
-
       const { error: sessErr } = await supabase.auth.setSession({
         access_token: data.access_token,
         refresh_token: data.refresh_token,
       })
       if (sessErr) { setMsg(`err:${sessErr.message}`); setLoading(false); return }
-
       if (timerRef.current) clearInterval(timerRef.current)
 
       if (mode === 'forgot') {
-        setStep('new-pass')
-        setMsg('')
+        setStep('new-pass'); setMsg('')
       } else {
-        const okMsg = mode === 'register'
-          ? 'ok:Llogaria u krijua! Duke u ridrejtuar...'
-          : 'ok:Hyrja u krye! Duke u ridrejtuar...'
-        setMsg(okMsg)
+        setMsg('ok:Llogaria u krijua! Duke u ridrejtuar...')
         setTimeout(() => { window.location.href = '/' }, 700)
       }
     } catch (e: unknown) {
@@ -275,9 +263,8 @@ export default function Auth() {
     if (newPass !== newPass2) { setMsg('err:Fjalëkalimet nuk përputhen!'); return }
     setLoading(true); setMsg('')
     const { error } = await supabase.auth.updateUser({ password: newPass })
-    if (error) {
-      setMsg(`err:${error.message}`)
-    } else {
+    if (error) { setMsg(`err:${error.message}`) }
+    else {
       setMsg('ok:Fjalëkalimi u ndryshua! Duke u ridrejtuar...')
       setTimeout(() => { window.location.href = '/' }, 700)
     }
@@ -310,17 +297,16 @@ export default function Auth() {
   const mins = Math.floor(countdown / 60)
   const secs = countdown % 60
   const timeClass = countdown > 30 ? 'ok-c' : countdown > 10 ? 'warn-c' : 'err-c'
-  const stepCount = mode === 'forgot' ? 3 : 2
   const stepIdx = step === 'form' ? 0 : step === 'otp' ? 1 : 2
   const cType = detectType(contact)
 
   const contactHint = contact.length > 2
     ? cType === 'email'
-      ? <p className="hint ok">📧 Do të marrësh kodin me <strong>email</strong></p>
+      ? <p className="hint ok">📧 Kodi konfirmimit dërgohet me <strong>email</strong></p>
       : cType === 'phone'
-        ? <p className="hint ok">📱 Do të marrësh kodin me <strong>SMS</strong> (çdo numër bote)</p>
-        : <p className="hint warn">Fut email (user@domain.com) ose nr. telefoni me prefiks (+355, +1, +44...)</p>
-    : <p className="hint">📧 Email &nbsp;·&nbsp; 📱 Çdo numër telefoni bote (+355, +1, +44, 00...)</p>
+        ? <p className="hint ok">📱 Kodi konfirmimit dërgohet me <strong>SMS</strong></p>
+        : <p className="hint warn">Fut email (user@domain.com) ose nr. telefoni (+355, +1, +44...)</p>
+    : <p className="hint">📧 Email &nbsp;·&nbsp; 📱 Çdo numër telefoni bote (+355, +1, +44...)</p>
 
   const Logo = (
     <div className="logo">
@@ -349,16 +335,12 @@ export default function Auth() {
         Kodi 6-shifror u dërgua te<br />
         <strong>{resolvedId}</strong><br />
         {detectType(resolvedId) === 'email' && (
-          <span style={{ fontSize: 10, color: '#aaa' }}>
-            Nëse nuk e gjen, kontrollo Spam / Junk
-          </span>
+          <span style={{ fontSize: 10, color: '#aaa' }}>Nëse nuk e gjen, kontrollo Spam / Junk</span>
         )}
       </p>
 
       <div className="countdown">
-        <span style={{ fontSize: 12, color: '#888' }}>
-          {expired ? 'Kodi skadoi' : 'Skadon në:'}
-        </span>
+        <span style={{ fontSize: 12, color: '#888' }}>{expired ? 'Kodi skadoi' : 'Skadon në:'}</span>
         <span className={`countdown-time ${expired ? 'err-c' : timeClass}`}>
           {expired ? '0:00' : `${mins}:${fmt2(secs)}`}
         </span>
@@ -367,9 +349,7 @@ export default function Auth() {
         </button>
       </div>
 
-      {expired && (
-        <div className="msg warn">Kodi ka skaduar. Klikoje &quot;Ridërgo&quot; për kod të ri.</div>
-      )}
+      {expired && <div className="msg warn">Kodi ka skaduar. Klikoje &quot;Ridërgo&quot; për kod të ri.</div>}
 
       <div className="otp-row" onPaste={handleOtpPaste}>
         {otp.map((d, i) => (
@@ -396,12 +376,11 @@ export default function Auth() {
       <style>{CSS}</style>
       <div className="wrap">
         <div className="card">
-
           {Logo}
 
           {mode !== 'login' && (
             <div className="steps">
-              {Array.from({ length: stepCount }).map((_, i) => (
+              {Array.from({ length: mode === 'forgot' ? 3 : 2 }).map((_, i) => (
                 <div key={i} className={`step-dot ${i === stepIdx ? 'active' : i < stepIdx ? 'done' : ''}`} />
               ))}
             </div>
@@ -409,167 +388,104 @@ export default function Auth() {
 
           {msg && <div className={`msg ${t}`}>{m}</div>}
 
-          {/* ─── LOGIN form ─────────────────────────── */}
+          {/* ════════════════════════════════════════
+              1. HYRJA — email/telefon + fjalëkalim (PRIMARE)
+              ════════════════════════════════════════ */}
           {mode === 'login' && step === 'form' && (
             <>
-              <h2>🔑 Hyr në llogarinë tënde</h2>
-              <p className="sub">ALPAZAR · Shit · Bli · Bëj Pazrin Tënd</p>
+              <h2>Mirë se vini në ALPAZAR</h2>
+              <p className="sub">Shit · Bli · Bëj Pazrin Tënd</p>
 
               <div className="field">
-                <label>{showPassLogin ? 'Email' : 'Email ose Numër Telefoni'}</label>
+                <label>Email ose Numër Telefoni</label>
                 <div className="contact-wrap">
                   <input
-                    type={showPassLogin ? 'email' : 'text'}
-                    placeholder={showPassLogin ? 'emaili@domain.com' : 'email@domain.com  ose  +355 6X XXX XXXX  ose  +1 212...'}
+                    type="text"
+                    placeholder="+355 6X XXX XXXX  ose  email@domain.com"
                     value={contact}
                     onChange={e => setContact(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && (showPassLogin ? void 0 : sendOtp())}
-                    autoComplete="email"
-                    style={showPassLogin ? {} : { paddingRight: 36 }}
+                    onKeyDown={e => e.key === 'Enter' && login()}
+                    autoComplete="username"
+                    style={{ paddingRight: 36 }}
                   />
-                  {!showPassLogin && (
-                    <span className="contact-type">
-                      {cType === 'email' ? '📧' : cType === 'phone' ? '📱' : ''}
-                    </span>
-                  )}
-                </div>
-                {!showPassLogin && contactHint}
-              </div>
-
-              {showPassLogin && (
-                <div className="field">
-                  <label>Fjalëkalimi</label>
-                  <div className="pass-wrap">
-                    <input type={showPass ? 'text' : 'password'} placeholder="••••••••" value={password}
-                      onChange={e => setPassword(e.target.value)}
-                      onKeyDown={e => e.key === 'Enter' && loginWithPassword()}
-                      autoComplete="current-password"
-                      style={{ paddingRight: 36 }} />
-                    <button className="pass-toggle" onClick={() => setShowPass(v => !v)}>
-                      {showPass ? '🙈' : '👁️'}
-                    </button>
-                  </div>
-                  <span className="forgot-link" onClick={() => switchMode('forgot')}>
-                    Harrove fjalëkalimin?
+                  <span className="contact-type">
+                    {cType === 'email' ? '📧' : cType === 'phone' ? '📱' : ''}
                   </span>
                 </div>
-              )}
-
-              {showPassLogin ? (
-                <>
-                  <button className="btn" onClick={loginWithPassword} disabled={loading}>
-                    {loading ? '⏳ Duke hyrë...' : '🔑 Hyr'}
-                  </button>
-                  <button className="btn-ghost" onClick={() => setShowPassLogin(false)}>
-                    📨 Hyr me kod njëpërdorshëm
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button className="btn" onClick={sendOtp} disabled={loading}>
-                    {loading ? '⏳ Duke dërguar kodin...' : '📨 Dërgo Kodin e Hyrjes'}
-                  </button>
-                  <button className="btn-ghost" onClick={() => setShowPassLogin(true)}>
-                    🔑 Hyr me fjalëkalim
-                  </button>
-                </>
-              )}
-
-              <div className="divider">ose</div>
-
-              {/* Register — secondary, smaller */}
-              <div className="register-link">
-                Nuk ke llogari? &nbsp;
-                <span onClick={() => switchMode('register')}>Regjistrohu falas →</span>
               </div>
 
-              {/* Forgot — tertiary, very subtle */}
-              {!showPassLogin && (
-                <div className="forgot-opt">
-                  <span onClick={() => switchMode('forgot')}>Humbëve llogarinë?</span>
+              <div className="field">
+                <label>Fjalëkalimi</label>
+                <div className="pass-wrap">
+                  <input
+                    type={showPass ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && login()}
+                    autoComplete="current-password"
+                    style={{ paddingRight: 36 }}
+                  />
+                  <button className="pass-toggle" onClick={() => setShowPass(v => !v)}>
+                    {showPass ? '🙈' : '👁️'}
+                  </button>
                 </div>
-              )}
+                {/* 3. Rikthimi — tertiar, nën fjalëkalim */}
+                <span className="forgot-link" onClick={() => switchMode('forgot')}>
+                  Keni harruar fjalëkalimin?
+                </span>
+              </div>
+
+              {/* Butoni kryesor */}
+              <button className="btn" onClick={login} disabled={loading}>
+                {loading ? '⏳ Duke hyrë...' : '🔑 Hyr'}
+              </button>
+
+              {/* 2. Regjistrimi — sekondare */}
+              <div className="divider">ose</div>
+              <button className="btn-ghost" onClick={() => switchMode('register')}>
+                📝 Regjistrohu Falas
+              </button>
             </>
           )}
 
-          {/* ─── LOGIN otp ──────────────────────────── */}
-          {mode === 'login' && step === 'otp' && OtpStep}
-
-          {/* ─── REGISTER form ─────────────────────── */}
+          {/* ════════════════════════════════════════
+              2. REGJISTRIMI — OTP (SEKONDARE)
+              ════════════════════════════════════════ */}
           {mode === 'register' && step === 'form' && (
             <>
-              <h2>🚀 Regjistrohu falas</h2>
-              <p className="sub">Pa fjalëkalim — konfirmo vetëm me kod</p>
+              <h2>📝 Regjistrohu Falas</h2>
+              <p className="sub">Krijo llogarinë tënde — konfirmo me kod</p>
 
               <div className="row-2">
                 <div className="field">
                   <label>Emri *</label>
                   <input type="text" placeholder="Arta" value={firstName}
-                    onChange={e => setFirstName(e.target.value)} />
+                    onChange={e => setFirstName(e.target.value)} autoComplete="given-name" />
                 </div>
                 <div className="field">
                   <label>Mbiemri *</label>
                   <input type="text" placeholder="Hoxha" value={lastName}
-                    onChange={e => setLastName(e.target.value)} />
+                    onChange={e => setLastName(e.target.value)} autoComplete="family-name" />
                 </div>
               </div>
 
               <div className="field">
                 <label>Mosha * (min. 16 vjeç)</label>
-                <input type="number" placeholder="25" value={age}
-                  onChange={e => setAge(e.target.value)} min="16" max="120" />
+                <input type="number" placeholder="25" value={age} min="16" max="120"
+                  onChange={e => setAge(e.target.value)} />
               </div>
 
               <div className="field">
                 <label>Email ose Numër Telefoni *</label>
                 <div className="contact-wrap">
                   <input type="text"
-                    placeholder="email@domain.com  ose  +355 6X XXX XXXX  ose  +1 212..."
+                    placeholder="+355 6X XXX XXXX  ose  email@domain.com"
                     value={contact}
                     onChange={e => setContact(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && sendOtp()}
-                    autoComplete="email" />
-                  <span className="contact-type">
-                    {cType === 'email' ? '📧' : cType === 'phone' ? '📱' : ''}
-                  </span>
-                </div>
-                {contactHint}
-              </div>
-
-              <button className="btn" onClick={sendOtp} disabled={loading}>
-                {loading ? '⏳ Duke dërguar kodin...' : '📨 Dërgo Kodin'}
-              </button>
-              <div className="divider">ose</div>
-              <div className="register-link">
-                Ke llogari? &nbsp;
-                <span onClick={() => switchMode('login')}>Hyr →</span>
-              </div>
-              <p className="terms">
-                Duke u regjistruar pranon{' '}
-                <a href="/kushtet">Kushtet e Përdorimit</a> dhe{' '}
-                <a href="/privatesia">Politikën e Privatësisë</a>
-              </p>
-            </>
-          )}
-
-          {/* ─── REGISTER otp ──────────────────────── */}
-          {mode === 'register' && step === 'otp' && OtpStep}
-
-          {/* ─── FORGOT form ───────────────────────── */}
-          {mode === 'forgot' && step === 'form' && (
-            <>
-              <h2>🔓 Rikthe Llogarinë</h2>
-              <p className="sub">Fut emailin ose telefonin — dërgojmë kod konfirmimi, pastaj vendos fjalëkalim të ri</p>
-
-              <div className="field">
-                <label>Email ose Numër Telefoni *</label>
-                <div className="contact-wrap">
-                  <input type="text"
-                    placeholder="email@domain.com  ose  +355 6X XXX XXXX  ose  +1 212..."
-                    value={contact}
-                    onChange={e => setContact(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && sendOtp()}
-                    autoComplete="email" />
+                    autoComplete="email"
+                    style={{ paddingRight: 36 }} />
                   <span className="contact-type">
                     {cType === 'email' ? '📧' : cType === 'phone' ? '📱' : ''}
                   </span>
@@ -580,17 +496,58 @@ export default function Auth() {
               <button className="btn" onClick={sendOtp} disabled={loading}>
                 {loading ? '⏳ Duke dërguar kodin...' : '📨 Dërgo Kodin e Konfirmimit'}
               </button>
-              <button className="btn-ghost" onClick={() => switchMode('login')}>← Kthehu te hyrja</button>
+
+              <div className="sec-row">Ke llogari? &nbsp;<a onClick={() => switchMode('login')}>Hyr →</a></div>
+
+              <p className="terms">
+                Duke u regjistruar pranon{' '}
+                <a href="/kushtet">Kushtet e Përdorimit</a> dhe{' '}
+                <a href="/privatesia">Politikën e Privatësisë</a>
+              </p>
             </>
           )}
 
-          {/* ─── FORGOT otp ────────────────────────── */}
+          {mode === 'register' && step === 'otp' && OtpStep}
+
+          {/* ════════════════════════════════════════
+              3. RIKTHIMI I LLOGARISË — OTP (OPSIONALE)
+              ════════════════════════════════════════ */}
+          {mode === 'forgot' && step === 'form' && (
+            <>
+              <h2>🔓 Rikthe Llogarinë</h2>
+              <p className="sub">
+                Fut emailin ose numrin e telefonit të llogarisë — dërgojmë kod konfirmimi, pastaj vendos fjalëkalim të ri
+              </p>
+
+              <div className="field">
+                <label>Email ose Numër Telefoni *</label>
+                <div className="contact-wrap">
+                  <input type="text"
+                    placeholder="+355 6X XXX XXXX  ose  email@domain.com"
+                    value={contact}
+                    onChange={e => setContact(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && sendOtp()}
+                    autoComplete="email"
+                    style={{ paddingRight: 36 }} />
+                  <span className="contact-type">
+                    {cType === 'email' ? '📧' : cType === 'phone' ? '📱' : ''}
+                  </span>
+                </div>
+                {contactHint}
+              </div>
+
+              <button className="btn" onClick={sendOtp} disabled={loading}>
+                {loading ? '⏳ Duke dërguar...' : '📨 Dërgo Kodin e Konfirmimit'}
+              </button>
+              <button className="btn-ghost" onClick={() => switchMode('login')}>← Kthehu te Hyrja</button>
+            </>
+          )}
+
           {mode === 'forgot' && step === 'otp' && OtpStep}
 
-          {/* ─── new-pass ──────────────────────────── */}
           {mode === 'forgot' && step === 'new-pass' && (
             <>
-              <h2>🔒 Vendos Fjalëkalim të Ri</h2>
+              <h2>🔒 Fjalëkalim i Ri</h2>
               <p className="sub">Zgjidh një fjalëkalim të sigurt (min. 6 karaktere)</p>
 
               <div className="field">
