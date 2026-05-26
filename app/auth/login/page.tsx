@@ -213,10 +213,13 @@ export default function Auth() {
       })
       const data = await res.json()
       if (!res.ok || data.error) {
-        if (data.error === 'sms_not_configured') {
+        if (data.error === 'sms_not_configured' || (res.status === 429 && type === 'phone')) {
           setOriginalPhone(id)
           setSmsFailMode(true)
-          setMsg('warn:SMS nuk është i konfiguruar. Shkruani emailin tuaj dhe do t\'ju dërgojmë kodin atje.')
+          const isRateLimit = res.status === 429
+          setMsg(isRateLimit
+            ? 'warn:Shumë tentativa me SMS. Konfirmo me email — numri ruhet në profil.'
+            : 'warn:SMS nuk është i konfiguruar. Shkruani emailin tuaj dhe do t\'ju dërgojmë kodin atje.')
         } else {
           setMsg(`err:${data.error ?? 'Gabim gjatë dërgimit.'}`)
         }
