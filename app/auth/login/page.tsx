@@ -5,14 +5,9 @@ import { supabase } from '../../../lib/supabase'
 type Mode = 'login' | 'register' | 'forgot'
 type Step = 'form' | 'otp' | 'new-pass'
 
+const FN_URL = 'https://sopafwfkrxpcdaljddoh.supabase.co/functions/v1'
+
 function isEmail(val: string) { return val.includes('@') }
-function toE164(phone: string) {
-  const clean = phone.replace(/[\s\-()]/g, '')
-  if (clean.startsWith('+')) return clean
-  if (clean.startsWith('06') || clean.startsWith('07')) return '+355' + clean.slice(1)
-  if (clean.startsWith('6') || clean.startsWith('7')) return '+355' + clean
-  return '+355' + clean
-}
 function fmt2(n: number) { return String(n).padStart(2, '0') }
 
 const CSS = `
@@ -75,7 +70,6 @@ export default function Auth() {
   const [mode, setMode] = useState<Mode>('login')
   const [step, setStep] = useState<Step>('form')
 
-  // Form fields
   const [contact, setContact] = useState('')
   const [password, setPassword] = useState('')
   const [showPass, setShowPass] = useState(false)
@@ -85,7 +79,6 @@ export default function Auth() {
   const [lastName, setLastName] = useState('')
   const [age, setAge] = useState('')
 
-  // OTP
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
   const [countdown, setCountdown] = useState(0)
   const [expired, setExpired] = useState(false)
@@ -108,11 +101,7 @@ export default function Auth() {
     setExpired(false)
     timerRef.current = setInterval(() => {
       setCountdown(prev => {
-        if (prev <= 1) {
-          clearInterval(timerRef.current!)
-          setExpired(true)
-          return 0
-        }
+        if (prev <= 1) { clearInterval(timerRef.current!); setExpired(true); return 0 }
         return prev - 1
       })
     }, 1000)
@@ -127,22 +116,15 @@ export default function Auth() {
   }
 
   function switchMode(m: Mode) {
-    setMode(m)
-    setStep('form')
-    setMsg('')
-    setContact('')
-    setPassword('')
-    setNewPass('')
-    setNewPass2('')
-    setFirstName('')
-    setLastName('')
-    setAge('')
+    setMode(m); setStep('form'); setMsg('')
+    setContact(''); setPassword(''); setNewPass(''); setNewPass2('')
+    setFirstName(''); setLastName(''); setAge('')
     setOtp(['', '', '', '', '', ''])
     setExpired(false)
     if (timerRef.current) clearInterval(timerRef.current)
   }
 
-  // ── LOGIN ──────────────────────────────────────────────────────────────────
+  // ── LOGIN (email + fjalëkalim) ────────────────────────────────────────────
   async function login() {
     if (!contact.trim() || !password) { setMsg('err:Plotëso emailin dhe fjalëkalimin!'); return }
     setLoading(true); setMsg('')
@@ -156,10 +138,11 @@ export default function Auth() {
     setLoading(false)
   }
 
-  // ── SEND OTP (register + forgot) ───────────────────────────────────────────
+  // ── SEND OTP — via edge function (Resend) ────────────────────────────────
   async function sendOtp() {
     const raw = contact.trim()
-    if (!raw) { setMsg('err:Fut emailin ose numrin e telefonit!'); return }
+    if (!raw) { setMsg('err:Fut emailin!'); return }
+    if (!isEmail(raw)) { setMsg('err:Fut një email të vlefshëm!'); return }
 
     if (mode === 'register') {
       if (!firstName.trim()) { setMsg('err:Emri është i detyrueshëm!'); return }
@@ -170,51 +153,24 @@ export default function Auth() {
 
     setLoading(true); setMsg('')
     try {
-      const c = raw
-      const emailC = isEmail(c)
-      let error: any
-
-      if (emailC) {
-        const res = await supabase.auth.signInWithOtp({
-          email: c,
-          options: {
-            shouldCreateUser: mode === 'register',
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
-            data: mode === 'register' ? {
-              full_name: `${firstName.trim()} ${lastName.trim()}`,
-              first_name: firstName.trim(),
-              last_name: lastName.trim(),
-              age: parseInt(age),
-            } : undefined,
-          },
-        })
-        error = res.error
-      } else {
-        const res = await supabase.auth.signInWithOtp({
-          phone: toE164(c),
-          options: {
-            shouldCreateUser: mode === 'register',
-            data: mode === 'register' ? {
-              full_name: `${firstName.trim()} ${lastName.trim()}`,
-              age: parseInt(age),
-            } : undefined,
-          },
-        })
-        error = res.error
-      }
-
-      if (error) {
-        const msg = error.message.toLowerCase()
-        if (msg.includes('rate limit') || msg.includes('security purposes')) {
-          setMsg('warn:Provo sërish pas pak çastesh.')
+      const res = await fetch(`${FN_URL}/send-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier: raw }),
+      })
+      const data = await res.json()
+      if (!res.ok || data.error) {
+        const e: string = data.error ?? 'Gabim gjatë dërgimit.'
+        if (e.toLowerCase().includes('shumë kërkesa') || e.includes('429')) {
+          setMsg('warn:Shumë kërkesa. Provo pas 10 minutash.')
         } else {
-          setMsg(`err:${error.message}`)
+          setMsg(`err:${e}`)
         }
       } else {
         setStep('otp')
         startCountdown()
         setOtp(['', '', '', '', '', ''])
-        setMsg(`info:Kodi u dërgua te ${c}`)
+        setMsg(`info:Kodi u dërgua te ${raw} — kontrollo email-in (dhe spam)`)
         setTimeout(() => inputRefs.current[0]?.focus(), 150)
       }
     } catch (e: any) {
@@ -223,41 +179,47 @@ export default function Auth() {
     setLoading(false)
   }
 
-  // ── VERIFY OTP ─────────────────────────────────────────────────────────────
+  // ── VERIFY OTP — via edge function ───────────────────────────────────────
   async function verifyOtp() {
     const code = otp.join('')
     if (code.length !== 6) { setMsg('err:Plotëso kodin 6-shifror!'); return }
     if (expired) { setMsg('err:Kodi ka skaduar! Kërko një kod të ri.'); return }
     setLoading(true); setMsg('')
     try {
-      const c = contact.trim()
-      const emailC = isEmail(c)
-      const { data, error } = emailC
-        ? await supabase.auth.verifyOtp({ email: c, token: code, type: 'email' })
-        : await supabase.auth.verifyOtp({ phone: toE164(c), token: code, type: 'sms' })
+      const res = await fetch(`${FN_URL}/verify-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          identifier: contact.trim(),
+          code,
+          mode,
+          firstName: firstName.trim() || undefined,
+          lastName: lastName.trim() || undefined,
+          age: age ? parseInt(age) : undefined,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok || data.error) {
+        setMsg(`err:${data.error ?? 'Kodi i gabuar ose ka skaduar!'}`)
+        return
+      }
 
-      if (error) {
-        setMsg(`err:${error.message.includes('expired') || error.message.includes('invalid') || error.message.includes('not found')
-          ? 'Kodi i gabuar ose ka skaduar! Kërko një kod të ri.' : error.message}`)
-      } else if (data?.user) {
-        if (timerRef.current) clearInterval(timerRef.current)
+      // Use the magic link token_hash to create a real Supabase session
+      const { error: sessErr } = await supabase.auth.verifyOtp({
+        token_hash: data.token_hash,
+        type: 'magiclink',
+      })
+      if (sessErr) { setMsg(`err:${sessErr.message}`); setLoading(false); return }
 
-        if (mode === 'register') {
-          const u = data.user
-          await supabase.from('profiles').upsert({
-            id: u.id,
-            full_name: `${firstName.trim()} ${lastName.trim()}`,
-            phone: emailC ? undefined : toE164(c),
-            age: parseInt(age),
-            username: emailC ? c.split('@')[0].replace(/[^a-z0-9_]/gi, '') : undefined,
-          }, { onConflict: 'id' })
-          setMsg('ok:Llogaria u krijua! Duke u ridrejtuar...')
-          setTimeout(() => { window.location.href = '/' }, 700)
-        } else {
-          // forgot mode — go to new password step
-          setStep('new-pass')
-          setMsg('')
-        }
+      if (timerRef.current) clearInterval(timerRef.current)
+
+      if (mode === 'register') {
+        setMsg('ok:Llogaria u krijua! Duke u ridrejtuar...')
+        setTimeout(() => { window.location.href = '/' }, 700)
+      } else {
+        // forgot — go to new-password step
+        setStep('new-pass')
+        setMsg('')
       }
     } catch (e: any) {
       setMsg(`err:${e.message}`)
@@ -265,7 +227,7 @@ export default function Auth() {
     setLoading(false)
   }
 
-  // ── SET NEW PASSWORD (after forgot OTP) ────────────────────────────────────
+  // ── SET NEW PASSWORD ──────────────────────────────────────────────────────
   async function setNewPassword() {
     if (newPass.length < 6) { setMsg('err:Fjalëkalimi duhet të ketë minimumi 6 karaktere!'); return }
     if (newPass !== newPass2) { setMsg('err:Fjalëkalimet nuk përputhen!'); return }
@@ -280,7 +242,7 @@ export default function Auth() {
     setLoading(false)
   }
 
-  // ── OTP INPUT HANDLERS ─────────────────────────────────────────────────────
+  // ── OTP INPUT HANDLERS ────────────────────────────────────────────────────
   function handleOtpChange(i: number, val: string) {
     if (!/^\d*$/.test(val) || expired) return
     const next = [...otp]; next[i] = val.slice(-1); setOtp(next)
@@ -304,11 +266,9 @@ export default function Auth() {
   }
 
   const [t, m] = msg.split(':')
-  const emailContact = isEmail(contact)
   const mins = Math.floor(countdown / 60)
   const secs = countdown % 60
   const timeClass = countdown > 30 ? 'ok-c' : countdown > 10 ? 'warn-c' : 'err-c'
-
   const stepCount = mode === 'forgot' ? 3 : mode === 'register' ? 2 : 1
   const stepIdx = step === 'form' ? 0 : step === 'otp' ? 1 : 2
 
@@ -317,7 +277,6 @@ export default function Auth() {
       <style>{CSS}</style>
       <div className="wrap">
         <div className="card">
-          {/* Logo */}
           <div className="logo">
             <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
               <rect width="40" height="40" rx="10" fill="#E63312"/>
@@ -336,7 +295,6 @@ export default function Auth() {
             <span className="brand">ALPAZAR</span>
           </div>
 
-          {/* Steps indicator (only multi-step modes) */}
           {mode !== 'login' && (
             <div className="steps">
               {Array.from({ length: stepCount }).map((_, i) => (
@@ -393,7 +351,7 @@ export default function Auth() {
           {mode === 'register' && step === 'form' && (
             <>
               <h2>🚀 Regjistrohu falas</h2>
-              <p className="sub">Krijo llogarinë tënde — falas dhe pa fjalëkalim</p>
+              <p className="sub">Krijo llogarinë tënde — falas, pa fjalëkalim</p>
 
               <div className="row-2">
                 <div className="field">
@@ -412,15 +370,11 @@ export default function Auth() {
               </div>
 
               <div className="field">
-                <label>Email ose Numri i Telefonit *</label>
-                <input type="text" placeholder="email@domain.com  ose  +355 6X XXX XXXX"
+                <label>Email *</label>
+                <input type="email" placeholder="email@domain.com"
                   value={contact} onChange={e => setContact(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && sendOtp()} autoComplete="email" />
-                <p className="hint">
-                  {contact.length > 2
-                    ? emailContact ? '📧 Do të marrësh kodin me email' : '📱 Do të marrësh kodin me SMS'
-                    : '📧 Email  ·  📱 Telefon (+355...)'}
-                </p>
+                <p className="hint">📧 Do të marrësh kodin e konfirmimit me email</p>
               </div>
 
               <button className="btn" onClick={() => sendOtp()} disabled={loading}>
@@ -459,15 +413,15 @@ export default function Auth() {
             </>
           )}
 
-          {/* ─── OTP STEP (register + forgot) ────────────── */}
+          {/* ─── OTP STEP ─────────────────────────────────── */}
           {(mode === 'register' || mode === 'forgot') && step === 'otp' && (
             <>
               <h2>🔐 Konfirmo Kodin</h2>
               <p className="sub">
-                Kodi 6-shifror u dërgua te<br /><strong>{contact}</strong>
+                Kodi 6-shifror u dërgua te<br /><strong>{contact}</strong><br />
+                <span style={{ fontSize: 10 }}>(kontrollo spam nëse nuk e gjen)</span>
               </p>
 
-              {/* Countdown */}
               <div className="countdown">
                 <span style={{ fontSize: 12, color: '#888' }}>
                   {expired ? 'Kodi skadoi' : 'Skadon në:'}
@@ -505,7 +459,7 @@ export default function Auth() {
             </>
           )}
 
-          {/* ─── FORGOT — step: new-pass ─────────────────── */}
+          {/* ─── FORGOT — new-pass ──────────────────────── */}
           {mode === 'forgot' && step === 'new-pass' && (
             <>
               <h2>🔒 Vendos Fjalëkalim të Ri</h2>
