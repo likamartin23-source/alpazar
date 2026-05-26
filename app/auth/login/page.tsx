@@ -81,7 +81,7 @@ const CSS = `
   .contact-type{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;}
 `
 
-const OTP_SECONDS = 60
+const OTP_SECONDS = 180 // 3 minuta
 
 export default function Auth() {
   const [mode, setMode] = useState<Mode>('login')
@@ -182,7 +182,12 @@ export default function Auth() {
       })
       const data = await res.json()
       if (!res.ok || data.error) {
-        setMsg(`err:${data.error ?? 'Gabim gjatë dërgimit.'}`)
+        // SMS not configured → friendly message with email suggestion
+        if (data.error === 'sms_not_configured' || data.message?.includes('SMS nuk')) {
+          setMsg('err:SMS nuk është aktiv ende. Provoni me adresë email.')
+        } else {
+          setMsg(`err:${data.error ?? 'Gabim gjatë dërgimit.'}`)
+        }
       } else {
         setStep('otp')
         startCountdown()
@@ -219,6 +224,16 @@ export default function Auth() {
       })
       const data = await res.json()
       if (!res.ok || data.error) {
+        // If account doesn't exist in login mode → auto-switch to register
+        if (mode === 'login' && (res.status === 404 || data.error?.includes('ekziston llogari'))) {
+          setStep('form')
+          setMode('register')
+          setOtp(['', '', '', '', '', ''])
+          if (timerRef.current) clearInterval(timerRef.current)
+          setMsg('warn:Nuk ke llogari ende. Plotëso emrin dhe moshën për t\'u regjistruar!')
+          setLoading(false)
+          return
+        }
         setMsg(`err:${data.error ?? 'Kodi i gabuar ose ka skaduar!'}`)
         return
       }
