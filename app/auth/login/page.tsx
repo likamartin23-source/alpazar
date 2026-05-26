@@ -81,7 +81,7 @@ const CSS = `
   .contact-type{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;}
 `
 
-const OTP_SECONDS = 180 // 3 minuta
+const OTP_SECONDS = 60 // 1 minutë
 
 export default function Auth() {
   const [mode, setMode] = useState<Mode>('login')
