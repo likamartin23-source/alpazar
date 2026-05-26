@@ -7,7 +7,20 @@ type Step = 'form' | 'otp' | 'new-pass'
 
 const FN_URL = 'https://sopafwfkrxpcdaljddoh.supabase.co/functions/v1'
 
-function isEmail(val: string) { return val.includes('@') }
+function detectType(val: string): 'email' | 'phone' | 'unknown' {
+  if (val.includes('@')) return 'email'
+  if (/^\+\d{4,}/.test(val) || /^0\d{8,}/.test(val) || /^\d{9,}/.test(val)) return 'phone'
+  return 'unknown'
+}
+
+function toE164(phone: string): string {
+  const clean = phone.replace(/[\s\-().]/g, '')
+  if (clean.startsWith('+')) return clean
+  if (clean.startsWith('06') || clean.startsWith('07')) return '+355' + clean.slice(1)
+  if (clean.startsWith('6') || clean.startsWith('7')) return '+355' + clean
+  return '+' + clean
+}
+
 function fmt2(n: number) { return String(n).padStart(2, '0') }
 
 const CSS = `
@@ -23,13 +36,15 @@ const CSS = `
   .row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   .field{margin-bottom:12px;}
   label{font-size:11px;font-weight:600;color:#555;display:block;margin-bottom:4px;}
-  input[type=text],input[type=email],input[type=number],input[type=password]{width:100%;border:1.5px solid #ddd;border-radius:8px;padding:11px 13px;font-size:13px;font-family:inherit;outline:none;transition:border .15s;background:#fff;color:#111;}
+  input[type=text],input[type=email],input[type=tel],input[type=number],input[type=password]{width:100%;border:1.5px solid #ddd;border-radius:8px;padding:11px 13px;font-size:13px;font-family:inherit;outline:none;transition:border .15s;background:#fff;color:#111;}
   input:focus{border-color:#F5C842;}
-  .hint{font-size:10px;color:#aaa;margin-top:4px;}
+  .hint{font-size:10px;color:#aaa;margin-top:4px;line-height:1.5;}
+  .hint.ok{color:#3B6D11;}
+  .hint.warn{color:#A05000;}
   .btn{width:100%;background:#E63312;color:#fff;border:none;border-radius:9px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px;transition:opacity .15s;}
   .btn:disabled{opacity:.6;cursor:not-allowed;}
   .btn-sec{width:100%;background:#F5C842;color:#111;border:none;border-radius:9px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px;}
-  .btn-ghost{width:100%;background:none;color:#888;border:1.5px solid #eee;border-radius:9px;padding:11px;font-size:13px;cursor:pointer;font-family:inherit;}
+  .btn-ghost{width:100%;background:none;color:#888;border:1.5px solid #eee;border-radius:9px;padding:11px;font-size:13px;cursor:pointer;font-family:inherit;margin-bottom:8px;}
   .btn-ghost:hover{border-color:#ddd;color:#555;}
   .msg{text-align:center;font-size:12px;padding:10px 12px;border-radius:8px;margin-bottom:12px;font-weight:500;line-height:1.5;}
   .ok{background:#EAF3DE;color:#3B6D11;border:0.5px solid #97C459;}
@@ -62,6 +77,8 @@ const CSS = `
   .terms a{color:#888;text-decoration:underline;}
   .pass-wrap{position:relative;}
   .pass-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#aaa;font-size:13px;padding:4px;}
+  .contact-wrap{position:relative;}
+  .contact-type{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;}
 `
 
 const OTP_SECONDS = 60
@@ -75,6 +92,7 @@ export default function Auth() {
   const [showPass, setShowPass] = useState(false)
   const [newPass, setNewPass] = useState('')
   const [newPass2, setNewPass2] = useState('')
+  const [showNewPass, setShowNewPass] = useState(false)
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [age, setAge] = useState('')
@@ -87,6 +105,9 @@ export default function Auth() {
 
   const [loading, setLoading] = useState(false)
   const [msg, setMsg] = useState('')
+
+  // The normalised identifier sent to the edge function
+  const [resolvedId, setResolvedId] = useState('')
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -108,23 +129,19 @@ export default function Auth() {
   }
 
   function resetToForm() {
-    setStep('form')
-    setOtp(['', '', '', '', '', ''])
-    setMsg('')
-    setExpired(false)
+    setStep('form'); setOtp(['', '', '', '', '', '']); setMsg(''); setExpired(false)
     if (timerRef.current) clearInterval(timerRef.current)
   }
 
   function switchMode(m: Mode) {
     setMode(m); setStep('form'); setMsg('')
     setContact(''); setPassword(''); setNewPass(''); setNewPass2('')
-    setFirstName(''); setLastName(''); setAge('')
-    setOtp(['', '', '', '', '', ''])
-    setExpired(false)
+    setFirstName(''); setLastName(''); setAge(''); setResolvedId('')
+    setOtp(['', '', '', '', '', '']); setExpired(false)
     if (timerRef.current) clearInterval(timerRef.current)
   }
 
-  // ── LOGIN (email + fjalëkalim) ────────────────────────────────────────────
+  // ── LOGIN ─────────────────────────────────────────────────────────────────
   async function login() {
     if (!contact.trim() || !password) { setMsg('err:Plotëso emailin dhe fjalëkalimin!'); return }
     setLoading(true); setMsg('')
@@ -138,11 +155,10 @@ export default function Auth() {
     setLoading(false)
   }
 
-  // ── SEND OTP — via edge function (Resend) ────────────────────────────────
+  // ── SEND OTP ──────────────────────────────────────────────────────────────
   async function sendOtp() {
     const raw = contact.trim()
-    if (!raw) { setMsg('err:Fut emailin!'); return }
-    if (!isEmail(raw)) { setMsg('err:Fut një email të vlefshëm!'); return }
+    if (!raw) { setMsg('err:Fut emailin ose numrin e telefonit!'); return }
 
     if (mode === 'register') {
       if (!firstName.trim()) { setMsg('err:Emri është i detyrueshëm!'); return }
@@ -151,26 +167,33 @@ export default function Auth() {
       if (!age || ageN < 16 || ageN > 120) { setMsg('err:Mosha duhet të jetë minimumi 16 vjeç!'); return }
     }
 
+    const type = detectType(raw)
+    if (type === 'unknown') {
+      setMsg('err:Fut email të vlefshëm ose nr. telefoni me prefiks (+355...)')
+      return
+    }
+
+    const id = type === 'phone' ? toE164(raw) : raw
+    setResolvedId(id)
+
     setLoading(true); setMsg('')
     try {
       const res = await fetch(`${FN_URL}/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identifier: raw }),
+        body: JSON.stringify({ identifier: id }),
       })
       const data = await res.json()
       if (!res.ok || data.error) {
-        const e: string = data.error ?? 'Gabim gjatë dërgimit.'
-        if (e.toLowerCase().includes('shumë kërkesa') || e.includes('429')) {
-          setMsg('warn:Shumë kërkesa. Provo pas 10 minutash.')
-        } else {
-          setMsg(`err:${e}`)
-        }
+        setMsg(`err:${data.error ?? 'Gabim gjatë dërgimit.'}`)
       } else {
         setStep('otp')
         startCountdown()
         setOtp(['', '', '', '', '', ''])
-        setMsg(`info:Kodi u dërgua te ${raw} — kontrollo email-in (dhe spam)`)
+        const where = type === 'email'
+          ? `📧 ${id} — kontrollo edhe spam`
+          : `📱 ${id}`
+        setMsg(`info:Kodi u dërgua te ${where}`)
         setTimeout(() => inputRefs.current[0]?.focus(), 150)
       }
     } catch (e: any) {
@@ -179,7 +202,7 @@ export default function Auth() {
     setLoading(false)
   }
 
-  // ── VERIFY OTP — via edge function ───────────────────────────────────────
+  // ── VERIFY OTP ────────────────────────────────────────────────────────────
   async function verifyOtp() {
     const code = otp.join('')
     if (code.length !== 6) { setMsg('err:Plotëso kodin 6-shifror!'); return }
@@ -190,7 +213,7 @@ export default function Auth() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          identifier: contact.trim(),
+          identifier: resolvedId,
           code,
           mode,
           firstName: firstName.trim() || undefined,
@@ -204,10 +227,10 @@ export default function Auth() {
         return
       }
 
-      // Use the magic link token_hash to create a real Supabase session
-      const { error: sessErr } = await supabase.auth.verifyOtp({
-        token_hash: data.token_hash,
-        type: 'magiclink',
+      // Set session directly from tokens — no magic link
+      const { error: sessErr } = await supabase.auth.setSession({
+        access_token: data.access_token,
+        refresh_token: data.refresh_token,
       })
       if (sessErr) { setMsg(`err:${sessErr.message}`); setLoading(false); return }
 
@@ -217,7 +240,6 @@ export default function Auth() {
         setMsg('ok:Llogaria u krijua! Duke u ridrejtuar...')
         setTimeout(() => { window.location.href = '/' }, 700)
       } else {
-        // forgot — go to new-password step
         setStep('new-pass')
         setMsg('')
       }
@@ -242,7 +264,7 @@ export default function Auth() {
     setLoading(false)
   }
 
-  // ── OTP INPUT HANDLERS ────────────────────────────────────────────────────
+  // ── OTP HANDLERS ─────────────────────────────────────────────────────────
   function handleOtpChange(i: number, val: string) {
     if (!/^\d*$/.test(val) || expired) return
     const next = [...otp]; next[i] = val.slice(-1); setOtp(next)
@@ -265,18 +287,29 @@ export default function Auth() {
     setTimeout(() => inputRefs.current[Math.min(text.length, 5)]?.focus(), 0)
   }
 
-  const [t, m] = msg.split(':')
+  const [t, m] = msg.split(/:(.+)/)
   const mins = Math.floor(countdown / 60)
   const secs = countdown % 60
   const timeClass = countdown > 30 ? 'ok-c' : countdown > 10 ? 'warn-c' : 'err-c'
   const stepCount = mode === 'forgot' ? 3 : mode === 'register' ? 2 : 1
   const stepIdx = step === 'form' ? 0 : step === 'otp' ? 1 : 2
+  const cType = detectType(contact)
+
+  const contactHint = contact.length > 2
+    ? cType === 'email'
+      ? <p className="hint ok">📧 Do të marrësh kodin me <strong>email</strong></p>
+      : cType === 'phone'
+        ? <p className="hint ok">📱 Do të marrësh kodin me <strong>SMS</strong></p>
+        : <p className="hint warn">Fut email (user@domain.com) ose nr. telefoni (+355...)</p>
+    : <p className="hint">📧 Email &nbsp;·&nbsp; 📱 Telefon me prefiks (+355, +1, +44...)</p>
 
   return (
     <>
       <style>{CSS}</style>
       <div className="wrap">
         <div className="card">
+
+          {/* Logo */}
           <div className="logo">
             <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
               <rect width="40" height="40" rx="10" fill="#E63312"/>
@@ -305,7 +338,7 @@ export default function Auth() {
 
           {msg && <div className={`msg ${t}`}>{m}</div>}
 
-          {/* ─── LOGIN ──────────────────────────────────── */}
+          {/* ─── LOGIN ─────────────────────────────── */}
           {mode === 'login' && (
             <>
               <h2>🔑 Hyr në llogarinë tënde</h2>
@@ -338,52 +371,59 @@ export default function Auth() {
               <button className="btn" onClick={login} disabled={loading}>
                 {loading ? '⏳ Duke hyrë...' : '🔑 Hyr'}
               </button>
-
               <div className="divider">ose</div>
-
               <button className="btn-sec" onClick={() => switchMode('register')}>
                 📝 Regjistrohu falas
               </button>
             </>
           )}
 
-          {/* ─── REGISTER — step: form ───────────────────── */}
+          {/* ─── REGISTER form ─────────────────────── */}
           {mode === 'register' && step === 'form' && (
             <>
               <h2>🚀 Regjistrohu falas</h2>
-              <p className="sub">Krijo llogarinë tënde — falas, pa fjalëkalim</p>
+              <p className="sub">Pa fjalëkalim — konfirmo vetëm me kod</p>
 
               <div className="row-2">
                 <div className="field">
                   <label>Emri *</label>
-                  <input type="text" placeholder="Arta" value={firstName} onChange={e => setFirstName(e.target.value)} />
+                  <input type="text" placeholder="Arta" value={firstName}
+                    onChange={e => setFirstName(e.target.value)} />
                 </div>
                 <div className="field">
                   <label>Mbiemri *</label>
-                  <input type="text" placeholder="Hoxha" value={lastName} onChange={e => setLastName(e.target.value)} />
+                  <input type="text" placeholder="Hoxha" value={lastName}
+                    onChange={e => setLastName(e.target.value)} />
                 </div>
               </div>
 
               <div className="field">
                 <label>Mosha * (min. 16 vjeç)</label>
-                <input type="number" placeholder="25" value={age} onChange={e => setAge(e.target.value)} min="16" max="120" />
+                <input type="number" placeholder="25" value={age}
+                  onChange={e => setAge(e.target.value)} min="16" max="120" />
               </div>
 
               <div className="field">
-                <label>Email *</label>
-                <input type="email" placeholder="email@domain.com"
-                  value={contact} onChange={e => setContact(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && sendOtp()} autoComplete="email" />
-                <p className="hint">📧 Do të marrësh kodin e konfirmimit me email</p>
+                <label>Email ose Numër Telefoni *</label>
+                <div className="contact-wrap">
+                  <input type="text"
+                    placeholder="email@domain.com  ose  +355 6X XXX XXXX"
+                    value={contact}
+                    onChange={e => setContact(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && sendOtp()}
+                    autoComplete="email" />
+                  <span className="contact-type">
+                    {cType === 'email' ? '📧' : cType === 'phone' ? '📱' : ''}
+                  </span>
+                </div>
+                {contactHint}
               </div>
 
-              <button className="btn" onClick={() => sendOtp()} disabled={loading}>
+              <button className="btn" onClick={sendOtp} disabled={loading}>
                 {loading ? '⏳ Duke dërguar kodin...' : '📨 Dërgo Kodin'}
               </button>
-
               <div className="divider">ose</div>
               <button className="btn-ghost" onClick={() => switchMode('login')}>🔑 Ke llogari? Hyr</button>
-
               <p className="terms">
                 Duke u regjistruar pranon{' '}
                 <a href="/kushtet">Kushtet e Përdorimit</a> dhe{' '}
@@ -392,34 +432,47 @@ export default function Auth() {
             </>
           )}
 
-          {/* ─── FORGOT — step: form ──────────────────────── */}
+          {/* ─── FORGOT form ───────────────────────── */}
           {mode === 'forgot' && step === 'form' && (
             <>
               <h2>🔓 Rivendos Fjalëkalimin</h2>
-              <p className="sub">Fut emailin tënd — dërgojmë një kod konfirmimi</p>
+              <p className="sub">Fut emailin ose telefonin — dërgojmë kod konfirmimi</p>
 
               <div className="field">
-                <label>Email *</label>
-                <input type="email" placeholder="emaili@domain.com" value={contact}
-                  onChange={e => setContact(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && sendOtp()} autoComplete="email" />
+                <label>Email ose Numër Telefoni *</label>
+                <div className="contact-wrap">
+                  <input type="text"
+                    placeholder="email@domain.com  ose  +355 6X XXX XXXX"
+                    value={contact}
+                    onChange={e => setContact(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && sendOtp()}
+                    autoComplete="email" />
+                  <span className="contact-type">
+                    {cType === 'email' ? '📧' : cType === 'phone' ? '📱' : ''}
+                  </span>
+                </div>
+                {contactHint}
               </div>
 
-              <button className="btn" onClick={() => sendOtp()} disabled={loading}>
+              <button className="btn" onClick={sendOtp} disabled={loading}>
                 {loading ? '⏳ Duke dërguar kodin...' : '📨 Dërgo Kodin'}
               </button>
-
               <button className="btn-ghost" onClick={() => switchMode('login')}>← Kthehu te hyrja</button>
             </>
           )}
 
-          {/* ─── OTP STEP ─────────────────────────────────── */}
+          {/* ─── OTP step ──────────────────────────── */}
           {(mode === 'register' || mode === 'forgot') && step === 'otp' && (
             <>
               <h2>🔐 Konfirmo Kodin</h2>
               <p className="sub">
-                Kodi 6-shifror u dërgua te<br /><strong>{contact}</strong><br />
-                <span style={{ fontSize: 10 }}>(kontrollo spam nëse nuk e gjen)</span>
+                Kodi 6-shifror u dërgua te<br />
+                <strong>{resolvedId}</strong><br />
+                {detectType(resolvedId) === 'email' && (
+                  <span style={{ fontSize: 10, color: '#aaa' }}>
+                    Nëse nuk e gjen, kontrollo Spam / Junk
+                  </span>
+                )}
               </p>
 
               <div className="countdown">
@@ -429,13 +482,13 @@ export default function Auth() {
                 <span className={`countdown-time ${expired ? 'err-c' : timeClass}`}>
                   {expired ? '0:00' : `${mins}:${fmt2(secs)}`}
                 </span>
-                <button className="resend-btn" onClick={() => sendOtp()} disabled={loading}>
+                <button className="resend-btn" onClick={sendOtp} disabled={loading}>
                   {loading ? '...' : 'Ridërgo'}
                 </button>
               </div>
 
               {expired && (
-                <div className="msg warn">Kodi ka skaduar. Klikoje "Ridërgo" për një kod të ri.</div>
+                <div className="msg warn">Kodi ka skaduar. Klikoje "Ridërgo" për kod të ri.</div>
               )}
 
               <div className="otp-row" onPaste={handleOtpPaste}>
@@ -454,12 +507,11 @@ export default function Auth() {
               <button className="btn" onClick={verifyOtp} disabled={loading || expired}>
                 {loading ? '⏳ Duke verifikuar...' : '✅ Konfirmo Kodin'}
               </button>
-
               <button className="btn-ghost" onClick={resetToForm}>← Ndrysho adresën</button>
             </>
           )}
 
-          {/* ─── FORGOT — new-pass ──────────────────────── */}
+          {/* ─── new-pass ──────────────────────────── */}
           {mode === 'forgot' && step === 'new-pass' && (
             <>
               <h2>🔒 Vendos Fjalëkalim të Ri</h2>
@@ -468,15 +520,14 @@ export default function Auth() {
               <div className="field">
                 <label>Fjalëkalimi i ri *</label>
                 <div className="pass-wrap">
-                  <input type={showPass ? 'text' : 'password'} placeholder="••••••••" value={newPass}
+                  <input type={showNewPass ? 'text' : 'password'} placeholder="••••••••" value={newPass}
                     onChange={e => setNewPass(e.target.value)} autoComplete="new-password"
                     style={{ paddingRight: 36 }} />
-                  <button className="pass-toggle" onClick={() => setShowPass(v => !v)}>
-                    {showPass ? '🙈' : '👁️'}
+                  <button className="pass-toggle" onClick={() => setShowNewPass(v => !v)}>
+                    {showNewPass ? '🙈' : '👁️'}
                   </button>
                 </div>
               </div>
-
               <div className="field">
                 <label>Konfirmo fjalëkalimin *</label>
                 <input type="password" placeholder="••••••••" value={newPass2}
@@ -491,7 +542,9 @@ export default function Auth() {
             </>
           )}
 
-          <div className="back" onClick={() => window.location.href = '/'}>← Kthehu te faqja kryesore</div>
+          <div className="back" onClick={() => window.location.href = '/'}>
+            ← Kthehu te faqja kryesore
+          </div>
         </div>
       </div>
     </>
