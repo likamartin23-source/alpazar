@@ -29,27 +29,25 @@ function InstallBanner() {
 
   if (!show || installed || dismissed) return null
   return (
-    <div style={{ position: 'fixed', bottom: 219, right: 12, zIndex: 190, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
-      <div style={{ background: '#111', color: '#F5C842', fontSize: 9, fontWeight: 700, padding: '5px 9px', borderRadius: '8px 8px 0 8px', whiteSpace: 'nowrap', boxShadow: '0 3px 10px rgba(0,0,0,.35)', display: 'flex', alignItems: 'center', gap: 5, animation: 'ai-fade .3s ease' }}>
-        📲 Instalo ALPAZAR
-        <button onClick={() => setDismissed(true)} style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', fontSize: 10, padding: '0 2px', lineHeight: 1 }}>✕</button>
-      </div>
+    <div style={{ position: 'fixed', bottom: 219, left: 12, zIndex: 190, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 4 }}>
       <button
         onClick={install}
         style={{
-          width: 52, height: 52,
-          background: 'linear-gradient(135deg,#E63312,#c42a0e)',
-          borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          width: 32, height: 40,
+          background: 'linear-gradient(135deg,#22C55E,#16a34a)',
+          borderRadius: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2,
           border: 'none', cursor: 'pointer',
-          boxShadow: '0 6px 20px rgba(230,51,18,.45)',
+          boxShadow: '0 5px 16px rgba(34,197,94,.45)',
           animation: 'install-pulse 2.2s infinite',
           transition: 'transform .15s',
         }}
         onMouseDown={e => (e.currentTarget.style.transform = 'scale(.92)')}
         onMouseUp={e => (e.currentTarget.style.transform = '')}
       >
-        <i className="ti ti-device-mobile-down" style={{ fontSize: 24, color: '#fff' }} />
+        <i className="ti ti-device-mobile-down" style={{ fontSize: 14, color: '#fff' }} />
+        <span style={{ fontSize: 6.5, color: '#fff', fontWeight: 800, letterSpacing: .3, lineHeight: 1 }}>Instalo</span>
       </button>
+      <button onClick={() => setDismissed(true)} style={{ background: 'none', border: 'none', color: 'rgba(34,197,94,.7)', cursor: 'pointer', fontSize: 8, padding: 0, lineHeight: 1, alignSelf: 'center' }}>✕</button>
     </div>
   )
 }
@@ -61,11 +59,11 @@ function ShareBox() {
   const text = 'Zbulo ALPAZAR — platforma #1 shqiptare e tregtisë online! Shit, bli dhe bëj pazarin tënd.'
 
   return (
-    <div style={{ position: 'fixed', bottom: 157, right: 12, zIndex: 190, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
+    <div style={{ position: 'fixed', bottom: 157, left: 12, zIndex: 190, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 4 }}>
       {open && (
         <div style={{
-          background: '#111', border: '1.5px solid #333', borderRadius: '12px 12px 0 12px',
-          padding: '10px', boxShadow: '0 4px 18px rgba(0,0,0,.35)',
+          background: '#111', border: '1.5px solid #1d4ed8', borderRadius: '12px 12px 12px 0',
+          padding: '10px', boxShadow: '0 4px 18px rgba(59,130,246,.25)',
           display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6,
           animation: 'ai-fade .25s ease',
         }}>
@@ -90,20 +88,22 @@ function ShareBox() {
       <button
         onClick={() => setOpen(o => !o)}
         style={{
-          width: 52, height: 52,
-          background: open ? '#1a1a1a' : 'linear-gradient(135deg,#111,#1c1c1c)',
-          borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          border: `1.5px solid ${open ? '#F5C842' : '#333'}`,
+          width: 32, height: 40,
+          background: open ? '#2563EB' : 'linear-gradient(135deg,#3B82F6,#2563EB)',
+          borderRadius: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2,
+          border: 'none',
           cursor: 'pointer',
-          boxShadow: '0 6px 20px rgba(245,200,66,.25)',
+          boxShadow: '0 5px 16px rgba(59,130,246,.45)',
           animation: open ? 'none' : 'share-pulse 2.2s infinite',
-          transition: 'all .2s',
+          transition: 'transform .15s',
         }}
         onMouseDown={e => (e.currentTarget.style.transform = 'scale(.92)')}
         onMouseUp={e => (e.currentTarget.style.transform = '')}
       >
-        <i className={`ti ti-${open ? 'x' : 'share-2'}`} style={{ fontSize: 22, color: '#F5C842' }} />
+        <i className={`ti ti-${open ? 'x' : 'share-2'}`} style={{ fontSize: 14, color: '#fff' }} />
+        <span style={{ fontSize: 6.5, color: '#fff', fontWeight: 800, letterSpacing: .3, lineHeight: 1 }}>Ndaj</span>
       </button>
+      <button onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', color: 'rgba(59,130,246,.7)', cursor: 'pointer', fontSize: 8, padding: 0, lineHeight: 1, alignSelf: 'center', display: open ? 'block' : 'none' }}>✕</button>
     </div>
   )
 }
@@ -375,8 +375,8 @@ export default function Home() {
         .nav-add:active{transform:scale(.9);box-shadow:0 2px 8px rgba(230,51,18,.3);}
         .nav-add i{font-size:24px;color:#fff;}
         /* Floating pulsing squares */
-        @keyframes install-pulse{0%,100%{box-shadow:0 6px 20px rgba(230,51,18,.4);transform:scale(1)}50%{box-shadow:0 8px 28px rgba(230,51,18,.65);transform:scale(1.07)}}
-        @keyframes share-pulse{0%,100%{box-shadow:0 6px 20px rgba(245,200,66,.25);transform:scale(1)}50%{box-shadow:0 8px 28px rgba(245,200,66,.5);transform:scale(1.07)}}
+        @keyframes install-pulse{0%,100%{box-shadow:0 6px 20px rgba(34,197,94,.4);transform:scale(1)}50%{box-shadow:0 8px 28px rgba(34,197,94,.65);transform:scale(1.07)}}
+        @keyframes share-pulse{0%,100%{box-shadow:0 6px 20px rgba(59,130,246,.35);transform:scale(1)}50%{box-shadow:0 8px 28px rgba(59,130,246,.6);transform:scale(1.07)}}
         .loading{text-align:center;padding:32px;color:#888;font-size:13px;}
         .spinner{display:block;width:28px;height:28px;border:3px solid #F5C842;border-top-color:#E63312;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px;}
         @keyframes spin{to{transform:rotate(360deg);}}
