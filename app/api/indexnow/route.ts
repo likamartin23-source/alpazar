@@ -15,8 +15,17 @@ const STATIC_URLS = [
   `${BASE_URL}/kontakt`,
 ]
 
+// Të gjitha motorët IndexNow
+// api.indexnow.org mbulon: Bing, DuckDuckGo, Ecosia, Startpage, MSN e të tjerë
+const INDEXNOW_ENDPOINTS = [
+  { name: 'bing',    url: 'https://api.indexnow.org/indexnow' },
+  { name: 'yandex',  url: 'https://yandex.com/indexnow' },
+  { name: 'naver',   url: 'https://searchadvisor.naver.com/indexnow' },
+  { name: 'seznam',  url: 'https://search.seznam.cz/indexnow' },
+]
+
 export async function GET(req: NextRequest) {
-  // Verco cron secret per siguri (opsional)
+  // Verco cron secret per siguri
   const auth = req.headers.get('authorization')
   const cronSecret = process.env.CRON_SECRET
   if (cronSecret && auth !== `Bearer ${cronSecret}`) {
@@ -48,35 +57,35 @@ export async function GET(req: NextRequest) {
 
     const allUrls = [...STATIC_URLS, ...listingUrls, ...shopUrls]
 
-    // IndexNow: Bing + Yandex + Naver (nje kerkese mbulon te gjitha)
     const payload = {
       host: 'alpazar.al',
       key: INDEXNOW_KEY,
       keyLocation: `${BASE_URL}/${INDEXNOW_KEY}.txt`,
-      urlList: allUrls.slice(0, 1000), // max 1000 per request
+      urlList: allUrls.slice(0, 1000),
     }
 
-    const [bingRes, yandexRes] = await Promise.allSettled([
-      fetch('https://api.indexnow.org/indexnow', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json; charset=utf-8' },
-        body: JSON.stringify(payload),
-      }),
-      fetch('https://yandex.com/indexnow', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json; charset=utf-8' },
-        body: JSON.stringify(payload),
-      }),
-    ])
+    // Submit te te gjitha engines ne paralel
+    const results = await Promise.allSettled(
+      INDEXNOW_ENDPOINTS.map(({ url }) =>
+        fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json; charset=utf-8' },
+          body: JSON.stringify(payload),
+        }).then(r => r.status).catch(() => 0)
+      )
+    )
 
-    const bingStatus = bingRes.status === 'fulfilled' ? bingRes.value.status : 'failed'
-    const yandexStatus = yandexRes.status === 'fulfilled' ? yandexRes.value.status : 'failed'
+    const engines: Record<string, number | string> = {}
+    INDEXNOW_ENDPOINTS.forEach(({ name }, i) => {
+      engines[name] = results[i].status === 'fulfilled' ? results[i].value : 'failed'
+    })
 
     return NextResponse.json({
       ok: true,
-      urlsSubmitted: allUrls.length,
-      bing: bingStatus,
-      yandex: yandexStatus,
+      urlsSubmitted: Math.min(allUrls.length, 1000),
+      totalFound: allUrls.length,
+      engines,
+      note: 'Bing/api.indexnow.org mbulon gjithashtu: DuckDuckGo, Ecosia, Startpage, MSN',
       timestamp: new Date().toISOString(),
     })
   } catch (err: any) {
