@@ -7,7 +7,14 @@
   ],
   "headers": [
     {
-      "source": "/((?!_next/static|_next/image|icons|favicon).*)",
+      "source": "/sw.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache" },
+        { "key": "Service-Worker-Allowed", "value": "/" }
+      ]
+    },
+    {
+      "source": "/((?!_next/static|_next/image|icons|favicon|sw\\.js).*)",
       "headers": [
         { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
         { "key": "Pragma", "value": "no-cache" },

@@ -1,5 +1,5 @@
 // CACHE_NAME ndryshon me çdo deploy — shfletuesi e njeh ndryshimin dhe rifrekon cache
-const CACHE_NAME = 'alpazar-v3'
+const CACHE_NAME = 'alpazar-v4'
 const STATIC_ASSETS = [
   '/manifest.json',
   '/icons/icon-192.png',
