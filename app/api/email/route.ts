@@ -1,26 +1,54 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { createClient } from '@supabase/supabase-js'
 
-// Lazy init — nuk instancohet gjatë build time
-function resend() {
-  return new Resend(process.env.RESEND_API_KEY!)
+const SUPABASE_URL  = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const SUPABASE_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+
+// Lexon çelësin Resend nga env var OSE nga admin_settings në Supabase
+async function getResend(): Promise<{ client: Resend; from: string } | null> {
+  // 1. Provo env var direkt
+  let apiKey = process.env.RESEND_API_KEY || ''
+  let fromEmail = 'noreply@alpazar.al'
+
+  // 2. Fallback: admin_settings
+  if (!apiKey) {
+    try {
+      const db = createClient(SUPABASE_URL, SUPABASE_ANON)
+      const { data } = await db
+        .from('admin_settings')
+        .select('key, value')
+        .in('key', ['resend_api_key', 'resend_from_email'])
+      if (data) {
+        for (const row of data) {
+          if (row.key === 'resend_api_key')    apiKey   = row.value
+          if (row.key === 'resend_from_email') fromEmail = row.value
+        }
+      }
+    } catch { /* vazhdo */ }
+  }
+
+  if (!apiKey) return null
+  return { client: new Resend(apiKey), from: `Alpazar <${fromEmail}>` }
 }
-
-const FROM = 'Alpazar <noreply@alpazar.al>'
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
     const { type } = body
-    const r = resend()
+
+    const r = await getResend()
+    if (!r) {
+      return NextResponse.json({ error: 'Email nuk është konfiguruar' }, { status: 503 })
+    }
+    const { client, from: FROM } = r
 
     if (type === 'contact') {
       const { name, email, subject, message } = body
       if (!name || !email || !message) {
         return NextResponse.json({ error: 'Fushat e detyrueshme mungojnë' }, { status: 400 })
       }
-
-      const { data, error } = await r.emails.send({
+      const { data, error } = await client.emails.send({
         from: FROM,
         to: ['info@alpazar.al'],
         replyTo: email,
@@ -49,8 +77,7 @@ export async function POST(req: NextRequest) {
     if (type === 'welcome') {
       const { email: to, name } = body
       if (!to) return NextResponse.json({ error: 'Email mungon' }, { status: 400 })
-
-      const { data, error } = await r.emails.send({
+      const { data, error } = await client.emails.send({
         from: FROM,
         to,
         subject: '🎉 Mirë se erdhe te Alpazar!',
@@ -85,7 +112,7 @@ export async function POST(req: NextRequest) {
       if (!to || !subject || !html) {
         return NextResponse.json({ error: 'Fushat e detyrueshme mungojnë' }, { status: 400 })
       }
-      const { data, error } = await r.emails.send({ from: FROM, to, subject, html })
+      const { data, error } = await client.emails.send({ from: FROM, to, subject, html })
       if (error) return NextResponse.json({ error: error.message }, { status: 500 })
       return NextResponse.json({ success: true, id: data?.id })
     }
