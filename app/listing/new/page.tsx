@@ -37,8 +37,19 @@ export default function NewListing() {
   function set(k: string, v: string) { setForm(f => ({ ...f, [k]: v })) }
 
   function handleImages(e: React.ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(e.target.files || []).slice(0, 5)
+    const MAX_MB = 5
+    const all = Array.from(e.target.files || [])
+    const oversized = all.filter(f => f.size > MAX_MB * 1024 * 1024)
+    if (oversized.length > 0) {
+      setMsg(`err:Fotot duhet të jenë max ${MAX_MB}MB secila. (${oversized.map(f => f.name).join(', ')})`)
+      e.target.value = ''
+      return
+    }
+    const files = all.slice(0, 5)
     setImageFiles(files)
+    setMsg('')
+    // Revoke old object URLs to prevent memory leaks
+    imagePreviews.forEach(url => URL.revokeObjectURL(url))
     const previews = files.map(f => URL.createObjectURL(f))
     setImagePreviews(previews)
   }

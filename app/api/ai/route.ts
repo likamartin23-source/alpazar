@@ -31,9 +31,22 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    const { messages } = await req.json()
-    if (!messages || !Array.isArray(messages)) {
+    const body = await req.json()
+    const { messages } = body
+
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return NextResponse.json({ error: 'Mesazhe të pavlefshme' }, { status: 400 })
+    }
+
+    // Validim: max 20 mesazhe, max 1000 karaktere/mesazh, vetëm role user/assistant
+    const ALLOWED_ROLES = new Set(['user', 'assistant'])
+    for (const m of messages) {
+      if (!ALLOWED_ROLES.has(m?.role) || typeof m?.content !== 'string') {
+        return NextResponse.json({ error: 'Format mesazhi i pavlefshëm' }, { status: 400 })
+      }
+      if (m.content.length > 1000) {
+        return NextResponse.json({ error: 'Mesazhi është shumë i gjatë (max 1000 karaktere)' }, { status: 400 })
+      }
     }
 
     const client = new Anthropic({ apiKey })
@@ -41,7 +54,7 @@ export async function POST(req: NextRequest) {
       model: 'claude-sonnet-4-6',
       max_tokens: 512,
       system: SYSTEM_PROMPT,
-      messages: messages.slice(-10),
+      messages: messages.slice(-10).map((m: any) => ({ role: m.role, content: m.content })),
     })
 
     const text = response.content[0].type === 'text' ? response.content[0].text : ''

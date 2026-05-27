@@ -476,12 +476,12 @@ export default function ListingPage({ params }: { params: { id: string } }) {
                   <div className="seller-bio">{seller.bio || seller.shop_description}</div>
                 )}
 
-                {/* Profile button — only for visitors */}
-                {!isOwner && (
+                {/* Profile button — only for visitors with shops */}
+                {!isOwner && seller.is_premium && seller.shop_name && (
                   <button className="view-profile-btn"
-                    onClick={() => window.location.href = seller.shop_name ? `/dyqane/${seller.id}` : `/profile`}>
-                    <i className="ti ti-user" />
-                    {seller.shop_name ? 'Shiko dyqanin' : 'Shiko profilin'}
+                    onClick={() => window.location.href = `/dyqane/${seller.id}`}>
+                    <i className="ti ti-building-store" />
+                    Shiko dyqanin
                   </button>
                 )}
 
