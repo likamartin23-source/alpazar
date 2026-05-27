@@ -16,25 +16,37 @@ export function isNewMember(createdAt?: string): boolean {
   return Date.now() - new Date(createdAt).getTime() < 30 * 24 * 3600 * 1000
 }
 
+// A është online (last_seen brenda 3 minutave)
+export function isOnline(lastSeen?: string | null): boolean {
+  if (!lastSeen) return false
+  return Date.now() - new Date(lastSeen).getTime() < 3 * 60 * 1000
+}
+
 type Badge = { label: string; bg: string; color: string }
 
 export type BadgeInput = {
   is_admin?: boolean
   is_premium?: boolean
+  is_verified?: boolean      // verifikim real nga DB
   shop_name?: string | null
   gamification_points?: number
   created_at?: string
-  verified?: boolean        // telefon/email i konfirmuar (kalohet nga thirrësi)
+  last_seen?: string | null
+  seller_rating?: number
+  reviews_count?: number
   activeListings?: number    // numri i shpalljeve aktive
   showLevel?: boolean        // shfaq edhe etiketën e nivelit
 }
 
 export function buildBadges(p: BadgeInput): Badge[] {
   const out: Badge[] = []
-  if (p.is_admin)  out.push({ label: '🛡 Admin',    bg: '#F3ECFE', color: '#7C3AED' })
-  if (p.verified)  out.push({ label: '✓ Verifikuar', bg: '#EAF3DE', color: '#3B6D11' })
-  if (p.is_premium) out.push({ label: '👑 Premium',  bg: '#FEF6DA', color: '#A87900' })
-  if (p.shop_name) out.push({ label: '🏪 Dyqan',     bg: '#E7F8F1', color: '#0B8A5A' })
+  if (p.is_admin)    out.push({ label: '🛡 Admin',      bg: '#F3ECFE', color: '#7C3AED' })
+  if (p.is_verified) out.push({ label: '✓ Verifikuar',  bg: '#EAF3DE', color: '#3B6D11' })
+  if (p.is_premium)  out.push({ label: '👑 Premium',    bg: '#FEF6DA', color: '#A87900' })
+  if (p.shop_name)   out.push({ label: '🏪 Dyqan',      bg: '#E7F8F1', color: '#0B8A5A' })
+  if ((p.reviews_count ?? 0) > 0 && (p.seller_rating ?? 0) > 0) {
+    out.push({ label: `⭐ ${Number(p.seller_rating).toFixed(1)} (${p.reviews_count})`, bg: '#FEF6DA', color: '#A87900' })
+  }
   if (p.showLevel) {
     const lvl = getLevel(p.gamification_points || 0)
     out.push({ label: `${lvl.icon} ${lvl.name}`, bg: lvl.bg, color: lvl.color })

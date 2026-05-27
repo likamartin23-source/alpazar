@@ -178,10 +178,17 @@ export default function Home() {
   async function fetchMyProfile(uid: string) {
     const { data } = await supabase
       .from('profiles')
-      .select('full_name,username,avatar_url,is_premium,is_admin,shop_name,gamification_points')
+      .select('full_name,username,avatar_url,is_premium,is_admin,is_verified,shop_name,gamification_points')
       .eq('id', uid)
       .single()
     if (data) setProfile(data)
+    // Heartbeat presence + vetë-verifikim nëse kontakti është konfirmuar
+    const patch: Record<string, any> = { last_seen: new Date().toISOString() }
+    const u = (await supabase.auth.getUser()).data.user
+    if (u && (u.email_confirmed_at || u.phone_confirmed_at) && data && !data.is_verified) {
+      patch.is_verified = true
+    }
+    supabase.from('profiles').update(patch).eq('id', uid)
   }
 
   async function fetchUnread(uid: string) {

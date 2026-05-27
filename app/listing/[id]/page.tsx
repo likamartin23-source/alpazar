@@ -35,6 +35,13 @@ export default function ListingPage({ params }: { params: { id: string } }) {
   const [liked, setLiked]             = useState(false)
   const [albiTooltip, setAlbiTooltip] = useState(false)
 
+  // Vlerësimi i shitësit
+  const [myReview, setMyReview]       = useState<any>(null)
+  const [reviewStars, setReviewStars] = useState(0)
+  const [reviewComment, setReviewComment] = useState('')
+  const [reviewMsg, setReviewMsg]     = useState('')
+  const [reviewSaving, setReviewSaving] = useState(false)
+
   // Chat bottom sheet
   const [chatOpen, setChatOpen]   = useState(false)
   const [chatMsgs, setChatMsgs]   = useState<any[]>([])
