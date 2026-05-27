@@ -33,9 +33,9 @@ function InstallBanner() {
       <button
         onClick={install}
         style={{
-          width: 26, height: 32,
+          width: 30, height: 37,
           background: 'linear-gradient(135deg,#22C55E,#16a34a)',
-          borderRadius: 7, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2,
+          borderRadius: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2,
           border: 'none', cursor: 'pointer',
           boxShadow: '0 4px 13px rgba(34,197,94,.45)',
           animation: 'install-pulse 2.2s infinite',
@@ -44,8 +44,8 @@ function InstallBanner() {
         onMouseDown={e => (e.currentTarget.style.transform = 'scale(.92)')}
         onMouseUp={e => (e.currentTarget.style.transform = '')}
       >
-        <i className="ti ti-device-mobile-down" style={{ fontSize: 11, color: '#fff' }} />
-        <span style={{ fontSize: 5, color: '#fff', fontWeight: 800, letterSpacing: .3, lineHeight: 1 }}>Instalo</span>
+        <i className="ti ti-device-mobile-down" style={{ fontSize: 13, color: '#fff' }} />
+        <span style={{ fontSize: 6, color: '#fff', fontWeight: 800, letterSpacing: .3, lineHeight: 1 }}>Instalo</span>
       </button>
       <button onClick={() => setDismissed(true)} style={{ background: 'none', border: 'none', color: 'rgba(34,197,94,.7)', cursor: 'pointer', fontSize: 7, padding: 0, lineHeight: 1, alignSelf: 'center' }}>✕</button>
     </div>
@@ -88,9 +88,9 @@ function ShareBox() {
       <button
         onClick={() => setOpen(o => !o)}
         style={{
-          width: 26, height: 32,
+          width: 30, height: 37,
           background: open ? '#2563EB' : 'linear-gradient(135deg,#3B82F6,#2563EB)',
-          borderRadius: 7, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2,
+          borderRadius: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2,
           border: 'none',
           cursor: 'pointer',
           boxShadow: '0 4px 13px rgba(59,130,246,.45)',
@@ -100,8 +100,8 @@ function ShareBox() {
         onMouseDown={e => (e.currentTarget.style.transform = 'scale(.92)')}
         onMouseUp={e => (e.currentTarget.style.transform = '')}
       >
-        <i className={`ti ti-${open ? 'x' : 'share-2'}`} style={{ fontSize: 11, color: '#fff' }} />
-        <span style={{ fontSize: 5, color: '#fff', fontWeight: 800, letterSpacing: .3, lineHeight: 1 }}>Ndaj</span>
+        <i className={`ti ti-${open ? 'x' : 'share-2'}`} style={{ fontSize: 13, color: '#fff' }} />
+        <span style={{ fontSize: 6, color: '#fff', fontWeight: 800, letterSpacing: .3, lineHeight: 1 }}>Ndaj</span>
       </button>
       <button onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', color: 'rgba(59,130,246,.7)', cursor: 'pointer', fontSize: 8, padding: 0, lineHeight: 1, alignSelf: 'center', display: open ? 'block' : 'none' }}>✕</button>
     </div>
