@@ -1,4 +1,7 @@
 import type { Metadata, Viewport } from 'next'
+import dynamic from 'next/dynamic'
+
+const AiFloat = dynamic(() => import('./components/AiFloat'), { ssr: false })
 
 export const metadata: Metadata = {
   title: 'ALPAZAR — Shit · Bli · Bëj Pazrin Tënd',
@@ -72,6 +75,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body style={{ margin: 0, background: '#FFFBEA', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
         {children}
+        <AiFloat />
         <footer style={{ background: '#111', padding: '22px 16px 28px', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
           <div style={{ maxWidth: 480, margin: '0 auto', textAlign: 'center' }}>
             <div style={{ color: '#F5C842', fontWeight: 700, fontSize: 13, letterSpacing: 1, marginBottom: 14 }}>🦅 ALPAZAR</div>
