@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 
 const INDEXNOW_KEY = '825731eba0e14fec916791e52a62816c'
-const BASE_URL = 'https://alpazar.al'
+const BASE_URL = 'https://alpazar.vercel.app'
 
 // Faqet statike gjithmonë të rëndësishme
 const STATIC_URLS = [
@@ -58,7 +58,7 @@ export async function GET(req: NextRequest) {
     const allUrls = [...STATIC_URLS, ...listingUrls, ...shopUrls]
 
     const payload = {
-      host: 'alpazar.al',
+      host: 'alpazar.vercel.app',
       key: INDEXNOW_KEY,
       keyLocation: `${BASE_URL}/${INDEXNOW_KEY}.txt`,
       urlList: allUrls.slice(0, 1000),

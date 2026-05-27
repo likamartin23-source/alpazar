@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 
-const BASE = 'https://alpazar.al'
+const BASE = 'https://alpazar.vercel.app'
 
 const STATIC_PAGES = [
   { url: '/', priority: '1.0', changefreq: 'daily' },

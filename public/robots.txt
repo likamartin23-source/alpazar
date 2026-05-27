@@ -8,5 +8,4 @@ Disallow: /messages/
 Disallow: /auth/
 Disallow: /api/
 
-Sitemap: https://alpazar.al/sitemap.xml
 Sitemap: https://alpazar.vercel.app/sitemap.xml

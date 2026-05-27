@@ -55,7 +55,7 @@ function InstallBanner() {
 // Kuti ndarje — buton i vogël katrore pulsues (fixed, vetem faqja kryesore)
 function ShareBox() {
   const [open, setOpen] = useState(false)
-  const url = 'https://alpazar.al'
+  const url = 'https://alpazar.vercel.app'
   const text = 'Zbulo ALPAZAR — platforma #1 shqiptare e tregtisë online! Shit, bli dhe bëj pazarin tënd.'
 
   return (

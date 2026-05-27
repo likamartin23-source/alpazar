@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic'
 
 const AiFloat = dynamic(() => import('./components/AiFloat'), { ssr: false })
 
-const SITE_URL = 'https://alpazar.al'
+const SITE_URL = 'https://alpazar.vercel.app'
 
 export const metadata: Metadata = {
   title: 'ALPAZAR — Shit · Bli · Bëj Pazrin Tënd',
@@ -81,18 +81,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           "@context": "https://schema.org",
           "@type": "WebSite",
           "name": "ALPAZAR",
-          "url": "https://alpazar.al",
+          "url": "https://alpazar.vercel.app",
           "description": "Platforma #1 shqiptare e tregtisë dhe shpalljeve online. Zero reklama.",
           "potentialAction": {
             "@type": "SearchAction",
-            "target": { "@type": "EntryPoint", "urlTemplate": "https://alpazar.al/search?q={search_term_string}" },
+            "target": { "@type": "EntryPoint", "urlTemplate": "https://alpazar.vercel.app/search?q={search_term_string}" },
             "query-input": "required name=search_term_string"
           },
           "publisher": {
             "@type": "Organization",
             "name": "ALPAZAR",
-            "url": "https://alpazar.al",
-            "logo": { "@type": "ImageObject", "url": "https://alpazar.al/icons/icon-512.png" }
+            "url": "https://alpazar.vercel.app",
+            "logo": { "@type": "ImageObject", "url": "https://alpazar.vercel.app/icons/icon-512.png" }
           }
         })}} />
         {/* Service Worker — me skipWaiting, ndryshimet pasqyrohen menjëherë */}
