@@ -4,11 +4,12 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import type { Category, Listing } from '../lib/types'
 
-// Banner shkarkim — inline (jo fixed), shfaqet vetem ne web
+// Banner shkarkim — buton i vogël katrore pulsues (fixed, vetem faqja kryesore)
 function InstallBanner() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
   const [show, setShow] = useState(false)
   const [installed, setInstalled] = useState(false)
+  const [dismissed, setDismissed] = useState(false)
 
   useEffect(() => {
     if (window.matchMedia('(display-mode: standalone)').matches) return
@@ -26,64 +27,83 @@ function InstallBanner() {
     setShow(false)
   }
 
-  if (!show || installed) return null
+  if (!show || installed || dismissed) return null
   return (
-    <div style={{
-      background: 'linear-gradient(135deg,#E63312,#c42a0e)', border: 'none',
-      borderRadius: 13, padding: '10px 12px', display: 'flex', alignItems: 'center', gap: 8,
-      marginBottom: 10, boxShadow: '0 3px 14px rgba(230,51,18,.4)',
-      maxWidth: '55%',
-    }}>
-      <img src="/icons/icon-72.png" alt="ALPAZAR" style={{ width: 28, height: 28, borderRadius: 7, flexShrink: 0 }} />
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ color: '#fff', fontWeight: 700, fontSize: 10 }}>📲 Instalo</div>
-        <div style={{ color: 'rgba(255,255,255,.75)', fontSize: 8, marginTop: 1 }}>Falas</div>
+    <div style={{ position: 'fixed', bottom: 219, right: 12, zIndex: 190, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
+      <div style={{ background: '#111', color: '#F5C842', fontSize: 9, fontWeight: 700, padding: '5px 9px', borderRadius: '8px 8px 0 8px', whiteSpace: 'nowrap', boxShadow: '0 3px 10px rgba(0,0,0,.35)', display: 'flex', alignItems: 'center', gap: 5, animation: 'ai-fade .3s ease' }}>
+        📲 Instalo ALPAZAR
+        <button onClick={() => setDismissed(true)} style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', fontSize: 10, padding: '0 2px', lineHeight: 1 }}>✕</button>
       </div>
-      <button onClick={() => setShow(false)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,.65)', cursor: 'pointer', padding: 2, fontSize: 13, flexShrink: 0 }}>✕</button>
-      <button onClick={install} style={{ background: '#fff', color: '#E63312', border: 'none', borderRadius: 8, padding: '6px 10px', fontSize: 10, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap', fontFamily: 'inherit', flexShrink: 0 }}>
-        Instalo
+      <button
+        onClick={install}
+        style={{
+          width: 52, height: 52,
+          background: 'linear-gradient(135deg,#E63312,#c42a0e)',
+          borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          border: 'none', cursor: 'pointer',
+          boxShadow: '0 6px 20px rgba(230,51,18,.45)',
+          animation: 'install-pulse 2.2s infinite',
+          transition: 'transform .15s',
+        }}
+        onMouseDown={e => (e.currentTarget.style.transform = 'scale(.92)')}
+        onMouseUp={e => (e.currentTarget.style.transform = '')}
+      >
+        <i className="ti ti-device-mobile-down" style={{ fontSize: 24, color: '#fff' }} />
       </button>
     </div>
   )
 }
 
-// Kuti ndarje ne rrjete sociale
+// Kuti ndarje — buton i vogël katrore pulsues (fixed, vetem faqja kryesore)
 function ShareBox() {
+  const [open, setOpen] = useState(false)
   const url = 'https://alpazar.al'
   const text = 'Zbulo ALPAZAR — platforma #1 shqiptare e tregtisë online! Shit, bli dhe bëj pazarin tënd.'
 
   return (
-    <div style={{
-      marginBottom: 12, background: 'linear-gradient(135deg,#111,#1a1a1a)',
-      border: '1.5px solid #333', borderRadius: 13, padding: '12px 14px',
-      boxShadow: '0 3px 12px rgba(0,0,0,.15)',
-      maxWidth: '55%',
-    }}>
-      <div style={{ color: '#F5C842', fontSize: 10, fontWeight: 700, marginBottom: 8 }}>
-        📤 Ndaj me miqtë
-      </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
-        <button
-          onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`, '_blank')}
-          style={{ background: '#25D366', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 4px', fontSize: 9, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-          <i className="ti ti-brand-whatsapp" style={{ fontSize: 16 }} />WhatsApp
-        </button>
-        <button
-          onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank')}
-          style={{ background: '#1877F2', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 4px', fontSize: 9, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-          <i className="ti ti-brand-facebook" style={{ fontSize: 16 }} />Facebook
-        </button>
-        <button
-          onClick={() => window.open('https://www.instagram.com/', '_blank')}
-          style={{ background: 'linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 4px', fontSize: 9, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-          <i className="ti ti-brand-instagram" style={{ fontSize: 16 }} />Instagram
-        </button>
-        <button
-          onClick={() => window.open('https://www.linkedin.com/', '_blank')}
-          style={{ background: '#0A66C2', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 4px', fontSize: 9, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-          <i className="ti ti-brand-linkedin" style={{ fontSize: 16 }} />LinkedIn
-        </button>
-      </div>
+    <div style={{ position: 'fixed', bottom: 157, right: 12, zIndex: 190, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
+      {open && (
+        <div style={{
+          background: '#111', border: '1.5px solid #333', borderRadius: '12px 12px 0 12px',
+          padding: '10px', boxShadow: '0 4px 18px rgba(0,0,0,.35)',
+          display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6,
+          animation: 'ai-fade .25s ease',
+        }}>
+          <button onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`, '_blank')}
+            style={{ background: '#25D366', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 6px', fontSize: 8, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+            <i className="ti ti-brand-whatsapp" style={{ fontSize: 16 }} />WhatsApp
+          </button>
+          <button onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank')}
+            style={{ background: '#1877F2', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 6px', fontSize: 8, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+            <i className="ti ti-brand-facebook" style={{ fontSize: 16 }} />Facebook
+          </button>
+          <button onClick={() => window.open('https://www.instagram.com/', '_blank')}
+            style={{ background: 'linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 6px', fontSize: 8, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+            <i className="ti ti-brand-instagram" style={{ fontSize: 16 }} />Instagram
+          </button>
+          <button onClick={() => window.open('https://www.linkedin.com/', '_blank')}
+            style={{ background: '#0A66C2', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 6px', fontSize: 8, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+            <i className="ti ti-brand-linkedin" style={{ fontSize: 16 }} />LinkedIn
+          </button>
+        </div>
+      )}
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{
+          width: 52, height: 52,
+          background: open ? '#1a1a1a' : 'linear-gradient(135deg,#111,#1c1c1c)',
+          borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          border: `1.5px solid ${open ? '#F5C842' : '#333'}`,
+          cursor: 'pointer',
+          boxShadow: '0 6px 20px rgba(245,200,66,.25)',
+          animation: open ? 'none' : 'share-pulse 2.2s infinite',
+          transition: 'all .2s',
+        }}
+        onMouseDown={e => (e.currentTarget.style.transform = 'scale(.92)')}
+        onMouseUp={e => (e.currentTarget.style.transform = '')}
+      >
+        <i className={`ti ti-${open ? 'x' : 'share-2'}`} style={{ fontSize: 22, color: '#F5C842' }} />
+      </button>
     </div>
   )
 }
@@ -354,6 +374,9 @@ export default function Home() {
         .nav-add{width:50px;height:50px;background:linear-gradient(135deg,#E63312,#c42a0e);border-radius:50%;display:flex;align-items:center;justify-content:center;border:3px solid #111;margin-top:-18px;cursor:pointer;box-shadow:0 4px 16px rgba(230,51,18,.5);transition:transform .15s,box-shadow .15s;}
         .nav-add:active{transform:scale(.9);box-shadow:0 2px 8px rgba(230,51,18,.3);}
         .nav-add i{font-size:24px;color:#fff;}
+        /* Floating pulsing squares */
+        @keyframes install-pulse{0%,100%{box-shadow:0 6px 20px rgba(230,51,18,.4);transform:scale(1)}50%{box-shadow:0 8px 28px rgba(230,51,18,.65);transform:scale(1.07)}}
+        @keyframes share-pulse{0%,100%{box-shadow:0 6px 20px rgba(245,200,66,.25);transform:scale(1)}50%{box-shadow:0 8px 28px rgba(245,200,66,.5);transform:scale(1.07)}}
         .loading{text-align:center;padding:32px;color:#888;font-size:13px;}
         .spinner{display:block;width:28px;height:28px;border:3px solid #F5C842;border-top-color:#E63312;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px;}
         @keyframes spin{to{transform:rotate(360deg);}}
@@ -502,9 +525,6 @@ export default function Home() {
             </>
           )}
 
-          {/* 5. Banner shkarkim — inline, i sinkronizuar me kutitë e tjera */}
-          <InstallBanner />
-
           <div className="filter-row">
             {[
               { id: 'all', label: 'Të gjitha' },
@@ -575,8 +595,6 @@ export default function Home() {
             </div>
           )}
 
-          {/* 4. Kuti ndarje — vendosur ku ishte Premium CTA */}
-          <ShareBox />
         </div>
 
         <nav className="bottom-nav">
@@ -600,6 +618,9 @@ export default function Home() {
         </nav>
       </div>
 
+      {/* Butonat pulsuese katrore — vetem faqja kryesore */}
+      <ShareBox />
+      <InstallBanner />
     </>
   )
 }
