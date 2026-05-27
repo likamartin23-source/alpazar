@@ -1,16 +1,13 @@
-const CACHE_NAME = 'alpazar-v1'
+// CACHE_NAME ndryshon me çdo deploy — shfletuesi e njeh ndryshimin dhe rifrekon cache
+const CACHE_NAME = 'alpazar-v3'
 const STATIC_ASSETS = [
-  '/',
-  '/search',
-  '/dyqane',
   '/manifest.json',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
-  'https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css',
-  'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap',
 ]
 
 self.addEventListener('install', (e) => {
+  // skipWaiting: SW i ri aktivizohet menjëherë pa pritur mbylljen e tab-it
   self.skipWaiting()
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) =>
@@ -20,53 +17,58 @@ self.addEventListener('install', (e) => {
 })
 
 self.addEventListener('activate', (e) => {
+  // Fshi të gjitha cache-t e vjetra (v1, v2, etj.)
   e.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
-    )
+    ).then(() => self.clients.claim())
   )
-  self.clients.claim()
 })
 
 self.addEventListener('fetch', (e) => {
   const { request } = e
   const url = new URL(request.url)
 
-  // Skip non-GET and supabase API calls
+  // Kalo: jo-GET, supabase, API, Next.js chunks (kane hash unik per deploy)
   if (request.method !== 'GET') return
   if (url.hostname.includes('supabase.co')) return
   if (url.pathname.startsWith('/api/')) return
+  if (url.pathname.startsWith('/_next/')) return  // Next.js chunks — mos i cache (jane hashed)
 
-  // Network-first for navigation (pages)
+  // NETWORK-FIRST per te gjitha faqet — gjithmonë version i ri nga serveri
   if (request.mode === 'navigate') {
     e.respondWith(
-      fetch(request)
-        .then((res) => {
-          const clone = res.clone()
-          caches.open(CACHE_NAME).then((c) => c.put(request, clone))
-          return res
-        })
-        .catch(() => caches.match(request).then((r) => r || caches.match('/')))
+      fetch(request, { cache: 'no-store' })
+        .then((res) => res)
+        .catch(() => caches.match('/').then((r) => r || new Response('Offline', { status: 503 })))
     )
     return
   }
 
-  // Cache-first for static assets
-  e.respondWith(
-    caches.match(request).then((cached) => {
-      if (cached) return cached
-      return fetch(request).then((res) => {
-        if (res.ok) {
-          const clone = res.clone()
-          caches.open(CACHE_NAME).then((c) => c.put(request, clone))
-        }
-        return res
-      }).catch(() => cached)
-    })
-  )
+  // Cache-first VETEM per assets statike (ikona, manifest)
+  if (url.pathname.startsWith('/icons/') || url.pathname === '/manifest.json') {
+    e.respondWith(
+      caches.match(request).then((cached) => {
+        if (cached) return cached
+        return fetch(request).then((res) => {
+          if (res.ok) caches.open(CACHE_NAME).then((c) => c.put(request, res.clone()))
+          return res
+        })
+      })
+    )
+    return
+  }
+
+  // Te gjitha te tjerat: network-first, pa cache
+  e.respondWith(fetch(request).catch(() => new Response('', { status: 503 })))
 })
 
-// Push notifications (placeholder)
+// SKIP_WAITING: lejon faqen te rifreskohet automatikisht kur ka version te ri
+self.addEventListener('message', (e) => {
+  if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting()
+})
+
+// Push notifications
 self.addEventListener('push', (e) => {
   const data = e.data?.json() || { title: 'ALPAZAR', body: 'Ke një mesazh të ri!' }
   e.waitUntil(

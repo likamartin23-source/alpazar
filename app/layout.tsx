@@ -3,13 +3,18 @@ import dynamic from 'next/dynamic'
 
 const AiFloat = dynamic(() => import('./components/AiFloat'), { ssr: false })
 
+const SITE_URL = 'https://alpazar.al'
+
 export const metadata: Metadata = {
   title: 'ALPAZAR — Shit · Bli · Bëj Pazrin Tënd',
-  description: 'Platforma #1 shqiptare e tregtisë dhe shpalljeve online. Zero reklama. Zero pagesa mes përdoruesve.',
-  keywords: 'marketplace, shqiperi, shpallje, shit, bli, online, dyqane, alpazar',
-  authors: [{ name: 'ALPAZAR' }],
+  description: 'Platforma #1 shqiptare e tregtisë dhe shpalljeve online. Zero reklama. Zero pagesa mes përdoruesve. Shit, bli dhe bëj pazarin tënd falas.',
+  keywords: 'marketplace shqiperi, shpallje online, shit bli shqiperi, dyqane online, alpazar, tregti online, bazar shqip, shpallje falas',
+  authors: [{ name: 'ALPAZAR', url: SITE_URL }],
   applicationName: 'ALPAZAR',
   manifest: '/manifest.json',
+  metadataBase: new URL(SITE_URL),
+  alternates: { canonical: SITE_URL },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
@@ -28,11 +33,17 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'sq_AL',
-    url: 'https://alpazar.vercel.app',
+    url: SITE_URL,
     siteName: 'ALPAZAR',
-    title: 'ALPAZAR — Shit · Bli · Bëj Pazrin Tënd',
-    description: 'Platforma #1 shqiptare e tregtisë online. Zero reklama.',
-    images: [{ url: '/icons/icon-512.png', width: 512, height: 512, alt: 'ALPAZAR' }],
+    title: 'ALPAZAR — Platforma #1 Shqiptare e Tregtisë Online',
+    description: 'Shit, bli dhe bëj pazarin tënd falas. Zero reklama. Zero komision.',
+    images: [{ url: `${SITE_URL}/icons/icon-512.png`, width: 512, height: 512, alt: 'ALPAZAR — Marketplace Shqiptar' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'ALPAZAR — Platforma #1 Shqiptare e Tregtisë Online',
+    description: 'Shit, bli dhe bëj pazarin tënd falas. Zero reklama.',
+    images: [`${SITE_URL}/icons/icon-512.png`],
   },
   other: {
     'mobile-web-app-capable': 'yes',
@@ -41,6 +52,7 @@ export const metadata: Metadata = {
     'apple-mobile-web-app-title': 'ALPAZAR',
     'msapplication-TileColor': '#111111',
     'msapplication-TileImage': '/icons/icon-144.png',
+    'google-site-verification': '',
   },
 }
 
@@ -64,10 +76,41 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+        {/* JSON-LD — Google e kupton si marketplace */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{__html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "ALPAZAR",
+          "url": "https://alpazar.al",
+          "description": "Platforma #1 shqiptare e tregtisë dhe shpalljeve online. Zero reklama.",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": { "@type": "EntryPoint", "urlTemplate": "https://alpazar.al/search?q={search_term_string}" },
+            "query-input": "required name=search_term_string"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "ALPAZAR",
+            "url": "https://alpazar.al",
+            "logo": { "@type": "ImageObject", "url": "https://alpazar.al/icons/icon-512.png" }
+          }
+        })}} />
+        {/* Service Worker — me skipWaiting, ndryshimet pasqyrohen menjëherë */}
         <script dangerouslySetInnerHTML={{__html: `
           if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
               navigator.serviceWorker.register('/sw.js', { scope: '/' })
+                .then(function(reg) {
+                  reg.addEventListener('updatefound', function() {
+                    var newSW = reg.installing;
+                    newSW.addEventListener('statechange', function() {
+                      if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+                        newSW.postMessage({ type: 'SKIP_WAITING' });
+                        window.location.reload();
+                      }
+                    });
+                  });
+                })
                 .catch(function() {});
             });
           }
