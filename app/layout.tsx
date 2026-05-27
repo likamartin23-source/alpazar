@@ -52,9 +52,7 @@ export const metadata: Metadata = {
     'apple-mobile-web-app-title': 'ALPAZAR',
     'msapplication-TileColor': '#111111',
     'msapplication-TileImage': '/icons/icon-144.png',
-    ...(process.env.GOOGLE_SITE_VERIFICATION
-      ? { 'google-site-verification': process.env.GOOGLE_SITE_VERIFICATION }
-      : {}),
+    'google-site-verification': process.env.GOOGLE_SITE_VERIFICATION || 'N0UdWUGXwgQ57VjW4bpk8Et3ql6iV3rZZXfYvoR9yCY',
   },
 }
 
