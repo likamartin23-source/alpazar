@@ -45,14 +45,19 @@ export default function ProfilePage() {
   const [deleteMsg, setDeleteMsg] = useState('')
 
   useEffect(() => {
+    // Kontrollo sesionin dhe dëgjo ndryshimet (p.sh. skadim sesioni)
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) { window.location.href = '/auth/login'; return }
       setUser(session.user)
       fetchProfile(session.user.id)
     })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) { window.location.href = '/auth/login' }
+    })
     // Check if redirected with tab param
     const params = new URLSearchParams(window.location.search)
     if (params.get('tab') === 'shop') setActiveTab('shop')
+    return () => subscription.unsubscribe()
   }, [])
 
   async function fetchProfile(uid: string) {
@@ -130,11 +135,11 @@ export default function ProfilePage() {
 
   async function signOut() {
     await supabase.auth.signOut()
-    window.location.href = '/'
+    window.location.href = '/auth/login'
   }
 
   async function changePassword() {
-    if (newPass.length < 6) { setPassMsg('err:Fjalëkalimi duhet të ketë minimumi 6 karaktere!'); return }
+    if (newPass.length < 8) { setPassMsg('err:Fjalëkalimi duhet të ketë minimumi 8 karaktere!'); return }
     if (newPass !== newPass2) { setPassMsg('err:Fjalëkalimet nuk përputhen!'); return }
     setSavingPass(true); setPassMsg('')
     const { error } = await supabase.auth.updateUser({ password: newPass })
@@ -424,7 +429,7 @@ export default function ProfilePage() {
                 {passMsg && (
                   <div className={`msg-box msg-sm ${passMsg.split(':')[0]}`}>{passMsg.split(/:(.+)/)[1]}</div>
                 )}
-                <label>Fjalëkalimi i ri (min. 6 karaktere)</label>
+                <label>Fjalëkalimi i ri (min. 8 karaktere)</label>
                 <div className="pass-wrap">
                   <input
                     type={showNewPass ? 'text' : 'password'}

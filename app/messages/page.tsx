@@ -91,7 +91,11 @@ export default function MessagesPage() {
         if (withId) openThreadById(withId, session.user.id)
       })
     })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) { window.location.href = '/auth/login' }
+    })
     return () => {
+      subscription.unsubscribe()
       if (channelRef.current)  supabase.removeChannel(channelRef.current)
       if (typingBcast.current) supabase.removeChannel(typingBcast.current)
     }

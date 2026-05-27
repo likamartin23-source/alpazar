@@ -132,10 +132,17 @@ export default function Auth() {
   const [originalPhone, setOriginalPhone] = useState('')
 
   useEffect(() => {
+    // Kontrollo sesionin ekzistues dhe dëgjo ndryshimet
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) window.location.href = '/'
     })
-    return () => { if (timerRef.current) clearInterval(timerRef.current) }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) window.location.href = '/'
+    })
+    return () => {
+      subscription.unsubscribe()
+      if (timerRef.current) clearInterval(timerRef.current)
+    }
   }, [])
 
   function startCountdown() {
@@ -260,8 +267,9 @@ export default function Auth() {
   }
 
   // ── Verify OTP (register / forgot) ─────────────────────────────────
-  async function verifyOtp() {
-    const code = otp.join('')
+  // codeOverride lejon auto-submit me vlerën e sapo plotësuar (para re-render të React)
+  async function verifyOtp(codeOverride?: string) {
+    const code = codeOverride ?? otp.join('')
     if (code.length !== 6) { setMsg('err:Plotëso kodin 6-shifror!'); return }
     if (expired) { setMsg('err:Kodi ka skaduar! Klikoje "Ridërgo" për kod të ri.'); return }
     setLoading(true); setMsg('')
@@ -309,7 +317,7 @@ export default function Auth() {
   }
 
   async function setNewPassword() {
-    if (newPass.length < 6) { setMsg('err:Fjalëkalimi duhet të ketë minimumi 6 karaktere!'); return }
+    if (newPass.length < 8) { setMsg('err:Fjalëkalimi duhet të ketë minimumi 8 karaktere!'); return }
     if (newPass !== newPass2) { setMsg('err:Fjalëkalimet nuk përputhen!'); return }
     setLoading(true); setMsg('')
     const { error } = await supabase.auth.updateUser({ password: newPass })
@@ -324,7 +332,13 @@ export default function Auth() {
   function handleOtpChange(i: number, val: string) {
     if (!/^\d*$/.test(val) || expired) return
     const next = [...otp]; next[i] = val.slice(-1); setOtp(next)
-    if (val && i < 5) setTimeout(() => inputRefs.current[i + 1]?.focus(), 0)
+    if (val && i < 5) {
+      setTimeout(() => inputRefs.current[i + 1]?.focus(), 0)
+    }
+    // Auto-submit kur plotësohet shifra e fundit (kalon kodin direkt — shmanget stale state)
+    if (val && next.every(d => d !== '') && !expired) {
+      setTimeout(() => verifyOtp(next.join('')), 250)
+    }
   }
   function handleOtpKeyDown(i: number, e: React.KeyboardEvent) {
     if (e.key === 'Backspace' && !otp[i] && i > 0) {
@@ -341,6 +355,10 @@ export default function Auth() {
     text.split('').forEach((d, i) => { next[i] = d })
     setOtp(next)
     setTimeout(() => inputRefs.current[Math.min(text.length, 5)]?.focus(), 0)
+    // Auto-submit kur ngjitet kodi i plotë 6-shifror
+    if (text.length === 6 && !expired) {
+      setTimeout(() => verifyOtp(text), 350)
+    }
   }
 
   const [t, m] = msg.split(/:(.+)/)
@@ -396,7 +414,12 @@ export default function Auth() {
         <span className={`countdown-time ${expired ? 'err-c' : timeClass}`}>
           {expired ? '0:00' : `${mins}:${fmt2(secs)}`}
         </span>
-        <button className="resend-btn" onClick={sendOtp} disabled={loading}>
+        <button
+          className="resend-btn"
+          onClick={sendOtp}
+          disabled={loading || (!expired && countdown > 0)}
+          title={!expired && countdown > 0 ? `Prit ${countdown}s` : 'Ridërgo kodin'}
+        >
           {loading ? '...' : 'Ridërgo'}
         </button>
       </div>
@@ -662,7 +685,7 @@ export default function Auth() {
           {mode === 'forgot' && step === 'new-pass' && (
             <>
               <h2>🔒 Fjalëkalim i Ri</h2>
-              <p className="sub">Zgjidh një fjalëkalim të sigurt (min. 6 karaktere)</p>
+              <p className="sub">Zgjidh një fjalëkalim të sigurt (min. 8 karaktere)</p>
 
               <div className="field">
                 <label>Fjalëkalimi i ri *</label>

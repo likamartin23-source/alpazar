@@ -29,9 +29,13 @@ export default function NewListing() {
       if (!session) { window.location.href = '/auth/login'; return }
       setUser(session.user)
     })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) { window.location.href = '/auth/login' }
+    })
     supabase.from('categories').select('*').eq('is_active', true).order('sort_order').then(({ data }) => {
       if (data) setCategories(data)
     })
+    return () => subscription.unsubscribe()
   }, [])
 
   function set(k: string, v: string) { setForm(f => ({ ...f, [k]: v })) }
