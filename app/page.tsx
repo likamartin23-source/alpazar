@@ -29,25 +29,25 @@ function InstallBanner() {
 
   if (!show || installed || dismissed) return null
   return (
-    <div style={{ position: 'fixed', bottom: 219, left: 12, zIndex: 190, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 4 }}>
+    <div style={{ position: 'fixed', bottom: 219, left: 12, zIndex: 190, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 3 }}>
       <button
         onClick={install}
         style={{
-          width: 32, height: 40,
+          width: 26, height: 32,
           background: 'linear-gradient(135deg,#22C55E,#16a34a)',
-          borderRadius: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2,
+          borderRadius: 7, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2,
           border: 'none', cursor: 'pointer',
-          boxShadow: '0 5px 16px rgba(34,197,94,.45)',
+          boxShadow: '0 4px 13px rgba(34,197,94,.45)',
           animation: 'install-pulse 2.2s infinite',
           transition: 'transform .15s',
         }}
         onMouseDown={e => (e.currentTarget.style.transform = 'scale(.92)')}
         onMouseUp={e => (e.currentTarget.style.transform = '')}
       >
-        <i className="ti ti-device-mobile-down" style={{ fontSize: 14, color: '#fff' }} />
-        <span style={{ fontSize: 6.5, color: '#fff', fontWeight: 800, letterSpacing: .3, lineHeight: 1 }}>Instalo</span>
+        <i className="ti ti-device-mobile-down" style={{ fontSize: 11, color: '#fff' }} />
+        <span style={{ fontSize: 5, color: '#fff', fontWeight: 800, letterSpacing: .3, lineHeight: 1 }}>Instalo</span>
       </button>
-      <button onClick={() => setDismissed(true)} style={{ background: 'none', border: 'none', color: 'rgba(34,197,94,.7)', cursor: 'pointer', fontSize: 8, padding: 0, lineHeight: 1, alignSelf: 'center' }}>✕</button>
+      <button onClick={() => setDismissed(true)} style={{ background: 'none', border: 'none', color: 'rgba(34,197,94,.7)', cursor: 'pointer', fontSize: 7, padding: 0, lineHeight: 1, alignSelf: 'center' }}>✕</button>
     </div>
   )
 }
@@ -59,7 +59,7 @@ function ShareBox() {
   const text = 'Zbulo ALPAZAR — platforma #1 shqiptare e tregtisë online! Shit, bli dhe bëj pazarin tënd.'
 
   return (
-    <div style={{ position: 'fixed', bottom: 157, left: 12, zIndex: 190, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 4 }}>
+    <div style={{ position: 'fixed', bottom: 157, left: 12, zIndex: 190, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 3 }}>
       {open && (
         <div style={{
           background: '#111', border: '1.5px solid #1d4ed8', borderRadius: '12px 12px 12px 0',
@@ -88,20 +88,20 @@ function ShareBox() {
       <button
         onClick={() => setOpen(o => !o)}
         style={{
-          width: 32, height: 40,
+          width: 26, height: 32,
           background: open ? '#2563EB' : 'linear-gradient(135deg,#3B82F6,#2563EB)',
-          borderRadius: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2,
+          borderRadius: 7, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2,
           border: 'none',
           cursor: 'pointer',
-          boxShadow: '0 5px 16px rgba(59,130,246,.45)',
+          boxShadow: '0 4px 13px rgba(59,130,246,.45)',
           animation: open ? 'none' : 'share-pulse 2.2s infinite',
           transition: 'transform .15s',
         }}
         onMouseDown={e => (e.currentTarget.style.transform = 'scale(.92)')}
         onMouseUp={e => (e.currentTarget.style.transform = '')}
       >
-        <i className={`ti ti-${open ? 'x' : 'share-2'}`} style={{ fontSize: 14, color: '#fff' }} />
-        <span style={{ fontSize: 6.5, color: '#fff', fontWeight: 800, letterSpacing: .3, lineHeight: 1 }}>Ndaj</span>
+        <i className={`ti ti-${open ? 'x' : 'share-2'}`} style={{ fontSize: 11, color: '#fff' }} />
+        <span style={{ fontSize: 5, color: '#fff', fontWeight: 800, letterSpacing: .3, lineHeight: 1 }}>Ndaj</span>
       </button>
       <button onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', color: 'rgba(59,130,246,.7)', cursor: 'pointer', fontSize: 8, padding: 0, lineHeight: 1, alignSelf: 'center', display: open ? 'block' : 'none' }}>✕</button>
     </div>
@@ -290,11 +290,11 @@ export default function Home() {
         .cat-item.active span{color:#F5C842;font-weight:700;}
         /* Body */
         .body{padding:0 10px;}
-        .no-ads{background:#EAF3DE;border:0.5px solid #97C459;border-radius:7px;padding:6px 12px;display:flex;align-items:center;gap:6px;margin-bottom:10px;}
+        .no-ads{background:#EAF3DE;border:0.5px solid #97C459;border-radius:7px;padding:6px 12px;display:flex;align-items:center;gap:6px;margin-bottom:2px;}
         .no-ads i{font-size:13px;color:#3B6D11;}
         .no-ads span{font-size:9px;color:#3B6D11;font-weight:700;}
         /* Hero — -40% lartesi */
-        .hero{background:linear-gradient(135deg,#111 0%,#1c1c1c 100%);border-radius:16px;padding:9px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;position:relative;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.15);}
+        .hero{background:linear-gradient(135deg,#111 0%,#1c1c1c 100%);border-radius:16px;padding:9px 14px;display:flex;align-items:center;justify-content:space-between;margin-top:-6px;margin-bottom:4px;position:relative;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.15);}
         .hero h2{color:#F5C842;font-size:12px;font-weight:700;margin-bottom:3px;}
         .hero p{color:#777;font-size:9px;line-height:1.5;}
         .hero-stats{display:flex;gap:14px;}
@@ -356,7 +356,7 @@ export default function Home() {
         .empty-state p{font-size:11px;color:#aaa;line-height:1.6;margin-bottom:14px;}
         .empty-cta{background:#E63312;color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
         /* Premium CTA */
-        .premium-cta{margin-bottom:10px;background:linear-gradient(135deg,#FFFBEA,#fff8d9);border:1.5px solid #F5C842;border-radius:13px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 3px 12px rgba(245,200,66,.15);}
+        .premium-cta{margin-top:-4px;margin-bottom:8px;background:linear-gradient(135deg,#FFFBEA,#fff8d9);border:1.5px solid #F5C842;border-radius:13px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 3px 12px rgba(245,200,66,.15);}
         .prem-icon{width:30px;height:30px;background:#F5C842;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
         .prem-icon i{font-size:15px;color:#111;}
         .prem-text strong{font-size:11px;font-weight:700;color:#111;display:block;}
