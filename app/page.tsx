@@ -4,13 +4,13 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import type { Category, Listing } from '../lib/types'
 
+// Banner shkarkim — inline (jo fixed), shfaqet vetem ne web
 function InstallBanner() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
   const [show, setShow] = useState(false)
   const [installed, setInstalled] = useState(false)
 
   useEffect(() => {
-    // Already installed as PWA
     if (window.matchMedia('(display-mode: standalone)').matches) return
     const handler = (e: any) => { e.preventDefault(); setDeferredPrompt(e); setShow(true) }
     window.addEventListener('beforeinstallprompt', handler)
@@ -29,20 +29,67 @@ function InstallBanner() {
   if (!show || installed) return null
   return (
     <div style={{
-      position: 'fixed', bottom: 80, left: 10, right: 10, maxWidth: 460, margin: '0 auto',
       background: 'linear-gradient(135deg,#111,#1c1c1c)', border: '1px solid #F5C842',
-      borderRadius: 16, padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 12,
-      zIndex: 300, boxShadow: '0 8px 32px rgba(0,0,0,.4)',
+      borderRadius: 13, padding: '11px 14px', display: 'flex', alignItems: 'center', gap: 12,
+      marginBottom: 10, boxShadow: '0 3px 12px rgba(245,200,66,.12)',
     }}>
-      <img src="/icons/icon-72.png" alt="ALPAZAR" style={{ width: 44, height: 44, borderRadius: 10 }} />
+      <img src="/icons/icon-72.png" alt="ALPAZAR" style={{ width: 38, height: 38, borderRadius: 9 }} />
       <div style={{ flex: 1 }}>
-        <div style={{ color: '#F5C842', fontWeight: 700, fontSize: 12 }}>📲 Instalo ALPAZAR</div>
-        <div style={{ color: '#888', fontSize: 10, marginTop: 2 }}>Shto në ekranin kryesor — falas</div>
+        <div style={{ color: '#F5C842', fontWeight: 700, fontSize: 11 }}>📲 Instalo ALPAZAR</div>
+        <div style={{ color: '#888', fontSize: 9, marginTop: 2 }}>Shto në ekranin kryesor — falas</div>
       </div>
-      <button onClick={() => setShow(false)} style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', padding: 4, fontSize: 16 }}>✕</button>
-      <button onClick={install} style={{ background: '#F5C842', color: '#111', border: 'none', borderRadius: 9, padding: '8px 14px', fontSize: 12, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap', fontFamily: 'inherit' }}>
+      <button onClick={() => setShow(false)} style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', padding: 4, fontSize: 15 }}>✕</button>
+      <button onClick={install} style={{ background: '#F5C842', color: '#111', border: 'none', borderRadius: 9, padding: '7px 13px', fontSize: 11, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap', fontFamily: 'inherit' }}>
         Instalo
       </button>
+    </div>
+  )
+}
+
+// Kuti ndarje ne rrjete sociale
+function ShareBox() {
+  const [copied, setCopied] = useState(false)
+  const url = 'https://alpazar.al'
+  const text = 'Zbulo ALPAZAR — platforma #1 shqiptare e tregtisë online! Shit, bli dhe bëj pazarin tënd.'
+
+  function copyLink() {
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
+
+  return (
+    <div style={{
+      marginBottom: 12, background: 'linear-gradient(135deg,#111,#1a1a1a)',
+      border: '1.5px solid #333', borderRadius: 13, padding: '12px 14px',
+      boxShadow: '0 3px 12px rgba(0,0,0,.15)',
+    }}>
+      <div style={{ color: '#F5C842', fontSize: 11, fontWeight: 700, marginBottom: 10 }}>
+        📤 Ndaj Alpazar me miqtë
+      </div>
+      <div style={{ display: 'flex', gap: 7 }}>
+        <button
+          onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`, '_blank')}
+          style={{ flex: 1, background: '#25D366', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 4px', fontSize: 9, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+          <span style={{ fontSize: 16 }}>💬</span>WhatsApp
+        </button>
+        <button
+          onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank')}
+          style={{ flex: 1, background: '#1877F2', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 4px', fontSize: 9, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+          <span style={{ fontSize: 16 }}>📘</span>Facebook
+        </button>
+        <button
+          onClick={() => window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank')}
+          style={{ flex: 1, background: '#0088CC', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 4px', fontSize: 9, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+          <span style={{ fontSize: 16 }}>✈️</span>Telegram
+        </button>
+        <button
+          onClick={copyLink}
+          style={{ flex: 1, background: copied ? '#3B6D11' : '#2a2a2a', color: copied ? '#9BE96A' : '#F5C842', border: '1px solid ' + (copied ? '#3B6D11' : '#444'), borderRadius: 9, padding: '8px 4px', fontSize: 9, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, transition: 'all .2s' }}>
+          <span style={{ fontSize: 16 }}>{copied ? '✅' : '🔗'}</span>{copied ? 'Kopjuar!' : 'Kopjo'}
+        </button>
+      </div>
     </div>
   )
 }
@@ -92,7 +139,6 @@ export default function Home() {
       if (session?.user) fetchUnread(session.user.id)
     })
 
-    // Live admin settings — reflect admin config changes in real time
     const settingsChannel = supabase
       .channel('admin-settings-live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'admin_settings' }, () => fetchSettings())
@@ -233,25 +279,14 @@ export default function Home() {
         .no-ads{background:#EAF3DE;border:0.5px solid #97C459;border-radius:7px;padding:6px 12px;display:flex;align-items:center;gap:6px;margin-bottom:10px;}
         .no-ads i{font-size:13px;color:#3B6D11;}
         .no-ads span{font-size:9px;color:#3B6D11;font-weight:700;}
-        /* Hero */
-        .hero{background:linear-gradient(135deg,#111 0%,#1c1c1c 100%);border-radius:16px;padding:16px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;position:relative;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.15);}
-        .hero::before{content:'';position:absolute;top:-20px;right:-20px;width:100px;height:100px;border-radius:50%;background:rgba(230,51,18,.15);}
-        .hero::after{content:'';position:absolute;bottom:-30px;left:-10px;width:80px;height:80px;border-radius:50%;background:rgba(245,200,66,.07);}
-        .hero h2{color:#F5C842;font-size:14px;font-weight:700;margin-bottom:5px;}
-        .hero p{color:#777;font-size:10px;line-height:1.6;}
-        .hero-stats{display:flex;gap:16px;}
+        /* Hero — -40% lartesi */
+        .hero{background:linear-gradient(135deg,#111 0%,#1c1c1c 100%);border-radius:16px;padding:9px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;position:relative;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.15);}
+        .hero h2{color:#F5C842;font-size:12px;font-weight:700;margin-bottom:3px;}
+        .hero p{color:#777;font-size:9px;line-height:1.5;}
+        .hero-stats{display:flex;gap:14px;}
         .stat{text-align:center;}
-        .stat-n{color:#F5C842;font-size:18px;font-weight:800;}
-        .stat-l{color:#555;font-size:8px;margin-top:2px;}
-        /* AI bar */
-        .ai-bar{background:linear-gradient(135deg,#111,#1a1a1a);border-radius:13px;padding:11px 14px;display:flex;align-items:center;gap:10px;border:1px solid #E63312;margin-bottom:10px;cursor:pointer;transition:border-color .15s;box-shadow:0 3px 12px rgba(230,51,18,.15);}
-        .ai-bar:hover{border-color:#ff4444;}
-        .ai-icon{width:32px;height:32px;background:#F5C842;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:pulse 2s infinite;}
-        @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(245,200,66,.4)} 50%{box-shadow:0 0 0 6px rgba(245,200,66,0)}}
-        .ai-icon i{font-size:15px;color:#111;}
-        .ai-text strong{color:#F5C842;font-size:11px;font-weight:700;display:block;}
-        .ai-text span{color:#888;font-size:9px;}
-        .ai-btn{background:#E63312;color:#fff;border:none;border-radius:8px;padding:7px 13px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;margin-left:auto;}
+        .stat-n{color:#F5C842;font-size:15px;font-weight:800;}
+        .stat-l{color:#555;font-size:7px;margin-top:1px;}
         /* Trust row */
         .trust-row{display:flex;gap:6px;margin-bottom:10px;}
         .trust-card{flex:1;border-radius:9px;padding:7px 8px;display:flex;align-items:center;gap:5px;}
@@ -283,32 +318,32 @@ export default function Home() {
         .filter-row::-webkit-scrollbar{display:none;}
         .filter-btn{background:#fff;border:0.5px solid #ddd;border-radius:20px;padding:6px 13px;font-size:10px;color:#666;white-space:nowrap;flex-shrink:0;cursor:pointer;font-family:inherit;transition:all .12s;box-shadow:0 1px 3px rgba(0,0,0,.04);}
         .filter-btn.active{background:#111;border-color:#111;color:#F5C842;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.15);}
-        /* Listings grid */
-        .listings-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px;}
+        /* Listings grid — -30% madhesi */
+        .listings-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:12px;}
         .listing-card{background:#fff;border:0.5px solid #eee;border-radius:10px;overflow:hidden;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.04);transition:transform .12s,box-shadow .12s;}
         .listing-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.08);}
         .listing-card:active{transform:scale(.97);}
-        .card-img{height:75px;display:flex;align-items:center;justify-content:center;font-size:24px;position:relative;background:linear-gradient(135deg,#f9f5e0,#f5f0d5);}
+        .card-img{height:52px;display:flex;align-items:center;justify-content:center;font-size:20px;position:relative;background:linear-gradient(135deg,#f9f5e0,#f5f0d5);}
         .card-img img{width:100%;height:100%;object-fit:cover;}
-        .badge-new{position:absolute;top:4px;left:4px;background:#E63312;color:#fff;font-size:6px;padding:2px 5px;border-radius:4px;font-weight:700;}
-        .badge-used{position:absolute;top:4px;left:4px;background:#111;color:#F5C842;font-size:6px;padding:2px 5px;border-radius:4px;font-weight:700;}
-        .badge-premium{position:absolute;top:4px;right:4px;background:#F5C842;color:#111;font-size:6px;padding:2px 5px;border-radius:4px;font-weight:700;}
-        .card-body{padding:7px 8px;}
-        .card-title{font-size:9px;font-weight:700;color:#222;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-        .card-price{font-size:11px;font-weight:800;color:#E63312;margin-bottom:4px;}
+        .badge-new{position:absolute;top:3px;left:3px;background:#E63312;color:#fff;font-size:6px;padding:1px 4px;border-radius:4px;font-weight:700;}
+        .badge-used{position:absolute;top:3px;left:3px;background:#111;color:#F5C842;font-size:6px;padding:1px 4px;border-radius:4px;font-weight:700;}
+        .badge-premium{position:absolute;top:3px;right:3px;background:#F5C842;color:#111;font-size:6px;padding:1px 4px;border-radius:4px;font-weight:700;}
+        .card-body{padding:5px 6px;}
+        .card-title{font-size:8px;font-weight:700;color:#222;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .card-price{font-size:9px;font-weight:800;color:#E63312;margin-bottom:3px;}
         .card-meta{display:flex;align-items:center;justify-content:space-between;}
-        .card-loc{font-size:7.5px;color:#aaa;display:flex;align-items:center;gap:3px;}
-        .card-loc i{font-size:8px;}
-        .card-like{width:18px;height:18px;border:0.5px solid #eee;border-radius:50%;display:flex;align-items:center;justify-content:center;background:none;cursor:pointer;transition:border-color .15s;}
+        .card-loc{font-size:7px;color:#aaa;display:flex;align-items:center;gap:2px;}
+        .card-loc i{font-size:7px;}
+        .card-like{width:16px;height:16px;border:0.5px solid #eee;border-radius:50%;display:flex;align-items:center;justify-content:center;background:none;cursor:pointer;transition:border-color .15s;}
         .card-like:hover{border-color:#E63312;}
-        .card-like i{font-size:9px;color:#ddd;}
+        .card-like i{font-size:8px;color:#ddd;}
         .empty-state{grid-column:1/-1;text-align:center;padding:36px 16px;background:linear-gradient(135deg,#f9f5e0,#f5f0d5);border:0.5px solid #eee;border-radius:13px;}
         .empty-state i{font-size:40px;color:#F5C842;display:block;margin-bottom:10px;}
         .empty-state h3{font-size:14px;font-weight:700;color:#555;margin-bottom:6px;}
         .empty-state p{font-size:11px;color:#aaa;line-height:1.6;margin-bottom:14px;}
         .empty-cta{background:#E63312;color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
         /* Premium CTA */
-        .premium-cta{margin-bottom:12px;background:linear-gradient(135deg,#FFFBEA,#fff8d9);border:1.5px solid #F5C842;border-radius:13px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 3px 12px rgba(245,200,66,.15);}
+        .premium-cta{margin-bottom:10px;background:linear-gradient(135deg,#FFFBEA,#fff8d9);border:1.5px solid #F5C842;border-radius:13px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 3px 12px rgba(245,200,66,.15);}
         .prem-icon{width:30px;height:30px;background:#F5C842;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
         .prem-icon i{font-size:15px;color:#111;}
         .prem-text strong{font-size:11px;font-weight:700;color:#111;display:block;}
@@ -334,7 +369,6 @@ export default function Home() {
         .spinner{display:block;width:28px;height:28px;border:3px solid #F5C842;border-top-color:#E63312;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px;}
         @keyframes spin{to{transform:rotate(360deg);}}
       `}</style>
-
 
       <div className="wrap">
         <div className="header">
@@ -395,6 +429,7 @@ export default function Home() {
             <span>Pa reklama — për të gjithë gjithmonë falas</span>
           </div>
 
+          {/* 1. Hero — 40% më i shkurtër vertikalisht */}
           <div className="hero">
             <div>
               <h2>🦅 {settings.site_slogan || 'Shit · Bli · Bëj Pazrin Tënd'}</h2>
@@ -412,15 +447,17 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="ai-bar" onClick={() => go('/asistent')}>
-            <div className="ai-icon"><i className="ti ti-robot" /></div>
-            <div className="ai-text">
-              <strong>Albi — AI Asistent 🤖 · 24/7</strong>
-              <span>Gjej produktin ideal — pyetmë çdo gjë</span>
+          {/* 2. Premium CTA — vendosur ku ishte AI asistenti */}
+          <div className="premium-cta">
+            <div className="prem-icon"><i className="ti ti-crown" /></div>
+            <div className="prem-text">
+              <strong>👑 Bëhu Anëtar Premium</strong>
+              <span>Dyqan · Badge · Shpallje ∞ · {settings.premium_monthly_price || '9.99'}€/muaj</span>
             </div>
-            <button className="ai-btn" onClick={e => { e.stopPropagation(); go('/asistent') }}>Chat ↗</button>
+            <button className="prem-btn" onClick={() => go('/premium')}>Shiko →</button>
           </div>
 
+          {/* 3. Trust row */}
           <div className="trust-row">
             <div className="trust-card tc-green">
               <i className="ti ti-shield-check" /><span>Shitës të verifikuar</span>
@@ -470,6 +507,9 @@ export default function Home() {
             </>
           )}
 
+          {/* 5. Banner shkarkim — inline, i sinkronizuar me kutitë e tjera */}
+          <InstallBanner />
+
           <div className="filter-row">
             {[
               { id: 'all', label: 'Të gjitha' },
@@ -492,6 +532,7 @@ export default function Home() {
             <a onClick={() => { setActiveCategory('all'); fetchListings('all', 'all') }}>Të gjitha →</a>
           </div>
 
+          {/* 6. Shpalljet — -30% madhësi */}
           {loading ? (
             <div className="loading">
               <span className="spinner" />
@@ -514,7 +555,7 @@ export default function Home() {
                     <div className="card-img">
                       {listing.images?.[0]
                         ? <img src={listing.images[0]} alt={listing.title} />
-                        : <i className="ti ti-photo" style={{ fontSize: 32, color: '#ccc' }} />
+                        : <i className="ti ti-photo" style={{ fontSize: 26, color: '#ccc' }} />
                       }
                       {listing.condition === 'i_ri' && <span className="badge-new">I ri</span>}
                       {listing.condition === 'i_perdorur' && <span className="badge-used">I përdorur</span>}
@@ -539,14 +580,8 @@ export default function Home() {
             </div>
           )}
 
-          <div className="premium-cta">
-            <div className="prem-icon"><i className="ti ti-crown" /></div>
-            <div className="prem-text">
-              <strong>👑 Bëhu Anëtar Premium</strong>
-              <span>Dyqan · Badge · Shpallje ∞ · {settings.premium_monthly_price || '9.99'}€/muaj</span>
-            </div>
-            <button className="prem-btn" onClick={() => go('/premium')}>Shiko →</button>
-          </div>
+          {/* 4. Kuti ndarje — vendosur ku ishte Premium CTA */}
+          <ShareBox />
         </div>
 
         <nav className="bottom-nav">
@@ -573,7 +608,6 @@ export default function Home() {
       <button className="ai-float" onClick={() => go('/asistent')}>
         <i className="ti ti-robot" />
       </button>
-      <InstallBanner />
     </>
   )
 }
