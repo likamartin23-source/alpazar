@@ -1,22 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Lazy init — nuk instancohet gjatë build time
+function resend() {
+  return new Resend(process.env.RESEND_API_KEY!)
+}
+
 const FROM = 'Alpazar <noreply@alpazar.al>'
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
     const { type } = body
+    const r = resend()
 
     if (type === 'contact') {
-      // Formular kontakti
       const { name, email, subject, message } = body
       if (!name || !email || !message) {
         return NextResponse.json({ error: 'Fushat e detyrueshme mungojnë' }, { status: 400 })
       }
 
-      const { data, error } = await resend.emails.send({
+      const { data, error } = await r.emails.send({
         from: FROM,
         to: ['info@alpazar.al'],
         replyTo: email,
@@ -38,21 +42,15 @@ export async function POST(req: NextRequest) {
             </p>
           </div>`,
       })
-
-      if (error) {
-        console.error('Resend contact error:', error)
-        return NextResponse.json({ error: error.message }, { status: 500 })
-      }
-
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 })
       return NextResponse.json({ success: true, id: data?.id })
     }
 
     if (type === 'welcome') {
-      // Email mirëseardhjeje
       const { email: to, name } = body
       if (!to) return NextResponse.json({ error: 'Email mungon' }, { status: 400 })
 
-      const { data, error } = await resend.emails.send({
+      const { data, error } = await r.emails.send({
         from: FROM,
         to,
         subject: '🎉 Mirë se erdhe te Alpazar!',
@@ -78,19 +76,16 @@ export async function POST(req: NextRequest) {
             </div>
           </div>`,
       })
-
       if (error) return NextResponse.json({ error: error.message }, { status: 500 })
       return NextResponse.json({ success: true, id: data?.id })
     }
 
     if (type === 'notification') {
-      // Njoftim për mesazh të ri / shpallje
       const { to, subject, html } = body
       if (!to || !subject || !html) {
         return NextResponse.json({ error: 'Fushat e detyrueshme mungojnë' }, { status: 400 })
       }
-
-      const { data, error } = await resend.emails.send({ from: FROM, to, subject, html })
+      const { data, error } = await r.emails.send({ from: FROM, to, subject, html })
       if (error) return NextResponse.json({ error: error.message }, { status: 500 })
       return NextResponse.json({ success: true, id: data?.id })
     }
