@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 
 // Module 3: Meilisearch — fast full-text search with Supabase fallback
-const MS_URL = process.env.NEXT_PUBLIC_MEILISEARCH_URL
-const MS_KEY = process.env.NEXT_PUBLIC_MEILISEARCH_KEY
+// Defaults to built-in Next.js API route (Postgres FTS) if no cloud instance configured
+const MS_URL = process.env.NEXT_PUBLIC_MEILISEARCH_URL || '/api/meili'
+const MS_KEY = process.env.NEXT_PUBLIC_MEILISEARCH_KEY || 'alpazar_search'
 
 async function meilisearch(query: string, catId: string) {
   if (!MS_URL || !MS_KEY || !query.trim()) return null
