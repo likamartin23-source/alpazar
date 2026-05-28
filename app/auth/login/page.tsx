@@ -259,15 +259,6 @@ export default function Auth() {
     }
     const id = type === 'phone' ? toE164(raw) : raw
     setResolvedId(id)
-
-    // Kalo direkt te email fallback për numra telefoni (SMS nuk është konfiguruar)
-    if (type === 'phone') {
-      setOriginalPhone(id)
-      setSmsFailMode(true)
-      setMsg('')
-      return
-    }
-
     setLoading(true); setMsg('')
     try {
       const res = await fetch(`${FN_URL}/send-otp`, {
@@ -277,10 +268,17 @@ export default function Auth() {
       })
       const data = await res.json()
       if (!res.ok || data.error) {
-        setMsg(`err:${data.error ?? 'Gabim gjatë dërgimit.'}`)
+        if (data.error === 'sms_not_configured' || (res.status === 429 && type === 'phone')) {
+          setOriginalPhone(id)
+          setSmsFailMode(true)
+          setMsg('')
+        } else {
+          setMsg(`err:${data.error ?? 'Gabim gjatë dërgimit.'}`)
+        }
       } else {
         setStep('otp'); startCountdown(); setOtp(['', '', '', '', '', ''])
-        setMsg(`info:Kodi u dërgua te 📧 ${id}`)
+        const where = type === 'email' ? `📧 ${id}` : `📱 ${id}`
+        setMsg(`info:Kodi u dërgua te ${where}`)
         setTimeout(() => inputRefs.current[0]?.focus(), 150)
       }
     } catch (e: unknown) {
@@ -425,7 +423,9 @@ export default function Auth() {
     ? cType === 'email'
       ? <p className="hint ok">📧 Kodi konfirmimit dërgohet me <strong>email</strong></p>
       : cType === 'phone'
-        ? <p className="hint ok">📱 Numri ruhet në profil — kodi dërgohet me <strong>email</strong></p>
+        ? smsFailMode
+          ? <p className="hint ok">📧 Numri ruhet — kodi dërgohet me <strong>email</strong></p>
+          : <p className="hint ok">📱 Kodi konfirmimit dërgohet me <strong>SMS</strong></p>
         : <p className="hint warn">Fut email (user@domain.com) ose nr. telefoni (+355, +1, +44...)</p>
     : <p className="hint">📧 Email &nbsp;·&nbsp; 📱 Çdo numër telefoni bote (+355, +1, +44...)</p>
 
