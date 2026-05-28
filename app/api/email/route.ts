@@ -9,7 +9,7 @@ const SUPABASE_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 async function getResend(): Promise<{ client: Resend; from: string } | null> {
   // 1. Provo env var direkt
   let apiKey = process.env.RESEND_API_KEY || ''
-  let fromEmail = 'noreply@alpazar.al'
+  let fromEmail = 'onboarding@resend.dev'
 
   // 2. Fallback: admin_settings
   if (!apiKey) {
@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
       }
       const { data, error } = await client.emails.send({
         from: FROM,
-        to: ['info@alpazar.al'],
+        to: ['likamartin23@gmail.com'],
         replyTo: email,
         subject: subject || `Mesazh nga ${name} - Alpazar`,
         html: `
@@ -94,7 +94,7 @@ export async function POST(req: NextRequest) {
                 Llogaria jote te Alpazar është krijuar me sukses.<br>
                 Tani mund të postosh shpallje, të kontaktosh shitësit dhe të gjesh gjithçka ke nevojë.
               </p>
-              <a href="https://alpazar.al" style="background:#E63312;color:#fff;text-decoration:none;padding:14px 32px;border-radius:10px;font-weight:700;font-size:15px;display:inline-block;">
+              <a href="https://alpazar.vercel.app" style="background:#E63312;color:#fff;text-decoration:none;padding:14px 32px;border-radius:10px;font-weight:700;font-size:15px;display:inline-block;">
                 Hap Alpazar →
               </a>
               <p style="color:#aaa;font-size:12px;margin-top:24px;">

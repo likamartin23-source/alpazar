@@ -104,8 +104,8 @@ export default function Siguria() {
             <p style={{ fontSize: 13, color: '#444', lineHeight: 1.7, marginBottom: 12 }}>
               Nëse hasni një shpallje mashtruese ose sjellje abuzive, raportojeni menjëherë. Ekipi ynë shqyrton çdo raportim brenda 24 orësh.
             </p>
-            <a href="mailto:abuse@alpazar.al" className="red-btn">
-              🚨 Raporto tani — abuse@alpazar.al
+            <a href="mailto:likamartin23@gmail.com" className="red-btn">
+              🚨 Raporto tani — likamartin23@gmail.com
             </a>
           </div>
 
