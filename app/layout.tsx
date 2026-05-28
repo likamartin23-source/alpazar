@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import dynamic from 'next/dynamic'
+import { Analytics } from '@vercel/analytics/next'
 
 const AiFloat = dynamic(() => import('./components/AiFloat'), { ssr: false })
 
@@ -79,8 +80,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-        {/* Module 6: Cloudflare Web Analytics — 100% falas, pa reklama, GDPR-compliant */}
-        <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "REPLACE_WITH_CF_ANALYTICS_TOKEN"}' />
+        {/* Module 6: Vercel Web Analytics — 100% falas, GDPR-compliant, zero konfigurim */}
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
         {/* JSON-LD — Google e kupton si marketplace */}
@@ -114,6 +114,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body style={{ margin: 0, background: '#FFFBEA', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
         {children}
         <AiFloat />
+        <Analytics />
         <footer style={{ background: '#111', padding: '22px 16px 28px', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
           <div style={{ maxWidth: 480, margin: '0 auto', textAlign: 'center' }}>
             <div style={{ color: '#F5C842', fontWeight: 700, fontSize: 13, letterSpacing: 1, marginBottom: 14 }}>🦅 ALPAZAR</div>

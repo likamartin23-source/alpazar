@@ -490,7 +490,7 @@ export default function Auth() {
         ))}
       </div>
 
-      <button className="btn" onClick={verifyOtp} disabled={loading || expired}>
+      <button className="btn" onClick={() => verifyOtp()} disabled={loading || expired}>
         {loading ? '⏳ Duke verifikuar...' : '✅ Konfirmo Kodin'}
       </button>
       <button className="btn-ghost" onClick={resetToForm}>← Ndrysho adresën</button>
