@@ -15,6 +15,17 @@ export async function middleware(req: NextRequest) {
     return res
   }
 
+  // Module 7: Referral — ruaj cookie kur dikush hap ?ref=CODE
+  const refParam = req.nextUrl.searchParams.get('ref')
+  if (refParam && /^[a-zA-Z0-9_-]{3,30}$/.test(refParam)) {
+    res.cookies.set('alpazar_ref', refParam, {
+      maxAge: 60 * 60 * 24 * 30,
+      path: '/',
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+    })
+  }
+
   try {
     const supabase = createMiddlewareClient({ req, res })
     // Refresh session — keeps cookies in sync

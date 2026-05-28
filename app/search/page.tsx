@@ -3,6 +3,28 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 
+// Module 3: Meilisearch — fast full-text search with Supabase fallback
+const MS_URL = process.env.NEXT_PUBLIC_MEILISEARCH_URL
+const MS_KEY = process.env.NEXT_PUBLIC_MEILISEARCH_KEY
+
+async function meilisearch(query: string, catId: string) {
+  if (!MS_URL || !MS_KEY || !query.trim()) return null
+  try {
+    const filter = catId ? [`category_id = "${catId}"`, 'is_active = true'] : ['is_active = true']
+    const res = await fetch(`${MS_URL}/indexes/listings/search`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${MS_KEY}` },
+      body: JSON.stringify({ q: query, limit: 40, filter, sort: ['is_premium:desc', 'created_at:desc'] }),
+      signal: AbortSignal.timeout(2000),
+    })
+    if (!res.ok) return null
+    const data = await res.json()
+    return data.hits ?? null
+  } catch {
+    return null
+  }
+}
+
 export default function SearchPage() {
   const [q, setQ] = useState('')
   const [results, setResults] = useState<any[]>([])
@@ -10,6 +32,7 @@ export default function SearchPage() {
   const [searched, setSearched] = useState(false)
   const [categories, setCategories] = useState<any[]>([])
   const [catFilter, setCatFilter] = useState('')
+  const [searchEngine, setSearchEngine] = useState<'meilisearch'|'supabase'>('supabase')
 
   useEffect(() => {
     supabase.from('categories').select('id,name,slug,icon').eq('is_active', true).order('sort_order').then(({ data }) => {
@@ -23,6 +46,20 @@ export default function SearchPage() {
 
   async function doSearch(query = q, cat = catFilter) {
     setLoading(true); setSearched(true)
+
+    // Module 3: Try Meilisearch first, fallback to Supabase
+    if (query.trim() && MS_URL && MS_KEY) {
+      const msResults = await meilisearch(query, cat)
+      if (msResults !== null) {
+        setResults(msResults)
+        setSearchEngine('meilisearch')
+        setLoading(false)
+        return
+      }
+    }
+
+    // Supabase fallback
+    setSearchEngine('supabase')
     let qb = supabase
       .from('listings')
       .select('id,title,price,currency,condition,city,is_premium,images,created_at')
@@ -149,6 +186,9 @@ export default function SearchPage() {
             <>
               <div className="results-info">
                 Gjetur <strong>{results.length}</strong> shpallje {q && `për "${q}"`}
+                {searchEngine === 'meilisearch' && (
+                  <span style={{ marginLeft: 8, background: '#EAF3DE', color: '#3B6D11', fontSize: 9, padding: '2px 6px', borderRadius: 4, fontWeight: 700 }}>⚡ Kërkim i shpejtë</span>
+                )}
               </div>
               <div className="listings-grid">
                 {results.map(l => (

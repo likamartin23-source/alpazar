@@ -1,0 +1,258 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { supabase } from '../../lib/supabase'
+
+const SITE = 'https://alpazar.vercel.app'
+
+const CSS = `
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
+  body{background:#FFFBEA;}
+  .wrap{max-width:480px;margin:0 auto;background:#FFFBEA;min-height:100vh;padding-bottom:60px;}
+  .topbar{background:#F5C842;padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
+  .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .back i{font-size:18px;color:#111;}
+  .topbar-title{font-size:15px;font-weight:700;color:#111;}
+  .hero{background:linear-gradient(135deg,#E63312,#c42a0e);padding:28px 20px 32px;text-align:center;}
+  .hero-emoji{font-size:52px;display:block;margin-bottom:12px;}
+  .hero h1{color:#fff;font-size:21px;font-weight:700;margin-bottom:8px;}
+  .hero p{color:rgba(255,255,255,.85);font-size:13px;line-height:1.7;}
+  .body{padding:16px 14px;}
+  .card{background:#fff;border-radius:14px;border:0.5px solid #eee;padding:18px;margin-bottom:14px;box-shadow:0 2px 10px rgba(0,0,0,.04);}
+  .card-title{font-size:13px;font-weight:700;color:#111;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+  .card-title i{font-size:16px;color:#E63312;}
+  .stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:4px;}
+  .stat{background:#FFFBEA;border-radius:10px;padding:14px 10px;text-align:center;}
+  .stat-n{font-size:22px;font-weight:700;color:#E63312;}
+  .stat-l{font-size:10px;color:#888;margin-top:3px;}
+  .ref-box{background:#f9f5e0;border:1.5px dashed #F5C842;border-radius:12px;padding:16px;margin-bottom:12px;text-align:center;}
+  .ref-code{font-size:22px;font-weight:700;color:#111;letter-spacing:3px;margin-bottom:6px;font-family:monospace;}
+  .ref-url{font-size:11px;color:#888;word-break:break-all;margin-bottom:12px;}
+  .share-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .share-btn{border:none;border-radius:9px;padding:11px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;}
+  .copy-btn{background:#111;color:#F5C842;}
+  .whatsapp-btn{background:#25D366;color:#fff;}
+  .step{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:0.5px solid #f5f5f5;}
+  .step:last-child{border:none;}
+  .step-num{width:26px;height:26px;background:#E63312;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+  .step-text strong{font-size:12px;font-weight:700;color:#111;display:block;margin-bottom:3px;}
+  .step-text span{font-size:11px;color:#666;line-height:1.6;}
+  .reward-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid #f5f5f5;}
+  .reward-item:last-child{border:none;}
+  .reward-badge{width:38px;height:38px;border-radius:50%;background:#FFF0EE;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+  .reward-info strong{font-size:12px;font-weight:700;color:#111;display:block;}
+  .reward-info span{font-size:11px;color:#888;}
+  .referral-list{display:flex;flex-direction:column;gap:8px;}
+  .ref-row{display:flex;align-items:center;gap:10px;background:#f9f5e0;border-radius:10px;padding:10px 12px;}
+  .ref-avatar{width:34px;height:34px;background:#F5C842;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#111;flex-shrink:0;}
+  .ref-info{flex:1;}
+  .ref-info strong{font-size:12px;font-weight:700;color:#111;display:block;}
+  .ref-info span{font-size:10px;color:#888;}
+  .ref-pts{font-size:11px;font-weight:700;color:#3B6D11;background:#EAF3DE;padding:3px 8px;border-radius:6px;}
+  .empty-ref{text-align:center;padding:24px;color:#bbb;font-size:12px;}
+  .login-cta{background:#E63312;color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;width:100%;font-family:inherit;margin-top:8px;}
+  .msg{padding:10px 14px;border-radius:8px;font-size:12px;font-weight:500;margin-bottom:10px;text-align:center;}
+  .ok{background:#EAF3DE;color:#3B6D11;}
+  .info{background:#EEF4FF;color:#185FA5;}
+  .spinner{width:24px;height:24px;border:3px solid #F5C842;border-top-color:#E63312;border-radius:50%;animation:spin .7s linear infinite;margin:40px auto;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+`
+
+export default function ReferralPage() {
+  const [user, setUser] = useState<any>(null)
+  const [profile, setProfile] = useState<any>(null)
+  const [referrals, setReferrals] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [copied, setCopied] = useState(false)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) { setLoading(false); return }
+      setUser(session.user)
+      fetchData(session.user.id)
+    })
+  }, [])
+
+  async function fetchData(uid: string) {
+    const [{ data: p }, { data: refs }] = await Promise.all([
+      supabase.from('profiles').select('id,username,full_name,gamification_points,gamification_level').eq('id', uid).single(),
+      supabase.from('profiles').select('id,full_name,username,created_at').eq('referred_by', uid).order('created_at', { ascending: false }).limit(20),
+    ])
+    if (p) setProfile(p)
+    if (refs) setReferrals(refs)
+    setLoading(false)
+  }
+
+  const refCode = profile?.username || user?.id?.slice(0, 8) || ''
+  const refUrl  = `${SITE}?ref=${refCode}`
+
+  function copyLink() {
+    navigator.clipboard.writeText(refUrl).catch(() => {
+      const el = document.createElement('textarea')
+      el.value = refUrl
+      document.body.appendChild(el); el.select()
+      document.execCommand('copy'); document.body.removeChild(el)
+    })
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2500)
+  }
+
+  function shareWhatsApp() {
+    const text = `Bashkohu me mua në ALPAZAR — marketplace #1 shqiptar! Regjistrohu falas: ${refUrl}`
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank')
+  }
+
+  const totalPts = referrals.length * 50
+
+  return (
+    <>
+      <style>{CSS}</style>
+      <div className="wrap">
+        <div className="topbar">
+          <button className="back" onClick={() => window.history.back()}>
+            <i className="ti ti-arrow-left" />
+          </button>
+          <span className="topbar-title">🎁 Programi i Referimit</span>
+        </div>
+
+        <div className="hero">
+          <span className="hero-emoji">🎁</span>
+          <h1>Fto Miqtë, Fito Pikë!</h1>
+          <p>Për çdo mik që regjistron në Alpazar<br />përmes linkut tënd, fiton <strong>50 pikë</strong> gamifikimi.<br />Pa kosto. Pa limit.</p>
+        </div>
+
+        <div className="body">
+          {loading ? (
+            <div className="spinner" />
+          ) : !user ? (
+            <div className="card">
+              <div className="card-title"><i className="ti ti-lock" />Hyr për të parë referalet</div>
+              <p style={{ fontSize: 12, color: '#888', marginBottom: 14 }}>Krijo llogari falas dhe fillo të fitosh pikë duke ftuar miqtë.</p>
+              <button className="login-cta" onClick={() => window.location.href = '/auth/login'}>
+                🔑 Hyr / Regjistrohu
+              </button>
+            </div>
+          ) : (
+            <>
+              {/* Stats */}
+              <div className="card">
+                <div className="card-title"><i className="ti ti-chart-bar" />Statistikat e Tua</div>
+                <div className="stats-row">
+                  <div className="stat">
+                    <div className="stat-n">{referrals.length}</div>
+                    <div className="stat-l">Të ftuar</div>
+                  </div>
+                  <div className="stat">
+                    <div className="stat-n">{totalPts}</div>
+                    <div className="stat-l">Pikë fituar</div>
+                  </div>
+                  <div className="stat">
+                    <div className="stat-n">{profile?.gamification_points || 0}</div>
+                    <div className="stat-l">Pikë totale</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Referral link */}
+              <div className="card">
+                <div className="card-title"><i className="ti ti-link" />Linku yt i Referimit</div>
+                <div className="ref-box">
+                  <div className="ref-code">{refCode.toUpperCase()}</div>
+                  <div className="ref-url">{refUrl}</div>
+                  <div className="share-row">
+                    <button className="share-btn copy-btn" onClick={copyLink}>
+                      <i className="ti ti-copy" style={{ fontSize: 14 }} />
+                      {copied ? '✅ U kopjua!' : 'Kopjo'}
+                    </button>
+                    <button className="share-btn whatsapp-btn" onClick={shareWhatsApp}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                      WhatsApp
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* How it works */}
+              <div className="card">
+                <div className="card-title"><i className="ti ti-help-circle" />Si Funksionon</div>
+                <div className="step">
+                  <div className="step-num">1</div>
+                  <div className="step-text">
+                    <strong>Ndaj linkun tënd</strong>
+                    <span>Dërgo tek miqtë, nëpër WhatsApp, Facebook ose Instagram</span>
+                  </div>
+                </div>
+                <div className="step">
+                  <div className="step-num">2</div>
+                  <div className="step-text">
+                    <strong>Miku regjistrohet</strong>
+                    <span>Miku klikon linkun dhe krijon llogari falas në Alpazar</span>
+                  </div>
+                </div>
+                <div className="step">
+                  <div className="step-num">3</div>
+                  <div className="step-text">
+                    <strong>Ti fiton 50 pikë</strong>
+                    <span>Pikët shtohen automatikisht — mund t'i shohësh këtu</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Rewards */}
+              <div className="card">
+                <div className="card-title"><i className="ti ti-trophy" />Shpërblimet</div>
+                <div className="reward-item">
+                  <div className="reward-badge">🥉</div>
+                  <div className="reward-info">
+                    <strong>5 referalë → Anëtar Bronzi</strong>
+                    <span>250 pikë · Badge special në profil</span>
+                  </div>
+                </div>
+                <div className="reward-item">
+                  <div className="reward-badge">🥈</div>
+                  <div className="reward-info">
+                    <strong>20 referalë → Anëtar Argjendi</strong>
+                    <span>1000 pikë · Prioritet në lista</span>
+                  </div>
+                </div>
+                <div className="reward-item">
+                  <div className="reward-badge">🥇</div>
+                  <div className="reward-info">
+                    <strong>50 referalë → Anëtar Ari</strong>
+                    <span>2500 pikë · 1 muaj Premium falas</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Referral list */}
+              <div className="card">
+                <div className="card-title"><i className="ti ti-users" />Të Ftuar ({referrals.length})</div>
+                {referrals.length === 0 ? (
+                  <div className="empty-ref">
+                    <div style={{ fontSize: 36, marginBottom: 8 }}>👥</div>
+                    <div>Ende nuk ke ftuar askënd.<br />Ndaj linkun dhe fillo të fitosh pikë!</div>
+                  </div>
+                ) : (
+                  <div className="referral-list">
+                    {referrals.map(r => (
+                      <div key={r.id} className="ref-row">
+                        <div className="ref-avatar">
+                          {(r.full_name || r.username || '?').slice(0, 2).toUpperCase()}
+                        </div>
+                        <div className="ref-info">
+                          <strong>{r.full_name || r.username || 'Përdorues'}</strong>
+                          <span>U regjistrua {new Date(r.created_at).toLocaleDateString('sq-AL')}</span>
+                        </div>
+                        <div className="ref-pts">+50 pts</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </>
+  )
+}

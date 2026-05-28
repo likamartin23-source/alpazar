@@ -71,9 +71,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="sq">
       <head>
+        {/* Module 2: Performance — DNS prefetch for external origins */}
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="https://sopafwfkrxpcdaljddoh.supabase.co" />
+        <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+        <link rel="preconnect" href="https://sopafwfkrxpcdaljddoh.supabase.co" crossOrigin="anonymous" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        {/* Module 6: Cloudflare Web Analytics — 100% falas, pa reklama, GDPR-compliant */}
+        <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "REPLACE_WITH_CF_ANALYTICS_TOKEN"}' />
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
         {/* JSON-LD — Google e kupton si marketplace */}
@@ -117,6 +124,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <a href="/rreth-nesh" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Rreth Nesh</a>
               <a href="/kontakt" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Kontakt</a>
               <a href="/siguria" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Siguria</a>
+              <a href="/referral" style={{ color: '#F5C842', fontSize: 11, textDecoration: 'none', fontWeight: 600 }}>🎁 Referral</a>
             </nav>
             <div style={{ fontSize: 10, color: '#444' }}>© 2025 Alpazar · Tiranë, Shqipëri · Të gjitha të drejtat e rezervuara</div>
           </div>
