@@ -1,13 +1,20 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
+
+// Hide on the assistant page itself only
+const OWN_ASSISTANT = ['/asistent']
 
 export default function AiFloat() {
   const [showTip, setShowTip] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
     const t = setTimeout(() => setShowTip(true), 2500)
     return () => clearTimeout(t)
   }, [])
+
+  if (pathname && OWN_ASSISTANT.some(p => pathname.startsWith(p))) return null
 
   return (
     <>

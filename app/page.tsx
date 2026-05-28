@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import type { Category, Listing } from '../lib/types'
 import { getLevel } from './components/Badges'
+import { PremiumUpsellModal } from './components/PremiumUpsell'
 
 // Banner shkarkim — buton i vogël katrore pulsues (fixed, vetem faqja kryesore)
 function InstallBanner() {
@@ -678,6 +679,8 @@ export default function Home() {
       {/* Butonat pulsuese katrore — vetem faqja kryesore */}
       <ShareBox />
       <InstallBanner />
+      {/* Marketing: upsell modal per jo-premium */}
+      {authReady && user && !profile?.is_premium && <PremiumUpsellModal trigger="scroll" />}
     </>
   )
 }

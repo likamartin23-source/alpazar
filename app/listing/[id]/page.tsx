@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { getLevel, isNewMember } from '../../components/Badges'
+import { SocialProofBar, SellerPremiumUpsell } from '../../components/PremiumUpsell'
 
 const CATEGORY_LABELS: Record<string, string> = {
   elektronike: 'Elektronikë', makina: 'Makina', shtepi: 'Shtëpi & Mobilje',
@@ -33,7 +34,6 @@ export default function ListingPage({ params }: { params: { id: string } }) {
   const [imgIdx, setImgIdx]           = useState(0)
   const [user, setUser]               = useState<any>(null)
   const [liked, setLiked]             = useState(false)
-  const [albiTooltip, setAlbiTooltip] = useState(false)
 
   // Vlerësimi i shitësit
   const [myReview, setMyReview]       = useState<any>(null)
@@ -54,7 +54,6 @@ export default function ListingPage({ params }: { params: { id: string } }) {
   const inputRef     = useRef<HTMLTextAreaElement>(null)
   const channelRef   = useRef<any>(null)
   const typingTimer  = useRef<any>(null)
-  const tooltipTimer = useRef<ReturnType<typeof setTimeout>>()
   const userRef      = useRef<any>(null)
   const sellerRef    = useRef<any>(null)
   const listingRef   = useRef<any>(null)
@@ -71,13 +70,6 @@ export default function ListingPage({ params }: { params: { id: string } }) {
     })
     fetchListing()
   }, [])
-
-  useEffect(() => {
-    if (!loading && listing) {
-      tooltipTimer.current = setTimeout(() => setAlbiTooltip(true), 4000)
-      return () => clearTimeout(tooltipTimer.current)
-    }
-  }, [loading, listing])
 
   // Load chat once both user and seller are known
   useEffect(() => {
@@ -353,13 +345,6 @@ export default function ListingPage({ params }: { params: { id: string } }) {
         .main-chat-btn{flex:1;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 12px rgba(230,51,18,.3);}
         .main-chat-btn i{font-size:16px;}
 
-        /* Albi FAB */
-        .albi-fab{position:fixed;bottom:${chatPanelOpen ? '310px' : '76px'};right:14px;z-index:210;display:flex;flex-direction:column;align-items:flex-end;gap:7px;transition:bottom .3s;}
-        .albi-tooltip{background:#111;color:#fff;font-size:11px;font-weight:600;padding:7px 12px;border-radius:14px;border-bottom-right-radius:4px;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.3);cursor:pointer;max-width:190px;text-align:right;}
-        .albi-tooltip strong{color:#F5C842;display:block;font-size:11.5px;}
-        .albi-btn{width:46px;height:46px;background:linear-gradient(135deg,#F5C842,#e0b030);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(245,200,66,.5);animation:pulse 2s infinite;}
-        .albi-btn i{font-size:20px;color:#111;}
-        @keyframes pulse{0%,100%{box-shadow:0 4px 14px rgba(245,200,66,.5)}50%{box-shadow:0 4px 22px rgba(245,200,66,.8),0 0 0 7px rgba(245,200,66,.12)}}
         @keyframes spin{to{transform:rotate(360deg);}}
       `}</style>
 
@@ -403,6 +388,9 @@ export default function ListingPage({ params }: { params: { id: string } }) {
           </button>
         </div>
 
+        {/* Social proof — shikues aktiv + total pamje */}
+        <SocialProofBar viewsCount={listing.views_count || 0} listingId={params.id} />
+
         <div className="info">
           {/* Status chip */}
           <div className="status-row">
@@ -437,6 +425,11 @@ export default function ListingPage({ params }: { params: { id: string } }) {
               <div className="sec-label">Përshkrimi</div>
               <div className="desc">{listing.description}</div>
             </>
+          )}
+
+          {/* Marketing: upsell per pronarin jo-premium */}
+          {isOwner && !seller?.is_premium && (
+            <SellerPremiumUpsell isPremium={false} />
           )}
 
           {/* ── PROFILI I SHITËSIT — free-flowing ── */}
@@ -639,18 +632,6 @@ export default function ListingPage({ params }: { params: { id: string } }) {
         </div>
       )}
 
-      {/* Albi FAB */}
-      <div className="albi-fab">
-        {albiTooltip && (
-          <div className="albi-tooltip" onClick={() => window.location.href = '/asistent'}>
-            <strong>Albi 🤖 — AI Asistent</strong>
-            Ke pyetje për këtë produkt?<br />Pyet Albin tani!
-          </div>
-        )}
-        <button className="albi-btn" onClick={() => window.location.href = '/asistent'}>
-          <i className="ti ti-robot" />
-        </button>
-      </div>
     </>
   )
 }

@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../../../lib/supabase'
 
 type Mode = 'login' | 'register' | 'forgot'
-type Step = 'form' | 'otp' | 'new-pass'
+type Step = 'form' | 'otp' | 'new-pass' | 'totp'
 
 const FN_URL = 'https://sopafwfkrxpcdaljddoh.supabase.co/functions/v1'
 
@@ -126,6 +126,10 @@ export default function Auth() {
   const [msg, setMsg] = useState('')
   const [resolvedId, setResolvedId] = useState('')
 
+  // 2FA (TOTP) state
+  const [totpCode, setTotpCode] = useState('')
+  const [mfaFactorId, setMfaFactorId] = useState('')
+
   // SMS fallback — when SMS is not configured, collect email instead
   const [smsFailMode, setSmsFailMode] = useState(false)
   const [smsFailEmail, setSmsFailEmail] = useState('')
@@ -171,6 +175,38 @@ export default function Auth() {
     if (timerRef.current) clearInterval(timerRef.current)
   }
 
+  // ── Module 1: Google OAuth ──────────────────────────────────────
+  async function loginWithGoogle() {
+    setLoading(true); setMsg('')
+    const ref = document.cookie.match(/alpazar_ref=([^;]+)/)?.[1]
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback${ref ? `?ref=${ref}` : ''}`,
+        queryParams: { access_type: 'offline', prompt: 'consent' },
+      },
+    })
+    if (error) setMsg(`err:${error.message}`)
+    setLoading(false)
+  }
+
+  // ── Module 1: 2FA TOTP verify ────────────────────────────────────
+  async function verifyTotp() {
+    if (totpCode.length !== 6) { setMsg('err:Fut kodin 6-shifror nga aplikacioni!'); return }
+    setLoading(true); setMsg('')
+    const { data, error } = await supabase.auth.mfa.challengeAndVerify({
+      factorId: mfaFactorId,
+      code: totpCode,
+    })
+    if (error) {
+      setMsg(`err:${error.message.includes('Invalid') ? 'Kodi i gabuar!' : error.message}`)
+    } else {
+      setMsg('ok:Hyrja u krye! Duke u ridrejtuar...')
+      setTimeout(() => { window.location.href = '/' }, 600)
+    }
+    setLoading(false)
+  }
+
   // ── 1. LOGIN — email/phone + password ──────────────────────────────
   async function login() {
     const raw = contact.trim()
@@ -181,11 +217,23 @@ export default function Auth() {
     const payload = type === 'phone'
       ? { phone: id, password }
       : { email: id, password }
-    const { error } = await supabase.auth.signInWithPassword(payload)
+    const { data, error } = await supabase.auth.signInWithPassword(payload)
     if (error) {
       const isWrong = error.message.toLowerCase().includes('invalid') || error.message.toLowerCase().includes('credentials')
       setMsg(`err:${isWrong ? 'Email/telefon ose fjalëkalim i gabuar!' : error.message}`)
     } else {
+      // Check if 2FA is required
+      const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+      if (aal?.nextLevel === 'aal2' && aal.nextLevel !== aal.currentLevel) {
+        const { data: factors } = await supabase.auth.mfa.listFactors()
+        const totp = factors?.totp?.[0]
+        if (totp) {
+          setMfaFactorId(totp.id)
+          setStep('totp')
+          setMsg('info:Fut kodin nga aplikacioni i autentikimit (Google Authenticator / Authy)')
+          setLoading(false); return
+        }
+      }
       setMsg('ok:Hyrja u krye! Duke u ridrejtuar...')
       setTimeout(() => { window.location.href = '/' }, 600)
     }
@@ -274,6 +322,8 @@ export default function Auth() {
     if (expired) { setMsg('err:Kodi ka skaduar! Klikoje "Ridërgo" për kod të ri.'); return }
     setLoading(true); setMsg('')
     try {
+      // Module 7: pass referral code on registration
+      const refCookie = document.cookie.match(/alpazar_ref=([^;]+)/)?.[1]
       const res = await fetch(`${FN_URL}/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -282,6 +332,7 @@ export default function Auth() {
           firstName: firstName.trim() || undefined,
           lastName: lastName.trim() || undefined,
           age: age ? parseInt(age) : undefined,
+          referredBy: mode === 'register' ? (refCookie || undefined) : undefined,
         }),
       })
       const data = await res.json()
@@ -439,7 +490,7 @@ export default function Auth() {
         ))}
       </div>
 
-      <button className="btn" onClick={verifyOtp} disabled={loading || expired}>
+      <button className="btn" onClick={() => verifyOtp()} disabled={loading || expired}>
         {loading ? '⏳ Duke verifikuar...' : '✅ Konfirmo Kodin'}
       </button>
       <button className="btn-ghost" onClick={resetToForm}>← Ndrysho adresën</button>
@@ -514,6 +565,14 @@ export default function Auth() {
               {/* Butoni kryesor */}
               <button className="btn" onClick={login} disabled={loading}>
                 {loading ? '⏳ Duke hyrë...' : '🔑 Hyr'}
+              </button>
+
+              {/* Module 1: Google OAuth */}
+              <div className="divider">ose vazhdo me</div>
+              <button className="btn-ghost" onClick={loginWithGoogle} disabled={loading}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2v6h7.8c4.5-4.2 7.1-10.3 7.1-17.2z"/><path fill="#34A853" d="M24 47c6.5 0 11.9-2.1 15.9-5.8l-7.8-6c-2.1 1.4-4.8 2.3-8.1 2.3-6.2 0-11.5-4.2-13.4-9.9H2.6v6.2C6.5 41.7 14.7 47 24 47z"/><path fill="#FBBC04" d="M10.6 27.6c-.5-1.4-.8-2.9-.8-4.6s.3-3.2.8-4.6v-6.2H2.6C1 15.6 0 19.7 0 24s1 8.4 2.6 11.8l8-6.2z"/><path fill="#E94235" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.5l6.8-6.8C35.9 2.4 30.5 0 24 0 14.7 0 6.5 5.3 2.6 13.2l8 6.2C12.5 13.7 17.8 9.5 24 9.5z"/></svg>
+                Hyr me Google
               </button>
 
               {/* 2. Regjistrimi — sekondare */}
@@ -681,6 +740,31 @@ export default function Auth() {
           )}
 
           {mode === 'forgot' && step === 'otp' && OtpStep}
+
+          {/* Module 1: 2FA TOTP verification step */}
+          {step === 'totp' && (
+            <>
+              <h2>🔐 Verifikimi me 2 Hapa</h2>
+              <p className="sub">Fut kodin 6-shifror nga<br /><strong>Google Authenticator / Authy</strong></p>
+              <div className="field">
+                <label>Kodi i autentikimit (TOTP)</label>
+                <input
+                  type="text" inputMode="numeric" pattern="[0-9]*" maxLength={6}
+                  placeholder="123456" value={totpCode}
+                  onChange={e => setTotpCode(e.target.value.replace(/\D/g, ''))}
+                  onKeyDown={e => e.key === 'Enter' && verifyTotp()}
+                  autoFocus autoComplete="one-time-code"
+                  style={{ letterSpacing: 4, fontSize: 20, textAlign: 'center', fontWeight: 700 }}
+                />
+              </div>
+              <button className="btn" onClick={verifyTotp} disabled={loading || totpCode.length !== 6}>
+                {loading ? '⏳ Duke verifikuar...' : '✅ Konfirmo'}
+              </button>
+              <button className="btn-ghost" onClick={() => { setStep('form'); setTotpCode(''); setMsg('') }}>
+                ← Kthehu
+              </button>
+            </>
+          )}
 
           {mode === 'forgot' && step === 'new-pass' && (
             <>
