@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import type { Category, Listing } from '../lib/types'
+import { getLevel } from './components/Badges'
 
 // Banner shkarkim — buton i vogël katrore pulsues (fixed, vetem faqja kryesore)
 function InstallBanner() {
@@ -138,6 +139,8 @@ export default function Home() {
   const [listingCount, setListingCount] = useState(0)
   const [userCount, setUserCount] = useState(0)
   const [user, setUser] = useState<any>(null)
+  const [profile, setProfile] = useState<any>(null)
+  const [authReady, setAuthReady] = useState(false)
   const [settings, setSettings] = useState<Record<string, string>>({})
   const [unreadCount, setUnreadCount] = useState(0)
 
@@ -146,11 +149,14 @@ export default function Home() {
     fetchSettings()
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
-      if (session?.user) fetchUnread(session.user.id)
+      setAuthReady(true)
+      if (session?.user) { fetchUnread(session.user.id); fetchMyProfile(session.user.id) }
     })
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
       setUser(session?.user ?? null)
-      if (session?.user) fetchUnread(session.user.id)
+      setAuthReady(true)
+      if (session?.user) { fetchUnread(session.user.id); fetchMyProfile(session.user.id) }
+      else setProfile(null)
     })
 
     const settingsChannel = supabase
@@ -167,6 +173,22 @@ export default function Home() {
   async function fetchSettings() {
     const { data } = await supabase.from('admin_settings').select('key,value')
     if (data) setSettings(Object.fromEntries(data.map((s: any) => [s.key, s.value])))
+  }
+
+  async function fetchMyProfile(uid: string) {
+    const { data } = await supabase
+      .from('profiles')
+      .select('full_name,username,avatar_url,is_premium,is_admin,is_verified,shop_name,gamification_points')
+      .eq('id', uid)
+      .single()
+    if (data) setProfile(data)
+    // Heartbeat presence + vetë-verifikim nëse kontakti është konfirmuar
+    const patch: Record<string, any> = { last_seen: new Date().toISOString() }
+    const u = (await supabase.auth.getUser()).data.user
+    if (u && (u.email_confirmed_at || u.phone_confirmed_at) && data && !data.is_verified) {
+      patch.is_verified = true
+    }
+    supabase.from('profiles').update(patch).eq('id', uid)
   }
 
   async function fetchUnread(uid: string) {
@@ -271,6 +293,17 @@ export default function Home() {
         .icon-btn i{font-size:17px;color:#111;}
         .login-btn{background:#111;color:#F5C842;border:none;border-radius:8px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s;}
         .login-btn:hover{opacity:.85;}
+        /* Identiteti i përdoruesit të loguar */
+        .user-chip{display:flex;align-items:center;gap:7px;background:rgba(0,0,0,.08);border:none;border-radius:20px;padding:4px 10px 4px 4px;cursor:pointer;font-family:inherit;transition:background .15s;}
+        .user-chip:hover{background:rgba(0,0,0,.15);}
+        .user-chip-av{width:28px;height:28px;border-radius:50%;background:#111;color:#F5C842;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;overflow:hidden;flex-shrink:0;position:relative;}
+        .user-chip-av img{width:100%;height:100%;object-fit:cover;}
+        .user-chip-on{position:absolute;bottom:-1px;right:-1px;width:9px;height:9px;background:#22C55E;border-radius:50%;border:2px solid #F5C842;}
+        .user-chip-txt{display:flex;flex-direction:column;align-items:flex-start;line-height:1.1;}
+        .user-chip-name{font-size:11px;font-weight:700;color:#111;max-width:84px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .user-chip-lvl{font-size:8px;font-weight:700;}
+        .auth-skel{width:90px;height:34px;border-radius:8px;background:rgba(0,0,0,.07);animation:auth-pulse 1.2s ease-in-out infinite;}
+        @keyframes auth-pulse{0%,100%{opacity:.5}50%{opacity:.9}}
         /* Search */
         .searchbar{padding:0 12px 10px;display:flex;gap:8px;}
         .search-wrap{flex:1;background:#fff;border-radius:10px;display:flex;align-items:center;padding:0 12px;gap:8px;border:1.5px solid rgba(0,0,0,.08);box-shadow:0 1px 4px rgba(0,0,0,.06);}
@@ -396,8 +429,28 @@ export default function Home() {
                   <span style={{ position: 'absolute', top: 2, right: 2, background: '#E63312', color: '#fff', fontSize: 7, fontWeight: 700, borderRadius: 8, padding: '1px 3px', minWidth: 12, textAlign: 'center', lineHeight: '12px' }}>{unreadCount > 9 ? '9+' : unreadCount}</span>
                 </button>
               )}
-              {user ? (
-                <button className="login-btn" onClick={() => go('/profile')}>Profili</button>
+              {!authReady ? (
+                <div className="auth-skel" aria-hidden />
+              ) : user ? (
+                (() => {
+                  const lvl = getLevel(profile?.gamification_points || 0)
+                  const nm = profile?.full_name || profile?.username || 'Profili'
+                  const inits = nm.slice(0, 2).toUpperCase()
+                  return (
+                    <button className="user-chip" onClick={() => go('/profile')} aria-label="Profili im">
+                      <span className="user-chip-av">
+                        {profile?.avatar_url ? <img src={profile.avatar_url} alt="" /> : inits}
+                        <span className="user-chip-on" />
+                      </span>
+                      <span className="user-chip-txt">
+                        <span className="user-chip-name">{nm}</span>
+                        <span className="user-chip-lvl" style={{ color: lvl.color }}>
+                          {profile?.is_premium ? '👑 Premium' : `${lvl.icon} ${lvl.name}`}
+                        </span>
+                      </span>
+                    </button>
+                  )
+                })()
               ) : (
                 <button className="login-btn" onClick={() => go('/auth/login')}>Hyr / Regjistrohu</button>
               )}
@@ -612,8 +665,12 @@ export default function Home() {
             {unreadCount > 0 && <span className="nav-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>}
             <span>Mesazhe</span>
           </button>
-          <button className="nav-item" onClick={() => go(user ? '/profile' : '/auth/login')}>
-            <i className="ti ti-user-circle" /><span>Profili</span>
+          <button className="nav-item" onClick={() => go(user ? '/profile' : '/auth/login')} style={{ position: 'relative' }}>
+            <i className="ti ti-user-circle" />
+            {authReady && user && (
+              <span style={{ position: 'absolute', top: 4, right: 12, width: 8, height: 8, background: '#22C55E', borderRadius: '50%', border: '1.5px solid #111' }} />
+            )}
+            <span>{authReady && user ? 'Profili' : 'Hyr'}</span>
           </button>
         </nav>
       </div>

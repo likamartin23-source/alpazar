@@ -83,7 +83,7 @@ export default function Kushtet() {
           <p>Alpazar rezervon të drejtën të ndryshojë këto kushte. Ndryshimet njoftohen 30 ditë para hyrjes në fuqi. Vazhdimi i përdorimit nënkupton pranimin e kushteve të reja.</p>
 
           <h2>12. Kontakti</h2>
-          <p>Pyetje ligjore: <strong>info@alpazar.al</strong> · Alpazar, Tiranë, Shqipëri</p>
+          <p>Pyetje ligjore: <strong>likamartin23@gmail.com</strong> · Alpazar, Tiranë, Shqipëri</p>
         </div>
         <div className="ftr">
           <a href="/privatesia" style={LS}>Privatësia</a>

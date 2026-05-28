@@ -41,7 +41,7 @@ export default function Privatesia() {
           </div>
 
           <h2>1. Kontrollori i të Dhënave</h2>
-          <p>Kontrolluesi i të dhënave personale është <strong>Alpazar</strong>, me seli në Tiranë, Shqipëri. Kontakt: info@alpazar.al</p>
+          <p>Kontrolluesi i të dhënave personale është <strong>Alpazar</strong>, me seli në Tiranë, Shqipëri. Kontakt: likamartin23@gmail.com</p>
 
           <h2>2. Të Dhënat që Mbledhim</h2>
           <p><strong>Të dhëna që jepni direkt:</strong></p>
@@ -101,7 +101,7 @@ export default function Privatesia() {
               <li>Tërhiqni konsentimin në çdo kohë</li>
             </ul>
           </div>
-          <p>Për ushtrimin e këtyre të drejtave kontaktoni: <strong>info@alpazar.al</strong></p>
+          <p>Për ushtrimin e këtyre të drejtave kontaktoni: <strong>likamartin23@gmail.com</strong></p>
           <p>Nëse nuk jeni të kënaqur me përgjigjen, mund të ankoheni te Komisioneri për Mbrojtjen e të Dhënave Personale: <strong>www.idp.al</strong></p>
 
           <h2>8. Transferimi Ndërkombëtar</h2>
@@ -111,7 +111,7 @@ export default function Privatesia() {
           <p>Çdo ndryshim i rëndësishëm i kësaj politike do të njoftohet me email ose njoftim në platformë, të paktën 14 ditë para hyrjes në fuqi.</p>
 
           <h2>10. Kontakti</h2>
-          <p>Për çdo pyetje rreth privatësisë: <strong>info@alpazar.al</strong><br/>Alpazar · Tiranë, Shqipëri</p>
+          <p>Për çdo pyetje rreth privatësisë: <strong>likamartin23@gmail.com</strong><br/>Alpazar · Tiranë, Shqipëri</p>
         </div>
         <div className="ftr">
           <a href="/kushtet" style={LS}>Kushtet</a>

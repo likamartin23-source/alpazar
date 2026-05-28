@@ -50,25 +50,25 @@ export default function Kontakt() {
 
         <div className="body">
           <div className="cards">
-            <a href="mailto:info@alpazar.al" className="ccard">
+            <a href="mailto:likamartin23@gmail.com" className="ccard">
               <i className="ti ti-mail" />
               <strong>Email</strong>
-              <span>info@alpazar.al</span>
+              <span>likamartin23@gmail.com</span>
             </a>
-            <a href="mailto:support@alpazar.al" className="ccard">
+            <a href="mailto:likamartin23@gmail.com" className="ccard">
               <i className="ti ti-headset" />
               <strong>Mbështetje</strong>
-              <span>support@alpazar.al</span>
+              <span>likamartin23@gmail.com</span>
             </a>
-            <a href="mailto:legal@alpazar.al" className="ccard">
+            <a href="mailto:likamartin23@gmail.com" className="ccard">
               <i className="ti ti-scale" />
               <strong>Çështje Ligjore</strong>
-              <span>legal@alpazar.al</span>
+              <span>likamartin23@gmail.com</span>
             </a>
-            <a href="mailto:abuse@alpazar.al" className="ccard">
+            <a href="mailto:likamartin23@gmail.com" className="ccard">
               <i className="ti ti-alert-triangle" />
               <strong>Raporto Abuzim</strong>
-              <span>abuse@alpazar.al</span>
+              <span>likamartin23@gmail.com</span>
             </a>
           </div>
 
@@ -84,11 +84,11 @@ export default function Kontakt() {
             <div className="sec-title"><i className="ti ti-help-circle" />Pyetjet e Shpeshta</div>
             <div className="faq-item">
               <div className="faq-q">Si ta fshij llogarinë time?</div>
-              <div className="faq-a">Dërgoni email në info@alpazar.al me subjektin "Fshirja e llogarisë". Procesojmë brenda 30 ditësh si kërkon ligji.</div>
+              <div className="faq-a">Dërgoni email në likamartin23@gmail.com me subjektin "Fshirja e llogarisë". Procesojmë brenda 30 ditësh si kërkon ligji.</div>
             </div>
             <div className="faq-item">
               <div className="faq-q">Si ta raportoj një shpallje mashtruese?</div>
-              <div className="faq-a">Klikoni butonin "Raporto" në shpallje ose dërgoni email në abuse@alpazar.al me ID-në e shpalljes.</div>
+              <div className="faq-a">Klikoni butonin "Raporto" në shpallje ose dërgoni email në likamartin23@gmail.com me ID-në e shpalljes.</div>
             </div>
             <div className="faq-item">
               <div className="faq-q">Si funksionon pagesa Premium?</div>

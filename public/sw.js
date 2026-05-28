@@ -1,5 +1,5 @@
 // CACHE_NAME ndryshon me çdo deploy — shfletuesi e njeh ndryshimin dhe rifrekon cache
-const CACHE_NAME = 'alpazar-v4'
+const CACHE_NAME = 'alpazar-v5'
 const STATIC_ASSETS = [
   '/manifest.json',
   '/icons/icon-192.png',
@@ -7,8 +7,8 @@ const STATIC_ASSETS = [
 ]
 
 self.addEventListener('install', (e) => {
-  // skipWaiting: SW i ri aktivizohet menjëherë pa pritur mbylljen e tab-it
-  self.skipWaiting()
+  // NUK thirrim skipWaiting() këtu — SW pret natyrshëm deri sa të lirohet tab-i
+  // Kjo parandalon reload loop: skipWaiting → controllerchange → reload → loop
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) =>
       cache.addAll(STATIC_ASSETS).catch(() => {})

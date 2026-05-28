@@ -86,7 +86,7 @@ export default function CookiesPage() {
           <p>Çdo ndryshim i kësaj politike do të publikohet në këtë faqe. Data e përditësimit do të ndryshohet.</p>
 
           <h2>6. Kontakti</h2>
-          <p>Pyetje rreth cookie-ve: <strong>info@alpazar.al</strong></p>
+          <p>Pyetje rreth cookie-ve: <strong>likamartin23@gmail.com</strong></p>
         </div>
         <div className="ftr">
           <a href="/kushtet" style={LS}>Kushtet</a>

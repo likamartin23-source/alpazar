@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import { getLevel, isNewMember } from '../components/Badges'
 
 const SHOP_CATEGORIES = [
   { id: '', label: '— Zgjidh kategorinë —' },
@@ -45,14 +46,19 @@ export default function ProfilePage() {
   const [deleteMsg, setDeleteMsg] = useState('')
 
   useEffect(() => {
+    // Kontrollo sesionin dhe dëgjo ndryshimet (p.sh. skadim sesioni)
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) { window.location.href = '/auth/login'; return }
       setUser(session.user)
       fetchProfile(session.user.id)
     })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) { window.location.href = '/auth/login' }
+    })
     // Check if redirected with tab param
     const params = new URLSearchParams(window.location.search)
     if (params.get('tab') === 'shop') setActiveTab('shop')
+    return () => subscription.unsubscribe()
   }, [])
 
   async function fetchProfile(uid: string) {
@@ -130,11 +136,11 @@ export default function ProfilePage() {
 
   async function signOut() {
     await supabase.auth.signOut()
-    window.location.href = '/'
+    window.location.href = '/auth/login'
   }
 
   async function changePassword() {
-    if (newPass.length < 6) { setPassMsg('err:Fjalëkalimi duhet të ketë minimumi 6 karaktere!'); return }
+    if (newPass.length < 8) { setPassMsg('err:Fjalëkalimi duhet të ketë minimumi 8 karaktere!'); return }
     if (newPass !== newPass2) { setPassMsg('err:Fjalëkalimet nuk përputhen!'); return }
     setSavingPass(true); setPassMsg('')
     const { error } = await supabase.auth.updateUser({ password: newPass })
@@ -213,6 +219,9 @@ export default function ProfilePage() {
         .b-pts{background:#E63312;color:#fff;}
         .b-admin{background:#7C3AED;color:#fff;}
         .b-shop{background:#10B981;color:#fff;}
+        .b-verif{background:#EAF3DE;color:#3B6D11;}
+        .b-seller{background:#EEF4FF;color:#185FA5;}
+        .b-new{background:#FFF4E5;color:#B45309;}
         .stats-row{display:flex;justify-content:space-around;padding:14px 0;background:#1a1a1a;}
         .stat{text-align:center;}
         .stat-n{font-size:18px;font-weight:800;color:#F5C842;}
@@ -320,8 +329,12 @@ export default function ProfilePage() {
           <div className="email-row"><i className="ti ti-mail" />{user?.email}</div>
           <div className="badges-row">
             {profile?.is_admin && <span className="badge b-admin">🛡 Admin</span>}
+            {(user?.email_confirmed_at || user?.phone_confirmed_at) && <span className="badge b-verif">✓ Verifikuar</span>}
             {profile?.is_premium && <span className="badge b-prem">👑 Premium</span>}
             {profile?.shop_name && <span className="badge b-shop">🏪 Dyqan</span>}
+            {(() => { const l = getLevel(profile?.gamification_points || 0); return <span className="badge" style={{ background: l.bg, color: l.color }}>{l.icon} {l.name}</span> })()}
+            {myListings.some(l => l.is_active) && <span className="badge b-seller">📦 Shitës aktiv</span>}
+            {isNewMember(profile?.created_at) && <span className="badge b-new">🆕 Anëtar i ri</span>}
             {profile?.gamification_points > 0 && <span className="badge b-pts">⚡ {profile.gamification_points} pikë</span>}
           </div>
         </div>
@@ -336,7 +349,7 @@ export default function ProfilePage() {
             <div className="stat-l">Shikime totale</div>
           </div>
           <div className="stat">
-            <div className="stat-n">{profile?.gamification_level || 'Fillestar'}</div>
+            <div className="stat-n">{getLevel(profile?.gamification_points || 0).name}</div>
             <div className="stat-l">Niveli</div>
           </div>
         </div>
@@ -424,7 +437,7 @@ export default function ProfilePage() {
                 {passMsg && (
                   <div className={`msg-box msg-sm ${passMsg.split(':')[0]}`}>{passMsg.split(/:(.+)/)[1]}</div>
                 )}
-                <label>Fjalëkalimi i ri (min. 6 karaktere)</label>
+                <label>Fjalëkalimi i ri (min. 8 karaktere)</label>
                 <div className="pass-wrap">
                   <input
                     type={showNewPass ? 'text' : 'password'}

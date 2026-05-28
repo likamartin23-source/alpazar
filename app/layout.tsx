@@ -95,13 +95,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             "logo": { "@type": "ImageObject", "url": "https://alpazar.vercel.app/icons/icon-512.png" }
           }
         })}} />
-        {/* Service Worker — controllerchange pattern: reload 1 herë kur SW i ri merr kontroll */}
+        {/* Service Worker — regjistrim i thjeshtë, pa reload automatik */}
         <script dangerouslySetInnerHTML={{__html: `
           if ('serviceWorker' in navigator) {
-            var _swReloading = false;
-            navigator.serviceWorker.addEventListener('controllerchange', function() {
-              if (!_swReloading) { _swReloading = true; window.location.reload(); }
-            });
             window.addEventListener('load', function() {
               navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function() {});
             });

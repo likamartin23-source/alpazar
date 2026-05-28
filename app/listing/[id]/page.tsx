@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { supabase } from '../../../lib/supabase'
+import { getLevel, isNewMember } from '../../components/Badges'
 
 const CATEGORY_LABELS: Record<string, string> = {
   elektronike: 'Elektronikë', makina: 'Makina', shtepi: 'Shtëpi & Mobilje',
@@ -33,6 +34,13 @@ export default function ListingPage({ params }: { params: { id: string } }) {
   const [user, setUser]               = useState<any>(null)
   const [liked, setLiked]             = useState(false)
   const [albiTooltip, setAlbiTooltip] = useState(false)
+
+  // Vlerësimi i shitësit
+  const [myReview, setMyReview]       = useState<any>(null)
+  const [reviewStars, setReviewStars] = useState(0)
+  const [reviewComment, setReviewComment] = useState('')
+  const [reviewMsg, setReviewMsg]     = useState('')
+  const [reviewSaving, setReviewSaving] = useState(false)
 
   // Chat bottom sheet
   const [chatOpen, setChatOpen]   = useState(false)
@@ -277,6 +285,8 @@ export default function ListingPage({ params }: { params: { id: string } }) {
         .sch-shop{background:#10B981;color:#fff;}
         .sch-admin{background:#7C3AED;color:#fff;}
         .sch-priv{background:#EEF4FF;color:#185FA5;border:1px solid #C3DAFB;}
+        .sch-seller{background:#EEF4FF;color:#185FA5;}
+        .sch-new{background:#FFF4E5;color:#B45309;}
         .seller-stats{display:flex;gap:6px;margin-bottom:7px;flex-wrap:wrap;}
         .stat-chip{display:flex;align-items:center;gap:4px;background:#f8f6f0;border:0.5px solid #eee;border-radius:9px;padding:4px 9px;font-size:11px;color:#555;}
         .stat-chip i{font-size:11px;color:#999;}
@@ -457,9 +467,12 @@ export default function ListingPage({ params }: { params: { id: string } }) {
 
                 {/* Badges */}
                 <div className="seller-chips">
+                  {seller.is_admin   && <span className="schip sch-admin">🛡 Admin</span>}
                   {seller.is_premium && <span className="schip sch-prem">👑 Premium</span>}
                   {seller.shop_name  && <span className="schip sch-shop">🏪 Dyqan</span>}
-                  {seller.is_admin   && <span className="schip sch-admin">🛡 Admin</span>}
+                  {(() => { const l = getLevel(seller.gamification_points || 0); return <span className="schip" style={{ background: l.bg, color: l.color }}>{l.icon} {l.name}</span> })()}
+                  {sellerCount > 0 && <span className="schip sch-seller">📦 Shitës aktiv</span>}
+                  {isNewMember(seller.created_at) && <span className="schip sch-new">🆕 Anëtar i ri</span>}
                   {!isOwner && <span className="schip sch-priv">🔒 Bisedë private</span>}
                 </div>
 
