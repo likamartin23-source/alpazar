@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { supabase } from '../../../lib/supabase'
 
@@ -18,20 +18,10 @@ export default function ShopDetailPage() {
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<any>(null)
   const [activeFilter, setActiveFilter] = useState('all')
-  const [albiTooltip, setAlbiTooltip] = useState(false)
-  const tooltipTimer = useRef<ReturnType<typeof setTimeout>>()
-
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => setUser(session?.user ?? null))
     if (shopId) fetchShop()
   }, [shopId])
-
-  useEffect(() => {
-    if (!loading && shop) {
-      tooltipTimer.current = setTimeout(() => setAlbiTooltip(true), 3000)
-      return () => clearTimeout(tooltipTimer.current)
-    }
-  }, [loading, shop])
 
   useEffect(() => {
     if (shop) fetchListings()
@@ -126,19 +116,8 @@ export default function ShopDetailPage() {
         .action-row{padding:12px 14px;display:flex;gap:8px;background:#fff;border-bottom:0.5px solid #eee;}
         .msg-btn{flex:1;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit;box-shadow:0 4px 12px rgba(230,51,18,.25);}
         .msg-btn i{font-size:16px;}
-        .albi-shop-btn{background:#F5C842;border:none;border-radius:10px;padding:12px 14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;font-size:11px;font-weight:700;color:#111;font-family:inherit;white-space:nowrap;}
-        .albi-shop-btn i{font-size:16px;}
         .share-btn{width:44px;background:#f5f5f0;border:none;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .share-btn i{font-size:18px;color:#555;}
-
-        /* Albi floating button */
-        .albi-fab{position:fixed;bottom:20px;right:14px;z-index:200;display:flex;flex-direction:column;align-items:flex-end;gap:8px;max-width:calc(100vw - 28px);}
-        .albi-tooltip{background:#111;color:#fff;font-size:11px;font-weight:600;padding:8px 13px;border-radius:14px;border-bottom-right-radius:4px;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.3);animation:fadeIn .3s ease;max-width:200px;line-height:1.5;text-align:right;cursor:pointer;}
-        .albi-tooltip strong{color:#F5C842;display:block;font-size:12px;}
-        .albi-btn{width:52px;height:52px;background:linear-gradient(135deg,#F5C842,#e0b030);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(245,200,66,.5);animation:pulse 2s infinite;}
-        .albi-btn i{font-size:24px;color:#111;}
-        @keyframes pulse{0%,100%{box-shadow:0 4px 16px rgba(245,200,66,.5)}50%{box-shadow:0 4px 24px rgba(245,200,66,.8),0 0 0 8px rgba(245,200,66,.15)}}
-        @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
         .body{padding:12px 10px;}
         .filter-row{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;}
         .filter-row::-webkit-scrollbar{display:none;}
@@ -216,9 +195,6 @@ export default function ShopDetailPage() {
             <button className="msg-btn" onClick={goToChat}>
               <i className="ti ti-message-circle" /> Chat me dyqanin
             </button>
-            <button className="albi-shop-btn" onClick={() => window.location.href = '/asistent'}>
-              <i className="ti ti-robot" /> Albi
-            </button>
             <button className="share-btn" onClick={() => navigator.share?.({ title: shop.shop_name, url: window.location.href })}>
               <i className="ti ti-share" />
             </button>
@@ -270,18 +246,6 @@ export default function ShopDetailPage() {
         </div>
       </div>
 
-      {/* Albi AI floating assistant */}
-      <div className="albi-fab">
-        {albiTooltip && (
-          <div className="albi-tooltip" onClick={() => window.location.href = '/asistent'}>
-            <strong>Albi 🤖 — AI Asistent</strong>
-            Pyet Albin për produktet<br />e këtij dyqani!
-          </div>
-        )}
-        <button className="albi-btn" onClick={() => window.location.href = '/asistent'} title="Pyet Albin — AI Asistent">
-          <i className="ti ti-robot" />
-        </button>
-      </div>
     </>
   )
 }

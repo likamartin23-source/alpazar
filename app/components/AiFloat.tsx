@@ -2,8 +2,8 @@
 import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 
-// Routes that render their own contextual Albi assistant — skip the global one there
-const OWN_ASSISTANT = ['/dyqane/', '/listing/', '/asistent']
+// Hide on the assistant page itself only
+const OWN_ASSISTANT = ['/asistent']
 
 export default function AiFloat() {
   const [showTip, setShowTip] = useState(false)
