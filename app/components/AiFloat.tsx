@@ -1,13 +1,20 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
+
+// Routes that render their own contextual Albi assistant — skip the global one there
+const OWN_ASSISTANT = ['/dyqane/', '/listing/', '/asistent']
 
 export default function AiFloat() {
   const [showTip, setShowTip] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
     const t = setTimeout(() => setShowTip(true), 2500)
     return () => clearTimeout(t)
   }, [])
+
+  if (pathname && OWN_ASSISTANT.some(p => pathname.startsWith(p))) return null
 
   return (
     <>
