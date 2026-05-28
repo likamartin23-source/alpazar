@@ -74,16 +74,22 @@ export default function ReferralPage() {
   }, [])
 
   async function fetchData(uid: string) {
-    const [{ data: p }, { data: refs }] = await Promise.all([
-      supabase.from('profiles').select('id,username,full_name,gamification_points,gamification_level').eq('id', uid).single(),
-      supabase.from('profiles').select('id,full_name,username,created_at').eq('referred_by', uid).order('created_at', { ascending: false }).limit(20),
-    ])
-    if (p) setProfile(p)
-    if (refs) setReferrals(refs)
+    const { data: p } = await supabase.from('profiles')
+      .select('id,username,full_name,gamification_points,gamification_level,referral_code')
+      .eq('id', uid).single()
+    if (p) {
+      setProfile(p)
+      const code = p.referral_code || p.username || uid.replace(/-/g,'').slice(0,8).toUpperCase()
+      const { data: refs } = await supabase.from('profiles')
+        .select('id,full_name,username,created_at')
+        .or(`referred_by.eq.${code},referred_by.eq.${p.username || ''}`)
+        .order('created_at', { ascending: false }).limit(20)
+      if (refs) setReferrals(refs)
+    }
     setLoading(false)
   }
 
-  const refCode = profile?.username || user?.id?.slice(0, 8) || ''
+  const refCode = profile?.referral_code || profile?.username || user?.id?.replace(/-/g,'').slice(0,8).toUpperCase() || ''
   const refUrl  = `${SITE}?ref=${refCode}`
 
   function copyLink() {
