@@ -34,9 +34,9 @@ export async function POST(
       else if (field === 'condition') qb = qb.eq('condition', value)
     }
 
-    // Full-text search using Postgres
+    // Full-text search using Postgres GIN index on fts column
     if (q.trim()) {
-      qb = qb.textSearch('title', q.trim().split(/\s+/).join(' | '), {
+      qb = qb.textSearch('fts', q.trim(), {
         type: 'websearch',
         config: 'simple',
       })
