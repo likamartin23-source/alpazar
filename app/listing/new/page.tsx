@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '../../../lib/supabase'
+import { FreeTierBanner, PremiumUpsellModal } from '../../components/PremiumUpsell'
 
 const CITIES = ['Tiranë', 'Durrës', 'Vlorë', 'Shkodër', 'Elbasan', 'Fier', 'Korçë', 'Berat', 'Lushnjë', 'Kavajë', 'Gjirokastër', 'Sarandë', 'Lezhë', 'Kukës', 'Pogradec', 'Peshkopi', 'Tropojë', 'Përmet', 'Tepelenë', 'Tjetër']
 
@@ -23,11 +24,13 @@ export default function NewListing() {
   })
   const [imageFiles, setImageFiles] = useState<File[]>([])
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
+  const [myListingCount, setMyListingCount] = useState(0)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) { window.location.href = '/auth/login'; return }
       setUser(session.user)
+      supabase.from('listings').select('*', { count: 'exact', head: true }).eq('user_id', session.user.id).eq('is_active', true).then(({ count }) => setMyListingCount(count || 0))
     })
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!session) { window.location.href = '/auth/login' }
@@ -151,6 +154,9 @@ export default function NewListing() {
         .submit-btn:disabled{opacity:.6;cursor:not-allowed;}
       `}</style>
 
+      {/* Marketing: upsell kur arrin kufirin falas (5 shpallje) */}
+      {myListingCount >= 5 && <PremiumUpsellModal trigger="limit" />}
+
       <div className="wrap">
         <div className="topbar">
           <button className="back" onClick={() => window.history.back()}>
@@ -160,6 +166,8 @@ export default function NewListing() {
         </div>
 
         <div className="body">
+          {/* Marketing: banner kufiri falas */}
+          <FreeTierBanner listingCount={myListingCount} freeLimit={5} />
           {msg && <div className={`msg-box ${mt}`}>{mm}</div>}
 
           <div className="card">

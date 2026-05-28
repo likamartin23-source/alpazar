@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { getLevel, isNewMember } from '../../components/Badges'
+import { SocialProofBar, SellerPremiumUpsell } from '../../components/PremiumUpsell'
 
 const CATEGORY_LABELS: Record<string, string> = {
   elektronike: 'Elektronikë', makina: 'Makina', shtepi: 'Shtëpi & Mobilje',
@@ -403,6 +404,9 @@ export default function ListingPage({ params }: { params: { id: string } }) {
           </button>
         </div>
 
+        {/* Social proof — shikues aktiv + total pamje */}
+        <SocialProofBar viewsCount={listing.views_count || 0} listingId={params.id} />
+
         <div className="info">
           {/* Status chip */}
           <div className="status-row">
@@ -437,6 +441,11 @@ export default function ListingPage({ params }: { params: { id: string } }) {
               <div className="sec-label">Përshkrimi</div>
               <div className="desc">{listing.description}</div>
             </>
+          )}
+
+          {/* Marketing: upsell per pronarin jo-premium */}
+          {isOwner && !seller?.is_premium && (
+            <SellerPremiumUpsell isPremium={false} />
           )}
 
           {/* ── PROFILI I SHITËSIT — free-flowing ── */}
