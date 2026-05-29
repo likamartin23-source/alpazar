@@ -95,7 +95,7 @@ const CSS = `
   .sec-row a:hover{text-decoration:underline;}
 `
 
-const OTP_SECONDS = 60
+const OTP_SECONDS = 120 // 2 minuta — duhet të përputhet me OTP_VALIDITY_MS=120*1000 në edge function
 
 export default function Auth() {
   const [mode, setMode] = useState<Mode>('login')
@@ -130,6 +130,33 @@ export default function Auth() {
   const [totpCode, setTotpCode] = useState('')
   const [mfaFactorId, setMfaFactorId] = useState('')
 
+  // Auto-submit cancel — tregon "Duke verifikuar në Xs..." me mundësi anulimi
+  const autoSubmitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [autoSubmitIn, setAutoSubmitIn] = useState<number>(0)
+  const autoSubmitCountRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  function cancelAutoSubmit() {
+    if (autoSubmitTimerRef.current) { clearTimeout(autoSubmitTimerRef.current); autoSubmitTimerRef.current = null }
+    if (autoSubmitCountRef.current) { clearInterval(autoSubmitCountRef.current); autoSubmitCountRef.current = null }
+    setAutoSubmitIn(0)
+  }
+
+  function scheduleAutoSubmit(code: string) {
+    cancelAutoSubmit()
+    const DELAY_MS = 1500
+    setAutoSubmitIn(DELAY_MS / 1000)
+    autoSubmitCountRef.current = setInterval(() => {
+      setAutoSubmitIn(prev => {
+        if (prev <= 0.1) { clearInterval(autoSubmitCountRef.current!); return 0 }
+        return +(prev - 0.1).toFixed(1)
+      })
+    }, 100)
+    autoSubmitTimerRef.current = setTimeout(() => {
+      cancelAutoSubmit()
+      verifyOtp(code)
+    }, DELAY_MS)
+  }
+
   // SMS fallback — when SMS is not configured, collect email instead
   const [smsFailMode, setSmsFailMode] = useState(false)
   const [smsFailEmail, setSmsFailEmail] = useState('')
@@ -146,6 +173,8 @@ export default function Auth() {
     return () => {
       subscription.unsubscribe()
       if (timerRef.current) clearInterval(timerRef.current)
+      if (autoSubmitTimerRef.current) clearTimeout(autoSubmitTimerRef.current)
+      if (autoSubmitCountRef.current) clearInterval(autoSubmitCountRef.current)
     }
   }, [])
 
@@ -162,6 +191,7 @@ export default function Auth() {
   }
 
   function resetToForm() {
+    cancelAutoSubmit()
     setStep('form'); setOtp(['', '', '', '', '', '']); setMsg(''); setExpired(false)
     if (timerRef.current) clearInterval(timerRef.current)
   }
@@ -184,9 +214,17 @@ export default function Auth() {
       options: {
         redirectTo: `${window.location.origin}/auth/callback${ref ? `?ref=${ref}` : ''}`,
         queryParams: { access_type: 'offline', prompt: 'consent' },
+        skipBrowserRedirect: false,
       },
     })
-    if (error) setMsg(`err:${error.message}`)
+    if (error) {
+      const raw = error.message.toLowerCase()
+      if (raw.includes('provider') || raw.includes('not enabled') || raw.includes('unsupported')) {
+        setMsg('err:Hyrja me Google nuk është aktivizuar ende nga administratori. Përdor email ose numër telefoni.')
+      } else {
+        setMsg(`err:${error.message}`)
+      }
+    }
     setLoading(false)
   }
 
@@ -264,7 +302,7 @@ export default function Auth() {
       const res = await fetch(`${FN_URL}/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identifier: id }),
+        body: JSON.stringify({ identifier: id, mode }),
       })
       const data = await res.json()
       if (!res.ok || data.error) {
@@ -297,7 +335,7 @@ export default function Auth() {
       const res = await fetch(`${FN_URL}/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identifier: email }),
+        body: JSON.stringify({ identifier: email, mode }),
       })
       const data = await res.json()
       if (!res.ok || data.error) {
@@ -382,33 +420,38 @@ export default function Auth() {
 
   function handleOtpChange(i: number, val: string) {
     if (!/^\d*$/.test(val) || expired) return
+    cancelAutoSubmit()
     const next = [...otp]; next[i] = val.slice(-1); setOtp(next)
     if (val && i < 5) {
       setTimeout(() => inputRefs.current[i + 1]?.focus(), 0)
     }
-    // Auto-submit kur plotësohet shifra e fundit (kalon kodin direkt — shmanget stale state)
+    // Auto-submit me 1.5s vonesë — lë kohë për të korrigjuar gabime
     if (val && next.every(d => d !== '') && !expired) {
-      setTimeout(() => verifyOtp(next.join('')), 250)
+      scheduleAutoSubmit(next.join(''))
     }
   }
   function handleOtpKeyDown(i: number, e: React.KeyboardEvent) {
-    if (e.key === 'Backspace' && !otp[i] && i > 0) {
-      const next = [...otp]; next[i - 1] = ''; setOtp(next)
-      inputRefs.current[i - 1]?.focus()
+    if (e.key === 'Backspace') {
+      cancelAutoSubmit()
+      if (!otp[i] && i > 0) {
+        const next = [...otp]; next[i - 1] = ''; setOtp(next)
+        inputRefs.current[i - 1]?.focus()
+      }
     }
-    if (e.key === 'Enter' && otp.join('').length === 6) verifyOtp()
+    if (e.key === 'Enter' && otp.join('').length === 6) { cancelAutoSubmit(); verifyOtp() }
   }
   function handleOtpPaste(e: React.ClipboardEvent) {
     e.preventDefault()
+    cancelAutoSubmit()
     const text = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6)
     if (!text) return
     const next = Array(6).fill('')
     text.split('').forEach((d, i) => { next[i] = d })
     setOtp(next)
     setTimeout(() => inputRefs.current[Math.min(text.length, 5)]?.focus(), 0)
-    // Auto-submit kur ngjitet kodi i plotë 6-shifror
+    // Auto-submit me vonesë pas paste-it
     if (text.length === 6 && !expired) {
-      setTimeout(() => verifyOtp(text), 350)
+      scheduleAutoSubmit(text)
     }
   }
 
@@ -483,17 +526,28 @@ export default function Auth() {
             ref={el => { inputRefs.current[i] = el }}
             className={`otp-input${d ? ' filled' : ''}`}
             type="text" inputMode="numeric" pattern="[0-9]*" maxLength={1}
-            value={d} disabled={expired}
+            value={d} disabled={expired || loading}
             onChange={e => handleOtpChange(i, e.target.value)}
             onKeyDown={e => handleOtpKeyDown(i, e)}
             autoComplete="one-time-code" />
         ))}
       </div>
 
-      <button className="btn" onClick={() => verifyOtp()} disabled={loading || expired}>
+      {autoSubmitIn > 0 && (
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
+          background:'#EEF4FF', border:'1px solid #85B7EB', borderRadius:8,
+          padding:'8px 12px', marginBottom:10, fontSize:12 }}>
+          <span style={{ color:'#185FA5' }}>⏳ Duke verifikuar automatikisht në <strong>{autoSubmitIn.toFixed(1)}s</strong>…</span>
+          <button onClick={cancelAutoSubmit}
+            style={{ background:'none', border:'none', color:'#E63312', cursor:'pointer',
+              fontWeight:700, fontSize:12, padding:'0 4px' }}>✕ Anulo</button>
+        </div>
+      )}
+
+      <button className="btn" onClick={() => { cancelAutoSubmit(); verifyOtp() }} disabled={loading || expired}>
         {loading ? '⏳ Duke verifikuar...' : '✅ Konfirmo Kodin'}
       </button>
-      <button className="btn-ghost" onClick={resetToForm}>← Ndrysho adresën</button>
+      <button className="btn-ghost" onClick={() => { cancelAutoSubmit(); resetToForm() }}>← Ndrysho adresën</button>
     </>
   )
 
