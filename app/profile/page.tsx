@@ -257,6 +257,7 @@ export default function ProfilePage() {
         .listing-price{font-size:13px;font-weight:700;color:#E63312;margin-top:2px;}
         .listing-meta{font-size:10px;color:#aaa;margin-top:2px;}
         .del-btn{background:#FFF0EE;border:none;border-radius:7px;padding:6px 10px;font-size:12px;cursor:pointer;color:#E63312;font-family:inherit;}
+        .edit-listing-btn{background:#FFFBEA;border:1px solid #e0b030;border-radius:7px;padding:6px 10px;font-size:12px;cursor:pointer;color:#856404;font-family:inherit;}
         .prem-card{background:linear-gradient(135deg,#111,#1c1c1c);border-radius:13px;padding:18px;margin-bottom:12px;text-align:center;border:1px solid #333;}
         .prem-card h3{color:#F5C842;font-size:15px;font-weight:700;margin-bottom:8px;}
         .prem-card p{color:#777;font-size:11px;margin-bottom:16px;line-height:1.6;}
@@ -519,7 +520,8 @@ export default function ProfilePage() {
                         <div className="listing-price">{fmt(l.price, l.currency)}</div>
                         <div className="listing-meta">👁 {l.views_count || 0} · 📍 {l.city || 'Shqipëri'}{l.is_premium ? ' · ⭐ Premium' : ''}</div>
                       </div>
-                      <button className="del-btn" onClick={() => deleteListing(l.id)}>🗑</button>
+                      <button className="edit-listing-btn" onClick={() => window.location.href = `/listing/${l.id}/edit`} title="Ndrysho">✏️</button>
+                      <button className="del-btn" onClick={() => deleteListing(l.id)} title="Fshi">🗑</button>
                     </div>
                   ))
                 )}

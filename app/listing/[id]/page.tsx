@@ -42,6 +42,35 @@ export default function ListingPage({ params }: { params: { id: string } }) {
   const [reviewMsg, setReviewMsg]     = useState('')
   const [reviewSaving, setReviewSaving] = useState(false)
 
+  // Report
+  const [reportOpen, setReportOpen]   = useState(false)
+  const [reportReason, setReportReason] = useState('')
+  const [reportSent, setReportSent]   = useState(false)
+  const [reportLoading, setReportLoading] = useState(false)
+
+  const REPORT_REASONS = [
+    'Shpallje mashtruese / e rreme',
+    'Çmim i dyshimtë',
+    'Produkt i ndaluar',
+    'Foto / informacion i vjedhur',
+    'Kontakt i rremë',
+    'Tjetër',
+  ]
+
+  async function submitReport() {
+    if (!reportReason) return
+    setReportLoading(true)
+    await supabase.from('reports').insert({
+      listing_id: params.id,
+      reporter_id: user?.id || null,
+      reason: reportReason,
+      status: 'pending',
+    })
+    setReportSent(true)
+    setReportLoading(false)
+    setTimeout(() => setReportOpen(false), 1800)
+  }
+
   // Chat bottom sheet
   const [chatOpen, setChatOpen]   = useState(false)
   const [chatMsgs, setChatMsgs]   = useState<any[]>([])
@@ -346,6 +375,21 @@ export default function ListingPage({ params }: { params: { id: string } }) {
         .main-chat-btn i{font-size:16px;}
 
         @keyframes spin{to{transform:rotate(360deg);}}
+
+        /* Report modal */
+        .report-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:300;animation:fadeIn .2s;}
+        .report-panel{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-radius:18px 18px 0 0;z-index:310;padding:18px 16px 32px;box-shadow:0 -4px 24px rgba(0,0,0,.15);}
+        .report-handle{width:36px;height:4px;background:#ddd;border-radius:4px;margin:0 auto 14px;}
+        .report-title{font-size:15px;font-weight:700;color:#111;margin-bottom:4px;}
+        .report-sub{font-size:12px;color:#888;margin-bottom:14px;}
+        .reason-list{display:flex;flex-direction:column;gap:7px;margin-bottom:16px;}
+        .reason-btn{display:flex;align-items:center;gap:10px;border:1.5px solid #eee;border-radius:10px;padding:11px 13px;background:#fff;font-family:inherit;font-size:13px;color:#333;cursor:pointer;text-align:left;}
+        .reason-btn.sel{border-color:#E63312;background:#FFF0EE;color:#E63312;font-weight:600;}
+        .report-submit{width:100%;background:#E63312;color:#fff;border:none;border-radius:11px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .report-submit:disabled{opacity:.5;cursor:not-allowed;}
+        .report-success{text-align:center;padding:18px 0;}
+        .report-link{display:block;text-align:center;font-size:11px;color:#bbb;margin-top:14px;cursor:pointer;}
+        .report-link:hover{color:#E63312;}
       `}</style>
 
       <div className="wrap">
@@ -506,8 +550,64 @@ export default function ListingPage({ params }: { params: { id: string } }) {
               <div style={{ height: 11 }} />
             </>
           )}
+
+          {/* Owner actions */}
+          {isOwner && (
+            <div style={{ padding: '0 13px 14px', display: 'flex', gap: 8 }}>
+              <button
+                onClick={() => window.location.href = `/listing/${params.id}/edit`}
+                style={{ flex: 1, background: '#F5C842', color: '#111', border: 'none', borderRadius: 10, padding: '10px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+                <i className="ti ti-pencil" style={{ fontSize: 14 }} />Ndrysho
+              </button>
+            </div>
+          )}
+
+          {/* Report link — only for non-owner visitors */}
+          {!isOwner && (
+            <div style={{ padding: '0 13px 20px', textAlign: 'center' }}>
+              <button onClick={() => setReportOpen(true)}
+                style={{ background: 'none', border: 'none', color: '#ccc', fontSize: 11, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                <i className="ti ti-flag" style={{ fontSize: 12 }} />Raporto këtë shpallje
+              </button>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* ── REPORT MODAL ── */}
+      {reportOpen && (
+        <>
+          <div className="report-overlay" onClick={() => setReportOpen(false)} />
+          <div className="report-panel">
+            <div className="report-handle" />
+            {reportSent ? (
+              <div className="report-success">
+                <div style={{ fontSize: 40, marginBottom: 10 }}>✅</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: '#3B6D11' }}>Raporti u dërgua!</div>
+                <div style={{ fontSize: 12, color: '#888', marginTop: 4 }}>Faleminderit. Ekipi ynë do ta shqyrtojë.</div>
+              </div>
+            ) : (
+              <>
+                <div className="report-title">⚑ Raporto shpalljen</div>
+                <div className="report-sub">Zgjidh arsyen e raportimit</div>
+                <div className="reason-list">
+                  {REPORT_REASONS.map(r => (
+                    <button key={r} className={`reason-btn ${reportReason === r ? 'sel' : ''}`}
+                      onClick={() => setReportReason(r)}>
+                      {reportReason === r ? '●' : '○'} {r}
+                    </button>
+                  ))}
+                </div>
+                <button className="report-submit" onClick={submitReport}
+                  disabled={!reportReason || reportLoading}>
+                  {reportLoading ? '⏳ Duke dërguar...' : 'Dërgo raportin'}
+                </button>
+                <button className="report-link" onClick={() => setReportOpen(false)}>Anulo</button>
+              </>
+            )}
+          </div>
+        </>
+      )}
 
       {/* ── CHAT BOTTOM SHEET ── */}
       {chatPanelOpen && seller && (
