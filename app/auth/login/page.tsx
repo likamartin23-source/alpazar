@@ -111,6 +111,11 @@ export default function Auth() {
   const [lastName, setLastName] = useState('')
   const [age, setAge] = useState('')
 
+  // register password fields
+  const [regPass, setRegPass] = useState('')
+  const [regPass2, setRegPass2] = useState('')
+  const [showRegPass, setShowRegPass] = useState(false)
+
   // new password (forgot flow)
   const [newPass, setNewPass] = useState('')
   const [newPass2, setNewPass2] = useState('')
@@ -169,6 +174,7 @@ export default function Auth() {
   function switchMode(m: Mode) {
     setMode(m); setStep('form'); setMsg('')
     setContact(''); setPassword(''); setNewPass(''); setNewPass2('')
+    setRegPass(''); setRegPass2('')
     setFirstName(''); setLastName(''); setAge(''); setResolvedId('')
     setOtp(['', '', '', '', '', '']); setExpired(false)
     setSmsFailMode(false); setSmsFailEmail(''); setOriginalPhone('')
@@ -250,6 +256,8 @@ export default function Auth() {
       if (!lastName.trim()) { setMsg('err:Mbiemri është i detyrueshëm!'); return }
       const ageN = parseInt(age)
       if (!age || ageN < 16 || ageN > 120) { setMsg('err:Mosha duhet të jetë minimumi 16 vjeç!'); return }
+      if (regPass.length < 8) { setMsg('err:Fjalëkalimi duhet të ketë minimumi 8 karaktere!'); return }
+      if (regPass !== regPass2) { setMsg('err:Fjalëkalimet nuk përputhen!'); return }
     }
 
     const type = detectType(raw)
@@ -363,6 +371,12 @@ export default function Auth() {
       if (mode === 'forgot') {
         setStep('new-pass'); setMsg('')
       } else {
+        const { error: passErr } = await supabase.auth.updateUser({ password: regPass })
+        if (passErr) {
+          setMsg(`err:Gabim gjatë vendosjes së fjalëkalimit: ${passErr.message}`)
+          setLoading(false)
+          return
+        }
         setMsg('ok:Llogaria u krijua! Duke u ridrejtuar...')
         setTimeout(() => { window.location.href = '/' }, 700)
       }
@@ -630,6 +644,32 @@ export default function Auth() {
                   </span>
                 </div>
                 {contactHint}
+              </div>
+
+              <div className="field">
+                <label>Fjalëkalimi * (min. 8 karaktere)</label>
+                <div className="pass-wrap">
+                  <input type={showRegPass ? 'text' : 'password'} placeholder="••••••••"
+                    value={regPass} onChange={e => setRegPass(e.target.value)}
+                    autoComplete="new-password" style={{ paddingRight: 36 }} />
+                  <button className="pass-toggle" onClick={() => setShowRegPass(v => !v)}>
+                    {showRegPass ? '🙈' : '👁️'}
+                  </button>
+                </div>
+                {regPass.length > 0 && regPass.length < 8 && (
+                  <p className="hint warn">Minimum 8 karaktere</p>
+                )}
+              </div>
+
+              <div className="field">
+                <label>Konfirmo Fjalëkalimin *</label>
+                <input type="password" placeholder="••••••••"
+                  value={regPass2} onChange={e => setRegPass2(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && sendOtp()}
+                  autoComplete="new-password" />
+                {regPass2.length > 0 && regPass !== regPass2 && (
+                  <p className="hint warn">Fjalëkalimet nuk përputhen</p>
+                )}
               </div>
 
               {!smsFailMode ? (
