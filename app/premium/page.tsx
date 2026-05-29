@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 
+const REFERRAL_TARGET = 50
+
 export default function PremiumPage() {
   const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
@@ -11,12 +13,21 @@ export default function PremiumPage() {
   const [payMethods, setPayMethods] = useState<any[]>([])
   const [submitting, setSubmitting] = useState(false)
   const [msg, setMsg] = useState('')
+  const [referralCount, setReferralCount] = useState(0)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
       if (session?.user) {
-        supabase.from('profiles').select('*').eq('id', session.user.id).single().then(({ data: p }) => setProfile(p))
+        supabase.from('profiles').select('*').eq('id', session.user.id).single().then(({ data: p }) => {
+          setProfile(p)
+          if (p?.referral_code || p?.username) {
+            const code = p.referral_code || p.username
+            supabase.from('profiles').select('id', { count: 'exact', head: true })
+              .or(`referred_by.eq.${code},referred_by.eq.${p.username || ''}`)
+              .then(({ count }) => setReferralCount(count || 0))
+          }
+        })
       }
     })
     supabase.from('payment_methods').select('*').eq('is_active', true).then(({ data }) => {
@@ -105,6 +116,13 @@ export default function PremiumPage() {
         .already i{font-size:36px;color:#1D9E75;display:block;margin-bottom:8px;}
         .already strong{font-size:15px;font-weight:700;color:#1D9E75;display:block;margin-bottom:4px;}
         .already span{font-size:12px;color:#555;}
+        .ref-milestone{background:linear-gradient(135deg,#1a0a00,#2d1400);border:1px solid #F5C84255;border-radius:12px;padding:16px;margin-bottom:14px;}
+        .ref-m-title{color:#F5C842;font-size:13px;font-weight:700;margin-bottom:4px;}
+        .ref-m-sub{color:#888;font-size:11px;margin-bottom:10px;}
+        .ref-m-bar-bg{background:#333;border-radius:6px;height:8px;overflow:hidden;margin-bottom:6px;}
+        .ref-m-bar-fill{height:100%;background:linear-gradient(90deg,#F5C842,#E63312);border-radius:6px;transition:width .5s;}
+        .ref-m-meta{display:flex;justify-content:space-between;font-size:10px;color:#888;}
+        .ref-m-cta{display:block;background:#F5C842;color:#111;border:none;border-radius:9px;padding:10px;font-size:12px;font-weight:700;cursor:pointer;width:100%;margin-top:10px;text-align:center;text-decoration:none;font-family:inherit;}
       `}</style>
 
       <div className="wrap">
@@ -180,6 +198,26 @@ export default function PremiumPage() {
             Pagesa procesohet manualisht nga admini brenda 24 orësh.<br />
             Do të njoftoheni sapo llogaria juaj aktivizohet.
           </p>
+
+          {/* Referral milestone CTA */}
+          {user && !profile?.is_premium && (
+            <div className="ref-milestone">
+              <div className="ref-m-title">🎁 Merr Premium FALAS!</div>
+              <div className="ref-m-sub">Fto {REFERRAL_TARGET} miq dhe fiton 1 muaj Premium pa pagesë.</div>
+              <div className="ref-m-bar-bg">
+                <div className="ref-m-bar-fill" style={{
+                  width: `${Math.min(100, Math.round((referralCount / REFERRAL_TARGET) * 100))}%`
+                }} />
+              </div>
+              <div className="ref-m-meta">
+                <span>{referralCount} / {REFERRAL_TARGET} referalë</span>
+                <span>{Math.max(0, REFERRAL_TARGET - referralCount)} mbetur</span>
+              </div>
+              <a href="/referral" className="ref-m-cta">
+                🔗 Fto miq tani →
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </>

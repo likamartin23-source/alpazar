@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { supabase } from '../../lib/supabase'
 import { getLevel, isNewMember } from '../components/Badges'
 
@@ -45,12 +45,37 @@ export default function ProfilePage() {
   const [deleting, setDeleting] = useState(false)
   const [deleteMsg, setDeleteMsg] = useState('')
 
+  const listingsChRef = useRef<any>(null)
+  const pollRef       = useRef<any>(null)
+
   useEffect(() => {
     // Kontrollo sesionin dhe dëgjo ndryshimet (p.sh. skadim sesioni)
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) { window.location.href = '/auth/login'; return }
       setUser(session.user)
       fetchProfile(session.user.id)
+
+      const uid = session.user.id
+      const refreshListings = () => {
+        supabase.from('listings')
+          .select('*')
+          .eq('user_id', uid)
+          .order('created_at', { ascending: false })
+          .then(({ data }) => { if (data) setMyListings(data) })
+      }
+
+      // Poll listingjet çdo 10 sekonda
+      pollRef.current = setInterval(refreshListings, 10000)
+
+      // Supabase Realtime si bonus
+      const ch = supabase
+        .channel(`my-listings-${uid}`)
+        .on('postgres_changes', {
+          event: '*', schema: 'public', table: 'listings',
+          filter: `user_id=eq.${uid}`,
+        }, refreshListings)
+        .subscribe()
+      listingsChRef.current = ch
     })
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!session) { window.location.href = '/auth/login' }
@@ -58,7 +83,11 @@ export default function ProfilePage() {
     // Check if redirected with tab param
     const params = new URLSearchParams(window.location.search)
     if (params.get('tab') === 'shop') setActiveTab('shop')
-    return () => subscription.unsubscribe()
+    return () => {
+      subscription.unsubscribe()
+      if (listingsChRef.current) supabase.removeChannel(listingsChRef.current)
+      clearInterval(pollRef.current)
+    }
   }, [])
 
   async function fetchProfile(uid: string) {
@@ -257,6 +286,7 @@ export default function ProfilePage() {
         .listing-price{font-size:13px;font-weight:700;color:#E63312;margin-top:2px;}
         .listing-meta{font-size:10px;color:#aaa;margin-top:2px;}
         .del-btn{background:#FFF0EE;border:none;border-radius:7px;padding:6px 10px;font-size:12px;cursor:pointer;color:#E63312;font-family:inherit;}
+        .edit-listing-btn{background:#FFFBEA;border:1px solid #e0b030;border-radius:7px;padding:6px 10px;font-size:12px;cursor:pointer;color:#856404;font-family:inherit;}
         .prem-card{background:linear-gradient(135deg,#111,#1c1c1c);border-radius:13px;padding:18px;margin-bottom:12px;text-align:center;border:1px solid #333;}
         .prem-card h3{color:#F5C842;font-size:15px;font-weight:700;margin-bottom:8px;}
         .prem-card p{color:#777;font-size:11px;margin-bottom:16px;line-height:1.6;}
@@ -429,6 +459,26 @@ export default function ProfilePage() {
                 </div>
               )}
 
+              {/* Referral CTA */}
+              <div style={{
+                background: 'linear-gradient(135deg,#E63312,#c42a0e)',
+                borderRadius: 13, padding: 16, marginBottom: 12,
+              }}>
+                <div style={{ color: '#fff', fontWeight: 700, fontSize: 14, marginBottom: 6 }}>
+                  🎁 Fto miq, fito pikë!
+                </div>
+                <div style={{ color: 'rgba(255,255,255,.8)', fontSize: 11, marginBottom: 12, lineHeight: 1.6 }}>
+                  Për çdo mik të regjistruar përmes linkut tënd, fiton <strong>50 pikë</strong> — kumulativisht.
+                  {profile?.gamification_points > 0 && ` Ke ${profile.gamification_points} pikë aktualisht.`}
+                </div>
+                <button
+                  style={{ background: '#fff', color: '#E63312', border: 'none', borderRadius: 9, padding: '9px 18px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+                  onClick={() => window.location.href = '/referral'}
+                >
+                  🔗 Ndaj linkun tënd →
+                </button>
+              </div>
+
               {/* ── Ndrysho Fjalëkalimin ── */}
               <div className="card">
                 <div className="card-hdr">
@@ -519,7 +569,8 @@ export default function ProfilePage() {
                         <div className="listing-price">{fmt(l.price, l.currency)}</div>
                         <div className="listing-meta">👁 {l.views_count || 0} · 📍 {l.city || 'Shqipëri'}{l.is_premium ? ' · ⭐ Premium' : ''}</div>
                       </div>
-                      <button className="del-btn" onClick={() => deleteListing(l.id)}>🗑</button>
+                      <button className="edit-listing-btn" onClick={() => window.location.href = `/listing/${l.id}/edit`} title="Ndrysho">✏️</button>
+                      <button className="del-btn" onClick={() => deleteListing(l.id)} title="Fshi">🗑</button>
                     </div>
                   ))
                 )}

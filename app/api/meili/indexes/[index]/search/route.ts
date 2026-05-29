@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { rateLimit, getClientIp } from '../../../../../../lib/rateLimit'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -10,9 +11,21 @@ export async function POST(
   req: NextRequest,
   { params }: { params: { index: string } }
 ) {
+  // 60 requests per minute per IP
+  const ip = getClientIp(req)
+  const rl = rateLimit(`search:${ip}`, { limit: 60, windowMs: 60_000 })
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { hits: [], estimatedTotalHits: 0 },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil(rl.resetIn / 1000)) } }
+    )
+  }
+
   try {
     const body = await req.json()
-    const { q = '', limit = 40, filter = [] } = body
+    const q      = String(body.q ?? '').trim().slice(0, 500)
+    const limit  = Math.min(Math.max(parseInt(body.limit) || 40, 1), 100)
+    const filter = Array.isArray(body.filter) ? body.filter : (body.filter ? [body.filter] : [])
 
     let qb = supabase
       .from('listings')
@@ -22,8 +35,7 @@ export async function POST(
       .limit(limit)
 
     // Apply filter from Meilisearch filter syntax: ["field = value", ...]
-    const filters = Array.isArray(filter) ? filter : [filter]
-    for (const f of filters) {
+    for (const f of filter) {
       const m = String(f).match(/^(\w+)\s*=\s*"?([^"]+)"?$/)
       if (!m) continue
       const [, field, value] = m

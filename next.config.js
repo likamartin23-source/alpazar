@@ -19,6 +19,20 @@ const nextConfig = {
   },
 
   async headers() {
+    const csp = [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://va.vercel-scripts.com https://vercel.live",
+      "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com",
+      "font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com",
+      "img-src 'self' data: blob: https://*.supabase.co https://*.supabase.in https://lh3.googleusercontent.com https://avatars.githubusercontent.com",
+      "connect-src 'self' https://*.supabase.co https://*.supabase.in wss://*.supabase.co https://va.vercel-scripts.com https://vitals.vercel-insights.com",
+      "frame-src 'none'",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "upgrade-insecure-requests",
+    ].join('; ')
+
     return [
       {
         source: '/(.*)',
@@ -28,6 +42,8 @@ const nextConfig = {
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(self)' },
+          { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+          { key: 'Content-Security-Policy', value: csp },
         ],
       },
       {

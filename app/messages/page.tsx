@@ -77,6 +77,8 @@ export default function MessagesPage() {
   const typingBcast  = useRef<any>(null)
   const userRef      = useRef<any>(null)
   const selectedRef  = useRef<any>(null)
+  const inboxRef     = useRef<any>(null)
+  const pollRef      = useRef<any>(null)
 
   useEffect(() => { userRef.current = user },    [user])
   useEffect(() => { selectedRef.current = selected }, [selected])
@@ -91,6 +93,39 @@ export default function MessagesPage() {
         const withId = p.get('with')
         if (withId) openThreadById(withId, ctxUser.id)
       })
+
+
+      const myId = ctxUser.id
+      // Poll threads çdo 5 sekonda — guaranteed refresh
+      pollRef.current = setInterval(() => { fetchThreads(myId) }, 5000)
+      // Visibility API — rifresko menjëherë kur kthehemi në tab
+      const onVisible = () => {
+        if (document.visibilityState === 'visible') fetchThreads(myId)
+      }
+      document.addEventListener('visibilitychange', onVisible)
+      ;(pollRef as any)._onVisible = onVisible
+      // Supabase Realtime si bonus
+      const inbox = supabase
+        .channel(`inbox-global-${myId}`)
+        .on('postgres_changes', {
+          event: 'INSERT', schema: 'public', table: 'messages',
+          filter: `receiver_id=eq.${myId}`,
+        }, (payload) => {
+          const m = payload.new as any
+          setThreads(prev => {
+            const idx = prev.findIndex(t => t.otherId === m.sender_id)
+            if (idx === -1) { fetchThreads(myId); return prev }
+            const t = { ...prev[idx], lastMsg: m }
+            if (selectedRef.current?.otherId !== m.sender_id) {
+              t.unread = (t.unread || 0) + 1
+            }
+            const updated = [...prev]
+            updated.splice(idx, 1)
+            return [t, ...updated]
+          })
+        })
+        .subscribe()
+      inboxRef.current = inbox
     } else {
       supabase.auth.getSession().then(({ data: { session } }) => {
         if (!session) { window.location.href = '/auth/login'; return }
@@ -101,11 +136,45 @@ export default function MessagesPage() {
           const withId = p.get('with')
           if (withId) openThreadById(withId, session.user.id)
         })
+        const myId = session.user.id
+        pollRef.current = setInterval(() => { fetchThreads(myId) }, 5000)
+        const onVisible = () => {
+          if (document.visibilityState === 'visible') fetchThreads(myId)
+        }
+        document.addEventListener('visibilitychange', onVisible)
+        ;(pollRef as any)._onVisible = onVisible
+        const inbox = supabase
+          .channel(`inbox-global-${myId}`)
+          .on('postgres_changes', {
+            event: 'INSERT', schema: 'public', table: 'messages',
+            filter: `receiver_id=eq.${myId}`,
+          }, (payload) => {
+            const m = payload.new as any
+            setThreads(prev => {
+              const idx = prev.findIndex(t => t.otherId === m.sender_id)
+              if (idx === -1) { fetchThreads(myId); return prev }
+              const t = { ...prev[idx], lastMsg: m }
+              if (selectedRef.current?.otherId !== m.sender_id) {
+                t.unread = (t.unread || 0) + 1
+              }
+              const updated = [...prev]
+              updated.splice(idx, 1)
+              return [t, ...updated]
+            })
+          })
+          .subscribe()
+        inboxRef.current = inbox
       })
     }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) { window.location.href = '/auth/login' }
+    })
     return () => {
       if (channelRef.current)  supabase.removeChannel(channelRef.current)
       if (typingBcast.current) supabase.removeChannel(typingBcast.current)
+      if (inboxRef.current)    supabase.removeChannel(inboxRef.current)
+      clearInterval(pollRef.current)
+      if ((pollRef as any)._onVisible) document.removeEventListener('visibilitychange', (pollRef as any)._onVisible)
     }
   }, [ctxUser])
 

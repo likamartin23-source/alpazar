@@ -45,7 +45,10 @@ export async function middleware(req: NextRequest) {
       }
     }
   } catch {
-    // Nëse supabase dështon, lejo request të kalojë
+    // Fail closed: nëse supabase dështon për rrugët admin, dërgo në login
+    if (pathname.startsWith('/admin')) {
+      return NextResponse.redirect(new URL('/auth/login', req.url))
+    }
     return res
   }
 

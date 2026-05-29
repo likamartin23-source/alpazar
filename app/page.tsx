@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import type { Category, Listing } from '../lib/types'
 import { getLevel } from './components/Badges'
 import { PremiumUpsellModal } from './components/PremiumUpsell'
 import { useAlpazar } from '../lib/context'
+import { saveRefFromUrl } from '../lib/referral'
 
 // Banner shkarkim — buton i vogël katrore pulsues (fixed, vetem faqja kryesore)
 function InstallBanner() {
@@ -56,10 +57,13 @@ function InstallBanner() {
 }
 
 // Kuti ndarje — buton i vogël katrore pulsues (fixed, vetem faqja kryesore)
-function ShareBox() {
+function ShareBox({ refCode }: { refCode?: string }) {
   const [open, setOpen] = useState(false)
-  const url = 'https://alpazar.vercel.app'
-  const text = 'Zbulo ALPAZAR — platforma #1 shqiptare e tregtisë online! Shit, bli dhe bëj pazarin tënd.'
+  const base = 'https://alpazar.vercel.app'
+  const url = refCode ? `${base}?ref=${refCode}` : base
+  const text = refCode
+    ? `Bashkohu me mua në ALPAZAR — marketplace #1 shqiptar! Shit, bli dhe bëj pazarin tënd falas:`
+    : 'Zbulo ALPAZAR — platforma #1 shqiptare e tregtisë online! Shit, bli dhe bëj pazarin tënd.'
 
   return (
     <div style={{ position: 'fixed', bottom: 157, left: 12, zIndex: 190, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 3 }}>
@@ -145,10 +149,61 @@ export default function Home() {
   const [userCount, setUserCount] = useState(0)
   // settings now from app_config via context (cfg helper)
   const settings: Record<string, string> = {}
+  const [newListingBadge, setNewListingBadge] = useState(false)
+  const listingsChRef = useRef<any>(null)
 
   useEffect(() => {
+    saveRefFromUrl()
     fetchAll()
+
+    // Rilexo kur tab bëhet aktiv sërish
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') {
+        fetchListings()
+        fetchCounts()
+      }
+    }
+    document.addEventListener('visibilitychange', onVisible)
+
+    // Poll shpallje çdo 10 sekonda
+    const listingsPoll = setInterval(() => {
+      fetchListings()
+      fetchCounts()
+    }, 10000)
+
+    // Supabase Realtime si bonus (kur replication është aktive)
+    const lch = supabase
+      .channel('listings-live')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'listings' }, (payload) => {
+        const n = payload.new as any
+        if (!n.is_active) return
+        setListings(prev => prev.find(l => l.id === n.id) ? prev : [n, ...prev].slice(0, 20))
+        setListingCount(c => c + 1)
+        setNewListingBadge(true)
+        setTimeout(() => setNewListingBadge(false), 4000)
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'listings' }, (payload) => {
+        const n = payload.new as any
+        setListings(prev =>
+          n.is_active
+            ? prev.map(l => l.id === n.id ? { ...l, ...n } : l)
+            : prev.filter(l => l.id !== n.id)
+        )
+      })
+      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'listings' }, (payload) => {
+        setListings(prev => prev.filter(l => l.id !== (payload.old as any).id))
+        setListingCount(c => Math.max(0, c - 1))
+      })
+      .subscribe()
+    listingsChRef.current = lch
+
+    return () => {
+      if (listingsChRef.current) supabase.removeChannel(listingsChRef.current)
+      clearInterval(listingsPoll)
+      document.removeEventListener('visibilitychange', onVisible)
+    }
   }, [])
+
 
   useEffect(() => { fetchListings() }, [activeCategory, activeFilter])
 
@@ -363,6 +418,9 @@ export default function Home() {
         .loading{text-align:center;padding:32px;color:#888;font-size:13px;}
         .spinner{display:block;width:28px;height:28px;border:3px solid #F5C842;border-top-color:#E63312;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px;}
         @keyframes spin{to{transform:rotate(360deg);}}
+        .new-listing-toast{background:#EAF3DE;border:1px solid #97C459;border-radius:8px;padding:6px 12px;display:flex;align-items:center;gap:7px;margin-bottom:7px;animation:toast-in .3s ease;}
+        @keyframes toast-in{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+        .new-listing-toast span{font-size:11px;font-weight:700;color:#3B6D11;}
       `}</style>
 
       <div className="wrap">
@@ -528,6 +586,13 @@ export default function Home() {
             </>
           )}
 
+          {newListingBadge && (
+            <div className="new-listing-toast" onClick={() => { fetchListings(); setNewListingBadge(false) }}>
+              <i className="ti ti-sparkles" style={{ fontSize: 14, color: '#3B6D11' }} />
+              <span>Shpallje e re u shtua — klikoni për të rifreskuar</span>
+            </div>
+          )}
+
           <div className="filter-row">
             {[
               { id: 'all', label: 'Të gjitha' },
@@ -626,7 +691,7 @@ export default function Home() {
       </div>
 
       {/* Butonat pulsuese katrore — vetem faqja kryesore */}
-      <ShareBox />
+      <ShareBox refCode={profile?.referral_code || profile?.username || undefined} />
       <InstallBanner />
       {/* Marketing: upsell modal per jo-premium */}
       {authReady && user && !profile?.is_premium && <PremiumUpsellModal trigger="scroll" />}

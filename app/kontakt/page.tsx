@@ -1,6 +1,45 @@
+'use client'
+
+import { useState } from 'react'
+
 const LS = { color: '#666' as const, fontSize: 11, textDecoration: 'none' as const }
 
 export default function Kontakt() {
+  const [name, setName]       = useState('')
+  const [email, setEmail]     = useState('')
+  const [subject, setSubject] = useState('')
+  const [message, setMessage] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [msg, setMsg]         = useState('')
+
+  async function sendForm(e: React.FormEvent) {
+    e.preventDefault()
+    if (!name.trim() || !email.trim() || !message.trim()) {
+      setMsg('err:Plotëso fushat e detyrueshme (emri, email, mesazhi)!')
+      return
+    }
+    setLoading(true); setMsg('')
+    try {
+      const res = await fetch('/api/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'contact', name, email, subject, message }),
+      })
+      const data = await res.json()
+      if (!res.ok || data.error) {
+        setMsg(`err:${data.error ?? 'Gabim gjatë dërgimit. Provo sërish.'}`)
+      } else {
+        setMsg('ok:Mesazhi u dërgua! Do t\'ju përgjigjemi brenda 24 orësh.')
+        setName(''); setEmail(''); setSubject(''); setMessage('')
+      }
+    } catch {
+      setMsg('err:Gabim lidhjeje. Kontrollo internetin dhe provo sërish.')
+    }
+    setLoading(false)
+  }
+
+  const [mt, mm] = msg.split(/:(.+)/)
+
   const css = `
     *{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA;}
@@ -32,6 +71,16 @@ export default function Kontakt() {
     .hours span:last-child{color:#111;font-weight:600;}
     .ftr{display:flex;flex-wrap:wrap;gap:8px 16px;padding:20px;background:#f9f9f9;border-top:1px solid #eee;}
     .ftr a{color:#888;font-size:11px;text-decoration:none;}
+    .form-field{margin-bottom:12px;}
+    .form-field label{font-size:11px;font-weight:600;color:#555;display:block;margin-bottom:4px;}
+    .form-field input,.form-field textarea{width:100%;border:1.5px solid #ddd;border-radius:10px;padding:11px 13px;font-size:13px;font-family:inherit;outline:none;background:#fff;color:#111;transition:border .15s;}
+    .form-field input:focus,.form-field textarea:focus{border-color:#F5C842;}
+    .form-field textarea{min-height:110px;resize:vertical;}
+    .send-btn{width:100%;background:#E63312;color:#fff;border:none;border-radius:11px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s;}
+    .send-btn:disabled{opacity:.6;cursor:not-allowed;}
+    .msg-box{border-radius:9px;padding:10px 14px;margin-bottom:14px;font-size:12px;font-weight:600;}
+    .ok{background:#EAF3DE;color:#3B6D11;border:0.5px solid #97C459;}
+    .err{background:#FFF0EE;color:#E63312;border:0.5px solid #F09595;}
   `
   return (
     <>
@@ -72,6 +121,37 @@ export default function Kontakt() {
             </a>
           </div>
 
+          {/* ── FORMA E KONTAKTIT ── */}
+          <div className="section">
+            <div className="sec-title"><i className="ti ti-send" />Dërgo Mesazh</div>
+            {msg && <div className={`msg-box ${mt}`}>{mm}</div>}
+            <form onSubmit={sendForm}>
+              <div className="form-field">
+                <label>Emri juaj *</label>
+                <input type="text" placeholder="Arta Hoxha" value={name}
+                  onChange={e => setName(e.target.value)} maxLength={100} required />
+              </div>
+              <div className="form-field">
+                <label>Email-i juaj *</label>
+                <input type="email" placeholder="arta@email.com" value={email}
+                  onChange={e => setEmail(e.target.value)} maxLength={200} required />
+              </div>
+              <div className="form-field">
+                <label>Subjekti</label>
+                <input type="text" placeholder="p.sh. Pyetje rreth Premium..." value={subject}
+                  onChange={e => setSubject(e.target.value)} maxLength={200} />
+              </div>
+              <div className="form-field">
+                <label>Mesazhi *</label>
+                <textarea placeholder="Shkruaj mesazhin tënd këtu..." value={message}
+                  onChange={e => setMessage(e.target.value)} maxLength={3000} required />
+              </div>
+              <button className="send-btn" type="submit" disabled={loading}>
+                {loading ? '⏳ Duke dërguar...' : '📨 Dërgo Mesazhin'}
+              </button>
+            </form>
+          </div>
+
           <div className="section">
             <div className="sec-title"><i className="ti ti-clock" />Oraret e Mbështetjes</div>
             <div className="hours"><span>E Hënë — E Premte</span><span>09:00 — 18:00</span></div>
@@ -88,11 +168,11 @@ export default function Kontakt() {
             </div>
             <div className="faq-item">
               <div className="faq-q">Si ta raportoj një shpallje mashtruese?</div>
-              <div className="faq-a">Klikoni butonin "Raporto" në shpallje ose dërgoni email në likamartin23@gmail.com me ID-në e shpalljes.</div>
+              <div className="faq-a">Klikoni butonin "Raporto" direkt në faqen e shpalljes ose dërgoni email me ID-në e shpalljes.</div>
             </div>
             <div className="faq-item">
               <div className="faq-q">Si funksionon pagesa Premium?</div>
-              <div className="faq-a">Zgjidhni planin, dërgoni kërkesën, dhe admini konfirmon pagesën manualisht brenda 24 orësh. Nuk ofrojmë pagesa automatike me kartë tani.</div>
+              <div className="faq-a">Zgjidhni planin, dërgoni kërkesën, dhe admini konfirmon pagesën manualisht brenda 24 orësh.</div>
             </div>
             <div className="faq-item">
               <div className="faq-q">Ku janë serverët tuaj?</div>
@@ -107,6 +187,13 @@ export default function Kontakt() {
               Tiranë, Shqipëri<br />
               <span style={{ fontSize: 11, color: '#888' }}>NIPT/QKB: (në regjistrim)</span>
             </p>
+            <a
+              href="https://www.google.com/maps/search/Tiranë,+Shqipëri"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 10, background: '#EEF4FF', color: '#185FA5', borderRadius: 8, padding: '7px 13px', fontSize: 12, fontWeight: 600, textDecoration: 'none', border: '1px solid #C3DAFB' }}>
+              <i className="ti ti-map" style={{ fontSize: 14 }} />Hap në Google Maps
+            </a>
           </div>
         </div>
 

@@ -19,6 +19,7 @@ export interface Profile {
   shop_banner_url?: string
   seller_rating?: number
   reviews_count?: number
+  referral_code?: string
 }
 
 interface AlpazarCtx {
@@ -89,7 +90,7 @@ export function AlpazarProvider({ children }: { children: ReactNode }) {
   const loadProfile = useCallback(async (uid: string) => {
     const { data } = await supabase
       .from('profiles')
-      .select('id,username,full_name,avatar_url,is_premium,is_admin,is_verified,is_suspended,gamification_points,gamification_level,shop_name,shop_banner_url,seller_rating,reviews_count')
+      .select('id,username,full_name,avatar_url,is_premium,is_admin,is_verified,is_suspended,gamification_points,gamification_level,shop_name,shop_banner_url,seller_rating,reviews_count,referral_code')
       .eq('id', uid)
       .single()
     if (data) setProfile(data as Profile)

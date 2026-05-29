@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { getLevel, isNewMember } from '../../components/Badges'
 import { SocialProofBar, SellerPremiumUpsell } from '../../components/PremiumUpsell'
+import { saveRefFromUrl, buildShareUrl } from '../../../lib/referral'
 
 const CATEGORY_LABELS: Record<string, string> = {
   elektronike: 'Elektronikë', makina: 'Makina', shtepi: 'Shtëpi & Mobilje',
@@ -34,6 +35,9 @@ export default function ListingPage({ params }: { params: { id: string } }) {
   const [imgIdx, setImgIdx]           = useState(0)
   const [user, setUser]               = useState<any>(null)
   const [liked, setLiked]             = useState(false)
+  const [myRefCode, setMyRefCode]     = useState<string | null>(null)
+  const [shareOpen, setShareOpen]     = useState(false)
+  const [linkCopied, setLinkCopied]   = useState(false)
 
   // Vlerësimi i shitësit
   const [myReview, setMyReview]       = useState<any>(null)
@@ -41,6 +45,35 @@ export default function ListingPage({ params }: { params: { id: string } }) {
   const [reviewComment, setReviewComment] = useState('')
   const [reviewMsg, setReviewMsg]     = useState('')
   const [reviewSaving, setReviewSaving] = useState(false)
+
+  // Report
+  const [reportOpen, setReportOpen]   = useState(false)
+  const [reportReason, setReportReason] = useState('')
+  const [reportSent, setReportSent]   = useState(false)
+  const [reportLoading, setReportLoading] = useState(false)
+
+  const REPORT_REASONS = [
+    'Shpallje mashtruese / e rreme',
+    'Çmim i dyshimtë',
+    'Produkt i ndaluar',
+    'Foto / informacion i vjedhur',
+    'Kontakt i rremë',
+    'Tjetër',
+  ]
+
+  async function submitReport() {
+    if (!reportReason) return
+    setReportLoading(true)
+    await supabase.from('reports').insert({
+      listing_id: params.id,
+      reporter_id: user?.id || null,
+      reason: reportReason,
+      status: 'pending',
+    })
+    setReportSent(true)
+    setReportLoading(false)
+    setTimeout(() => setReportOpen(false), 1800)
+  }
 
   // Chat bottom sheet
   const [chatOpen, setChatOpen]   = useState(false)
@@ -64,9 +97,19 @@ export default function ListingPage({ params }: { params: { id: string } }) {
   useEffect(() => { listingRef.current = listing }, [listing])
 
   useEffect(() => {
+    saveRefFromUrl()
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
       userRef.current = session?.user ?? null
+      if (session?.user) {
+        supabase.from('profiles')
+          .select('referral_code,username')
+          .eq('id', session.user.id)
+          .single()
+          .then(({ data: p }) => {
+            if (p) setMyRefCode(p.referral_code || p.username || null)
+          })
+      }
     })
     fetchListing()
   }, [])
@@ -344,8 +387,30 @@ export default function ListingPage({ params }: { params: { id: string } }) {
         .bottom-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:1px solid #eee;padding:9px 13px;display:flex;gap:8px;z-index:100;}
         .main-chat-btn{flex:1;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 12px rgba(230,51,18,.3);}
         .main-chat-btn i{font-size:16px;}
+        .wa-btn{width:48px;height:48px;background:#25D366;border:none;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(37,211,102,.3);text-decoration:none;}
+        .wa-btn i{font-size:22px;color:#fff;}
+
+        /* Location section */
+        .map-link{display:inline-flex;align-items:center;gap:6px;background:#EEF4FF;color:#185FA5;border:1px solid #C3DAFB;border-radius:9px;padding:7px 13px;font-size:12px;font-weight:600;text-decoration:none;margin-top:8px;}
+        .map-link i{font-size:14px;}
 
         @keyframes spin{to{transform:rotate(360deg);}}
+
+        /* Report modal */
+        .report-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:300;animation:fadeIn .2s;}
+        .report-panel{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-radius:18px 18px 0 0;z-index:310;padding:18px 16px 32px;box-shadow:0 -4px 24px rgba(0,0,0,.15);}
+        .report-handle{width:36px;height:4px;background:#ddd;border-radius:4px;margin:0 auto 14px;}
+        .report-title{font-size:15px;font-weight:700;color:#111;margin-bottom:4px;}
+        .report-sub{font-size:12px;color:#888;margin-bottom:14px;}
+        .reason-list{display:flex;flex-direction:column;gap:7px;margin-bottom:16px;}
+        .reason-btn{display:flex;align-items:center;gap:10px;border:1.5px solid #eee;border-radius:10px;padding:11px 13px;background:#fff;font-family:inherit;font-size:13px;color:#333;cursor:pointer;text-align:left;}
+        .reason-btn.sel{border-color:#E63312;background:#FFF0EE;color:#E63312;font-weight:600;}
+        .report-submit{width:100%;background:#E63312;color:#fff;border:none;border-radius:11px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .report-submit:disabled{opacity:.5;cursor:not-allowed;}
+        .report-success{text-align:center;padding:18px 0;}
+        .report-link{display:block;text-align:center;font-size:11px;color:#bbb;margin-top:14px;cursor:pointer;}
+        .report-link:hover{color:#E63312;}
+        @keyframes ai-fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
       `}</style>
 
       <div className="wrap">
@@ -354,10 +419,59 @@ export default function ListingPage({ params }: { params: { id: string } }) {
             <i className="ti ti-arrow-left" />
           </button>
           <span className="topbar-title">Shpallja</span>
-          <button className="share-btn" onClick={() => navigator.share?.({ title: listing.title, url: window.location.href }).catch(() => {})}>
-            <i className="ti ti-share" />
+          <button className="share-btn" onClick={() => setShareOpen(o => !o)}>
+            <i className={`ti ti-${shareOpen ? 'x' : 'share'}`} />
           </button>
         </div>
+
+        {/* Share sheet */}
+        {shareOpen && (() => {
+          const shareUrl = buildShareUrl(`/listing/${params.id}`, myRefCode)
+          const shareText = `Shiko këtë shpallje në Alpazar: "${listing.title}"${myRefCode ? ' 🔗' : ''}`
+
+          function copyShareLink() {
+            navigator.clipboard.writeText(shareUrl).catch(() => {
+              const el = document.createElement('textarea')
+              el.value = shareUrl; document.body.appendChild(el); el.select()
+              document.execCommand('copy'); document.body.removeChild(el)
+            })
+            setLinkCopied(true)
+            setTimeout(() => { setLinkCopied(false); setShareOpen(false) }, 1800)
+          }
+
+          return (
+            <div style={{
+              background: '#fff', borderBottom: '1px solid #eee',
+              padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 10,
+              animation: 'ai-fade .2s ease',
+            }}>
+              {myRefCode && (
+                <div style={{ background: '#FFFBEA', border: '1px dashed #F5C842', borderRadius: 9, padding: '8px 12px', fontSize: 11, color: '#856404', display: 'flex', alignItems: 'center', gap: 7 }}>
+                  <i className="ti ti-gift" style={{ fontSize: 14, color: '#E63312', flexShrink: 0 }} />
+                  <span>Duke ndarë me kodin tënd — nëse miku regjistrohet <strong>fiton 50 pikë!</strong></span>
+                </div>
+              )}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+                <button
+                  onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(shareText + '\n' + shareUrl)}`, '_blank')}
+                  style={{ background: '#25D366', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 6px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                  <i className="ti ti-brand-whatsapp" style={{ fontSize: 20 }} />WhatsApp
+                </button>
+                <button
+                  onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank')}
+                  style={{ background: '#1877F2', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 6px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                  <i className="ti ti-brand-facebook" style={{ fontSize: 20 }} />Facebook
+                </button>
+                <button
+                  onClick={copyShareLink}
+                  style={{ background: linkCopied ? '#EAF3DE' : '#111', color: linkCopied ? '#3B6D11' : '#F5C842', border: 'none', borderRadius: 10, padding: '10px 6px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                  <i className={`ti ti-${linkCopied ? 'check' : 'copy'}`} style={{ fontSize: 20 }} />
+                  {linkCopied ? 'U kopjua!' : 'Kopjo'}
+                </button>
+              </div>
+            </div>
+          )
+        })()}
 
         {/* Gallery */}
         <div className="img-wrap">
@@ -424,6 +538,24 @@ export default function ListingPage({ params }: { params: { id: string } }) {
               <div className="divider" />
               <div className="sec-label">Përshkrimi</div>
               <div className="desc">{listing.description}</div>
+            </>
+          )}
+
+          {/* Vendndodhja me Google Maps */}
+          {listing.city && (
+            <>
+              <div className="divider" />
+              <div className="sec-label">Vendndodhja</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                <span style={{ fontSize: 13, color: '#555' }}>📍 {listing.city}, Shqipëri</span>
+                <a
+                  href={`https://www.google.com/maps/search/${encodeURIComponent(listing.city + ', Shqipëri')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="map-link">
+                  <i className="ti ti-map" />Hap në Maps
+                </a>
+              </div>
             </>
           )}
 
@@ -506,8 +638,64 @@ export default function ListingPage({ params }: { params: { id: string } }) {
               <div style={{ height: 11 }} />
             </>
           )}
+
+          {/* Owner actions */}
+          {isOwner && (
+            <div style={{ padding: '0 13px 14px', display: 'flex', gap: 8 }}>
+              <button
+                onClick={() => window.location.href = `/listing/${params.id}/edit`}
+                style={{ flex: 1, background: '#F5C842', color: '#111', border: 'none', borderRadius: 10, padding: '10px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+                <i className="ti ti-pencil" style={{ fontSize: 14 }} />Ndrysho
+              </button>
+            </div>
+          )}
+
+          {/* Report link — only for non-owner visitors */}
+          {!isOwner && (
+            <div style={{ padding: '0 13px 20px', textAlign: 'center' }}>
+              <button onClick={() => setReportOpen(true)}
+                style={{ background: 'none', border: 'none', color: '#ccc', fontSize: 11, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                <i className="ti ti-flag" style={{ fontSize: 12 }} />Raporto këtë shpallje
+              </button>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* ── REPORT MODAL ── */}
+      {reportOpen && (
+        <>
+          <div className="report-overlay" onClick={() => setReportOpen(false)} />
+          <div className="report-panel">
+            <div className="report-handle" />
+            {reportSent ? (
+              <div className="report-success">
+                <div style={{ fontSize: 40, marginBottom: 10 }}>✅</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: '#3B6D11' }}>Raporti u dërgua!</div>
+                <div style={{ fontSize: 12, color: '#888', marginTop: 4 }}>Faleminderit. Ekipi ynë do ta shqyrtojë.</div>
+              </div>
+            ) : (
+              <>
+                <div className="report-title">⚑ Raporto shpalljen</div>
+                <div className="report-sub">Zgjidh arsyen e raportimit</div>
+                <div className="reason-list">
+                  {REPORT_REASONS.map(r => (
+                    <button key={r} className={`reason-btn ${reportReason === r ? 'sel' : ''}`}
+                      onClick={() => setReportReason(r)}>
+                      {reportReason === r ? '●' : '○'} {r}
+                    </button>
+                  ))}
+                </div>
+                <button className="report-submit" onClick={submitReport}
+                  disabled={!reportReason || reportLoading}>
+                  {reportLoading ? '⏳ Duke dërguar...' : 'Dërgo raportin'}
+                </button>
+                <button className="report-link" onClick={() => setReportOpen(false)}>Anulo</button>
+              </>
+            )}
+          </div>
+        </>
+      )}
 
       {/* ── CHAT BOTTOM SHEET ── */}
       {chatPanelOpen && seller && (
@@ -629,6 +817,16 @@ export default function ListingPage({ params }: { params: { id: string } }) {
             <i className="ti ti-messages" />
             {user ? '💬 Fillo bisedën' : '🔑 Hyr për të biseduar'}
           </button>
+          {seller.phone && (
+            <a
+              href={`https://wa.me/${seller.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Përshëndetje! Jam i interesuar/e për: "${listing.title}"`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="wa-btn"
+              title="Kontakto me WhatsApp">
+              <i className="ti ti-brand-whatsapp" />
+            </a>
+          )}
         </div>
       )}
 

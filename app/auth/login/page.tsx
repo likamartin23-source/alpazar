@@ -95,7 +95,7 @@ const CSS = `
   .sec-row a:hover{text-decoration:underline;}
 `
 
-const OTP_SECONDS = 120
+const OTP_SECONDS = 120 // 2 minuta — duhet të përputhet me OTP_VALIDITY_MS=120*1000 në edge function
 
 export default function Auth() {
   const [mode, setMode] = useState<Mode>('login')
@@ -134,6 +134,39 @@ export default function Auth() {
   // 2FA (TOTP) state
   const [totpCode, setTotpCode] = useState('')
   const [mfaFactorId, setMfaFactorId] = useState('')
+  const [forgotTokens, setForgotTokens] = useState<{access: string; refresh: string} | null>(null)
+
+  // Auto-submit cancel — tregon "Duke verifikuar në Xs..." me mundësi anulimi
+  const autoSubmitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [autoSubmitIn, setAutoSubmitIn] = useState<number>(0)
+  const autoSubmitCountRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  // Bllokon ridrejtimin nga onAuthStateChange gjatë fluksit të verifikimit OTP.
+  // Kur setSession() vendos sesionin, onAuthStateChange nuk duhet të ridrejtojë
+  // derisa vetë kodi ta bëjë eksplicit (pasi fjalëkalimi të ndryshohet ose regjistrimi të plotësohet).
+  const blockAuthRedirectRef = useRef(false)
+
+  function cancelAutoSubmit() {
+    if (autoSubmitTimerRef.current) { clearTimeout(autoSubmitTimerRef.current); autoSubmitTimerRef.current = null }
+    if (autoSubmitCountRef.current) { clearInterval(autoSubmitCountRef.current); autoSubmitCountRef.current = null }
+    setAutoSubmitIn(0)
+  }
+
+  function scheduleAutoSubmit(code: string) {
+    cancelAutoSubmit()
+    const DELAY_MS = 1500
+    setAutoSubmitIn(DELAY_MS / 1000)
+    autoSubmitCountRef.current = setInterval(() => {
+      setAutoSubmitIn(prev => {
+        if (prev <= 0.1) { clearInterval(autoSubmitCountRef.current!); return 0 }
+        return +(prev - 0.1).toFixed(1)
+      })
+    }, 100)
+    autoSubmitTimerRef.current = setTimeout(() => {
+      cancelAutoSubmit()
+      verifyOtp(code)
+    }, DELAY_MS)
+  }
 
   // SMS fallback — when SMS is not configured, collect email instead
   const [smsFailMode, setSmsFailMode] = useState(false)
@@ -146,11 +179,13 @@ export default function Auth() {
       if (session) window.location.href = '/'
     })
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) window.location.href = '/'
+      if (session && !blockAuthRedirectRef.current) window.location.href = '/'
     })
     return () => {
       subscription.unsubscribe()
       if (timerRef.current) clearInterval(timerRef.current)
+      if (autoSubmitTimerRef.current) clearTimeout(autoSubmitTimerRef.current)
+      if (autoSubmitCountRef.current) clearInterval(autoSubmitCountRef.current)
     }
   }, [])
 
@@ -167,7 +202,9 @@ export default function Auth() {
   }
 
   function resetToForm() {
+    cancelAutoSubmit()
     setStep('form'); setOtp(['', '', '', '', '', '']); setMsg(''); setExpired(false)
+    setForgotTokens(null)
     if (timerRef.current) clearInterval(timerRef.current)
   }
 
@@ -178,6 +215,7 @@ export default function Auth() {
     setFirstName(''); setLastName(''); setAge(''); setResolvedId('')
     setOtp(['', '', '', '', '', '']); setExpired(false)
     setSmsFailMode(false); setSmsFailEmail(''); setOriginalPhone('')
+    setForgotTokens(null)
     if (timerRef.current) clearInterval(timerRef.current)
   }
 
@@ -185,14 +223,18 @@ export default function Auth() {
   async function loginWithGoogle() {
     setLoading(true); setMsg('')
     const ref = document.cookie.match(/alpazar_ref=([^;]+)/)?.[1]
+    // Uses custom OIDC provider 'google-oidc' stored in auth.custom_oauth_providers
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
+      provider: 'google-oidc' as 'google',
       options: {
         redirectTo: `${window.location.origin}/auth/callback${ref ? `?ref=${ref}` : ''}`,
         queryParams: { access_type: 'offline', prompt: 'consent' },
+        skipBrowserRedirect: false,
       },
     })
-    if (error) setMsg(`err:${error.message}`)
+    if (error) {
+      setMsg(`err:${error.message}`)
+    }
     setLoading(false)
   }
 
@@ -220,12 +262,21 @@ export default function Auth() {
     setLoading(true); setMsg('')
     const type = detectType(raw)
     const id = type === 'phone' ? toE164(raw) : raw
-    const payload = type === 'phone'
-      ? { phone: id, password }
-      : { email: id, password }
-    const { data, error } = await supabase.auth.signInWithPassword(payload)
+
+    // For phone: try phone auth first, then fall back to derived email
+    // (OTP registration stores accounts as phone@sms.al internally)
+    let authResult = await supabase.auth.signInWithPassword(
+      type === 'phone' ? { phone: id, password } : { email: id, password }
+    )
+    if (type === 'phone' && authResult.error) {
+      const derived = (id.startsWith('+') ? id.slice(1) : id) + '@sms.al'
+      authResult = await supabase.auth.signInWithPassword({ email: derived, password })
+    }
+
+    const { error } = authResult
     if (error) {
-      const isWrong = error.message.toLowerCase().includes('invalid') || error.message.toLowerCase().includes('credentials')
+      const raw2 = error.message.toLowerCase()
+      const isWrong = raw2.includes('invalid') || raw2.includes('credentials') || raw2.includes('phone') || raw2.includes('disabled')
       setMsg(`err:${isWrong ? 'Email/telefon ose fjalëkalim i gabuar!' : error.message}`)
     } else {
       // Check if 2FA is required
@@ -353,32 +404,38 @@ export default function Auth() {
         setLoading(false)
         return
       }
-      const { error: sessErr } = await supabase.auth.setSession({
-        access_token: data.access_token,
-        refresh_token: data.refresh_token,
-      })
-      if (sessErr) { setMsg(`err:${sessErr.message}`); setLoading(false); return }
       if (timerRef.current) clearInterval(timerRef.current)
 
-      // If original input was a phone number but we used email fallback, store phone in profile
-      if (originalPhone) {
-        const { data: { user: currentUser } } = await supabase.auth.getUser()
-        if (currentUser) {
-          await supabase.from('profiles').update({ phone: originalPhone }).eq('id', currentUser.id)
-        }
-      }
-
       if (mode === 'forgot') {
-        setStep('new-pass'); setMsg('')
+        // Ruaj tokenat pa vendosur sesionin — onAuthStateChange nuk aktivizohet fare.
+        // setSession() thirret vetëm brenda setNewPassword() pasi fjalëkalimi të ruhet.
+        setForgotTokens({ access: data.access_token, refresh: data.refresh_token })
+        setStep('new-pass')
+        setMsg('')
       } else {
-        const { error: passErr } = await supabase.auth.updateUser({ password: regPass })
-        if (passErr) {
-          setMsg(`err:Gabim gjatë vendosjes së fjalëkalimit: ${passErr.message}`)
+        // Regjistrim: vendos sesionin dhe ridrejto
+        blockAuthRedirectRef.current = true
+        const { error: sessErr } = await supabase.auth.setSession({
+          access_token: data.access_token,
+          refresh_token: data.refresh_token,
+        })
+        if (sessErr) {
+          blockAuthRedirectRef.current = false
+          setMsg(`err:${sessErr.message}`)
           setLoading(false)
           return
         }
+        if (originalPhone) {
+          const { data: { user: currentUser } } = await supabase.auth.getUser()
+          if (currentUser) {
+            await supabase.from('profiles').update({ phone: originalPhone }).eq('id', currentUser.id)
+          }
+        }
         setMsg('ok:Llogaria u krijua! Duke u ridrejtuar...')
-        setTimeout(() => { window.location.href = '/' }, 700)
+        setTimeout(() => {
+          blockAuthRedirectRef.current = false
+          window.location.href = '/'
+        }, 700)
       }
     } catch (e: unknown) {
       setMsg(`err:${e instanceof Error ? e.message : 'Gabim lidhjeje'}`)
@@ -389,45 +446,73 @@ export default function Auth() {
   async function setNewPassword() {
     if (newPass.length < 8) { setMsg('err:Fjalëkalimi duhet të ketë minimumi 8 karaktere!'); return }
     if (newPass !== newPass2) { setMsg('err:Fjalëkalimet nuk përputhen!'); return }
+    if (!forgotTokens) { setMsg('err:Sesioni ka skaduar. Provo sërish nga fillimi.'); return }
     setLoading(true); setMsg('')
+    // Vendos sesionin vetëm tani — platforma nuk hapet pa fjalëkalim të ri
+    blockAuthRedirectRef.current = true
+    const { error: sessErr } = await supabase.auth.setSession({
+      access_token: forgotTokens.access,
+      refresh_token: forgotTokens.refresh,
+    })
+    if (sessErr) {
+      blockAuthRedirectRef.current = false
+      setMsg(`err:${sessErr.message}`)
+      setLoading(false)
+      return
+    }
+    if (originalPhone) {
+      const { data: { user: cu } } = await supabase.auth.getUser()
+      if (cu) await supabase.from('profiles').update({ phone: originalPhone }).eq('id', cu.id)
+    }
     const { error } = await supabase.auth.updateUser({ password: newPass })
-    if (error) { setMsg(`err:${error.message}`) }
-    else {
+    if (error) {
+      blockAuthRedirectRef.current = false
+      setMsg(`err:${error.message}`)
+    } else {
+      setForgotTokens(null)
       setMsg('ok:Fjalëkalimi u ndryshua! Duke u ridrejtuar...')
-      setTimeout(() => { window.location.href = '/' }, 700)
+      setTimeout(() => {
+        blockAuthRedirectRef.current = false
+        window.location.href = '/'
+      }, 700)
     }
     setLoading(false)
   }
 
   function handleOtpChange(i: number, val: string) {
     if (!/^\d*$/.test(val) || expired) return
+    cancelAutoSubmit()
     const next = [...otp]; next[i] = val.slice(-1); setOtp(next)
     if (val && i < 5) {
       setTimeout(() => inputRefs.current[i + 1]?.focus(), 0)
     }
-    // Auto-submit kur plotësohet shifra e fundit (kalon kodin direkt — shmanget stale state)
+    // Auto-submit me 1.5s vonesë — lë kohë për të korrigjuar gabime
     if (val && next.every(d => d !== '') && !expired) {
-      setTimeout(() => verifyOtp(next.join('')), 250)
+      scheduleAutoSubmit(next.join(''))
     }
   }
   function handleOtpKeyDown(i: number, e: React.KeyboardEvent) {
-    if (e.key === 'Backspace' && !otp[i] && i > 0) {
-      const next = [...otp]; next[i - 1] = ''; setOtp(next)
-      inputRefs.current[i - 1]?.focus()
+    if (e.key === 'Backspace') {
+      cancelAutoSubmit()
+      if (!otp[i] && i > 0) {
+        const next = [...otp]; next[i - 1] = ''; setOtp(next)
+        inputRefs.current[i - 1]?.focus()
+      }
     }
-    if (e.key === 'Enter' && otp.join('').length === 6) verifyOtp()
+    if (e.key === 'Enter' && otp.join('').length === 6) { cancelAutoSubmit(); verifyOtp() }
   }
   function handleOtpPaste(e: React.ClipboardEvent) {
     e.preventDefault()
+    cancelAutoSubmit()
     const text = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6)
     if (!text) return
     const next = Array(6).fill('')
     text.split('').forEach((d, i) => { next[i] = d })
     setOtp(next)
     setTimeout(() => inputRefs.current[Math.min(text.length, 5)]?.focus(), 0)
-    // Auto-submit kur ngjitet kodi i plotë 6-shifror
+    // Auto-submit me vonesë pas paste-it
     if (text.length === 6 && !expired) {
-      setTimeout(() => verifyOtp(text), 350)
+      scheduleAutoSubmit(text)
     }
   }
 
@@ -502,17 +587,28 @@ export default function Auth() {
             ref={el => { inputRefs.current[i] = el }}
             className={`otp-input${d ? ' filled' : ''}`}
             type="text" inputMode="numeric" pattern="[0-9]*" maxLength={1}
-            value={d} disabled={expired}
+            value={d} disabled={expired || loading}
             onChange={e => handleOtpChange(i, e.target.value)}
             onKeyDown={e => handleOtpKeyDown(i, e)}
             autoComplete="one-time-code" />
         ))}
       </div>
 
-      <button className="btn" onClick={() => verifyOtp()} disabled={loading || expired}>
+      {autoSubmitIn > 0 && (
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
+          background:'#EEF4FF', border:'1px solid #85B7EB', borderRadius:8,
+          padding:'8px 12px', marginBottom:10, fontSize:12 }}>
+          <span style={{ color:'#185FA5' }}>⏳ Duke verifikuar automatikisht në <strong>{autoSubmitIn.toFixed(1)}s</strong>…</span>
+          <button onClick={cancelAutoSubmit}
+            style={{ background:'none', border:'none', color:'#E63312', cursor:'pointer',
+              fontWeight:700, fontSize:12, padding:'0 4px' }}>✕ Anulo</button>
+        </div>
+      )}
+
+      <button className="btn" onClick={() => { cancelAutoSubmit(); verifyOtp() }} disabled={loading || expired}>
         {loading ? '⏳ Duke verifikuar...' : '✅ Konfirmo Kodin'}
       </button>
-      <button className="btn-ghost" onClick={resetToForm}>← Ndrysho adresën</button>
+      <button className="btn-ghost" onClick={() => { cancelAutoSubmit(); resetToForm() }}>← Ndrysho adresën</button>
     </>
   )
 

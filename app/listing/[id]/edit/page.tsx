@@ -1,45 +1,54 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase } from '../../../lib/supabase'
-import { FreeTierBanner, PremiumUpsellModal } from '../../components/PremiumUpsell'
+import { supabase } from '../../../../lib/supabase'
 
 const CITIES = ['Tiranë', 'Durrës', 'Vlorë', 'Shkodër', 'Elbasan', 'Fier', 'Korçë', 'Berat', 'Lushnjë', 'Kavajë', 'Gjirokastër', 'Sarandë', 'Lezhë', 'Kukës', 'Pogradec', 'Peshkopi', 'Tropojë', 'Përmet', 'Tepelenë', 'Tjetër']
 
-export default function NewListing() {
-  const [user, setUser] = useState<any>(null)
+export default function EditListing({ params }: { params: { id: string } }) {
+  const [user, setUser]       = useState<any>(null)
   const [categories, setCategories] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
-  const [msg, setMsg] = useState('')
-  const [step, setStep] = useState(1)
-  const [form, setForm] = useState({
-    title: '',
-    description: '',
-    price: '',
-    currency: 'ALL',
-    condition: '',
-    category_id: '',
-    city: '',
-    images: [] as string[],
+  const [pageLoading, setPageLoading] = useState(true)
+  const [msg, setMsg]         = useState('')
+  const [form, setForm]       = useState({
+    title: '', description: '', price: '', currency: 'ALL',
+    condition: '', category_id: '', city: '', images: [] as string[],
   })
-  const [imageFiles, setImageFiles] = useState<File[]>([])
+  const [imageFiles, setImageFiles]     = useState<File[]>([])
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
-  const [myListingCount, setMyListingCount] = useState(0)
+  const [existingImages, setExistingImages] = useState<string[]>([])
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/auth/login'; return }
       setUser(session.user)
-      supabase.from('listings').select('*', { count: 'exact', head: true }).eq('user_id', session.user.id).eq('is_active', true).then(({ count }) => setMyListingCount(count || 0))
+
+      const [{ data: listing }, { data: cats }] = await Promise.all([
+        supabase.from('listings').select('*').eq('id', params.id).single(),
+        supabase.from('categories').select('*').eq('is_active', true).order('sort_order'),
+      ])
+
+      if (!listing || listing.user_id !== session.user.id) {
+        window.location.href = `/listing/${params.id}`
+        return
+      }
+
+      if (cats) setCategories(cats)
+      setExistingImages(listing.images || [])
+      setForm({
+        title: listing.title || '',
+        description: listing.description || '',
+        price: listing.price != null ? String(listing.price) : '',
+        currency: listing.currency || 'ALL',
+        condition: listing.condition || '',
+        category_id: listing.category_id || '',
+        city: listing.city || '',
+        images: listing.images || [],
+      })
+      setPageLoading(false)
     })
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) { window.location.href = '/auth/login' }
-    })
-    supabase.from('categories').select('*').eq('is_active', true).order('sort_order').then(({ data }) => {
-      if (data) setCategories(data)
-    })
-    return () => subscription.unsubscribe()
-  }, [])
+  }, [params.id])
 
   function set(k: string, v: string) { setForm(f => ({ ...f, [k]: v })) }
 
@@ -48,24 +57,25 @@ export default function NewListing() {
     const all = Array.from(e.target.files || [])
     const oversized = all.filter(f => f.size > MAX_MB * 1024 * 1024)
     if (oversized.length > 0) {
-      setMsg(`err:Fotot duhet të jenë max ${MAX_MB}MB secila. (${oversized.map(f => f.name).join(', ')})`)
+      setMsg(`err:Fotot duhet të jenë max ${MAX_MB}MB secila.`)
       e.target.value = ''
       return
     }
     const files = all.slice(0, 5)
     setImageFiles(files)
     setMsg('')
-    // Revoke old object URLs to prevent memory leaks
     imagePreviews.forEach(url => URL.revokeObjectURL(url))
-    const previews = files.map(f => URL.createObjectURL(f))
-    setImagePreviews(previews)
+    setImagePreviews(files.map(f => URL.createObjectURL(f)))
+  }
+
+  function removeExistingImage(url: string) {
+    setExistingImages(imgs => imgs.filter(i => i !== url))
   }
 
   async function uploadImages(): Promise<string[]> {
     const urls: string[] = []
     for (const file of imageFiles) {
       const ext = file.name.split('.').pop()
-      // RLS requires the first path folder to equal the user's UID
       const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
       const { error } = await supabase.storage.from('listing-images').upload(path, file, { upsert: true })
       if (error) { console.error('Upload error:', error.message); continue }
@@ -77,18 +87,15 @@ export default function NewListing() {
 
   async function submit() {
     if (!form.title.trim()) { setMsg('err:Titulli është i detyrueshëm!'); return }
-    if (!form.category_id) { setMsg('err:Zgjidh kategorinë!'); return }
-    if (!form.city) { setMsg('err:Zgjidh qytetin!'); return }
+    if (!form.category_id)  { setMsg('err:Zgjidh kategorinë!'); return }
+    if (!form.city)         { setMsg('err:Zgjidh qytetin!'); return }
 
     setLoading(true); setMsg('')
     try {
-      const uploadedUrls = imageFiles.length ? await uploadImages() : []
-      if (imageFiles.length && uploadedUrls.length === 0) {
-        setMsg('err:Fotot nuk u ngarkuan. Provo përsëri ose publiko pa foto.')
-        setLoading(false); return
-      }
-      const { data, error } = await supabase.from('listings').insert({
-        user_id: user.id,
+      const newUrls = imageFiles.length ? await uploadImages() : []
+      const allImages = [...existingImages, ...newUrls]
+
+      const { error } = await supabase.from('listings').update({
         title: form.title.trim(),
         description: form.description.trim() || null,
         price: form.price ? parseFloat(form.price) : null,
@@ -96,14 +103,12 @@ export default function NewListing() {
         condition: form.condition || null,
         category_id: form.category_id,
         city: form.city,
-        images: uploadedUrls,
-        is_active: true,
-      }).select().single()
+        images: allImages,
+      }).eq('id', params.id)
 
       if (error) { setMsg(`err:${error.message}`); setLoading(false); return }
-      const bonusMsg = myListingCount === 0 ? ' +35 pikë gamifikimi (bonus fillestar)! 🎉' : ' +10 pikë gamifikimi! ⚡'
-      setMsg(`ok:Shpallja u publikua me sukses!${bonusMsg}`)
-      setTimeout(() => { window.location.href = `/listing/${data.id}` }, 2000)
+      setMsg('ok:Shpallja u përditësua me sukses!')
+      setTimeout(() => { window.location.href = `/listing/${params.id}` }, 900)
     } catch (e: any) {
       setMsg(`err:${e.message}`)
     }
@@ -111,6 +116,13 @@ export default function NewListing() {
   }
 
   const [mt, mm] = msg.split(':')
+
+  if (pageLoading) return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#FFFBEA' }}>
+      <style>{`@keyframes spin{to{transform:rotate(360deg);}}`}</style>
+      <div style={{ width: 28, height: 28, border: '3px solid #F5C842', borderTopColor: '#E63312', borderRadius: '50%', animation: 'spin .7s linear infinite' }} />
+    </div>
+  )
 
   return (
     <>
@@ -145,7 +157,9 @@ export default function NewListing() {
         .img-zone i{font-size:32px;color:#e0b030;display:block;margin-bottom:8px;}
         .img-zone p{font-size:12px;color:#888;}
         .img-previews{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+        .img-prev-wrap{position:relative;}
         .img-prev{width:70px;height:70px;border-radius:8px;object-fit:cover;border:2px solid #F5C842;}
+        .img-remove{position:absolute;top:-5px;right:-5px;width:18px;height:18px;background:#E63312;border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:700;line-height:1;}
         .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
         .cat-btn{border:1.5px solid #ddd;border-radius:9px;padding:8px 4px;font-size:10px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;}
         .cat-btn i{font-size:18px;color:#aaa;}
@@ -155,20 +169,15 @@ export default function NewListing() {
         .submit-btn:disabled{opacity:.6;cursor:not-allowed;}
       `}</style>
 
-      {/* Marketing: upsell kur arrin kufirin falas (5 shpallje) */}
-      {myListingCount >= 5 && <PremiumUpsellModal trigger="limit" />}
-
       <div className="wrap">
         <div className="topbar">
           <button className="back" onClick={() => window.history.back()}>
             <i className="ti ti-arrow-left" />
           </button>
-          <span className="topbar-title">➕ Shto Shpallje</span>
+          <span className="topbar-title">✏️ Ndrysho Shpalljen</span>
         </div>
 
         <div className="body">
-          {/* Marketing: banner kufiri falas */}
-          <FreeTierBanner listingCount={myListingCount} freeLimit={5} />
           {msg && <div className={`msg-box ${mt}`}>{mm}</div>}
 
           <div className="card">
@@ -176,31 +185,35 @@ export default function NewListing() {
 
             <div className="field">
               <label>Titulli *</label>
-              <input type="text" placeholder="p.sh. iPhone 13 Pro Max 256GB..." value={form.title} onChange={e => set('title', e.target.value)} maxLength={100} />
+              <input type="text" placeholder="p.sh. iPhone 13 Pro Max 256GB..." value={form.title}
+                onChange={e => set('title', e.target.value)} maxLength={100} />
             </div>
 
             <div className="field">
               <label>Përshkrimi</label>
-              <textarea placeholder="Përshkruaj artikullin — gjendje, veçori, arsye shitjeje..." value={form.description} onChange={e => set('description', e.target.value)} maxLength={2000} />
+              <textarea placeholder="Përshkruaj artikullin..." value={form.description}
+                onChange={e => set('description', e.target.value)} maxLength={2000} />
             </div>
 
             <div className="field">
               <label>Çmimi</label>
               <div className="price-row">
-                <input type="number" placeholder="0" value={form.price} onChange={e => set('price', e.target.value)} min="0" />
+                <input type="number" placeholder="0" value={form.price}
+                  onChange={e => set('price', e.target.value)} min="0" />
                 <select value={form.currency} onChange={e => set('currency', e.target.value)}>
                   <option value="ALL">L (Lekë)</option>
                   <option value="EUR">€ (Euro)</option>
                 </select>
               </div>
-              <p style={{ fontSize: 10, color: '#aaa', marginTop: 4 }}>Lër bosh për "Çmim me marrëveshje"</p>
             </div>
 
             <div className="field">
               <label>Gjendja</label>
               <div className="cond-row">
-                <button className={`cond-btn ${form.condition === 'i_ri' ? 'active' : ''}`} onClick={() => set('condition', 'i_ri')}>✨ I ri</button>
-                <button className={`cond-btn ${form.condition === 'i_perdorur' ? 'active' : ''}`} onClick={() => set('condition', 'i_perdorur')}>🔄 I përdorur</button>
+                <button className={`cond-btn ${form.condition === 'i_ri' ? 'active' : ''}`}
+                  onClick={() => set('condition', 'i_ri')}>✨ I ri</button>
+                <button className={`cond-btn ${form.condition === 'i_perdorur' ? 'active' : ''}`}
+                  onClick={() => set('condition', 'i_perdorur')}>🔄 I përdorur</button>
               </div>
             </div>
           </div>
@@ -209,11 +222,9 @@ export default function NewListing() {
             <div className="card-title"><i className="ti ti-category" />Kategoria *</div>
             <div className="cat-grid">
               {categories.map(c => (
-                <button
-                  key={c.id}
+                <button key={c.id}
                   className={`cat-btn ${form.category_id === c.id ? 'active' : ''}`}
-                  onClick={() => set('category_id', c.id)}
-                >
+                  onClick={() => set('category_id', c.id)}>
                   <i className={`ti ti-${c.icon}`} />
                   {c.name}
                 </button>
@@ -233,15 +244,31 @@ export default function NewListing() {
           </div>
 
           <div className="card">
-            <div className="card-title"><i className="ti ti-photo" />Fotot (max 5)</div>
+            <div className="card-title"><i className="ti ti-photo" />Fotot</div>
+
+            {existingImages.length > 0 && (
+              <div style={{ marginBottom: 12 }}>
+                <p style={{ fontSize: 11, color: '#888', marginBottom: 8 }}>Fotot aktuale (kliko ✕ për të hequr):</p>
+                <div className="img-previews">
+                  {existingImages.map((url, i) => (
+                    <div key={i} className="img-prev-wrap">
+                      <img src={url} className="img-prev" alt="" />
+                      <button className="img-remove" onClick={() => removeExistingImage(url)}>✕</button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <label className="img-zone" onClick={() => document.getElementById('img-input')?.click()}>
               <input id="img-input" type="file" accept="image/*" multiple onChange={handleImages} />
               <i className="ti ti-cloud-upload" />
-              <p>Kliko për të ngarkuar fotot</p>
+              <p>Kliko për të shtuar foto të reja</p>
               <p style={{ fontSize: 10, marginTop: 4, color: '#bbb' }}>JPG, PNG, WebP · max 5MB secila</p>
             </label>
+
             {imagePreviews.length > 0 && (
-              <div className="img-previews">
+              <div className="img-previews" style={{ marginTop: 10 }}>
                 {imagePreviews.map((src, i) => (
                   <img key={i} src={src} className="img-prev" alt="" />
                 ))}
@@ -250,7 +277,7 @@ export default function NewListing() {
           </div>
 
           <button className="submit-btn" onClick={submit} disabled={loading}>
-            {loading ? '⏳ Duke publikuar...' : '🚀 Publiko shpalljen falas'}
+            {loading ? '⏳ Duke ruajtur...' : '💾 Ruaj Ndryshimet'}
           </button>
         </div>
       </div>
