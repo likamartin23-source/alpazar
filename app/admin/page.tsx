@@ -354,7 +354,7 @@ export default function Admin() {
       const sub = payments.find(p => p.id === id)
       await supabase.from('profiles').update({ is_premium: true, premium_expires_at: sub?.end_date }).eq('id', userId)
     }
-    if (status === 'cancelled' && userId) {
+    if ((status === 'cancelled' || status === 'suspended') && userId) {
       await supabase.from('profiles').update({ is_premium: false }).eq('id', userId)
     }
     fetchAll()
@@ -458,7 +458,7 @@ export default function Admin() {
                               <td><span className={`badge ${p.status==='active'?'ba':p.status==='pending'?'bp':'bd'}`}>{p.status}</span></td>
                               <td>
                                 {p.status !== 'active'   && <button className="btn btn-green"  onClick={() => updateStatus(p.id,'active',p.user_id)}>Aktivizo</button>}
-                                {p.status === 'active'   && <button className="btn btn-orange" onClick={() => updateStatus(p.id,'suspended')}>Pezullo</button>}
+                                {p.status === 'active'   && <button className="btn btn-orange" onClick={() => updateStatus(p.id,'suspended',p.user_id)}>Pezullo</button>}
                                 <button className="btn btn-red" onClick={() => updateStatus(p.id,'cancelled',p.user_id)}>Anulo</button>
                               </td>
                             </tr>
@@ -490,7 +490,7 @@ export default function Admin() {
                               <td style={{ color:'#888' }}>{new Date(p.created_at).toLocaleDateString('sq-AL')}</td>
                               <td>
                                 {p.status!=='active' && <button className="btn btn-green" onClick={() => updateStatus(p.id,'active',p.user_id)}>✓</button>}
-                                {p.status==='active' && <button className="btn btn-orange" onClick={() => updateStatus(p.id,'suspended')}>⏸</button>}
+                                {p.status==='active' && <button className="btn btn-orange" onClick={() => updateStatus(p.id,'suspended',p.user_id)}>⏸</button>}
                                 <button className="btn btn-red" onClick={() => updateStatus(p.id,'cancelled',p.user_id)}>✕</button>
                               </td>
                             </tr>
