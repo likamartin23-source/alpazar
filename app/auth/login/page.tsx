@@ -129,6 +129,7 @@ export default function Auth() {
   // 2FA (TOTP) state
   const [totpCode, setTotpCode] = useState('')
   const [mfaFactorId, setMfaFactorId] = useState('')
+  const [forgotTokens, setForgotTokens] = useState<{access: string; refresh: string} | null>(null)
 
   // Auto-submit cancel — tregon "Duke verifikuar në Xs..." me mundësi anulimi
   const autoSubmitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -198,6 +199,7 @@ export default function Auth() {
   function resetToForm() {
     cancelAutoSubmit()
     setStep('form'); setOtp(['', '', '', '', '', '']); setMsg(''); setExpired(false)
+    setForgotTokens(null)
     if (timerRef.current) clearInterval(timerRef.current)
   }
 
@@ -207,6 +209,7 @@ export default function Auth() {
     setFirstName(''); setLastName(''); setAge(''); setResolvedId('')
     setOtp(['', '', '', '', '', '']); setExpired(false)
     setSmsFailMode(false); setSmsFailEmail(''); setOriginalPhone('')
+    setForgotTokens(null)
     if (timerRef.current) clearInterval(timerRef.current)
   }
 
@@ -388,33 +391,33 @@ export default function Auth() {
         setMsg(`err:${data.error ?? 'Kodi i gabuar ose ka skaduar!'}`)
         return
       }
-      // Blloko onAuthStateChange para setSession() — parandalon ridrejtimin
-      // automatik ndërkohë që jemi ende në fluksin e OTP / ndërrimit të fjalëkalimit
-      blockAuthRedirectRef.current = true
-      const { error: sessErr } = await supabase.auth.setSession({
-        access_token: data.access_token,
-        refresh_token: data.refresh_token,
-      })
-      if (sessErr) {
-        blockAuthRedirectRef.current = false
-        setMsg(`err:${sessErr.message}`)
-        setLoading(false)
-        return
-      }
       if (timerRef.current) clearInterval(timerRef.current)
 
-      // If original input was a phone number but we used email fallback, store phone in profile
-      if (originalPhone) {
-        const { data: { user: currentUser } } = await supabase.auth.getUser()
-        if (currentUser) {
-          await supabase.from('profiles').update({ phone: originalPhone }).eq('id', currentUser.id)
-        }
-      }
-
       if (mode === 'forgot') {
-        // Mbaj bllokimin aktiv — ridrejtimi bëhet vetëm pas ndërrimit të fjalëkalimit
-        setStep('new-pass'); setMsg('')
+        // Ruaj tokenat pa vendosur sesionin — onAuthStateChange nuk aktivizohet fare.
+        // setSession() thirret vetëm brenda setNewPassword() pasi fjalëkalimi të ruhet.
+        setForgotTokens({ access: data.access_token, refresh: data.refresh_token })
+        setStep('new-pass')
+        setMsg('')
       } else {
+        // Regjistrim: vendos sesionin dhe ridrejto
+        blockAuthRedirectRef.current = true
+        const { error: sessErr } = await supabase.auth.setSession({
+          access_token: data.access_token,
+          refresh_token: data.refresh_token,
+        })
+        if (sessErr) {
+          blockAuthRedirectRef.current = false
+          setMsg(`err:${sessErr.message}`)
+          setLoading(false)
+          return
+        }
+        if (originalPhone) {
+          const { data: { user: currentUser } } = await supabase.auth.getUser()
+          if (currentUser) {
+            await supabase.from('profiles').update({ phone: originalPhone }).eq('id', currentUser.id)
+          }
+        }
         setMsg('ok:Llogaria u krijua! Duke u ridrejtuar...')
         setTimeout(() => {
           blockAuthRedirectRef.current = false
@@ -430,10 +433,30 @@ export default function Auth() {
   async function setNewPassword() {
     if (newPass.length < 8) { setMsg('err:Fjalëkalimi duhet të ketë minimumi 8 karaktere!'); return }
     if (newPass !== newPass2) { setMsg('err:Fjalëkalimet nuk përputhen!'); return }
+    if (!forgotTokens) { setMsg('err:Sesioni ka skaduar. Provo sërish nga fillimi.'); return }
     setLoading(true); setMsg('')
+    // Vendos sesionin vetëm tani — platforma nuk hapet pa fjalëkalim të ri
+    blockAuthRedirectRef.current = true
+    const { error: sessErr } = await supabase.auth.setSession({
+      access_token: forgotTokens.access,
+      refresh_token: forgotTokens.refresh,
+    })
+    if (sessErr) {
+      blockAuthRedirectRef.current = false
+      setMsg(`err:${sessErr.message}`)
+      setLoading(false)
+      return
+    }
+    if (originalPhone) {
+      const { data: { user: cu } } = await supabase.auth.getUser()
+      if (cu) await supabase.from('profiles').update({ phone: originalPhone }).eq('id', cu.id)
+    }
     const { error } = await supabase.auth.updateUser({ password: newPass })
-    if (error) { setMsg(`err:${error.message}`) }
-    else {
+    if (error) {
+      blockAuthRedirectRef.current = false
+      setMsg(`err:${error.message}`)
+    } else {
+      setForgotTokens(null)
       setMsg('ok:Fjalëkalimi u ndryshua! Duke u ridrejtuar...')
       setTimeout(() => {
         blockAuthRedirectRef.current = false
