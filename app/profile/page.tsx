@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { supabase } from '../../lib/supabase'
 import { getLevel, isNewMember } from '../components/Badges'
 
@@ -45,12 +45,29 @@ export default function ProfilePage() {
   const [deleting, setDeleting] = useState(false)
   const [deleteMsg, setDeleteMsg] = useState('')
 
+  const listingsChRef = useRef<any>(null)
+
   useEffect(() => {
     // Kontrollo sesionin dhe dëgjo ndryshimet (p.sh. skadim sesioni)
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) { window.location.href = '/auth/login'; return }
       setUser(session.user)
       fetchProfile(session.user.id)
+      // Real-time: listingjet e mia ndryshohen / fshihen / shtohen
+      const ch = supabase
+        .channel(`my-listings-${session.user.id}`)
+        .on('postgres_changes', {
+          event: '*', schema: 'public', table: 'listings',
+          filter: `user_id=eq.${session.user.id}`,
+        }, () => {
+          supabase.from('listings')
+            .select('*')
+            .eq('user_id', session.user.id)
+            .order('created_at', { ascending: false })
+            .then(({ data }) => { if (data) setMyListings(data) })
+        })
+        .subscribe()
+      listingsChRef.current = ch
     })
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!session) { window.location.href = '/auth/login' }
@@ -58,7 +75,10 @@ export default function ProfilePage() {
     // Check if redirected with tab param
     const params = new URLSearchParams(window.location.search)
     if (params.get('tab') === 'shop') setActiveTab('shop')
-    return () => subscription.unsubscribe()
+    return () => {
+      subscription.unsubscribe()
+      if (listingsChRef.current) supabase.removeChannel(listingsChRef.current)
+    }
   }, [])
 
   async function fetchProfile(uid: string) {

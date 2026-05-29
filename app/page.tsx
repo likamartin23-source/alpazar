@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import type { Category, Listing } from '../lib/types'
 import { getLevel } from './components/Badges'
@@ -144,6 +144,10 @@ export default function Home() {
   const [authReady, setAuthReady] = useState(false)
   const [settings, setSettings] = useState<Record<string, string>>({})
   const [unreadCount, setUnreadCount] = useState(0)
+  const [newListingBadge, setNewListingBadge] = useState(false)
+
+  const listingsChRef = useRef<any>(null)
+  const unreadChRef   = useRef<any>(null)
 
   useEffect(() => {
     fetchAll()
@@ -151,13 +155,25 @@ export default function Home() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
       setAuthReady(true)
-      if (session?.user) { fetchUnread(session.user.id); fetchMyProfile(session.user.id) }
+      if (session?.user) {
+        fetchUnread(session.user.id)
+        fetchMyProfile(session.user.id)
+        // Real-time: mesazhe të palexuara
+        const uch = supabase
+          .channel(`unread-live-${session.user.id}`)
+          .on('postgres_changes', {
+            event: 'INSERT', schema: 'public', table: 'messages',
+            filter: `receiver_id=eq.${session.user.id}`,
+          }, () => fetchUnread(session.user.id))
+          .subscribe()
+        unreadChRef.current = uch
+      }
     })
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
       setUser(session?.user ?? null)
       setAuthReady(true)
       if (session?.user) { fetchUnread(session.user.id); fetchMyProfile(session.user.id) }
-      else setProfile(null)
+      else { setProfile(null); if (unreadChRef.current) { supabase.removeChannel(unreadChRef.current); unreadChRef.current = null } }
     })
 
     const settingsChannel = supabase
@@ -165,9 +181,37 @@ export default function Home() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'admin_settings' }, () => fetchSettings())
       .subscribe()
 
+    // Real-time: shpallje të reja / të përditësuara / të fshira
+    const lch = supabase
+      .channel('listings-live')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'listings' }, (payload) => {
+        const n = payload.new as any
+        if (!n.is_active) return
+        setListings(prev => prev.find(l => l.id === n.id) ? prev : [n, ...prev].slice(0, 20))
+        setListingCount(c => c + 1)
+        setNewListingBadge(true)
+        setTimeout(() => setNewListingBadge(false), 4000)
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'listings' }, (payload) => {
+        const n = payload.new as any
+        setListings(prev =>
+          n.is_active
+            ? prev.map(l => l.id === n.id ? { ...l, ...n } : l)
+            : prev.filter(l => l.id !== n.id)
+        )
+      })
+      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'listings' }, (payload) => {
+        setListings(prev => prev.filter(l => l.id !== (payload.old as any).id))
+        setListingCount(c => Math.max(0, c - 1))
+      })
+      .subscribe()
+    listingsChRef.current = lch
+
     return () => {
       subscription.unsubscribe()
       supabase.removeChannel(settingsChannel)
+      if (listingsChRef.current) supabase.removeChannel(listingsChRef.current)
+      if (unreadChRef.current)   supabase.removeChannel(unreadChRef.current)
     }
   }, [])
 
@@ -414,6 +458,9 @@ export default function Home() {
         .loading{text-align:center;padding:32px;color:#888;font-size:13px;}
         .spinner{display:block;width:28px;height:28px;border:3px solid #F5C842;border-top-color:#E63312;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px;}
         @keyframes spin{to{transform:rotate(360deg);}}
+        .new-listing-toast{background:#EAF3DE;border:1px solid #97C459;border-radius:8px;padding:6px 12px;display:flex;align-items:center;gap:7px;margin-bottom:7px;animation:toast-in .3s ease;}
+        @keyframes toast-in{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+        .new-listing-toast span{font-size:11px;font-weight:700;color:#3B6D11;}
       `}</style>
 
       <div className="wrap">
@@ -577,6 +624,13 @@ export default function Home() {
                 </div>
               </div>
             </>
+          )}
+
+          {newListingBadge && (
+            <div className="new-listing-toast" onClick={() => { fetchListings(); setNewListingBadge(false) }}>
+              <i className="ti ti-sparkles" style={{ fontSize: 14, color: '#3B6D11' }} />
+              <span>Shpallje e re u shtua — klikoni për të rifreskuar</span>
+            </div>
           )}
 
           <div className="filter-row">
