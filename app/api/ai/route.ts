@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { NextRequest, NextResponse } from 'next/server'
+import { rateLimit, getClientIp } from '../../../lib/rateLimit'
 
 export const runtime = 'nodejs'
 
@@ -22,6 +23,16 @@ Rregulla:
 - Përgjigje maksimum 3-4 fjali`
 
 export async function POST(req: NextRequest) {
+  // 20 requests per minute per IP
+  const ip = getClientIp(req)
+  const rl = rateLimit(`ai:${ip}`, { limit: 20, windowMs: 60_000 })
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: 'Shumë kërkesa. Provo sërisht pas pak sekondash.' },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil(rl.resetIn / 1000)) } }
+    )
+  }
+
   try {
     const apiKey = process.env.ANTHROPIC_API_KEY
     if (!apiKey) {
