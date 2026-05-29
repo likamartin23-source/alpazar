@@ -209,8 +209,9 @@ export default function Auth() {
   async function loginWithGoogle() {
     setLoading(true); setMsg('')
     const ref = document.cookie.match(/alpazar_ref=([^;]+)/)?.[1]
+    // Uses custom OIDC provider 'google-oidc' stored in auth.custom_oauth_providers
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
+      provider: 'google-oidc' as 'google',
       options: {
         redirectTo: `${window.location.origin}/auth/callback${ref ? `?ref=${ref}` : ''}`,
         queryParams: { access_type: 'offline', prompt: 'consent' },
@@ -218,12 +219,7 @@ export default function Auth() {
       },
     })
     if (error) {
-      const raw = error.message.toLowerCase()
-      if (raw.includes('provider') || raw.includes('not enabled') || raw.includes('unsupported')) {
-        setMsg('err:Hyrja me Google nuk është aktivizuar ende nga administratori. Përdor email ose numër telefoni.')
-      } else {
-        setMsg(`err:${error.message}`)
-      }
+      setMsg(`err:${error.message}`)
     }
     setLoading(false)
   }
