@@ -248,17 +248,17 @@ function ModerationTab() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    supabase.from('listing_reports')
-      .select('*,listings(title),profiles!listing_reports_reporter_id_fkey(username)')
+    supabase.from('reports')
+      .select('*,listings(title),profiles!reporter_id(username)')
       .eq('status', 'pending')
       .order('created_at', { ascending: true })
       .limit(50)
       .then(({ data }) => { setReports(data || []); setLoading(false) })
 
     const ch = supabase.channel('mod_live')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'listing_reports' }, () => {
-        supabase.from('listing_reports')
-          .select('*,listings(title),profiles!listing_reports_reporter_id_fkey(username)')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'reports' }, () => {
+        supabase.from('reports')
+          .select('*,listings(title),profiles!reporter_id(username)')
           .eq('status', 'pending').order('created_at', { ascending: true }).limit(50)
           .then(({ data }) => setReports(data || []))
       }).subscribe()
@@ -267,7 +267,7 @@ function ModerationTab() {
   }, [])
 
   const resolve = async (id: string, action: 'resolved' | 'dismissed') => {
-    await supabase.from('listing_reports').update({ status: action }).eq('id', id)
+    await supabase.from('reports').update({ status: action }).eq('id', id)
   }
 
   return (
@@ -335,7 +335,7 @@ export default function Admin() {
       supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('is_premium', true),
       supabase.from('listings').select('*', { count: 'exact', head: true }).eq('is_active', true),
       supabase.from('messages').select('*', { count: 'exact', head: true }),
-      supabase.from('listing_reports').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+      supabase.from('reports').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
       supabase.from('premium_subscriptions')
         .select('*,profiles(full_name,username)').order('created_at', { ascending: false }).limit(50),
       supabase.from('payment_methods').select('*').order('sort_order'),
