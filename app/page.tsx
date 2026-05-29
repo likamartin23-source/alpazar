@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase'
 import type { Category, Listing } from '../lib/types'
 import { getLevel } from './components/Badges'
 import { PremiumUpsellModal } from './components/PremiumUpsell'
+import { useAlpazar } from '../lib/context'
 
 // Banner shkarkim — buton i vogël katrore pulsues (fixed, vetem faqja kryesore)
 function InstallBanner() {
@@ -130,6 +131,9 @@ function AlpazarIcon() {
 }
 
 export default function Home() {
+  // Global context — auth, config, unread counts
+  const { user, profile, authReady, unreadMessages: unreadCount, cfg } = useAlpazar()
+
   const [categories, setCategories] = useState<Category[]>([])
   const [listings, setListings] = useState<Listing[]>([])
   const [shops, setShops] = useState<any[]>([])
@@ -139,67 +143,12 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [listingCount, setListingCount] = useState(0)
   const [userCount, setUserCount] = useState(0)
-  const [user, setUser] = useState<any>(null)
-  const [profile, setProfile] = useState<any>(null)
-  const [authReady, setAuthReady] = useState(false)
-  const [settings, setSettings] = useState<Record<string, string>>({})
-  const [unreadCount, setUnreadCount] = useState(0)
+  // settings now from app_config via context (cfg helper)
+  const settings: Record<string, string> = {}
 
   useEffect(() => {
     fetchAll()
-    fetchSettings()
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-      setAuthReady(true)
-      if (session?.user) { fetchUnread(session.user.id); fetchMyProfile(session.user.id) }
-    })
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
-      setUser(session?.user ?? null)
-      setAuthReady(true)
-      if (session?.user) { fetchUnread(session.user.id); fetchMyProfile(session.user.id) }
-      else setProfile(null)
-    })
-
-    const settingsChannel = supabase
-      .channel('admin-settings-live')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'admin_settings' }, () => fetchSettings())
-      .subscribe()
-
-    return () => {
-      subscription.unsubscribe()
-      supabase.removeChannel(settingsChannel)
-    }
   }, [])
-
-  async function fetchSettings() {
-    const { data } = await supabase.from('admin_settings').select('key,value')
-    if (data) setSettings(Object.fromEntries(data.map((s: any) => [s.key, s.value])))
-  }
-
-  async function fetchMyProfile(uid: string) {
-    const { data } = await supabase
-      .from('profiles')
-      .select('full_name,username,avatar_url,is_premium,is_admin,is_verified,shop_name,gamification_points')
-      .eq('id', uid)
-      .single()
-    if (data) setProfile(data)
-    // Heartbeat presence + vetë-verifikim nëse kontakti është konfirmuar
-    const patch: Record<string, any> = { last_seen: new Date().toISOString() }
-    const u = (await supabase.auth.getUser()).data.user
-    if (u && (u.email_confirmed_at || u.phone_confirmed_at) && data && !data.is_verified) {
-      patch.is_verified = true
-    }
-    supabase.from('profiles').update(patch).eq('id', uid)
-  }
-
-  async function fetchUnread(uid: string) {
-    const { count } = await supabase
-      .from('messages')
-      .select('*', { count: 'exact', head: true })
-      .eq('receiver_id', uid)
-      .eq('read', false)
-    setUnreadCount(count || 0)
-  }
 
   useEffect(() => { fetchListings() }, [activeCategory, activeFilter])
 
@@ -498,18 +447,18 @@ export default function Home() {
           {/* 1. Hero — 40% më i shkurtër vertikalisht */}
           <div className="hero">
             <div>
-              <h2>🦅 {settings.site_slogan || 'Shit · Bli · Bëj Pazrin Tënd'}</h2>
+              <h2>🦅 {cfg('site_slogan', 'Shit · Bli · Bëj Pazrin Tënd')}</h2>
               <p><span style={{color:'#E63312',fontWeight:800}}>Platforma #1 shqiptare<br />e tregtisë online</span></p>
             </div>
-            {(settings.show_listing_count !== 'false' || settings.show_user_count !== 'false') && (
+            {(cfg('show_listing_count','true') !== 'false' || cfg('show_user_count','true') !== 'false') && (
               <div className="hero-stats">
-                {settings.show_listing_count !== 'false' && (
+                {cfg('show_listing_count','true') !== 'false' && (
                   <div className="stat">
                     <div className="stat-n">{listingCount.toLocaleString('sq-AL')}</div>
                     <div className="stat-l">Shpallje</div>
                   </div>
                 )}
-                {settings.show_user_count !== 'false' && (
+                {cfg('show_user_count','true') !== 'false' && (
                   <div className="stat">
                     <div className="stat-n">{userCount.toLocaleString('sq-AL')}</div>
                     <div className="stat-l">Përdorues</div>
@@ -524,7 +473,7 @@ export default function Home() {
             <div className="prem-icon"><i className="ti ti-crown" /></div>
             <div className="prem-text">
               <strong>👑 Bëhu Anëtar Premium</strong>
-              <span>Dyqan · Badge · Shpallje ∞ · {settings.premium_monthly_price || '9.99'}€/muaj</span>
+              <span>Dyqan · Badge · Shpallje ∞ · {cfg('premium_monthly_price','9.99')}€/muaj</span>
             </div>
             <button className="prem-btn" onClick={() => go('/premium')}>Shiko →</button>
           </div>

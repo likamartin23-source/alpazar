@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { supabase } from '../../lib/supabase'
+import { useAlpazar } from '../../lib/context'
 
 /* ─── helpers ─────────────────────────────────── */
 const displayName = (p: any) => p?.full_name || p?.username || 'Përdorues'
@@ -53,6 +54,7 @@ function Avatar({ profile, size = 46, online = false }: { profile: any; size?: n
 
 /* ─── Main component ────────────────────────────── */
 export default function MessagesPage() {
+  const { user: ctxUser } = useAlpazar()
   const [user,     setUser]     = useState<any>(null)
   const [threads,  setThreads]  = useState<any[]>([])
   const [selected, setSelected] = useState<any>(null)
@@ -81,25 +83,31 @@ export default function MessagesPage() {
 
   /* ── Init ─────────────────────────────── */
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) { window.location.href = '/auth/login'; return }
-      setUser(session.user)
-      userRef.current = session.user
-      fetchThreads(session.user.id).then(() => {
+    if (ctxUser) {
+      setUser(ctxUser)
+      userRef.current = ctxUser
+      fetchThreads(ctxUser.id).then(() => {
         const p = new URLSearchParams(window.location.search)
         const withId = p.get('with')
-        if (withId) openThreadById(withId, session.user.id)
+        if (withId) openThreadById(withId, ctxUser.id)
       })
-    })
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) { window.location.href = '/auth/login' }
-    })
+    } else {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (!session) { window.location.href = '/auth/login'; return }
+        setUser(session.user)
+        userRef.current = session.user
+        fetchThreads(session.user.id).then(() => {
+          const p = new URLSearchParams(window.location.search)
+          const withId = p.get('with')
+          if (withId) openThreadById(withId, session.user.id)
+        })
+      })
+    }
     return () => {
-      subscription.unsubscribe()
       if (channelRef.current)  supabase.removeChannel(channelRef.current)
       if (typingBcast.current) supabase.removeChannel(typingBcast.current)
     }
-  }, [])
+  }, [ctxUser])
 
   /* ── Scroll detection ─────────────────── */
   useEffect(() => {
