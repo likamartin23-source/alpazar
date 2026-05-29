@@ -200,6 +200,7 @@ export default function MessagesPage() {
       .from('messages')
       .select('*,sender:sender_id(id,full_name,username,avatar_url),receiver:receiver_id(id,full_name,username,avatar_url)')
       .or(`sender_id.eq.${uid},receiver_id.eq.${uid}`)
+      .is('deleted_at', null)
       .order('created_at', { ascending: false })
 
     if (data) {
@@ -231,6 +232,7 @@ export default function MessagesPage() {
       .from('messages')
       .select('*')
       .or(`and(sender_id.eq.${myId},receiver_id.eq.${thread.otherId}),and(sender_id.eq.${thread.otherId},receiver_id.eq.${myId})`)
+      .is('deleted_at', null)
       .order('created_at', { ascending: true })
 
     if (data) {
