@@ -135,6 +135,11 @@ export default function Auth() {
   const [autoSubmitIn, setAutoSubmitIn] = useState<number>(0)
   const autoSubmitCountRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
+  // Bllokon ridrejtimin nga onAuthStateChange gjatë fluksit të verifikimit OTP.
+  // Kur setSession() vendos sesionin, onAuthStateChange nuk duhet të ridrejtojë
+  // derisa vetë kodi ta bëjë eksplicit (pasi fjalëkalimi të ndryshohet ose regjistrimi të plotësohet).
+  const blockAuthRedirectRef = useRef(false)
+
   function cancelAutoSubmit() {
     if (autoSubmitTimerRef.current) { clearTimeout(autoSubmitTimerRef.current); autoSubmitTimerRef.current = null }
     if (autoSubmitCountRef.current) { clearInterval(autoSubmitCountRef.current); autoSubmitCountRef.current = null }
@@ -168,7 +173,7 @@ export default function Auth() {
       if (session) window.location.href = '/'
     })
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) window.location.href = '/'
+      if (session && !blockAuthRedirectRef.current) window.location.href = '/'
     })
     return () => {
       subscription.unsubscribe()
@@ -383,11 +388,19 @@ export default function Auth() {
         setMsg(`err:${data.error ?? 'Kodi i gabuar ose ka skaduar!'}`)
         return
       }
+      // Blloko onAuthStateChange para setSession() — parandalon ridrejtimin
+      // automatik ndërkohë që jemi ende në fluksin e OTP / ndërrimit të fjalëkalimit
+      blockAuthRedirectRef.current = true
       const { error: sessErr } = await supabase.auth.setSession({
         access_token: data.access_token,
         refresh_token: data.refresh_token,
       })
-      if (sessErr) { setMsg(`err:${sessErr.message}`); setLoading(false); return }
+      if (sessErr) {
+        blockAuthRedirectRef.current = false
+        setMsg(`err:${sessErr.message}`)
+        setLoading(false)
+        return
+      }
       if (timerRef.current) clearInterval(timerRef.current)
 
       // If original input was a phone number but we used email fallback, store phone in profile
@@ -399,10 +412,14 @@ export default function Auth() {
       }
 
       if (mode === 'forgot') {
+        // Mbaj bllokimin aktiv — ridrejtimi bëhet vetëm pas ndërrimit të fjalëkalimit
         setStep('new-pass'); setMsg('')
       } else {
         setMsg('ok:Llogaria u krijua! Duke u ridrejtuar...')
-        setTimeout(() => { window.location.href = '/' }, 700)
+        setTimeout(() => {
+          blockAuthRedirectRef.current = false
+          window.location.href = '/'
+        }, 700)
       }
     } catch (e: unknown) {
       setMsg(`err:${e instanceof Error ? e.message : 'Gabim lidhjeje'}`)
@@ -418,7 +435,10 @@ export default function Auth() {
     if (error) { setMsg(`err:${error.message}`) }
     else {
       setMsg('ok:Fjalëkalimi u ndryshua! Duke u ridrejtuar...')
-      setTimeout(() => { window.location.href = '/' }, 700)
+      setTimeout(() => {
+        blockAuthRedirectRef.current = false
+        window.location.href = '/'
+      }, 700)
     }
     setLoading(false)
   }
