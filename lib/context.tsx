@@ -101,7 +101,7 @@ export function AlpazarProvider({ children }: { children: ReactNode }) {
   const loadUnread = useCallback(async (uid: string) => {
     const [{ count: msgs }, { count: notifs }] = await Promise.all([
       supabase.from('messages').select('*', { count: 'exact', head: true })
-        .eq('receiver_id', uid).eq('read', false),
+        .eq('receiver_id', uid).eq('read', false).is('deleted_at', null),
       supabase.from('notifications').select('*', { count: 'exact', head: true })
         .eq('user_id', uid).eq('is_read', false),
     ])
