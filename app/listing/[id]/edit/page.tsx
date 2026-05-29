@@ -20,14 +20,19 @@ export default function EditListing({ params }: { params: { id: string } }) {
   const [existingImages, setExistingImages] = useState<string[]>([])
 
   useEffect(() => {
+    let mounted = true
+
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/auth/login'; return }
+      if (!mounted) return
       setUser(session.user)
 
       const [{ data: listing }, { data: cats }] = await Promise.all([
         supabase.from('listings').select('*').eq('id', params.id).single(),
         supabase.from('categories').select('*').eq('is_active', true).order('sort_order'),
       ])
+
+      if (!mounted) return
 
       if (!listing || listing.user_id !== session.user.id) {
         window.location.href = `/listing/${params.id}`
@@ -48,6 +53,15 @@ export default function EditListing({ params }: { params: { id: string } }) {
       })
       setPageLoading(false)
     })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') window.location.href = '/auth/login'
+    })
+
+    return () => {
+      mounted = false
+      subscription.unsubscribe()
+    }
   }, [params.id])
 
   function set(k: string, v: string) { setForm(f => ({ ...f, [k]: v })) }

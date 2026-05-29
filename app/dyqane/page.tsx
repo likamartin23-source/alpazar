@@ -79,19 +79,21 @@ export default function DyqanePage() {
       .eq('is_premium', true)
       .order('created_at', { ascending: false })
 
-    if (!profiles) { setLoading(false); return }
+    if (!profiles?.length) { setShops([]); setLoading(false); return }
 
-    const withCounts = await Promise.all(
-      profiles.map(async (p) => {
-        const { count } = await supabase
-          .from('listings')
-          .select('*', { count: 'exact', head: true })
-          .eq('user_id', p.id)
-          .eq('is_active', true)
-        return { ...p, listing_count: count || 0 }
-      })
-    )
-    setShops(withCounts)
+    const ids = profiles.map(p => p.id)
+    const { data: listingsData } = await supabase
+      .from('listings')
+      .select('user_id')
+      .in('user_id', ids)
+      .eq('is_active', true)
+
+    const countMap: Record<string, number> = {}
+    for (const l of listingsData || []) {
+      countMap[l.user_id] = (countMap[l.user_id] || 0) + 1
+    }
+
+    setShops(profiles.map(p => ({ ...p, listing_count: countMap[p.id] || 0 })))
     setLoading(false)
   }
 
