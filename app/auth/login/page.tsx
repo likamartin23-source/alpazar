@@ -252,12 +252,21 @@ export default function Auth() {
     setLoading(true); setMsg('')
     const type = detectType(raw)
     const id = type === 'phone' ? toE164(raw) : raw
-    const payload = type === 'phone'
-      ? { phone: id, password }
-      : { email: id, password }
-    const { data, error } = await supabase.auth.signInWithPassword(payload)
+
+    // For phone: try phone auth first, then fall back to derived email
+    // (OTP registration stores accounts as phone@sms.al internally)
+    let authResult = await supabase.auth.signInWithPassword(
+      type === 'phone' ? { phone: id, password } : { email: id, password }
+    )
+    if (type === 'phone' && authResult.error) {
+      const derived = (id.startsWith('+') ? id.slice(1) : id) + '@sms.al'
+      authResult = await supabase.auth.signInWithPassword({ email: derived, password })
+    }
+
+    const { error } = authResult
     if (error) {
-      const isWrong = error.message.toLowerCase().includes('invalid') || error.message.toLowerCase().includes('credentials')
+      const raw2 = error.message.toLowerCase()
+      const isWrong = raw2.includes('invalid') || raw2.includes('credentials') || raw2.includes('phone') || raw2.includes('disabled')
       setMsg(`err:${isWrong ? 'Email/telefon ose fjalëkalim i gabuar!' : error.message}`)
     } else {
       // Check if 2FA is required
@@ -468,7 +477,7 @@ export default function Auth() {
       : cType === 'phone'
         ? smsFailMode
           ? <p className="hint ok">📧 Numri ruhet — kodi dërgohet me <strong>email</strong></p>
-          : <p className="hint ok">📱 Kodi konfirmimit dërgohet me <strong>email</strong> (SMS i padisponueshëm)</p>
+          : <p className="hint ok">📱 Kodi konfirmimit dërgohet me <strong>SMS</strong></p>
         : <p className="hint warn">Fut email (user@domain.com) ose nr. telefoni (+355, +1, +44...)</p>
     : <p className="hint">📧 Email &nbsp;·&nbsp; 📱 Çdo numër telefoni bote (+355, +1, +44...)</p>
 
