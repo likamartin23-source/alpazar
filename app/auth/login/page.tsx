@@ -95,7 +95,7 @@ const CSS = `
   .sec-row a:hover{text-decoration:underline;}
 `
 
-const OTP_SECONDS = 180
+const OTP_SECONDS = 120
 
 export default function Auth() {
   const [mode, setMode] = useState<Mode>('login')
