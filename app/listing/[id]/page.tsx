@@ -154,6 +154,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
       .from('messages')
       .select('*')
       .or(`and(sender_id.eq.${myId},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${myId})`)
+      .is('deleted_at', null)
       .order('created_at', { ascending: true })
 
     setChatMsgs(data || [])
