@@ -148,32 +148,73 @@ export default function Home() {
 
   const listingsChRef = useRef<any>(null)
   const unreadChRef   = useRef<any>(null)
+  const notifChRef    = useRef<any>(null)
+  const pollTimers    = useRef<{ listings?: any; unread?: any }>({})
+  const userIdRef     = useRef<string | null>(null)
 
   useEffect(() => {
     fetchAll()
     fetchSettings()
+
+    // Rilexo kur tab bëhet aktiv sërish
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') {
+        fetchListings()
+        if (userIdRef.current) fetchUnread(userIdRef.current)
+        fetchCounts()
+      }
+    }
+    document.addEventListener('visibilitychange', onVisible)
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
       setAuthReady(true)
       if (session?.user) {
+        userIdRef.current = session.user.id
         fetchUnread(session.user.id)
         fetchMyProfile(session.user.id)
-        // Real-time: mesazhe të palexuara
+        // Poll mesazhe palexuara çdo 5 sekonda
+        pollTimers.current.unread = setInterval(() => {
+          if (userIdRef.current) fetchUnread(userIdRef.current)
+        }, 5000)
+        // Realtime: messages INSERT
         const uch = supabase
-          .channel(`unread-live-${session.user.id}`)
+          .channel(`unread-msg-${session.user.id}`)
           .on('postgres_changes', {
             event: 'INSERT', schema: 'public', table: 'messages',
             filter: `receiver_id=eq.${session.user.id}`,
-          }, () => fetchUnread(session.user.id))
+          }, () => { if (userIdRef.current) fetchUnread(userIdRef.current) })
           .subscribe()
         unreadChRef.current = uch
+        // Realtime: notifications INSERT/UPDATE (trigger i ri)
+        const nch = supabase
+          .channel(`notif-live-${session.user.id}`)
+          .on('postgres_changes', {
+            event: 'INSERT', schema: 'public', table: 'notifications',
+            filter: `user_id=eq.${session.user.id}`,
+          }, () => { if (userIdRef.current) fetchUnread(userIdRef.current) })
+          .on('postgres_changes', {
+            event: 'UPDATE', schema: 'public', table: 'notifications',
+            filter: `user_id=eq.${session.user.id}`,
+          }, () => { if (userIdRef.current) fetchUnread(userIdRef.current) })
+          .subscribe()
+        notifChRef.current = nch
       }
     })
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
       setUser(session?.user ?? null)
       setAuthReady(true)
-      if (session?.user) { fetchUnread(session.user.id); fetchMyProfile(session.user.id) }
-      else { setProfile(null); if (unreadChRef.current) { supabase.removeChannel(unreadChRef.current); unreadChRef.current = null } }
+      if (session?.user) {
+        userIdRef.current = session.user.id
+        fetchUnread(session.user.id)
+        fetchMyProfile(session.user.id)
+      } else {
+        userIdRef.current = null
+        setProfile(null)
+        clearInterval(pollTimers.current.unread)
+        if (unreadChRef.current) { supabase.removeChannel(unreadChRef.current); unreadChRef.current = null }
+      }
     })
 
     const settingsChannel = supabase
@@ -181,7 +222,13 @@ export default function Home() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'admin_settings' }, () => fetchSettings())
       .subscribe()
 
-    // Real-time: shpallje të reja / të përditësuara / të fshira
+    // Poll shpallje çdo 10 sekonda
+    pollTimers.current.listings = setInterval(() => {
+      fetchListings()
+      fetchCounts()
+    }, 10000)
+
+    // Supabase Realtime si bonus (kur replication është aktive)
     const lch = supabase
       .channel('listings-live')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'listings' }, (payload) => {
@@ -212,6 +259,10 @@ export default function Home() {
       supabase.removeChannel(settingsChannel)
       if (listingsChRef.current) supabase.removeChannel(listingsChRef.current)
       if (unreadChRef.current)   supabase.removeChannel(unreadChRef.current)
+      if (notifChRef.current)    supabase.removeChannel(notifChRef.current)
+      clearInterval(pollTimers.current.listings)
+      clearInterval(pollTimers.current.unread)
+      document.removeEventListener('visibilitychange', onVisible)
     }
   }, [])
 
@@ -237,12 +288,14 @@ export default function Home() {
   }
 
   async function fetchUnread(uid: string) {
-    const { count } = await supabase
-      .from('messages')
-      .select('*', { count: 'exact', head: true })
-      .eq('receiver_id', uid)
-      .eq('read', false)
-    setUnreadCount(count || 0)
+    // Kombino: mesazhe palexuara + notifikime palexuara (new_message)
+    const [{ count: mc }, { count: nc }] = await Promise.all([
+      supabase.from('messages').select('*', { count: 'exact', head: true })
+        .eq('receiver_id', uid).eq('read', false),
+      supabase.from('notifications').select('*', { count: 'exact', head: true })
+        .eq('user_id', uid).eq('is_read', false),
+    ])
+    setUnreadCount((mc || 0) + (nc || 0))
   }
 
   useEffect(() => { fetchListings() }, [activeCategory, activeFilter])

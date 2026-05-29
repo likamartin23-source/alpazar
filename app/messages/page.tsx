@@ -76,6 +76,7 @@ export default function MessagesPage() {
   const userRef      = useRef<any>(null)
   const selectedRef  = useRef<any>(null)
   const inboxRef     = useRef<any>(null)
+  const pollRef      = useRef<any>(null)
 
   useEffect(() => { userRef.current = user },    [user])
   useEffect(() => { selectedRef.current = selected }, [selected])
@@ -92,8 +93,21 @@ export default function MessagesPage() {
         if (withId) openThreadById(withId, session.user.id)
       })
 
-      // Global inbox channel — përditëson listën e threads kur mbërrijn mesazhe të reja
       const myId = session.user.id
+
+      // Poll threads çdo 5 sekonda — guaranteed refresh
+      pollRef.current = setInterval(() => {
+        fetchThreads(myId)
+      }, 5000)
+
+      // Visibility API — rifresko menjëherë kur kthehemi në tab
+      const onVisible = () => {
+        if (document.visibilityState === 'visible') fetchThreads(myId)
+      }
+      document.addEventListener('visibilitychange', onVisible)
+      ;(pollRef as any)._onVisible = onVisible
+
+      // Supabase Realtime si bonus
       const inbox = supabase
         .channel(`inbox-global-${myId}`)
         .on('postgres_changes', {
@@ -103,13 +117,8 @@ export default function MessagesPage() {
           const m = payload.new as any
           setThreads(prev => {
             const idx = prev.findIndex(t => t.otherId === m.sender_id)
-            if (idx === -1) {
-              // Bisedë e re — rifitoj listën me profilin e saktë
-              fetchThreads(myId)
-              return prev
-            }
+            if (idx === -1) { fetchThreads(myId); return prev }
             const t = { ...prev[idx], lastMsg: m }
-            // Rrit unread vetëm nëse nuk po e shikojmë atë thread
             if (selectedRef.current?.otherId !== m.sender_id) {
               t.unread = (t.unread || 0) + 1
             }
@@ -129,6 +138,8 @@ export default function MessagesPage() {
       if (channelRef.current)  supabase.removeChannel(channelRef.current)
       if (typingBcast.current) supabase.removeChannel(typingBcast.current)
       if (inboxRef.current)    supabase.removeChannel(inboxRef.current)
+      clearInterval(pollRef.current)
+      if ((pollRef as any)._onVisible) document.removeEventListener('visibilitychange', (pollRef as any)._onVisible)
     }
   }, [])
 

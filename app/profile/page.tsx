@@ -46,6 +46,7 @@ export default function ProfilePage() {
   const [deleteMsg, setDeleteMsg] = useState('')
 
   const listingsChRef = useRef<any>(null)
+  const pollRef       = useRef<any>(null)
 
   useEffect(() => {
     // Kontrollo sesionin dhe dëgjo ndryshimet (p.sh. skadim sesioni)
@@ -53,19 +54,26 @@ export default function ProfilePage() {
       if (!session) { window.location.href = '/auth/login'; return }
       setUser(session.user)
       fetchProfile(session.user.id)
-      // Real-time: listingjet e mia ndryshohen / fshihen / shtohen
+
+      const uid = session.user.id
+      const refreshListings = () => {
+        supabase.from('listings')
+          .select('*')
+          .eq('user_id', uid)
+          .order('created_at', { ascending: false })
+          .then(({ data }) => { if (data) setMyListings(data) })
+      }
+
+      // Poll listingjet çdo 10 sekonda
+      pollRef.current = setInterval(refreshListings, 10000)
+
+      // Supabase Realtime si bonus
       const ch = supabase
-        .channel(`my-listings-${session.user.id}`)
+        .channel(`my-listings-${uid}`)
         .on('postgres_changes', {
           event: '*', schema: 'public', table: 'listings',
-          filter: `user_id=eq.${session.user.id}`,
-        }, () => {
-          supabase.from('listings')
-            .select('*')
-            .eq('user_id', session.user.id)
-            .order('created_at', { ascending: false })
-            .then(({ data }) => { if (data) setMyListings(data) })
-        })
+          filter: `user_id=eq.${uid}`,
+        }, refreshListings)
         .subscribe()
       listingsChRef.current = ch
     })
@@ -78,6 +86,7 @@ export default function ProfilePage() {
     return () => {
       subscription.unsubscribe()
       if (listingsChRef.current) supabase.removeChannel(listingsChRef.current)
+      clearInterval(pollRef.current)
     }
   }, [])
 
