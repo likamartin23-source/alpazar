@@ -93,13 +93,13 @@ export function useUnreadCount(userId: string | null) {
         event: 'INSERT',
         schema: 'public',
         table: 'messages',
-        filter: `recipient_id=eq.${userId}`,
+        filter: `receiver_id=eq.${userId}`,
       }, () => setCount(c => c + 1))
       .on('postgres_changes', {
         event: 'UPDATE',
         schema: 'public',
         table: 'messages',
-        filter: `recipient_id=eq.${userId}`,
+        filter: `receiver_id=eq.${userId}`,
       }, payload => {
         const prev = payload.old as { read_at: string | null }
         const next = payload.new as { read_at: string | null }

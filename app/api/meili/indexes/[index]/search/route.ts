@@ -30,6 +30,7 @@ export async function POST(
     let qb = supabase
       .from('listings')
       .select('id,title,price,currency,condition,city,is_premium,images,created_at,category_id,is_active')
+      .eq('is_active', true)
       .order('is_premium', { ascending: false })
       .order('created_at', { ascending: false })
       .limit(limit)
