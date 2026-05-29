@@ -110,6 +110,7 @@ export default function ProfilePage() {
       .from('messages')
       .select('id,sender_id,receiver_id,content,created_at,read,listing_id')
       .or(`sender_id.eq.${uid},receiver_id.eq.${uid}`)
+      .is('deleted_at', null)
       .order('created_at', { ascending: false })
     if (!data || data.length === 0) return
 
