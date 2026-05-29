@@ -272,7 +272,7 @@ export default function Auth() {
       const res = await fetch(`${FN_URL}/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identifier: id }),
+        body: JSON.stringify({ identifier: id, mode }),
       })
       const data = await res.json()
       if (!res.ok || data.error) {
@@ -305,7 +305,7 @@ export default function Auth() {
       const res = await fetch(`${FN_URL}/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identifier: email }),
+        body: JSON.stringify({ identifier: email, mode }),
       })
       const data = await res.json()
       if (!res.ok || data.error) {
