@@ -373,6 +373,12 @@ export default function ListingPage({ params }: { params: { id: string } }) {
         .bottom-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:1px solid #eee;padding:9px 13px;display:flex;gap:8px;z-index:100;}
         .main-chat-btn{flex:1;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 12px rgba(230,51,18,.3);}
         .main-chat-btn i{font-size:16px;}
+        .wa-btn{width:48px;height:48px;background:#25D366;border:none;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(37,211,102,.3);text-decoration:none;}
+        .wa-btn i{font-size:22px;color:#fff;}
+
+        /* Location section */
+        .map-link{display:inline-flex;align-items:center;gap:6px;background:#EEF4FF;color:#185FA5;border:1px solid #C3DAFB;border-radius:9px;padding:7px 13px;font-size:12px;font-weight:600;text-decoration:none;margin-top:8px;}
+        .map-link i{font-size:14px;}
 
         @keyframes spin{to{transform:rotate(360deg);}}
 
@@ -468,6 +474,24 @@ export default function ListingPage({ params }: { params: { id: string } }) {
               <div className="divider" />
               <div className="sec-label">Përshkrimi</div>
               <div className="desc">{listing.description}</div>
+            </>
+          )}
+
+          {/* Vendndodhja me Google Maps */}
+          {listing.city && (
+            <>
+              <div className="divider" />
+              <div className="sec-label">Vendndodhja</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                <span style={{ fontSize: 13, color: '#555' }}>📍 {listing.city}, Shqipëri</span>
+                <a
+                  href={`https://www.google.com/maps/search/${encodeURIComponent(listing.city + ', Shqipëri')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="map-link">
+                  <i className="ti ti-map" />Hap në Maps
+                </a>
+              </div>
             </>
           )}
 
@@ -729,6 +753,16 @@ export default function ListingPage({ params }: { params: { id: string } }) {
             <i className="ti ti-messages" />
             {user ? '💬 Fillo bisedën' : '🔑 Hyr për të biseduar'}
           </button>
+          {seller.phone && (
+            <a
+              href={`https://wa.me/${seller.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Përshëndetje! Jam i interesuar/e për: "${listing.title}"`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="wa-btn"
+              title="Kontakto me WhatsApp">
+              <i className="ti ti-brand-whatsapp" />
+            </a>
+          )}
         </div>
       )}
 
