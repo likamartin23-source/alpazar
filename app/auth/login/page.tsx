@@ -95,7 +95,7 @@ const CSS = `
   .sec-row a:hover{text-decoration:underline;}
 `
 
-const OTP_SECONDS = 60
+const OTP_SECONDS = 180
 
 export default function Auth() {
   const [mode, setMode] = useState<Mode>('login')
@@ -155,7 +155,7 @@ export default function Auth() {
     setExpired(false)
     timerRef.current = setInterval(() => {
       setCountdown(prev => {
-        if (prev <= 1) { clearInterval(timerRef.current!); setExpired(true); return 0 }
+        if (prev <= 1) { clearInterval(timerRef.current!); setExpired(true); setLoading(false); return 0 }
         return prev - 1
       })
     }, 1000)
@@ -337,7 +337,12 @@ export default function Auth() {
       })
       const data = await res.json()
       if (!res.ok || data.error) {
-        setMsg(`err:${data.error ?? 'Kodi i gabuar ose ka skaduar!'}`)
+        const rawErr = data.error ?? 'Kodi i gabuar ose ka skaduar!'
+        const friendlyErr = rawErr.toLowerCase().includes('already registered')
+          ? 'Ky numër/email është i regjistruar tashmë. Hyr me fjalëkalim ose përdor "Harrova fjalëkalimin".'
+          : rawErr
+        setMsg(`err:${friendlyErr}`)
+        setLoading(false)
         return
       }
       const { error: sessErr } = await supabase.auth.setSession({
@@ -468,10 +473,10 @@ export default function Auth() {
         <button
           className="resend-btn"
           onClick={sendOtp}
-          disabled={loading || (!expired && countdown > 0)}
+          disabled={!expired && countdown > 0}
           title={!expired && countdown > 0 ? `Prit ${countdown}s` : 'Ridërgo kodin'}
         >
-          {loading ? '...' : 'Ridërgo'}
+          Ridërgo
         </button>
       </div>
 
