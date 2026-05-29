@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase'
 import type { Category, Listing } from '../lib/types'
 import { getLevel } from './components/Badges'
 import { PremiumUpsellModal } from './components/PremiumUpsell'
+import { saveRefFromUrl } from '../lib/referral'
 
 // Banner shkarkim — buton i vogël katrore pulsues (fixed, vetem faqja kryesore)
 function InstallBanner() {
@@ -156,6 +157,7 @@ export default function Home() {
   const userIdRef     = useRef<string | null>(null)
 
   useEffect(() => {
+    saveRefFromUrl()
     fetchAll()
     fetchSettings()
 

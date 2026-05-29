@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { getLevel, isNewMember } from '../../components/Badges'
 import { SocialProofBar, SellerPremiumUpsell } from '../../components/PremiumUpsell'
+import { saveRefFromUrl, buildShareUrl } from '../../../lib/referral'
 
 const CATEGORY_LABELS: Record<string, string> = {
   elektronike: 'Elektronikë', makina: 'Makina', shtepi: 'Shtëpi & Mobilje',
@@ -34,6 +35,9 @@ export default function ListingPage({ params }: { params: { id: string } }) {
   const [imgIdx, setImgIdx]           = useState(0)
   const [user, setUser]               = useState<any>(null)
   const [liked, setLiked]             = useState(false)
+  const [myRefCode, setMyRefCode]     = useState<string | null>(null)
+  const [shareOpen, setShareOpen]     = useState(false)
+  const [linkCopied, setLinkCopied]   = useState(false)
 
   // Vlerësimi i shitësit
   const [myReview, setMyReview]       = useState<any>(null)
@@ -93,9 +97,19 @@ export default function ListingPage({ params }: { params: { id: string } }) {
   useEffect(() => { listingRef.current = listing }, [listing])
 
   useEffect(() => {
+    saveRefFromUrl()
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
       userRef.current = session?.user ?? null
+      if (session?.user) {
+        supabase.from('profiles')
+          .select('referral_code,username')
+          .eq('id', session.user.id)
+          .single()
+          .then(({ data: p }) => {
+            if (p) setMyRefCode(p.referral_code || p.username || null)
+          })
+      }
     })
     fetchListing()
   }, [])
@@ -396,6 +410,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
         .report-success{text-align:center;padding:18px 0;}
         .report-link{display:block;text-align:center;font-size:11px;color:#bbb;margin-top:14px;cursor:pointer;}
         .report-link:hover{color:#E63312;}
+        @keyframes ai-fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
       `}</style>
 
       <div className="wrap">
@@ -404,10 +419,59 @@ export default function ListingPage({ params }: { params: { id: string } }) {
             <i className="ti ti-arrow-left" />
           </button>
           <span className="topbar-title">Shpallja</span>
-          <button className="share-btn" onClick={() => navigator.share?.({ title: listing.title, url: window.location.href }).catch(() => {})}>
-            <i className="ti ti-share" />
+          <button className="share-btn" onClick={() => setShareOpen(o => !o)}>
+            <i className={`ti ti-${shareOpen ? 'x' : 'share'}`} />
           </button>
         </div>
+
+        {/* Share sheet */}
+        {shareOpen && (() => {
+          const shareUrl = buildShareUrl(`/listing/${params.id}`, myRefCode)
+          const shareText = `Shiko këtë shpallje në Alpazar: "${listing.title}"${myRefCode ? ' 🔗' : ''}`
+
+          function copyShareLink() {
+            navigator.clipboard.writeText(shareUrl).catch(() => {
+              const el = document.createElement('textarea')
+              el.value = shareUrl; document.body.appendChild(el); el.select()
+              document.execCommand('copy'); document.body.removeChild(el)
+            })
+            setLinkCopied(true)
+            setTimeout(() => { setLinkCopied(false); setShareOpen(false) }, 1800)
+          }
+
+          return (
+            <div style={{
+              background: '#fff', borderBottom: '1px solid #eee',
+              padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 10,
+              animation: 'ai-fade .2s ease',
+            }}>
+              {myRefCode && (
+                <div style={{ background: '#FFFBEA', border: '1px dashed #F5C842', borderRadius: 9, padding: '8px 12px', fontSize: 11, color: '#856404', display: 'flex', alignItems: 'center', gap: 7 }}>
+                  <i className="ti ti-gift" style={{ fontSize: 14, color: '#E63312', flexShrink: 0 }} />
+                  <span>Duke ndarë me kodin tënd — nëse miku regjistrohet <strong>fiton 50 pikë!</strong></span>
+                </div>
+              )}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+                <button
+                  onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(shareText + '\n' + shareUrl)}`, '_blank')}
+                  style={{ background: '#25D366', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 6px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                  <i className="ti ti-brand-whatsapp" style={{ fontSize: 20 }} />WhatsApp
+                </button>
+                <button
+                  onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank')}
+                  style={{ background: '#1877F2', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 6px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                  <i className="ti ti-brand-facebook" style={{ fontSize: 20 }} />Facebook
+                </button>
+                <button
+                  onClick={copyShareLink}
+                  style={{ background: linkCopied ? '#EAF3DE' : '#111', color: linkCopied ? '#3B6D11' : '#F5C842', border: 'none', borderRadius: 10, padding: '10px 6px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                  <i className={`ti ti-${linkCopied ? 'check' : 'copy'}`} style={{ fontSize: 20 }} />
+                  {linkCopied ? 'U kopjua!' : 'Kopjo'}
+                </button>
+              </div>
+            </div>
+          )
+        })()}
 
         {/* Gallery */}
         <div className="img-wrap">

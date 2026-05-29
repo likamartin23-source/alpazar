@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { supabase } from '../../../lib/supabase'
+import { saveRefFromUrl, buildShareUrl } from '../../../lib/referral'
 
 const CATEGORY_COLORS: Record<string, string> = {
   elektronike: '#3B82F6', makina: '#EF4444', shtepi: '#10B981',
@@ -17,9 +18,19 @@ export default function ShopDetailPage() {
   const [listings, setListings] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<any>(null)
+  const [myRefCode, setMyRefCode] = useState<string | null>(null)
+  const [shareOpen, setShareOpen] = useState(false)
+  const [linkCopied, setLinkCopied] = useState(false)
   const [activeFilter, setActiveFilter] = useState('all')
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => setUser(session?.user ?? null))
+    saveRefFromUrl()
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+      if (session?.user) {
+        supabase.from('profiles').select('referral_code,username').eq('id', session.user.id).single()
+          .then(({ data: p }) => { if (p) setMyRefCode(p.referral_code || p.username || null) })
+      }
+    })
     if (shopId) fetchShop()
   }, [shopId])
 
@@ -144,6 +155,7 @@ export default function ShopDetailPage() {
         .empty-shop{text-align:center;padding:40px;background:#f9f5e0;border-radius:12px;grid-column:1/-1;}
         .empty-shop i{font-size:36px;color:#F5C842;display:block;margin-bottom:8px;}
         .empty-shop p{font-size:12px;color:#aaa;line-height:1.6;}
+        @keyframes ai-fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
       `}</style>
 
       <div className="wrap">
@@ -195,11 +207,51 @@ export default function ShopDetailPage() {
             <button className="msg-btn" onClick={goToChat}>
               <i className="ti ti-message-circle" /> Chat me dyqanin
             </button>
-            <button className="share-btn" onClick={() => navigator.share?.({ title: shop.shop_name, url: window.location.href })}>
-              <i className="ti ti-share" />
+            <button className="share-btn" onClick={() => setShareOpen(o => !o)} style={{ position: 'relative' }}>
+              <i className={`ti ti-${shareOpen ? 'x' : 'share'}`} />
             </button>
           </div>
         )}
+
+        {/* Share sheet */}
+        {shareOpen && (() => {
+          const shareUrl = buildShareUrl(`/dyqane/${shopId}`, myRefCode)
+          const shareText = `Shiko dyqanin "${shop.shop_name}" në Alpazar!${myRefCode ? ' 🔗' : ''}`
+          function copyShareLink() {
+            navigator.clipboard.writeText(shareUrl).catch(() => {
+              const el = document.createElement('textarea')
+              el.value = shareUrl; document.body.appendChild(el); el.select()
+              document.execCommand('copy'); document.body.removeChild(el)
+            })
+            setLinkCopied(true)
+            setTimeout(() => { setLinkCopied(false); setShareOpen(false) }, 1800)
+          }
+          return (
+            <div style={{ background: '#fff', borderBottom: '1px solid #eee', padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 10, animation: 'ai-fade .2s ease' }}>
+              {myRefCode && (
+                <div style={{ background: '#FFFBEA', border: '1px dashed #F5C842', borderRadius: 9, padding: '8px 12px', fontSize: 11, color: '#856404', display: 'flex', alignItems: 'center', gap: 7 }}>
+                  <i className="ti ti-gift" style={{ fontSize: 14, color: '#E63312', flexShrink: 0 }} />
+                  <span>Duke ndarë me kodin tënd — nëse miku regjistrohet <strong>fiton 50 pikë!</strong></span>
+                </div>
+              )}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+                <button onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(shareText + '\n' + shareUrl)}`, '_blank')}
+                  style={{ background: '#25D366', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 6px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                  <i className="ti ti-brand-whatsapp" style={{ fontSize: 20 }} />WhatsApp
+                </button>
+                <button onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank')}
+                  style={{ background: '#1877F2', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 6px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                  <i className="ti ti-brand-facebook" style={{ fontSize: 20 }} />Facebook
+                </button>
+                <button onClick={copyShareLink}
+                  style={{ background: linkCopied ? '#EAF3DE' : '#111', color: linkCopied ? '#3B6D11' : '#F5C842', border: 'none', borderRadius: 10, padding: '10px 6px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                  <i className={`ti ti-${linkCopied ? 'check' : 'copy'}`} style={{ fontSize: 20 }} />
+                  {linkCopied ? 'U kopjua!' : 'Kopjo'}
+                </button>
+              </div>
+            </div>
+          )
+        })()}
 
         <div className="body">
           <div className="filter-row">
