@@ -55,10 +55,13 @@ function InstallBanner() {
 }
 
 // Kuti ndarje — buton i vogël katrore pulsues (fixed, vetem faqja kryesore)
-function ShareBox() {
+function ShareBox({ refCode }: { refCode?: string }) {
   const [open, setOpen] = useState(false)
-  const url = 'https://alpazar.vercel.app'
-  const text = 'Zbulo ALPAZAR — platforma #1 shqiptare e tregtisë online! Shit, bli dhe bëj pazarin tënd.'
+  const base = 'https://alpazar.vercel.app'
+  const url = refCode ? `${base}?ref=${refCode}` : base
+  const text = refCode
+    ? `Bashkohu me mua në ALPAZAR — marketplace #1 shqiptar! Shit, bli dhe bëj pazarin tënd falas:`
+    : 'Zbulo ALPAZAR — platforma #1 shqiptare e tregtisë online! Shit, bli dhe bëj pazarin tënd.'
 
   return (
     <div style={{ position: 'fixed', bottom: 157, left: 12, zIndex: 190, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 3 }}>
@@ -274,7 +277,7 @@ export default function Home() {
   async function fetchMyProfile(uid: string) {
     const { data } = await supabase
       .from('profiles')
-      .select('full_name,username,avatar_url,is_premium,is_admin,is_verified,shop_name,gamification_points')
+      .select('full_name,username,avatar_url,is_premium,is_admin,is_verified,shop_name,gamification_points,referral_code')
       .eq('id', uid)
       .single()
     if (data) setProfile(data)
@@ -784,7 +787,7 @@ export default function Home() {
       </div>
 
       {/* Butonat pulsuese katrore — vetem faqja kryesore */}
-      <ShareBox />
+      <ShareBox refCode={profile?.referral_code || profile?.username || undefined} />
       <InstallBanner />
       {/* Marketing: upsell modal per jo-premium */}
       {authReady && user && !profile?.is_premium && <PremiumUpsellModal trigger="scroll" />}

@@ -101,8 +101,9 @@ export default function NewListing() {
       }).select().single()
 
       if (error) { setMsg(`err:${error.message}`); setLoading(false); return }
-      setMsg('ok:Shpallja u publikua me sukses!')
-      setTimeout(() => { window.location.href = `/listing/${data.id}` }, 1000)
+      const bonusMsg = myListingCount === 0 ? ' +35 pikë gamifikimi (bonus fillestar)! 🎉' : ' +10 pikë gamifikimi! ⚡'
+      setMsg(`ok:Shpallja u publikua me sukses!${bonusMsg}`)
+      setTimeout(() => { window.location.href = `/listing/${data.id}` }, 2000)
     } catch (e: any) {
       setMsg(`err:${e.message}`)
     }

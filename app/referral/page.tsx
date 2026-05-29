@@ -2,8 +2,25 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import { getLevel } from '../components/Badges'
 
 const SITE = 'https://alpazar.vercel.app'
+
+const LEVELS = [
+  { name: 'Fillestar', icon: '🌱', min: 0,   max: 99,  color: '#888',    bg: '#f5f5f5' },
+  { name: 'Tregtar',   icon: '⚡', min: 100, max: 399, color: '#185FA5', bg: '#EEF4FF' },
+  { name: 'Ekspert',   icon: '🏆', min: 400, max: 999, color: '#856404', bg: '#FFF4E5' },
+  { name: 'Master',    icon: '💎', min: 1000, max: Infinity, color: '#7C3AED', bg: '#F5F3FF' },
+]
+
+function getLevelProgress(pts: number) {
+  const idx = LEVELS.findIndex((l, i) => pts >= l.min && (i === LEVELS.length - 1 || pts < LEVELS[i + 1].min))
+  const current = LEVELS[idx]
+  const next = LEVELS[idx + 1]
+  if (!next) return { current, next: null, pct: 100, remaining: 0 }
+  const pct = Math.round(((pts - current.min) / (next.min - current.min)) * 100)
+  return { current, next, pct, remaining: next.min - pts }
+}
 
 const CSS = `
   *{box-sizing:border-box;margin:0;padding:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
@@ -40,8 +57,10 @@ const CSS = `
   .reward-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid #f5f5f5;}
   .reward-item:last-child{border:none;}
   .reward-badge{width:38px;height:38px;border-radius:50%;background:#FFF0EE;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+  .reward-info{flex:1;}
   .reward-info strong{font-size:12px;font-weight:700;color:#111;display:block;}
   .reward-info span{font-size:11px;color:#888;}
+  .reward-done{font-size:16px;flex-shrink:0;}
   .referral-list{display:flex;flex-direction:column;gap:8px;}
   .ref-row{display:flex;align-items:center;gap:10px;background:#f9f5e0;border-radius:10px;padding:10px 12px;}
   .ref-avatar{width:34px;height:34px;background:#F5C842;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#111;flex-shrink:0;}
@@ -56,6 +75,20 @@ const CSS = `
   .info{background:#EEF4FF;color:#185FA5;}
   .spinner{width:24px;height:24px;border:3px solid #F5C842;border-top-color:#E63312;border-radius:50%;animation:spin .7s linear infinite;margin:40px auto;}
   @keyframes spin{to{transform:rotate(360deg);}}
+  /* Level progress */
+  .level-card{background:linear-gradient(135deg,#111,#1c1c1c);border-radius:14px;padding:16px;margin-bottom:14px;}
+  .level-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .level-badge{font-size:13px;font-weight:700;padding:5px 12px;border-radius:20px;}
+  .level-pts{font-size:12px;color:#888;}
+  .level-bar-bg{background:#333;border-radius:6px;height:8px;overflow:hidden;margin-bottom:6px;}
+  .level-bar-fill{height:100%;border-radius:6px;transition:width .5s ease;}
+  .level-hint{font-size:10px;color:#666;text-align:right;}
+  /* Premium milestone */
+  .milestone-card{background:linear-gradient(135deg,#1a0a00,#2d1400);border:1px solid #F5C84255;border-radius:14px;padding:16px;margin-bottom:14px;}
+  .milestone-title{color:#F5C842;font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+  .milestone-bar-bg{background:#333;border-radius:6px;height:10px;overflow:hidden;margin-bottom:8px;}
+  .milestone-bar-fill{height:100%;background:linear-gradient(90deg,#F5C842,#E63312);border-radius:6px;transition:width .5s ease;}
+  .milestone-meta{display:flex;justify-content:space-between;font-size:10px;color:#888;}
 `
 
 export default function ReferralPage() {
@@ -109,6 +142,17 @@ export default function ReferralPage() {
   }
 
   const totalPts = referrals.length * 50
+  const pts = profile?.gamification_points || 0
+  const lp = getLevelProgress(pts)
+
+  // Premium milestone: 50 referrals = 1 free month
+  const MILESTONES = [
+    { at: 5,  label: '🥉 Anëtar Bronzi', pts: 250 },
+    { at: 20, label: '🥈 Anëtar Argjendi', pts: 1000 },
+    { at: 50, label: '🥇 Anëtar Ari + 1 muaj Premium FALAS', pts: 2500 },
+  ]
+  const nextMilestone = MILESTONES.find(m => referrals.length < m.at)
+  const prevMilestone = [...MILESTONES].reverse().find(m => referrals.length >= m.at)
 
   return (
     <>
@@ -140,6 +184,61 @@ export default function ReferralPage() {
             </div>
           ) : (
             <>
+              {/* Level progress */}
+              <div className="level-card">
+                <div className="level-top">
+                  <span className="level-badge" style={{ background: lp.current.bg, color: lp.current.color }}>
+                    {lp.current.icon} {lp.current.name}
+                  </span>
+                  <span className="level-pts">{pts} pikë</span>
+                </div>
+                <div className="level-bar-bg">
+                  <div className="level-bar-fill" style={{
+                    width: `${lp.pct}%`,
+                    background: lp.next ? `linear-gradient(90deg,${lp.current.color},${lp.next.color})` : '#F5C842',
+                  }} />
+                </div>
+                {lp.next
+                  ? <div className="level-hint">{lp.remaining} pikë deri në {lp.next.icon} {lp.next.name}</div>
+                  : <div className="level-hint" style={{ color: '#F5C842' }}>💎 Nivel maksimal i arritur!</div>
+                }
+              </div>
+
+              {/* Premium milestone progress */}
+              {nextMilestone && (
+                <div className="milestone-card">
+                  <div className="milestone-title">
+                    <i className="ti ti-crown" style={{ fontSize: 14 }} />
+                    Progresi drejt {nextMilestone.label}
+                  </div>
+                  <div className="milestone-bar-bg">
+                    <div className="milestone-bar-fill" style={{
+                      width: `${Math.round((referrals.length / nextMilestone.at) * 100)}%`,
+                    }} />
+                  </div>
+                  <div className="milestone-meta">
+                    <span>{referrals.length} / {nextMilestone.at} referalë</span>
+                    <span>{nextMilestone.at - referrals.length} mbetur</span>
+                  </div>
+                  {prevMilestone && (
+                    <div style={{ fontSize: 10, color: '#F5C84299', marginTop: 6, textAlign: 'center' }}>
+                      ✅ Ke arritur: {prevMilestone.label}
+                    </div>
+                  )}
+                </div>
+              )}
+              {!nextMilestone && (
+                <div className="milestone-card">
+                  <div className="milestone-title">
+                    <i className="ti ti-crown" style={{ fontSize: 14 }} />
+                    🥇 Ke arritur të gjitha milestones!
+                  </div>
+                  <div style={{ fontSize: 12, color: '#F5C842', textAlign: 'center', padding: '8px 0' }}>
+                    Urime! 50+ referalë & 1 muaj Premium FALAS fituar! 🎉
+                  </div>
+                </div>
+              )}
+
               {/* Stats */}
               <div className="card">
                 <div className="card-title"><i className="ti ti-chart-bar" />Statistikat e Tua</div>
@@ -207,27 +306,23 @@ export default function ReferralPage() {
               {/* Rewards */}
               <div className="card">
                 <div className="card-title"><i className="ti ti-trophy" />Shpërblimet</div>
-                <div className="reward-item">
-                  <div className="reward-badge">🥉</div>
-                  <div className="reward-info">
-                    <strong>5 referalë → Anëtar Bronzi</strong>
-                    <span>250 pikë · Badge special në profil</span>
-                  </div>
-                </div>
-                <div className="reward-item">
-                  <div className="reward-badge">🥈</div>
-                  <div className="reward-info">
-                    <strong>20 referalë → Anëtar Argjendi</strong>
-                    <span>1000 pikë · Prioritet në lista</span>
-                  </div>
-                </div>
-                <div className="reward-item">
-                  <div className="reward-badge">🥇</div>
-                  <div className="reward-info">
-                    <strong>50 referalë → Anëtar Ari</strong>
-                    <span>2500 pikë · 1 muaj Premium falas</span>
-                  </div>
-                </div>
+                {[
+                  { at: 5,  badge: '🥉', label: '5 referalë → Anëtar Bronzi',   sub: '250 pikë · Badge special në profil' },
+                  { at: 20, badge: '🥈', label: '20 referalë → Anëtar Argjendi', sub: '1000 pikë · Prioritet në lista' },
+                  { at: 50, badge: '🥇', label: '50 referalë → Anëtar Ari',      sub: '2500 pikë · 1 muaj Premium FALAS' },
+                ].map(r => {
+                  const done = referrals.length >= r.at
+                  return (
+                    <div key={r.at} className="reward-item" style={{ opacity: done ? 1 : 0.7 }}>
+                      <div className="reward-badge" style={{ background: done ? '#EAF3DE' : '#FFF0EE' }}>{r.badge}</div>
+                      <div className="reward-info">
+                        <strong style={{ color: done ? '#3B6D11' : '#111' }}>{r.label}</strong>
+                        <span>{r.sub}</span>
+                      </div>
+                      <div className="reward-done">{done ? '✅' : '🔒'}</div>
+                    </div>
+                  )
+                })}
               </div>
 
               {/* Referral list */}

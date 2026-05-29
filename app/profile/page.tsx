@@ -459,6 +459,26 @@ export default function ProfilePage() {
                 </div>
               )}
 
+              {/* Referral CTA */}
+              <div style={{
+                background: 'linear-gradient(135deg,#E63312,#c42a0e)',
+                borderRadius: 13, padding: 16, marginBottom: 12,
+              }}>
+                <div style={{ color: '#fff', fontWeight: 700, fontSize: 14, marginBottom: 6 }}>
+                  🎁 Fto miq, fito pikë!
+                </div>
+                <div style={{ color: 'rgba(255,255,255,.8)', fontSize: 11, marginBottom: 12, lineHeight: 1.6 }}>
+                  Për çdo mik të regjistruar përmes linkut tënd, fiton <strong>50 pikë</strong> — kumulativisht.
+                  {profile?.gamification_points > 0 && ` Ke ${profile.gamification_points} pikë aktualisht.`}
+                </div>
+                <button
+                  style={{ background: '#fff', color: '#E63312', border: 'none', borderRadius: 9, padding: '9px 18px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+                  onClick={() => window.location.href = '/referral'}
+                >
+                  🔗 Ndaj linkun tënd →
+                </button>
+              </div>
+
               {/* ── Ndrysho Fjalëkalimin ── */}
               <div className="card">
                 <div className="card-hdr">
