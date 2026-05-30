@@ -240,9 +240,10 @@ export default function MessagesPage() {
       setTimeout(() => scrollBottom(false), 50)
     }
 
-    // Mark read
+    // Mark read (fire-and-forget — .then() triggers the lazy Supabase v2 query)
     supabase.from('messages').update({ read: true })
       .eq('receiver_id', myId).eq('sender_id', thread.otherId).eq('read', false)
+      .then()
 
     // Subscribe to new messages + typing + presence
     subscribeToThread(thread.otherId, myId)
@@ -267,7 +268,7 @@ export default function MessagesPage() {
           if (prev.find(x => x.id === m.id)) return prev
           return [...prev, m]
         })
-        supabase.from('messages').update({ read: true }).eq('id', m.id)
+        supabase.from('messages').update({ read: true }).eq('id', m.id).then()
       })
       // Broadcast: typing
       .on('broadcast', { event: 'typing' }, ({ payload }: any) => {
