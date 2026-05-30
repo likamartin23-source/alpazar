@@ -1,8 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import dynamic from 'next/dynamic'
 import { supabase } from '../../../lib/supabase'
 import { FreeTierBanner, PremiumUpsellModal } from '../../components/PremiumUpsell'
+
+const MapPicker = dynamic(() => import('../../components/MapPicker').then(m => ({ default: m.MapPicker })), { ssr: false })
 
 const CITIES = ['Tiranë', 'Durrës', 'Vlorë', 'Shkodër', 'Elbasan', 'Fier', 'Korçë', 'Berat', 'Lushnjë', 'Kavajë', 'Gjirokastër', 'Sarandë', 'Lezhë', 'Kukës', 'Pogradec', 'Peshkopi', 'Tropojë', 'Përmet', 'Tepelenë', 'Tjetër']
 
@@ -21,6 +24,9 @@ export default function NewListing() {
     category_id: '',
     city: '',
     images: [] as string[],
+    latitude: null as number | null,
+    longitude: null as number | null,
+    location_address: '',
   })
   const [imageFiles, setImageFiles] = useState<File[]>([])
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
@@ -98,6 +104,9 @@ export default function NewListing() {
         city: form.city,
         images: uploadedUrls,
         is_active: true,
+        latitude: form.latitude,
+        longitude: form.longitude,
+        location_address: form.location_address || null,
       }).select().single()
 
       if (error) { setMsg(`err:${error.message}`); setLoading(false); return }
@@ -229,6 +238,15 @@ export default function NewListing() {
                 <option value="">— Zgjidh qytetin —</option>
                 {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
+            </div>
+            <div className="field">
+              <label>Lokacioni i saktë në hartë <span style={{ fontWeight: 400, color: '#aaa' }}>(opsional)</span></label>
+              <MapPicker
+                lat={form.latitude}
+                lng={form.longitude}
+                address={form.location_address}
+                onChange={(lat, lng, address) => setForm(f => ({ ...f, latitude: lat, longitude: lng, location_address: address }))}
+              />
             </div>
           </div>
 
