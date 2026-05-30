@@ -656,9 +656,11 @@ export default function ListingPage({ params }: { params: { id: string } }) {
           ) : (
             <span style={{ fontSize: 56 }}>📦</span>
           )}
-          <button className="like-btn" onClick={toggleSave}>
-            <i className={`ti ti-heart${liked ? '-filled' : ''}`} style={{ fontSize: 17, color: liked ? '#E63312' : '#ddd' }} />
-          </button>
+          {!isOwner && (
+            <button className="like-btn" onClick={toggleSave}>
+              <i className={`ti ti-heart${liked ? '-filled' : ''}`} style={{ fontSize: 17, color: liked ? '#E63312' : '#ddd' }} />
+            </button>
+          )}
         </div>
 
         {/* Social proof — shikues aktiv + total pamje */}
