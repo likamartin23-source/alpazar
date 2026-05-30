@@ -1,5 +1,26 @@
 name: Deploy to Vercel
 
+# HOW TO FIX DEPLOYMENT (choose ONE option):
+#
+# OPTION A — Deploy Hook (simpler, recommended):
+#   1. Go to vercel.com → Project alpazar → Settings → Git → Deploy Hooks
+#   2. Create a hook named "GitHub Actions" for branch "main"
+#   3. Copy the hook URL
+#   4. Go to github.com/likamartin23-source/alpazar/settings/secrets/actions
+#   5. Add secret: VERCEL_DEPLOY_HOOK = <paste the URL>
+#   Done — every push to main will auto-deploy.
+#
+# OPTION B — API Token (full CLI control):
+#   1. Go to vercel.com/account/tokens → Create token "GitHub Actions"
+#   2. Go to github.com/likamartin23-source/alpazar/settings/secrets/actions
+#   3. Add secret: VERCEL_TOKEN = <paste the token>
+#   Done — every push to main will auto-deploy.
+#
+# OPTION C — Restore native integration (no secrets needed):
+#   Go to vercel.com → Project alpazar → Settings → Git
+#   Click "Disconnect" then "Connect" to re-link the GitHub repo.
+#   This restores the original webhook — no GitHub Actions needed.
+
 on:
   push:
     branches:
@@ -15,29 +36,71 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # ── OPTION A: Deploy Hook (just a curl, no install needed) ──────────────
+      - name: Deploy via hook (if VERCEL_DEPLOY_HOOK is set)
+        if: ${{ env.VERCEL_DEPLOY_HOOK != '' }}
+        run: |
+          echo "Triggering Vercel deploy hook…"
+          curl -s -X POST "$VERCEL_DEPLOY_HOOK" | tee /tmp/hook_response.json
+          echo ""
+          cat /tmp/hook_response.json
+        env:
+          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+
+      # ── OPTION B: CLI with API token ────────────────────────────────────────
       - name: Setup Node.js
+        if: ${{ env.VERCEL_TOKEN != '' && env.VERCEL_DEPLOY_HOOK == '' }}
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
 
       - name: Install Vercel CLI
+        if: ${{ env.VERCEL_TOKEN != '' && env.VERCEL_DEPLOY_HOOK == '' }}
         run: npm install -g vercel@latest
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
 
       - name: Pull Vercel environment
+        if: ${{ env.VERCEL_TOKEN != '' && env.VERCEL_DEPLOY_HOOK == '' }}
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: team_Kkg5W4qnF2t5CQZj64ZS8xbz
           VERCEL_PROJECT_ID: prj_KNCEtuUDGNCA6ulHomdKniNAZEuX
+          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
 
       - name: Build
+        if: ${{ env.VERCEL_TOKEN != '' && env.VERCEL_DEPLOY_HOOK == '' }}
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: team_Kkg5W4qnF2t5CQZj64ZS8xbz
           VERCEL_PROJECT_ID: prj_KNCEtuUDGNCA6ulHomdKniNAZEuX
+          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
 
       - name: Deploy to production
+        if: ${{ env.VERCEL_TOKEN != '' && env.VERCEL_DEPLOY_HOOK == '' }}
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: team_Kkg5W4qnF2t5CQZj64ZS8xbz
           VERCEL_PROJECT_ID: prj_KNCEtuUDGNCA6ulHomdKniNAZEuX
+          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+
+      # ── Neither secret set — warn the user ─────────────────────────────────
+      - name: Warn — no secrets configured
+        if: ${{ env.VERCEL_TOKEN == '' && env.VERCEL_DEPLOY_HOOK == '' }}
+        run: |
+          echo "❌ No deployment secret found."
+          echo ""
+          echo "Add ONE of these secrets to GitHub Actions:"
+          echo "  • VERCEL_DEPLOY_HOOK  (easiest — get URL from Vercel → Settings → Git → Deploy Hooks)"
+          echo "  • VERCEL_TOKEN        (get token from vercel.com/account/tokens)"
+          echo ""
+          echo "Go to: https://github.com/likamartin23-source/alpazar/settings/secrets/actions"
+          exit 1
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
