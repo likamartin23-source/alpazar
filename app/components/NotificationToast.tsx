@@ -78,7 +78,7 @@ export function NotificationToast() {
       {toasts.map(t => (
         <div
           key={t.id}
-          onClick={() => { dismiss(t.id); if (t.link) window.location.href = t.link }}
+          onClick={() => { dismiss(t.id); if (t.link?.startsWith('/')) window.location.href = t.link }}
           style={{
             pointerEvents: 'all',
             maxWidth: 420, width: '100%',
