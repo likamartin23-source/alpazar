@@ -36,6 +36,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
   const [seller, setSeller]           = useState<any>(null)
   const [sellerCount, setSellerCount] = useState(0)
   const [loading, setLoading]         = useState(true)
+  const [similar, setSimilar]         = useState<any[]>([])
   const [imgIdx, setImgIdx]           = useState(0)
   const [user, setUser]               = useState<any>(null)
   const [liked, setLiked]             = useState(false)
@@ -203,6 +204,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
       let sid = typeof window !== 'undefined' ? localStorage.getItem('_alpazar_sid') : null
       if (!sid) { sid = crypto.randomUUID(); if (typeof window !== 'undefined') localStorage.setItem('_alpazar_sid', sid) }
       supabase.rpc('increment_listing_views', { p_listing_id: data.id, p_viewer_id: userRef.current?.id ?? null, p_ip_hash: sid })
+      if (data.category_id) fetchSimilarListings(data.category_id, data.id)
       if (data.user_id) {
         const [{ data: p }, { count }] = await Promise.all([
           supabase.from('profiles').select('*').eq('id', data.user_id).single(),
@@ -214,6 +216,18 @@ export default function ListingPage({ params }: { params: { id: string } }) {
       }
     }
     setLoading(false)
+  }
+
+  async function fetchSimilarListings(categoryId: string, currentId: string) {
+    const { data } = await supabase
+      .from('listings')
+      .select('id,title,price,currency,images,condition,city,is_premium')
+      .eq('category_id', categoryId)
+      .eq('is_active', true)
+      .neq('id', currentId)
+      .order('created_at', { ascending: false })
+      .limit(6)
+    if (data) setSimilar(data)
   }
 
   async function loadPriceAlert(listingId: string) {
@@ -899,6 +913,45 @@ export default function ListingPage({ params }: { params: { id: string } }) {
                   </button>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Similar listings */}
+          {similar.length > 0 && (
+            <div style={{ padding: '0 13px 24px' }}>
+              <div style={{ fontWeight: 700, fontSize: 14, color: '#111', marginBottom: 12 }}>
+                Shpallje të ngjashme
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 9 }}>
+                {similar.map(s => {
+                  const img = Array.isArray(s.images) && s.images.length ? s.images[0] : null
+                  const priceStr = s.currency === 'EUR'
+                    ? `€${Number(s.price).toLocaleString('sq-AL')}`
+                    : `${Number(s.price).toLocaleString('sq-AL')} L`
+                  return (
+                    <div
+                      key={s.id}
+                      onClick={() => { window.location.href = `/listing/${s.id}` }}
+                      style={{ borderRadius: 12, overflow: 'hidden', background: '#fff', border: '1px solid #F0F0F0', boxShadow: '0 1px 6px rgba(0,0,0,0.06)', cursor: 'pointer' }}
+                    >
+                      <div style={{ width: '100%', aspectRatio: '4/3', background: '#F6F6F6', overflow: 'hidden', position: 'relative' }}>
+                        {img
+                          ? <img src={img} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><i className="ti ti-photo" style={{ fontSize: 24, color: '#ccc' }} /></div>
+                        }
+                        {s.is_premium && (
+                          <div style={{ position: 'absolute', top: 5, left: 5, background: 'linear-gradient(90deg,#FFD700,#FFA500)', color: '#7B5000', fontSize: 9, fontWeight: 800, padding: '2px 6px', borderRadius: 5 }}>GOLD</div>
+                        )}
+                      </div>
+                      <div style={{ padding: '7px 8px 9px' }}>
+                        <div style={{ fontSize: 11, fontWeight: 600, color: '#111', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', lineHeight: 1.35, marginBottom: 4 }}>{s.title}</div>
+                        <div style={{ fontSize: 13, fontWeight: 800, color: '#E63312' }}>{priceStr}</div>
+                        {s.city && <div style={{ fontSize: 10, color: '#888', marginTop: 2 }}><i className="ti ti-map-pin" style={{ fontSize: 10 }} /> {s.city}</div>}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
           )}
 
