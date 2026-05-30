@@ -118,19 +118,28 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, id: data?.id })
     }
 
-    // ── welcome: 10 per minute per IP ───────────────────────────────────
+    // ── welcome: authenticated users only — 10 per minute per IP ──────────
     if (type === 'welcome') {
+      // Require a valid session — prevents spamming arbitrary recipients
+      const authHeader = req.headers.get('authorization')
+      const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null
+      if (!token) {
+        return NextResponse.json({ error: 'Jo i autorizuar' }, { status: 401 })
+      }
+      const anonDb = createClient(SUPABASE_URL, SUPABASE_ANON)
+      const { data: { user: authUser }, error: authErr } = await anonDb.auth.getUser(token)
+      if (authErr || !authUser?.email) {
+        return NextResponse.json({ error: 'Sesion i pavlefshëm' }, { status: 401 })
+      }
+
       const rl = rateLimit(`email:welcome:${ip}`, { limit: 10, windowMs: 60_000 })
       if (!rl.allowed) {
         return NextResponse.json({ error: 'Shumë kërkesa.' }, { status: 429 })
       }
 
-      const to   = String(body.email ?? '').trim()
-      const name = String(body.name  ?? '').trim().slice(0, 200)
-
-      if (!to || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) {
-        return NextResponse.json({ error: 'Email mungon ose i pavlefshëm' }, { status: 400 })
-      }
+      // Always send to the authenticated user's own email — never arbitrary targets
+      const to   = authUser.email
+      const name = String(body.name ?? '').trim().slice(0, 200)
 
       const r = await getResend()
       if (!r) return NextResponse.json({ error: 'Email nuk është konfiguruar' }, { status: 503 })

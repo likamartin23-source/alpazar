@@ -146,22 +146,28 @@ function AppConfigTab() {
 
   const save = async (key: string) => {
     const val = localVals[key] ?? ''
-    await supabase.from('app_config').upsert(
+    const { error } = await supabase.from('app_config').upsert(
       { key, value: val, type: CONFIG_SCHEMA.find(s => s.key === key)?.type ?? 'string' },
       { onConflict: 'key' }
     )
-    setSaved(prev => ({ ...prev, [key]: true }))
-    setTimeout(() => setSaved(prev => ({ ...prev, [key]: false })), 2000)
+    if (!error) {
+      setSaved(prev => ({ ...prev, [key]: true }))
+      setTimeout(() => setSaved(prev => ({ ...prev, [key]: false })), 2000)
+    }
   }
 
   const toggleBool = async (key: string) => {
     const cur = (localVals[key] ?? config[key] ?? 'false') === 'true'
     const next = cur ? 'false' : 'true'
     setLocalVals(prev => ({ ...prev, [key]: next }))
-    await supabase.from('app_config').upsert(
+    const { error } = await supabase.from('app_config').upsert(
       { key, value: next, type: 'bool' },
       { onConflict: 'key' }
     )
+    if (error) {
+      // Rollback — DB write failed, restore previous value
+      setLocalVals(prev => ({ ...prev, [key]: cur ? 'true' : 'false' }))
+    }
   }
 
   const boolKeys  = CONFIG_SCHEMA.filter(s => s.type === 'bool')
