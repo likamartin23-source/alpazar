@@ -6,6 +6,7 @@ import { supabase } from '../../../lib/supabase'
 import { getLevel, isNewMember } from '../../components/Badges'
 import { SocialProofBar, SellerPremiumUpsell } from '../../components/PremiumUpsell'
 import { saveRefFromUrl, buildShareUrl } from '../../../lib/referral'
+import { TrustBadge } from '../../components/TrustBadge'
 
 const MapDisplay = dynamic(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), { ssr: false })
 
@@ -636,6 +637,17 @@ export default function ListingPage({ params }: { params: { id: string } }) {
                   {seller.gamification_points > 0 &&
                     <span className="stat-chip"><i className="ti ti-bolt" />{seller.gamification_points} pikë</span>}
                 </div>
+
+                {/* Trust Score */}
+                {seller.created_at && (
+                  <div style={{ marginBottom: 8 }}>
+                    <TrustBadge
+                      createdAt={seller.created_at}
+                      listingsActive={sellerCount}
+                      gamificationPoints={seller.gamification_points || 0}
+                    />
+                  </div>
+                )}
 
                 {/* Bio */}
                 {(seller.bio || seller.shop_description) && (
