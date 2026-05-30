@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAlpazar } from '../../lib/context'
+import { useRealtimeTable } from '../../hooks/useRealtimeTable'
 
 /* ─── Styles ───────────────────────────────────────────────── */
 const CSS = `
@@ -321,6 +322,8 @@ export default function Admin() {
   const [methods, setMethods] = useState<any[]>([])
   const [authChecked, setAuthChecked] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [lastUpdated, setLastUpdated] = useState(new Date())
+  const [liveStats, setLiveStats] = useState({ newListings: 0, newReports: 0 })
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
@@ -376,6 +379,37 @@ export default function Admin() {
     if (error) alert('Gabim: ' + error.message)
     fetchAll()
   }
+
+  // Realtime — listingje të reja
+  useRealtimeTable(
+    'listings',
+    null,
+    () => {
+      setLiveStats(s => ({ ...s, newListings: s.newListings + 1 }))
+      setLastUpdated(new Date())
+    },
+    undefined, undefined, 'INSERT'
+  )
+
+  // Realtime — raporte të reja
+  useRealtimeTable(
+    'reports',
+    null,
+    () => {
+      setLiveStats(s => ({ ...s, newReports: s.newReports + 1 }))
+      setLastUpdated(new Date())
+    },
+    undefined, undefined, 'INSERT'
+  )
+
+  // Auto-refresh stats çdo 5 minuta
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchAll()
+      setLastUpdated(new Date())
+    }, 5 * 60 * 1000)
+    return () => clearInterval(interval)
+  }, [fetchAll])
 
   const isMaint = (config['maintenance_mode'] ?? 'false') === 'true'
 
@@ -442,7 +476,14 @@ export default function Admin() {
                 <>
                   <div className="ph">
                     <div className="pt">📊 Dashboard</div>
-                    <div className="live-dot">● Live</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
+                      <div className="live-dot">● Live</div>
+                      <span style={{ fontSize: 9, color: '#aaa' }}>
+                        {lastUpdated.toLocaleTimeString('sq-AL')}
+                        {liveStats.newListings > 0 && ` · +${liveStats.newListings} listingje`}
+                        {liveStats.newReports > 0 && ` · +${liveStats.newReports} raporte`}
+                      </span>
+                    </div>
                   </div>
                   <div className="stats" style={{ gridTemplateColumns: 'repeat(3,1fr)' }}>
                     <div className="sc"><div className="sn">{stats.users.toLocaleString()}</div><div className="sl">Përdorues total</div></div>
