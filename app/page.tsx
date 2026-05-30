@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import type { Category, Listing } from '../lib/types'
+import { SkeletonGrid } from './components/Skeleton'
 import { getLevel } from './components/Badges'
 import { PremiumUpsellModal } from './components/PremiumUpsell'
 import { useAlpazar } from '../lib/context'
@@ -617,10 +618,7 @@ export default function Home() {
 
           {/* 6. Shpalljet — -30% madhësi */}
           {loading ? (
-            <div className="loading">
-              <span className="spinner" />
-              <div>Duke ngarkuar shpalljet...</div>
-            </div>
+            <SkeletonGrid count={6} />
           ) : (
             <div className="listings-grid">
               {listings.length === 0 ? (

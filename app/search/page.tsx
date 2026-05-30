@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import { SkeletonGrid } from '../components/Skeleton'
 
 const MS_URL = process.env.NEXT_PUBLIC_MEILISEARCH_URL || '/api/meili'
 const MS_KEY = process.env.NEXT_PUBLIC_MEILISEARCH_KEY || 'alpazar_search'
@@ -247,10 +248,7 @@ export default function SearchPage() {
 
         <div className="body">
           {loading ? (
-            <div className="loading">
-              <div className="spinner" />
-              <div>Duke kërkuar...</div>
-            </div>
+            <SkeletonGrid count={6} />
           ) : !searched ? (
             <div className="initial">
               <i className="ti ti-search" />

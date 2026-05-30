@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { supabase } from '../../lib/supabase'
 import { getLevel, isNewMember } from '../components/Badges'
+import { SkeletonProfile, SkeletonList } from '../components/Skeleton'
 
 const SHOP_CATEGORIES = [
   { id: '', label: '— Zgjidh kategorinë —' },
@@ -220,9 +221,11 @@ export default function ProfilePage() {
   const [smt, smm] = shopMsg.split(/:(.+)/)
 
   if (loading) return (
-    <div style={{ textAlign: 'center', padding: 60, maxWidth: 480, margin: '0 auto' }}>
-      <div style={{ width: 28, height: 28, border: '3px solid #F5C842', borderTopColor: '#E63312', borderRadius: '50%', animation: 'spin .7s linear infinite', margin: '0 auto 10px' }} />
-      <style>{`@keyframes spin{to{transform:rotate(360deg);}}`}</style>
+    <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh' }}>
+      <div style={{ background: '#F5C842', height: 52 }} />
+      <SkeletonProfile />
+      <div style={{ height: 1, background: '#f0f0f0' }} />
+      <SkeletonList count={4} />
     </div>
   )
 
