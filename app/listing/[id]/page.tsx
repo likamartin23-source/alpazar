@@ -64,15 +64,17 @@ export default function ListingPage({ params }: { params: { id: string } }) {
   async function submitReport() {
     if (!reportReason) return
     setReportLoading(true)
-    await supabase.from('reports').insert({
+    const { error } = await supabase.from('reports').insert({
       listing_id: params.id,
       reporter_id: user?.id || null,
       reason: reportReason,
       status: 'pending',
     })
-    setReportSent(true)
     setReportLoading(false)
-    setTimeout(() => setReportOpen(false), 1800)
+    if (!error) {
+      setReportSent(true)
+      setTimeout(() => setReportOpen(false), 1800)
+    }
   }
 
   // Chat bottom sheet
