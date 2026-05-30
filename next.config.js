@@ -3,6 +3,10 @@ const nextConfig = {
   typescript: { ignoreBuildErrors: true },
   eslint: { ignoreDuringBuilds: true },
 
+  env: {
+    NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: 'AIzaSyCelKjnVE8zKIc0Cyq_pecSIv6Q3YbMk6U',
+  },
+
   // ── Module 2: Performance optimization ─────────────────────────
   compress: true,
   poweredByHeader: false,
