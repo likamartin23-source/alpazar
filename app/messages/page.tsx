@@ -353,8 +353,10 @@ export default function MessagesPage() {
   /* ── Reactions ────────────────────────────────── */
   async function sendReaction(msgId: string, emoji: string) {
     setReactionMsg(null)
+    const prev_reaction = messages.find(m => m.id === msgId)?.reaction ?? null
     setMessages(prev => prev.map(m => m.id === msgId ? { ...m, reaction: emoji } : m))
-    await supabase.from('messages').update({ reaction: emoji }).eq('id', msgId)
+    const { error } = await supabase.from('messages').update({ reaction: emoji }).eq('id', msgId)
+    if (error) setMessages(prev => prev.map(m => m.id === msgId ? { ...m, reaction: prev_reaction } : m))
   }
 
   /* ── Block / Unblock ──────────────────────────── */
@@ -363,10 +365,11 @@ export default function MessagesPage() {
     const otherId = selected?.otherId
     if (!myId || !otherId) return
     setShowBlockConfirm(false)
-    await supabase.from('blocks').upsert(
+    const { error } = await supabase.from('blocks').upsert(
       { blocker_id: myId, blocked_id: otherId },
       { onConflict: 'blocker_id,blocked_id' }
     )
+    if (error) return
     setBlockedIds(prev => new Set([...prev, otherId]))
     back()
   }
@@ -374,7 +377,8 @@ export default function MessagesPage() {
   async function unblockUser(otherId: string) {
     const myId = userRef.current?.id
     if (!myId) return
-    await supabase.from('blocks').delete().eq('blocker_id', myId).eq('blocked_id', otherId)
+    const { error } = await supabase.from('blocks').delete().eq('blocker_id', myId).eq('blocked_id', otherId)
+    if (error) return
     setBlockedIds(prev => { const s = new Set(prev); s.delete(otherId); return s })
     fetchThreads(myId)
   }
