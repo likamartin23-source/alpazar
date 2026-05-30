@@ -200,7 +200,9 @@ export default function ListingPage({ params }: { params: { id: string } }) {
     if (data) {
       setListing(data)
       listingRef.current = data
-      supabase.rpc('increment_listing_views', { p_listing_id: data.id, p_viewer_id: userRef.current?.id ?? null, p_ip_hash: null })
+      let sid = typeof window !== 'undefined' ? localStorage.getItem('_alpazar_sid') : null
+      if (!sid) { sid = crypto.randomUUID(); if (typeof window !== 'undefined') localStorage.setItem('_alpazar_sid', sid) }
+      supabase.rpc('increment_listing_views', { p_listing_id: data.id, p_viewer_id: userRef.current?.id ?? null, p_ip_hash: sid })
       if (data.user_id) {
         const [{ data: p }, { count }] = await Promise.all([
           supabase.from('profiles').select('*').eq('id', data.user_id).single(),
