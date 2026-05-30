@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useParams } from 'next/navigation'
 import { supabase } from '../../../lib/supabase'
 import { saveRefFromUrl, buildShareUrl } from '../../../lib/referral'
@@ -22,6 +22,9 @@ export default function ShopDetailPage() {
   const [shareOpen, setShareOpen] = useState(false)
   const [linkCopied, setLinkCopied] = useState(false)
   const [activeFilter, setActiveFilter] = useState('all')
+  const [rtTick, setRtTick] = useState(0)
+  const channelRef = useRef<any>(null)
+
   useEffect(() => {
     saveRefFromUrl()
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -34,9 +37,28 @@ export default function ShopDetailPage() {
     if (shopId) fetchShop()
   }, [shopId])
 
+  // Realtime: listings + shop profile updates
+  useEffect(() => {
+    if (!shopId) return
+    if (channelRef.current) supabase.removeChannel(channelRef.current)
+    const ch = supabase
+      .channel(`shop-rt-${shopId}`)
+      .on('postgres_changes', {
+        event: '*', schema: 'public', table: 'listings',
+        filter: `user_id=eq.${shopId}`,
+      }, () => setRtTick(n => n + 1))
+      .on('postgres_changes', {
+        event: 'UPDATE', schema: 'public', table: 'profiles',
+        filter: `id=eq.${shopId}`,
+      }, (payload) => setShop(payload.new as any))
+      .subscribe()
+    channelRef.current = ch
+    return () => { if (channelRef.current) supabase.removeChannel(channelRef.current) }
+  }, [shopId])
+
   useEffect(() => {
     if (shop) fetchListings()
-  }, [activeFilter, shop])
+  }, [activeFilter, shop, rtTick])
 
   async function fetchShop() {
     setLoading(true)

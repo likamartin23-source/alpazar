@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import dynamic from 'next/dynamic'
 import { Analytics } from '@vercel/analytics/next'
+import '@tabler/icons-webfont/dist/tabler-icons.min.css'
 
 const AiFloat            = dynamic(() => import('./components/AiFloat'),            { ssr: false })
 const AlpazarProviderDyn = dynamic(() => import('../lib/context').then(m => ({ default: m.AlpazarProvider })), { ssr: false })
@@ -78,9 +79,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Module 2: Performance — DNS prefetch for external origins */}
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
         <link rel="dns-prefetch" href="https://sopafwfkrxpcdaljddoh.supabase.co" />
-        <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
         <link rel="preconnect" href="https://sopafwfkrxpcdaljddoh.supabase.co" crossOrigin="anonymous" />
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
         {/* Module 6: Vercel Web Analytics — 100% falas, GDPR-compliant, zero konfigurim */}

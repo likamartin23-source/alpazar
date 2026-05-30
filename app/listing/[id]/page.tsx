@@ -114,6 +114,19 @@ export default function ListingPage({ params }: { params: { id: string } }) {
       }
     })
     fetchListing()
+
+    // Realtime: track listing status changes (sold, deactivated, price changes)
+    const lsCh = supabase
+      .channel(`listing-status-${params.id}`)
+      .on('postgres_changes', {
+        event: 'UPDATE', schema: 'public', table: 'listings',
+        filter: `id=eq.${params.id}`,
+      }, (payload) => {
+        setListing((prev: any) => prev ? { ...prev, ...payload.new } : payload.new)
+        listingRef.current = { ...(listingRef.current || {}), ...payload.new }
+      })
+      .subscribe()
+    return () => { supabase.removeChannel(lsCh) }
   }, [])
 
   // Load chat once both user and seller are known

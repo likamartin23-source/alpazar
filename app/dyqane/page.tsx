@@ -65,6 +65,18 @@ export default function DyqanePage() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => setUser(session?.user ?? null))
     fetchShops()
+    // Poll every 90s + Realtime for premium shop changes
+    const poll = setInterval(fetchShops, 90_000)
+    const ch = supabase
+      .channel('shops-rt')
+      .on('postgres_changes', {
+        event: '*', schema: 'public', table: 'profiles',
+      }, fetchShops)
+      .subscribe()
+    return () => {
+      clearInterval(poll)
+      supabase.removeChannel(ch)
+    }
   }, [])
 
   useEffect(() => {
