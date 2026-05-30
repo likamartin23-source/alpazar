@@ -3,10 +3,11 @@ import dynamic from 'next/dynamic'
 import { Analytics } from '@vercel/analytics/next'
 import '@tabler/icons-webfont/dist/tabler-icons.min.css'
 
-const AiFloat            = dynamic(() => import('./components/AiFloat'),            { ssr: false })
-const AlpazarProviderDyn = dynamic(() => import('../lib/context').then(m => ({ default: m.AlpazarProvider })), { ssr: false })
-const NotificationToast  = dynamic(() => import('./components/NotificationToast').then(m => ({ default: m.NotificationToast })), { ssr: false })
-const MaintenanceBanner  = dynamic(() => import('./components/MaintenanceBanner').then(m => ({ default: m.MaintenanceBanner })), { ssr: false })
+const AiFloat               = dynamic(() => import('./components/AiFloat'),            { ssr: false })
+const AlpazarProviderDyn    = dynamic(() => import('../lib/context').then(m => ({ default: m.AlpazarProvider })), { ssr: false })
+const NotificationToast     = dynamic(() => import('./components/NotificationToast').then(m => ({ default: m.NotificationToast })), { ssr: false })
+const MaintenanceBanner     = dynamic(() => import('./components/MaintenanceBanner').then(m => ({ default: m.MaintenanceBanner })), { ssr: false })
+const GlobalErrorBoundaryDyn = dynamic(() => import('../lib/error-handler').then(m => ({ default: m.GlobalErrorBoundary })), { ssr: false })
 
 const SITE_URL = 'https://alpazar.vercel.app'
 
@@ -115,6 +116,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body style={{ margin: 0, background: '#FFFBEA', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
         <AlpazarProviderDyn>
+          <GlobalErrorBoundaryDyn>
           <MaintenanceBanner />
           <NotificationToast />
           {children}
@@ -135,6 +137,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <div style={{ fontSize: 10, color: '#444' }}>© 2025 Alpazar · Tiranë, Shqipëri · Të gjitha të drejtat e rezervuara</div>
             </div>
           </footer>
+          </GlobalErrorBoundaryDyn>
         </AlpazarProviderDyn>
       </body>
     </html>
