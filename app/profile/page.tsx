@@ -271,9 +271,9 @@ export default function ProfilePage() {
         .stat-l{font-size:9px;color:#666;margin-top:2px;}
         /* Tabs */
         .tabs{display:flex;background:#fff;border-bottom:1.5px solid #eee;}
-        .tab{flex:1;padding:12px;text-align:center;font-size:11px;font-weight:600;color:#999;border:none;background:none;cursor:pointer;font-family:inherit;border-bottom:2.5px solid transparent;transition:all .15s;}
+        .tab{flex:1;padding:9px 2px;text-align:center;font-size:9.5px;font-weight:600;color:#999;border:none;background:none;cursor:pointer;font-family:inherit;border-bottom:2.5px solid transparent;transition:all .15s;}
         .tab.active{color:#E63312;border-bottom-color:#E63312;font-weight:700;}
-        .tab i{font-size:15px;display:block;margin-bottom:3px;}
+        .tab i{font-size:14px;display:block;margin-bottom:2px;}
         .body{padding:12px 10px;}
         .msg-box{border-radius:9px;padding:10px 14px;margin-bottom:12px;font-size:12px;font-weight:600;}
         .ok{background:#EAF3DE;color:#3B6D11;border:0.5px solid #97C459;}
