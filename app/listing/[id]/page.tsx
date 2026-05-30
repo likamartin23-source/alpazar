@@ -200,7 +200,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
     if (data) {
       setListing(data)
       listingRef.current = data
-      supabase.rpc('increment_listing_views', { lid: data.id })
+      supabase.rpc('increment_listing_views', { p_listing_id: data.id, p_viewer_id: userRef.current?.id ?? null, p_ip_hash: null })
       if (data.user_id) {
         const [{ data: p }, { count }] = await Promise.all([
           supabase.from('profiles').select('*').eq('id', data.user_id).single(),
