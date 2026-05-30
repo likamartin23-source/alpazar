@@ -70,7 +70,7 @@ const FAQ: Array<{ keys: string[]; answer: string }> = [
   },
   {
     keys: ['favorit', 'ruaj', 'bookmark', 'ruajtur'],
-    answer: 'Kliko ikonën **❤️** në çdo shpallje për ta shtuar te Të Preferuarat. I gjen te Profili → Të Preferuara. 💝',
+    answer: 'Kliko ikonën **❤️** në çdo shpallje për ta ruajtur. I gjen te Profili → tab **"Të ruajtura"**. 💝',
   },
   {
     keys: ['foto', 'imazh', 'foto ngarko', 'upload'],
