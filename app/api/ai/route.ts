@@ -48,6 +48,9 @@ export async function POST(req: NextRequest) {
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return NextResponse.json({ error: 'Mesazhe të pavlefshme' }, { status: 400 })
     }
+    if (messages.length > 50) {
+      return NextResponse.json({ error: 'Shumë mesazhe' }, { status: 400 })
+    }
 
     // Validim: max 20 mesazhe, max 1000 karaktere/mesazh, vetëm role user/assistant
     const ALLOWED_ROLES = new Set(['user', 'assistant'])

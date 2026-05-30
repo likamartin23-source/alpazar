@@ -113,11 +113,10 @@ export default function ReferralPage() {
     if (p) {
       setProfile(p)
       const code = p.referral_code || p.username || uid.replace(/-/g,'').slice(0,8).toUpperCase()
-      const codes = [...new Set([p.referral_code, p.username, code].filter(Boolean))]
-      const orClause = codes.map((c: string) => `referred_by.eq.${c}`).join(',')
+      const codes = [...new Set([p.referral_code, p.username, code].filter(Boolean))] as string[]
       const { data: refs } = await supabase.from('profiles')
         .select('id,full_name,username,created_at')
-        .or(orClause)
+        .in('referred_by', codes)
         .order('created_at', { ascending: false }).limit(20)
       if (refs) setReferrals(refs)
     }
