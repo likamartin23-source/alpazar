@@ -118,7 +118,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
         category_id: form.category_id,
         city: form.city,
         images: allImages,
-      }).eq('id', params.id)
+      }).eq('id', params.id).eq('user_id', user.id)
 
       if (error) { setMsg(`err:${error.message}`); setLoading(false); return }
       setMsg('ok:Shpallja u përditësua me sukses!')
