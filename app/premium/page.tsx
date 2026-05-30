@@ -35,6 +35,16 @@ export default function PremiumPage() {
     })
   }, [])
 
+  async function onPaymentSuccess(userId: string) {
+    const { error } = await supabase.from('profiles').update({ is_premium: true }).eq('id', userId)
+    if (error) {
+      alert('Gabim gjatë aktivizimit. Kontakto support.')
+      return
+    }
+    await supabase.auth.refreshSession()
+    window.location.href = '/?premium=activated'
+  }
+
   async function subscribe() {
     if (!user) { window.location.href = '/auth/login'; return }
     if (!payMethod) { setMsg('err:Zgjidh metodën e pagesës!'); return }
@@ -53,6 +63,8 @@ export default function PremiumPage() {
       status: 'pending',
     })
     if (error) { setMsg(`err:${error.message}`); setSubmitting(false); return }
+    // Rifresko session për claims të reja pas dërgimit të kërkesës
+    await supabase.auth.refreshSession()
     setMsg('ok:Kërkesa u dërgua! Admini do ta konfirmojë brenda 24 orësh.')
     setSubmitting(false)
   }
