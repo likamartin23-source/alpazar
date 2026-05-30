@@ -552,6 +552,18 @@ export default function ProfilePage() {
           {/* Listings Tab */}
           {activeTab === 'listings' && (
             <>
+              <button
+                style={{ width: '100%', background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 13, padding: '14px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}
+                onClick={() => window.location.href = '/profile/analytics'}
+              >
+                <i className="ti ti-chart-bar" style={{ fontSize: 20 }} />
+                <div style={{ textAlign: 'left' }}>
+                  <div>📊 Statistikat e Shpalljeve</div>
+                  <div style={{ fontSize: 10, fontWeight: 500, opacity: 0.85, marginTop: 2 }}>Pamje, kontaktime, CTR — 7 ose 30 ditë</div>
+                </div>
+                <i className="ti ti-chevron-right" style={{ fontSize: 16, marginLeft: 'auto' }} />
+              </button>
+
               <div className="card">
                 <div className="card-hdr">
                   <span className="card-title">Shpalljet e mia ({myListings.filter(l => l.is_active).length})</span>
