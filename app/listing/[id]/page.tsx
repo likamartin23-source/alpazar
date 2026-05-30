@@ -65,6 +65,38 @@ export default function ListingPage({ params }: { params: { id: string } }) {
     'Tjetër',
   ]
 
+  async function submitReview() {
+    if (!user || !seller || reviewStars === 0) return
+    setReviewSaving(true); setReviewMsg('')
+    try {
+      // Kontroll: a ka biseduar user-i me shitësin? (proxy për blerje të verifikuar)
+      const { count: msgCount } = await supabase
+        .from('messages')
+        .select('*', { count: 'exact', head: true })
+        .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`)
+        .or(`sender_id.eq.${seller.id},receiver_id.eq.${seller.id}`)
+        .eq('listing_id', params.id)
+
+      const isVerified = (msgCount || 0) >= 3
+
+      const { error } = await supabase.from('reviews').upsert({
+        reviewer_id: user.id,
+        seller_id: seller.id,
+        listing_id: params.id,
+        stars: reviewStars,
+        comment: reviewComment.trim() || null,
+        purchase_verified: isVerified,
+      }, { onConflict: 'reviewer_id,listing_id' })
+
+      if (error) { setReviewMsg(`err:${error.message}`); return }
+      setMyReview({ stars: reviewStars, comment: reviewComment, purchase_verified: isVerified })
+      setReviewMsg('ok:Faleminderit! Vlerësimi u ruajt.')
+    } catch (e: any) {
+      setReviewMsg(`err:${e.message}`)
+    }
+    setReviewSaving(false)
+  }
+
   async function submitReport() {
     if (!reportReason) return
     setReportLoading(true)
@@ -108,6 +140,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
       setUser(session?.user ?? null)
       userRef.current = session?.user ?? null
       if (session?.user) {
+        loadMyReview(params.id, session.user.id)
         supabase.from('profiles')
           .select('referral_code,username')
           .eq('id', session.user.id)
@@ -166,6 +199,20 @@ export default function ListingPage({ params }: { params: { id: string } }) {
       }
     }
     setLoading(false)
+  }
+
+  async function loadMyReview(listingId: string, userId: string) {
+    const { data } = await supabase
+      .from('reviews')
+      .select('*')
+      .eq('listing_id', listingId)
+      .eq('reviewer_id', userId)
+      .maybeSingle()
+    if (data) {
+      setMyReview(data)
+      setReviewStars(data.stars)
+      setReviewComment(data.comment || '')
+    }
   }
 
   async function loadChat(myId: string, otherId: string, lst: any) {
@@ -687,6 +734,59 @@ export default function ListingPage({ params }: { params: { id: string } }) {
                 style={{ flex: 1, background: '#F5C842', color: '#111', border: 'none', borderRadius: 10, padding: '10px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
                 <i className="ti ti-pencil" style={{ fontSize: 14 }} />Ndrysho
               </button>
+            </div>
+          )}
+
+          {/* Review section — vetëm vizitorë jo-pronar të loguar */}
+          {!isOwner && user && seller && (
+            <div style={{ padding: '0 13px 14px' }}>
+              <div className="divider" style={{ marginBottom: 12 }} />
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '.5px', marginBottom: 10 }}>
+                Vlerëso shitësin
+              </div>
+
+              {myReview ? (
+                <div style={{ background: '#EAF3DE', border: '0.5px solid #97C459', borderRadius: 10, padding: '10px 13px', fontSize: 12 }}>
+                  <div style={{ color: '#3B6D11', fontWeight: 700, marginBottom: 4 }}>
+                    {'⭐'.repeat(myReview.stars)} Vlerësimi yt u ruajt
+                    {myReview.purchase_verified && (
+                      <span style={{ marginLeft: 6, background: '#0E7A35', color: '#fff', fontSize: 9.5, fontWeight: 700, padding: '1px 6px', borderRadius: 6 }}>✅ Blerje e verifikuar</span>
+                    )}
+                  </div>
+                  {myReview.comment && <div style={{ color: '#555' }}>{myReview.comment}</div>}
+                </div>
+              ) : (
+                <div style={{ background: '#fff', border: '0.5px solid #eee', borderRadius: 10, padding: '12px 13px' }}>
+                  {/* Yjet */}
+                  <div style={{ display: 'flex', gap: 5, marginBottom: 10 }}>
+                    {[1, 2, 3, 4, 5].map(s => (
+                      <button key={s} onClick={() => setReviewStars(s)}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, padding: 0, opacity: s <= reviewStars ? 1 : 0.3 }}>
+                        ⭐
+                      </button>
+                    ))}
+                  </div>
+                  {/* Koment */}
+                  <textarea
+                    placeholder="Komenti (opsional)..."
+                    value={reviewComment}
+                    onChange={e => setReviewComment(e.target.value)}
+                    maxLength={300}
+                    style={{ width: '100%', border: '1.5px solid #ddd', borderRadius: 9, padding: '8px 11px', fontSize: 12, fontFamily: 'inherit', outline: 'none', resize: 'none', minHeight: 60, color: '#111', background: '#fff', boxSizing: 'border-box' }}
+                  />
+                  {reviewMsg && (
+                    <div style={{ fontSize: 11, marginTop: 6, color: reviewMsg.startsWith('ok:') ? '#3B6D11' : '#E63312', fontWeight: 600 }}>
+                      {reviewMsg.split(/:(.+)/)[1]}
+                    </div>
+                  )}
+                  <button
+                    onClick={submitReview}
+                    disabled={reviewStars === 0 || reviewSaving}
+                    style={{ marginTop: 8, width: '100%', background: reviewStars ? '#E63312' : '#ccc', color: '#fff', border: 'none', borderRadius: 9, padding: '10px', fontSize: 12, fontWeight: 700, cursor: reviewStars ? 'pointer' : 'not-allowed', fontFamily: 'inherit' }}>
+                    {reviewSaving ? '⏳ Duke ruajtur...' : '⭐ Dërgo vlerësimin'}
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
