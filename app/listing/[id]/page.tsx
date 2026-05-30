@@ -169,6 +169,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
 
     supabase.from('messages').update({ read: true })
       .eq('receiver_id', myId).eq('sender_id', otherId).eq('read', false)
+      .then()
 
     if (channelRef.current) supabase.removeChannel(channelRef.current)
     const ch = supabase
@@ -180,7 +181,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
         const m = payload.new as any
         if (m.sender_id !== otherId) return
         setChatMsgs(prev => prev.find(x => x.id === m.id) ? prev : [...prev, m])
-        supabase.from('messages').update({ read: true }).eq('id', m.id)
+        supabase.from('messages').update({ read: true }).eq('id', m.id).then()
       })
       .on('broadcast', { event: 'typing' }, ({ payload }: any) => {
         if (payload.userId !== otherId) return
