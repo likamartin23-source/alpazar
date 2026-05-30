@@ -50,6 +50,13 @@ export default function ListingPage({ params }: { params: { id: string } }) {
   const [reviewMsg, setReviewMsg]     = useState('')
   const [reviewSaving, setReviewSaving] = useState(false)
 
+  // Price Alert
+  const [priceAlert, setPriceAlert]         = useState<any>(null)
+  const [alertOpen, setAlertOpen]           = useState(false)
+  const [alertTarget, setAlertTarget]       = useState('')
+  const [alertSaving, setAlertSaving]       = useState(false)
+  const [alertMsg, setAlertMsg]             = useState('')
+
   // Report
   const [reportOpen, setReportOpen]   = useState(false)
   const [reportReason, setReportReason] = useState('')
@@ -141,6 +148,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
       userRef.current = session?.user ?? null
       if (session?.user) {
         loadMyReview(params.id, session.user.id)
+        loadPriceAlert(params.id)
         supabase.from('profiles')
           .select('referral_code,username')
           .eq('id', session.user.id)
@@ -199,6 +207,59 @@ export default function ListingPage({ params }: { params: { id: string } }) {
       }
     }
     setLoading(false)
+  }
+
+  async function loadPriceAlert(listingId: string) {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) return
+    try {
+      const res = await fetch(`/api/price-alerts?listing_id=${listingId}`, {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      })
+      const json = await res.json()
+      if (json.alert) {
+        setPriceAlert(json.alert)
+        setAlertTarget(String(json.alert.target_price))
+      }
+    } catch {}
+  }
+
+  async function saveAlert() {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) { window.location.href = '/auth/login'; return }
+    const price = parseFloat(alertTarget)
+    if (!price || price <= 0) { setAlertMsg('err:Vendos një çmim të vlefshëm'); return }
+    setAlertSaving(true); setAlertMsg('')
+    try {
+      const res = await fetch('/api/price-alerts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({ listing_id: params.id, target_price: price }),
+      })
+      const json = await res.json()
+      if (!res.ok) { setAlertMsg(`err:${json.error}`); return }
+      setPriceAlert(json.alert)
+      setAlertMsg('ok:Alarmi u ruajt! Do të njoftohesh kur çmimi ulet.')
+      setTimeout(() => setAlertOpen(false), 1800)
+    } catch (e: any) {
+      setAlertMsg(`err:${e.message}`)
+    }
+    setAlertSaving(false)
+  }
+
+  async function deleteAlert() {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) return
+    setAlertSaving(true)
+    try {
+      await fetch(`/api/price-alerts?listing_id=${params.id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      })
+      setPriceAlert(null); setAlertTarget(''); setAlertMsg('')
+      setAlertOpen(false)
+    } catch {}
+    setAlertSaving(false)
   }
 
   async function loadMyReview(listingId: string, userId: string) {
@@ -462,6 +523,20 @@ export default function ListingPage({ params }: { params: { id: string } }) {
         .map-link{display:inline-flex;align-items:center;gap:6px;background:#EEF4FF;color:#185FA5;border:1px solid #C3DAFB;border-radius:9px;padding:7px 13px;font-size:12px;font-weight:600;text-decoration:none;margin-top:8px;}
         .map-link i{font-size:14px;}
 
+        /* Price alert modal */
+        .alert-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:300;animation:fadeIn .2s;}
+        .alert-panel{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-radius:18px 18px 0 0;z-index:310;padding:20px 18px 36px;box-shadow:0 -4px 24px rgba(0,0,0,.15);}
+        .alert-handle{width:36px;height:4px;background:#ddd;border-radius:4px;margin:0 auto 16px;}
+        .alert-title{font-size:16px;font-weight:800;color:#111;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+        .alert-sub{font-size:12px;color:#888;margin-bottom:16px;}
+        .alert-input{width:100%;border:1.5px solid #ddd;border-radius:11px;padding:12px 14px;font-size:15px;font-weight:700;color:#111;box-sizing:border-box;font-family:inherit;outline:none;}
+        .alert-input:focus{border-color:#E63312;}
+        .alert-btn-row{display:flex;gap:8px;margin-top:14px;}
+        .alert-save{flex:1;background:#E63312;color:#fff;border:none;border-radius:11px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .alert-save:disabled{opacity:.5;cursor:not-allowed;}
+        .alert-del{width:48px;background:#FFF0EE;color:#E63312;border:1.5px solid #FFCDD2;border-radius:11px;padding:13px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+        .alert-msg{font-size:12px;text-align:center;margin-top:8px;font-weight:600;}
+
         @keyframes spin{to{transform:rotate(360deg);}}
 
         /* Report modal */
@@ -585,7 +660,24 @@ export default function ListingPage({ params }: { params: { id: string } }) {
           </div>
 
           <h1>{listing.title}</h1>
-          <div className="price">{fmt(listing.price, listing.currency)}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <div className="price">{fmt(listing.price, listing.currency)}</div>
+            {user && !isOwner && listing.is_active && (
+              <button
+                onClick={() => setAlertOpen(true)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 5,
+                  background: priceAlert ? '#FFF8E1' : '#F0F7FF',
+                  color: priceAlert ? '#856404' : '#185FA5',
+                  border: `1.5px solid ${priceAlert ? '#FFE082' : '#C3DAFB'}`,
+                  borderRadius: 9, padding: '5px 11px', fontSize: 12,
+                  fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+                }}>
+                <i className={`ti ti-bell${priceAlert ? '-ringing' : ''}`} style={{ fontSize: 14 }} />
+                {priceAlert ? `🔔 ${priceAlert.target_price} ALL` : 'Njoftomë'}
+              </button>
+            )}
+          </div>
 
           {/* Meta row: condition + city + date + category + views */}
           <div className="meta">
@@ -801,6 +893,59 @@ export default function ListingPage({ params }: { params: { id: string } }) {
           )}
         </div>
       </div>
+
+      {/* ── PRICE ALERT MODAL ── */}
+      {alertOpen && (
+        <>
+          <div className="alert-overlay" onClick={() => { setAlertOpen(false); setAlertMsg('') }} />
+          <div className="alert-panel">
+            <div className="alert-handle" />
+            <div className="alert-title">
+              <i className="ti ti-bell-ringing" style={{ color: '#E63312' }} />
+              Alarmi i Çmimit
+            </div>
+            <div className="alert-sub">
+              Do të njoftohesh kur çmimi të bjerë poshtë kufirit që vendos.
+              {priceAlert && !priceAlert.triggered && (
+                <span style={{ color: '#856404', background: '#FFF8E1', border: '1px solid #FFE082', borderRadius: 7, padding: '2px 8px', marginLeft: 6, fontSize: 11 }}>
+                  Aktiv: {priceAlert.target_price} ALL
+                </span>
+              )}
+              {priceAlert?.triggered && (
+                <span style={{ color: '#2e7d32', background: '#E8F5E9', border: '1px solid #A5D6A7', borderRadius: 7, padding: '2px 8px', marginLeft: 6, fontSize: 11 }}>
+                  ✅ U aktivizua
+                </span>
+              )}
+            </div>
+            <div style={{ fontSize: 12, color: '#888', marginBottom: 8 }}>
+              Çmimi aktual: <strong style={{ color: '#111' }}>{fmt(listing?.price, listing?.currency)}</strong>
+            </div>
+            <input
+              className="alert-input"
+              type="number"
+              placeholder="Çmimi target (p.sh. 5000)"
+              value={alertTarget}
+              onChange={e => setAlertTarget(e.target.value)}
+              min={1}
+            />
+            <div className="alert-btn-row">
+              {priceAlert && (
+                <button className="alert-del" onClick={deleteAlert} disabled={alertSaving} title="Fshi alarmin">
+                  <i className="ti ti-trash" />
+                </button>
+              )}
+              <button className="alert-save" onClick={saveAlert} disabled={alertSaving || !alertTarget}>
+                {alertSaving ? 'Duke ruajtur...' : priceAlert ? 'Përditëso alarmin' : 'Aktivizo alarmin 🔔'}
+              </button>
+            </div>
+            {alertMsg && (
+              <div className="alert-msg" style={{ color: alertMsg.startsWith('ok:') ? '#2e7d32' : '#E63312' }}>
+                {alertMsg.replace(/^(ok|err):/, '')}
+              </div>
+            )}
+          </div>
+        </>
+      )}
 
       {/* ── REPORT MODAL ── */}
       {reportOpen && (
