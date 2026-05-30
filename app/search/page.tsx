@@ -72,8 +72,9 @@ export default function SearchPage() {
     setLoading(true); setSearched(true)
 
     // Build filter array for Meilisearch-compatible API
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
     const filters: string[] = ['is_active = true']
-    if (cat)  filters.push(`category_id = "${cat}"`)
+    if (cat && UUID_RE.test(cat))  filters.push(`category_id = "${cat}"`)
     if (cond) filters.push(`condition = "${cond}"`)
     if (city) filters.push(`city = "${city}"`)
 
