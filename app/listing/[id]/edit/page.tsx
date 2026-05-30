@@ -1,7 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import dynamic from 'next/dynamic'
 import { supabase } from '../../../../lib/supabase'
+
+const MapPicker = dynamic(() => import('../../../components/MapPicker').then(m => ({ default: m.MapPicker })), { ssr: false })
 
 const CITIES = ['Tiranë', 'Durrës', 'Vlorë', 'Shkodër', 'Elbasan', 'Fier', 'Korçë', 'Berat', 'Lushnjë', 'Kavajë', 'Gjirokastër', 'Sarandë', 'Lezhë', 'Kukës', 'Pogradec', 'Peshkopi', 'Tropojë', 'Përmet', 'Tepelenë', 'Tjetër']
 
@@ -14,6 +17,9 @@ export default function EditListing({ params }: { params: { id: string } }) {
   const [form, setForm]       = useState({
     title: '', description: '', price: '', currency: 'ALL',
     condition: '', category_id: '', city: '', images: [] as string[],
+    latitude: null as number | null,
+    longitude: null as number | null,
+    location_address: '',
   })
   const [imageFiles, setImageFiles]     = useState<File[]>([])
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
@@ -50,6 +56,9 @@ export default function EditListing({ params }: { params: { id: string } }) {
         category_id: listing.category_id || '',
         city: listing.city || '',
         images: listing.images || [],
+        latitude: listing.latitude ?? null,
+        longitude: listing.longitude ?? null,
+        location_address: listing.location_address || '',
       })
       setPageLoading(false)
     })
@@ -118,6 +127,9 @@ export default function EditListing({ params }: { params: { id: string } }) {
         category_id: form.category_id,
         city: form.city,
         images: allImages,
+        latitude: form.latitude,
+        longitude: form.longitude,
+        location_address: form.location_address || null,
       }).eq('id', params.id).eq('user_id', user.id)
 
       if (error) { setMsg(`err:${error.message}`); setLoading(false); return }
@@ -254,6 +266,15 @@ export default function EditListing({ params }: { params: { id: string } }) {
                 <option value="">— Zgjidh qytetin —</option>
                 {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
+            </div>
+            <div className="field">
+              <label>Lokacioni i saktë në hartë <span style={{ fontWeight: 400, color: '#aaa' }}>(opsional)</span></label>
+              <MapPicker
+                lat={form.latitude}
+                lng={form.longitude}
+                address={form.location_address}
+                onChange={(lat, lng, address) => setForm(f => ({ ...f, latitude: lat, longitude: lng, location_address: address }))}
+              />
             </div>
           </div>
 
