@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
   // 2. Pamje për ditë (raw aggregate)
   const { data: rawViews } = await sb
     .from('listing_views')
-    .select('viewed_at')
+    .select('viewed_at,listing_id')
     .in('listing_id', listingIds)
     .gte('viewed_at', since)
 

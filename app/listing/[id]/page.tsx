@@ -156,6 +156,11 @@ export default function ListingPage({ params }: { params: { id: string } }) {
           .then(({ data: p }) => {
             if (p) setMyRefCode(p.referral_code || p.username || null)
           })
+        supabase.from('saved_listings')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', session.user.id)
+          .eq('listing_id', params.id)
+          .then(({ count }) => { if ((count ?? 0) > 0) setLiked(true) })
       }
     })
     fetchListing()
@@ -260,6 +265,17 @@ export default function ListingPage({ params }: { params: { id: string } }) {
       setAlertOpen(false)
     } catch {}
     setAlertSaving(false)
+  }
+
+  async function toggleSave() {
+    if (!user) { window.location.href = '/auth/login'; return }
+    if (liked) {
+      const { error } = await supabase.from('saved_listings').delete().eq('user_id', user.id).eq('listing_id', params.id)
+      if (!error) setLiked(false)
+    } else {
+      const { error } = await supabase.from('saved_listings').insert({ user_id: user.id, listing_id: params.id })
+      if (!error) setLiked(true)
+    }
   }
 
   async function loadMyReview(listingId: string, userId: string) {
@@ -640,7 +656,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
           ) : (
             <span style={{ fontSize: 56 }}>📦</span>
           )}
-          <button className="like-btn" onClick={() => setLiked(l => !l)}>
+          <button className="like-btn" onClick={toggleSave}>
             <i className={`ti ti-heart${liked ? '-filled' : ''}`} style={{ fontSize: 17, color: liked ? '#E63312' : '#ddd' }} />
           </button>
         </div>

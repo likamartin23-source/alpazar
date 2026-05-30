@@ -62,6 +62,25 @@ export default function SearchPage() {
     setActiveFilterCount(n)
   }, [condFilter, cityFilter, priceMin, priceMax])
 
+  // Realtime: update/remove results when listings change
+  useEffect(() => {
+    if (!results.length) return
+    const ch = supabase
+      .channel('search-results-live')
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'listings' }, (payload) => {
+        const n = payload.new as any
+        setResults(prev => n.is_active
+          ? prev.map(l => l.id === n.id ? { ...l, ...n } : l)
+          : prev.filter(l => l.id !== n.id)
+        )
+      })
+      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'listings' }, (payload) => {
+        setResults(prev => prev.filter(l => l.id !== (payload.old as any).id))
+      })
+      .subscribe()
+    return () => { supabase.removeChannel(ch) }
+  }, [results.length > 0])
+
   async function doSearch(
     query = q,
     cat = catFilter,
