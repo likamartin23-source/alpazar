@@ -110,7 +110,7 @@ export default function NewListing() {
     setLoading(false)
   }
 
-  const [mt, mm] = msg.split(':')
+  const [mt, mm] = msg.split(/:(.+)/)
 
   return (
     <>

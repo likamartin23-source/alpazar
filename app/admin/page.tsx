@@ -334,7 +334,7 @@ export default function Admin() {
       supabase.from('profiles').select('*', { count: 'exact', head: true }),
       supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('is_premium', true),
       supabase.from('listings').select('*', { count: 'exact', head: true }).eq('is_active', true),
-      supabase.from('messages').select('*', { count: 'exact', head: true }),
+      supabase.from('messages').select('*', { count: 'exact', head: true }).is('deleted_at', null),
       supabase.from('reports').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
       supabase.from('premium_subscriptions')
         .select('*,profiles(full_name,username)').order('created_at', { ascending: false }).limit(50),

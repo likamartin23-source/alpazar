@@ -58,7 +58,7 @@ export default function PremiumPage() {
     setSubmitting(false)
   }
 
-  const [mt, mm] = msg.split(':')
+  const [mt, mm] = msg.split(/:(.+)/)
 
   const features = [
     { icon: 'building-store', text: 'Dyqan personal' },

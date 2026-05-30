@@ -216,8 +216,8 @@ export default function ProfilePage() {
     !price ? 'Me marrëveshje' :
     cur === 'EUR' ? `${price.toLocaleString()} €` : `${price.toLocaleString()} L`
 
-  const [mt, mm] = msg.split(':')
-  const [smt, smm] = shopMsg.split(':')
+  const [mt, mm] = msg.split(/:(.+)/)
+  const [smt, smm] = shopMsg.split(/:(.+)/)
 
   if (loading) return (
     <div style={{ textAlign: 'center', padding: 60, maxWidth: 480, margin: '0 auto' }}>

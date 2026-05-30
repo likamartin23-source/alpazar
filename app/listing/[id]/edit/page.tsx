@@ -129,7 +129,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
     setLoading(false)
   }
 
-  const [mt, mm] = msg.split(':')
+  const [mt, mm] = msg.split(/:(.+)/)
 
   if (pageLoading) return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#FFFBEA' }}>
