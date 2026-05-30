@@ -1,7 +1,8 @@
 // CACHE_NAME ndryshon me çdo deploy — shfletuesi e njeh ndryshimin dhe rifrekon cache
-const CACHE_NAME = 'alpazar-v5'
+const CACHE_NAME = 'alpazar-v6'
 const STATIC_ASSETS = [
   '/manifest.json',
+  '/offline.html',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
 ]
@@ -40,13 +41,13 @@ self.addEventListener('fetch', (e) => {
     e.respondWith(
       fetch(request, { cache: 'no-store' })
         .then((res) => res)
-        .catch(() => caches.match('/').then((r) => r || new Response('Offline', { status: 503 })))
+        .catch(() => caches.match('/offline.html').then((r) => r || new Response('Offline', { status: 503 })))
     )
     return
   }
 
-  // Cache-first VETEM per assets statike (ikona, manifest)
-  if (url.pathname.startsWith('/icons/') || url.pathname === '/manifest.json') {
+  // Cache-first VETEM per assets statike (ikona, manifest, offline page)
+  if (url.pathname.startsWith('/icons/') || url.pathname === '/manifest.json' || url.pathname === '/offline.html') {
     e.respondWith(
       caches.match(request).then((cached) => {
         if (cached) return cached
@@ -60,7 +61,7 @@ self.addEventListener('fetch', (e) => {
   }
 
   // Te gjitha te tjerat: network-first, pa cache
-  e.respondWith(fetch(request).catch(() => new Response('', { status: 503 })))
+  e.respondWith(fetch(request).catch(() => caches.match('/offline.html').then((r) => r || new Response('', { status: 503 }))))
 })
 
 // SKIP_WAITING: lejon faqen te rifreskohet automatikisht kur ka version te ri
@@ -85,5 +86,12 @@ self.addEventListener('push', (e) => {
 
 self.addEventListener('notificationclick', (e) => {
   e.notification.close()
-  e.waitUntil(clients.openWindow('/'))
+  const targetUrl = e.notification.data?.url || '/messages'
+  e.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((wins) => {
+      const existing = wins.find((w) => w.url.includes(self.location.origin))
+      if (existing) { existing.focus(); existing.navigate(targetUrl) }
+      else clients.openWindow(targetUrl)
+    })
+  )
 })
