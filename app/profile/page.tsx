@@ -208,8 +208,8 @@ export default function ProfilePage() {
 
   async function deleteListing(id: string) {
     if (!confirm('Fshi këtë shpallje?')) return
-    await supabase.from('listings').update({ is_active: false }).eq('id', id)
-    setMyListings(ls => ls.filter(l => l.id !== id))
+    const { error } = await supabase.from('listings').update({ is_active: false }).eq('id', id)
+    if (!error) setMyListings(ls => ls.filter(l => l.id !== id))
   }
 
   const fmt = (price: number, cur: string) =>
