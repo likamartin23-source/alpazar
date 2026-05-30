@@ -21,11 +21,10 @@ export default function PremiumPage() {
       if (session?.user) {
         supabase.from('profiles').select('*').eq('id', session.user.id).single().then(({ data: p }) => {
           setProfile(p)
-          const codes = [...new Set([p.referral_code, p.username].filter(Boolean))]
+          const codes = [...new Set([p.referral_code, p.username].filter(Boolean))] as string[]
           if (codes.length) {
-            const orClause = codes.map((c: string) => `referred_by.eq.${c}`).join(',')
             supabase.from('profiles').select('id', { count: 'exact', head: true })
-              .or(orClause)
+              .in('referred_by', codes)
               .then(({ count }) => setReferralCount(count || 0))
           }
         })

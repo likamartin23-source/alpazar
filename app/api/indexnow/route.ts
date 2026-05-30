@@ -25,10 +25,10 @@ const INDEXNOW_ENDPOINTS = [
 ]
 
 export async function GET(req: NextRequest) {
-  // Verco cron secret per siguri
+  // Fail-closed: kërko gjithmonë CRON_SECRET
   const auth = req.headers.get('authorization')
   const cronSecret = process.env.CRON_SECRET
-  if (cronSecret && auth !== `Bearer ${cronSecret}`) {
+  if (!cronSecret || auth !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 

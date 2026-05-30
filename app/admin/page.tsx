@@ -273,7 +273,9 @@ function ModerationTab() {
   }, [])
 
   const resolve = async (id: string, action: 'resolved' | 'dismissed') => {
-    await supabase.from('reports').update({ status: action }).eq('id', id)
+    const { error } = await supabase.from('reports').update({ status: action }).eq('id', id)
+    if (error) { alert('Gabim: ' + error.message); return }
+    setReports(prev => prev.filter(r => r.id !== id))
   }
 
   return (
@@ -355,19 +357,23 @@ export default function Admin() {
   }, [])
 
   async function updateStatus(id: string, status: string, userId?: string) {
-    await supabase.from('premium_subscriptions').update({ status }).eq('id', id)
+    const { error: e1 } = await supabase.from('premium_subscriptions').update({ status }).eq('id', id)
+    if (e1) { alert('Gabim ndryshim abonimi: ' + e1.message); return }
     if (status === 'active' && userId) {
       const sub = payments.find(p => p.id === id)
-      await supabase.from('profiles').update({ is_premium: true, premium_expires_at: sub?.end_date }).eq('id', userId)
+      const { error: e2 } = await supabase.from('profiles').update({ is_premium: true, premium_expires_at: sub?.end_date }).eq('id', userId)
+      if (e2) alert('Abonimi u ndryshua por profili nuk u përditësua: ' + e2.message)
     }
     if ((status === 'cancelled' || status === 'suspended') && userId) {
-      await supabase.from('profiles').update({ is_premium: false }).eq('id', userId)
+      const { error: e2 } = await supabase.from('profiles').update({ is_premium: false }).eq('id', userId)
+      if (e2) alert('Abonimi u ndryshua por profili nuk u përditësua: ' + e2.message)
     }
     fetchAll()
   }
 
   async function toggleMethod(id: string, cur: boolean) {
-    await supabase.from('payment_methods').update({ is_active: !cur }).eq('id', id)
+    const { error } = await supabase.from('payment_methods').update({ is_active: !cur }).eq('id', id)
+    if (error) alert('Gabim: ' + error.message)
     fetchAll()
   }
 
@@ -524,7 +530,7 @@ export default function Admin() {
                           <span className={`tgl ${m.is_active ? 'tgl-on' : 'tgl-off'}`} onClick={() => toggleMethod(m.id, m.is_active)}>
                             <span className="tdot" />
                           </span>
-                          <button className="btn btn-red" onClick={async () => { await supabase.from('payment_methods').delete().eq('id',m.id); fetchAll() }}>Fshi</button>
+                          <button className="btn btn-red" onClick={async () => { const { error } = await supabase.from('payment_methods').delete().eq('id',m.id); if (error) alert('Gabim: ' + error.message); fetchAll() }}>Fshi</button>
                         </div>
                       </div>
                     ))}

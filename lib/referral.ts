@@ -1,13 +1,15 @@
 const COOKIE = 'alpazar_ref'
 const DAYS   = 30
 
+const REF_REGEX = /^[a-zA-Z0-9_-]{3,30}$/
+
 /** Reads ?ref= from current URL and stores in cookie (30 days). Call on every page mount. */
 export function saveRefFromUrl(): void {
   if (typeof window === 'undefined') return
-  const ref = new URLSearchParams(window.location.search).get('ref')
-  if (ref && ref.trim()) {
+  const ref = new URLSearchParams(window.location.search).get('ref')?.trim()
+  if (ref && REF_REGEX.test(ref)) {
     const exp = new Date(Date.now() + DAYS * 864e5).toUTCString()
-    document.cookie = `${COOKIE}=${encodeURIComponent(ref.trim())}; expires=${exp}; path=/; SameSite=Lax`
+    document.cookie = `${COOKIE}=${encodeURIComponent(ref)}; expires=${exp}; path=/; SameSite=Lax`
   }
 }
 
