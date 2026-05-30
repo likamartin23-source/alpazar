@@ -35,6 +35,9 @@ export async function POST(
       .order('created_at', { ascending: false })
       .limit(limit)
 
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    const CONDITION_OK = new Set(['i_ri', 'i_perdorur', 'new', 'used', 'like_new', 'refurbished', 'damaged'])
+
     // Apply filter from Meilisearch filter syntax: ["field = value", ...]
     for (const f of filter) {
       const m = String(f).match(/^(\w+)\s*=\s*"?([^"]+)"?$/)
@@ -42,9 +45,9 @@ export async function POST(
       const [, field, value] = m
       if (field === 'is_active') qb = qb.eq('is_active', value === 'true')
       else if (field === 'is_premium') qb = qb.eq('is_premium', value === 'true')
-      else if (field === 'category_id') qb = qb.eq('category_id', value)
-      else if (field === 'city') qb = qb.eq('city', value)
-      else if (field === 'condition') qb = qb.eq('condition', value)
+      else if (field === 'category_id' && UUID_RE.test(value)) qb = qb.eq('category_id', value)
+      else if (field === 'city' && value.length <= 100) qb = qb.eq('city', value)
+      else if (field === 'condition' && CONDITION_OK.has(value)) qb = qb.eq('condition', value)
     }
 
     // Full-text search using Postgres GIN index on fts column
