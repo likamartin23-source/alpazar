@@ -1,10 +1,13 @@
 'use client'
 
 import { useEffect, useState, useRef, useCallback } from 'react'
+import dynamic from 'next/dynamic'
 import { supabase } from '../../../lib/supabase'
 import { getLevel, isNewMember } from '../../components/Badges'
 import { SocialProofBar, SellerPremiumUpsell } from '../../components/PremiumUpsell'
 import { saveRefFromUrl, buildShareUrl } from '../../../lib/referral'
+
+const MapDisplay = dynamic(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), { ssr: false })
 
 const CATEGORY_LABELS: Record<string, string> = {
   elektronike: 'Elektronikë', makina: 'Makina', shtepi: 'Shtëpi & Mobilje',
@@ -558,21 +561,29 @@ export default function ListingPage({ params }: { params: { id: string } }) {
             </>
           )}
 
-          {/* Vendndodhja me Google Maps */}
-          {listing.city && (
+          {/* Vendndodhja */}
+          {(listing.city || (listing.latitude && listing.longitude)) && (
             <>
               <div className="divider" />
               <div className="sec-label">Vendndodhja</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                <span style={{ fontSize: 13, color: '#555' }}>📍 {listing.city}, Shqipëri</span>
-                <a
-                  href={`https://www.google.com/maps/search/${encodeURIComponent(listing.city + ', Shqipëri')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="map-link">
-                  <i className="ti ti-map" />Hap në Maps
-                </a>
-              </div>
+              {listing.latitude && listing.longitude ? (
+                <MapDisplay
+                  lat={listing.latitude}
+                  lng={listing.longitude}
+                  address={listing.location_address || listing.city || ''}
+                />
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: 13, color: '#555' }}>📍 {listing.city}</span>
+                  <a
+                    href={`https://www.google.com/maps/search/${encodeURIComponent(listing.city + ', Shqipëri')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="map-link">
+                    <i className="ti ti-map" />Hap në Maps
+                  </a>
+                </div>
+              )}
             </>
           )}
 
