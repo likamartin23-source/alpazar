@@ -23,9 +23,10 @@ export default function ProfilePage() {
   const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
   const [myListings, setMyListings] = useState<any[]>([])
+  const [savedListings, setSavedListings] = useState<any[]>([])
   const [conversations, setConversations] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'profile'|'listings'|'shop'|'messages'>('profile')
+  const [activeTab, setActiveTab] = useState<'profile'|'listings'|'saved'|'shop'|'messages'>('profile')
   const [editing, setEditing] = useState(false)
   const [form, setForm] = useState({ full_name: '', username: '', city: '', bio: '' })
   const [shopForm, setShopForm] = useState({ shop_name: '', shop_description: '', shop_category: '', shop_banner_url: '' })
@@ -102,8 +103,17 @@ export default function ProfilePage() {
       setShopForm({ shop_name: p.shop_name || '', shop_description: p.shop_description || '', shop_category: p.shop_category || '', shop_banner_url: p.shop_banner_url || '' })
     }
     if (ls) setMyListings(ls)
-    await fetchConversations(uid)
+    await Promise.all([fetchConversations(uid), fetchSavedListings(uid)])
     setLoading(false)
+  }
+
+  async function fetchSavedListings(uid: string) {
+    const { data } = await supabase
+      .from('saved_listings')
+      .select('listing_id, listings(*)')
+      .eq('user_id', uid)
+      .order('created_at', { ascending: false })
+    if (data) setSavedListings(data.map((r: any) => r.listings).filter(Boolean))
   }
 
   async function fetchConversations(uid: string) {
@@ -396,6 +406,9 @@ export default function ProfilePage() {
           <button className={`tab ${activeTab === 'listings' ? 'active' : ''}`} onClick={() => setActiveTab('listings')}>
             <i className="ti ti-package" />Shpalljet
           </button>
+          <button className={`tab ${activeTab === 'saved' ? 'active' : ''}`} onClick={() => setActiveTab('saved')}>
+            <i className="ti ti-heart" />Të ruajtura
+          </button>
           <button className={`tab ${activeTab === 'messages' ? 'active' : ''}`} onClick={() => setActiveTab('messages')}>
             <i className="ti ti-message-circle" />
             Mesazhet
@@ -592,6 +605,34 @@ export default function ProfilePage() {
                 )}
               </div>
             </>
+          )}
+
+          {/* Saved Listings Tab */}
+          {activeTab === 'saved' && (
+            <div className="card">
+              <div className="card-hdr">
+                <span className="card-title">❤️ Shpalljet e ruajtura ({savedListings.length})</span>
+              </div>
+              {savedListings.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '24px 0', color: '#aaa', fontSize: 12 }}>
+                  <i className="ti ti-heart" style={{ fontSize: 36, display: 'block', marginBottom: 10, color: '#F5C842' }} />
+                  Nuk ke shpallje të ruajtura.<br />Hap zemrën <i className="ti ti-heart" style={{ fontSize: 11 }} /> në çdo shpallje!
+                </div>
+              ) : (
+                savedListings.map((l: any) => (
+                  <div key={l.id} className="listing-row" onClick={() => window.location.href = `/listing/${l.id}`} style={{ cursor: 'pointer' }}>
+                    <div className="listing-thumb">
+                      {l.images?.[0] ? <img src={l.images[0]} alt="" /> : <i className="ti ti-photo" style={{ color: '#ccc', fontSize: 20 }} />}
+                    </div>
+                    <div className="listing-info">
+                      <div className="listing-title">{l.title}</div>
+                      <div className="listing-price">{fmt(l.price, l.currency)}</div>
+                      <div className="listing-meta">📍 {l.city || 'Shqipëri'}{l.is_active ? '' : ' · ✅ Shitur'}</div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           )}
 
           {/* Messages Tab */}
