@@ -550,6 +550,8 @@ export default function ListingPage({ params }: { params: { id: string } }) {
         .main-chat-btn i{font-size:16px;}
         .wa-btn{width:48px;height:48px;background:#25D366;border:none;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(37,211,102,.3);text-decoration:none;}
         .wa-btn i{font-size:22px;color:#fff;}
+        .viber-btn{width:48px;height:48px;background:#7360F2;border:none;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(115,96,242,.3);text-decoration:none;}
+        .viber-btn i{font-size:22px;color:#fff;}
 
         /* Location section */
         .map-link{display:inline-flex;align-items:center;gap:6px;background:#EEF4FF;color:#185FA5;border:1px solid #C3DAFB;border-radius:9px;padding:7px 13px;font-size:12px;font-weight:600;text-decoration:none;margin-top:8px;}
@@ -626,11 +628,16 @@ export default function ListingPage({ params }: { params: { id: string } }) {
                   <span>Duke ndarë me kodin tënd — nëse miku regjistrohet <strong>fiton 50 pikë!</strong></span>
                 </div>
               )}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 8 }}>
                 <button
                   onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(shareText + '\n' + shareUrl)}`, '_blank')}
                   style={{ background: '#25D366', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 6px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
                   <i className="ti ti-brand-whatsapp" style={{ fontSize: 20 }} />WhatsApp
+                </button>
+                <button
+                  onClick={() => window.open(`viber://forward?text=${encodeURIComponent(shareText + '\n' + shareUrl)}`, '_blank')}
+                  style={{ background: '#7360F2', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 6px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                  <i className="ti ti-brand-viber" style={{ fontSize: 20 }} />Viber
                 </button>
                 <button
                   onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank')}
@@ -1183,6 +1190,16 @@ export default function ListingPage({ params }: { params: { id: string } }) {
               className="wa-btn"
               title="Kontakto me WhatsApp">
               <i className="ti ti-brand-whatsapp" />
+            </a>
+          )}
+          {seller.phone && (
+            <a
+              href={`viber://chat?number=%2B${seller.phone.replace(/\D/g, '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="viber-btn"
+              title="Kontakto me Viber">
+              <i className="ti ti-brand-viber" />
             </a>
           )}
         </div>

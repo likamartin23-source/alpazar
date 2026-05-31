@@ -256,10 +256,14 @@ export default function ShopDetailPage() {
                   <span>Duke ndarë me kodin tënd — nëse miku regjistrohet <strong>fiton 50 pikë!</strong></span>
                 </div>
               )}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 8 }}>
                 <button onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(shareText + '\n' + shareUrl)}`, '_blank')}
                   style={{ background: '#25D366', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 6px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
                   <i className="ti ti-brand-whatsapp" style={{ fontSize: 20 }} />WhatsApp
+                </button>
+                <button onClick={() => window.open(`viber://forward?text=${encodeURIComponent(shareText + '\n' + shareUrl)}`, '_blank')}
+                  style={{ background: '#7360F2', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 6px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                  <i className="ti ti-brand-viber" style={{ fontSize: 20 }} />Viber
                 </button>
                 <button onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank')}
                   style={{ background: '#1877F2', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 6px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>

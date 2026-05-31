@@ -79,6 +79,10 @@ function ShareBox({ refCode }: { refCode?: string }) {
             style={{ background: '#25D366', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 6px', fontSize: 8, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
             <i className="ti ti-brand-whatsapp" style={{ fontSize: 16 }} />WhatsApp
           </button>
+          <button onClick={() => window.open(`viber://forward?text=${encodeURIComponent(text + ' ' + url)}`, '_blank')}
+            style={{ background: '#7360F2', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 6px', fontSize: 8, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+            <i className="ti ti-brand-viber" style={{ fontSize: 16 }} />Viber
+          </button>
           <button onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank')}
             style={{ background: '#1877F2', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 6px', fontSize: 8, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
             <i className="ti ti-brand-facebook" style={{ fontSize: 16 }} />Facebook
@@ -86,10 +90,6 @@ function ShareBox({ refCode }: { refCode?: string }) {
           <button onClick={() => window.open('https://www.instagram.com/', '_blank')}
             style={{ background: 'linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 6px', fontSize: 8, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
             <i className="ti ti-brand-instagram" style={{ fontSize: 16 }} />Instagram
-          </button>
-          <button onClick={() => window.open('https://www.linkedin.com/', '_blank')}
-            style={{ background: '#0A66C2', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 6px', fontSize: 8, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-            <i className="ti ti-brand-linkedin" style={{ fontSize: 16 }} />LinkedIn
           </button>
         </div>
       )}

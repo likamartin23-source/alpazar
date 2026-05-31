@@ -143,6 +143,7 @@ export default function MessagesPage() {
   const [otherPhone,     setOtherPhone]     = useState<string|null>(null)
   const [showInfo,       setShowInfo]       = useState(false)
   const [showWhatsApp,   setShowWhatsApp]   = useState(false)
+  const [showViber,      setShowViber]      = useState(false)
   const [blockedIds,     setBlockedIds]     = useState<Set<string>>(new Set())
   const [showBlockConf,  setShowBlockConf]  = useState(false)
   const [replyTo,        setReplyTo]        = useState<any>(null)
@@ -635,6 +636,7 @@ export default function MessagesPage() {
   const groups          = buildGroups(messages)
   const waPhone         = otherPhone?.replace(/\D/g,'')
   const waLink          = waPhone ? `https://wa.me/${waPhone}` : null
+  const viberLink       = waPhone ? `viber://chat?number=%2B${waPhone}` : null
   const canSend         = (draft.trim() || imgPreview) && !sending && !uploading
 
   // ── Render ────────────────────────────────────────────────────────────────
@@ -985,6 +987,12 @@ export default function MessagesPage() {
                 <span>Vazhdo në WhatsApp</span>
               </div>
             )}
+            {viberLink && (
+              <div className="mi" style={{ '--mi-accent': '#7360F2' } as any} onClick={() => { setShowInfo(false); setShowViber(true) }}>
+                <i className="ti ti-brand-viber" style={{ color: '#7360F2' }} />
+                <span>Vazhdo në Viber</span>
+              </div>
+            )}
             <div className="sep" />
             {isBlocked ? (
               <div className="mi success" onClick={() => { setShowInfo(false); unblockUser(selected.otherId) }}>
@@ -1017,6 +1025,29 @@ export default function MessagesPage() {
               </a>
               <button style={{ width:'100%', padding:'13px', background:'#f5f5f0', border:'none', borderRadius:14, fontWeight:600, fontSize:14, cursor:'pointer', color:'#555', fontFamily:'inherit' }}
                 onClick={() => setShowWhatsApp(false)}>Anulo</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Viber handoff */}
+      {showViber && selected && viberLink && (
+        <div className="overlay" onClick={() => setShowViber(false)}>
+          <div className="sheet" onClick={e => e.stopPropagation()}>
+            <div className="handle" />
+            <div style={{ padding:'4px 20px 20px', textAlign:'center' }}>
+              <div style={{ fontSize:52, marginBottom:10 }}>📲</div>
+              <div style={{ fontWeight:700, fontSize:16, color:'#111', marginBottom:8 }}>Vazhdo në Viber</div>
+              <div style={{ fontSize:13, color:'#888', lineHeight:1.7, marginBottom:20 }}>
+                Do të hapësh Viber me <strong>{displayName(selected.other)}</strong>.
+              </div>
+              <a href={viberLink}
+                style={{ display:'block', background:'#7360F2', color:'#fff', textDecoration:'none', padding:'14px', borderRadius:14, fontWeight:700, fontSize:15, marginBottom:10 }}
+                onClick={() => setShowViber(false)}>
+                <i className="ti ti-brand-viber" style={{ marginRight:8 }} />Hap Viber
+              </a>
+              <button style={{ width:'100%', padding:'13px', background:'#f5f5f0', border:'none', borderRadius:14, fontWeight:600, fontSize:14, cursor:'pointer', color:'#555', fontFamily:'inherit' }}
+                onClick={() => setShowViber(false)}>Anulo</button>
             </div>
           </div>
         </div>
@@ -1072,6 +1103,11 @@ export default function MessagesPage() {
                   {waLink && (
                     <button className="t-action-btn" onClick={() => setShowWhatsApp(true)}>
                       <i className="ti ti-brand-whatsapp" style={{ color:'#25D366' }} />
+                    </button>
+                  )}
+                  {viberLink && (
+                    <button className="t-action-btn" onClick={() => setShowViber(true)}>
+                      <i className="ti ti-brand-viber" style={{ color:'#7360F2' }} />
                     </button>
                   )}
                   <button className="t-action-btn" onClick={() => setShowInfo(true)}>
