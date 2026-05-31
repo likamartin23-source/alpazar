@@ -2,7 +2,7 @@
 
 import { GoogleMap, Marker, useLoadScript } from '@react-google-maps/api'
 
-const MAP_CONTAINER_STYLE = { width: '100%', height: '200px', borderRadius: '10px', overflow: 'hidden' }
+const MAP_CONTAINER_STYLE = { width: '100%', height: '200px', borderRadius: '12px', overflow: 'hidden' }
 
 interface MapDisplayProps {
   lat: number
