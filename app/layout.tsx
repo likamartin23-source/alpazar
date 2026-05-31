@@ -125,6 +125,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <footer style={{ background: '#111', padding: '22px 16px 28px', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
             <div style={{ maxWidth: 480, margin: '0 auto', textAlign: 'center' }}>
               <div style={{ color: '#F5C842', fontWeight: 700, fontSize: 13, letterSpacing: 1, marginBottom: 14 }}>🦅 ALPAZAR</div>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 18, marginBottom: 14 }}>
+                <a href="https://facebook.com/alpazaral" aria-label="Facebook" target="_blank" rel="noopener noreferrer" style={{ color: '#555', fontSize: 19, textDecoration: 'none' }}><i className="ti ti-brand-facebook" /></a>
+                <a href="https://instagram.com/alpazaral" aria-label="Instagram" target="_blank" rel="noopener noreferrer" style={{ color: '#555', fontSize: 19, textDecoration: 'none' }}><i className="ti ti-brand-instagram" /></a>
+                <a href="https://tiktok.com/@alpazaral" aria-label="TikTok" target="_blank" rel="noopener noreferrer" style={{ color: '#555', fontSize: 19, textDecoration: 'none' }}><i className="ti ti-brand-tiktok" /></a>
+                <a href="https://t.me/alpazaral" aria-label="Telegram" target="_blank" rel="noopener noreferrer" style={{ color: '#555', fontSize: 19, textDecoration: 'none' }}><i className="ti ti-brand-telegram" /></a>
+                <a href="https://linkedin.com/company/alpazar" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer" style={{ color: '#555', fontSize: 19, textDecoration: 'none' }}><i className="ti ti-brand-linkedin" /></a>
+                <a href="https://x.com/alpazaral" aria-label="X / Twitter" target="_blank" rel="noopener noreferrer" style={{ color: '#555', fontSize: 19, textDecoration: 'none' }}><i className="ti ti-brand-x" /></a>
+              </div>
               <nav style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '6px 14px', marginBottom: 14 }}>
                 <a href="/kushtet" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Kushtet e Përdorimit</a>
                 <a href="/privatesia" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Privatësia</a>

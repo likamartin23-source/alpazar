@@ -112,6 +112,16 @@ export default function NewListing() {
       if (error) { setMsg(`err:${error.message}`); setLoading(false); return }
       const bonusMsg = myListingCount === 0 ? ' +35 pikë gamifikimi (bonus fillestar)! 🎉' : ' +10 pikë gamifikimi! ⚡'
       setMsg(`ok:Shpallja u publikua me sukses!${bonusMsg}`)
+      // IndexNow ping — instant Bing/Yandex indexing
+      fetch('https://www.bing.com/indexnow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          host: 'alpazar.vercel.app',
+          key: 'alpazar2025vercel',
+          urlList: [`https://alpazar.vercel.app/listing/${data.id}`],
+        }),
+      }).catch(() => {})
       setTimeout(() => { window.location.href = `/listing/${data.id}` }, 2000)
     } catch (e: any) {
       setMsg(`err:${e.message}`)
