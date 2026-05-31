@@ -126,7 +126,7 @@ function Avatar({ profile, size = 46, online = false }: { profile: any; size?: n
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 export default function MessagesPage() {
-  const { user: ctxUser } = useAlpazar()
+  const { user: ctxUser, refreshUnread } = useAlpazar()
 
   const [user,           setUser]           = useState<any>(null)
   const [threads,        setThreads]        = useState<any[]>([])
@@ -318,7 +318,14 @@ export default function MessagesPage() {
 
     if (msgs) { setMessages(msgs); prevMsgCount.current = msgs.length; setTimeout(() => scrollBottom(false), 50) }
     if (pData?.phone) setOtherPhone(pData.phone)
-    supabase.from('messages').update({ read: true }).eq('receiver_id', myId).eq('sender_id', thread.otherId).eq('read', false).then()
+    await Promise.all([
+      supabase.from('messages').update({ read: true })
+        .eq('receiver_id', myId).eq('sender_id', thread.otherId).eq('read', false),
+      supabase.from('notifications').update({ is_read: true, read_at: new Date().toISOString() })
+        .eq('user_id', myId).eq('type', 'new_message')
+        .eq('link', `/messages?with=${thread.otherId}`).eq('is_read', false),
+    ])
+    await refreshUnread()
     subscribeToThread(thread.otherId, myId)
     setTimeout(() => inputRef.current?.focus(), 200)
   }

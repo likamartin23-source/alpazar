@@ -36,6 +36,7 @@ interface AlpazarCtx {
   cfgInt: (key: string, fallback?: number)  => number
   // actions
   refreshProfile: () => Promise<void>
+  refreshUnread:  () => Promise<void>
 }
 
 const defaultCtx: AlpazarCtx = {
@@ -46,6 +47,7 @@ const defaultCtx: AlpazarCtx = {
   cfgBool: (_, f = false) => f,
   cfgInt:  (_, f = 0) => f,
   refreshProfile: async () => {},
+  refreshUnread:  async () => {},
 }
 
 const AlpazarContext = createContext<AlpazarCtx>(defaultCtx)
@@ -146,10 +148,10 @@ export function AlpazarProvider({ children }: { children: ReactNode }) {
       .on('postgres_changes', {
         event: 'UPDATE', schema: 'public', table: 'messages',
         filter: `receiver_id=eq.${user.id}`,
-      }, p => {
-        const prev = p.old as any; const next = p.new as any
-        if (prev.read === false && next.read === true)
-          setUnreadMessages(c => Math.max(c - 1, 0))
+      }, () => {
+        // Supabase nuk dërgon p.old.read (nevojitet REPLICA IDENTITY FULL)
+        // Kështu rilex numrin direkt nga DB
+        loadUnread(user.id)
       })
       .on('postgres_changes', {
         event: 'INSERT', schema: 'public', table: 'notifications',
@@ -158,15 +160,18 @@ export function AlpazarProvider({ children }: { children: ReactNode }) {
       .on('postgres_changes', {
         event: 'UPDATE', schema: 'public', table: 'notifications',
         filter: `user_id=eq.${user.id}`,
-      }, p => {
-        const prev = p.old as any; const next = p.new as any
-        if (!prev.is_read && next.is_read)
-          setUnreadNotifications(c => Math.max(c - 1, 0))
+      }, () => {
+        // Njëjtë — rilex numrin direkt
+        loadUnread(user.id)
       })
       .subscribe()
 
     return () => { supabase.removeChannel(ch) }
-  }, [user])
+  }, [user, loadUnread])
+
+  const refreshUnread = useCallback(async () => {
+    if (user) await loadUnread(user.id)
+  }, [user, loadUnread])
 
   const cfg     = useCallback((k: string, f = '')  => config[k] ?? f,       [config])
   const cfgBool = useCallback((k: string, f = false) => {
@@ -185,7 +190,7 @@ export function AlpazarProvider({ children }: { children: ReactNode }) {
       user, profile, authReady,
       unreadMessages, unreadNotifications,
       config, cfg, cfgBool, cfgInt,
-      refreshProfile,
+      refreshProfile, refreshUnread,
     }}>
       {children}
     </AlpazarContext.Provider>
