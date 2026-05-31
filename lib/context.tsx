@@ -35,8 +35,9 @@ interface AlpazarCtx {
   cfgBool:(key: string, fallback?: boolean) => boolean
   cfgInt: (key: string, fallback?: number)  => number
   // actions
-  refreshProfile: () => Promise<void>
-  refreshUnread:  () => Promise<void>
+  refreshProfile:   () => Promise<void>
+  refreshUnread:    (uid?: string) => Promise<void>
+  decrementUnread:  (byMessages: number) => void
 }
 
 const defaultCtx: AlpazarCtx = {
@@ -46,8 +47,9 @@ const defaultCtx: AlpazarCtx = {
   cfg:     (_, f = '') => f,
   cfgBool: (_, f = false) => f,
   cfgInt:  (_, f = 0) => f,
-  refreshProfile: async () => {},
-  refreshUnread:  async () => {},
+  refreshProfile:  async () => {},
+  refreshUnread:   async () => {},
+  decrementUnread: () => {},
 }
 
 const AlpazarContext = createContext<AlpazarCtx>(defaultCtx)
@@ -169,9 +171,14 @@ export function AlpazarProvider({ children }: { children: ReactNode }) {
     return () => { supabase.removeChannel(ch) }
   }, [user, loadUnread])
 
-  const refreshUnread = useCallback(async () => {
-    if (user) await loadUnread(user.id)
+  const refreshUnread = useCallback(async (uid?: string) => {
+    const id = uid ?? user?.id
+    if (id) await loadUnread(id)
   }, [user, loadUnread])
+
+  const decrementUnread = useCallback((byMessages: number) => {
+    setUnreadMessages(c => Math.max(c - byMessages, 0))
+  }, [])
 
   const cfg     = useCallback((k: string, f = '')  => config[k] ?? f,       [config])
   const cfgBool = useCallback((k: string, f = false) => {
@@ -190,7 +197,7 @@ export function AlpazarProvider({ children }: { children: ReactNode }) {
       user, profile, authReady,
       unreadMessages, unreadNotifications,
       config, cfg, cfgBool, cfgInt,
-      refreshProfile, refreshUnread,
+      refreshProfile, refreshUnread, decrementUnread,
     }}>
       {children}
     </AlpazarContext.Provider>

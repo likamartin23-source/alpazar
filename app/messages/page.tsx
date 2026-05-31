@@ -126,7 +126,7 @@ function Avatar({ profile, size = 46, online = false }: { profile: any; size?: n
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 export default function MessagesPage() {
-  const { user: ctxUser, refreshUnread } = useAlpazar()
+  const { user: ctxUser, refreshUnread, decrementUnread } = useAlpazar()
 
   const [user,           setUser]           = useState<any>(null)
   const [threads,        setThreads]        = useState<any[]>([])
@@ -306,6 +306,9 @@ export default function MessagesPage() {
     setOtherPhone(null); setShowInfo(false); setReplyTo(null); setEmojiOpen(false)
     setSelectMode(false); setSelectedMsgs(new Set()); setImgPreview(null)
     userScrolledUp.current = false; prevMsgCount.current = 0
+    // Clear badge immediately — don't wait for DB roundtrip
+    const threadUnread = thread.unread || 0
+    decrementUnread(threadUnread)
     setThreads(prev => prev.map(t => t.otherId === thread.otherId ? { ...t, unread: 0 } : t))
 
     const [{ data: msgs }, { data: pData }] = await Promise.all([
@@ -318,14 +321,16 @@ export default function MessagesPage() {
 
     if (msgs) { setMessages(msgs); prevMsgCount.current = msgs.length; setTimeout(() => scrollBottom(false), 50) }
     if (pData?.phone) setOtherPhone(pData.phone)
+    const now = new Date().toISOString()
     await Promise.all([
       supabase.from('messages').update({ read: true })
         .eq('receiver_id', myId).eq('sender_id', thread.otherId).eq('read', false),
-      supabase.from('notifications').update({ is_read: true, read_at: new Date().toISOString() })
-        .eq('user_id', myId).eq('type', 'new_message')
-        .eq('link', `/messages?with=${thread.otherId}`).eq('is_read', false),
+      // Mark both link formats (two different DB triggers create notifs with different links)
+      supabase.from('notifications').update({ is_read: true, read_at: now })
+        .eq('user_id', myId).eq('type', 'new_message').eq('is_read', false)
+        .or(`link.eq./messages,link.eq./messages?with=${thread.otherId}`),
     ])
-    await refreshUnread()
+    if (myId) await refreshUnread(myId)
     subscribeToThread(thread.otherId, myId)
     setTimeout(() => inputRef.current?.focus(), 200)
   }
@@ -338,6 +343,8 @@ export default function MessagesPage() {
         const m = p.new as any
         if (m.sender_id !== selectedRef.current?.otherId) return
         setMessages(prev => prev.find(x => x.id === m.id) ? prev : [...prev, m])
+        // Mark read immediately & decrement badge (context INSERT handler already incremented it)
+        decrementUnread(1)
         supabase.from('messages').update({ read: true }).eq('id', m.id).then()
       })
       .on('postgres_changes', { event:'UPDATE', schema:'public', table:'messages', filter:`sender_id=eq.${myId}` }, p => {
