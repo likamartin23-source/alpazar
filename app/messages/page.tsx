@@ -229,18 +229,37 @@ export default function MessagesPage() {
   }, [ctxUser])
 
   // ── Scroll detection ──────────────────────────────────────────────────────
-  useEffect(() => {
-    const el = msgsRef.current; if (!el) return
+  // Përdorim ref callback në vend të useEffect për të garantuar që el ekziston
+  const attachScrollListener = useCallback((el: HTMLDivElement | null) => {
+    (msgsRef as any).current = el
+    if (!el) return
     const h = () => {
       const fb = el.scrollHeight - el.scrollTop - el.clientHeight
-      setShowScrollBtn(fb > 120); userScrolledUp.current = fb > 80
+      setShowScrollBtn(fb > 120)
+      userScrolledUp.current = fb > 80
     }
     el.addEventListener('scroll', h, { passive: true })
-    return () => el.removeEventListener('scroll', h)
+    // Cleanup ruhet si property e elementit
+    ;(el as any)._scrollCleanup = () => el.removeEventListener('scroll', h)
+  }, [])
+
+  // Pastro listener-in kur elementi del
+  useEffect(() => {
+    return () => {
+      const el = msgsRef.current as any
+      if (el?._scrollCleanup) el._scrollCleanup()
+    }
   }, [selected])
 
+  // Scroll në fund direkt nëpërmjet ref (pa scrollIntoView)
   const scrollBottom = useCallback((smooth = true) => {
-    bottomRef.current?.scrollIntoView({ behavior: smooth ? 'smooth' : 'instant' })
+    const el = msgsRef.current
+    if (!el) return
+    if (smooth) {
+      el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
+    } else {
+      el.scrollTop = el.scrollHeight
+    }
   }, [])
 
   useEffect(() => {
@@ -609,9 +628,9 @@ export default function MessagesPage() {
     <>
       <style>{`
         *{box-sizing:border-box;margin:0;padding:0;}
-        html,body{height:100%;overflow:hidden;}
-        body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#0a0a0a;}
-        .page{max-width:480px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;background:#FFFBEA;overflow:hidden;position:relative;}
+        body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
+        /* Fixed overlay — qëndron brenda viewport pavarësisht nga prindërit */
+        .page{position:fixed;inset:0;max-width:480px;margin:0 auto;display:flex;flex-direction:column;background:#FFFBEA;overflow:hidden;z-index:50;}
 
         /* Topbar */
         .topbar{background:#111;padding:0 10px;display:flex;align-items:center;gap:9px;height:58px;flex-shrink:0;border-bottom:1px solid #222;z-index:10;}
@@ -632,8 +651,6 @@ export default function MessagesPage() {
         .search-inner input{border:none;background:transparent;font-size:12px;color:#eee;outline:none;flex:1;padding:9px 0;font-family:inherit;}
         .search-inner input::placeholder{color:#444;}
 
-        /* Thread list */
-        .threads-scroll{flex:1;overflow-y:auto;min-height:0;background:#FFFBEA;}
         .threads-scroll::-webkit-scrollbar{width:3px;}
         .threads-scroll::-webkit-scrollbar-thumb{background:#ddd;border-radius:10px;}
         .thread{display:flex;align-items:center;gap:12px;padding:13px 14px;cursor:pointer;border-bottom:0.5px solid #f0ece0;transition:background .1s;position:relative;}
@@ -657,8 +674,10 @@ export default function MessagesPage() {
 
         /* Chat area */
         .chat-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
+        /* height:0 + flex:1 është mënyra e garantuar për scroll brenda flex */
         .msgs-area{
-          flex:1;overflow-y:auto;padding:8px 10px 6px;display:flex;flex-direction:column;gap:1px;min-height:0;
+          flex:1;height:0;overflow-y:scroll;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;
+          padding:8px 10px 6px;display:flex;flex-direction:column;gap:1px;
           background-color:#e5ddd5;
           background-image:url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23c8bba8' fill-opacity='0.13' fill-rule='evenodd'/%3E%3C/svg%3E");
         }
@@ -674,8 +693,11 @@ export default function MessagesPage() {
         .msg-row.mine{flex-direction:row-reverse;}
         .av-spacer{width:26px;flex-shrink:0;}
 
-        /* Bubble wrap with swipe */
-        .bwrap{display:flex;flex-direction:column;max-width:78%;position:relative;transform:translateX(0);transition:transform .22s cubic-bezier(.4,0,.2,1);}
+        /* Thread list — scrollable */
+        .threads-scroll{flex:1;height:0;overflow-y:scroll;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;background:#FFFBEA;}
+
+        /* Bubble wrap — touch-action:pan-y lejon scroll vertikal me gisht */
+        .bwrap{display:flex;flex-direction:column;max-width:78%;position:relative;transform:translateX(0);transition:transform .22s cubic-bezier(.4,0,.2,1);touch-action:pan-y;}
         .mine .bwrap{align-items:flex-end;}
         .swipe-icon{position:absolute;left:-32px;bottom:6px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(0);transition:none;pointer-events:none;}
         .swipe-icon i{font-size:13px;color:#fff;}
@@ -1046,7 +1068,7 @@ export default function MessagesPage() {
             )}
 
             <div className="chat-wrap" style={{ position:'relative' }}>
-              <div className="msgs-area" ref={msgsRef}>
+              <div className="msgs-area" ref={attachScrollListener}>
                 {isBlocked && (
                   <div style={{ background:'rgba(230,51,18,.08)', borderRadius:12, padding:'10px 14px', margin:'8px 0', textAlign:'center', fontSize:12, color:'#E63312', border:'1px solid rgba(230,51,18,.15)' }}>
                     🚫 Ke bllokuar këtë përdorues
