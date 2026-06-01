@@ -991,7 +991,7 @@ export default function MessagesPage() {
             )}
             {viberLink && (
               <div className="mi" style={{ '--mi-accent': '#7360F2' } as any} onClick={() => { setShowInfo(false); setShowViber(true) }}>
-                <i className="ti ti-brand-viber" style={{ color: '#7360F2' }} />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#7360F2" style={{display:'inline-block',verticalAlign:'middle',flexShrink:0}}><path d="M11.5 1C5.7 1.1 1.1 5.7 1 11.5c-.04 2.1.55 4 1.53 5.65L1 23l6.09-1.5c1.57.9 3.4 1.41 5.27 1.45C18.1 23.02 23 18.1 23 12c0-6.07-5.1-11.09-11.5-11zm4.55 15.9c-.31.85-1.5 1.58-2.26 1.6-.77.05-1.51-.16-4.45-1.4C6.08 15.6 3.83 12.17 3.63 11.9c-.2-.28-1.63-2.16-1.63-4.13 0-1.96.85-2.95 1.18-3.37.33-.42.64-.62.9-.64.32 0 .62 0 .9.02.3.02.7-.11.97.74.32.94 1.08 3.26 1.18 3.49.1.24.16.5.03.8-.12.3-.18.48-.36.74-.18.26-.38.57-.55.76-.18.2-.36.42-.16.83.2.4.9 1.48 1.93 2.4 1.33 1.19 2.45 1.56 2.8 1.74.34.18.55.15.75-.08.2-.22.87-1.02 1.1-1.37.23-.34.46-.28.78-.17.33.11 2.07.98 2.43 1.16.35.18.58.27.67.42.09.15.09.85-.22 1.62z"/></svg>
                 <span>Vazhdo në Viber</span>
               </div>
             )}
@@ -1046,7 +1046,7 @@ export default function MessagesPage() {
               <a href={viberLink}
                 style={{ display:'block', background:'#7360F2', color:'#fff', textDecoration:'none', padding:'14px', borderRadius:14, fontWeight:700, fontSize:15, marginBottom:10 }}
                 onClick={() => setShowViber(false)}>
-                <i className="ti ti-brand-viber" style={{ marginRight:8 }} />Hap Viber
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" style={{display:'inline-block',verticalAlign:'middle',marginRight:8}}><path d="M11.5 1C5.7 1.1 1.1 5.7 1 11.5c-.04 2.1.55 4 1.53 5.65L1 23l6.09-1.5c1.57.9 3.4 1.41 5.27 1.45C18.1 23.02 23 18.1 23 12c0-6.07-5.1-11.09-11.5-11zm4.55 15.9c-.31.85-1.5 1.58-2.26 1.6-.77.05-1.51-.16-4.45-1.4C6.08 15.6 3.83 12.17 3.63 11.9c-.2-.28-1.63-2.16-1.63-4.13 0-1.96.85-2.95 1.18-3.37.33-.42.64-.62.9-.64.32 0 .62 0 .9.02.3.02.7-.11.97.74.32.94 1.08 3.26 1.18 3.49.1.24.16.5.03.8-.12.3-.18.48-.36.74-.18.26-.38.57-.55.76-.18.2-.36.42-.16.83.2.4.9 1.48 1.93 2.4 1.33 1.19 2.45 1.56 2.8 1.74.34.18.55.15.75-.08.2-.22.87-1.02 1.1-1.37.23-.34.46-.28.78-.17.33.11 2.07.98 2.43 1.16.35.18.58.27.67.42.09.15.09.85-.22 1.62z"/></svg>Hap Viber
               </a>
               <button style={{ width:'100%', padding:'13px', background:'#f5f5f0', border:'none', borderRadius:14, fontWeight:600, fontSize:14, cursor:'pointer', color:'#555', fontFamily:'inherit' }}
                 onClick={() => setShowViber(false)}>Anulo</button>
@@ -1109,7 +1109,7 @@ export default function MessagesPage() {
                   )}
                   {viberLink && (
                     <button className="t-action-btn" onClick={() => setShowViber(true)}>
-                      <i className="ti ti-brand-viber" style={{ color:'#7360F2' }} />
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="#7360F2" style={{display:'block'}}><path d="M11.5 1C5.7 1.1 1.1 5.7 1 11.5c-.04 2.1.55 4 1.53 5.65L1 23l6.09-1.5c1.57.9 3.4 1.41 5.27 1.45C18.1 23.02 23 18.1 23 12c0-6.07-5.1-11.09-11.5-11zm4.55 15.9c-.31.85-1.5 1.58-2.26 1.6-.77.05-1.51-.16-4.45-1.4C6.08 15.6 3.83 12.17 3.63 11.9c-.2-.28-1.63-2.16-1.63-4.13 0-1.96.85-2.95 1.18-3.37.33-.42.64-.62.9-.64.32 0 .62 0 .9.02.3.02.7-.11.97.74.32.94 1.08 3.26 1.18 3.49.1.24.16.5.03.8-.12.3-.18.48-.36.74-.18.26-.38.57-.55.76-.18.2-.36.42-.16.83.2.4.9 1.48 1.93 2.4 1.33 1.19 2.45 1.56 2.8 1.74.34.18.55.15.75-.08.2-.22.87-1.02 1.1-1.37.23-.34.46-.28.78-.17.33.11 2.07.98 2.43 1.16.35.18.58.27.67.42.09.15.09.85-.22 1.62z"/></svg>
                     </button>
                   )}
                   <button className="t-action-btn" onClick={() => setShowInfo(true)}>
