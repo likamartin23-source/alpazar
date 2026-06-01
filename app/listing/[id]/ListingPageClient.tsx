@@ -7,6 +7,7 @@ import { getLevel, isNewMember } from '../../components/Badges'
 import { SocialProofBar, SellerPremiumUpsell } from '../../components/PremiumUpsell'
 import { saveRefFromUrl, buildShareUrl } from '../../../lib/referral'
 import { TrustBadge } from '../../components/TrustBadge'
+import { SharePanel } from '../../components/SharePanel'
 
 const MapDisplay = dynamic(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), { ssr: false })
 
@@ -608,75 +609,18 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         {shareOpen && (() => {
           const shareUrl = buildShareUrl(`/listing/${params.id}`, myRefCode)
           const shareText = `Shiko këtë shpallje në Alpazar: "${listing.title}"${myRefCode ? ' 🔗' : ''}`
-
-          function copyShareLink() {
-            navigator.clipboard.writeText(shareUrl).catch(() => {
-              const el = document.createElement('textarea')
-              el.value = shareUrl; document.body.appendChild(el); el.select()
-              document.execCommand('copy'); document.body.removeChild(el)
-            })
-            setLinkCopied(true)
-            setTimeout(() => { setLinkCopied(false); setShareOpen(false) }, 1800)
-          }
-
           return (
             <div style={{
               background: '#fff', borderBottom: '1px solid #eee',
-              padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 10,
-              animation: 'ai-fade .2s ease',
+              padding: '12px 14px', animation: 'ai-fade .2s ease',
             }}>
-              {myRefCode && (
-                <div style={{ background: '#FFFBEA', border: '1px dashed #F5C842', borderRadius: 9, padding: '8px 12px', fontSize: 11, color: '#856404', display: 'flex', alignItems: 'center', gap: 7 }}>
-                  <i className="ti ti-gift" style={{ fontSize: 14, color: '#E63312', flexShrink: 0 }} />
-                  <span>Duke ndarë me kodin tënd — nëse miku regjistrohet <strong>fiton 50 pikë!</strong></span>
-                </div>
-              )}
-              {/* Web Share API — native OS sheet (mobile) */}
-              {typeof navigator !== 'undefined' && 'share' in navigator && (
-                <button
-                  onClick={() => navigator.share({ title: listing.title, text: shareText, url: shareUrl }).catch(() => {})}
-                  style={{ width: '100%', background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '11px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, marginBottom: 8 }}>
-                  <i className="ti ti-share" style={{ fontSize: 17 }} />Ndaje me aplikacion tjetër
-                </button>
-              )}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 7 }}>
-                {/* Rreshti 1 */}
-                <button onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank')}
-                  style={{ background: '#1877F2', color: '#fff', border: 'none', borderRadius: 10, padding: '9px 4px', fontSize: 10, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-                  <i className="ti ti-brand-facebook" style={{ fontSize: 19 }} />Facebook
-                </button>
-                <button onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(shareText + '\n' + shareUrl)}`, '_blank')}
-                  style={{ background: '#25D366', color: '#fff', border: 'none', borderRadius: 10, padding: '9px 4px', fontSize: 10, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-                  <i className="ti ti-brand-whatsapp" style={{ fontSize: 19 }} />WhatsApp
-                </button>
-                <button onClick={() => window.open(`viber://forward?text=${encodeURIComponent(shareText + '\n' + shareUrl)}`, '_blank')}
-                  style={{ background: '#7360F2', color: '#fff', border: 'none', borderRadius: 10, padding: '9px 4px', fontSize: 10, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-                  <i className="ti ti-brand-viber" style={{ fontSize: 19 }} />Viber
-                </button>
-                <button onClick={() => window.open(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`, '_blank')}
-                  style={{ background: '#229ED9', color: '#fff', border: 'none', borderRadius: 10, padding: '9px 4px', fontSize: 10, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-                  <i className="ti ti-brand-telegram" style={{ fontSize: 19 }} />Telegram
-                </button>
-                {/* Rreshti 2 */}
-                <button onClick={() => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`, '_blank')}
-                  style={{ background: '#000', color: '#fff', border: 'none', borderRadius: 10, padding: '9px 4px', fontSize: 10, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-                  <i className="ti ti-brand-x" style={{ fontSize: 19 }} />X / Twitter
-                </button>
-                <button onClick={() => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`, '_blank')}
-                  style={{ background: '#0A66C2', color: '#fff', border: 'none', borderRadius: 10, padding: '9px 4px', fontSize: 10, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-                  <i className="ti ti-brand-linkedin" style={{ fontSize: 19 }} />LinkedIn
-                </button>
-                <button onClick={() => { const img = listing.images?.[0] || ''; window.open(`https://pinterest.com/pin/create/button/?url=${encodeURIComponent(shareUrl)}&media=${encodeURIComponent(img)}&description=${encodeURIComponent(shareText)}`, '_blank') }}
-                  style={{ background: '#E60023', color: '#fff', border: 'none', borderRadius: 10, padding: '9px 4px', fontSize: 10, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-                  <i className="ti ti-brand-pinterest" style={{ fontSize: 19 }} />Pinterest
-                </button>
-                <button
-                  onClick={copyShareLink}
-                  style={{ background: linkCopied ? '#EAF3DE' : '#111', color: linkCopied ? '#3B6D11' : '#F5C842', border: 'none', borderRadius: 10, padding: '9px 4px', fontSize: 10, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-                  <i className={`ti ti-${linkCopied ? 'check' : 'copy'}`} style={{ fontSize: 20 }} />
-                  {linkCopied ? 'U kopjua!' : 'Kopjo'}
-                </button>
-              </div>
+              <SharePanel
+                shareUrl={shareUrl}
+                shareText={shareText}
+                refCode={myRefCode}
+                listingId={params.id}
+                userId={user?.id ?? null}
+              />
             </div>
           )
         })()}
