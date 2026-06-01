@@ -2,35 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
-import { SkeletonGrid } from '../components/Skeleton'
-
-const MS_URL = process.env.NEXT_PUBLIC_MEILISEARCH_URL || '/api/meili'
-const MS_KEY = process.env.NEXT_PUBLIC_MEILISEARCH_KEY || 'alpazar_search'
 
 const CITIES = ['Tiranë', 'Durrës', 'Vlorë', 'Shkodër', 'Elbasan', 'Fier', 'Korçë', 'Berat', 'Lushnjë', 'Kavajë', 'Gjirokastër', 'Sarandë', 'Lezhë', 'Kukës', 'Pogradec', 'Peshkopi', 'Tropojë', 'Përmet', 'Tepelenë', 'Tjetër']
 
-async function meilisearch(query: string, filters: string[]) {
-  if (!MS_URL || !MS_KEY) return null
-  try {
-    const res = await fetch(`${MS_URL}/indexes/listings/search`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${MS_KEY}` },
-      body: JSON.stringify({ q: query, limit: 60, filter: filters, sort: ['is_premium:desc', 'created_at:desc'] }),
-      signal: AbortSignal.timeout(2500),
-    })
-    if (!res.ok) return null
-    const data = await res.json()
-    return data.hits ?? null
-  } catch {
-    return null
-  }
-}
-
 export default function SearchPage() {
   const [q, setQ]               = useState('')
-  const [results, setResults]   = useState<any[]>([])
-  const [loading, setLoading]   = useState(false)
-  const [searched, setSearched] = useState(false)
   const [categories, setCategories] = useState<any[]>([])
 
   // Filters
@@ -50,7 +26,14 @@ export default function SearchPage() {
     const qp = params.get('q')
     const cp = params.get('cat')
     if (cp) setCatFilter(cp)
-    if (qp) { setQ(qp); doSearch(qp, cp || '', '', '', '', '') }
+    if (qp) {
+      setQ(qp)
+      // If arriving with a query, go directly to results page
+      const p = new URLSearchParams()
+      p.set('q', qp)
+      if (cp) p.set('cat', cp)
+      window.location.href = `/search/results?${p.toString()}`
+    }
   }, [])
 
   useEffect(() => {
@@ -62,90 +45,36 @@ export default function SearchPage() {
     setActiveFilterCount(n)
   }, [condFilter, cityFilter, priceMin, priceMax])
 
-  // Realtime: update/remove results when listings change
-  useEffect(() => {
-    if (!results.length) return
-    const ch = supabase
-      .channel('search-results-live')
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'listings' }, (payload) => {
-        const n = payload.new as any
-        setResults(prev => n.is_active
-          ? prev.map(l => l.id === n.id ? { ...l, ...n } : l)
-          : prev.filter(l => l.id !== n.id)
-        )
-      })
-      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'listings' }, (payload) => {
-        setResults(prev => prev.filter(l => l.id !== (payload.old as any).id))
-      })
-      .subscribe()
-    return () => { supabase.removeChannel(ch) }
-  }, [results.length > 0])
 
-  async function doSearch(
+  function goToResults(
     query = q,
-    cat = catFilter,
-    cond = condFilter,
-    city = cityFilter,
-    pMin = priceMin,
-    pMax = priceMax,
+    cat   = catFilter,
+    cond  = condFilter,
+    city  = cityFilter,
+    pMin  = priceMin,
+    pMax  = priceMax,
   ) {
-    setLoading(true); setSearched(true)
-
-    // Build filter array for Meilisearch-compatible API
-    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-    const filters: string[] = ['is_active = true']
-    if (cat && UUID_RE.test(cat))  filters.push(`category_id = "${cat}"`)
-    if (cond) filters.push(`condition = "${cond}"`)
-    if (city) filters.push(`city = "${city}"`)
-
-    if (query.trim() && MS_URL && MS_KEY) {
-      const msResults = await meilisearch(query, filters)
-      if (msResults !== null) {
-        let filtered = msResults
-        if (pMin) filtered = filtered.filter((l: any) => (l.price || 0) >= parseFloat(pMin))
-        if (pMax) filtered = filtered.filter((l: any) => (l.price || 0) <= parseFloat(pMax))
-        setResults(filtered)
-        setLoading(false)
-        return
-      }
-    }
-
-    // Supabase fallback
-    let qb = supabase
-      .from('listings')
-      .select('id,title,price,currency,condition,city,is_premium,images,created_at,category_id')
-      .eq('is_active', true)
-      .order('is_premium', { ascending: false })
-      .order('created_at', { ascending: false })
-      .limit(60)
-
-    if (query.trim()) qb = (qb as any).textSearch('search_tsv', query.trim(), { type: 'websearch', config: 'simple' })
-    if (cat)  qb = qb.eq('category_id', cat)
-    if (cond) qb = qb.eq('condition', cond)
-    if (city) qb = qb.eq('city', city)
-    if (pMin) qb = qb.gte('price', parseFloat(pMin))
-    if (pMax) qb = qb.lte('price', parseFloat(pMax))
-
-    const { data } = await qb
-    setResults(data || [])
-    setLoading(false)
+    const params = new URLSearchParams()
+    if (query.trim()) params.set('q', query.trim())
+    if (cat)  params.set('cat',  cat)
+    if (cond) params.set('cond', cond)
+    if (city) params.set('city', city)
+    if (pMin) params.set('pmin', pMin)
+    if (pMax) params.set('pmax', pMax)
+    window.location.href = `/search/results?${params.toString()}`
   }
 
   function applyFilters() {
     setFiltersOpen(false)
-    doSearch(q, catFilter, condFilter, cityFilter, priceMin, priceMax)
+    goToResults(q, catFilter, condFilter, cityFilter, priceMin, priceMax)
   }
 
   function clearFilters() {
     setCondFilter(''); setCityFilter(''); setPriceMin(''); setPriceMax('')
-    doSearch(q, catFilter, '', '', '', '')
+    goToResults(q, catFilter, '', '', '', '')
   }
 
-  function handleSubmit(e: React.FormEvent) { e.preventDefault(); doSearch() }
-
-  const fmt = (price: number, cur: string) =>
-    !price ? 'Me marrëveshje' :
-    cur === 'EUR' ? `${price.toLocaleString()} €` : `${price.toLocaleString()} L`
+  function handleSubmit(e: React.FormEvent) { e.preventDefault(); goToResults() }
 
   return (
     <>
@@ -233,7 +162,7 @@ export default function SearchPage() {
               autoFocus
             />
           </form>
-          <button className="search-btn" onClick={() => doSearch()}>Kërko</button>
+          <button className="search-btn" onClick={() => goToResults()}>Kërko</button>
           <button className="filter-btn" onClick={() => setFiltersOpen(true)}>
             <i className="ti ti-adjustments-horizontal" />
             {activeFilterCount > 0 && <span className="filter-badge">{activeFilterCount}</span>}
@@ -243,13 +172,13 @@ export default function SearchPage() {
         {/* Category chips */}
         <div className="cats">
           <button className={`cb ${!catFilter ? 'on' : ''}`}
-            onClick={() => { setCatFilter(''); if (q) doSearch(q, '', condFilter, cityFilter, priceMin, priceMax) }}>
+            onClick={() => { setCatFilter(''); if (q) goToResults(q, '', condFilter, cityFilter, priceMin, priceMax) }}>
             Të gjitha
           </button>
           {categories.map(c => (
             <button key={c.id}
               className={`cb ${catFilter === c.id ? 'on' : ''}`}
-              onClick={() => { setCatFilter(c.id); if (q) doSearch(q, c.id, condFilter, cityFilter, priceMin, priceMax) }}>
+              onClick={() => { setCatFilter(c.id); if (q) goToResults(q, c.id, condFilter, cityFilter, priceMin, priceMax) }}>
               {c.name}
             </button>
           ))}
@@ -266,52 +195,11 @@ export default function SearchPage() {
         )}
 
         <div className="body">
-          {loading ? (
-            <SkeletonGrid count={6} />
-          ) : !searched ? (
-            <div className="initial">
-              <i className="ti ti-search" />
-              <h3>Kërko çdo gjë në Shqipëri</h3>
-              <p>Elektronikë, Automjete, Prona,<br />Kafshë, Shërbime dhe shumë të tjera</p>
-            </div>
-          ) : results.length === 0 ? (
-            <div className="empty">
-              <i className="ti ti-mood-sad" />
-              <h3>Nuk u gjet asgjë</h3>
-              <p>Provo terma të tjerë ose<br />ndrysho filtrat</p>
-              {activeFilterCount > 0 && (
-                <button onClick={clearFilters}
-                  style={{ marginTop: 12, background: '#F5C842', color: '#111', border: 'none', borderRadius: 9, padding: '9px 20px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
-                  Pastro filtrat
-                </button>
-              )}
-            </div>
-          ) : (
-            <>
-              <div className="results-info">
-                Gjetur <strong>{results.length}</strong> shpallje {q && `për "${q}"`}
-              </div>
-              <div className="listings-grid">
-                {results.map(l => (
-                  <div key={l.id} className="listing-card" onClick={() => window.location.href = `/listing/${l.id}`}>
-                    <div className="card-img">
-                      {l.images?.[0]
-                        ? <img src={l.images[0]} alt={l.title} />
-                        : <i className="ti ti-photo" style={{ fontSize: 32, color: '#ccc' }} />}
-                      {l.condition === 'i_ri'       && <span className="badge-new">I ri</span>}
-                      {l.condition === 'i_perdorur' && <span className="badge-used">I përdorur</span>}
-                      {l.is_premium && <span className="badge-premium">⭐</span>}
-                    </div>
-                    <div className="card-body">
-                      <div className="card-title">{l.title}</div>
-                      <div className="card-price">{fmt(l.price, l.currency)}</div>
-                      <div className="card-loc"><i className="ti ti-map-pin" style={{ fontSize: 11 }} />{l.city || 'Shqipëri'}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
+          <div className="initial">
+            <i className="ti ti-search" />
+            <h3>Kërko çdo gjë në Shqipëri</h3>
+            <p>Elektronikë, Automjete, Prona,<br />Kafshë, Shërbime dhe shumë të tjera</p>
+          </div>
         </div>
       </div>
 
