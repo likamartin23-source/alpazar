@@ -305,7 +305,8 @@ export default function MessagesPage() {
     const myId = uid || userRef.current?.id
     setSelected(thread); selectedRef.current = thread
     setOtherPhone(null); setShowInfo(false); setReplyTo(null); setEmojiOpen(false)
-    setSelectMode(false); setSelectedMsgs(new Set()); setImgPreview(null)
+    setSelectMode(false); setSelectedMsgs(new Set())
+    setImgPreview(prev => { if (prev) URL.revokeObjectURL(prev.url); return null })
     userScrolledUp.current = false; prevMsgCount.current = 0
     // Clear badge immediately — don't wait for DB roundtrip
     const threadUnread = thread.unread || 0
@@ -611,7 +612,8 @@ export default function MessagesPage() {
   function back() {
     setSelected(null); setShowInfo(false); setOtherPhone(null)
     setReplyTo(null); setEmojiOpen(false); setSelectMode(false); setSelectedMsgs(new Set())
-    setImgPreview(null); setRecording(false); clearInterval(recTimerRef.current)
+    setImgPreview(prev => { if (prev) URL.revokeObjectURL(prev.url); return null })
+    setRecording(false); clearInterval(recTimerRef.current)
     userScrolledUp.current = false; prevMsgCount.current = 0
     if (channelRef.current) supabase.removeChannel(channelRef.current)
     setTypingVisible(false); fetchThreads(userRef.current?.id)

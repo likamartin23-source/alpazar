@@ -28,6 +28,10 @@ export default function EditListing({ params }: { params: { id: string } }) {
   const [existingImages, setExistingImages] = useState<string[]>([])
 
   useEffect(() => {
+    return () => { imagePreviews.forEach(url => URL.revokeObjectURL(url)) }
+  }, [imagePreviews])
+
+  useEffect(() => {
     let mounted = true
 
     supabase.auth.getSession().then(async ({ data: { session } }) => {

@@ -1,12 +1,19 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../../lib/supabase'
+import { rateLimit, getClientIp } from '../../../../lib/rateLimit'
 
 export const runtime = 'nodejs'
 
 const anonSb = () => createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 export async function GET(req: NextRequest) {
+  const ip = getClientIp(req)
+  const rl = rateLimit(`fts:${ip}`, { limit: 30, windowMs: 60_000 })
+  if (!rl.allowed) {
+    return NextResponse.json({ error: 'Shumë kërkesa. Provo përsëri pas pak.' }, { status: 429 })
+  }
+
   const q = req.nextUrl.searchParams.get('q')?.trim()
   if (!q || q.length < 2) return NextResponse.json({ results: [] })
 

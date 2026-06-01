@@ -208,7 +208,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
     if (data) {
       let sid = typeof window !== 'undefined' ? localStorage.getItem('_alpazar_sid') : null
       if (!sid) { sid = crypto.randomUUID(); if (typeof window !== 'undefined') localStorage.setItem('_alpazar_sid', sid) }
-      supabase.rpc('increment_listing_views', { p_listing_id: data.id, p_viewer_id: userRef.current?.id ?? null, p_ip_hash: sid })
+      supabase.rpc('increment_listing_views', { p_listing_id: data.id, p_viewer_id: userRef.current?.id ?? null, p_ip_hash: sid }).then(() => {}).catch(() => {})
       if (data.category_id) fetchSimilarListings(data.category_id, data.id)
       if (data.user_id) {
         const [{ data: p }, { count }] = await Promise.all([

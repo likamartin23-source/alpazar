@@ -49,8 +49,15 @@ export default function NewListing() {
     supabase.from('categories').select('*').eq('is_active', true).order('sort_order').then(({ data }) => {
       if (data) setCategories(data)
     })
-    return () => subscription.unsubscribe()
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [])
+
+  // Revoke object URLs on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => { imagePreviews.forEach(url => URL.revokeObjectURL(url)) }
+  }, [imagePreviews])
 
   function set(k: string, v: string) { setForm(f => ({ ...f, [k]: v })) }
 
