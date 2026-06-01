@@ -415,6 +415,7 @@ export default function MessagesPage() {
       reply_msg: rep, reply_to_id: rep?.id ?? null,
     }
     setMessages(prev => [...prev, opt])
+    URL.revokeObjectURL(imgPreview.url)
     setImgPreview(null); setReplyTo(null)
 
     await supabase.from('messages').insert({
@@ -1293,7 +1294,7 @@ export default function MessagesPage() {
                         <div style={{ fontSize:12, fontWeight:700, color:'#111', marginBottom:2 }}>Dërgo foton</div>
                         <div style={{ fontSize:11, color:'#888' }}>{imgPreview.file.name}</div>
                       </div>
-                      <button onClick={() => setImgPreview(null)} style={{ background:'none', border:'none', color:'#bbb', fontSize:20, cursor:'pointer', flexShrink:0 }}>✕</button>
+                      <button onClick={() => { URL.revokeObjectURL(imgPreview.url); setImgPreview(null) }} style={{ background:'none', border:'none', color:'#bbb', fontSize:20, cursor:'pointer', flexShrink:0 }}>✕</button>
                       <button onClick={sendImage} disabled={uploading}
                         style={{ background:'linear-gradient(135deg,#E63312,#c42a0e)', border:'none', borderRadius:10, color:'#fff', fontWeight:700, fontSize:13, padding:'9px 16px', cursor:'pointer', flexShrink:0 }}>
                         {uploading ? '...' : 'Dërgo'}

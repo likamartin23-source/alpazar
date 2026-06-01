@@ -3,11 +3,9 @@ const nextConfig = {
   typescript: { ignoreBuildErrors: true },
   eslint: { ignoreDuringBuilds: true },
 
-  env: {
-    NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: 'AIzaSyCelKjnVE8zKIc0Cyq_pecSIv6Q3YbMk6U',
-  },
+  // Google Maps API key must be set in Vercel env vars, NOT here (git-exposed)
+  // Set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in Vercel Dashboard → Settings → Env Vars
 
-  // ── Module 2: Performance optimization ─────────────────────────
   compress: true,
   poweredByHeader: false,
 
@@ -25,11 +23,11 @@ const nextConfig = {
   async headers() {
     const csp = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://va.vercel-scripts.com https://vercel.live https://maps.googleapis.com",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://va.vercel-scripts.com https://vercel.live",
       "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com",
       "font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https://*.supabase.co https://*.supabase.in https://lh3.googleusercontent.com https://avatars.githubusercontent.com https://maps.gstatic.com https://maps.googleapis.com https://*.googleapis.com",
-      "connect-src 'self' https://*.supabase.co https://*.supabase.in wss://*.supabase.co https://va.vercel-scripts.com https://vitals.vercel-insights.com https://maps.googleapis.com",
+      "img-src 'self' data: blob: https://*.supabase.co https://*.supabase.in https://lh3.googleusercontent.com https://avatars.githubusercontent.com https://nominatim.openstreetmap.org",
+      "connect-src 'self' https://*.supabase.co https://*.supabase.in wss://*.supabase.co https://va.vercel-scripts.com https://vitals.vercel-insights.com https://nominatim.openstreetmap.org",
       "frame-src 'none'",
       "object-src 'none'",
       "base-uri 'self'",

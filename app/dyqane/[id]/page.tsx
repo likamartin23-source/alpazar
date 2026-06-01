@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-import { useParams } from 'next/navigation'
 import { supabase } from '../../../lib/supabase'
 import { saveRefFromUrl, buildShareUrl } from '../../../lib/referral'
 
@@ -12,8 +11,9 @@ const CATEGORY_COLORS: Record<string, string> = {
 }
 
 export default function ShopDetailPage() {
-  const params = useParams()
-  const shopId = params?.id as string
+  const [shopId] = useState<string>(() =>
+    typeof window !== 'undefined' ? (window.location.pathname.split('/').pop() ?? '') : ''
+  )
   const [shop, setShop] = useState<any>(null)
   const [listings, setListings] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
