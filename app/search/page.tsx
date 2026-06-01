@@ -119,7 +119,7 @@ export default function SearchPage() {
       .order('created_at', { ascending: false })
       .limit(60)
 
-    if (query.trim()) qb = qb.ilike('title', `%${query.trim()}%`)
+    if (query.trim()) qb = (qb as any).textSearch('search_tsv', query.trim(), { type: 'websearch', config: 'simple' })
     if (cat)  qb = qb.eq('category_id', cat)
     if (cond) qb = qb.eq('condition', cond)
     if (city) qb = qb.eq('city', city)

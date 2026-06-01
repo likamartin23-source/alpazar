@@ -2,23 +2,25 @@ import { createClient } from '@supabase/supabase-js'
 import type { Metadata } from 'next'
 import ListingPageClient from './ListingPageClient'
 
+export const revalidate = 60
+
 const SITE_URL = 'https://alpazar.vercel.app'
 
-async function fetchListingMeta(id: string) {
+async function fetchListingData(id: string) {
   const sb = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
   const { data } = await sb
     .from('listings')
-    .select('id,title,description,price,currency,images,is_active,city')
+    .select('*')
     .eq('id', id)
     .single()
   return data
 }
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const listing = await fetchListingMeta(params.id)
+  const listing = await fetchListingData(params.id)
   if (!listing) return { title: 'Shpallje — ALPAZAR' }
 
   const title = `${listing.title} — ALPAZAR`
@@ -50,7 +52,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 }
 
 export default async function ListingPage({ params }: { params: { id: string } }) {
-  const listing = await fetchListingMeta(params.id)
+  const listing = await fetchListingData(params.id)
 
   const jsonLd = listing
     ? JSON.stringify({
@@ -77,7 +79,7 @@ export default async function ListingPage({ params }: { params: { id: string } }
       {jsonLd && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
       )}
-      <ListingPageClient params={params} />
+      <ListingPageClient params={params} initialListing={listing} />
     </>
   )
 }

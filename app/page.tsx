@@ -6,6 +6,7 @@ import type { Category, Listing } from '../lib/types'
 import { SkeletonGrid } from './components/Skeleton'
 import { getLevel } from './components/Badges'
 import { PremiumUpsellModal } from './components/PremiumUpsell'
+import { Onboarding } from './components/Onboarding'
 import { useAlpazar } from '../lib/context'
 import { saveRefFromUrl } from '../lib/referral'
 
@@ -284,6 +285,7 @@ export default function Home() {
 
   return (
     <>
+      <Onboarding />
       <style>{`
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;}

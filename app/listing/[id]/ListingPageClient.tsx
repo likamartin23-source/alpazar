@@ -31,11 +31,11 @@ function pubDate(d: string) {
   return new Date(d).toLocaleDateString('sq-AL', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
-export default function ListingPageClient({ params }: { params: { id: string } }) {
-  const [listing, setListing]         = useState<any>(null)
+export default function ListingPageClient({ params, initialListing }: { params: { id: string }; initialListing?: any }) {
+  const [listing, setListing]         = useState<any>(initialListing ?? null)
   const [seller, setSeller]           = useState<any>(null)
   const [sellerCount, setSellerCount] = useState(0)
-  const [loading, setLoading]         = useState(true)
+  const [loading, setLoading]         = useState(!initialListing)
   const [similar, setSimilar]         = useState<any[]>([])
   const [imgIdx, setImgIdx]           = useState(0)
   const [user, setUser]               = useState<any>(null)
@@ -135,7 +135,7 @@ export default function ListingPageClient({ params }: { params: { id: string } }
   const typingTimer  = useRef<any>(null)
   const userRef      = useRef<any>(null)
   const sellerRef    = useRef<any>(null)
-  const listingRef   = useRef<any>(null)
+  const listingRef   = useRef<any>(initialListing ?? null)
   const autoOpenDone = useRef(false)
 
   useEffect(() => { userRef.current = user }, [user])
@@ -197,10 +197,14 @@ export default function ListingPageClient({ params }: { params: { id: string } }
   useEffect(() => { if (chatMsgs.length) scrollChat() }, [chatMsgs])
 
   async function fetchListing() {
-    const { data } = await supabase.from('listings').select('*').eq('id', params.id).single()
+    let data: any = initialListing ?? null
+    if (!data) {
+      const res = await supabase.from('listings').select('*').eq('id', params.id).single()
+      data = res.data
+      if (data) { setListing(data); listingRef.current = data }
+      setLoading(false)
+    }
     if (data) {
-      setListing(data)
-      listingRef.current = data
       let sid = typeof window !== 'undefined' ? localStorage.getItem('_alpazar_sid') : null
       if (!sid) { sid = crypto.randomUUID(); if (typeof window !== 'undefined') localStorage.setItem('_alpazar_sid', sid) }
       supabase.rpc('increment_listing_views', { p_listing_id: data.id, p_viewer_id: userRef.current?.id ?? null, p_ip_hash: sid })
@@ -215,7 +219,6 @@ export default function ListingPageClient({ params }: { params: { id: string } }
         if (count !== null) setSellerCount(count)
       }
     }
-    setLoading(false)
   }
 
   async function fetchSimilarListings(categoryId: string, currentId: string) {

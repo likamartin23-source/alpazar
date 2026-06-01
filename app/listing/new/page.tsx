@@ -31,6 +31,8 @@ export default function NewListing() {
   const [imageFiles, setImageFiles] = useState<File[]>([])
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
   const [myListingCount, setMyListingCount] = useState(0)
+  const [priceSuggestion, setPriceSuggestion] = useState('')
+  const [priceLoading, setPriceLoading] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -48,6 +50,25 @@ export default function NewListing() {
   }, [])
 
   function set(k: string, v: string) { setForm(f => ({ ...f, [k]: v })) }
+
+  async function suggestPrice() {
+    if (!form.title.trim()) { setPriceSuggestion('err:Shkruaj titullin para se të sugjerosh çmimin.'); return }
+    setPriceLoading(true); setPriceSuggestion('')
+    const catName = categories.find(c => c.id === form.category_id)?.name || ''
+    const userMsg = `Duhet të vendos çmim për shpalljen time: "${form.title}"${catName ? ` (kategoria: ${catName})` : ''}${form.description ? `. Përshkrimi: ${form.description.slice(0, 200)}` : ''}. Cili është çmimi real i tregut shqiptar? Jep vetëm një range konkrete çmimi (p.sh. "15,000–25,000 L" ose "150–200 €").`
+    try {
+      const res = await fetch('/api/ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [{ role: 'user', content: userMsg }] }),
+      })
+      const json = await res.json()
+      setPriceSuggestion(json.reply || 'err:Nuk mund të sugjeroj çmim tani.')
+    } catch {
+      setPriceSuggestion('err:Gabim në lidhje. Provo sërisht.')
+    }
+    setPriceLoading(false)
+  }
 
   function handleImages(e: React.ChangeEvent<HTMLInputElement>) {
     const MAX_MB = 5
@@ -213,6 +234,30 @@ export default function NewListing() {
                 </select>
               </div>
               <p style={{ fontSize: 10, color: '#aaa', marginTop: 4 }}>Lër bosh për "Çmim me marrëveshje"</p>
+              <button
+                type="button"
+                onClick={suggestPrice}
+                disabled={priceLoading}
+                style={{
+                  marginTop: 8, background: '#111', color: '#F5C842', border: 'none',
+                  borderRadius: 8, padding: '7px 12px', fontSize: 11, fontWeight: 700,
+                  cursor: priceLoading ? 'not-allowed' : 'pointer', display: 'flex',
+                  alignItems: 'center', gap: 5, opacity: priceLoading ? 0.7 : 1, fontFamily: 'inherit',
+                }}
+              >
+                {priceLoading ? '⏳' : '🤖'} {priceLoading ? 'Duke menduar...' : 'Sugjero çmimin me Albi'}
+              </button>
+              {priceSuggestion && !priceSuggestion.startsWith('err:') && (
+                <div style={{
+                  marginTop: 8, background: '#EAF3DE', border: '0.5px solid #97C459',
+                  borderRadius: 9, padding: '10px 13px', fontSize: 12, color: '#3B6D11', lineHeight: 1.6,
+                }}>
+                  💡 <strong>Albi sugjeron:</strong> {priceSuggestion}
+                </div>
+              )}
+              {priceSuggestion?.startsWith('err:') && (
+                <div style={{ marginTop: 6, fontSize: 11, color: '#E63312' }}>{priceSuggestion.slice(4)}</div>
+              )}
             </div>
 
             <div className="field">
