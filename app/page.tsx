@@ -73,7 +73,7 @@ function ShareBox({ refCode }: { refCode?: string }) {
         <div style={{
           background: '#111', border: '1.5px solid #1d4ed8', borderRadius: '12px 12px 12px 0',
           padding: '10px', boxShadow: '0 4px 18px rgba(59,130,246,.25)',
-          display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6,
+          display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6,
           animation: 'ai-fade .25s ease',
         }}>
           <button onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`, '_blank')}
@@ -91,6 +91,14 @@ function ShareBox({ refCode }: { refCode?: string }) {
           <button onClick={() => window.open('https://www.instagram.com/', '_blank')}
             style={{ background: 'linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 6px', fontSize: 8, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
             <i className="ti ti-brand-instagram" style={{ fontSize: 16 }} />Instagram
+          </button>
+          <button onClick={() => { navigator.clipboard?.writeText(url).catch(()=>{}); window.open('https://www.tiktok.com/', '_blank') }}
+            style={{ background: '#010101', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 6px', fontSize: 8, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+            <i className="ti ti-brand-tiktok" style={{ fontSize: 16 }} />TikTok
+          </button>
+          <button onClick={() => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank')}
+            style={{ background: '#0A66C2', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 6px', fontSize: 8, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+            <i className="ti ti-brand-linkedin" style={{ fontSize: 16 }} />LinkedIn
           </button>
         </div>
       )}
