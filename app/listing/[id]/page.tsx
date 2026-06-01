@@ -1,16 +1,14 @@
 import { createClient } from '@supabase/supabase-js'
 import type { Metadata } from 'next'
 import ListingPageClient from './ListingPageClient'
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../lib/supabase'
 
 export const revalidate = 60
 
 const SITE_URL = 'https://alpazar.vercel.app'
 
 async function fetchListingData(id: string) {
-  const sb = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
   const { data } = await sb
     .from('listings')
     .select('*')

@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { createClient } from '@supabase/supabase-js'
 import { rateLimit, getClientIp } from '../../../lib/rateLimit'
-
-const SUPABASE_URL  = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const SUPABASE_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+import { SUPABASE_URL, SUPABASE_ANON_KEY as SUPABASE_ANON } from '../../../lib/supabase'
 
 /** Escape HTML entities — prevents injection in email bodies */
 function esc(s: unknown): string {

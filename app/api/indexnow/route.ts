@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../lib/supabase'
 
 const INDEXNOW_KEY = '825731eba0e14fec916791e52a62816c'
 const BASE_URL = 'https://alpazar.vercel.app'
@@ -33,10 +34,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
     // Merr URL-et e shpalljeve aktive (max 1000 per this)
     const { data: listings } = await supabase

@@ -1,13 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
 import { MetadataRoute } from 'next'
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../lib/supabase'
 
 const BASE = 'https://alpazar.vercel.app'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
   const [{ data: listings }, { data: shops }] = await Promise.all([
     supabase
