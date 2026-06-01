@@ -95,14 +95,24 @@ export default function EditListing({ params }: { params: { id: string } }) {
   }
 
   async function uploadImages(): Promise<string[]> {
+    const { data: { session }, error: sessionErr } = await supabase.auth.getSession()
+    if (sessionErr || !session) { setMsg('err:Sesioni ka skaduar. Hyr sërisht.'); return [] }
+
     const urls: string[] = []
+    const firstErr: string[] = []
     for (const file of imageFiles) {
-      const ext = file.name.split('.').pop()
-      const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
-      const { error } = await supabase.storage.from('listing-images').upload(path, file, { upsert: true })
-      if (error) { console.error('Upload error:', error.message); continue }
+      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase()
+      const path = `${session.user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+      const { error } = await supabase.storage.from('listing-images').upload(path, file, {
+        upsert: false,
+        contentType: file.type || 'image/jpeg',
+      })
+      if (error) { firstErr.push(error.message); continue }
       const { data: { publicUrl } } = supabase.storage.from('listing-images').getPublicUrl(path)
       urls.push(publicUrl)
+    }
+    if (urls.length === 0 && firstErr.length > 0) {
+      setMsg(`err:Gabim ngarkim: ${firstErr[0]}`)
     }
     return urls
   }
