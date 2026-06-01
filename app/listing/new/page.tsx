@@ -3,12 +3,16 @@
 import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { supabase } from '../../../lib/supabase'
+import { useAlpazar } from '../../../lib/context'
 import { FreeTierBanner, PremiumUpsellModal } from '../../components/PremiumUpsell'
 
 const MapPicker = dynamic(() => import('../../components/MapPicker').then(m => ({ default: m.MapPicker })), { ssr: false })
 
 
 export default function NewListing() {
+  const { cfgInt, profile } = useAlpazar()
+  const maxImages  = profile?.is_premium ? cfgInt('max_images_premium', 10) : cfgInt('max_images_free', 5)
+  const freeLimit  = cfgInt('free_listings_limit', 5)
   const [user, setUser] = useState<any>(null)
   const [categories, setCategories] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
@@ -78,7 +82,7 @@ export default function NewListing() {
       e.target.value = ''
       return
     }
-    const files = all.slice(0, 5)
+    const files = all.slice(0, maxImages)
     setImageFiles(files)
     setMsg('')
     // Revoke old object URLs to prevent memory leaks
@@ -203,7 +207,7 @@ export default function NewListing() {
       `}</style>
 
       {/* Marketing: upsell kur arrin kufirin falas (5 shpallje) */}
-      {myListingCount >= 5 && <PremiumUpsellModal trigger="limit" />}
+      {myListingCount >= freeLimit && <PremiumUpsellModal trigger="limit" />}
 
       <div className="wrap">
         <div className="topbar">
@@ -215,7 +219,7 @@ export default function NewListing() {
 
         <div className="body">
           {/* Marketing: banner kufiri falas */}
-          <FreeTierBanner listingCount={myListingCount} freeLimit={5} />
+          <FreeTierBanner listingCount={myListingCount} freeLimit={freeLimit} />
           {msg && <div className={`msg-box ${mt}`}>{mm}</div>}
 
           <div className="card">
@@ -316,7 +320,7 @@ export default function NewListing() {
           </div>
 
           <div className="card">
-            <div className="card-title"><i className="ti ti-photo" />Fotot (max 5)</div>
+            <div className="card-title"><i className="ti ti-photo" />Fotot (max {maxImages})</div>
             <label className="img-zone" onClick={() => document.getElementById('img-input')?.click()}>
               <input id="img-input" type="file" accept="image/*" multiple onChange={handleImages} />
               <i className="ti ti-cloud-upload" />

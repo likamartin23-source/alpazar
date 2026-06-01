@@ -3,11 +3,14 @@
 import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { supabase } from '../../../../lib/supabase'
+import { useAlpazar } from '../../../../lib/context'
 
 const MapPicker = dynamic(() => import('../../../components/MapPicker').then(m => ({ default: m.MapPicker })), { ssr: false })
 
 
 export default function EditListing({ params }: { params: { id: string } }) {
+  const { cfgInt, profile } = useAlpazar()
+  const maxImages = profile?.is_premium ? cfgInt('max_images_premium', 10) : cfgInt('max_images_free', 5)
   const [user, setUser]       = useState<any>(null)
   const [categories, setCategories] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
@@ -83,7 +86,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
       e.target.value = ''
       return
     }
-    const files = all.slice(0, 5)
+    const files = all.slice(0, maxImages)
     setImageFiles(files)
     setMsg('')
     imagePreviews.forEach(url => URL.revokeObjectURL(url))
@@ -291,7 +294,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
           </div>
 
           <div className="card">
-            <div className="card-title"><i className="ti ti-photo" />Fotot</div>
+            <div className="card-title"><i className="ti ti-photo" />Fotot (max {maxImages})</div>
 
             {existingImages.length > 0 && (
               <div style={{ marginBottom: 12 }}>
