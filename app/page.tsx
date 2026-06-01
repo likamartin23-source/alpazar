@@ -61,55 +61,140 @@ function InstallBanner() {
 // Kuti ndarje — buton i vogël katrore pulsues (fixed, vetem faqja kryesore)
 function ShareBox({ refCode }: { refCode?: string }) {
   const [open, setOpen] = useState(false)
+  const [mode, setMode] = useState<'feed' | 'msg'>('feed')
+  const [copied, setCopied] = useState<string | null>(null)
+
   const base = 'https://alpazar.vercel.app'
-  const url = refCode ? `${base}?ref=${refCode}` : base
+  const url  = refCode ? `${base}?ref=${refCode}` : base
   const text = refCode
-    ? `Bashkohu me mua në ALPAZAR — marketplace #1 shqiptar! Shit, bli dhe bëj pazarin tënd falas:`
+    ? 'Bashkohu me mua në ALPAZAR — marketplace #1 shqiptar! Shit, bli dhe bëj pazarin tënd falas:'
     : 'Zbulo ALPAZAR — platforma #1 shqiptare e tregtisë online! Shit, bli dhe bëj pazarin tënd.'
+
+  const enc = (s: string) => encodeURIComponent(s)
+
+  // platform: [id, label, bg, feedUrl, msgUrl, feedApp?, msgApp?]
+  const platforms = [
+    {
+      id: 'facebook',  label: 'Facebook',
+      bg: '#1877F2',
+      feedUrl: `https://www.facebook.com/sharer/sharer.php?u=${enc(url)}`,
+      msgUrl:  `fb-messenger://share?link=${enc(url)}`,
+      feedSub: 'Feed', msgSub: 'Messenger',
+      icon: 'ti-brand-facebook',
+    },
+    {
+      id: 'instagram', label: 'Instagram',
+      bg: 'linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)',
+      feedUrl: null, msgUrl: null,
+      feedApp: 'https://www.instagram.com/', msgApp: 'https://www.instagram.com/direct/new/',
+      feedSub: 'Story', msgSub: 'DM',
+      icon: 'ti-brand-instagram',
+    },
+    {
+      id: 'tiktok',    label: 'TikTok',
+      bg: '#010101',
+      feedUrl: null, msgUrl: null,
+      feedApp: 'https://www.tiktok.com/', msgApp: 'https://www.tiktok.com/messages',
+      feedSub: 'Post', msgSub: 'DM',
+      icon: 'ti-brand-tiktok',
+    },
+    {
+      id: 'linkedin',  label: 'LinkedIn',
+      bg: '#0A66C2',
+      feedUrl: `https://www.linkedin.com/sharing/share-offsite/?url=${enc(url)}`,
+      msgUrl:  `https://www.linkedin.com/messaging/compose/?body=${enc(text + '\n' + url)}`,
+      feedSub: 'Post', msgSub: 'Mesazh',
+      icon: 'ti-brand-linkedin',
+    },
+    {
+      id: 'whatsapp',  label: 'WhatsApp',
+      bg: '#25D366',
+      feedUrl: `https://api.whatsapp.com/send?text=${enc(text + '\n' + url)}`,
+      msgUrl:  `https://wa.me/?text=${enc(text + '\n' + url)}`,
+      feedSub: 'Status', msgSub: 'Chat',
+      icon: 'ti-brand-whatsapp',
+    },
+    {
+      id: 'viber',     label: 'Viber',
+      bg: '#7360F2',
+      feedUrl: `viber://forward?text=${enc(text + '\n' + url)}`,
+      msgUrl:  `viber://forward?text=${enc(text + '\n' + url)}`,
+      feedSub: 'Forward', msgSub: 'Mesazh',
+      icon: 'ti-brand-viber',
+    },
+  ]
+
+  function handlePlatform(p: typeof platforms[number]) {
+    const target = mode === 'feed' ? p.feedUrl : p.msgUrl
+    const app    = mode === 'feed' ? (p as any).feedApp : (p as any).msgApp
+
+    if (target) {
+      window.open(target, '_blank', 'noopener,noreferrer')
+    } else if (app) {
+      navigator.clipboard?.writeText(url).catch(() => {})
+      setCopied(p.id)
+      setTimeout(() => { window.open(app, '_blank', 'noopener,noreferrer'); setCopied(null) }, 1100)
+    }
+  }
+
+  const BTN_BASE: React.CSSProperties = {
+    border: 'none', borderRadius: 8, padding: '7px 4px', fontSize: 7.5, fontWeight: 700,
+    cursor: 'pointer', fontFamily: 'inherit', color: '#fff',
+    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
+  }
 
   return (
     <div style={{ position: 'fixed', bottom: 157, left: 12, zIndex: 190, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 3 }}>
       {open && (
         <div style={{
-          background: '#111', border: '1.5px solid #1d4ed8', borderRadius: '12px 12px 12px 0',
-          padding: '10px', boxShadow: '0 4px 18px rgba(59,130,246,.25)',
-          display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6,
-          animation: 'ai-fade .25s ease',
+          background: '#111', border: '1.5px solid #1d4ed8', borderRadius: '14px 14px 14px 0',
+          padding: '10px', boxShadow: '0 4px 20px rgba(59,130,246,.3)',
+          width: 212, animation: 'ai-fade .2s ease',
         }}>
-          <button onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`, '_blank')}
-            style={{ background: '#25D366', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 6px', fontSize: 8, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-            <i className="ti ti-brand-whatsapp" style={{ fontSize: 16 }} />WhatsApp
-          </button>
-          <button onClick={() => window.open(`viber://forward?text=${encodeURIComponent(text + ' ' + url)}`, '_blank')}
-            style={{ background: '#7360F2', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 6px', fontSize: 8, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-            <i className="ti ti-brand-viber" style={{ fontSize: 16 }} />Viber
-          </button>
-          <button onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank')}
-            style={{ background: '#1877F2', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 6px', fontSize: 8, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-            <i className="ti ti-brand-facebook" style={{ fontSize: 16 }} />Facebook
-          </button>
-          <button onClick={() => window.open('https://www.instagram.com/', '_blank')}
-            style={{ background: 'linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 6px', fontSize: 8, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-            <i className="ti ti-brand-instagram" style={{ fontSize: 16 }} />Instagram
-          </button>
-          <button onClick={() => { navigator.clipboard?.writeText(url).catch(()=>{}); window.open('https://www.tiktok.com/', '_blank') }}
-            style={{ background: '#010101', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 6px', fontSize: 8, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-            <i className="ti ti-brand-tiktok" style={{ fontSize: 16 }} />TikTok
-          </button>
-          <button onClick={() => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank')}
-            style={{ background: '#0A66C2', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 6px', fontSize: 8, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-            <i className="ti ti-brand-linkedin" style={{ fontSize: 16 }} />LinkedIn
-          </button>
+          {/* Mode toggle */}
+          <div style={{ display: 'flex', background: '#222', borderRadius: 8, padding: 3, gap: 3, marginBottom: 9 }}>
+            {(['feed', 'msg'] as const).map(m => (
+              <button key={m} onClick={() => setMode(m)} style={{
+                flex: 1, border: 'none', borderRadius: 6, padding: '5px 2px',
+                fontSize: 8, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+                background: mode === m ? '#3B82F6' : 'transparent',
+                color: mode === m ? '#fff' : '#888', transition: 'all .15s',
+              }}>
+                {m === 'feed' ? '📢 Statusi' : '💬 Mesazh'}
+              </button>
+            ))}
+          </div>
+
+          {/* 3×2 grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6 }}>
+            {platforms.map(p => {
+              const isCopying = copied === p.id
+              const sub = mode === 'feed' ? p.feedSub : p.msgSub
+              return (
+                <button key={p.id} onClick={() => handlePlatform(p)}
+                  style={{ ...BTN_BASE, background: isCopying ? '#EAF3DE' : p.bg, color: isCopying ? '#3B6D11' : '#fff' }}>
+                  {isCopying
+                    ? <span style={{ fontSize: 14 }}>✅</span>
+                    : <i className={`ti ${p.icon}`} style={{ fontSize: 14 }} />
+                  }
+                  <span>{p.label}</span>
+                  <span style={{ fontSize: 6.5, opacity: 0.8, fontWeight: 400 }}>
+                    {isCopying ? 'Kopjuar!' : sub}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
         </div>
       )}
+
       <button
         onClick={() => setOpen(o => !o)}
         style={{
           width: 36, height: 44,
           background: open ? '#2563EB' : 'linear-gradient(135deg,#3B82F6,#2563EB)',
           borderRadius: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2,
-          border: 'none',
-          cursor: 'pointer',
+          border: 'none', cursor: 'pointer',
           boxShadow: '0 4px 13px rgba(59,130,246,.45)',
           animation: open ? 'none' : 'share-pulse 2.2s infinite',
           transition: 'transform .15s',

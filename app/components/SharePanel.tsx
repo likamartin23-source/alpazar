@@ -11,12 +11,21 @@ export interface SharePanelProps {
   userId?: string | null
 }
 
-// ─── Inline SVGs për ikonat e platformave ────────────────────────────────────
+// ─── Inline SVGs ──────────────────────────────────────────────────────────────
 
 function FbIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
       <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+    </svg>
+  )
+}
+
+function MsgrIcon() {
+  // Facebook Messenger
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 0C5.374 0 0 4.975 0 11.111c0 3.497 1.745 6.616 4.472 8.652V24l4.086-2.242c1.09.301 2.246.464 3.442.464 6.626 0 12-4.974 12-11.111C24 4.975 18.626 0 12 0zm1.191 14.963l-3.055-3.26-5.963 3.26L10.732 8l3.131 3.259L19.752 8l-6.561 6.963z"/>
     </svg>
   )
 }
@@ -61,58 +70,101 @@ function VbIcon() {
   )
 }
 
-const PLATFORMS = [
-  {
-    id: 'facebook' as const,
-    label: 'Facebook',
-    bg: '#1877F2',
-    buildUrl: (u: string, t: string) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(u)}`,
-    Icon: FbIcon,
-    openApp: null,
-  },
-  {
-    id: 'instagram' as const,
-    label: 'Instagram',
-    bg: 'linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)',
-    buildUrl: null,
-    Icon: IgIcon,
-    openApp: 'https://www.instagram.com',
-  },
-  {
-    id: 'linkedin' as const,
-    label: 'LinkedIn',
-    bg: '#0A66C2',
-    buildUrl: (u: string, t: string) => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(u)}`,
-    Icon: LiIcon,
-    openApp: null,
-  },
-  {
-    id: 'tiktok' as const,
-    label: 'TikTok',
-    bg: '#010101',
-    buildUrl: null,
-    Icon: TtIcon,
-    openApp: 'https://www.tiktok.com',
-  },
-  {
-    id: 'whatsapp' as const,
-    label: 'WhatsApp',
-    bg: '#25D366',
-    buildUrl: (u: string, t: string) => `https://wa.me/?text=${encodeURIComponent(t + '\n' + u)}`,
-    Icon: WaIcon,
-    openApp: null,
-  },
-  {
-    id: 'viber' as const,
-    label: 'Viber',
-    bg: '#7360F2',
-    buildUrl: (u: string, t: string) => `viber://forward?text=${encodeURIComponent(t + '\n' + u)}`,
-    Icon: VbIcon,
-    openApp: null,
-  },
-]
+// ─── Platform config ──────────────────────────────────────────────────────────
 
 type PlatformId = 'facebook' | 'instagram' | 'linkedin' | 'tiktok' | 'whatsapp' | 'viber' | 'copy'
+
+interface Platform {
+  id: PlatformId
+  label: string
+  bg: string
+  // feed/status/public
+  feedUrl: ((u: string, t: string) => string) | null
+  feedApp: string | null
+  feedSubLabel: string
+  // private message
+  msgUrl: ((u: string, t: string) => string) | null
+  msgApp: string | null
+  msgSubLabel: string
+  Icon: () => JSX.Element
+  MsgIcon?: () => JSX.Element
+}
+
+const PLATFORMS: Platform[] = [
+  {
+    id: 'facebook',
+    label: 'Facebook',
+    bg: '#1877F2',
+    feedUrl: (u) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(u)}`,
+    feedApp: null,
+    feedSubLabel: 'Feed',
+    msgUrl: (u) => `fb-messenger://share?link=${encodeURIComponent(u)}`,
+    msgApp: `https://m.me/`,
+    msgSubLabel: 'Messenger',
+    Icon: FbIcon,
+    MsgIcon: MsgrIcon,
+  },
+  {
+    id: 'instagram',
+    label: 'Instagram',
+    bg: 'linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)',
+    feedUrl: null,
+    feedApp: 'https://www.instagram.com/',
+    feedSubLabel: 'Story',
+    msgUrl: null,
+    msgApp: 'https://www.instagram.com/direct/new/',
+    msgSubLabel: 'DM',
+    Icon: IgIcon,
+  },
+  {
+    id: 'tiktok',
+    label: 'TikTok',
+    bg: '#010101',
+    feedUrl: null,
+    feedApp: 'https://www.tiktok.com/',
+    feedSubLabel: 'Post',
+    msgUrl: null,
+    msgApp: 'https://www.tiktok.com/messages',
+    msgSubLabel: 'DM',
+    Icon: TtIcon,
+  },
+  {
+    id: 'linkedin',
+    label: 'LinkedIn',
+    bg: '#0A66C2',
+    feedUrl: (u) => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(u)}`,
+    feedApp: null,
+    feedSubLabel: 'Post',
+    msgUrl: (u, t) => `https://www.linkedin.com/messaging/compose/?body=${encodeURIComponent(t + '\n' + u)}`,
+    msgApp: null,
+    msgSubLabel: 'Mesazh',
+    Icon: LiIcon,
+  },
+  {
+    id: 'whatsapp',
+    label: 'WhatsApp',
+    bg: '#25D366',
+    feedUrl: (u, t) => `https://api.whatsapp.com/send?text=${encodeURIComponent(t + '\n' + u)}`,
+    feedApp: null,
+    feedSubLabel: 'Status',
+    msgUrl: (u, t) => `https://wa.me/?text=${encodeURIComponent(t + '\n' + u)}`,
+    msgApp: null,
+    msgSubLabel: 'Chat',
+    Icon: WaIcon,
+  },
+  {
+    id: 'viber',
+    label: 'Viber',
+    bg: '#7360F2',
+    feedUrl: (u, t) => `viber://forward?text=${encodeURIComponent(t + '\n' + u)}`,
+    feedApp: null,
+    feedSubLabel: 'Forward',
+    msgUrl: (u, t) => `viber://forward?text=${encodeURIComponent(t + '\n' + u)}`,
+    msgApp: null,
+    msgSubLabel: 'Mesazh',
+    Icon: VbIcon,
+  },
+]
 
 function logShare(userId: string, platform: PlatformId, listingId?: string | null, refCode?: string | null) {
   supabase.from('shares').insert({
@@ -134,8 +186,7 @@ function copyText(text: string) {
 function fallbackCopy(text: string) {
   const el = document.createElement('textarea')
   el.value = text
-  el.style.position = 'fixed'
-  el.style.opacity = '0'
+  el.style.cssText = 'position:fixed;opacity:0'
   document.body.appendChild(el)
   el.select()
   document.execCommand('copy')
@@ -143,20 +194,27 @@ function fallbackCopy(text: string) {
 }
 
 export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: SharePanelProps) {
+  const [mode, setMode] = useState<'feed' | 'msg'>('feed')
   const [copied, setCopied] = useState<PlatformId | null>(null)
   const [linkCopied, setLinkCopied] = useState(false)
 
-  function handlePlatform(p: typeof PLATFORMS[number]) {
+  function handlePlatform(p: Platform) {
     if (userId) logShare(userId, p.id, listingId, refCode)
 
-    if (p.buildUrl) {
-      window.open(p.buildUrl(shareUrl, shareText), '_blank', 'noopener,noreferrer')
-    } else {
-      // Instagram / TikTok: copy link → then open app
+    const url = mode === 'feed'
+      ? (p.feedUrl ? p.feedUrl(shareUrl, shareText) : null)
+      : (p.msgUrl  ? p.msgUrl(shareUrl, shareText)  : null)
+
+    const fallbackApp = mode === 'feed' ? p.feedApp : p.msgApp
+
+    if (url) {
+      window.open(url, '_blank', 'noopener,noreferrer')
+    } else if (fallbackApp) {
+      // No web API (Instagram/TikTok) — copy link first, then open app
       copyText(shareUrl)
-      setCopied(p.id as PlatformId)
+      setCopied(p.id)
       setTimeout(() => {
-        window.open(p.openApp!, '_blank', 'noopener,noreferrer')
+        window.open(fallbackApp, '_blank', 'noopener,noreferrer')
         setCopied(null)
       }, 1200)
     }
@@ -168,6 +226,8 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
     setLinkCopied(true)
     setTimeout(() => setLinkCopied(false), 2000)
   }
+
+  const noApi = (p: Platform) => mode === 'feed' ? !p.feedUrl : !p.msgUrl
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -184,9 +244,42 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
         </div>
       )}
 
+      {/* Mode toggle */}
+      <div style={{
+        display: 'flex', background: '#f0f0f0', borderRadius: 10, padding: 3, gap: 3,
+      }}>
+        <button
+          onClick={() => setMode('feed')}
+          style={{
+            flex: 1, border: 'none', borderRadius: 8, padding: '8px 4px',
+            fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+            background: mode === 'feed' ? '#111' : 'transparent',
+            color: mode === 'feed' ? '#F5C842' : '#666',
+            transition: 'all .15s',
+          }}
+        >
+          📢 Statusi / Feed
+        </button>
+        <button
+          onClick={() => setMode('msg')}
+          style={{
+            flex: 1, border: 'none', borderRadius: 8, padding: '8px 4px',
+            fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+            background: mode === 'msg' ? '#111' : 'transparent',
+            color: mode === 'msg' ? '#F5C842' : '#666',
+            transition: 'all .15s',
+          }}
+        >
+          💬 Mesazh privat
+        </button>
+      </div>
+
+      {/* Platform grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 7 }}>
         {PLATFORMS.map(p => {
           const isCopying = copied === p.id
+          const subLabel = mode === 'feed' ? p.feedSubLabel : p.msgSubLabel
+          const IconComp = (mode === 'msg' && p.MsgIcon) ? p.MsgIcon : p.Icon
           return (
             <button
               key={p.id}
@@ -198,16 +291,18 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
                 padding: '10px 4px', fontSize: 10, fontWeight: 700,
                 cursor: 'pointer', fontFamily: 'inherit',
                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-                transition: 'opacity .15s', minHeight: 62,
+                transition: 'opacity .15s', minHeight: 66,
               }}
             >
               {isCopying
                 ? <span style={{ fontSize: 18, lineHeight: 1 }}>✅</span>
-                : <p.Icon />
+                : <IconComp />
               }
-              {isCopying ? 'Kopjuar!' : p.label}
-              {(p.id === 'instagram' || p.id === 'tiktok') && !isCopying && (
-                <span style={{ fontSize: 8, opacity: 0.8, fontWeight: 400 }}>kopjo & hap</span>
+              <span>{isCopying ? 'Kopjuar!' : p.label}</span>
+              {!isCopying && (
+                <span style={{ fontSize: 8, opacity: 0.75, fontWeight: 400 }}>
+                  {noApi(p) ? '📋 ' + subLabel : subLabel}
+                </span>
               )}
             </button>
           )
@@ -237,6 +332,13 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
           {linkCopied ? '✓ Kopjuar' : '🔗 Kopjo'}
         </button>
       </div>
+
+      {/* Hint for copy-based platforms */}
+      {PLATFORMS.some(p => noApi(p)) && (
+        <div style={{ fontSize: 9.5, color: '#aaa', textAlign: 'center', lineHeight: 1.5 }}>
+          📋 Instagram &amp; TikTok: linku kopjohet automatikisht, pastaj hapet aplikacioni
+        </div>
+      )}
     </div>
   )
 }
