@@ -761,7 +761,10 @@ export default function Home() {
 
         <nav className="bottom-nav">
           <button className="nav-item active">
-            <i className="ti ti-home-filled" /><span>Kreu</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            <span>Kreu</span>
           </button>
           <button className="nav-item" onClick={() => go('/search')}>
             <i className="ti ti-search" /><span>Kërko</span>
