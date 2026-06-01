@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { supabase } from '../../../lib/supabase'
 import { useAlpazar } from '../../../lib/context'
+import { uploadImages, UploadProgress } from '../../../lib/uploadImages'
 import { FreeTierBanner, PremiumUpsellModal } from '../../components/PremiumUpsell'
 
 const MapPicker = dynamic(() => import('../../components/MapPicker').then(m => ({ default: m.MapPicker })), { ssr: false })
@@ -36,6 +37,7 @@ export default function NewListing() {
   const [myListingCount, setMyListingCount] = useState(0)
   const [priceSuggestion, setPriceSuggestion] = useState('')
   const [priceLoading, setPriceLoading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -81,7 +83,7 @@ export default function NewListing() {
   }
 
   function handleImages(e: React.ChangeEvent<HTMLInputElement>) {
-    const MAX_MB = 5
+    const MAX_MB = 25
     const all = Array.from(e.target.files || [])
     const oversized = all.filter(f => f.size > MAX_MB * 1024 * 1024)
     if (oversized.length > 0) {
@@ -98,40 +100,31 @@ export default function NewListing() {
     setImagePreviews(previews)
   }
 
-  async function uploadImages(): Promise<string[]> {
-    const { data: { session }, error: sessionErr } = await supabase.auth.getSession()
-    if (sessionErr || !session) { setMsg('err:Sesioni ka skaduar. Hyr sërisht.'); return [] }
-
-    const urls: string[] = []
-    const firstErr: string[] = []
-    for (const file of imageFiles) {
-      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase()
-      const path = `${session.user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
-      const { error } = await supabase.storage.from('listing-images').upload(path, file, {
-        upsert: false,
-        contentType: file.type || 'image/jpeg',
-      })
-      if (error) { firstErr.push(error.message); continue }
-      const { data: { publicUrl } } = supabase.storage.from('listing-images').getPublicUrl(path)
-      urls.push(publicUrl)
-    }
-    if (urls.length === 0 && firstErr.length > 0) {
-      setMsg(`err:Gabim ngarkim: ${firstErr[0]}`)
-    }
-    return urls
-  }
-
   async function submit() {
     if (!form.title.trim()) { setMsg('err:Titulli është i detyrueshëm!'); return }
     if (!form.category_id) { setMsg('err:Zgjidh kategorinë!'); return }
     if (!form.city) { setMsg('err:Shkruaj qytetin!'); return }
 
-    setLoading(true); setMsg('')
+    setLoading(true); setMsg(''); setUploadProgress(null)
     try {
-      const uploadedUrls = imageFiles.length ? await uploadImages() : []
-      if (imageFiles.length && uploadedUrls.length === 0) {
-        setLoading(false); return
+      let uploadedUrls: string[] = []
+      if (imageFiles.length > 0) {
+        try {
+          const { urls, errors } = await uploadImages(imageFiles, setUploadProgress)
+          if (errors.length > 0 && urls.length === 0) {
+            setMsg(`err:Ngarkim dështoi: ${errors[0]}`)
+            setLoading(false); setUploadProgress(null); return
+          }
+          if (errors.length > 0) {
+            setMsg(`warn:${urls.length} foto u ngarkuan. ${errors.length} dështuan: ${errors[0]}`)
+          }
+          uploadedUrls = urls
+        } catch (uploadErr: any) {
+          setMsg(`err:${uploadErr?.message ?? 'Gabim ngarkim fotosh.'}`)
+          setLoading(false); setUploadProgress(null); return
+        }
       }
+      setUploadProgress(null)
       const { data, error } = await supabase.from('listings').insert({
         user_id: user.id,
         title: form.title.trim(),
@@ -184,6 +177,7 @@ export default function NewListing() {
         .msg-box{border-radius:9px;padding:10px 14px;margin-bottom:12px;font-size:12px;font-weight:600;}
         .ok{background:#EAF3DE;color:#3B6D11;border:0.5px solid #97C459;}
         .err{background:#FFF0EE;color:#E63312;border:0.5px solid #F09595;}
+        .warn{background:#FFF8E1;color:#E65100;border:0.5px solid #FFB74D;}
         .card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;border:0.5px solid #eee;}
         .card-title{font-size:13px;font-weight:700;color:#111;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
         .card-title i{font-size:16px;color:#E63312;}
@@ -228,6 +222,18 @@ export default function NewListing() {
           {/* Marketing: banner kufiri falas */}
           <FreeTierBanner listingCount={myListingCount} freeLimit={freeLimit} />
           {msg && <div className={`msg-box ${mt}`}>{mm}</div>}
+          {uploadProgress && (
+            <div style={{ background:'#e8f4fd', border:'1px solid #90caf9', borderRadius:10, padding:'10px 14px', marginBottom:10, fontSize:13, color:'#1565c0', display:'flex', alignItems:'center', gap:8 }}>
+              <span style={{ fontSize:16 }}>⏳</span>
+              <div style={{ flex:1 }}>
+                <div style={{ fontWeight:600 }}>Duke ngarkuar foto... {uploadProgress.done}/{uploadProgress.total}</div>
+                {uploadProgress.currentName && <div style={{ color:'#1976d2', marginTop:2 }}>{uploadProgress.currentName}</div>}
+                <div style={{ background:'#bbdefb', borderRadius:4, height:6, marginTop:6, overflow:'hidden' }}>
+                  <div style={{ background:'#1976d2', height:'100%', width:`${Math.round(uploadProgress.done / uploadProgress.total * 100)}%`, transition:'width .3s' }} />
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="card">
             <div className="card-title"><i className="ti ti-info-circle" />Informacioni bazë</div>
@@ -344,7 +350,7 @@ export default function NewListing() {
           </div>
 
           <button className="submit-btn" onClick={submit} disabled={loading}>
-            {loading ? '⏳ Duke publikuar...' : '🚀 Publiko shpalljen falas'}
+            {uploadProgress ? `⏳ Foto ${uploadProgress.done}/${uploadProgress.total}...` : loading ? '⏳ Duke publikuar...' : '🚀 Publiko shpalljen falas'}
           </button>
         </div>
       </div>
