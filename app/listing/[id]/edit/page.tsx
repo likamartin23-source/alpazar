@@ -6,7 +6,6 @@ import { supabase } from '../../../../lib/supabase'
 
 const MapPicker = dynamic(() => import('../../../components/MapPicker').then(m => ({ default: m.MapPicker })), { ssr: false })
 
-const CITIES = ['Tiranë', 'Durrës', 'Vlorë', 'Shkodër', 'Elbasan', 'Fier', 'Korçë', 'Berat', 'Lushnjë', 'Kavajë', 'Gjirokastër', 'Sarandë', 'Lezhë', 'Kukës', 'Pogradec', 'Peshkopi', 'Tropojë', 'Përmet', 'Tepelenë', 'Tjetër']
 
 export default function EditListing({ params }: { params: { id: string } }) {
   const [user, setUser]       = useState<any>(null)
@@ -111,7 +110,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
   async function submit() {
     if (!form.title.trim()) { setMsg('err:Titulli është i detyrueshëm!'); return }
     if (!form.category_id)  { setMsg('err:Zgjidh kategorinë!'); return }
-    if (!form.city)         { setMsg('err:Zgjidh qytetin!'); return }
+    if (!form.city)         { setMsg('err:Shkruaj qytetin!'); return }
 
     setLoading(true); setMsg('')
     try {
@@ -261,19 +260,22 @@ export default function EditListing({ params }: { params: { id: string } }) {
           <div className="card">
             <div className="card-title"><i className="ti ti-map-pin" />Vendndodhja *</div>
             <div className="field">
-              <label>Qyteti</label>
-              <select value={form.city} onChange={e => set('city', e.target.value)}>
-                <option value="">— Zgjidh qytetin —</option>
-                {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
+              <label>Qyteti *</label>
+              <input
+                type="text"
+                placeholder="p.sh. Tiranë, Durrës, Vlorë..."
+                value={form.city}
+                onChange={e => set('city', e.target.value)}
+              />
             </div>
             <div className="field">
-              <label>Lokacioni i saktë në hartë <span style={{ fontWeight: 400, color: '#aaa' }}>(opsional)</span></label>
+              <label>Adresa e saktë <span style={{ fontWeight: 400, color: '#aaa' }}>(opsional — mund të vendoset me GPS)</span></label>
               <MapPicker
                 lat={form.latitude}
                 lng={form.longitude}
                 address={form.location_address}
                 onChange={(lat, lng, address) => setForm(f => ({ ...f, latitude: lat, longitude: lng, location_address: address }))}
+                onCityChange={city => { if (!form.city) setForm(f => ({ ...f, city })) }}
               />
             </div>
           </div>
