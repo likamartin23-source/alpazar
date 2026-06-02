@@ -1,10 +1,12 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabase'
-import dynamic from 'next/dynamic'
+import dynamicImport from 'next/dynamic'
 
-const MapDisplay = dynamic(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), { ssr: false })
+const MapDisplay = dynamicImport(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), { ssr: false })
 
 interface Biz {
   id: string; owner_id: string; name: string; slug: string; type: string
