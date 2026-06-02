@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
   if (!tsqueryOriginal) return NextResponse.json({ results: [] })
 
   // Run both FTS queries in parallel; if normalized differs, include its results too
-  const queries: Promise<any>[] = [
+  const queries = [
     sb.from('listings')
       .select(SELECT)
       .eq('is_active', true)
