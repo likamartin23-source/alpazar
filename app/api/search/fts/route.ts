@@ -7,6 +7,23 @@ export const runtime = 'nodejs'
 
 const anonSb = () => createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
+// Normalize Albanian characters so ë→e, ç→c searches still match
+function normalizeAlb(text: string): string {
+  return text
+    .replace(/[ëÊ]/g, 'e')
+    .replace(/[çÇ]/g, 'c')
+}
+
+function buildTsquery(text: string): string {
+  return text
+    .replace(/[^a-zA-ZÀ-öø-ÿëËçÇ0-9 ]/g, ' ')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map(w => `${w}:*`)
+    .join(' & ')
+}
+
 export async function GET(req: NextRequest) {
   const ip = getClientIp(req)
   const rl = rateLimit(`fts:${ip}`, { limit: 30, windowMs: 60_000 })
@@ -17,33 +34,58 @@ export async function GET(req: NextRequest) {
   const q = req.nextUrl.searchParams.get('q')?.trim()
   if (!q || q.length < 2) return NextResponse.json({ results: [] })
 
-  // Sanitize: remove special chars that break tsquery
-  const clean = q.replace(/[^a-zA-ZÀ-öø-ÿëËçÇ0-9 ]/g, ' ').trim()
-  if (!clean) return NextResponse.json({ results: [] })
-
-  // Build tsquery: each word with prefix match
-  const tsquery = clean.split(/\s+/).filter(Boolean).map(w => `${w}:*`).join(' & ')
-
   const sb = anonSb()
-  const { data, error } = await sb
-    .from('listings')
-    .select('id,title,price,currency,city,category,images,condition,created_at,views_count')
-    .eq('is_active', true)
-    .textSearch('fts', tsquery, { type: 'websearch', config: 'simple' })
-    .order('created_at', { ascending: false })
-    .limit(20)
+  const SELECT = 'id,title,price,currency,city,category,images,condition,created_at,views_count'
 
-  if (error) {
-    // Fallback: ilike search nëse FTS dështon
+  // Build two tsquery forms: original + Albanian-normalized (ë→e, ç→c)
+  const tsqueryOriginal   = buildTsquery(q)
+  const tsqueryNormalized = buildTsquery(normalizeAlb(q))
+
+  if (!tsqueryOriginal) return NextResponse.json({ results: [] })
+
+  // Run both FTS queries in parallel; if normalized differs, include its results too
+  const queries: Promise<any>[] = [
+    sb.from('listings')
+      .select(SELECT)
+      .eq('is_active', true)
+      .textSearch('fts', tsqueryOriginal, { type: 'websearch', config: 'simple' })
+      .order('views_count', { ascending: false })
+      .limit(20),
+  ]
+
+  if (tsqueryNormalized !== tsqueryOriginal) {
+    queries.push(
+      sb.from('listings')
+        .select(SELECT)
+        .eq('is_active', true)
+        .textSearch('fts', tsqueryNormalized, { type: 'websearch', config: 'simple' })
+        .order('views_count', { ascending: false })
+        .limit(20),
+    )
+  }
+
+  const results = await Promise.allSettled(queries)
+  const primary   = results[0].status === 'fulfilled' ? results[0].value : { data: null, error: true }
+  const secondary = results[1]?.status === 'fulfilled' ? results[1].value : { data: null }
+
+  if (primary.error && !secondary?.data) {
+    // Both FTS failed — fallback to ilike
     const { data: fallback } = await sb
       .from('listings')
-      .select('id,title,price,currency,city,category,images,condition,created_at,views_count')
+      .select(SELECT)
       .eq('is_active', true)
-      .ilike('title', `%${clean}%`)
-      .order('created_at', { ascending: false })
+      .ilike('title', `%${q.replace(/[%_\\]/g, '')}%`)
+      .order('views_count', { ascending: false })
       .limit(20)
     return NextResponse.json({ results: fallback || [], mode: 'fallback' })
   }
 
-  return NextResponse.json({ results: data || [], mode: 'fts' })
+  // Merge results: primary first, then secondary (deduplicate by id)
+  const seen = new Set<string>()
+  const merged: any[] = []
+  for (const item of [...(primary.data || []), ...(secondary?.data || [])]) {
+    if (!seen.has(item.id)) { seen.add(item.id); merged.push(item) }
+  }
+
+  return NextResponse.json({ results: merged, mode: 'fts' })
 }

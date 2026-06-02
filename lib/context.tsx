@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback, useRef, ReactNode } from 'react'
 import { supabase } from './supabase'
 
 // ─── Types ─────────────────────────────────────────────────
@@ -91,6 +91,9 @@ export function AlpazarProvider({ children }: { children: ReactNode }) {
   }, [])
 
   // ── auth ──────────────────────────────────────────────────
+  const lastSeenRef = useRef<number>(0)
+  const LAST_SEEN_TTL = 5 * 60 * 1000 // write at most once per 5 minutes
+
   const loadProfile = useCallback(async (uid: string) => {
     const { data } = await supabase
       .from('profiles')
@@ -98,8 +101,12 @@ export function AlpazarProvider({ children }: { children: ReactNode }) {
       .eq('id', uid)
       .single()
     if (data) setProfile(data as Profile)
-    // heartbeat last_seen
-    await supabase.from('profiles').update({ last_seen: new Date().toISOString() }).eq('id', uid)
+    // Throttle last_seen: write at most once per 5 min to avoid redundant DB writes
+    const now = Date.now()
+    if (now - lastSeenRef.current > LAST_SEEN_TTL) {
+      lastSeenRef.current = now
+      supabase.from('profiles').update({ last_seen: new Date().toISOString() }).eq('id', uid).then(() => {})
+    }
   }, [])
 
   const loadUnread = useCallback(async (uid: string) => {

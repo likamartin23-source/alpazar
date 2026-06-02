@@ -83,6 +83,7 @@ export async function DELETE(req: NextRequest) {
     .from('price_alerts')
     .delete()
     .eq('listing_id', listingId)
+    .eq('user_id', user.id)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ ok: true })
