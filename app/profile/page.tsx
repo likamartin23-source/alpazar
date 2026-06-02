@@ -223,6 +223,29 @@ export default function ProfilePage() {
     if (!error) setMyListings(ls => ls.filter(l => l.id !== id))
   }
 
+  function canBump(lastBumped: string | null): boolean {
+    if (!lastBumped) return true
+    const diff = Date.now() - new Date(lastBumped).getTime()
+    return diff >= 7 * 24 * 60 * 60 * 1000
+  }
+
+  function bumpDaysLeft(lastBumped: string | null): number {
+    if (!lastBumped) return 0
+    const diff = Date.now() - new Date(lastBumped).getTime()
+    const remaining = 7 * 24 * 60 * 60 * 1000 - diff
+    return Math.max(0, Math.ceil(remaining / (24 * 60 * 60 * 1000)))
+  }
+
+  async function bumpListing(id: string) {
+    const now = new Date().toISOString()
+    setMyListings(ls => ls.map(l => l.id === id ? { ...l, created_at: now, last_bumped_at: now } : l))
+    const { error } = await supabase.from('listings').update({ created_at: now, last_bumped_at: now }).eq('id', id)
+    if (error) {
+      // rollback
+      setMyListings(ls => ls.map(l => l.id === id ? { ...l, created_at: l.created_at, last_bumped_at: l.last_bumped_at } : l))
+    }
+  }
+
   const fmt = (price: number, cur: string) =>
     !price ? 'Me marrëveshje' :
     cur === 'EUR' ? `${price.toLocaleString()} €` : `${price.toLocaleString()} L`
@@ -598,6 +621,16 @@ export default function ProfilePage() {
                         <div className="listing-price">{fmt(l.price, l.currency)}</div>
                         <div className="listing-meta">👁 {l.views_count || 0} · 📍 {l.city || 'Shqipëri'}{l.is_premium ? ' · ⭐ Premium' : ''}</div>
                       </div>
+                      {canBump(l.last_bumped_at) ? (
+                        <button
+                          className="edit-listing-btn"
+                          onClick={() => bumpListing(l.id)}
+                          title="Rifresko shpalljen"
+                          style={{ fontSize: 13 }}
+                        >⬆️</button>
+                      ) : (
+                        <span title={`Mund ta rifreskosh pas ${bumpDaysLeft(l.last_bumped_at)} ditësh`} style={{ fontSize: 10, color: '#aaa', padding: '0 4px', cursor: 'default' }}>{bumpDaysLeft(l.last_bumped_at)}d</span>
+                      )}
                       <button className="edit-listing-btn" onClick={() => window.location.href = `/listing/${l.id}/edit`} title="Ndrysho">✏️</button>
                       <button className="del-btn" onClick={() => deleteListing(l.id)} title="Fshi">🗑</button>
                     </div>
