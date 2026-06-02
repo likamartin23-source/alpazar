@@ -4,7 +4,6 @@ import { supabase } from './supabase'
 
 export interface UploadProgress { done: number; total: number; currentName?: string }
 
-// Compress to JPEG (max 1920px, quality 0.82). Skips if already small.
 async function compress(file: File): Promise<Blob> {
   if (file.size < 250 * 1024 || file.type === 'image/gif') return file
   return new Promise(resolve => {
@@ -26,18 +25,14 @@ async function compress(file: File): Promise<Blob> {
   })
 }
 
-// PUT with retry (3 attempts, exponential backoff)
-async function putWithRetry(signedUrl: string, blob: Blob, attempts = 3): Promise<string | null> {
+async function uploadWithRetry(path: string, blob: Blob, attempts = 3): Promise<string | null> {
   for (let i = 0; i < attempts; i++) {
     try {
-      const res = await fetch(signedUrl, {
-        method: 'PUT',
-        body: blob,
-        headers: { 'Content-Type': blob.type || 'image/jpeg' },
-      })
-      if (res.ok) return null
-      const text = await res.text().catch(() => `HTTP ${res.status}`)
-      if (i === attempts - 1) return `HTTP ${res.status}: ${text.slice(0, 120)}`
+      const { error } = await supabase.storage
+        .from('listing-images')
+        .upload(path, blob, { contentType: blob.type || 'image/jpeg', upsert: true })
+      if (!error) return null
+      if (i === attempts - 1) return error.message
     } catch (e: any) {
       if (i === attempts - 1) return e?.message ?? 'Lidhje dështoi'
     }
@@ -54,61 +49,39 @@ export async function uploadImages(
 
   onProgress?.({ done: 0, total: files.length })
 
-  // 1. Get valid session token
-  const { data: { session }, error: sessErr } = await supabase.auth.getSession()
-  if (sessErr || !session) {
-    // Try to refresh first
-    const { data: { session: refreshed } } = await supabase.auth.refreshSession()
-    if (!refreshed) throw new Error('Sesioni ka skaduar. Hyr sërisht.')
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session) {
+    await supabase.auth.refreshSession()
+    const { data: { session: s2 } } = await supabase.auth.getSession()
+    if (!s2) throw new Error('Sesioni ka skaduar. Hyr sërisht.')
   }
 
   const { data: { session: validSession } } = await supabase.auth.getSession()
   if (!validSession) throw new Error('Sesioni ka skaduar. Hyr sërisht.')
 
-  // 2. Get presigned URLs from server
-  const presignRes = await fetch('/api/upload/presign', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${validSession.access_token}`,
-    },
-    body: JSON.stringify({
-      files: files.map(f => ({ name: f.name, type: f.type || 'image/jpeg', size: f.size })),
-    }),
-  })
-
-  if (!presignRes.ok) {
-    const err = await presignRes.json().catch(() => ({ error: 'Gabim serveri' }))
-    throw new Error(err.error ?? `Presign dështoi (${presignRes.status})`)
-  }
-
-  const { uploads } = await presignRes.json() as {
-    uploads: Array<{ signedUrl: string; path: string; publicUrl: string }>
-  }
-
-  // 3. Compress + upload each file
+  const uid = validSession.user.id
   const urls: string[] = []
   const errors: string[] = []
   let done = 0
 
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i]
-    const slot = uploads[i]
+  for (const file of files) {
     onProgress?.({ done, total: files.length, currentName: file.name })
 
-    // Compress (client-side, canvas)
     let blob: Blob = file
-    try { blob = await compress(file) } catch { /* use original on compress error */ }
+    try { blob = await compress(file) } catch { /* use original */ }
 
-    // Upload to presigned URL with retry
-    const err = await putWithRetry(slot.signedUrl, blob)
+    const ext = blob.type === 'image/gif' ? 'gif' : 'jpg'
+    const path = `${uid}/${crypto.randomUUID()}.${ext}`
+
+    const err = await uploadWithRetry(path, blob)
     done++
     onProgress?.({ done, total: files.length })
 
     if (err) {
       errors.push(`${file.name}: ${err}`)
     } else {
-      urls.push(slot.publicUrl)
+      const { data } = supabase.storage.from('listing-images').getPublicUrl(path)
+      urls.push(data.publicUrl)
     }
   }
 
