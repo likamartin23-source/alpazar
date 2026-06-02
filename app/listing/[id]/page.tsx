@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import ListingPageClient from './ListingPageClient'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../lib/supabase'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 const SITE_URL = 'https://alpazar.vercel.app'
 
