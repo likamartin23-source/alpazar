@@ -19,6 +19,29 @@ const SHOP_CATEGORIES = [
 
 const FN_URL = 'https://sopafwfkrxpcdaljddoh.supabase.co/functions/v1'
 
+function BizUpsellBanner({ userId }: { userId?: string }) {
+  const [hasBiz, setHasBiz] = useState<boolean | null>(null)
+  useEffect(() => {
+    if (!userId) return
+    supabase.from('businesses').select('id', { count: 'exact', head: true }).eq('owner_id', userId)
+      .then(({ count }) => setHasBiz((count ?? 0) > 0))
+  }, [userId])
+  if (hasBiz !== false) return null
+  return (
+    <div
+      onClick={() => window.location.href = '/biznese/new'}
+      style={{ background: 'linear-gradient(135deg,#111,#1c1c1c)', borderRadius: 13, padding: '14px 16px', marginBottom: 12, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12 }}
+    >
+      <span style={{ fontSize: 28 }}>🏢</span>
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: 13, fontWeight: 800, color: '#F5C842', marginBottom: 3 }}>Krijo Biznes Online</div>
+        <div style={{ fontSize: 11, color: '#aaa', lineHeight: 1.5 }}>Faqe e dedikuar · Shpallje pa limit · Badge ✓ Biznes</div>
+      </div>
+      <i className="ti ti-chevron-right" style={{ color: '#F5C842', fontSize: 18 }} />
+    </div>
+  )
+}
+
 export default function ProfilePage() {
   const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
@@ -651,6 +674,9 @@ export default function ProfilePage() {
           {/* Listings Tab */}
           {activeTab === 'listings' && (
             <>
+              {/* Business upsell — shown only if user has no business */}
+              <BizUpsellBanner userId={user?.id} />
+
               <button
                 style={{ width: '100%', background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 13, padding: '14px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}
                 onClick={() => window.location.href = '/profile/analytics'}

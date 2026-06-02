@@ -28,6 +28,25 @@ function dayLabel(d: string) {
   if (dt.toDateString() === yes.toDateString()) return 'Dje'
   return dt.toLocaleDateString('sq-AL', { day: '2-digit', month: 'long' })
 }
+function BusinessMiniCard({ bizId }: { bizId: string }) {
+  const [biz, setBiz] = useState<any>(null)
+  useEffect(() => {
+    supabase.from('businesses').select('id,name,logo_url,is_verified').eq('id', bizId).single().then(({ data }) => { if (data) setBiz(data) })
+  }, [bizId])
+  if (!biz) return null
+  return (
+    <div style={{ margin: '0 0 12px', padding: '10px 12px', background: '#F5F5F5', borderRadius: 12, display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => window.location.href = `/biznese/${biz.id}`}>
+      <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#fff', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, border: '1px solid #eee', flexShrink: 0 }}>
+        {biz.logo_url ? <img src={biz.logo_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : '🏢'}
+      </div>
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: '#111' }}>{biz.name} {biz.is_verified && <span style={{ color: '#16a34a' }}>✓ Biznes</span>}</div>
+        <div style={{ fontSize: 10, color: '#888' }}>Shfaq faqen e biznesit →</div>
+      </div>
+    </div>
+  )
+}
+
 function pubDate(d: string) {
   if (!d) return ''
   return new Date(d).toLocaleDateString('sq-AL', { day: '2-digit', month: 'short', year: 'numeric' })
@@ -727,6 +746,11 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                 </div>
               )}
             </>
+          )}
+
+          {/* Business mini-card — shown when listing belongs to a business */}
+          {listing.business_id && (
+            <BusinessMiniCard bizId={listing.business_id} />
           )}
 
           {/* Marketing: upsell per pronarin jo-premium */}
