@@ -2,6 +2,8 @@
 
 ## ⚡ HAPI I PARË I ÇDO SESIONI
 
+<!-- Azhurnim i fundit: 2 Qershor 2026 — automatizim i plotë, migrime DB, optimizim indeksesh, sigurim API -->
+
 **Kryej të gjitha këto njëkohësisht:**
 
 ```bash
