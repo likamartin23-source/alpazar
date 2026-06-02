@@ -8,6 +8,7 @@ import { SocialProofBar, SellerPremiumUpsell } from '../../components/PremiumUps
 import { saveRefFromUrl, buildShareUrl } from '../../../lib/referral'
 import { TrustBadge } from '../../components/TrustBadge'
 import { SharePanel } from '../../components/SharePanel'
+import { ImageCarousel } from '../../components/ImageCarousel'
 
 const MapDisplay = dynamic(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), { ssr: false })
 
@@ -642,34 +643,8 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         })()}
 
         {/* Gallery */}
-        <div className="img-wrap">
-          {images.length > 0 ? (
-            <>
-              <img src={images[imgIdx]} alt={listing.title} />
-              {images.length > 1 && (
-                <>
-                  <button className="img-nav" style={{ left: 10 }} onClick={() => setImgIdx(i => Math.max(0, i - 1))}>
-                    <i className="ti ti-chevron-left" />
-                  </button>
-                  <button className="img-nav" style={{ right: 10 }} onClick={() => setImgIdx(i => Math.min(images.length - 1, i + 1))}>
-                    <i className="ti ti-chevron-right" />
-                  </button>
-                  <div className="img-dots">
-                    {images.map((_: any, i: number) => (
-                      <div key={i} className={`img-dot ${i === imgIdx ? 'on' : ''}`} onClick={() => setImgIdx(i)} />
-                    ))}
-                  </div>
-                </>
-              )}
-            </>
-          ) : (
-            <span style={{ fontSize: 56 }}>📦</span>
-          )}
-          {!isOwner && (
-            <button className="like-btn" onClick={toggleSave}>
-              <i className={`ti ti-heart${liked ? '-filled' : ''}`} style={{ fontSize: 17, color: liked ? '#E63312' : '#ddd' }} />
-            </button>
-          )}
+        <div style={{ padding: '0 13px', marginBottom: 4 }}>
+          <ImageCarousel images={images} alt={listing.title} aspectRatio="4/3" />
         </div>
 
         {/* Social proof — shikues aktiv + total pamje */}
