@@ -1,16 +1,22 @@
 # CLAUDE.md — Alpazar Project Instructions
 
-## ⚡ HAPI I PARË I ÇDO SESIONI — EKZEKUTO KOMANDAT NGA NOTION
+## ⚡ HAPI I PARË I ÇDO SESIONI
 
-**Gjithmonë, para çdo gjëje tjetër, kontrollo databazën e komandave:**
+**Kryej të gjitha këto njëkohësisht:**
 
+```bash
+# 1. Kontrollo statusin e deployment-it të fundit
+# (Vercel MCP → list_deployments → prj_KNCEtuUDGNCA6ulHomdKniNAZEuX)
+
+# 2. Kontrollo komandat e Notion
+# URL: https://www.notion.so/3703ee6af10981229176f8b4ede4df03
+# Filter: Statusi = "⏳ Pret"
+
+# 3. Kontrollo TypeScript errors
+cd /home/user/alpazar && npx tsc --noEmit 2>&1 | head -30
 ```
-URL: https://www.notion.so/3703ee6af10981229176f8b4ede4df03
-Databaza: 🎯 KOMANDA PËR CLAUDE
-Filter: Statusi = "⏳ Pret"
-```
 
-**Procedure:**
+**Procedure Notion:**
 1. Lexo të gjitha komandat me status `⏳ Pret`
 2. Ndrysho statusin → `🔄 Duke u ekzekutuar`
 3. Ekzekuto komandën plotësisht
@@ -41,10 +47,11 @@ Filter: Statusi = "⏳ Pret"
 - **Framework:** Next.js 14 App Router, `'use client'` directive
 - **DB/Auth:** Supabase JS v2 — singleton nga `lib/supabase.ts`
 - **Supabase queries:** gjithmonë `await` ose `.then()` — lazy PromiseLike!
+- **Upload foto:** `lib/uploadImages.ts` → direkt tek Supabase Storage (RLS, pa presign)
 - **Deployment:** Vercel — `prj_KNCEtuUDGNCA6ulHomdKniNAZEuX`
 - **Team:** `team_Kkg5W4qnF2t5CQZj64ZS8xbz`
 - **Supabase project:** `sopafwfkrxpcdaljddoh` (eu-west-1)
-- **Maps:** `@react-google-maps/api` — dynamic import `{ ssr: false }`
+- **Maps:** OpenStreetMap Nominatim (GPS) + iframe embed (pa API key)
 
 ---
 
@@ -61,17 +68,26 @@ app/
     [id]/edit/page.tsx  — Editim: MapPicker
   messages/page.tsx     — Mesazhe realtime
   admin/page.tsx        — Panel admin
+  error.tsx             — Global crash page
+  not-found.tsx         — 404 page
   components/
     Skeleton.tsx        — SkeletonCard, Grid, Row, List, Text, Profile
     TrustBadge.tsx      — Trust score 0-100, SVG ring
-    MapPicker.tsx       — Interactive map me Places API
-    MapDisplay.tsx      — Read-only map
+    MapPicker.tsx       — GPS + Nominatim, pa API key
+    MapDisplay.tsx      — OpenStreetMap iframe embed
 lib/
-  supabase.ts           — Singleton client
+  supabase.ts           — Singleton client (anon key hardcoded si fallback)
+  supabase-admin.ts     — Lazy singleton me Proxy (nuk crash-on pa service_role)
+  uploadImages.ts       — compress + supabase.storage.upload direkt (pa presign)
+  context.tsx           — AlpazarProvider: auth, unread, app_config realtime
 public/
   sw.js                 — Service Worker v6
   manifest.json         — PWA manifest
 next.config.js          — CSP headers, ignoreBuildErrors
+.github/workflows/
+  ci.yml                — TypeScript + build check + Slack notify
+  claude.yml            — Claude auto-fix + @claude trigger
+  deploy.yml            — Manual deploy (fallback, Vercel integrim natyv aktiv)
 supabase/migrations/    — SQL migrations
 ```
 
@@ -79,15 +95,38 @@ supabase/migrations/    — SQL migrations
 
 ## 🔗 LIDHJET E PLATFORMAVE
 
-| Platformë | URL/ID |
-|---|---|
-| Notion Handoff | https://www.notion.so/3703ee6af10981229176f8b4ede4df03 |
-| Notion Biseda | https://www.notion.so/3703ee6af10981e8832fc0e2080319cc |
-| GitHub | https://github.com/likamartin23-source/alpazar |
-| Vercel | https://alpazar.vercel.app |
-| Linear | https://linear.app/martinel/project/alpazar-platform-0305ace5dc9b |
-| Slack | #all-alpazar — C0B6MEETXKJ |
-| Supabase | sopafwfkrxpcdaljddoh.supabase.co |
+| Platformë | URL/ID | Statusi |
+|---|---|---|
+| Notion Handoff | https://www.notion.so/3703ee6af10981229176f8b4ede4df03 | ✅ Aktiv |
+| Notion Biseda | https://www.notion.so/3703ee6af10981e8832fc0e2080319cc | ✅ Aktiv |
+| GitHub | https://github.com/likamartin23-source/alpazar | ✅ Aktiv |
+| Vercel | https://alpazar.vercel.app | ✅ Auto-deploy nga main |
+| Linear | https://linear.app/martinel/project/alpazar-platform-0305ace5dc9b | ✅ Manual |
+| Slack | #all-alpazar — C0B6MEETXKJ | ⚙️ Webhook needed |
+| Supabase | sopafwfkrxpcdaljddoh.supabase.co | ✅ Aktiv |
+
+---
+
+## 🤖 AUTOMATIZIMI — GitHub Secrets të nevojshme
+
+Shto këto sekrete në: **github.com/likamartin23-source/alpazar/settings/secrets/actions**
+
+| Secret | Vlera | Efekti |
+|---|---|---|
+| `ANTHROPIC_API_KEY` | Claude API key nga console.anthropic.com | Claude auto-fix aktivizohet |
+| `SLACK_WEBHOOK_URL` | Webhook nga Slack → Apps → Incoming Webhooks | Njoftime push/deploy/gabim |
+| `NEXT_PUBLIC_SUPABASE_URL` | `https://sopafwfkrxpcdaljddoh.supabase.co` | Build CI ka variablat |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Anon key nga Supabase | Build CI ka variablat |
+
+**Si aktivizohet @claude tek PR-et:**
+1. Shto `ANTHROPIC_API_KEY` tek GitHub Secrets
+2. Hap çdo PR dhe shkruaj: `@claude fix TypeScript errors` ose `@claude rregulloji këto probleme`
+3. Claude Code ekzekutohet dhe bën commit direkt
+
+**Slack Webhook URL (si e merr):**
+1. slack.com → Apps → Incoming Webhooks → Add to Slack
+2. Zgjidh #all-alpazar
+3. Kopjo Webhook URL → Shto si `SLACK_WEBHOOK_URL` në GitHub Secrets
 
 ---
 
@@ -107,10 +146,29 @@ git push github claude/loving-wright-kBMgT
 
 ---
 
-## ⚠️ VEPRIME MANUALE ENDE TË NEVOJSHME
+## 🔁 FLUX AUTOMATIK (pas konfigurimeve)
 
-1. **Google Maps API Key** → Vercel Dashboard env vars:
-   `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=AIzaSy...`
+```
+Push → GitHub
+  ├── CI (ci.yml): TypeScript check + build → Slack notify
+  ├── Claude (claude.yml): auto-review ndryshimet → fix nëse ka gabime
+  └── Vercel: auto-deploy në production (integrim natyv)
+
+PR i ri:
+  ├── Claude bën review automatik
+  └── @claude <komandë> → Claude ekzekuton dhe commituon fix
+
+Çdo sesion Claude Code:
+  ├── Kontroll deployment Vercel (MCP)
+  ├── Kontroll komanda Notion
+  └── Kontroll TypeScript errors
+```
+
+---
+
+## ⚠️ VEPRIME MANUALE TË NEVOJSHME
+
+1. **GitHub Secrets** (shih seksionin AUTOMATIZIMI sipër)
 
 2. **Supabase SQL Migrations** (ekzekuto në SQL Editor):
    - `supabase/migrations/20250530_listings_location.sql`
@@ -121,6 +179,6 @@ git push github claude/loving-wright-kBMgT
 
 ## 📋 TASKS TË ARDHSHME (Javë 2)
 
-- [ ] **MAR-5:** Price Alerts System
+- [ ] **MAR-5:** Price Alerts System — cron job për detektim çmimesh
 - [ ] **MAR-6:** Seller Analytics Dashboard
 - [ ] **MAR-7:** Semantic Search (pgvector/Meilisearch)

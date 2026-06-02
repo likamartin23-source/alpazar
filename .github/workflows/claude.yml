@@ -1,30 +1,101 @@
-repo/
- ├── .github/          ← këtu vendoset workflows
- │    └── workflows/
- │         └── claude.yml
- ├── src/              ← kodi burimor
- ├── README.md         ← dokumentacioni kryesor
- ├── LICENSE           ← licenca e projektit
- └── ...
- name: Claude Review
+name: Claude Auto-Fix
 
 on:
+  # Komentet "@claude ..." mbi PR ose Issue
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+
+  # PR i ri ose i përditësuar → Claude bën review automatik
   pull_request:
-    types: [opened, synchronize]
+    types: [opened, synchronize, reopened]
+
+  # Push direkt në branch → Claude kontrollon dhe rregullon
+  push:
+    branches: ["claude/*"]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write
 
 jobs:
-  review:
+  claude:
+    name: Claude Code
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+    timeout-minutes: 30
 
-      - name: Call Claude API
+    # Mos rri në queue nëse ka tashmë një run aktiv
+    concurrency:
+      group: claude-${{ github.ref }}
+      cancel-in-progress: true
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: anthropics/claude-code-action@beta
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+
+          # Prompt automatik për push-et (pa trigger phrase)
+          direct_prompt: |
+            Kontrollo ndryshimet e fundit në këtë Next.js 14 + Supabase projekt.
+
+            KONTEKSTI:
+            - Framework: Next.js 14 App Router, 'use client' directive
+            - DB/Auth: Supabase JS v2 — singleton nga lib/supabase.ts
+            - CSS: Vetëm inline — JO Tailwind
+            - Navigimi: window.location.href — JO useRouter()
+            - Import paths: Vetëm relative — JO @/ alias
+            - OTP_SECONDS = 120 — MOS NDRYSHO KURRË
+
+            DETYRAT:
+            1. Nëse ka gabime TypeScript/build → rregulloji
+            2. Nëse ka dobësi sigurie (XSS, SQL injection, secrets të ekspozuara) → rregulloji
+            3. Nëse ka memory leaks (object URLs pa revoke) → rregulloji
+            4. Nëse ka Promise-a pa trajtim gabimesh → shto .catch()
+            5. Mos ndryshoni logjikën e biznesit pa arsye
+
+            Bëj commit direkt nëse gjen probleme.
+
+          # Lejohen vetëm kur ka @claude në koment
+          trigger_phrase: "@claude"
+
+          timeout_minutes: 25
+
+          allowed_tools: >
+            Bash,
+            Read,
+            Edit,
+            Write,
+            Glob,
+            Grep,
+            mcp__github__add_issue_comment,
+            mcp__github__create_or_update_file,
+            mcp__github__push_files,
+            mcp__github__pull_request_review_write,
+            mcp__github__get_file_contents,
+            mcp__github__list_commits
+
+      - name: Notify Slack after Claude fix
+        if: success() && env.SLACK_WEBHOOK_URL != ''
         run: |
-          curl https://api.anthropic.com/v1/messages \
-          -H "Authorization: Bearer ${{ secrets.CLAUDE_API_KEY }}" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "claude-3-opus-20240229",
-            "messages": [{"role":"user","content":"Review this PR for issues"}]
-          }'
+          curl -s -X POST "$SLACK_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"text\": \"🤖 *Claude rregulloi* automatikisht kodin në Alpazar!\",
+              \"attachments\": [{
+                \"color\": \"good\",
+                \"fields\": [
+                  {\"title\": \"Branch\", \"value\": \"${{ github.ref_name }}\", \"short\": true},
+                  {\"title\": \"Trigger\", \"value\": \"${{ github.event_name }}\", \"short\": true}
+                ]
+              }]
+            }"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
