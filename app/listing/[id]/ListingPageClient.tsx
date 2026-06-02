@@ -209,7 +209,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
       let sid = typeof window !== 'undefined' ? localStorage.getItem('_alpazar_sid') : null
       if (!sid) { sid = crypto.randomUUID(); if (typeof window !== 'undefined') localStorage.setItem('_alpazar_sid', sid) }
       supabase.rpc('increment_listing_views', { p_listing_id: data.id, p_viewer_id: userRef.current?.id ?? null, p_ip_hash: sid }).then(() => {}, () => {})
-      if (data.category_id) fetchSimilarListings(data.category_id, data.id)
+      if (data.category_id) fetchSimilarListings(data.category_id, data.id, data.city, data.price)
       if (data.user_id) {
         const [{ data: p }, { count }] = await Promise.all([
           supabase.from('profiles').select('*').eq('id', data.user_id).single(),
@@ -222,16 +222,32 @@ export default function ListingPageClient({ params, initialListing }: { params: 
     }
   }
 
-  async function fetchSimilarListings(categoryId: string, currentId: string) {
-    const { data } = await supabase
+  async function fetchSimilarListings(categoryId: string, currentId: string, city?: string, price?: number) {
+    let q = supabase
       .from('listings')
-      .select('id,title,price,currency,images,condition,city,is_premium')
+      .select('id,title,price,currency,images,condition,city,is_premium,views_count')
       .eq('category_id', categoryId)
       .eq('is_active', true)
       .neq('id', currentId)
-      .order('created_at', { ascending: false })
-      .limit(6)
-    if (data) setSimilar(data)
+    if (city) q = q.eq('city', city)
+    if (price && price > 0) {
+      q = q.gte('price', price * 0.7).lte('price', price * 1.3)
+    }
+    const { data } = await q.order('views_count', { ascending: false }).limit(4)
+    if (data && data.length > 0) {
+      setSimilar(data)
+    } else if (city || price) {
+      // Fallback: broader search without city/price filters
+      const { data: fallback } = await supabase
+        .from('listings')
+        .select('id,title,price,currency,images,condition,city,is_premium,views_count')
+        .eq('category_id', categoryId)
+        .eq('is_active', true)
+        .neq('id', currentId)
+        .order('views_count', { ascending: false })
+        .limit(4)
+      if (fallback) setSimilar(fallback)
+    }
   }
 
   async function loadPriceAlert(listingId: string) {
@@ -778,6 +794,12 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                   {sellerCount > 0 && <span className="schip sch-seller">📦 Shitës aktiv</span>}
                   {isNewMember(seller.created_at) && <span className="schip sch-new">🆕 Anëtar i ri</span>}
                   {!isOwner && <span className="schip sch-priv">🔒 Bisedë private</span>}
+                  {(seller.trust_score ?? 0) >= 60 && (
+                    <span className="schip" style={{ background: '#dcfce7', color: '#16a34a', fontWeight: 700 }}>✓ I verifikuar</span>
+                  )}
+                  {(seller.trust_score ?? 0) >= 75 && (
+                    <span className="schip" style={{ background: '#fef9c3', color: '#854d0e', fontWeight: 700 }}>⚡ Përgjigjet shpejt</span>
+                  )}
                 </div>
 
                 {/* Stats */}
