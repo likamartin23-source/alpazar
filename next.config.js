@@ -20,6 +20,14 @@ const nextConfig = {
     ],
   },
 
+  async redirects() {
+    return [
+      { source: '/dyqane', destination: '/biznese', permanent: true },
+      { source: '/dyqane/:id', destination: '/biznese/:id', permanent: true },
+      { source: '/dyqane/:id/:path*', destination: '/biznese/:id/:path*', permanent: true },
+    ]
+  },
+
   async headers() {
     const csp = [
       "default-src 'self'",
