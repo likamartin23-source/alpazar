@@ -47,6 +47,10 @@ export default function ProfilePage() {
   const [deleting, setDeleting] = useState(false)
   const [deleteMsg, setDeleteMsg] = useState('')
 
+  // Cover + Avatar upload
+  const [coverUploading, setCoverUploading] = useState(false)
+  const [avatarUploading, setAvatarUploading] = useState(false)
+
   const listingsChRef = useRef<any>(null)
   const pollRef       = useRef<any>(null)
 
@@ -105,6 +109,38 @@ export default function ProfilePage() {
     if (ls) setMyListings(ls)
     await Promise.all([fetchConversations(uid), fetchSavedListings(uid)])
     setLoading(false)
+  }
+
+  async function compressImage(file: File, maxW = 1920): Promise<Blob> {
+    if (file.size < 250 * 1024) return file
+    return new Promise(resolve => {
+      const img = new Image(), url = URL.createObjectURL(file)
+      img.onload = () => {
+        URL.revokeObjectURL(url)
+        const scale = Math.min(1, maxW / Math.max(img.naturalWidth, img.naturalHeight))
+        const canvas = document.createElement('canvas')
+        canvas.width = Math.round(img.naturalWidth * scale)
+        canvas.height = Math.round(img.naturalHeight * scale)
+        canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height)
+        canvas.toBlob(b => resolve(b ?? file), 'image/jpeg', 0.82)
+      }
+      img.onerror = () => { URL.revokeObjectURL(url); resolve(file) }
+      img.src = url
+    })
+  }
+
+  async function uploadProfileImage(file: File, type: 'avatar' | 'cover') {
+    if (!user) return
+    const setUploading = type === 'cover' ? setCoverUploading : setAvatarUploading
+    setUploading(true)
+    const blob = await compressImage(file, type === 'cover' ? 1920 : 400)
+    const path = `profiles/${user.id}-${type}.jpg`
+    await supabase.storage.from('listing-images').upload(path, blob, { contentType: 'image/jpeg', upsert: true })
+    const { data: { publicUrl } } = supabase.storage.from('listing-images').getPublicUrl(path)
+    const field = type === 'cover' ? 'cover_url' : 'avatar_url'
+    await supabase.from('profiles').update({ [field]: publicUrl }).eq('id', user.id)
+    setProfile((p: any) => ({ ...p, [field]: publicUrl }))
+    setUploading(false)
   }
 
   async function fetchSavedListings(uid: string) {
@@ -387,14 +423,41 @@ export default function ProfilePage() {
           <button className="logout" onClick={signOut}>Dil ↗</button>
         </div>
 
-        <div className="hero">
-          <div className="avatar">
-            {profile?.avatar_url ? <img src={profile.avatar_url} alt="" /> : '👤'}
+        {/* Cover + Avatar — Facebook-style */}
+        <div style={{ position: 'relative', marginBottom: 56 }}>
+          {/* Cover 16:6 */}
+          <div style={{ position: 'relative', width: '100%', aspectRatio: '16/6', overflow: 'hidden', borderRadius: '20px 20px 0 0' }}>
+            {profile?.cover_url
+              ? <img src={profile.cover_url} alt="Kopertina" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              : <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg,#F5C842,#E63312)' }} />
+            }
+            <label style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,.52)', color: '#fff', borderRadius: 8, padding: '5px 10px', fontSize: 11, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
+              {coverUploading ? '⏳' : '📷'} Kopertina
+              <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) uploadProfileImage(f, 'cover') }} />
+            </label>
           </div>
-          <div className="name">{profile?.full_name || profile?.username || 'Përdoruesi'}</div>
-          {profile?.username && <div className="handle">@{profile.username}</div>}
-          <div className="email-row"><i className="ti ti-mail" />{user?.email}</div>
-          <div className="badges-row">
+
+          {/* Avatar — positioned to overlap cover */}
+          <div style={{ position: 'absolute', bottom: -48, left: 16 }}>
+            <div style={{ position: 'relative', width: 96, height: 96 }}>
+              <div style={{ width: 96, height: 96, borderRadius: '50%', background: '#F5C842', border: '4px solid #fff', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 34, boxShadow: '0 2px 12px rgba(0,0,0,.15)' }}>
+                {profile?.avatar_url ? <img src={profile.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : '👤'}
+              </div>
+              <label style={{ position: 'absolute', bottom: 0, right: 0, background: '#E63312', color: '#fff', width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, cursor: 'pointer', border: '2px solid #fff', boxShadow: '0 1px 4px rgba(0,0,0,.2)' }}>
+                {avatarUploading ? '⏳' : '📷'}
+                <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) uploadProfileImage(f, 'avatar') }} />
+              </label>
+            </div>
+          </div>
+        </div>
+
+        {/* Name + handle + badges */}
+        <div style={{ padding: '0 16px 4px' }}>
+          <div className="name" style={{ textAlign: 'left', marginBottom: 2 }}>{profile?.full_name || profile?.username || 'Përdoruesi'}</div>
+          {profile?.username && <div className="handle" style={{ textAlign: 'left' }}>@{profile.username}</div>}
+          {profile?.city && <div style={{ fontSize: 11, color: '#888', marginBottom: 4 }}>📍 {profile.city}{profile?.created_at ? ` · Anëtar prej ${new Date(profile.created_at).getFullYear()}` : ''}</div>}
+          <div className="email-row" style={{ justifyContent: 'flex-start' }}><i className="ti ti-mail" />{user?.email}</div>
+          <div className="badges-row" style={{ justifyContent: 'flex-start', marginTop: 8 }}>
             {profile?.is_admin && <span className="badge b-admin">🛡 Admin</span>}
             {(user?.email_confirmed_at || user?.phone_confirmed_at) && <span className="badge b-verif">✓ Verifikuar</span>}
             {profile?.is_premium && <span className="badge b-prem">👑 Premium</span>}
