@@ -37,6 +37,7 @@ export default function NewListing() {
   const [myListingCount, setMyListingCount] = useState(0)
   const [priceSuggestion, setPriceSuggestion] = useState('')
   const [priceLoading, setPriceLoading] = useState(false)
+  const [descLoading, setDescLoading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null)
   const [showUpsell, setShowUpsell] = useState(false)
 
@@ -63,6 +64,32 @@ export default function NewListing() {
   }, [imagePreviews])
 
   function set(k: string, v: string) { setForm(f => ({ ...f, [k]: v })) }
+
+  async function generateDescription() {
+    if (!form.title.trim()) { setMsg('err:Shkruaj titullin para se të gjenerosh përshkrimin.'); return }
+    setDescLoading(true)
+    const catName = categories.find(c => c.id === form.category_id)?.name || ''
+    const userMsg = `Shkruaj një përshkrim të shkurtër (max 150 fjalë) për një shpallje me titull: "${form.title}"${catName ? ` në kategorinë "${catName}"` : ''}${form.condition === 'i_ri' ? ', gjendje: i ri' : form.condition === 'i_perdorur' ? ', gjendje: i përdorur' : ''}. Shkruaj në gjuhën shqipe. Trego veçoritë kryesore dhe arsyet pse dikush duhet ta blejë. Vetëm teksti i përshkrimit, pa titull e pa shpjegime shtesë.`
+    try {
+      const res = await fetch('/api/ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [{ role: 'user', content: userMsg }] }),
+      })
+      const json = await res.json()
+      if (json.reply) {
+        set('description', json.reply.trim())
+      } else {
+        const catLabel = catName || 'produkt'
+        const condLabel = form.condition === 'i_ri' ? 'i ri, kurrë i përdorur' : form.condition === 'i_perdorur' ? 'i përdorur, në gjendje të mirë' : ''
+        set('description', `${form.title} — ${catLabel} ${condLabel ? `${condLabel}, ` : ''}në gjendje të shkëlqyer. Çmim i arsyeshëm dhe i negociueshëm. Kontaktoni për më shumë informacion.`.trim())
+      }
+    } catch {
+      const catLabel = catName || 'produkt'
+      set('description', `${form.title} — ${catLabel} në gjendje të mirë. Çmim i negociueshëm. Kontaktoni për detaje.`)
+    }
+    setDescLoading(false)
+  }
 
   async function suggestPrice() {
     if (!form.title.trim()) { setPriceSuggestion('err:Shkruaj titullin para se të sugjerosh çmimin.'); return }
@@ -255,6 +282,19 @@ export default function NewListing() {
             <div className="field">
               <label>Përshkrimi</label>
               <textarea placeholder="Përshkruaj artikullin — gjendje, veçori, arsye shitjeje..." value={form.description} onChange={e => set('description', e.target.value)} maxLength={2000} />
+              <button
+                type="button"
+                onClick={generateDescription}
+                disabled={descLoading}
+                style={{
+                  marginTop: 6, background: '#111', color: '#F5C842', border: 'none',
+                  borderRadius: 8, padding: '7px 12px', fontSize: 11, fontWeight: 700,
+                  cursor: descLoading ? 'not-allowed' : 'pointer', display: 'flex',
+                  alignItems: 'center', gap: 5, opacity: descLoading ? 0.7 : 1, fontFamily: 'inherit',
+                }}
+              >
+                {descLoading ? '⏳' : '🤖'} {descLoading ? 'Duke gjeneruar...' : 'Gjenero përshkrim me Albi'}
+              </button>
             </div>
 
             <div className="field">
