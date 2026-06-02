@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '../../../lib/supabase'
+import { SellerPremiumUpsell } from '../../components/PremiumUpsell'
 
 const PERIODS = [
   { label: '7 ditë', days: 7 },
@@ -60,6 +61,7 @@ export default function AnalyticsPage() {
   const [data, setData]         = useState<any>(null)
   const [loading, setLoading]   = useState(true)
   const [period, setPeriod]     = useState(30)
+  const [showUpsell, setShowUpsell] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -67,6 +69,11 @@ export default function AnalyticsPage() {
       setUser(session.user)
       fetchAnalytics(session.access_token, 30)
     })
+    // Upsell 1 herë/sesion te analytics
+    if (!sessionStorage.getItem('alpazar_upsell_shown')) {
+      sessionStorage.setItem('alpazar_upsell_shown', '1')
+      setShowUpsell(true)
+    }
   }, [])
 
   async function fetchAnalytics(token: string, days: number) {
@@ -212,6 +219,8 @@ export default function AnalyticsPage() {
           </div>
         </>
       )}
+
+      {showUpsell && <SellerPremiumUpsell isPremium={false} />}
 
       {/* Link nga profili */}
       <div style={{ textAlign: 'center', padding: '8px 0 20px', fontSize: 12, color: '#bbb' }}>

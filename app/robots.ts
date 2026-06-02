@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin', '/api/', '/dashboard', '/messages', '/profile'],
+        disallow: ['/admin', '/api/', '/dashboard', '/messages', '/profile', '/listing/new', '/listing/*/edit'],
       },
     ],
     sitemap: 'https://alpazar.vercel.app/sitemap.xml',

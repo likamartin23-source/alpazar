@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'
 import { supabase } from '../../../lib/supabase'
 import { useAlpazar } from '../../../lib/context'
 import { uploadImages, UploadProgress } from '../../../lib/uploadImages'
-import { FreeTierBanner, PremiumUpsellModal } from '../../components/PremiumUpsell'
+import { FreeTierBanner, PremiumUpsellModal, SellerPremiumUpsell } from '../../components/PremiumUpsell'
 
 const MapPicker = dynamic(() => import('../../components/MapPicker').then(m => ({ default: m.MapPicker })), { ssr: false })
 
@@ -38,6 +38,7 @@ export default function NewListing() {
   const [priceSuggestion, setPriceSuggestion] = useState('')
   const [priceLoading, setPriceLoading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null)
+  const [showUpsell, setShowUpsell] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -154,7 +155,14 @@ export default function NewListing() {
           urlList: [`https://alpazar.vercel.app/listing/${data.id}`],
         }),
       }).catch(() => {})
-      setTimeout(() => { window.location.href = `/listing/${data.id}` }, 2000)
+      // Upsell pas shpalljes së 2-të — max 1 herë/sesion
+      if (myListingCount === 1 && !sessionStorage.getItem('alpazar_upsell_shown')) {
+        sessionStorage.setItem('alpazar_upsell_shown', '1')
+        setShowUpsell(true)
+        setTimeout(() => { window.location.href = `/listing/${data.id}` }, 4000)
+      } else {
+        setTimeout(() => { window.location.href = `/listing/${data.id}` }, 2000)
+      }
     } catch (e: any) {
       setMsg(`err:${e.message}`)
     }
@@ -209,6 +217,7 @@ export default function NewListing() {
 
       {/* Marketing: upsell kur arrin kufirin falas (5 shpallje) */}
       {myListingCount >= freeLimit && <PremiumUpsellModal trigger="limit" />}
+      {showUpsell && <PremiumUpsellModal trigger="scroll" />}
 
       <div className="wrap">
         <div className="topbar">
