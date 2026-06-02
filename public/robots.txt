@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api
+Disallow: /messages
+Disallow: /profile
+Disallow: /listing/new
+Disallow: /listing/*/edit
+
+Sitemap: https://alpazar.vercel.app/sitemap.xml
