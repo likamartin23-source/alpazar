@@ -58,7 +58,6 @@ export default function ListingPageClient({ params, initialListing }: { params: 
   const [sellerCount, setSellerCount] = useState(0)
   const [loading, setLoading]         = useState(!initialListing)
   const [similar, setSimilar]         = useState<any[]>([])
-  const [imgIdx, setImgIdx]           = useState(0)
   const [user, setUser]               = useState<any>(null)
   const [liked, setLiked]             = useState(false)
   const [myRefCode, setMyRefCode]     = useState<string | null>(null)
@@ -662,8 +661,22 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         })()}
 
         {/* Gallery */}
-        <div style={{ padding: '0 13px', marginBottom: 4 }}>
+        <div style={{ padding: '0 13px', marginBottom: 4, position: 'relative' }}>
           <ImageCarousel images={images} alt={listing.title} aspectRatio="4/3" />
+          {!isOwner && (
+            <button
+              onClick={toggleSave}
+              style={{
+                position: 'absolute', top: 10, right: 23,
+                width: 34, height: 34, background: '#fff',
+                borderRadius: '50%', border: 'none', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: '0 2px 8px rgba(0,0,0,.15)', zIndex: 5,
+              }}>
+              <i className={`ti ti-heart${liked ? '-filled' : ''}`}
+                style={{ fontSize: 17, color: liked ? '#E63312' : '#888' }} />
+            </button>
+          )}
         </div>
 
         {/* Social proof — shikues aktiv + total pamje */}
