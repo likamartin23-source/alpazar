@@ -2,85 +2,92 @@
 
 import { useState, useEffect } from 'react'
 
-const STEPS = [
-  {
-    emoji: '👋',
-    title: 'Mirë se erdhe te ALPAZAR!',
-    text: 'Platforma #1 shqiptare për blerje dhe shitje online. Gjej gjithçka ke nevojë — nga elektronika te makinat.',
-    cta: 'Vazhdo →',
-  },
-  {
-    emoji: '🛍️',
-    title: 'Si të shesësh?',
-    text: 'Kliko "+ Shpallje e Re", shto foto dhe çmim, dhe publiko. Shpallja jote del menjëherë para mijëra blerësve.',
-    cta: 'Vazhdo →',
-  },
-  {
-    emoji: '🔍',
-    title: 'Si të blesh?',
-    text: 'Këdo produktin, kliko "Kontakto Shitësin" dhe bisedo direkt. Shiko Trust Score para çdo transaksioni.',
-    cta: 'Fillojmë! 🚀',
-  },
-]
-
 export function Onboarding() {
   const [visible, setVisible] = useState(false)
   const [step, setStep] = useState(0)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
-    if (!localStorage.getItem('alpazar_onboarded')) {
-      setVisible(true)
-    }
+    if (!localStorage.getItem('alpazar_onboarded')) setVisible(true)
   }, [])
 
-  function next() {
-    if (step < STEPS.length - 1) {
-      setStep(s => s + 1)
-    } else {
-      localStorage.setItem('alpazar_onboarded', '1')
-      setVisible(false)
-    }
-  }
-
-  function skip() {
+  function close() {
     localStorage.setItem('alpazar_onboarded', '1')
     setVisible(false)
   }
 
   if (!visible) return null
 
-  const s = STEPS[step]
-
   return (
-    <div style={{
-      position: 'fixed', inset: 0, background: 'rgba(0,0,0,.7)', zIndex: 9999,
-      display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
-    }}>
+    <div
+      onClick={(e) => { if (e.target === e.currentTarget) close() }}
+      style={{
+        position: 'fixed', inset: 0, background: 'rgba(17,17,17,.55)', zIndex: 9999,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '0 16px',
+        animation: 'ob-fade .2s ease',
+      }}
+    >
       <style>{`
-        @keyframes ob-up{from{transform:translateY(100%)}to{transform:none}}
-        .ob-sheet{background:#FFFBEA;border-radius:24px 24px 0 0;padding:28px 24px 40px;width:100%;max-width:480px;animation:ob-up .3s ease;}
-        .ob-dots{display:flex;justify-content:center;gap:6px;margin-bottom:20px;}
-        .ob-dot{width:8px;height:8px;border-radius:50%;background:#ddd;transition:background .2s;}
-        .ob-dot.active{background:#E63312;width:20px;border-radius:4px;}
-        .ob-emoji{font-size:52px;text-align:center;display:block;margin-bottom:14px;}
-        .ob-title{font-size:20px;font-weight:800;color:#111;text-align:center;margin-bottom:10px;}
-        .ob-text{font-size:13px;color:#555;text-align:center;line-height:1.7;margin-bottom:28px;}
-        .ob-cta{width:100%;background:#E63312;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px;}
-        .ob-skip{width:100%;background:none;border:none;color:#aaa;font-size:12px;cursor:pointer;font-family:inherit;}
+        @keyframes ob-fade { from { opacity:0 } to { opacity:1 } }
+        @keyframes ob-up   { from { transform:translateY(16px);opacity:0 } to { transform:none;opacity:1 } }
       `}</style>
-      <div className="ob-sheet">
-        <div className="ob-dots">
-          {STEPS.map((_, i) => (
-            <div key={i} className={`ob-dot${i === step ? ' active' : ''}`} />
+      <div style={{
+        background: '#fff', borderRadius: 20, maxWidth: 380, width: '100%',
+        padding: '28px 24px 24px', boxShadow: '0 8px 40px rgba(0,0,0,.18)',
+        animation: 'ob-up .2s ease',
+      }}>
+        {/* Dots */}
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginBottom: 20 }}>
+          {[0,1,2].map(i => (
+            <div key={i} style={{
+              width: i === step ? 20 : 8, height: 8, borderRadius: 4,
+              background: i === step ? '#E63312' : '#e0e0e0',
+              transition: 'all .2s',
+            }} />
           ))}
         </div>
-        <span className="ob-emoji">{s.emoji}</span>
-        <div className="ob-title">{s.title}</div>
-        <div className="ob-text">{s.text}</div>
-        <button className="ob-cta" onClick={next}>{s.cta}</button>
-        {step < STEPS.length - 1 && (
-          <button className="ob-skip" onClick={skip}>Kalo →</button>
+
+        {step === 0 && (
+          <>
+            <div style={{ textAlign: 'center', marginBottom: 16 }}>
+              <span style={{ background: '#111', color: '#F5C842', fontSize: 13, fontWeight: 800, letterSpacing: 2, padding: '4px 12px', borderRadius: 8, display: 'inline-block' }}>🦅 ALPAZAR</span>
+            </div>
+            <div style={{ fontSize: 22, fontWeight: 800, color: '#111', textAlign: 'center', marginBottom: 8 }}>Mirë se erdhe!</div>
+            <div style={{ fontSize: 14, color: '#888', textAlign: 'center', lineHeight: 1.6, marginBottom: 28 }}>Shit, bli dhe bëj pazarin tënd — falas, pa komision.</div>
+            <button onClick={() => setStep(1)} style={{ width: '100%', background: '#E63312', color: '#fff', border: 'none', borderRadius: 12, padding: 14, fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', marginBottom: 10 }}>Vazhdo →</button>
+            <button onClick={close} style={{ width: '100%', background: 'none', border: 'none', color: '#aaa', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>Anashkalo</button>
+          </>
+        )}
+
+        {step === 1 && (
+          <>
+            <div style={{ fontSize: 20, fontWeight: 800, color: '#111', textAlign: 'center', marginBottom: 20 }}>Si funksionon</div>
+            {[
+              { icon: '🔍', text: 'Kërko mes mijëra shpalljeve' },
+              { icon: '💬', text: 'Shkruaj shitësit direkt' },
+              { icon: '❤️', text: 'Ruaj çfarë të pëlqen' },
+            ].map(({ icon, text }) => (
+              <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                <span style={{ fontSize: 22, width: 32, textAlign: 'center' }}>{icon}</span>
+                <span style={{ fontSize: 14, color: '#333', fontWeight: 500 }}>{text}</span>
+              </div>
+            ))}
+            <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
+              <button onClick={() => setStep(0)} style={{ flex: 1, background: '#fff', color: '#111', border: '1.5px solid #ddd', borderRadius: 12, padding: 13, fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>← Mbrapa</button>
+              <button onClick={() => setStep(2)} style={{ flex: 1, background: '#E63312', color: '#fff', border: 'none', borderRadius: 12, padding: 13, fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Vazhdo →</button>
+            </div>
+          </>
+        )}
+
+        {step === 2 && (
+          <>
+            <div style={{ fontSize: 22, fontWeight: 800, color: '#111', textAlign: 'center', marginBottom: 8 }}>Gati? 🚀</div>
+            <div style={{ fontSize: 13, color: '#888', textAlign: 'center', marginBottom: 24 }}>Zgjidh si dëshiron të fillosh</div>
+            <button onClick={() => { close(); window.location.href = '/listing/new' }} style={{ width: '100%', background: '#E63312', color: '#fff', border: 'none', borderRadius: 12, padding: 14, fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', marginBottom: 10 }}>➕ Shto shpalljen e parë</button>
+            <button onClick={() => { close(); window.location.href = '/search' }} style={{ width: '100%', background: '#F5C842', color: '#111', border: 'none', borderRadius: 12, padding: 14, fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', marginBottom: 10 }}>🔍 Eksploro</button>
+            <button onClick={() => setStep(1)} style={{ width: '100%', background: 'none', border: 'none', color: '#aaa', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>← Mbrapa</button>
+          </>
         )}
       </div>
     </div>
