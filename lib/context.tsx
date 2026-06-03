@@ -20,6 +20,7 @@ export interface Profile {
   seller_rating?: number
   reviews_count?: number
   referral_code?: string
+  trust_score?: number
 }
 
 interface AlpazarCtx {

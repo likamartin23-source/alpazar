@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic'
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAlpazar } from '../../lib/context'
+import AlpazarAvatar from '../components/Avatar'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -108,18 +109,16 @@ function AudioPlayer({ url, mine }: { url: string; mine: boolean }) {
 // ─── Avatar ───────────────────────────────────────────────────────────────────
 
 function Avatar({ profile, size = 46, online = false }: { profile: any; size?: number; online?: boolean }) {
+  const name = profile?.shop_name || profile?.full_name || profile?.username
   return (
     <div style={{ position:'relative', flexShrink:0 }}>
-      <div style={{
-        width:size, height:size, borderRadius:'50%', overflow:'hidden',
-        background:'linear-gradient(135deg,#F5C842,#e0b030)',
-        display:'flex', alignItems:'center', justifyContent:'center',
-        fontSize:size*0.35, fontWeight:700, color:'#111',
-      }}>
-        {profile?.avatar_url
-          ? <img src={profile.avatar_url} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} onError={e => { (e.target as any).style.display='none' }} />
-          : initials(profile)}
-      </div>
+      <AlpazarAvatar
+        src={profile?.avatar_url}
+        name={name}
+        type={profile?.shop_name ? 'business' : profile?.is_premium ? 'premium' : 'user'}
+        verified={(profile?.trust_score ?? 0) >= 60}
+        size={size}
+      />
       {online && <span style={{ position:'absolute', bottom:1, right:1, width:Math.max(size*.22,8), height:Math.max(size*.22,8), borderRadius:'50%', background:'#22c55e', border:'2px solid #FFFBEA' }} />}
     </div>
   )

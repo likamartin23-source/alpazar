@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabase'
 import dynamicImport from 'next/dynamic'
+import Avatar from '../../components/Avatar'
 
 const MapDisplay = dynamicImport(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), { ssr: false })
 
@@ -151,12 +152,13 @@ export default function BiznesPage({ params }: { params: { id: string } }) {
       <div style={{ background: '#fff', borderRadius: '0 0 20px 20px', paddingBottom: 16, marginBottom: 8 }}>
         {/* Avatar overlapping the cover */}
         <div style={{ position: 'relative', marginTop: -42, marginLeft: 16, marginBottom: 10 }}>
-          <div style={{ width: 84, height: 84, borderRadius: '50%', background: '#F5C842', border: '4px solid #fff', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, boxShadow: '0 2px 14px rgba(0,0,0,.18)' }}>
-            {biz.logo_url
-              ? <img src={biz.logo_url} alt={biz.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
-              : '🏢'}
-          </div>
+          <Avatar
+            src={biz.logo_url}
+            name={biz.name}
+            type="business"
+            verified={biz.is_verified}
+            size={84}
+          />
         </div>
 
         {/* Name + verified */}
