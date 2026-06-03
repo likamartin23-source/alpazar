@@ -3,6 +3,7 @@
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState, useRef } from 'react'
+import Avatar from '../components/Avatar'
 import { supabase } from '../../lib/supabase'
 import { getLevel, isNewMember } from '../components/Badges'
 import { SkeletonProfile, SkeletonList } from '../components/Skeleton'
@@ -158,13 +159,22 @@ export default function ProfilePage() {
     if (!user) return
     const setUploading = type === 'cover' ? setCoverUploading : setAvatarUploading
     setUploading(true)
-    const blob = await compressImage(file, type === 'cover' ? 1920 : 400)
-    const path = `profiles/${user.id}-${type}.jpg`
-    await supabase.storage.from('listing-images').upload(path, blob, { contentType: 'image/jpeg', upsert: true })
-    const { data: { publicUrl } } = supabase.storage.from('listing-images').getPublicUrl(path)
-    const field = type === 'cover' ? 'cover_url' : 'avatar_url'
-    await supabase.from('profiles').update({ [field]: publicUrl }).eq('id', user.id)
-    setProfile((p: any) => ({ ...p, [field]: publicUrl }))
+    try {
+      const blob = await compressImage(file, type === 'cover' ? 1920 : 400)
+      // UID si dosja e parë — kjo është e detyrueshme nga RLS policy
+      const path = `${user.id}/profile-${type}.jpg`
+      const { error: upErr } = await supabase.storage
+        .from('listing-images')
+        .upload(path, blob, { contentType: 'image/jpeg', upsert: true })
+      if (upErr) { setMsg(`err:Gabim ngarkimi ${type}: ${upErr.message}`); setUploading(false); return }
+      const { data: { publicUrl } } = supabase.storage.from('listing-images').getPublicUrl(path)
+      const field = type === 'cover' ? 'cover_url' : 'avatar_url'
+      const { error: dbErr } = await supabase.from('profiles').update({ [field]: publicUrl }).eq('id', user.id)
+      if (dbErr) { setMsg(`err:Gabim ruajtje: ${dbErr.message}`); setUploading(false); return }
+      setProfile((p: any) => ({ ...p, [field]: publicUrl }))
+    } catch (e: any) {
+      setMsg(`err:${e?.message ?? 'Gabim i papritur'}`)
+    }
     setUploading(false)
   }
 
@@ -463,13 +473,15 @@ export default function ProfilePage() {
 
           {/* Avatar — positioned to overlap cover */}
           <div style={{ position: 'absolute', bottom: -48, left: 16 }}>
-            <div style={{ position: 'relative', width: 96, height: 96 }}>
-              <div style={{ width: 96, height: 96, borderRadius: '50%', background: '#F5C842', border: '4px solid #fff', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 34, boxShadow: '0 2px 12px rgba(0,0,0,.15)' }}>
-                {profile?.avatar_url
-                  ? <img src={profile.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { const el = e.currentTarget as HTMLImageElement; el.style.display = 'none'; const p = el.parentElement; if (p && !p.querySelector('.av-fallback')) { const s = document.createElement('span'); s.className = 'av-fallback'; s.style.fontSize = '34px'; s.textContent = '👤'; p.appendChild(s) } }} />
-                  : '👤'}
-              </div>
-              <label style={{ position: 'absolute', bottom: 0, right: 0, background: '#E63312', color: '#fff', width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, cursor: 'pointer', border: '2px solid #fff', boxShadow: '0 1px 4px rgba(0,0,0,.2)' }}>
+            <div style={{ position: 'relative' }}>
+              <Avatar
+                src={profile?.avatar_url}
+                name={profile?.full_name || profile?.username}
+                type={profile?.is_premium ? (profile?.shop_name ? 'business' : 'premium') : 'user'}
+                verified={(profile?.trust_score ?? 0) >= 60}
+                size={96}
+              />
+              <label style={{ position: 'absolute', bottom: 0, right: 0, background: '#E63312', color: '#fff', width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, cursor: 'pointer', border: '2px solid #fff', boxShadow: '0 1px 4px rgba(0,0,0,.2)', zIndex: 2 }}>
                 {avatarUploading ? '⏳' : '📷'}
                 <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) uploadProfileImage(f, 'avatar') }} />
               </label>
@@ -797,10 +809,13 @@ export default function ProfilePage() {
                       return (
                         <div key={conv.otherId} className="conv-row"
                           onClick={() => window.location.href = `/messages?with=${conv.otherId}`}>
-                          <div className="conv-av">
-                            {p?.avatar_url
-                              ? <img src={p.avatar_url} alt={name} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
-                              : name.slice(0, 1).toUpperCase()}
+                          <div style={{ position: 'relative', flexShrink: 0 }}>
+                            <Avatar
+                              src={p?.avatar_url}
+                              name={name}
+                              type={p?.is_premium ? 'premium' : 'user'}
+                              size={44}
+                            />
                             {conv.unread > 0 && (
                               <span className="unread-dot">{conv.unread > 9 ? '9+' : conv.unread}</span>
                             )}

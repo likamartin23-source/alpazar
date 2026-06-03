@@ -109,7 +109,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{__html: `
           if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-              navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function() {});
+              navigator.serviceWorker.register('/sw.js', { scope: '/' }).then(function(reg) {
+                navigator.serviceWorker.addEventListener('controllerchange', function() {
+                  window.location.reload();
+                });
+              }).catch(function() {});
             });
           }
         `}} />

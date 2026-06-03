@@ -9,6 +9,7 @@ import { saveRefFromUrl, buildShareUrl } from '../../../lib/referral'
 import { TrustBadge } from '../../components/TrustBadge'
 import { SharePanel } from '../../components/SharePanel'
 import { ImageCarousel } from '../../components/ImageCarousel'
+import Avatar from '../../components/Avatar'
 
 const MapDisplay = dynamic(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), { ssr: false })
 
@@ -779,14 +780,16 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                 <div className="sec-label">Shitësi</div>
 
                 {/* Avatar row */}
-                <div className="seller-av-row">
-                  <div className="seller-av">
-                    {seller.avatar_url
-                      ? <img src={seller.avatar_url} alt={seller.full_name} />
-                      : initials}
-                  </div>
+                <div className="seller-av-row" onClick={() => window.location.href = hasShop ? `/biznese/${seller.id}` : `/u/${seller.id}`} style={{ cursor: 'pointer' }}>
+                  <Avatar
+                    src={seller.avatar_url}
+                    name={seller.shop_name || seller.full_name || seller.username}
+                    type={hasShop ? 'business' : (seller.is_premium ? 'premium' : 'user')}
+                    verified={(seller.trust_score ?? 0) >= 60}
+                    size={44}
+                  />
                   <div>
-                    <div className="seller-name">
+                    <div className="seller-name" style={{ textDecoration: 'underline', textDecorationColor: '#ddd' }}>
                       {seller.shop_name || seller.full_name || seller.username || 'Shitës'}
                     </div>
                     <div className="seller-sub">
@@ -1075,11 +1078,13 @@ export default function ListingPageClient({ params, initialListing }: { params: 
 
             {/* Header */}
             <div className="cs-header">
-              <div className="cs-av">
-                {seller.avatar_url
-                  ? <img src={seller.avatar_url} alt={seller.full_name} />
-                  : initials}
-              </div>
+              <Avatar
+                src={seller.avatar_url}
+                name={seller.shop_name || seller.full_name || seller.username}
+                type={hasShop ? 'business' : (seller.is_premium ? 'premium' : 'user')}
+                verified={(seller.trust_score ?? 0) >= 60}
+                size={36}
+              />
               <span className="cs-seller-name">
                 {seller.shop_name || seller.full_name || seller.username || 'Shitës'}
               </span>

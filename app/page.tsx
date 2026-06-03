@@ -6,6 +6,7 @@ import { useEffect, useState, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import type { Category, Listing } from '../lib/types'
 import { SkeletonGrid } from './components/Skeleton'
+import Avatar from './components/Avatar'
 import { getLevel } from './components/Badges'
 import { PremiumUpsellModal } from './components/PremiumUpsell'
 import { Onboarding } from './components/Onboarding'
@@ -328,7 +329,7 @@ export default function Home() {
     setLoading(true)
     let query = supabase
       .from('listings')
-      .select('id,title,price,currency,condition,city,is_premium,images,category_id,created_at')
+      .select('id,title,price,currency,condition,city,is_premium,images,category_id,created_at,user_id,author:user_id(id,full_name,username,avatar_url,is_premium,trust_score)')
       .eq('is_active', true)
       .order('is_premium', { ascending: false })
       .order('created_at', { ascending: false })
@@ -343,7 +344,7 @@ export default function Home() {
     if (filter === 'premium') query = query.eq('is_premium', true)
 
     const { data } = await query
-    if (data) setListings(data as Listing[])
+    if (data) setListings(data as unknown as Listing[])
     setLoading(false)
   }
 
@@ -366,7 +367,7 @@ export default function Home() {
       .ilike('title', `%${searchQuery.trim()}%`)
       .eq('is_active', true)
       .limit(20)
-    if (data) setListings(data as Listing[])
+    if (data) setListings(data as unknown as Listing[])
     setLoading(false)
   }
 
@@ -545,8 +546,8 @@ export default function Home() {
                   const inits = nm.slice(0, 2).toUpperCase()
                   return (
                     <button className="user-chip" onClick={() => go('/profile')} aria-label="Profili im">
-                      <span className="user-chip-av">
-                        {profile?.avatar_url ? <img src={profile.avatar_url} alt="" onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} /> : inits}
+                      <span className="user-chip-av" style={{ overflow: 'visible' }}>
+                        <Avatar src={profile?.avatar_url} name={nm} type={profile?.is_premium ? 'premium' : 'user'} verified={(profile?.trust_score ?? 0) >= 60} size={28} />
                         <span className="user-chip-on" />
                       </span>
                       <span className="user-chip-txt">
@@ -662,11 +663,8 @@ export default function Home() {
                   return (
                     <div key={shop.id} className="shop-mini" onClick={() => go(`/biznese/${shop.id}`)}>
                       <div className="shop-top" style={{ background: `linear-gradient(135deg,${col}22,${col}44)` }}>
-                        <div className="shop-av" style={{ background: col }}>
-                          {shop.avatar_url
-                            ? <img src={shop.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} onError={e => { const el = e.currentTarget as HTMLImageElement; el.style.display = 'none'; const p = el.parentElement; if (p && !p.querySelector('.sh-init')) { const s = document.createElement('span'); s.className = 'sh-init'; s.textContent = initials; p.appendChild(s) } }} />
-                            : initials
-                          }
+                        <div className="shop-av" style={{ background: 'transparent' }}>
+                          <Avatar src={shop.avatar_url} name={shop.shop_name || shop.full_name} type="business" verified={shop.is_premium} size={40} />
                         </div>
                         <span className="shop-prem">⭐</span>
                       </div>
@@ -752,6 +750,23 @@ export default function Home() {
                           <i className="ti ti-heart" />
                         </button>
                       </div>
+                      {(listing as any).author && (
+                        <div
+                          style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6, paddingTop: 6, borderTop: '1px solid #f0f0f0' }}
+                          onClick={e => { e.stopPropagation(); go(`/u/${(listing as any).author.id}`) }}
+                        >
+                          <Avatar
+                            src={(listing as any).author.avatar_url}
+                            name={(listing as any).author.full_name || (listing as any).author.username}
+                            type={(listing as any).author.is_premium ? 'premium' : 'user'}
+                            verified={((listing as any).author.trust_score ?? 0) >= 60}
+                            size={20}
+                          />
+                          <span style={{ fontSize: 11, color: '#888', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {(listing as any).author.full_name || (listing as any).author.username || 'Shitës'}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))

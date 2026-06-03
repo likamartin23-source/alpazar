@@ -90,8 +90,9 @@ export default function BiznesNewPage() {
 
     let logoUrl = '', coverUrl = ''
     try {
-      if (logoFile) logoUrl = await uploadFile(logoFile, `businesses/${userId}-logo.jpg`, 400)
-      if (coverFile) coverUrl = await uploadFile(coverFile, `businesses/${userId}-cover.jpg`, 1920)
+      // UID si dosja e parë — kjo është e detyrueshme nga RLS policy
+      if (logoFile) logoUrl = await uploadFile(logoFile, `${userId}/biz-logo.jpg`, 400)
+      if (coverFile) coverUrl = await uploadFile(coverFile, `${userId}/biz-cover.jpg`, 1920)
     } catch (e: any) {
       setMsg(`err:Gabim gjatë ngarkimit të fotove: ${e.message}`); setSaving(false); setUploading(false); return
     }
