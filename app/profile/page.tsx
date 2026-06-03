@@ -158,13 +158,22 @@ export default function ProfilePage() {
     if (!user) return
     const setUploading = type === 'cover' ? setCoverUploading : setAvatarUploading
     setUploading(true)
-    const blob = await compressImage(file, type === 'cover' ? 1920 : 400)
-    const path = `profiles/${user.id}-${type}.jpg`
-    await supabase.storage.from('listing-images').upload(path, blob, { contentType: 'image/jpeg', upsert: true })
-    const { data: { publicUrl } } = supabase.storage.from('listing-images').getPublicUrl(path)
-    const field = type === 'cover' ? 'cover_url' : 'avatar_url'
-    await supabase.from('profiles').update({ [field]: publicUrl }).eq('id', user.id)
-    setProfile((p: any) => ({ ...p, [field]: publicUrl }))
+    try {
+      const blob = await compressImage(file, type === 'cover' ? 1920 : 400)
+      // UID si dosja e parë — kjo është e detyrueshme nga RLS policy
+      const path = `${user.id}/profile-${type}.jpg`
+      const { error: upErr } = await supabase.storage
+        .from('listing-images')
+        .upload(path, blob, { contentType: 'image/jpeg', upsert: true })
+      if (upErr) { setMsg(`err:Gabim ngarkimi ${type}: ${upErr.message}`); setUploading(false); return }
+      const { data: { publicUrl } } = supabase.storage.from('listing-images').getPublicUrl(path)
+      const field = type === 'cover' ? 'cover_url' : 'avatar_url'
+      const { error: dbErr } = await supabase.from('profiles').update({ [field]: publicUrl }).eq('id', user.id)
+      if (dbErr) { setMsg(`err:Gabim ruajtje: ${dbErr.message}`); setUploading(false); return }
+      setProfile((p: any) => ({ ...p, [field]: publicUrl }))
+    } catch (e: any) {
+      setMsg(`err:${e?.message ?? 'Gabim i papritur'}`)
+    }
     setUploading(false)
   }
 

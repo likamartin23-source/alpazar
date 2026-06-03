@@ -28,15 +28,19 @@ async function compress(file: File): Promise<Blob> {
 async function uploadWithRetry(path: string, blob: Blob, attempts = 3): Promise<string | null> {
   for (let i = 0; i < attempts; i++) {
     try {
-      const { error } = await supabase.storage
+      const uploadPromise = supabase.storage
         .from('listing-images')
         .upload(path, blob, { contentType: blob.type || 'image/jpeg', upsert: true })
-      if (!error) return null
-      if (i === attempts - 1) return error.message
+      const timeoutPromise = new Promise<{ error: Error }>(resolve =>
+        setTimeout(() => resolve({ error: new Error('Upload timed out (30s). Provo sërisht.') }), 30000)
+      )
+      const result = await Promise.race([uploadPromise, timeoutPromise]) as any
+      if (!result.error) return null
+      if (i === attempts - 1) return result.error.message
     } catch (e: any) {
       if (i === attempts - 1) return e?.message ?? 'Lidhje dështoi'
     }
-    await new Promise(r => setTimeout(r, 1200 * (i + 1)))
+    if (i < attempts - 1) await new Promise(r => setTimeout(r, 1200 * (i + 1)))
   }
   return 'Tejkaloi numrin maksimal të tentativave'
 }
