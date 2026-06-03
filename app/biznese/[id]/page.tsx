@@ -33,7 +33,12 @@ export default function BiznesPage({ params }: { params: { id: string } }) {
   }, [])
 
   async function fetchBiz() {
-    const { data: b } = await supabase.from('businesses').select('*').eq('id', params.id).single()
+    // Kërko sipas id (UUID biznesi) OSE owner_id (UUID profilit) — mbështet të dy lidhjet
+    let { data: b } = await supabase.from('businesses').select('*').eq('id', params.id).maybeSingle()
+    if (!b) {
+      const res = await supabase.from('businesses').select('*').eq('owner_id', params.id).maybeSingle()
+      b = res.data
+    }
     if (!b) { setLoading(false); return }
     setBiz(b)
     setIsOwner((await supabase.auth.getSession()).data.session?.user.id === b.owner_id)

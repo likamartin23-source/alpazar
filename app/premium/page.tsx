@@ -72,7 +72,7 @@ export default function PremiumPage() {
   const [mt, mm] = msg.split(/:(.+)/)
 
   const features = [
-    { icon: 'building-store', text: 'Dyqan personal' },
+    { icon: 'building-store', text: 'Biznes online' },
     { icon: 'shield-check', text: 'Badge verifikimi ✓' },
     { icon: 'infinity', text: 'Shpallje të pakufizuara' },
     { icon: 'photo', text: 'Deri 20 foto për shpallje' },

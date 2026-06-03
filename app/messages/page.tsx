@@ -980,9 +980,9 @@ export default function MessagesPage() {
                 </div>
               </div>
             </div>
-            <div className="mi" onClick={() => { setShowInfo(false); window.location.href=`/dyqane/${selected.otherId}` }}>
+            <div className="mi" onClick={() => { setShowInfo(false); window.location.href=`/biznese/${selected.otherId}` }}>
               <i className="ti ti-building-store" style={{ color:'#F5C842' }} />
-              <span>Shiko dyqanin</span>
+              <span>Shiko biznesin</span>
             </div>
             <div className="mi" onClick={() => { setShowInfo(false); window.location.href='/notifications' }}>
               <i className="ti ti-bell" />

@@ -630,7 +630,7 @@ export default function Home() {
             <div className="prem-icon"><i className="ti ti-crown" /></div>
             <div className="prem-text">
               <strong>👑 Bëhu Anëtar Premium</strong>
-              <span>Dyqan · Badge · Shpallje ∞ · {cfg('premium_monthly_price','9.99')}€/muaj</span>
+              <span>Biznes · Badge · Shpallje ∞ · {cfg('premium_monthly_price','9.99')}€/muaj</span>
             </div>
             <button className="prem-btn" onClick={() => go('/premium')}>Shiko →</button>
           </div>
@@ -652,15 +652,15 @@ export default function Home() {
           {shops.length > 0 && (
             <>
               <div className="section-hdr">
-                <h3>🏪 Dyqane Premium</h3>
-                <a onClick={() => go('/dyqane')}>Të gjitha →</a>
+                <h3>🏢 Biznese Online</h3>
+                <a onClick={() => go('/biznese')}>Të gjitha →</a>
               </div>
               <div className="shops-grid">
                 {shops.map((shop, idx) => {
                   const col = SHOP_COLORS[idx % SHOP_COLORS.length]
                   const initials = (shop.shop_name || shop.full_name || '?').slice(0, 2).toUpperCase()
                   return (
-                    <div key={shop.id} className="shop-mini" onClick={() => go(`/dyqane/${shop.id}`)}>
+                    <div key={shop.id} className="shop-mini" onClick={() => go(`/biznese/${shop.id}`)}>
                       <div className="shop-top" style={{ background: `linear-gradient(135deg,${col}22,${col}44)` }}>
                         <div className="shop-av" style={{ background: col }}>
                           {shop.avatar_url
@@ -677,7 +677,7 @@ export default function Home() {
                     </div>
                   )
                 })}
-                <div className="shop-mini" onClick={() => go('/dyqane')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#fff', border: '1.5px dashed #F5C842', cursor: 'pointer' }}>
+                <div className="shop-mini" onClick={() => go('/biznese')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#fff', border: '1.5px dashed #F5C842', cursor: 'pointer' }}>
                   <i className="ti ti-arrow-right" style={{ fontSize: 14, color: '#E63312' }} />
                   <div style={{ fontSize: 7, color: '#E63312', fontWeight: 700, marginTop: 3, textAlign: 'center', padding: '0 4px' }}>Shiko të gjitha</div>
                 </div>

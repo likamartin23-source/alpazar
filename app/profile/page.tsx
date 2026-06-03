@@ -486,7 +486,7 @@ export default function ProfilePage() {
             {profile?.is_admin && <span className="badge b-admin">🛡 Admin</span>}
             {(user?.email_confirmed_at || user?.phone_confirmed_at) && <span className="badge b-verif">✓ Verifikuar</span>}
             {profile?.is_premium && <span className="badge b-prem">👑 Premium</span>}
-            {profile?.shop_name && <span className="badge b-shop">🏪 Dyqan</span>}
+            {profile?.shop_name && <span className="badge b-shop">🏢 Biznes</span>}
             {(() => { const l = getLevel(profile?.gamification_points || 0); return <span className="badge" style={{ background: l.bg, color: l.color }}>{l.icon} {l.name}</span> })()}
             {myListings.some(l => l.is_active) && <span className="badge b-seller">📦 Shitës aktiv</span>}
             {isNewMember(profile?.created_at) && <span className="badge b-new">🆕 Anëtar i ri</span>}
@@ -582,7 +582,7 @@ export default function ProfilePage() {
               {!profile?.is_premium && (
                 <div className="prem-card">
                   <h3>👑 Bëhu Premium — 9.99€/muaj</h3>
-                  <p>Dyqan personal · Badge verifikimi · Shpallje të pakufizuara · Statistika të avancuara</p>
+                  <p>Biznes online · Badge verifikimi · Shpallje të pakufizuara · Statistika të avancuara</p>
                   <button className="prem-cta" onClick={() => window.location.href = '/premium'}>Shiko planin →</button>
                 </div>
               )}
