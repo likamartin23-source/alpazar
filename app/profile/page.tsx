@@ -232,7 +232,7 @@ export default function ProfilePage() {
       shop_banner_url: shopForm.shop_banner_url.trim(),
     }).eq('id', user.id)
     if (error) setShopMsg(`err:${error.message}`)
-    else { setShopMsg('ok:Dyqani u ruajt me sukses!'); fetchProfile(user.id) }
+    else { setShopMsg('ok:Biznesi u ruajt me sukses!'); fetchProfile(user.id) }
     setSavingShop(false)
   }
 
@@ -529,7 +529,7 @@ export default function ProfilePage() {
             )}
           </button>
           <button className={`tab ${activeTab === 'shop' ? 'active' : ''}`} onClick={() => setActiveTab('shop')}>
-            <i className="ti ti-building-store" />Dyqani
+            <i className="ti ti-building-store" />Biznes
           </button>
         </div>
 
@@ -840,8 +840,8 @@ export default function ProfilePage() {
 
               {!profile?.is_premium ? (
                 <div className="prem-card">
-                  <h3>🏪 Hap Dyqanin Tënd</h3>
-                  <p>Dyqani personal është i disponueshëm vetëm për anëtarët Premium. Merr badge ⭐ verifikimi, shpal produkte të pakufizuara dhe menaxho dyqanin tënd!</p>
+                  <h3>🏢 Hap Biznesin Tënd</h3>
+                  <p>Biznesi online është i disponueshëm vetëm për anëtarët Premium. Merr badge ⭐ verifikimi, shpal produkte të pakufizuara dhe menaxho biznesin tënd!</p>
                   <button className="prem-cta" onClick={() => window.location.href = '/premium'}>👑 Bëhu Premium — 9.99€/muaj</button>
                 </div>
               ) : (
@@ -851,9 +851,9 @@ export default function ProfilePage() {
                       <div className="shop-preview-icon"><i className="ti ti-building-store" /></div>
                       <div className="shop-preview-text">
                         <strong>🏪 {profile.shop_name}</strong>
-                        <span>{profile.shop_description?.slice(0, 60) || 'Dyqan premium i verifikuar'}...</span>
+                        <span>{profile.shop_description?.slice(0, 60) || 'Biznes premium i verifikuar'}...</span>
                       </div>
-                      <button className="shop-preview-btn" onClick={() => window.location.href = `/dyqane/${user.id}`}>
+                      <button className="shop-preview-btn" onClick={() => window.location.href = `/biznese/${user.id}`}>
                         Shiko →
                       </button>
                     </div>
@@ -861,10 +861,10 @@ export default function ProfilePage() {
 
                   <div className="card">
                     <div className="card-hdr">
-                      <span className="card-title">🏪 Konfiguro Dyqanin</span>
+                      <span className="card-title">🏢 Konfiguro Biznesin</span>
                     </div>
 
-                    <label>Emri i dyqanit *</label>
+                    <label>Emri i biznesit *</label>
                     <input
                       type="text"
                       value={shopForm.shop_name}
@@ -878,11 +878,11 @@ export default function ProfilePage() {
                       {SHOP_CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
                     </select>
 
-                    <label>Përshkrimi i dyqanit</label>
+                    <label>Përshkrimi i biznesit</label>
                     <textarea
                       value={shopForm.shop_description}
                       onChange={e => setShopForm(f => ({ ...f, shop_description: e.target.value }))}
-                      placeholder="Përshkruaj dyqanin tënd — çfarë shet, ku je, si kontaktoni..."
+                      placeholder="Përshkruaj biznesin tënd — çfarë shet, ku je, si kontaktoni..."
                       maxLength={300}
                     />
 
@@ -900,7 +900,7 @@ export default function ProfilePage() {
                       disabled={savingShop || !shopForm.shop_name.trim()}
                     >
                       <i className="ti ti-device-floppy" />
-                      {savingShop ? 'Duke ruajtur...' : 'Ruaj Dyqanin'}
+                      {savingShop ? 'Duke ruajtur...' : 'Ruaj Biznesin'}
                     </button>
                   </div>
                 </>
