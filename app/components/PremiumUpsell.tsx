@@ -91,11 +91,11 @@ export function PremiumUpsellModal({
         <div className="ups-sub">
           {trigger === 'limit'
             ? 'Ke arritur kufirin falas. Premium të hap mundësi të pakufizuara.'
-            : 'Shpallja jote shfaqet e para. Dyqan personal. Badge verifikimi.'}
+            : 'Shpallja jote shfaqet e para. Biznes online. Badge verifikimi.'}
         </div>
         <div className="ups-feats">
           {[
-            ['building-store', 'Dyqan personal'],
+            ['building-store', 'Biznes online'],
             ['infinity', 'Shpallje ∞'],
             ['shield-check', 'Badge ✓'],
             ['photo', 'Deri 20 foto'],
@@ -192,7 +192,7 @@ export function SellerPremiumUpsell({ isPremium, price = '9.99' }: { isPremium: 
           Shpallja jote shihet 5× më shumë me Premium
         </div>
         <div style={{ color: '#888', fontSize: 10, lineHeight: 1.5 }}>
-          Shfaqet e para · Badge verifikimi · Dyqan personal
+          Shfaqet e para · Badge verifikimi · Biznes online
         </div>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
@@ -247,7 +247,7 @@ export function FreeTierBanner({
       </div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ fontSize: 10, color: '#888', lineHeight: 1.5 }}>
-          Premium → shpallje të pakufizuara + dyqan personal
+          Premium → shpallje të pakufizuara + biznes online
         </span>
         <button
           onClick={() => window.location.href = '/premium'}

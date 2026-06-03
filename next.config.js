@@ -45,6 +45,15 @@ const nextConfig = {
 
     return [
       {
+        // Faqet dinamike — kurrë mos i cache në CDN
+        source: '/((?!_next/static|_next/image|icons|favicon).*)',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' },
+          { key: 'CDN-Cache-Control', value: 'no-store' },
+          { key: 'Vercel-CDN-Cache-Control', value: 'no-store' },
+        ],
+      },
+      {
         source: '/(.*)',
         headers: [
           { key: 'X-DNS-Prefetch-Control', value: 'on' },

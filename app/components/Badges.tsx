@@ -43,7 +43,7 @@ export function buildBadges(p: BadgeInput): Badge[] {
   if (p.is_admin)    out.push({ label: '🛡 Admin',      bg: '#F3ECFE', color: '#7C3AED' })
   if (p.is_verified) out.push({ label: '✓ Verifikuar',  bg: '#EAF3DE', color: '#3B6D11' })
   if (p.is_premium)  out.push({ label: '👑 Premium',    bg: '#FEF6DA', color: '#A87900' })
-  if (p.shop_name)   out.push({ label: '🏪 Dyqan',      bg: '#E7F8F1', color: '#0B8A5A' })
+  if (p.shop_name)   out.push({ label: '🏢 Biznes',      bg: '#E7F8F1', color: '#0B8A5A' })
   if ((p.reviews_count ?? 0) > 0 && (p.seller_rating ?? 0) > 0) {
     out.push({ label: `⭐ ${Number(p.seller_rating).toFixed(1)} (${p.reviews_count})`, bg: '#FEF6DA', color: '#A87900' })
   }

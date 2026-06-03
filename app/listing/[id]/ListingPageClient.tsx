@@ -801,7 +801,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                 <div className="seller-chips">
                   {seller.is_admin   && <span className="schip sch-admin">🛡 Admin</span>}
                   {seller.is_premium && <span className="schip sch-prem">👑 Premium</span>}
-                  {seller.shop_name  && <span className="schip sch-shop">🏪 Dyqan</span>}
+                  {seller.shop_name  && <span className="schip sch-shop">🏢 Biznes</span>}
                   {(() => { const l = getLevel(seller.gamification_points || 0); return <span className="schip" style={{ background: l.bg, color: l.color }}>{l.icon} {l.name}</span> })()}
                   {sellerCount > 0 && <span className="schip sch-seller">📦 Shitës aktiv</span>}
                   {isNewMember(seller.created_at) && <span className="schip sch-new">🆕 Anëtar i ri</span>}
@@ -841,19 +841,19 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                 {/* Profile button — only for visitors with shops */}
                 {!isOwner && seller.is_premium && seller.shop_name && (
                   <button className="view-profile-btn"
-                    onClick={() => window.location.href = `/dyqane/${seller.id}`}>
+                    onClick={() => window.location.href = `/biznese/${seller.id}`}>
                     <i className="ti ti-building-store" />
-                    Shiko dyqanin
+                    Shiko biznesin
                   </button>
                 )}
 
                 {/* Shop link */}
                 {hasShop && !isOwner && (
-                  <a className="shop-link-row" href={`/dyqane/${seller.id}`}>
-                    <span style={{ fontSize: 20 }}>🏪</span>
+                  <a className="shop-link-row" href={`/biznese/${seller.id}`}>
+                    <span style={{ fontSize: 20 }}>🏢</span>
                     <div>
                       <span>{seller.shop_name}</span>
-                      <small>Shfleto të gjitha produktet e dyqanit</small>
+                      <small>Shfleto të gjitha shpalljet e biznesit</small>
                     </div>
                     <i className="ti ti-chevron-right" style={{ fontSize: 13, color: '#aaa', marginLeft: 'auto' }} />
                   </a>

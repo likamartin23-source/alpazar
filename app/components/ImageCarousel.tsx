@@ -79,6 +79,18 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3' }: Props) 
                 alt={`${alt} ${i + 1}`}
                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', pointerEvents: 'none', userSelect: 'none' }}
                 draggable={false}
+                onError={e => {
+                  const img = e.currentTarget
+                  img.style.display = 'none'
+                  const wrap = img.parentElement
+                  if (wrap && !wrap.querySelector('.img-err')) {
+                    const d = document.createElement('div')
+                    d.className = 'img-err'
+                    d.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#ccc;background:#F6F6F6;'
+                    d.innerHTML = '<i class="ti ti-photo" style="font-size:32px"></i><span style="font-size:11px;font-weight:600">Pa foto</span>'
+                    wrap.appendChild(d)
+                  }
+                }}
               />
             </div>
           ))}
