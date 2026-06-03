@@ -451,11 +451,10 @@ export default function ProfilePage() {
         {/* Cover + Avatar — Facebook-style */}
         <div style={{ position: 'relative', marginBottom: 56 }}>
           {/* Cover 16:6 */}
-          <div style={{ position: 'relative', width: '100%', aspectRatio: '16/6', overflow: 'hidden', borderRadius: '20px 20px 0 0' }}>
-            {profile?.cover_url
-              ? <img src={profile.cover_url} alt="Kopertina" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              : <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg,#F5C842,#E63312)' }} />
-            }
+          <div style={{ position: 'relative', width: '100%', aspectRatio: '16/6', overflow: 'hidden', borderRadius: '20px 20px 0 0', background: 'linear-gradient(135deg,#F5C842,#E63312)' }}>
+            {profile?.cover_url && (
+              <img src={profile.cover_url} alt="Kopertina" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
+            )}
             <label style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,.52)', color: '#fff', borderRadius: 8, padding: '5px 10px', fontSize: 11, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
               {coverUploading ? '⏳' : '📷'} Kopertina
               <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) uploadProfileImage(f, 'cover') }} />
@@ -466,7 +465,9 @@ export default function ProfilePage() {
           <div style={{ position: 'absolute', bottom: -48, left: 16 }}>
             <div style={{ position: 'relative', width: 96, height: 96 }}>
               <div style={{ width: 96, height: 96, borderRadius: '50%', background: '#F5C842', border: '4px solid #fff', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 34, boxShadow: '0 2px 12px rgba(0,0,0,.15)' }}>
-                {profile?.avatar_url ? <img src={profile.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : '👤'}
+                {profile?.avatar_url
+                  ? <img src={profile.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { const el = e.currentTarget as HTMLImageElement; el.style.display = 'none'; const p = el.parentElement; if (p && !p.querySelector('.av-fallback')) { const s = document.createElement('span'); s.className = 'av-fallback'; s.style.fontSize = '34px'; s.textContent = '👤'; p.appendChild(s) } }} />
+                  : '👤'}
               </div>
               <label style={{ position: 'absolute', bottom: 0, right: 0, background: '#E63312', color: '#fff', width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, cursor: 'pointer', border: '2px solid #fff', boxShadow: '0 1px 4px rgba(0,0,0,.2)' }}>
                 {avatarUploading ? '⏳' : '📷'}
@@ -798,7 +799,7 @@ export default function ProfilePage() {
                           onClick={() => window.location.href = `/messages?with=${conv.otherId}`}>
                           <div className="conv-av">
                             {p?.avatar_url
-                              ? <img src={p.avatar_url} alt={name} />
+                              ? <img src={p.avatar_url} alt={name} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
                               : name.slice(0, 1).toUpperCase()}
                             {conv.unread > 0 && (
                               <span className="unread-dot">{conv.unread > 9 ? '9+' : conv.unread}</span>
