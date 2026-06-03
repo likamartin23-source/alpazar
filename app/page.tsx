@@ -329,7 +329,7 @@ export default function Home() {
     setLoading(true)
     let query = supabase
       .from('listings')
-      .select('id,title,price,currency,condition,city,is_premium,images,category_id,created_at')
+      .select('id,title,price,currency,condition,city,is_premium,images,category_id,created_at,user_id,author:user_id(id,full_name,username,avatar_url,is_premium,trust_score)')
       .eq('is_active', true)
       .order('is_premium', { ascending: false })
       .order('created_at', { ascending: false })
@@ -344,7 +344,7 @@ export default function Home() {
     if (filter === 'premium') query = query.eq('is_premium', true)
 
     const { data } = await query
-    if (data) setListings(data as Listing[])
+    if (data) setListings(data as unknown as Listing[])
     setLoading(false)
   }
 
@@ -367,7 +367,7 @@ export default function Home() {
       .ilike('title', `%${searchQuery.trim()}%`)
       .eq('is_active', true)
       .limit(20)
-    if (data) setListings(data as Listing[])
+    if (data) setListings(data as unknown as Listing[])
     setLoading(false)
   }
 
@@ -750,6 +750,23 @@ export default function Home() {
                           <i className="ti ti-heart" />
                         </button>
                       </div>
+                      {(listing as any).author && (
+                        <div
+                          style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6, paddingTop: 6, borderTop: '1px solid #f0f0f0' }}
+                          onClick={e => { e.stopPropagation(); go(`/u/${(listing as any).author.id}`) }}
+                        >
+                          <Avatar
+                            src={(listing as any).author.avatar_url}
+                            name={(listing as any).author.full_name || (listing as any).author.username}
+                            type={(listing as any).author.is_premium ? 'premium' : 'user'}
+                            verified={((listing as any).author.trust_score ?? 0) >= 60}
+                            size={20}
+                          />
+                          <span style={{ fontSize: 11, color: '#888', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {(listing as any).author.full_name || (listing as any).author.username || 'Shitës'}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))
