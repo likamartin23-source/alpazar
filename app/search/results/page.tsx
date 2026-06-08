@@ -1,11 +1,10 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useEffect, useState } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { SkeletonGrid } from '../../components/Skeleton'
-
-const MS_URL = process.env.NEXT_PUBLIC_MEILISEARCH_URL || '/api/meili'
-const MS_KEY = process.env.NEXT_PUBLIC_MEILISEARCH_KEY || 'alpazar_search'
 
 const CITIES = ['Tiranë', 'Durrës', 'Vlorë', 'Shkodër', 'Elbasan', 'Fier', 'Korçë', 'Berat', 'Lushnjë', 'Kavajë', 'Gjirokastër', 'Sarandë', 'Lezhë', 'Kukës', 'Pogradec', 'Peshkopi', 'Tropojë', 'Përmet', 'Tepelenë', 'Tjetër']
 
@@ -20,25 +19,6 @@ const SHOP_CATEGORIES = [
   { id: 'bukuri', label: 'Bukuri' },
 ]
 
-async function meilisearch(query: string, filters: string[], premium: boolean | null) {
-  if (!MS_URL || !MS_KEY) return null
-  try {
-    const f = [...filters]
-    if (premium !== null) f.push(`is_premium = ${premium}`)
-    const res = await fetch(`${MS_URL}/indexes/listings/search`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${MS_KEY}` },
-      body: JSON.stringify({ q: query, limit: 40, filter: f, sort: ['created_at:desc'] }),
-      signal: AbortSignal.timeout(2500),
-    })
-    if (!res.ok) return null
-    const data = await res.json()
-    return data.hits ?? null
-  } catch {
-    return null
-  }
-}
-
 function fmt(price: number, cur: string) {
   if (!price) return 'Me marrëveshje'
   return cur === 'EUR' ? `${price.toLocaleString()} €` : `${price.toLocaleString()} L`
@@ -49,7 +29,7 @@ function ShopCard({ shop }: { shop: any }) {
   const catLabel = SHOP_CATEGORIES.find(c => c.id === shop.shop_category)?.label
 
   return (
-    <div className="shop-card" onClick={() => window.location.href = `/dyqane/${shop.id}`}>
+    <div className="shop-card" onClick={() => window.location.href = `/biznese/${shop.id}`}>
       <div className="shop-banner" style={{
         background: shop.shop_banner_url
           ? `url(${shop.shop_banner_url}) center/cover`
@@ -220,28 +200,7 @@ export default function SearchResultsPage() {
     }
     setShops(shopResults)
 
-    // ── 2 + 3) LISTINGS — try Meilisearch first ──────────────
-    if (query.trim() && MS_URL && MS_KEY) {
-      const [premHits, regHits] = await Promise.all([
-        meilisearch(query, baseFilters, true),
-        meilisearch(query, baseFilters, false),
-      ])
-
-      if (premHits !== null && regHits !== null) {
-        const applyPrice = (arr: any[]) => {
-          let r = arr
-          if (pMin) r = r.filter((l: any) => (l.price || 0) >= parseFloat(pMin))
-          if (pMax) r = r.filter((l: any) => (l.price || 0) <= parseFloat(pMax))
-          return r
-        }
-        setPremium(applyPrice(premHits))
-        setRegular(applyPrice(regHits))
-        setLoading(false)
-        return
-      }
-    }
-
-    // ── Supabase fallback ────────────────────────────────────
+    // ── 2 + 3) LISTINGS — FTS GIN ───────────────────────────
     const buildQb = (isPrem: boolean) => {
       let qb = supabase
         .from('listings')
@@ -464,11 +423,11 @@ export default function SearchResultsPage() {
               <div className="section">
                 <div className="section-hdr">
                   <span className="section-icon">🏪</span>
-                  <h2>Dyqanet</h2>
+                  <h2>Bizneset</h2>
                   <span className="section-count">{shops.length}</span>
                 </div>
                 {shops.length === 0 ? (
-                  <div className="section-empty">Nuk u gjet asnjë dyqan{q ? ` për "${q}"` : ''}</div>
+                  <div className="section-empty">Nuk u gjet asnjë biznes{q ? ` për "${q}"` : ''}</div>
                 ) : (
                   <div className="shops-grid">
                     {shops.map(s => <ShopCard key={s.id} shop={s} />)}

@@ -29,7 +29,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     { url: BASE,                 lastModified: new Date(), changeFrequency: 'daily',   priority: 1   },
     { url: `${BASE}/search`,     lastModified: new Date(), changeFrequency: 'hourly',  priority: 0.9 },
-    { url: `${BASE}/dyqane`,     lastModified: new Date(), changeFrequency: 'daily',   priority: 0.8 },
+    { url: `${BASE}/biznese`,    lastModified: new Date(), changeFrequency: 'daily',   priority: 0.8 },
     { url: `${BASE}/premium`,    lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.7 },
     { url: `${BASE}/asistent`,   lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
     { url: `${BASE}/rreth-nesh`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
@@ -46,7 +46,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }))
 
   const shopPages: MetadataRoute.Sitemap = (shops ?? []).map(s => ({
-    url:             `${BASE}/dyqane/${s.id}`,
+    url:             `${BASE}/biznese/${s.id}`,
     lastModified:    new Date(s.updated_at),
     changeFrequency: 'weekly' as const,
     priority:        0.7,
