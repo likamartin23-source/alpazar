@@ -7,7 +7,7 @@ const QUICK_ACTIONS = [
   { label: '🔍 Kërko produkt', msg: 'Dua të kërkoj një produkt specifik' },
   { label: '💰 Çmimet e tregut', msg: 'Cilat janë çmimet tipike të tregut shqiptar?' },
   { label: '📦 Si të shes?', msg: 'Si mund të shes në ALPAZAR?' },
-  { label: '🏪 Dyqan premium', msg: 'Si funksionon dyqani premium?' },
+  { label: '🏢 Biznes premium', msg: 'Si funksionon biznesi premium?' },
   { label: '🔒 Siguria', msg: 'Si të bëj transaksione të sigurta?' },
   { label: '📱 Si instaloj?', msg: 'Si ta instaloj ALPAZAR si app?' },
 ]
