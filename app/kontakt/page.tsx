@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useState } from 'react'
 
 const LS = { color: '#666' as const, fontSize: 11, textDecoration: 'none' as const }

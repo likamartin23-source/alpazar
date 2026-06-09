@@ -1,13 +1,15 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useEffect, useState } from 'react'
-import dynamic from 'next/dynamic'
+import nextDynamic from 'next/dynamic'
 import { supabase } from '../../../lib/supabase'
 import { useAlpazar } from '../../../lib/context'
 import { uploadImages, UploadProgress } from '../../../lib/uploadImages'
 import { FreeTierBanner, PremiumUpsellModal, SellerPremiumUpsell } from '../../components/PremiumUpsell'
 
-const MapPicker = dynamic(() => import('../../components/MapPicker').then(m => ({ default: m.MapPicker })), { ssr: false })
+const MapPicker = nextDynamic(() => import('../../components/MapPicker').then(m => ({ default: m.MapPicker })), { ssr: false })
 
 
 export default function NewListing() {
