@@ -620,6 +620,49 @@ export default function ProfilePage() {
                 </button>
               </div>
 
+              {/* ── Trust Score — Kundërshtim Profilizimit (Ligj 124/2024 n.19) ── */}
+              <div className="card">
+                <div className="card-hdr">
+                  <span className="card-title">🔵 Trust Score — Privatësia</span>
+                </div>
+                <p style={{ fontSize: 12, color: '#555', lineHeight: 1.6, marginBottom: 12 }}>
+                  <strong>Ç'është Trust Score?</strong> Është një vlerë 0–100 që tregon besueshmërinë
+                  e llogarisë bazuar në: moshën e llogarisë, numrin e shpalljeve aktive dhe pikët e
+                  aktivitetit. <strong>Nuk lidhet me pagesa, gjini, racë apo karakteristika sensitive.</strong>
+                  <br /><br />
+                  Sipas Ligjit Nr. 124/2024 (neni 19), keni të drejtë të kundërshtoni profilizimin
+                  automatik. Nëse e çaktivizoni, Trust Score juaj <em>nuk do të shfaqet</em> te profili
+                  publik dhe kartat e shpalljeve.
+                </p>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer', padding: '10px 0' }}>
+                  <input
+                    type="checkbox"
+                    checked={profile?.trust_score_visible !== false}
+                    onChange={async e => {
+                      const visible = e.target.checked
+                      await supabase.from('profiles').update({ trust_score_visible: visible }).eq('id', user?.id)
+                      setProfile((prev: any) => ({ ...prev, trust_score_visible: visible }))
+                      setMsg(`ok:Trust Score ${visible ? 'aktivizuar' : 'çaktivizuar'} me sukses.`)
+                      setTimeout(() => setMsg(''), 3000)
+                    }}
+                    style={{ width: 18, height: 18, accentColor: '#E63312', cursor: 'pointer' }}
+                  />
+                  <span style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>
+                    Shfaq Trust Score tim te profili publik
+                  </span>
+                </label>
+                {profile?.trust_score_visible !== false && (
+                  <div style={{ background: '#F0FDF4', border: '1px solid #86EFAC', borderRadius: 8, padding: '8px 12px', fontSize: 11.5, color: '#166534', marginTop: 4 }}>
+                    ✅ Trust Score aktiv — vizitorët mund ta shohin besueshmërinë tuaj
+                  </div>
+                )}
+                {profile?.trust_score_visible === false && (
+                  <div style={{ background: '#FEF9C3', border: '1px solid #FDE047', borderRadius: 8, padding: '8px 12px', fontSize: 11.5, color: '#713F12', marginTop: 4 }}>
+                    ⚠️ Trust Score i fshehur — profili publik nuk e shfaq
+                  </div>
+                )}
+              </div>
+
               {/* ── Ndrysho Fjalëkalimin ── */}
               <div className="card">
                 <div className="card-hdr">

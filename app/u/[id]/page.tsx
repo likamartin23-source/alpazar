@@ -34,7 +34,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
     async function load() {
       const { data: p } = await supabase
         .from('profiles')
-        .select('id,full_name,username,avatar_url,cover_url,bio,city,is_premium,is_verified,trust_score,created_at,shop_name,seller_rating,reviews_count')
+        .select('id,full_name,username,avatar_url,cover_url,bio,city,is_premium,is_verified,trust_score,trust_score_visible,created_at,shop_name,seller_rating,reviews_count')
         .eq('id', params.id)
         .single()
 
@@ -138,7 +138,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
               <div style={{ fontWeight: 800, fontSize: 17, color: '#111' }}>{listings.length}</div>
               <div style={{ fontSize: 11, color: '#888' }}>Shpallje</div>
             </div>
-            {(profile.trust_score ?? 0) > 0 && (
+            {(profile.trust_score_visible !== false) && (profile.trust_score ?? 0) > 0 && (
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontWeight: 800, fontSize: 17, color: '#111' }}>{profile.trust_score}%</div>
                 <div style={{ fontSize: 11, color: '#888' }}>Besueshmëri</div>
