@@ -8,6 +8,7 @@ const AlpazarProviderDyn    = dynamic(() => import('../lib/context').then(m => (
 const NotificationToast     = dynamic(() => import('./components/NotificationToast').then(m => ({ default: m.NotificationToast })), { ssr: false })
 const MaintenanceBanner     = dynamic(() => import('./components/MaintenanceBanner').then(m => ({ default: m.MaintenanceBanner })), { ssr: false })
 const GlobalErrorBoundaryDyn = dynamic(() => import('../lib/error-handler').then(m => ({ default: m.GlobalErrorBoundary })), { ssr: false })
+const CookieBannerDyn        = dynamic(() => import('./components/CookieBanner').then(m => ({ default: m.CookieBanner })), { ssr: false })
 
 const SITE_URL = 'https://alpazar.vercel.app'
 
@@ -125,6 +126,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <NotificationToast />
           {children}
           <AiFloat />
+          <CookieBannerDyn />
           <Analytics />
           <footer style={{ background: '#111', padding: '22px 16px 28px', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
             <div style={{ maxWidth: 480, margin: '0 auto', textAlign: 'center' }}>
@@ -144,6 +146,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <a href="/rreth-nesh" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Rreth Nesh</a>
                 <a href="/kontakt" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Kontakt</a>
                 <a href="/siguria" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Siguria</a>
+                <a href="/te-dhenat-mia" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Të dhënat e mia</a>
                 <a href="/referral" style={{ color: '#F5C842', fontSize: 11, textDecoration: 'none', fontWeight: 600 }}>🎁 Referral</a>
               </nav>
               <div style={{ fontSize: 10, color: '#444' }}>© 2025 Alpazar · Tiranë, Shqipëri · Të gjitha të drejtat e rezervuara</div>
