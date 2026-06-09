@@ -27,6 +27,27 @@ cd /home/user/alpazar && npx tsc --noEmit 2>&1 | head -30
 
 ---
 
+## 🤖 ZGJEDHJA AUTOMATIKE E AGJENTËVE
+
+Alpazar ka agjentë të specializuar në `.claude/agents/`. Zgjidhja është automatike:
+
+| Tipi i detyrës | Agjenti | Model |
+|----------------|---------|-------|
+| UI, `app/**/*.tsx`, komponente | `frontend` | Sonnet |
+| API, `app/api/**`, DB, Supabase | `backend` | Sonnet |
+| Chat Albi, `app/asistent/`, `app/api/ai/` | `ai-assistant` | Sonnet |
+| Commit, push, merge, git ops | `git-workflow` | Haiku |
+| Kërkim, grep, strukturë kodi | `explorer` | Haiku |
+| Security review, RLS, API keys | `security` | Opus |
+
+**Spawn paralel kur detyrat janë të pavarura:**
+```python
+Agent({ name: "ui",  subagent_type: "frontend", prompt: "..." })
+Agent({ name: "api", subagent_type: "backend",  prompt: "..." })
+```
+
+---
+
 ## 🔒 RREGULLA ABSOLUTE (MOS NDRYSHO KURRË)
 
 | Parametër | Vlera |
