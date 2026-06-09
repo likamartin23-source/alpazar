@@ -91,23 +91,21 @@ export default function NotificationsPage() {
     return () => { supabase.removeChannel(ch) }
   }, [user])
 
-  const markRead = useCallback(async (id: string) => {
-    setNotifs(prev => prev.map(n => n.id === id ? { ...n, is_read: true, read_at: new Date().toISOString() } : n))
-    await supabase.from('notifications').update({ is_read: true, read_at: new Date().toISOString() }).eq('id', id)
+  const dismiss = useCallback(async (id: string) => {
+    setNotifs(prev => prev.filter(n => n.id !== id))
+    await supabase.from('notifications').delete().eq('id', id)
   }, [])
 
   const markAllRead = useCallback(async () => {
     if (!user) return
-    const now = new Date().toISOString()
-    setNotifs(prev => prev.map(n => ({ ...n, is_read: true, read_at: now })))
-    await supabase.from('notifications').update({ is_read: true, read_at: now })
-      .eq('user_id', user.id).eq('is_read', false)
+    setNotifs([])
+    await supabase.from('notifications').delete().eq('user_id', user.id)
   }, [user])
 
   const handleClick = useCallback((n: Notif) => {
-    if (!n.is_read) markRead(n.id)
+    dismiss(n.id)
     if (n.link?.startsWith('/')) window.location.href = n.link
-  }, [markRead])
+  }, [dismiss])
 
   // Not logged in
   if (authReady && !user) {

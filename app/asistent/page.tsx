@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import type { ChatMessage } from '../../lib/types'
 
 const QUICK_ACTIONS = [
@@ -14,11 +14,80 @@ const QUICK_ACTIONS = [
   { label: '📱 Si instaloj?', msg: 'Si ta instaloj ALPAZAR si app?' },
 ]
 
-const SUGGESTIONS: Record<string, string[]> = {
-  'elektr': ['iPhone', 'Samsung Galaxy', 'Laptop', 'TV 55"', 'Frigorifer'],
-  'makin': ['BMW', 'Mercedes', 'Golf 6', 'Benz C200', 'Toyota Corolla'],
-  'shtëpi': ['Apartament', 'Vilë', 'Mobilje', 'Kuzhinë'],
-  'veshj': ['Xhinse', 'Këpucë Nike', 'Çantë lëkure'],
+function renderContent(text: string, isStreaming = false): React.ReactNode {
+  const lines = text.split('\n')
+  const nodes: React.ReactNode[] = []
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
+
+    if (line.startsWith('## ')) {
+      nodes.push(<div key={i} style={{ fontWeight: 700, fontSize: 14, color: '#F5C842', margin: '8px 0 3px' }}>{renderInline(line.slice(3))}</div>)
+    } else if (line.startsWith('# ')) {
+      nodes.push(<div key={i} style={{ fontWeight: 700, fontSize: 15, color: '#F5C842', margin: '8px 0 3px' }}>{renderInline(line.slice(2))}</div>)
+    } else if (/^[-*] /.test(line)) {
+      nodes.push(
+        <div key={i} style={{ display: 'flex', gap: 6, alignItems: 'flex-start', marginLeft: 2, marginTop: 2 }}>
+          <span style={{ color: '#F5C842', flexShrink: 0 }}>•</span>
+          <span>{renderInline(line.slice(2))}</span>
+        </div>
+      )
+    } else if (/^\d+\. /.test(line)) {
+      const m = line.match(/^(\d+)\. /)!
+      nodes.push(
+        <div key={i} style={{ display: 'flex', gap: 6, alignItems: 'flex-start', marginLeft: 2, marginTop: 2 }}>
+          <span style={{ color: '#F5C842', flexShrink: 0, minWidth: 16 }}>{m[1]}.</span>
+          <span>{renderInline(line.slice(m[0].length))}</span>
+        </div>
+      )
+    } else if (!line.trim()) {
+      nodes.push(<div key={i} style={{ height: 5 }} />)
+    } else {
+      nodes.push(<div key={i}>{renderInline(line)}</div>)
+    }
+  }
+
+  if (isStreaming) {
+    nodes.push(<span key="cursor" style={{ display: 'inline-block', width: 2, height: 13, background: '#F5C842', marginLeft: 1, verticalAlign: 'middle', animation: 'blink .7s step-end infinite' }} />)
+  }
+
+  return <>{nodes}</>
+}
+
+function renderInline(text: string): React.ReactNode {
+  const parts: React.ReactNode[] = []
+  let remaining = text
+  let key = 0
+
+  while (remaining.length > 0) {
+    const boldIdx = remaining.indexOf('**')
+    const codeIdx = remaining.indexOf('`')
+
+    const hasCode = codeIdx !== -1
+    const hasBold = boldIdx !== -1 && remaining.indexOf('**', boldIdx + 2) !== -1
+
+    let first: 'bold' | 'code' | null = null
+    if (hasBold && hasCode) first = boldIdx < codeIdx ? 'bold' : 'code'
+    else if (hasBold) first = 'bold'
+    else if (hasCode) first = 'code'
+
+    if (!first) { parts.push(remaining); break }
+
+    if (first === 'bold') {
+      const end = remaining.indexOf('**', boldIdx + 2)
+      if (boldIdx > 0) parts.push(remaining.slice(0, boldIdx))
+      parts.push(<strong key={key++} style={{ color: '#F5C842' }}>{remaining.slice(boldIdx + 2, end)}</strong>)
+      remaining = remaining.slice(end + 2)
+    } else {
+      const end = remaining.indexOf('`', codeIdx + 1)
+      if (end === -1) { parts.push(remaining); break }
+      if (codeIdx > 0) parts.push(remaining.slice(0, codeIdx))
+      parts.push(<code key={key++} style={{ background: '#2a2a2a', padding: '1px 5px', borderRadius: 3, fontSize: 11, fontFamily: 'monospace', color: '#4ade80' }}>{remaining.slice(codeIdx + 1, end)}</code>)
+      remaining = remaining.slice(end + 1)
+    }
+  }
+
+  return <>{parts}</>
 }
 
 export default function AsistentPage() {
@@ -30,6 +99,7 @@ export default function AsistentPage() {
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [streamingIdx, setStreamingIdx] = useState<number | null>(null)
   const [isPWA, setIsPWA] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -42,7 +112,7 @@ export default function AsistentPage() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, loading])
 
-  async function sendMessage(text?: string) {
+  const sendMessage = useCallback(async (text?: string) => {
     const content = (text || input).trim()
     if (!content || loading) return
     setInput('')
@@ -51,53 +121,92 @@ export default function AsistentPage() {
     const updated = [...messages, userMsg]
     setMessages(updated)
     setLoading(true)
+    setStreamingIdx(null)
+
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 25000)
 
     try {
       const res = await fetch('/api/ai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: updated }),
+        signal: controller.signal,
       })
-      const data = await res.json()
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: data.reply || data.error || 'Gabim i papritur. Provo përsëri.'
-      }])
-    } catch {
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: '⚠️ Nuk mund të lidhesha me serverin. Kontrollo internetin dhe provo përsëri.'
-      }])
+      clearTimeout(timeout)
+
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}))
+        throw new Error(d.error || `Gabim ${res.status}`)
+      }
+
+      const ct = res.headers.get('content-type') || ''
+
+      if (ct.includes('text/event-stream') && res.body) {
+        // Streaming path
+        const newIdx = updated.length
+        setMessages(prev => [...prev, { role: 'assistant', content: '' }])
+        setLoading(false)
+        setStreamingIdx(newIdx)
+
+        const reader = res.body.getReader()
+        const decoder = new TextDecoder()
+        let buf = ''
+        let done = false
+
+        while (!done) {
+          const { done: d, value } = await reader.read()
+          if (d) break
+          buf += decoder.decode(value, { stream: true })
+          const lines = buf.split('\n')
+          buf = lines.pop() ?? ''
+
+          for (const line of lines) {
+            if (!line.startsWith('data: ')) continue
+            const raw = line.slice(6).trim()
+            if (raw === '[DONE]') { done = true; break }
+            try {
+              const parsed = JSON.parse(raw)
+              if (parsed.t) {
+                setMessages(prev => {
+                  const copy = [...prev]
+                  copy[newIdx] = { ...copy[newIdx], content: copy[newIdx].content + parsed.t }
+                  return copy
+                })
+              }
+            } catch {}
+          }
+        }
+        setStreamingIdx(null)
+      } else {
+        // Non-streaming fallback (FAQ)
+        const data = await res.json()
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: data.reply || data.error || 'Gabim i papritur. Provo përsëri.',
+        }])
+        setLoading(false)
+      }
+    } catch (err: any) {
+      clearTimeout(timeout)
+      setStreamingIdx(null)
+      const msg = err?.name === 'AbortError'
+        ? '⏱️ Kërkesa mori shumë kohë. Provo sërisht.'
+        : '⚠️ Nuk mund të lidhesha. Kontrollo internetin dhe provo sërisht.'
+      setMessages(prev => [...prev, { role: 'assistant', content: msg }])
+      setLoading(false)
     }
-    setLoading(false)
+
     setTimeout(() => inputRef.current?.focus(), 100)
-  }
+  }, [messages, input, loading])
 
   function handleKey(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      sendMessage()
-    }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() }
   }
 
   function clearChat() {
-    setMessages([{
-      role: 'assistant',
-      content: 'Biseda u pastrua! Si mund të të ndihmoj? 😊'
-    }])
-  }
-
-  // Render message content with basic markdown bold support
-  function renderContent(text: string) {
-    return text.split('\n').map((line, i) => {
-      const parts = line.split(/\*\*(.*?)\*\*/g)
-      return (
-        <span key={i}>
-          {parts.map((p, j) => j % 2 === 1 ? <strong key={j}>{p}</strong> : p)}
-          {i < text.split('\n').length - 1 && <br />}
-        </span>
-      )
-    })
+    setMessages([{ role: 'assistant', content: 'Biseda u pastrua! Si mund të të ndihmoj? 😊' }])
+    setStreamingIdx(null)
   }
 
   return (
@@ -106,8 +215,6 @@ export default function AsistentPage() {
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#0e0e0e;overflow:hidden;}
         .page{max-width:480px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;background:#0e0e0e;position:relative;}
-
-        /* Header */
         .header{background:linear-gradient(135deg,#E63312,#b02a0c);padding:${isPWA ? '44px' : '12px'} 14px 12px;flex-shrink:0;display:flex;align-items:center;gap:10px;}
         .back-btn{width:34px;height:34px;background:rgba(255,255,255,.15);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
         .back-btn i{font-size:18px;color:#fff;}
@@ -118,42 +225,30 @@ export default function AsistentPage() {
         .header-status{color:rgba(255,255,255,.7);font-size:10px;display:flex;align-items:center;gap:5px;margin-top:2px;}
         .online-dot{width:6px;height:6px;border-radius:50%;background:#4ade80;flex-shrink:0;}
         .clear-btn{background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:7px 12px;color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;}
-
-        /* Messages */
         .msgs{flex:1;overflow-y:auto;padding:14px 12px 8px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth;}
         .msgs::-webkit-scrollbar{width:3px;}
         .msgs::-webkit-scrollbar-track{background:transparent;}
         .msgs::-webkit-scrollbar-thumb{background:#333;border-radius:10px;}
-
-        /* Message rows */
         .msg-row{display:flex;gap:8px;align-items:flex-end;max-width:100%;}
         .msg-row.user{flex-direction:row-reverse;}
         .bot-av{width:30px;height:30px;background:#F5C842;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
         .bot-av i{font-size:15px;color:#111;}
         .bot-av.spacer{visibility:hidden;}
-
-        /* Bubbles */
         .bubble{padding:10px 14px;border-radius:18px;font-size:13px;line-height:1.6;max-width:82%;word-break:break-word;}
         .bubble.bot{background:#1e1e1e;color:#e8e8e8;border:0.5px solid #2a2a2a;border-bottom-left-radius:4px;}
         .bubble.user{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border-bottom-right-radius:4px;box-shadow:0 3px 10px rgba(230,51,18,.3);}
-        .bubble strong{color:#F5C842;}
         .bubble.user strong{color:#fff;text-decoration:underline;}
-
-        /* Typing indicator */
         .typing{display:flex;gap:5px;align-items:center;padding:12px 16px;background:#1e1e1e;border-radius:18px;border-bottom-left-radius:4px;width:fit-content;border:0.5px solid #2a2a2a;}
         .dot{width:7px;height:7px;border-radius:50%;background:#F5C842;animation:bounce .9s infinite;}
         .dot:nth-child(2){animation-delay:.2s;}
         .dot:nth-child(3){animation-delay:.4s;}
         @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
-
-        /* Quick actions */
+        @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
         .quick-section{flex-shrink:0;padding:0 12px 8px;}
         .quick-label{color:#555;font-size:10px;font-weight:600;margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px;}
         .quick-grid{display:flex;flex-wrap:wrap;gap:6px;}
         .quick-btn{background:#1a1a1a;border:0.5px solid #2a2a2a;border-radius:20px;padding:7px 13px;font-size:11px;color:#ccc;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap;}
         .quick-btn:hover,.quick-btn:active{background:#F5C842;color:#111;border-color:#F5C842;font-weight:700;}
-
-        /* Input */
         .input-area{background:#111;border-top:1px solid #1e1e1e;padding:10px 12px ${isPWA ? '28px' : '12px'};flex-shrink:0;}
         .input-row{display:flex;gap:8px;align-items:flex-end;}
         .input-wrap{flex:1;background:#1a1a1a;border:1.5px solid #2a2a2a;border-radius:22px;padding:10px 16px;display:flex;align-items:flex-end;gap:8px;transition:border-color .15s;}
@@ -164,8 +259,6 @@ export default function AsistentPage() {
         .send-btn:active{transform:scale(.9);}
         .send-btn:disabled{opacity:.4;}
         .send-btn i{color:#fff;font-size:20px;}
-
-        /* Web version banner */
         .web-banner{background:linear-gradient(135deg,#1a1a1a,#111);border:0.5px solid #2a2a2a;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:10px;}
         .wb-icon{width:34px;height:34px;background:#F5C842;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
         .wb-icon i{font-size:17px;color:#111;}
@@ -185,14 +278,13 @@ export default function AsistentPage() {
             <div className="header-name">Albi — AI Asistent 🤖</div>
             <div className="header-status">
               <span className="online-dot" />
-              Online 24/7 · ALPAZAR
+              {loading || streamingIdx !== null ? 'Duke shkruar...' : 'Online 24/7 · ALPAZAR'}
             </div>
           </div>
           <button className="clear-btn" onClick={clearChat}>🗑 Pastro</button>
         </div>
 
         <div className="msgs">
-          {/* Install app banner — only in web browser, not PWA */}
           {!isPWA && messages.length <= 2 && (
             <div className="web-banner">
               <div className="wb-icon"><i className="ti ti-device-mobile" /></div>
@@ -200,30 +292,30 @@ export default function AsistentPage() {
                 <strong>📲 Instalo si App</strong>
                 <span>Akses më i shpejtë · Pa browser · Offline</span>
               </div>
-              <button className="wb-btn" onClick={() => window.location.href = '/'}>
-                Shko →
-              </button>
+              <button className="wb-btn" onClick={() => window.location.href = '/'}>Shko →</button>
             </div>
           )}
 
           {messages.map((m, i) => {
             const isBot = m.role === 'assistant'
-            const prevBot = i > 0 && messages[i - 1].role === 'assistant'
+            const prevSameRole = i > 0 && messages[i - 1].role === m.role
+            const isCurrentlyStreaming = streamingIdx === i
+
             return (
               <div key={i} className={`msg-row ${isBot ? 'bot' : 'user'}`}>
                 {isBot && (
-                  <div className={`bot-av ${prevBot && i > 0 && messages[i-1].role === 'assistant' ? 'spacer' : ''}`}>
-                    {!(prevBot && i > 0 && messages[i-1].role === 'assistant') && <i className="ti ti-robot" />}
+                  <div className={`bot-av${prevSameRole ? ' spacer' : ''}`}>
+                    {!prevSameRole && <i className="ti ti-robot" />}
                   </div>
                 )}
                 <div className={`bubble ${isBot ? 'bot' : 'user'}`}>
-                  {renderContent(m.content)}
+                  {renderContent(m.content, isCurrentlyStreaming)}
                 </div>
               </div>
             )
           })}
 
-          {loading && (
+          {loading && streamingIdx === null && (
             <div className="msg-row bot">
               <div className="bot-av"><i className="ti ti-robot" /></div>
               <div className="typing">
@@ -234,8 +326,7 @@ export default function AsistentPage() {
           <div ref={bottomRef} />
         </div>
 
-        {/* Quick action chips — show only at start */}
-        {messages.length <= 2 && !loading && (
+        {messages.length <= 2 && !loading && streamingIdx === null && (
           <div className="quick-section">
             <div className="quick-label">Pyetje të shpejta</div>
             <div className="quick-grid">
@@ -264,7 +355,7 @@ export default function AsistentPage() {
                 onKeyDown={handleKey}
               />
             </div>
-            <button className="send-btn" onClick={() => sendMessage()} disabled={!input.trim() || loading}>
+            <button className="send-btn" onClick={() => sendMessage()} disabled={!input.trim() || loading || streamingIdx !== null}>
               <i className="ti ti-send" />
             </button>
           </div>
