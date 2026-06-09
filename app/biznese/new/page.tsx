@@ -127,6 +127,9 @@ export default function BiznesNewPage() {
       )
     }
 
+    // Sync shop_name on profile so business badge appears in profile page
+    await supabase.from('profiles').update({ shop_name: form.name.trim() }).eq('id', userId)
+
     window.location.href = `/biznese/${biz!.id}`
   }
 
