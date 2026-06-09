@@ -7,6 +7,26 @@
     "firecrawl": {
       "command": "npx",
       "args": ["-y", "firecrawl-mcp"]
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking@latest"]
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory@latest"]
+    },
+    "magic": {
+      "command": "npx",
+      "args": ["-y", "@21st-dev/magic-mcp@latest"]
+    },
+    "fetch": {
+      "command": "npx",
+      "args": ["-y", "@tokenizin/mcp-fetch@latest"]
     }
   }
 }
