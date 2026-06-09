@@ -11,7 +11,7 @@ const SHOP_LIMIT    = 500
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
-  const [{ data: listings }, { data: shops }] = await Promise.all([
+  const [{ data: listings }, { data: businesses }] = await Promise.all([
     supabase
       .from('listings')
       .select('id, updated_at, created_at')
@@ -19,23 +19,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .order('created_at', { ascending: false })
       .limit(LISTING_LIMIT),
     supabase
-      .from('profiles')
-      .select('id, updated_at')
-      .eq('is_premium', true)
-      .order('updated_at', { ascending: false })
+      .from('businesses')
+      .select('id, updated_at, created_at')
+      .order('created_at', { ascending: false })
       .limit(SHOP_LIMIT),
   ])
 
   const staticPages: MetadataRoute.Sitemap = [
-    { url: BASE,                 lastModified: new Date(), changeFrequency: 'daily',   priority: 1   },
-    { url: `${BASE}/search`,     lastModified: new Date(), changeFrequency: 'hourly',  priority: 0.9 },
-    { url: `${BASE}/biznese`,    lastModified: new Date(), changeFrequency: 'daily',   priority: 0.8 },
-    { url: `${BASE}/premium`,    lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.7 },
-    { url: `${BASE}/asistent`,   lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${BASE}/rreth-nesh`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
-    { url: `${BASE}/kontakt`,    lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
-    { url: `${BASE}/kushtet`,    lastModified: new Date(), changeFrequency: 'monthly', priority: 0.4 },
-    { url: `${BASE}/privatesia`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.4 },
+    { url: BASE,                   lastModified: new Date(), changeFrequency: 'daily',   priority: 1   },
+    { url: `${BASE}/search`,       lastModified: new Date(), changeFrequency: 'hourly',  priority: 0.9 },
+    { url: `${BASE}/biznese`,      lastModified: new Date(), changeFrequency: 'daily',   priority: 0.8 },
+    { url: `${BASE}/premium`,      lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.7 },
+    { url: `${BASE}/asistent`,     lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${BASE}/rreth-nesh`,   lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
+    { url: `${BASE}/kontakt`,      lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
+    { url: `${BASE}/kushtet`,      lastModified: new Date(), changeFrequency: 'monthly', priority: 0.4 },
+    { url: `${BASE}/privatesia`,   lastModified: new Date(), changeFrequency: 'monthly', priority: 0.4 },
+    { url: `${BASE}/cookies`,      lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
+    { url: `${BASE}/siguria`,      lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
+    { url: `${BASE}/te-dhenat-mia`,lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
   ]
 
   const listingPages: MetadataRoute.Sitemap = (listings ?? []).map(l => ({
@@ -45,12 +47,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority:        0.6,
   }))
 
-  const shopPages: MetadataRoute.Sitemap = (shops ?? []).map(s => ({
-    url:             `${BASE}/biznese/${s.id}`,
-    lastModified:    new Date(s.updated_at),
+  const businessPages: MetadataRoute.Sitemap = (businesses ?? []).map(b => ({
+    url:             `${BASE}/biznese/${b.id}`,
+    lastModified:    new Date(b.updated_at ?? b.created_at),
     changeFrequency: 'weekly' as const,
     priority:        0.7,
   }))
 
-  return [...staticPages, ...listingPages, ...shopPages]
+  return [...staticPages, ...listingPages, ...businessPages]
 }
