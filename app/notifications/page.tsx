@@ -93,13 +93,15 @@ export default function NotificationsPage() {
 
   const dismiss = useCallback(async (id: string) => {
     setNotifs(prev => prev.filter(n => n.id !== id))
-    await supabase.from('notifications').delete().eq('id', id)
+    const { error } = await supabase.from('notifications').delete().eq('id', id)
+    if (error) console.warn('dismiss notif failed:', error.message)
   }, [])
 
   const markAllRead = useCallback(async () => {
     if (!user) return
     setNotifs([])
-    await supabase.from('notifications').delete().eq('user_id', user.id)
+    const { error } = await supabase.from('notifications').delete().eq('user_id', user.id)
+    if (error) console.warn('markAllRead failed:', error.message)
   }, [user])
 
   const handleClick = useCallback((n: Notif) => {

@@ -1,6 +1,6 @@
 const LS = { color: '#666' as const, fontSize: 11, textDecoration: 'none' as const }
 
-export default function CookiesPage() {
+export default function Cookies() {
   const css = `
     *{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA;}
@@ -16,10 +16,19 @@ export default function CookiesPage() {
     p{font-size:13px;color:#444;line-height:1.85;margin-bottom:10px;}
     ul{font-size:13px;color:#444;line-height:1.85;padding-left:18px;margin-bottom:10px;}
     li{margin-bottom:5px;}
-    table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px;}
-    th{background:#FFFBEA;padding:8px 10px;text-align:left;border-bottom:2px solid #F5C842;font-size:11px;font-weight:700;color:#555;}
-    td{padding:8px 10px;border-bottom:0.5px solid #f0f0f0;color:#444;vertical-align:top;}
-    .note{background:#FFFBEA;border-left:3px solid #F5C842;padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:12px;color:#555;}
+    .note{background:#FFFBEA;border-left:3px solid #F5C842;padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:12px;color:#666;line-height:1.7;}
+    .cookie-card{background:#f9f9f9;border:1px solid #eee;border-radius:10px;padding:12px 16px;margin:8px 0;}
+    .cookie-card strong{font-size:12px;font-weight:700;color:#111;display:block;margin-bottom:4px;}
+    .cookie-card span{font-size:11px;color:#666;}
+    .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;margin-left:6px;}
+    .badge-req{background:#EAF3DE;color:#3B6D11;}
+    .badge-opt{background:#EEF4FF;color:#185FA5;}
+    .law{font-size:11px;color:#aaa;font-style:italic;}
+    .table-wrap{overflow-x:auto;margin:10px 0;}
+    table{width:100%;border-collapse:collapse;font-size:12px;}
+    th{background:#FFFBEA;padding:8px 10px;text-align:left;font-weight:700;color:#111;border:1px solid #eee;}
+    td{padding:8px 10px;color:#444;border:1px solid #eee;vertical-align:top;}
+    code{background:#f0f0f0;padding:1px 5px;border-radius:3px;font-size:11px;font-family:monospace;}
     .ftr{display:flex;flex-wrap:wrap;gap:8px 16px;padding:20px;background:#f9f9f9;border-top:1px solid #eee;margin-top:10px;}
     .ftr a{color:#888;font-size:11px;text-decoration:none;}
   `
@@ -33,67 +42,127 @@ export default function CookiesPage() {
         </div>
         <div className="content">
           <h1>Politika e Cookie-ve</h1>
-          <div className="ver">Versioni 1.0 · Janar 2025</div>
-
-          <h2>1. Çfarë janë Cookie-t?</h2>
-          <p>Cookie-t janë skedarë të vegjël teksti që ruhen në pajisjen tuaj kur vizitoni një faqe interneti. Alpazar i përdor cookie-t ekskluzivisht për funksionimin teknik të platformës — <strong>pa reklama, pa gjurmim marketingu</strong>.</p>
-
-          <h2>2. Cookie-t që Përdorim</h2>
-          <table>
-            <thead>
-              <tr><th>Cookie</th><th>Lloji</th><th>Qëllimi</th><th>Kohëzgjatja</th></tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>sb-*-auth-token</code></td>
-                <td>I detyrueshëm</td>
-                <td>Sesioni i autentikimit — mban hyrjen aktive</td>
-                <td>7 ditë</td>
-              </tr>
-              <tr>
-                <td><code>sb-*-auth-token-code-verifier</code></td>
-                <td>I detyrueshëm</td>
-                <td>Siguria e hyrjes OAuth (PKCE)</td>
-                <td>Sesioni</td>
-              </tr>
-              <tr>
-                <td><code>__vercel_live_token</code></td>
-                <td>Teknik</td>
-                <td>Preview deployments (vetëm zhvillim)</td>
-                <td>Sesioni</td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="ver">Versioni 2.0 · Përditësuar: Qershor 2026 · Ligji Nr. 124/2024 · Ligji Nr. 54/2024 Art. 158/6</div>
 
           <div className="note">
-            Alpazar <strong>NUK</strong> përdor cookie analitike (Google Analytics, Mixpanel etj.), cookie reklamimi (Facebook Pixel etj.) apo cookie gjurmimi të palëve të treta. Zero reklama — gjithmonë.
+            Kjo politikë shpjegon se si Alpazar përdor cookie-t dhe teknologjitë e ngjashme, në përputhje me <strong>Ligjin Nr. 124/2024</strong> "Për mbrojtjen e të dhënave personale" dhe <strong>Ligjin Nr. 54/2024</strong> (Neni 158/6 — transpozimi shqiptar i Direktivës ePrivacy 2002/58/EC) që kërkon konsentim paraprak për cookie-t jo-thelbësorë.
           </div>
 
-          <h2>3. Cookie-t e Detyrueshëm</h2>
-          <p>Cookie-t e sesionit të Supabase janë teknikisht të nevojshme për funksionimin e hyrjes në platformë. Pa to, nuk mund të qëndroni të identifikuar. Këto cookie nuk mund të çaktivizohen pa humbur funksionalitetin e hyrjes.</p>
+          <h2>1. Çfarë janë Cookie-t?</h2>
+          <p>Cookie-t janë skedarë të vegjël tekst që një faqe web ruan në pajisjen tuaj kur e vizitoni. Ato mundësojnë mbajtjen e gjendjes gjatë sesionit (p.sh. të qenit i kyçur), personalizimin e preferencave dhe analizën e trafikut.</p>
+          <p>Alpazar përdor edhe teknologji të ngjashme si <strong>localStorage</strong> (p.sh. për konfirmimin e moshës) dhe <strong>sessionStorage</strong> (për gjendjet e sesionit).</p>
 
-          <h2>4. Si t'i Kontrolloni Cookie-t</h2>
-          <p>Mund të menaxhoni cookie-t përmes cilësimeve të browser-it tuaj:</p>
+          <h2>2. Llojet e Cookie-ve që Përdorim</h2>
+
+          <div className="cookie-card">
+            <strong>Cookie Thelbësorë (Strictly Necessary) <span className="badge badge-req">I detyrueshëm</span></strong>
+            <span>Këta cookie janë të domosdoshëm për funksionimin bazë të platformës. Nuk kërkohet konsentimi juaj sipas Nenit 158/6 §3, Ligji Nr. 54/2024.</span>
+          </div>
+
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Emri</th>
+                  <th>Qëllimi</th>
+                  <th>Jetëgjatësia</th>
+                  <th>Ofruesi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>sb-*-auth-token</code></td>
+                  <td>Sesioni i autentikimit (Supabase JWT) — mban hyrjen aktive</td>
+                  <td>1 orë (rinovohet automatikisht)</td>
+                  <td>Supabase / alpazar.al</td>
+                </tr>
+                <tr>
+                  <td><code>alpazar_age_ok</code></td>
+                  <td>Konfirmimi i moshës 16+ (localStorage, jo cookie HTTP)</td>
+                  <td>Persistent (deri sa fshihet manualisht)</td>
+                  <td>alpazar.al</td>
+                </tr>
+                <tr>
+                  <td><code>alpazar_cookie_ok</code></td>
+                  <td>Ruajtja e zgjedhjes suaj të konsentimit të cookie-ve</td>
+                  <td>365 ditë</td>
+                  <td>alpazar.al</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div className="cookie-card">
+            <strong>Cookie Analitikë <span className="badge badge-opt">Pa konsentim të veçantë</span></strong>
+            <span>Alpazar përdor Vercel Analytics — sistem analitik <strong>pa cookie</strong>, që mbledh vetëm statistika agregate anonime (pa ruajtje të IP-së individuale, pa fingerprinting, pa identifikim të vizitorit). Sipas Udhëzimit të WP29 dhe EDPB, kjo teknologji nuk kërkon konsentim të veçantë.</span>
+          </div>
+
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Teknologjia</th>
+                  <th>Qëllimi</th>
+                  <th>Cookie?</th>
+                  <th>Ofruesi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Vercel Analytics</td>
+                  <td>Statistika anonime vizitorësh (numri vizitave, faqet populare)</td>
+                  <td>Jo — pa cookie</td>
+                  <td>Vercel Inc. (USA/EU)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div className="cookie-card">
+            <strong>Cookie Marketingu dhe Reklamimit <span className="badge badge-req">Nuk përdoren</span></strong>
+            <span>Alpazar <strong>nuk përdor</strong> asnjë cookie reklamimi, tracker nga palë të treta (Meta Pixel, Google Analytics, TikTok Pixel, Hotjar etj.) dhe nuk ndan të dhëna me platformat reklamuese. Zero re-targeting. Zero profilizim.</span>
+          </div>
+
+          <h2>3. Baza Ligjore</h2>
+          <p>Cookie-t thelbësorë nuk kërkojnë konsentim bazuar mbi nenin 158/6 §3 të Ligjit Nr. 54/2024 (transpozim i Nenit 5.3 të Direktivës ePrivacy 2002/58/EC), pasi janë të nevojshëm teknikisht për ofrimin e shërbimit të kërkuar shprehimisht nga përdoruesi.</p>
+          <p>Nëse në të ardhmen shtohen cookie analitikë ose marketingu, ato do të kërkojnë konsentim paraprak, të lirë, specifik, të informuar dhe të shprehur qartë (Art. 6.1.a GDPR dhe Art. 7 Ligji Nr. 124/2024).</p>
+          <p className="law">Ligji Nr. 54/2024 "Për komunikimet elektronike" — Neni 158/6 · Ligji Nr. 124/2024 "Për mbrojtjen e të dhënave personale" · Direktiva ePrivacy 2002/58/EC</p>
+
+          <h2>4. Si t'i Kontrolloni Cookie-t Tuaja</h2>
+          <p>Mund të menaxhoni cookie-t nëpërmjet:</p>
           <ul>
-            <li><strong>Chrome:</strong> Cilësimet → Privatësia → Cookie-t</li>
-            <li><strong>Firefox:</strong> Cilësimet → Privatësia → Menaxho Cookie-t</li>
-            <li><strong>Safari:</strong> Preferencat → Privatësia</li>
-            <li><strong>Edge:</strong> Cilësimet → Cookie-t dhe lejet e faqes</li>
+            <li><strong>Cilësimet e browser-it tuaj:</strong>
+              <ul style={{ marginTop: 6 }}>
+                <li>Chrome: Cilësimet → Privatësia dhe Siguria → Cookie-t</li>
+                <li>Firefox: Opsionet → Privatësia dhe Siguria → Cookie-t</li>
+                <li>Safari: Preferencat → Privatësia</li>
+                <li>Edge: Cilësimet → Cookie-t dhe lejet e faqes</li>
+              </ul>
+            </li>
+            <li><strong>Mode Incognito/Private</strong> — cookie-t fshihen automatikisht pas mbylljes së browser-it</li>
+            <li><strong>Fshirja manuale e localStorage</strong> — Developer Tools → Application → Local Storage → alpazar.vercel.app</li>
           </ul>
-          <p>Fshirja e cookie-ve të sesionit do t'ju çidentifikojë nga platforma.</p>
+          <p>Nëse bllokoni cookie-t thelbësorë (autentikimi), nuk do të mund të kyçeni në Alpazar. Cookie-t opsionale mund të çaktivizohen pa ndikuar në funksionalitetin kryesor.</p>
 
-          <h2>5. Ndryshimet</h2>
-          <p>Çdo ndryshim i kësaj politike do të publikohet në këtë faqe. Data e përditësimit do të ndryshohet.</p>
+          <h2>5. Cookie-t e Palëve të Treta</h2>
+          <p>Alpazar nuk integron shërbime të palëve të treta që vendosin cookie-t pa konsentimin tuaj. Lidhjet externe (Facebook, Instagram, TikTok etj.) hapen në browser të veçantë dhe ato platforma kanë politikat e tyre të pavarura të cookie-ve.</p>
 
-          <h2>6. Kontakti</h2>
-          <p>Pyetje rreth cookie-ve: <strong>likamartin23@gmail.com</strong></p>
+          <h2>6. Ndryshimet e Politikës</h2>
+          <p>Çdo ndryshim i kësaj politike njoftohet me banner brenda platformës, të paktën 14 ditë para hyrjes në fuqi. Konsentimi i mëparshëm rishikohet nëse kategoritë e cookie-ve ndryshojnë ose shtohen të reja. Data e përditësimit shfaqet gjithmonë në krye të faqes.</p>
+
+          <h2>7. Kontakti dhe Ankesat</h2>
+          <p>Pyetje rreth cookie-ve dhe privatësisë:<br />
+          <strong>privacy@alpazar.al</strong> · Alpazar, Tiranë, Shqipëri</p>
+          <p>Ankesa te autoriteti mbikëqyrës:<br />
+          <strong>Komisioneri për Mbrojtjen e të Dhënave Personale</strong><br />
+          Rruga "Abdi Toptani", Nr. 2, Tiranë · <strong>www.idp.al</strong></p>
+          <p className="law">Të drejtat tuaja sipas Ligjit Nr. 124/2024 dhe GDPR janë të shpjeguara plotësisht në Politikën e Privatësisë.</p>
         </div>
         <div className="ftr">
           <a href="/kushtet" style={LS}>Kushtet</a>
           <a href="/privatesia" style={LS}>Privatësia</a>
           <a href="/rreth-nesh" style={LS}>Rreth Nesh</a>
           <a href="/kontakt" style={LS}>Kontakt</a>
-          <a href="/siguria" style={LS}>Siguria</a>
           <a href="/" style={LS}>← Kreu</a>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { rateLimit, getClientIp } from '../../../lib/rateLimit'
 
 export const runtime = 'nodejs'
+export const maxDuration = 30
 
 const SYSTEM_PROMPT = `Ti je **Albi 🤖** — asistenti virtual i ALPAZAR, platforma #1 shqiptare e tregtisë online.
 
@@ -102,8 +103,6 @@ function localFallback(userMessage: string): string {
   return 'Përshëndetje! Unë jam **Albi 🤖**, asistenti i Alpazar. Mund të të ndihmoj me shpallje, çmime, kategori dhe sigurinë e blerjeve. Çfarë dëshiron të dish? 😊'
 }
 
-const enc = new TextEncoder()
-
 export async function POST(req: NextRequest) {
   const ip = getClientIp(req)
   const rl = rateLimit(`ai:${ip}`, { limit: 20, windowMs: 60_000 })
@@ -138,37 +137,14 @@ export async function POST(req: NextRequest) {
   if (apiKey) {
     try {
       const client = new Anthropic({ apiKey })
-      const stream = await client.messages.stream({
-        model: 'claude-sonnet-4-6',
+      const response = await client.messages.create({
+        model: 'claude-haiku-4-5-20251001',
         max_tokens: 1024,
         system: SYSTEM_PROMPT,
         messages: messages.slice(-20).map((m: any) => ({ role: m.role, content: m.content })),
       })
-
-      const readable = new ReadableStream({
-        async start(controller) {
-          try {
-            for await (const event of stream) {
-              if (event.type === 'content_block_delta' && event.delta?.type === 'text_delta') {
-                controller.enqueue(enc.encode(`data: ${JSON.stringify({ t: event.delta.text })}\n\n`))
-              }
-            }
-            controller.enqueue(enc.encode('data: [DONE]\n\n'))
-          } catch {
-            controller.enqueue(enc.encode(`data: ${JSON.stringify({ err: 'Gabim gjatë transmetimit' })}\n\n`))
-          } finally {
-            controller.close()
-          }
-        },
-      })
-
-      return new Response(readable, {
-        headers: {
-          'Content-Type': 'text/event-stream',
-          'Cache-Control': 'no-cache',
-          'X-Accel-Buffering': 'no',
-        },
-      })
+      const text = response.content[0]?.type === 'text' ? response.content[0].text : ''
+      return NextResponse.json({ reply: text })
     } catch (err: any) {
       const status = err?.status ?? 0
       if (status !== 401 && status !== 403 && status !== 429 && status !== 529) {
