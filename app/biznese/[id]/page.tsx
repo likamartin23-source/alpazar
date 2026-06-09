@@ -14,7 +14,8 @@ interface Biz {
   logo_url: string | null; cover_url: string | null; description: string | null
   address: string | null; latitude: number | null; longitude: number | null
   phone: string | null; website: string | null; hours: any; is_verified: boolean
-  created_at: string; city?: string | null; email?: string | null
+  created_at: string; city: string | null; email: string | null
+  nipt: string | null; withdrawal_days: number | null; updated_at: string | null
 }
 
 export default function BiznesPage({ params }: { params: { id: string } }) {
@@ -335,10 +336,10 @@ export default function BiznesPage({ params }: { params: { id: string } }) {
                 <span className="info-text">{biz.address}</span>
               </div>
             )}
-            {(biz as any).city && (
+            {biz.city && (
               <div className="info-row">
                 <span className="info-icon">🏙️</span>
-                <span className="info-text">{(biz as any).city}</span>
+                <span className="info-text">{biz.city}</span>
               </div>
             )}
             {biz.phone && (
@@ -347,10 +348,10 @@ export default function BiznesPage({ params }: { params: { id: string } }) {
                 <span className="info-text"><a href={`tel:${biz.phone}`}>{biz.phone}</a></span>
               </div>
             )}
-            {(biz as any).email && (
+            {biz.email && (
               <div className="info-row">
                 <span className="info-icon">✉️</span>
-                <span className="info-text"><a href={`mailto:${(biz as any).email}`}>{(biz as any).email}</a></span>
+                <span className="info-text"><a href={`mailto:${biz.email}`}>{biz.email}</a></span>
               </div>
             )}
             {biz.website && (
@@ -383,6 +384,24 @@ export default function BiznesPage({ params }: { params: { id: string } }) {
           {biz.latitude && biz.longitude && (
             <div style={{ margin: '8px 12px 0', borderRadius: 16, overflow: 'hidden' }}>
               <MapDisplay lat={biz.latitude} lng={biz.longitude} address={biz.address || biz.name} />
+            </div>
+          )}
+
+          {(biz.nipt || biz.withdrawal_days) && (
+            <div className="card">
+              <div className="card-title"><i className="ti ti-scale" style={{ fontSize: 16, color: '#E63312' }} /> Informacion ligjor</div>
+              {biz.nipt && (
+                <div className="info-row">
+                  <span className="info-icon">🏛️</span>
+                  <span className="info-text">NIPT: <strong>{biz.nipt}</strong></span>
+                </div>
+              )}
+              {(biz.withdrawal_days ?? 0) > 0 && (
+                <div className="info-row">
+                  <span className="info-icon">↩️</span>
+                  <span className="info-text">E drejta e tërheqjes: <strong>{biz.withdrawal_days} ditë</strong> (Direktiva EU 2011/83/EU)</span>
+                </div>
+              )}
             </div>
           )}
 

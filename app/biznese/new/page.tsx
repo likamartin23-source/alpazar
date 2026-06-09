@@ -24,6 +24,7 @@ export default function BiznesNewPage() {
   const [form, setForm] = useState({
     name: '', description: '', address: '', phone: '', website: '',
     hours: 'Hënë–Premte 09:00–18:00',
+    email: '', city: '', nipt: '', withdrawal_days: 14,
     latitude: null as number | null, longitude: null as number | null,
     logo_url: '', cover_url: '',
   })
@@ -110,6 +111,10 @@ export default function BiznesNewPage() {
       phone: form.phone || null,
       website: form.website || null,
       hours: form.hours ? { schedule: form.hours } : null,
+      email: form.email || null,
+      city: form.city || null,
+      nipt: form.nipt || null,
+      withdrawal_days: form.withdrawal_days || 14,
       logo_url: logoUrl || null,
       cover_url: coverUrl || null,
     }).select('id').single()
@@ -288,12 +293,35 @@ export default function BiznesNewPage() {
                 <input className="biz-input" type="tel" value={form.phone} onChange={e => setF('phone', e.target.value)} placeholder="+355 6X XXX XXXX" />
               </div>
               <div>
+                <label style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>✉️ Email</label>
+                <input className="biz-input" type="email" value={form.email} onChange={e => setF('email', e.target.value)} placeholder="info@biznesi.al" />
+              </div>
+              <div>
                 <label style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>🌐 Website</label>
                 <input className="biz-input" type="url" value={form.website} onChange={e => setF('website', e.target.value)} placeholder="https://..." />
               </div>
               <div>
+                <label style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>🏙️ Qyteti</label>
+                <input className="biz-input" value={form.city} onChange={e => setF('city', e.target.value)} placeholder="p.sh. Tiranë" maxLength={80} />
+              </div>
+              <div>
                 <label style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>🕐 Orari</label>
                 <input className="biz-input" value={form.hours} onChange={e => setF('hours', e.target.value)} placeholder="Hënë–Premte 09:00–18:00" />
+              </div>
+              <div style={{ background: '#FFFBEA', borderRadius: 12, padding: 14, border: '1px solid #F5C84266' }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#7B5000', marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 }}>⚖️ Të dhëna ligjore (B2C)</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>NIPT / Nr. TVSH (opsional)</label>
+                    <input className="biz-input" value={form.nipt} onChange={e => setF('nipt', e.target.value.toUpperCase())} placeholder="p.sh. K12345678A" maxLength={20} />
+                    <div style={{ fontSize: 10, color: '#888', marginTop: 3 }}>Detyrueshëm nëse shet B2C sipas ligjit shqiptar</div>
+                  </div>
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>E drejta e tërheqjes (ditë)</label>
+                    <input className="biz-input" type="number" min={14} max={30} value={form.withdrawal_days} onChange={e => setF('withdrawal_days', parseInt(e.target.value) || 14)} />
+                    <div style={{ fontSize: 10, color: '#888', marginTop: 3 }}>Direktiva EU 2011/83/EU — minimum 14 ditë</div>
+                  </div>
+                </div>
               </div>
             </div>
 
