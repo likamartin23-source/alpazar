@@ -78,11 +78,15 @@ export default function AnalyticsPage() {
 
   async function fetchAnalytics(token: string, days: number) {
     setLoading(true)
-    const res = await fetch(`/api/analytics?days=${days}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    const json = await res.json()
-    setData(json)
+    try {
+      const res = await fetch(`/api/analytics?days=${days}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const json = await res.json()
+      setData(json)
+    } catch {
+      // silently fail — loading state will clear
+    }
     setLoading(false)
   }
 

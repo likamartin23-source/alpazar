@@ -22,6 +22,7 @@ const nextConfig = {
 
   async redirects() {
     return [
+      { source: '/login', destination: '/auth/login', permanent: true },
       { source: '/dyqane', destination: '/biznese', permanent: true },
       { source: '/dyqane/:id', destination: '/biznese/:id', permanent: true },
       { source: '/dyqane/:id/:path*', destination: '/biznese/:id/:path*', permanent: true },
