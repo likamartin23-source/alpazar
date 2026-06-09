@@ -9,6 +9,7 @@ const NotificationToast     = dynamic(() => import('./components/NotificationToa
 const MaintenanceBanner     = dynamic(() => import('./components/MaintenanceBanner').then(m => ({ default: m.MaintenanceBanner })), { ssr: false })
 const GlobalErrorBoundaryDyn = dynamic(() => import('../lib/error-handler').then(m => ({ default: m.GlobalErrorBoundary })), { ssr: false })
 const CookieBannerDyn        = dynamic(() => import('./components/CookieBanner').then(m => ({ default: m.CookieBanner })), { ssr: false })
+const AgeGateDyn             = dynamic(() => import('./components/AgeGate').then(m => ({ default: m.AgeGate })), { ssr: false })
 
 const SITE_URL = 'https://alpazar.vercel.app'
 
@@ -124,7 +125,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <GlobalErrorBoundaryDyn>
           <MaintenanceBanner />
           <NotificationToast />
-          {children}
+          <AgeGateDyn>{children}</AgeGateDyn>
           <AiFloat />
           <CookieBannerDyn />
           <Analytics />
