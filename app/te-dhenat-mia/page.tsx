@@ -85,8 +85,7 @@ export default function TeDhenatMiaPage() {
     if (!session) return
     setDeleting(true)
     try {
-      const FN_URL = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace('.supabase.co', '.functions.supabase.co') + '/delete-account'
-      const res = await fetch(FN_URL, {
+      const res = await fetch('/api/delete-account', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${session.access_token}`, 'Content-Type': 'application/json' },
       })
