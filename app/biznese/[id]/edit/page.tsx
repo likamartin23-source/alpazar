@@ -117,6 +117,8 @@ export default function BiznesEditPage({ params }: { params: { id: string } }) {
 
     setSaving(false)
     if (error) { setMsg(`err:${error.message}`); return }
+    // Keep profile shop_name in sync
+    await supabase.from('profiles').update({ shop_name: form.name.trim() }).eq('id', userId)
     setMsg('ok:Ndryshimet u ruajtën!')
     setTimeout(() => window.location.href = `/biznese/${params.id}`, 1200)
   }
