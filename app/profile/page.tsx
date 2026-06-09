@@ -161,13 +161,13 @@ export default function ProfilePage() {
     setUploading(true)
     try {
       const blob = await compressImage(file, type === 'cover' ? 1920 : 400)
-      // UID si dosja e parë — kjo është e detyrueshme nga RLS policy
+      const bucket = type === 'cover' ? 'covers' : 'avatars'
       const path = `${user.id}/profile-${type}.jpg`
       const { error: upErr } = await supabase.storage
-        .from('listing-images')
+        .from(bucket)
         .upload(path, blob, { contentType: 'image/jpeg', upsert: true })
       if (upErr) { setMsg(`err:Gabim ngarkimi ${type}: ${upErr.message}`); setUploading(false); return }
-      const { data: { publicUrl } } = supabase.storage.from('listing-images').getPublicUrl(path)
+      const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(path)
       const field = type === 'cover' ? 'cover_url' : 'avatar_url'
       const { error: dbErr } = await supabase.from('profiles').update({ [field]: publicUrl }).eq('id', user.id)
       if (dbErr) { setMsg(`err:Gabim ruajtje: ${dbErr.message}`); setUploading(false); return }

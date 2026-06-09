@@ -74,11 +74,11 @@ export default function BiznesNewPage() {
     })
   }
 
-  async function uploadFile(file: File, path: string, maxW: number): Promise<string> {
+  async function uploadFile(file: File, path: string, maxW: number, bucket = 'listing-images'): Promise<string> {
     const blob = await compressImage(file, maxW)
-    const { error } = await supabase.storage.from('listing-images').upload(path, blob, { contentType: 'image/jpeg', upsert: true })
+    const { error } = await supabase.storage.from(bucket).upload(path, blob, { contentType: 'image/jpeg', upsert: true })
     if (error) throw error
-    return supabase.storage.from('listing-images').getPublicUrl(path).data.publicUrl
+    return supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl
   }
 
   async function submit() {
@@ -91,8 +91,8 @@ export default function BiznesNewPage() {
     let logoUrl = '', coverUrl = ''
     try {
       // UID si dosja e parë — kjo është e detyrueshme nga RLS policy
-      if (logoFile) logoUrl = await uploadFile(logoFile, `${userId}/biz-logo.jpg`, 400)
-      if (coverFile) coverUrl = await uploadFile(coverFile, `${userId}/biz-cover.jpg`, 1920)
+      if (logoFile) logoUrl = await uploadFile(logoFile, `${userId}/biz-logo.jpg`, 400, 'avatars')
+      if (coverFile) coverUrl = await uploadFile(coverFile, `${userId}/biz-cover.jpg`, 1920, 'covers')
     } catch (e: any) {
       setMsg(`err:Gabim gjatë ngarkimit të fotove: ${e.message}`); setSaving(false); setUploading(false); return
     }
