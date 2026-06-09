@@ -825,8 +825,8 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                     <span className="stat-chip"><i className="ti ti-bolt" />{seller.gamification_points} pikë</span>}
                 </div>
 
-                {/* Trust Score */}
-                {seller.created_at && (
+                {/* Trust Score — respekto opt-out (Ligj 124/2024 n.19) */}
+                {seller.created_at && seller.trust_score_visible !== false && (
                   <div style={{ marginBottom: 8 }}>
                     <TrustBadge
                       createdAt={seller.created_at}
@@ -841,12 +841,19 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                   <div className="seller-bio">{seller.bio || seller.shop_description}</div>
                 )}
 
-                {/* Profile button — only for visitors with shops */}
-                {!isOwner && seller.is_premium && seller.shop_name && (
+                {/* Profile / Business button */}
+                {!isOwner && hasShop && (
                   <button className="view-profile-btn"
                     onClick={() => window.location.href = `/biznese/${seller.id}`}>
                     <i className="ti ti-building-store" />
-                    Shiko biznesin
+                    Shiko biznesin →
+                  </button>
+                )}
+                {!isOwner && !hasShop && (
+                  <button className="view-profile-btn"
+                    onClick={() => window.location.href = `/u/${seller.id}`}>
+                    <i className="ti ti-user" />
+                    Shiko profilin →
                   </button>
                 )}
 
