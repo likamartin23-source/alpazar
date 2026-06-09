@@ -16,7 +16,7 @@ const SITE_URL = 'https://alpazar.vercel.app'
 export const metadata: Metadata = {
   title: 'ALPAZAR — Shit · Bli · Bëj Pazrin Tënd',
   description: 'Platforma #1 shqiptare e tregtisë dhe shpalljeve online. Zero reklama. Zero pagesa mes përdoruesve. Shit, bli dhe bëj pazarin tënd falas.',
-  keywords: 'marketplace shqiperi, shpallje online, shit bli shqiperi, dyqane online, alpazar, tregti online, bazar shqip, shpallje falas',
+  keywords: 'marketplace shqiperi, shpallje online, shit bli shqiperi, alpazar, tregti online, bazar shqip, shpallje falas',
   authors: [{ name: 'ALPAZAR', url: SITE_URL }],
   applicationName: 'ALPAZAR',
   manifest: '/manifest.json',
@@ -152,7 +152,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <a href="/te-dhenat-mia" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Të dhënat e mia</a>
                 <a href="/referral" style={{ color: '#F5C842', fontSize: 11, textDecoration: 'none', fontWeight: 600 }}>🎁 Referral</a>
               </nav>
-              <div style={{ fontSize: 10, color: '#444' }}>© 2025 Alpazar · Tiranë, Shqipëri · Të gjitha të drejtat e rezervuara</div>
+              <div style={{ fontSize: 10, color: '#444' }}>© 2025–2026 Alpazar · Tiranë, Shqipëri · Të gjitha të drejtat e rezervuara</div>
             </div>
           </footer>
           </GlobalErrorBoundaryDyn>

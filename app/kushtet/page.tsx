@@ -31,66 +31,75 @@ export default function Kushtet() {
         </div>
         <div className="content">
           <h1>Kushtet e Përdorimit</h1>
-          <div className="ver">Versioni 1.0 · Janar 2025 · Ligji shqiptar i zbatueshëm</div>
+          <div className="ver">Versioni 2.0 · Përditësuar: Qershor 2026 · Ligji Nr. 124/2024</div>
 
           <h2>1. Pranimi i Kushteve</h2>
-          <p>Duke aksesuar dhe përdorur platformën Alpazar, ju pranoni plotësisht dhe pa rezerva kushtet e mëposhtme. Nëse nuk pranoni, ju lutem mos e përdorni shërbimin.</p>
+          <p>Duke aksesuar dhe përdorur platformën Alpazar, ju pranoni plotësisht dhe pa rezerva kushtet e mëposhtme. Nëse nuk pranoni, ju lutem mos e përdorni shërbimin. Alpazar rezervon të drejtën të ndryshojë këto kushte me njoftim paraprak 30-ditor.</p>
 
           <h2>2. Rreth Alpazar</h2>
-          <p>Alpazar është platformë shqiptare e tregtisë elektronike mes individëve dhe bizneseve. Platforma ofron shërbime falas dhe opsionale premium. Alpazar nuk është palë në transaksione — ofron vetëm hapësirën e komunikimit.</p>
-          <div className="note">Alpazar nuk garanton saktësinë e shpalljeve dhe nuk mban përgjegjësi për transaksionet mes përdoruesve.</div>
+          <p>Alpazar është platformë shqiptare e tregtisë elektronike ndërmjet individëve dhe bizneseve (C2C dhe B2C). Platforma ofron shërbime bazë falas dhe opsione premium me pagesë. Alpazar vepron si ndërmjetës teknik — nuk është palë në transaksionet mes përdoruesve dhe nuk garanton produktet e listuara.</p>
+          <div className="note">Alpazar nuk garanton saktësinë e shpalljeve dhe nuk mban përgjegjësi direkte për transaksionet mes palëve. Secili përdorues vepron nën përgjegjësinë e tij.</div>
 
-          <h2>3. Regjistrimi dhe Llogaria</h2>
+          <h2>3. Kushtet e Regjistrimit</h2>
           <ul>
-            <li>Minimumi i moshës: 16 vjeç për regjistrim</li>
-            <li>Duhet të jepni informacion të saktë dhe të vërtetë</li>
-            <li>Jeni plotësisht përgjegjës për ruajtjen e fjalëkalimit</li>
-            <li>Çdo llogari është personale dhe jo e transferueshme</li>
-            <li>Alpazar rezervon të drejtën të pezullojë ose fshijë llogarinë në rast shkeljes</li>
+            <li>Mosha minimale: <strong>16 vjeç</strong> (konfirmuar me Age Gate)</li>
+            <li>Informacioni i dhënë duhet të jetë i saktë, i plotë dhe i vërtetë</li>
+            <li>Secili person mund të ketë vetëm një llogari aktive</li>
+            <li>Jeni plotësisht përgjegjës për ruajtjen e kredencialeve tuaja</li>
+            <li>Ndalohet ndarja ose transferimi i llogarisë tek persona të tjerë</li>
+            <li>Alpazar rezervon të drejtën të pezullojë ose fshijë llogarinë pa njoftim paraprak në rast shkeljes</li>
           </ul>
 
           <h2>4. Rregullat e Shpalljeve</h2>
-          <p>Çdo shpallje duhet të përmbajë informacion të saktë dhe fotografi origjinale. Çmimi duhet të jetë real. Shpallja duhet të kategorizohet saktë. Ndalohet publikimi i shpalljeve për produkte apo shërbime të ndaluara me ligj.</p>
+          <p>Çdo shpallje duhet të përmbajë informacion të saktë, fotografi origjinale dhe çmim real. Shpalljet duhet të kategorizohen saktë. Ndalohen shpalljet mashtruese, shpalljet për produkte/shërbime të ndaluara, kopjet e shpalljeve dhe shpalljet me qëllim reklamimi masiv.</p>
+          <p>Alpazar rezervon të drejtën të fshijë çdo shpallje që shkel rregullat pa njoftim paraprak.</p>
 
-          <h2>5. Artikujt e Ndaluara</h2>
+          <h2>5. Artikujt dhe Shërbimet e Ndaluara</h2>
           <ul>
-            <li>Armë dhe municion pa leje ligjore (L. Nr. 9/2018)</li>
-            <li>Substanca narkotike dhe psikotropike (L. Nr. 7975/1995)</li>
-            <li>Material pornografik, veçanërisht me të mitur</li>
-            <li>Kafshë të mbrojtura dhe të rralla pa leje</li>
-            <li>Produkte të falsifikuara ose të vjedhura</li>
-            <li>Piramida financiare dhe skema mashtruese</li>
-            <li>Çdo artikull i ndaluar me ligjet e Republikës së Shqipërisë</li>
+            <li>Armë, municion dhe pajisje ushtarake pa leje ligjore (Ligji Nr. 9/2018)</li>
+            <li>Substanca narkotike dhe psikotropike (Ligji Nr. 7975/1995 dhe ndryshimet)</li>
+            <li>Material pornografik, sidomos ai me të mitur (Neni 117, Kodi Penal)</li>
+            <li>Kafshë të mbrojtura të specieve të rrezikuara (CITES)</li>
+            <li>Produkte të falsifikuara, të vjedhura ose me origjinë të dyshimtë</li>
+            <li>Piramida financiare, skema Ponzi dhe investime mashtruese</li>
+            <li>Shërbime mashtruese ose shërbime me natyrë seksuale</li>
+            <li>Çdo artikull ose shërbim i ndaluar me ligjet e Republikës së Shqipërisë</li>
           </ul>
+          <div className="note">Raportimi i shpalljeve të dyshimta bëhet me butonin "Raporto" ose me email tek support@alpazar.al. Shpalljet ilegale i raportohen autoriteteve kompetente.</div>
 
           <h2>6. Shërbimi Premium</h2>
-          <p>Shërbimi Premium ofrohet me pagesë mujore (9.99€) ose vjetore (95.88€). Pagesa procesohet manualisht brenda 24 orësh. Rimbursimi nuk ofrohet për periudha të utilizuara. Anulimi mund të bëhet çdo kohë duke kontaktuar administratorët.</p>
+          <p>Shërbimi Premium ofrohet me tarifa mujore ose vjetore të publikuara në platformë. Pagesa konfirmohet brenda 24 orësh pune. Anulimi bëhet duke kontaktuar administratorët. Rimbursimi nuk ofrohet për periudha të shfrytëzuara plotësisht, por mund të merret parasysh rast pas rasti sipas ligjit të konsumatorëve (Ligji Nr. 9902/2008, Neni 35).</p>
 
-          <h2>7. Mbrojtja e të Dhënave</h2>
-          <p>Mbledhja dhe përpunimi i të dhënave personale kryhet në përputhje me Ligjin Nr. 9887/2008 "Për mbrojtjen e të dhënave personale" dhe ndryshimet e Ligjit Nr. 48/2012.</p>
-          <p className="law">Komisioneri për Mbrojtjen e të Dhënave Personale: www.idp.al</p>
+          <h2>7. Mbrojtja e të Dhënave Personale</h2>
+          <p>Mbledhja, ruajtja dhe përpunimi i të dhënave personale kryhet në përputhje me <strong>Ligjin Nr. 124/2024 "Për mbrojtjen e të dhënave personale"</strong> (hyrë në fuqi 1 Janar 2025), i cili harmonizoi legjislacionin shqiptar me Rregulloren GDPR 2016/679 të BE-së.</p>
+          <p>Për detaje të plota, shihni <a href="/privatesia" style={{ color: '#E63312' }}>Politikën e Privatësisë</a> dhe <a href="/cookies" style={{ color: '#E63312' }}>Politikën e Cookie-ve</a>.</p>
+          <p className="law">Autoritet mbikëqyrëse: Komisioneri për Mbrojtjen e të Dhënave Personale — www.idp.al</p>
 
-          <h2>8. Kufizimi i Përgjegjësisë</h2>
-          <p>Alpazar nuk mban përgjegjësi për saktësinë e informacionit të postuar nga përdoruesit, për transaksionet mes palëve, për humbjet financiare, apo për ndërprerjet teknike.</p>
+          <h2>8. Heqja dhe Notice-and-Takedown</h2>
+          <p>Nëse besoni se një shpallje shkel të drejtat tuaja të autorit, privatësinë ose është ilegale, mund të paraqisni kërkesë formale <a href="/takedown" style={{ color: '#E63312' }}>këtu</a>. Alpazar shqyrton çdo kërkesë brenda 72 orëve pune dhe vepron sipas Ligjit Nr. 9880/2008 "Për nënshkrimin elektronik" dhe direktivave europiane mbi tregtinë elektronike.</p>
 
-          <h2>9. Pronësia Intelektuale</h2>
-          <p>E gjithë platforma Alpazar — logo, dizajn, kod — mbrohet me Ligjin Nr. 35/2016 për të Drejtat e Autorit. Kopjimi i paautorizuar është i ndaluar rreptësisht.</p>
+          <h2>9. Kufizimi i Përgjegjësisë</h2>
+          <p>Alpazar nuk mban përgjegjësi për: saktësinë e informacionit të postuar nga përdoruesit; humbjet financiare nga transaksionet mes palëve; dëmet e shkaktuara nga ndërprerjet teknike; apo veprimet e palëve të treta. Limiti maksimal i përgjegjësisë së Alpazar ndaj çdo përdoruesi është i barabartë me shumën e paguar prej tij gjatë 12 muajve të fundit.</p>
 
-          <h2>10. Ligji dhe Juridiksioni</h2>
-          <p>Këto kushte rregullohen nga legjislacioni i Republikës së Shqipërisë. Çdo mosmarrëveshje i paraqitet gjykatave kompetente me seli në Tiranë.</p>
+          <h2>10. Pronësia Intelektuale</h2>
+          <p>E gjithë platforma Alpazar — logo, dizajni, kodi burimor dhe brendi — mbrohet me <strong>Ligjin Nr. 35/2016 "Për të Drejtat e Autorit dhe të Drejtat e Tjera të Lidhura me To"</strong>. Çdo riprodhim, kopjim ose shpërndarje pa autorizim të shkruar është i ndaluar rreptësisht.</p>
+          <p>Përdoruesit mbajnë të drejtën e autorit mbi fotografitë dhe përshkrimet e tyre, por japin Alpazar licencë jo-ekskluzive për t'i shfaqur ato brenda platformës.</p>
 
-          <h2>11. Ndryshimet</h2>
-          <p>Alpazar rezervon të drejtën të ndryshojë këto kushte. Ndryshimet njoftohen 30 ditë para hyrjes në fuqi. Vazhdimi i përdorimit nënkupton pranimin e kushteve të reja.</p>
+          <h2>11. Ligji i Aplikueshëm dhe Juridiksioni</h2>
+          <p>Këto kushte rregullohen ekskluzivisht nga legjislacioni i Republikës së Shqipërisë. Çdo mosmarrëveshje paraqitet fillimisht tek procedura e zgjidhjes alternative të mosmarrëveshjeve (ODR), dhe nëse nuk zgjidhet brenda 30 ditëve, i paraqitet Gjykatës Administrative të Rrethit Gjyqësor Tiranë.</p>
 
-          <h2>12. Kontakti</h2>
-          <p>Pyetje ligjore: <strong>likamartin23@gmail.com</strong> · Alpazar, Tiranë, Shqipëri</p>
+          <h2>12. Ndryshimet e Kushteve</h2>
+          <p>Alpazar njofton ndryshimet e rëndësishme të kushteve të paktën 30 ditë para hyrjes në fuqi, me email dhe njoftim brenda platformës. Vazhdimi i përdorimit pas datës efektive nënkupton pranimin e plotë të kushteve të reja.</p>
+
+          <h2>13. Kontakti Ligjor</h2>
+          <p>Pyetje ligjore dhe ankesa: <strong>support@alpazar.al</strong><br />Alpazar · Tiranë, Shqipëri</p>
         </div>
         <div className="ftr">
           <a href="/privatesia" style={LS}>Privatësia</a>
           <a href="/cookies" style={LS}>Cookie-t</a>
+          <a href="/takedown" style={LS}>Heqja e Përmbajtjes</a>
           <a href="/rreth-nesh" style={LS}>Rreth Nesh</a>
           <a href="/kontakt" style={LS}>Kontakt</a>
-          <a href="/siguria" style={LS}>Siguria</a>
           <a href="/" style={LS}>← Kreu</a>
         </div>
       </div>

@@ -21,6 +21,10 @@ export default function Privatesia() {
     .right-box strong{font-size:12px;font-weight:700;color:#3B6D11;display:block;margin-bottom:6px;}
     .right-box ul{color:#3B6D11;font-size:12px;margin:0;}
     .law{font-size:11px;color:#aaa;font-style:italic;}
+    .table-wrap{overflow-x:auto;margin:10px 0;}
+    table{width:100%;border-collapse:collapse;font-size:12px;}
+    th{background:#FFFBEA;padding:8px 10px;text-align:left;font-weight:700;color:#111;border:1px solid #eee;}
+    td{padding:8px 10px;color:#444;border:1px solid #eee;vertical-align:top;}
     .ftr{display:flex;flex-wrap:wrap;gap:8px 16px;padding:20px;background:#f9f9f9;border-top:1px solid #eee;margin-top:10px;}
     .ftr a{color:#888;font-size:11px;text-decoration:none;}
   `
@@ -34,91 +38,146 @@ export default function Privatesia() {
         </div>
         <div className="content">
           <h1>Politika e Privatësisë</h1>
-          <div className="ver">Versioni 1.0 · Janar 2025 · Ligji Nr. 9887/2008</div>
+          <div className="ver">Versioni 2.0 · Përditësuar: Qershor 2026 · Ligji Nr. 124/2024 · Art. 13 GDPR</div>
 
           <div className="note">
-            Alpazar angazhohet për mbrojtjen e privatësisë suaj në përputhje të plotë me Ligjin Nr. 9887/2008 "Për mbrojtjen e të dhënave personale" të Republikës së Shqipërisë dhe Rregulloren GDPR të Bashkimit Europian.
+            <strong>Informacion i detyrueshëm sipas Nenit 13 të GDPR dhe Ligjit Nr. 124/2024</strong><br />
+            Alpazar angazhohet për mbrojtjen e privatësisë suaj në përputhje të plotë me Ligjin Nr. 124/2024 "Për mbrojtjen e të dhënave personale" (harmonizuar me GDPR 2016/679) dhe legjislacionin shqiptar në fuqi.
           </div>
 
-          <h2>1. Kontrollori i të Dhënave</h2>
-          <p>Kontrolluesi i të dhënave personale është <strong>Alpazar</strong>, me seli në Tiranë, Shqipëri. Kontakt: likamartin23@gmail.com</p>
+          <h2>1. Identiteti dhe Kontakti i Kontrolluesit</h2>
+          <p><strong>Kontrolluesi i të dhënave:</strong> Alpazar<br />
+          <strong>Adresa:</strong> Tiranë, Shqipëri<br />
+          <strong>Email kontakti (DPO/Privatësi):</strong> privacy@alpazar.al<br />
+          <strong>Email i përgjithshëm:</strong> support@alpazar.al</p>
 
-          <h2>2. Të Dhënat që Mbledhim</h2>
-          <p><strong>Të dhëna që jepni direkt:</strong></p>
+          <h2>2. Kategoritë e të Dhënave dhe Qëllimi i Përpunimit</h2>
+          <p>Përpunojmë kategorinë minimale të nevojshme të të dhënave personale. Tabela më poshtë shpjegon çdo kategori, qëllimin dhe bazën ligjore:</p>
+
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Kategoria</th>
+                  <th>Të dhënat</th>
+                  <th>Qëllimi</th>
+                  <th>Baza ligjore</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Identifikimi</strong></td>
+                  <td>Email, numër telefoni, username</td>
+                  <td>Autentikimi dhe menaxhimi i llogarisë</td>
+                  <td>Ekzekutimi i kontratës (Art. 6.1.b)</td>
+                </tr>
+                <tr>
+                  <td><strong>Profili</strong></td>
+                  <td>Emri, qyteti, fotografia e profilit (opsionale)</td>
+                  <td>Personalizimi i eksperiencës</td>
+                  <td>Konsentimi (Art. 6.1.a)</td>
+                </tr>
+                <tr>
+                  <td><strong>Shpalljet</strong></td>
+                  <td>Titull, përshkrim, çmim, fotografi, lokacion</td>
+                  <td>Publikimi dhe shfaqja e shpalljeve</td>
+                  <td>Ekzekutimi i kontratës (Art. 6.1.b)</td>
+                </tr>
+                <tr>
+                  <td><strong>Komunikimet</strong></td>
+                  <td>Mesazhet ndërmjet përdoruesve</td>
+                  <td>Shërbimi i mesazheve</td>
+                  <td>Ekzekutimi i kontratës (Art. 6.1.b)</td>
+                </tr>
+                <tr>
+                  <td><strong>Teknikë</strong></td>
+                  <td>IP, browser, kohëzgjatja e sesionit</td>
+                  <td>Siguria, antifraud, debugging</td>
+                  <td>Interesi legjitim (Art. 6.1.f)</td>
+                </tr>
+                <tr>
+                  <td><strong>Pagesa Premium</strong></td>
+                  <td>Konfirmimi i pagesës (jo kartë bankare)</td>
+                  <td>Aktivizimi i abonimit Premium</td>
+                  <td>Ekzekutimi i kontratës (Art. 6.1.b)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p className="law">Nuk përpunojmë kategori speciale të dhënash (Art. 9 GDPR) dhe nuk marrim vendime të automatizuara me efekte juridike (Art. 22 GDPR).</p>
+
+          <h2>3. Ruajtja dhe Siguria Teknike</h2>
+          <p>Të dhënat ruhen në infrastrukturën e <strong>Supabase</strong> (me datacenter në Europë — Frankfurt, Gjermani) dhe <strong>Vercel</strong> (me CDN në Europë). Të dyja kompanite janë të certifikuara SOC 2 Type II.</p>
+          <p>Masat teknike dhe organizative të sigurisë përfshijnë:</p>
           <ul>
-            <li>Adresa e emailit (për regjistrim dhe hyrje)</li>
-            <li>Emri, username dhe qyteti (opsionale, në profil)</li>
-            <li>Fotografitë e shpalljeve dhe përshkrimet</li>
-            <li>Mesazhet mes përdoruesve</li>
-            <li>Informacioni i pagesës për abonim Premium (metodë pagese, jo kartë bankare)</li>
-          </ul>
-          <p><strong>Të dhëna teknike (automatike):</strong></p>
-          <ul>
-            <li>Adresa IP dhe browser i përdorur</li>
-            <li>Koha dhe frekuenca e vizitave</li>
-            <li>Shpalljet e shikuara (numërim anonimik)</li>
-            <li>Cookie-t teknike (shih Politikën e Cookie-ve)</li>
+            <li>Enkriptim TLS 1.3 për të gjitha lidhjet</li>
+            <li>Enkriptim AES-256 për të dhënat në pushim (at rest)</li>
+            <li>Fjalëkalimet ruhen me hash bcrypt (nuk janë kurrë të lexueshme)</li>
+            <li>Row-Level Security (RLS) — çdo përdorues sheh vetëm të dhënat e veta</li>
+            <li>Autentikimi me OTP SMS me skadim 120 sekondash</li>
+            <li>Auditim i plota i akseseve administrative (MFA i detyrueshëm)</li>
           </ul>
 
-          <h2>3. Qëllimi i Përpunimit</h2>
+          <h2>4. Periudhat e Ruajtjes</h2>
           <ul>
-            <li><strong>Ekzekutimi i shërbimit:</strong> autentikimi, menaxhimi i llogarisë, shpalljeve dhe mesazheve</li>
-            <li><strong>Siguria:</strong> parandalimi i mashtrimeve dhe abuzimeve</li>
-            <li><strong>Pagesa Premium:</strong> konfirmimi dhe menaxhimi i abonimeve</li>
-            <li><strong>Statistikat:</strong> numërimi anonim për përmirësimin e platformës</li>
+            <li><strong>Të dhënat e llogarisë:</strong> deri sa të kërkoni fshirjen</li>
+            <li><strong>Shpalljet aktive:</strong> deri sa të fshihen nga përdoruesi ose të skadojnë</li>
+            <li><strong>Shpalljet e fshira:</strong> 30 ditë kopje rezervë, pastaj fshihen përfundimisht</li>
+            <li><strong>Mesazhet:</strong> 12 muaj pas mesazhit të fundit</li>
+            <li><strong>Loget teknike (IP, sesionet):</strong> 90 ditë</li>
+            <li><strong>Të dhënat e transaksioneve Premium:</strong> 5 vjet (detyrim ligjor fiskal)</li>
           </ul>
-          <p className="law">Baza ligjore: Neni 5 i Ligjit Nr. 9887/2008 — Konsentimi + Ekzekutimi i kontratës</p>
-
-          <h2>4. Ruajtja dhe Siguria</h2>
-          <p>Të dhënat tuaja ruhen në serverë të sigurt (Supabase, me hosting në Europë). Ne zbatojmë masat teknike dhe organizative të sigurisë sipas standardeve të industrisë, duke përfshirë enkriptimin SSL/TLS dhe kontrollin e aksesit me role.</p>
-          <p>Fjalëkalimet ruhen të hashuara (bcrypt) — asnjëherë në tekst të qartë. Alpazar nuk ka akses në fjalëkalimet tuaja.</p>
 
           <h2>5. Ndarja me Palë të Treta</h2>
-          <p>Alpazar <strong>nuk shet</strong> dhe <strong>nuk tregton</strong> të dhënat tuaja personale. Të dhënat mund t'u aksesohen vetëm:</p>
+          <p>Alpazar <strong>nuk shet dhe nuk tregton</strong> të dhënat tuaja. Aksesi i kufizuar lejohet vetëm tek:</p>
           <ul>
-            <li>Ofruesve të shërbimeve teknike (Supabase, Vercel) — vetëm aq sa nevojitet për funksionimin</li>
-            <li>Autoriteteve kompetente shqiptare kur kërkohet me ligj</li>
+            <li><strong>Supabase Inc.</strong> — ruajtja e bazës së të dhënave dhe autentikimi (Data Processing Agreement aktiv)</li>
+            <li><strong>Vercel Inc.</strong> — infrastruktura e hosting-ut (DPA aktiv)</li>
+            <li><strong>Vercel Analytics</strong> — statistika anonime të vizitorëve (pa cookies, GDPR-compliant)</li>
+            <li><strong>Autoritetet kompetente shqiptare</strong> — vetëm me urdhër gjykate ose kërkesë ligjore</li>
           </ul>
 
-          <h2>6. Ruajtja në Kohë</h2>
-          <ul>
-            <li>Të dhënat e llogarisë: deri sa të fshini llogarinë</li>
-            <li>Mesazhet: 12 muaj pas shkëmbimit</li>
-            <li>Shpalljet e fshira: 30 ditë (kopje rezervë) pastaj fshihen</li>
-            <li>Të dhënat teknike/log: 90 ditë</li>
-          </ul>
+          <h2>6. Transferimi Ndërkombëtar</h2>
+          <p>Të dhënat përpunohen brenda Bashkimit Europian (Frankfurt, Gjermani). Nëse bëhet transferim jashtë BE-së, ai realizohet me <strong>Klauzolat Standarde Kontraktuale (SCCs)</strong> të miratuara nga Komisioni Europian, sipas Nenit 46 të GDPR.</p>
 
           <h2>7. Të Drejtat Tuaja</h2>
           <div className="right-box">
-            <strong>Sipas Ligjit Nr. 9887/2008 dhe GDPR, keni të drejtë të:</strong>
+            <strong>Sipas Ligjit Nr. 124/2024 dhe GDPR (Nenet 15-22), keni të drejtë të:</strong>
             <ul>
-              <li>Aksesoni të dhënat tuaja personale</li>
-              <li>Korrigjoni të dhëna të pasakta</li>
-              <li>Kërkoni fshirjen e të dhënave (e drejta për t'u harruar)</li>
-              <li>Kufizoni përpunimin</li>
-              <li>Merrni të dhënat tuaja në format të lexueshëm (portabilitet)</li>
-              <li>Kundërshtoni përpunimin</li>
-              <li>Tërhiqni konsentimin në çdo kohë</li>
+              <li><strong>Aksesoni</strong> — merrni kopje të të dhënave tuaja personale (Art. 15)</li>
+              <li><strong>Korrigjoni</strong> — ndryshoni të dhëna të pasakta (Art. 16)</li>
+              <li><strong>Fshini</strong> — "e drejta për t'u harruar" (Art. 17)</li>
+              <li><strong>Kufizoni</strong> — pezulloni përkohësisht përpunimin (Art. 18)</li>
+              <li><strong>Portabilizoni</strong> — merrni të dhënat në format të lexueshëm makinë (Art. 20)</li>
+              <li><strong>Kundërshtoni</strong> — ndaloni përpunimin bazuar mbi interes legjitim (Art. 21)</li>
+              <li><strong>Tërhiqni konsentimin</strong> — pa pasoja negative, në çdo kohë (Art. 7.3)</li>
             </ul>
           </div>
-          <p>Për ushtrimin e këtyre të drejtave kontaktoni: <strong>likamartin23@gmail.com</strong></p>
-          <p>Nëse nuk jeni të kënaqur me përgjigjen, mund të ankoheni te Komisioneri për Mbrojtjen e të Dhënave Personale: <strong>www.idp.al</strong></p>
+          <p>Ushtroni të drejtat tuaja duke dërguar email tek <strong>privacy@alpazar.al</strong> me subjekt "Kërkesë Privatësi". Përgjigjet jepen brenda <strong>30 ditëve</strong> (ose 90 ditë nëse kompleksiteti e kërkon, me njoftim).</p>
+          <p>Nëse nuk jeni të kënaqur me përgjigjen, keni të drejtë të paraqisni ankesë tek:</p>
+          <p className="law"><strong>Komisioneri për Mbrojtjen e të Dhënave Personale (IDP)</strong><br />
+          Adresa: Rruga "Abdi Toptani", Nr. 2, Tiranë · Tel: +355 4 2235996 · www.idp.al</p>
 
-          <h2>8. Transferimi Ndërkombëtar</h2>
-          <p>Të dhënat mund të përpunohen jashtë Shqipërisë (serverët e Supabase dhe Vercel në Bashkimin Europian). Kjo bëhet me mbrojtje adekuate sipas standardeve GDPR.</p>
+          <h2>8. Cookie-t dhe Teknologjitë e Gjurmimit</h2>
+          <p>Alpazar përdor vetëm cookie-t teknikë të domosdoshëm për funksionimin e platformës (autentikimi, preferencat). Nuk përdorim cookie-t e marketingut apo ata të palëve të treta pa konsentimin tuaj.</p>
+          <p>Për detaje të plota, lexoni <a href="/cookies" style={{ color: '#E63312' }}>Politikën e Cookie-ve</a>.</p>
 
           <h2>9. Ndryshimet e Politikës</h2>
-          <p>Çdo ndryshim i rëndësishëm i kësaj politike do të njoftohet me email ose njoftim në platformë, të paktën 14 ditë para hyrjes në fuqi.</p>
+          <p>Çdo ndryshim i rëndësishëm i kësaj politike njoftohet me email dhe njoftim në platformë, të paktën <strong>14 ditë</strong> para hyrjes në fuqi, sipas Nenit 13.2 të GDPR. Data e përditësimit shfaqet gjithmonë në krye të faqes.</p>
 
-          <h2>10. Kontakti</h2>
-          <p>Për çdo pyetje rreth privatësisë: <strong>likamartin23@gmail.com</strong><br/>Alpazar · Tiranë, Shqipëri</p>
+          <h2>10. Kontakti për Privatësinë</h2>
+          <p>
+            <strong>Email privatësi (DPO):</strong> privacy@alpazar.al<br />
+            <strong>Email i përgjithshëm:</strong> support@alpazar.al<br />
+            <strong>Adresa:</strong> Alpazar · Tiranë, Shqipëri
+          </p>
         </div>
         <div className="ftr">
           <a href="/kushtet" style={LS}>Kushtet</a>
           <a href="/cookies" style={LS}>Cookie-t</a>
+          <a href="/takedown" style={LS}>Heqja e Përmbajtjes</a>
           <a href="/rreth-nesh" style={LS}>Rreth Nesh</a>
           <a href="/kontakt" style={LS}>Kontakt</a>
-          <a href="/siguria" style={LS}>Siguria</a>
           <a href="/" style={LS}>← Kreu</a>
         </div>
       </div>
