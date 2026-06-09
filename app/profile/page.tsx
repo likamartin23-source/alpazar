@@ -663,6 +663,38 @@ export default function ProfilePage() {
                 )}
               </div>
 
+              {/* ── Marketing Opt-in (GDPR Art.7) ── */}
+              <div className="card">
+                <div className="card-hdr">
+                  <span className="card-title">📢 Komunikim Marketing</span>
+                </div>
+                <p style={{ fontSize: 12, color: '#666', marginBottom: 10, lineHeight: 1.6 }}>
+                  Zgjidhni nëse doni të merrni oferta speciale, lajme dhe këshilla nga Alpazar. Mund ta ndryshoni kurdo. (GDPR Art.7)
+                </p>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer', padding: '10px 0' }}>
+                  <input
+                    type="checkbox"
+                    checked={profile?.marketing_opt_in === true}
+                    onChange={async e => {
+                      const opted = e.target.checked
+                      await supabase.from('profiles').update({ marketing_opt_in: opted }).eq('id', user?.id)
+                      setProfile((prev: any) => ({ ...prev, marketing_opt_in: opted }))
+                      setMsg(`ok:Preferencat e marketingut u ${opted ? 'aktivizuan' : 'çaktivizuan'}.`)
+                      setTimeout(() => setMsg(''), 3000)
+                    }}
+                    style={{ width: 18, height: 18, accentColor: '#E63312', cursor: 'pointer' }}
+                  />
+                  <span style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>
+                    Pranoj njoftime dhe oferta nga Alpazar
+                  </span>
+                </label>
+                <div style={{ marginTop: 6 }}>
+                  <a href="/te-dhenat-mia" style={{ fontSize: 12, color: '#E63312', fontWeight: 600, textDecoration: 'none' }}>
+                    🔒 Menaxho të gjitha të dhënat e mia (GDPR) →
+                  </a>
+                </div>
+              </div>
+
               {/* ── Ndrysho Fjalëkalimin ── */}
               <div className="card">
                 <div className="card-hdr">
