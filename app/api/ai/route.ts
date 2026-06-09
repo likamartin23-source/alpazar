@@ -4,23 +4,23 @@ import { rateLimit, getClientIp } from '../../../lib/rateLimit'
 
 export const runtime = 'nodejs'
 
-const SYSTEM_PROMPT = `Ti je asistenti virtual i ALPAZAR — platformës #1 shqiptare të tregtisë online. Emri yt është "Albi 🤖".
+const SYSTEM_PROMPT = `Ti je **Albi 🤖** — asistenti virtual i ALPAZAR, platforma #1 shqiptare e tregtisë online.
 
-Ndihmo përdoruesit me:
-- Gjetjen e produkteve dhe kategorive
-- Çmimet e tregut në Shqipëri (ALL/EUR)
-- Si të shesin dhe blejnë në ALPAZAR
-- Dyqanet premium dhe veçoritë e tyre
-- Këshilla sigurie për transaksionet online
-- Kategoritë: Elektronikë, Makina, Shtëpi & Kopsht, Veshje, Kafshë, Sport, Pune, Shërbime, Fëmijë, Bukuri
+**Aftësitë tua:**
+- Gjetja e produkteve dhe sugjerimi i kategorive relevante
+- Informacione mbi çmimet reale të tregut shqiptar (ALL/EUR)
+- Udhëzime për shitje dhe blerje të sigurta
+- Ndihmë me funksionet e platformës (Premium, Reviews, Trust Score, etj.)
+- Kategoritë: Elektronikë, Makina, Shtëpi & Kopsht, Veshje & Aksesore, Kafshë, Sport & Hobi, Punë & Shërbime, Fëmijë, Bukuri & Shëndet, Libra & Koleksione, Ushqim & Bujqësi, Tjera
 
-Rregulla:
-- Fol GJITHMONË në shqip
-- Ji miqësor, i shkurtër dhe i dobishëm
-- Nëse pyesin çmime, jep range reale të tregut shqiptar
-- Nëse pyesin produkt specifik, sugjero kategoritë relevante
-- Mos diskuto tema jashtë ALPAZAR/tregtisë
-- Përgjigje maksimum 3-4 fjali`
+**Rregulla absolute:**
+- Fol GJITHMONË shqip, me ton miqësor dhe profesional
+- Jep përgjigje të sakta, praktike dhe të shkurtra (3-6 fjali)
+- Kur pyesin çmime, jep range realistike sipas tregut shqiptar
+- Kur pyesin produkt specifik, sugjero kategori + këshilla për blerje të sigurtë
+- Mos diskuto tema jashtë ALPAZAR/tregtisë/konsumatorizmit
+- Përdor emoji me moderim për të bërë bisedën më miqësore
+- Formatimi me **bold** për terma të rëndësishëm`
 
 /* ── FAQ fallback (punon pa API key) ─────────────────────────────── */
 const FAQ: Array<{ keys: string[]; answer: string }> = [
@@ -97,12 +97,12 @@ const FAQ: Array<{ keys: string[]; answer: string }> = [
 function localFallback(userMessage: string): string {
   const msg = userMessage.toLowerCase()
   for (const faq of FAQ) {
-    if (faq.keys.some(k => msg.includes(k))) {
-      return faq.answer
-    }
+    if (faq.keys.some(k => msg.includes(k))) return faq.answer
   }
   return 'Përshëndetje! Unë jam **Albi 🤖**, asistenti i Alpazar. Mund të të ndihmoj me shpallje, çmime, kategori dhe sigurinë e blerjeve. Çfarë dëshiron të dish? 😊'
 }
+
+const enc = new TextEncoder()
 
 export async function POST(req: NextRequest) {
   const ip = getClientIp(req)
@@ -115,56 +115,68 @@ export async function POST(req: NextRequest) {
   }
 
   let body: any
-  try {
-    body = await req.json()
-  } catch {
-    return NextResponse.json({ error: 'Kërkesë e pavlefshme.' }, { status: 400 })
-  }
+  try { body = await req.json() }
+  catch { return NextResponse.json({ error: 'Kërkesë e pavlefshme.' }, { status: 400 }) }
 
   const { messages } = body
-  if (!messages || !Array.isArray(messages) || messages.length === 0) {
+  if (!messages || !Array.isArray(messages) || messages.length === 0)
     return NextResponse.json({ error: 'Mesazhe të pavlefshme' }, { status: 400 })
-  }
-  if (messages.length > 50) {
+  if (messages.length > 50)
     return NextResponse.json({ error: 'Shumë mesazhe' }, { status: 400 })
-  }
 
   const ALLOWED_ROLES = new Set(['user', 'assistant'])
   for (const m of messages) {
-    if (!ALLOWED_ROLES.has(m?.role) || typeof m?.content !== 'string') {
+    if (!ALLOWED_ROLES.has(m?.role) || typeof m?.content !== 'string')
       return NextResponse.json({ error: 'Format mesazhi i pavlefshëm' }, { status: 400 })
-    }
-    if (m.content.length > 1000) {
-      return NextResponse.json({ error: 'Mesazhi është shumë i gjatë (max 1000 karaktere)' }, { status: 400 })
-    }
+    if (m.content.length > 2000)
+      return NextResponse.json({ error: 'Mesazhi është shumë i gjatë (max 2000 karaktere)' }, { status: 400 })
   }
 
   const lastUserMsg: string = [...messages].reverse().find((m: any) => m.role === 'user')?.content ?? ''
-
-  /* ── Provo Claude API; nëse mungon çelësi ose dështon → fallback ── */
   const apiKey = process.env.ANTHROPIC_API_KEY
+
   if (apiKey) {
     try {
       const client = new Anthropic({ apiKey })
-      const response = await client.messages.create({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 512,
+      const stream = await client.messages.stream({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1024,
         system: SYSTEM_PROMPT,
-        messages: messages.slice(-10).map((m: any) => ({ role: m.role, content: m.content })),
+        messages: messages.slice(-20).map((m: any) => ({ role: m.role, content: m.content })),
       })
-      const text = response.content[0].type === 'text' ? response.content[0].text : ''
-      return NextResponse.json({ reply: text })
+
+      const readable = new ReadableStream({
+        async start(controller) {
+          try {
+            for await (const event of stream) {
+              if (event.type === 'content_block_delta' && event.delta?.type === 'text_delta') {
+                controller.enqueue(enc.encode(`data: ${JSON.stringify({ t: event.delta.text })}\n\n`))
+              }
+            }
+            controller.enqueue(enc.encode('data: [DONE]\n\n'))
+          } catch {
+            controller.enqueue(enc.encode(`data: ${JSON.stringify({ err: 'Gabim gjatë transmetimit' })}\n\n`))
+          } finally {
+            controller.close()
+          }
+        },
+      })
+
+      return new Response(readable, {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'X-Accel-Buffering': 'no',
+        },
+      })
     } catch (err: any) {
       const status = err?.status ?? 0
-      // 401 = key e bllokuar, 429 = rate limit → fallback
-      if (status === 401 || status === 403 || status === 429 || status === 529) {
-        console.warn(`AI route: Claude API status ${status} — duke përdorur FAQ fallback`)
-      } else {
+      if (status !== 401 && status !== 403 && status !== 429 && status !== 529) {
         console.error('AI route error:', err?.message ?? err)
       }
     }
   }
 
-  /* ── FAQ fallback (punon gjithmonë, pa API key) ─────────────────── */
+  /* FAQ fallback */
   return NextResponse.json({ reply: localFallback(lastUserMsg) })
 }

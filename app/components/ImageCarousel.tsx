@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useCallback, useEffect } from 'react'
+import { useState, useRef } from 'react'
 
 interface Props {
   images: string[]
@@ -12,8 +12,11 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3' }: Props) 
   const [current, setCurrent] = useState(0)
   const [lightbox, setLightbox] = useState(false)
   const trackRef = useRef<HTMLDivElement>(null)
-  const dragStart = useRef<number | null>(null)
-  const dragging = useRef(false)
+  const touchStartX = useRef<number | null>(null)
+  const touchStartY = useRef<number | null>(null)
+  const touchMoved = useRef(false)
+  const mouseStartX = useRef<number | null>(null)
+  const mouseMoved = useRef(false)
 
   const count = images.length
   if (count === 0) return (
@@ -31,33 +34,55 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3' }: Props) 
   function onScroll() {
     if (!trackRef.current) return
     const { scrollLeft, clientWidth } = trackRef.current
-    const idx = Math.round(scrollLeft / clientWidth)
-    setCurrent(idx)
+    setCurrent(Math.round(scrollLeft / clientWidth))
   }
 
-  function onPointerDown(e: React.PointerEvent) {
-    dragStart.current = e.clientX
-    dragging.current = false
+  // Touch events — most reliable for mobile tap detection
+  function onTouchStart(e: React.TouchEvent) {
+    touchStartX.current = e.touches[0].clientX
+    touchStartY.current = e.touches[0].clientY
+    touchMoved.current = false
   }
-  function onPointerMove(e: React.PointerEvent) {
-    if (dragStart.current !== null && Math.abs(e.clientX - dragStart.current) > 5) dragging.current = true
+  function onTouchMove(e: React.TouchEvent) {
+    if (touchStartX.current === null) return
+    const dx = Math.abs(e.touches[0].clientX - touchStartX.current)
+    const dy = Math.abs(e.touches[0].clientY - (touchStartY.current ?? 0))
+    if (dx > 8 || dy > 8) touchMoved.current = true
   }
-  function onPointerUp(e: React.PointerEvent) {
-    if (!dragging.current && dragStart.current !== null) {
-      // tap → lightbox
-      setLightbox(true)
-    }
-    dragStart.current = null
-    dragging.current = false
+  function onTouchEnd() {
+    if (!touchMoved.current) setLightbox(true)
+    touchStartX.current = null
+    touchStartY.current = null
+    touchMoved.current = false
+  }
+
+  // Mouse events for desktop
+  function onMouseDown(e: React.MouseEvent) {
+    mouseStartX.current = e.clientX
+    mouseMoved.current = false
+  }
+  function onMouseMove(e: React.MouseEvent) {
+    if (mouseStartX.current !== null && Math.abs(e.clientX - mouseStartX.current) > 5)
+      mouseMoved.current = true
+  }
+  function onMouseUp() {
+    if (!mouseMoved.current) setLightbox(true)
+    mouseStartX.current = null
+    mouseMoved.current = false
   }
 
   return (
     <>
-      <div style={{ position: 'relative', borderRadius: 16, overflow: 'hidden', touchAction: 'pan-y' }}>
-        {/* Scroll track */}
+      <div style={{ position: 'relative', borderRadius: 16, overflow: 'hidden' }}>
         <div
           ref={trackRef}
           onScroll={onScroll}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+          onMouseDown={onMouseDown}
+          onMouseMove={onMouseMove}
+          onMouseUp={onMouseUp}
           style={{
             display: 'flex',
             overflowX: 'auto',
@@ -66,11 +91,9 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3' }: Props) 
             WebkitOverflowScrolling: 'touch',
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
+            cursor: 'pointer',
           }}
           className="carousel-track"
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
         >
           {images.map((src, i) => (
             <div key={i} style={{ flex: '0 0 100%', scrollSnapAlign: 'start', aspectRatio, background: '#F6F6F6', position: 'relative', overflow: 'hidden' }}>
