@@ -89,8 +89,32 @@ export default function SearchResultsPage() {
   const [loading, setLoading]       = useState(true)
   const [categories, setCategories] = useState<any[]>([])
   const [filtersOpen, setFiltersOpen] = useState(false)
+  const [savedOk, setSavedOk]         = useState(false)
+  const [userId, setUserId]           = useState<string | null>(null)
 
   const [activeFilterCount, setActiveFilterCount] = useState(0)
+
+  // Load user id for save search
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) setUserId(session.user.id)
+    })
+  }, [])
+
+  async function saveSearch() {
+    if (!userId) { window.location.href = '/auth/login'; return }
+    const filters: Record<string, string> = {}
+    if (catFilter) filters.cat = catFilter
+    if (condFilter) filters.cond = condFilter
+    if (cityFilter) filters.city = cityFilter
+    if (priceMin) filters.priceMin = priceMin
+    if (priceMax) filters.priceMax = priceMax
+    await supabase.from('saved_searches').insert({
+      user_id: userId, query: q || null, filters, notify: true
+    })
+    setSavedOk(true)
+    setTimeout(() => setSavedOk(false), 3000)
+  }
 
   // Read params from URL on mount and search
   useEffect(() => {
@@ -412,11 +436,31 @@ export default function SearchResultsPage() {
             <SkeletonGrid count={6} />
           ) : (
             <>
-              <div className="results-meta">
-                {q
-                  ? <>Rezultate për <strong>"{q}"</strong> — <strong>{totalResults}</strong> gjëra</>
-                  : <><strong>{totalResults}</strong> shpallje</>
-                }
+              <div className="results-meta" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                <span>
+                  {q
+                    ? <>Rezultate për <strong>"{q}"</strong> — <strong>{totalResults}</strong> gjëra</>
+                    : <><strong>{totalResults}</strong> shpallje</>
+                  }
+                </span>
+                {(q || activeFilterCount > 0) && (
+                  <button
+                    onClick={saveSearch}
+                    title="Ruaj këtë kërkim"
+                    style={{
+                      background: savedOk ? '#10B981' : '#fff',
+                      color: savedOk ? '#fff' : '#E63312',
+                      border: `1.5px solid ${savedOk ? '#10B981' : '#E63312'}`,
+                      borderRadius: 20, padding: '3px 10px', fontSize: 10,
+                      fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+                      display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0,
+                      transition: 'all .2s',
+                    }}
+                  >
+                    <i className={`ti ti-bell${savedOk ? '-ringing' : ''}`} style={{ fontSize: 11 }} />
+                    {savedOk ? '✓ Ruajtur!' : 'Ruaj'}
+                  </button>
+                )}
               </div>
 
               {/* ── SECTION 1: SHOPS ── */}
