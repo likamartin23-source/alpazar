@@ -234,7 +234,7 @@ function AlpazarIcon() {
 
 export default function Home() {
   // Global context — auth, config, unread counts
-  const { user, profile, authReady, unreadMessages: unreadCount, cfg } = useAlpazar()
+  const { user, profile, authReady, unreadMessages: unreadCount, unreadNotifications, cfg } = useAlpazar()
 
   const [categories, setCategories] = useState<Category[]>([])
   const [listings, setListings] = useState<Listing[]>([])
@@ -531,8 +531,14 @@ export default function Home() {
               <span className="brand">{settings.site_name || 'ALPAZAR'}</span>
             </div>
             <div className="nav">
-              {unreadCount > 0 && (
-                <button className="icon-btn" onClick={() => go(user ? '/messages' : '/auth/login')} style={{ position: 'relative' }}>
+              {user && unreadNotifications > 0 && (
+                <button className="icon-btn" onClick={() => go('/notifications')} style={{ position: 'relative' }}>
+                  <i className="ti ti-bell-ringing" />
+                  <span style={{ position: 'absolute', top: 2, right: 2, background: '#E63312', color: '#fff', fontSize: 7, fontWeight: 700, borderRadius: 8, padding: '1px 3px', minWidth: 12, textAlign: 'center', lineHeight: '12px' }}>{unreadNotifications > 9 ? '9+' : unreadNotifications}</span>
+                </button>
+              )}
+              {user && unreadNotifications === 0 && unreadCount > 0 && (
+                <button className="icon-btn" onClick={() => go('/messages')} style={{ position: 'relative' }}>
                   <i className="ti ti-bell" />
                   <span style={{ position: 'absolute', top: 2, right: 2, background: '#E63312', color: '#fff', fontSize: 7, fontWeight: 700, borderRadius: 8, padding: '1px 3px', minWidth: 12, textAlign: 'center', lineHeight: '12px' }}>{unreadCount > 9 ? '9+' : unreadCount}</span>
                 </button>
