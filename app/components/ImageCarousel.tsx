@@ -100,6 +100,7 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3' }: Props) 
               <img
                 src={src}
                 alt={`${alt} ${i + 1}`}
+                loading={i === 0 ? 'eager' : 'lazy'}
                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', pointerEvents: 'none', userSelect: 'none' }}
                 draggable={false}
                 onError={e => {

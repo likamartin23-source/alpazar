@@ -316,6 +316,77 @@ function ModerationTab() {
   )
 }
 
+/* ─── Takedown Tab ───────────────────────────────────────────── */
+function TakedownTab() {
+  const [requests, setRequests] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [note, setNote] = useState<Record<string, string>>({})
+
+  useEffect(() => {
+    supabase.from('takedown_requests').select('*').order('created_at', { ascending: false }).limit(50)
+      .then(({ data }) => { setRequests(data || []); setLoading(false) })
+  }, [])
+
+  const resolve = async (id: string, status: 'resolved' | 'rejected') => {
+    await supabase.from('takedown_requests').update({
+      status, resolver_note: note[id] || '', resolved_at: new Date().toISOString()
+    }).eq('id', id)
+    setRequests(prev => prev.map(r => r.id === id ? { ...r, status } : r))
+  }
+
+  const statusBadge: Record<string, string> = { pending: 'bp', resolved: 'ba', rejected: 'bd' }
+  const statusLabel: Record<string, string> = { pending: 'Në pritje', resolved: 'Zgjidhur', rejected: 'Refuzuar' }
+
+  return (
+    <>
+      <div className="ph"><div className="pt">⚖️ Heqja e Përmbajtjes (Notice &amp; Takedown)</div></div>
+      <div className="card">
+        <div className="ct">Kërkesat ({requests.filter(r => r.status === 'pending').length} të hapura)</div>
+        {loading ? <p style={{ color:'#aaa', fontSize:12 }}>Duke ngarkuar...</p> :
+          requests.length === 0 ? (
+            <p style={{ color:'#1D9E75', fontSize:12, padding:'12px 0', fontWeight:700 }}>✓ Asnjë kërkesë heqje</p>
+          ) : (
+            <table>
+              <thead><tr><th>Lloji</th><th>URL</th><th>Kontakti</th><th>Përshkrimi</th><th>Data</th><th>Statusi</th><th>Veprime</th></tr></thead>
+              <tbody>{requests.map((r: any) => (
+                <tr key={r.id}>
+                  <td style={{ fontWeight:700 }}>{r.type}</td>
+                  <td style={{ maxWidth:120, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
+                    {r.content_url ? <a href={r.content_url} target="_blank" rel="noreferrer" style={{ color:'#185FA5', textDecoration:'none' }}>{r.content_url}</a> : '—'}
+                  </td>
+                  <td>{r.contact_email || '—'}</td>
+                  <td style={{ maxWidth:160, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{r.description}</td>
+                  <td style={{ color:'#888' }}>{new Date(r.created_at).toLocaleDateString('sq-AL')}</td>
+                  <td><span className={`badge ${statusBadge[r.status] || 'bp'}`}>{statusLabel[r.status] || r.status}</span></td>
+                  <td>
+                    {r.status === 'pending' && (
+                      <div style={{ display:'flex', flexDirection:'column', gap:4 }}>
+                        <input className="finput" placeholder="Shënim (opsional)" style={{ fontSize:10, padding:'4px 6px', marginBottom:2 }}
+                          value={note[r.id] || ''} onChange={e => setNote(prev => ({ ...prev, [r.id]: e.target.value }))} />
+                        <div style={{ display:'flex', gap:4 }}>
+                          <button className="btn btn-red" onClick={() => resolve(r.id, 'resolved')}>Zgjidh</button>
+                          <button className="btn btn-orange" onClick={() => resolve(r.id, 'rejected')}>Refuzo</button>
+                        </div>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}</tbody>
+            </table>
+          )
+        }
+      </div>
+      <div className="card" style={{ marginTop:16 }}>
+        <div className="ct">📋 Si bëhet dorëzimi?</div>
+        <p style={{ fontSize:11, color:'#888', lineHeight:1.7 }}>
+          Kërkesat e heqjes dorëzohen përmes faqes <strong>/takedown</strong> ose me email.
+          Afati ligjor i përgjigjes: <strong>72 orë</strong> për përmbajtje të paligjshme, <strong>14 ditë</strong> për të drejtat e autorit.
+        </p>
+      </div>
+    </>
+  )
+}
+
 /* ─── Main Admin Page ────────────────────────────────────────── */
 export default function Admin() {
   const { config } = useAlpazar()
@@ -324,6 +395,10 @@ export default function Admin() {
   const [payments, setPayments] = useState<any[]>([])
   const [methods, setMethods] = useState<any[]>([])
   const [authChecked, setAuthChecked] = useState(false)
+  const [mfaRequired, setMfaRequired] = useState(false)
+  const [mfaFactorId, setMfaFactorId] = useState('')
+  const [totpCode, setTotpCode] = useState('')
+  const [mfaError, setMfaError] = useState('')
   const [loading, setLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState(new Date())
   const [liveStats, setLiveStats] = useState({ newListings: 0, newReports: 0 })
@@ -333,10 +408,29 @@ export default function Admin() {
       if (!session) { window.location.href = '/auth/login'; return }
       const { data: p } = await supabase.from('profiles').select('is_admin').eq('id', session.user.id).single()
       if (!p?.is_admin) { window.location.href = '/'; return }
+      const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+      if (aal?.nextLevel === 'aal2' && aal.currentLevel !== 'aal2') {
+        const { data: factors } = await supabase.auth.mfa.listFactors()
+        const totp = factors?.totp?.[0]
+        if (totp) {
+          setMfaFactorId(totp.id)
+          setMfaRequired(true)
+          return
+        }
+      }
       setAuthChecked(true)
       fetchAll()
     })
   }, [])
+
+  async function verifyAdminMfa() {
+    if (totpCode.length !== 6) { setMfaError('Fut kodin 6-shifror!'); return }
+    const { error } = await supabase.auth.mfa.challengeAndVerify({ factorId: mfaFactorId, code: totpCode })
+    if (error) { setMfaError('Kodi i gabuar!'); return }
+    setMfaRequired(false)
+    setAuthChecked(true)
+    fetchAll()
+  }
 
   const fetchAll = useCallback(async () => {
     setLoading(true)
@@ -423,7 +517,20 @@ export default function Admin() {
     ['config',     'settings-2',       'Konfigurime'],
     ['moderation', 'shield-check',     'Moderimi'],
     ['referrals',  'gift',             'Referalet'],
+    ['takedown',   'gavel',            'Heqja'],
   ]
+
+  if (mfaRequired) return (
+    <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'#111', flexDirection:'column', gap:20 }}>
+      <style>{`input[type=text]{background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:8px;padding:12px 16px;font-size:20px;letter-spacing:8px;text-align:center;width:180px;outline:none;font-family:monospace;}`}</style>
+      <div style={{ fontSize:32 }}>🔐</div>
+      <div style={{ color:'#F5C842', fontWeight:800, fontSize:16 }}>Verifikimi 2FA i Adminit</div>
+      <div style={{ color:'#666', fontSize:12 }}>Fut kodin nga Google Authenticator / Authy</div>
+      <input type="text" maxLength={6} value={totpCode} onChange={e => setTotpCode(e.target.value.replace(/\D/g,''))} placeholder="000000" onKeyDown={e => e.key === 'Enter' && verifyAdminMfa()} autoFocus />
+      {mfaError && <div style={{ color:'#E63312', fontSize:12 }}>{mfaError}</div>}
+      <button onClick={verifyAdminMfa} style={{ background:'#F5C842', color:'#111', border:'none', borderRadius:8, padding:'10px 28px', fontWeight:800, fontSize:14, cursor:'pointer' }}>Konfirmo</button>
+    </div>
+  )
 
   if (!authChecked) return (
     <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'#111', color:'#F5C842', fontFamily:'system-ui', gap:12 }}>
@@ -591,6 +698,9 @@ export default function Admin() {
 
               {/* REFERRALS */}
               {tab === 'referrals' && <ReferralTab />}
+
+              {/* TAKEDOWN */}
+              {tab === 'takedown' && <TakedownTab />}
             </>
           )}
         </div>

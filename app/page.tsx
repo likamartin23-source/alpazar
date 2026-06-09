@@ -737,7 +737,7 @@ export default function Home() {
                   <div key={listing.id} className="listing-card" onClick={() => go(`/listing/${listing.id}`)}>
                     <div className="card-img">
                       {listing.images?.[0]
-                        ? <img src={listing.images[0]} alt={listing.title} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
+                        ? <img src={listing.images[0]} alt={listing.title} loading="lazy" onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
                         : <i className="ti ti-photo" style={{ fontSize: 26, color: '#ccc' }} />
                       }
                       {listing.condition === 'i_ri' && <span className="badge-new">I ri</span>}
