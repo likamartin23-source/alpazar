@@ -146,10 +146,7 @@ export async function POST(req: NextRequest) {
       const text = response.content[0]?.type === 'text' ? response.content[0].text : ''
       return NextResponse.json({ reply: text })
     } catch (err: any) {
-      const status = err?.status ?? 0
-      if (status !== 401 && status !== 403 && status !== 429 && status !== 529) {
-        console.error('AI route error:', err?.message ?? err)
-      }
+      console.error('AI route error:', err?.status, err?.message ?? err)
     }
   }
 

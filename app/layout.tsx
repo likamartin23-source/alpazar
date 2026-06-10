@@ -21,7 +21,6 @@ export const metadata: Metadata = {
   applicationName: 'ALPAZAR',
   manifest: '/manifest.json',
   metadataBase: new URL(SITE_URL),
-  alternates: { canonical: SITE_URL },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
   appleWebApp: {
     capable: true,
@@ -67,8 +66,6 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#F5C842' },
     { media: '(prefers-color-scheme: dark)', color: '#111111' },
