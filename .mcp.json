@@ -52,6 +52,16 @@
     "duckduckgo": {
       "command": "npx",
       "args": ["-y", "@nickclyde/duckduckgo-mcp-server@latest"]
+    },
+    "supermemory": {
+      "url": "https://mcp.supermemory.ai/mcp"
+    },
+    "exa": {
+      "command": "npx",
+      "args": ["-y", "exa-mcp-server@latest"],
+      "env": {
+        "EXA_API_KEY": "${EXA_API_KEY}"
+      }
     }
   }
 }

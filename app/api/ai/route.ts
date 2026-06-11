@@ -137,11 +137,26 @@ export async function POST(req: NextRequest) {
   if (apiKey) {
     try {
       const client = new Anthropic({ apiKey })
+
+      // Sanitize conversation: strip empty, ensure first is 'user', merge consecutive same-role
+      let convo = messages.slice(-20)
+        .map((m: any) => ({ role: m.role, content: String(m.content).trim() }))
+        .filter((m: any) => m.content !== '')
+      while (convo.length > 0 && convo[0].role !== 'user') convo.shift()
+      convo = convo.reduce((acc: any[], m: any) => {
+        const last = acc[acc.length - 1]
+        if (last && last.role === m.role) last.content += '\n' + m.content
+        else acc.push({ ...m })
+        return acc
+      }, [])
+
+      if (convo.length === 0) return NextResponse.json({ reply: localFallback(lastUserMsg) })
+
       const response = await client.messages.create({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 1024,
         system: SYSTEM_PROMPT,
-        messages: messages.slice(-20).map((m: any) => ({ role: m.role, content: m.content })),
+        messages: convo,
       })
       const text = response.content[0]?.type === 'text' ? response.content[0].text : ''
       return NextResponse.json({ reply: text })

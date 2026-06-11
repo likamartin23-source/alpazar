@@ -33,6 +33,11 @@ export async function POST(req: NextRequest) {
     await admin.from('price_alerts').delete().eq('user_id', user.id)
     await admin.from('notifications').delete().eq('user_id', user.id)
 
+    // GDPR Art.17 / Ligji 124/2024 — anonymize messages (don't delete to preserve conversation integrity)
+    const anon = { content: '[fshirë]', attachment_url: null, payload: null, metadata: null }
+    await (admin.from('messages') as any).update({ ...anon, sender_id: null }).eq('sender_id', user.id)
+    await (admin.from('messages') as any).update({ ...anon, receiver_id: null }).eq('receiver_id', user.id)
+
     // Delete the auth user (cascades to profile via DB trigger/FK)
     const { error: delErr } = await admin.auth.admin.deleteUser(user.id)
     if (delErr) {
