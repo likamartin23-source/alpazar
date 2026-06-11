@@ -52,6 +52,9 @@
     "duckduckgo": {
       "command": "npx",
       "args": ["-y", "@nickclyde/duckduckgo-mcp-server@latest"]
+    },
+    "supermemory": {
+      "url": "https://mcp.supermemory.ai/mcp"
     }
   }
 }
