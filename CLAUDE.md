@@ -54,8 +54,8 @@ Agent({ name: "api", subagent_type: "backend",  prompt: "..." })
 |---|---|
 | `OTP_SECONDS` | `120` — NDRYSHO KURRË |
 | SMS username | `ONL3QR` (shkronjë O, JO zero 0) |
-| SMS password | `tryj__fti2xwfy` |
-| SMS fallback IP | `185.85.155.39:8080` (user: `sms`, pass: `oxkA9lo1`) |
+| SMS password | shih `.env.local` |
+| SMS fallback IP | shih `.env.local` |
 | Git remote | `github` (JO `origin`) |
 | Branch aktive | `claude/loving-wright-kBMgT` |
 | Import paths | Vetëm relative — JO `@/` alias |
