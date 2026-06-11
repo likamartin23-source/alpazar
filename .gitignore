@@ -9,3 +9,8 @@ node_modules/
 Thumbs.db
 .vercel
 tsconfig.tsbuildinfo
+
+# Claude Code tooling — konfigurim i veglës, jo produkt
+.mcp.json
+.agents/
+skills-lock.json
