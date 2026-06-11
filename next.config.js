@@ -84,7 +84,7 @@ const nextConfig = {
 module.exports = process.env.NEXT_PUBLIC_SENTRY_DSN
   ? withSentryConfig(nextConfig, {
       org: 'alpazar',
-      project: 'alpazar-nextjs',
+      project: 'javascript-nextjs',
       silent: true,
       widenClientFileUpload: true,
       hideSourceMaps: true,
