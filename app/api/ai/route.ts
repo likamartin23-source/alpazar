@@ -136,7 +136,7 @@ export async function POST(req: NextRequest) {
 
   if (apiKey) {
     try {
-      const client = new Anthropic({ apiKey })
+      const client = new Anthropic({ apiKey, timeout: 25000 })
 
       // Sanitize conversation: strip empty, ensure first is 'user', merge consecutive same-role
       let convo = messages.slice(-20)
@@ -153,20 +153,20 @@ export async function POST(req: NextRequest) {
       if (convo.length === 0) return NextResponse.json({ reply: localFallback(lastUserMsg) })
 
       const encoder = new TextEncoder()
-      const stream = client.messages.stream({
+      const msgStream = await client.messages.create({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 1024,
         system: SYSTEM_PROMPT,
         messages: convo,
+        stream: true,
       })
 
       const readable = new ReadableStream({
         async start(controller) {
           try {
-            for await (const chunk of stream) {
+            for await (const chunk of msgStream) {
               if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
-                const data = JSON.stringify({ t: chunk.delta.text })
-                controller.enqueue(encoder.encode(`data: ${data}\n\n`))
+                controller.enqueue(encoder.encode(`data: ${JSON.stringify({ t: chunk.delta.text })}\n\n`))
               }
             }
           } catch (e: any) {

@@ -103,13 +103,18 @@ export default function AsistentPage() {
   const [isPWA, setIsPWA] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  const msgsRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setIsPWA(window.matchMedia('(display-mode: standalone)').matches)
   }, [])
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    const el = msgsRef.current
+    const nearBottom = !el || (el.scrollHeight - el.scrollTop - el.clientHeight < 150)
+    if (nearBottom) {
+      bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }
   }, [messages, loading])
 
   const sendMessage = useCallback(async (text?: string) => {
@@ -122,9 +127,12 @@ export default function AsistentPage() {
     setMessages(updated)
     setLoading(true)
     setStreamingIdx(null)
+    // Force scroll to bottom when user sends
+    setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 30)
 
+    // Timeout covers entire operation including streaming (40s)
     const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 25000)
+    const timeout = setTimeout(() => controller.abort(), 40000)
 
     try {
       const res = await fetch('/api/ai', {
@@ -133,7 +141,6 @@ export default function AsistentPage() {
         body: JSON.stringify({ messages: updated }),
         signal: controller.signal,
       })
-      clearTimeout(timeout)
 
       if (!res.ok) {
         const d = await res.json().catch(() => ({}))
@@ -177,10 +184,12 @@ export default function AsistentPage() {
             } catch {}
           }
         }
+        clearTimeout(timeout)
         setStreamingIdx(null)
       } else {
         // Non-streaming fallback (FAQ)
         const data = await res.json()
+        clearTimeout(timeout)
         setMessages(prev => [...prev, {
           role: 'assistant',
           content: data.reply || data.error || 'Gabim i papritur. Provo përsëri.',
@@ -284,7 +293,7 @@ export default function AsistentPage() {
           <button className="clear-btn" onClick={clearChat}>🗑 Pastro</button>
         </div>
 
-        <div className="msgs">
+        <div className="msgs" ref={msgsRef}>
           {!isPWA && messages.length <= 2 && (
             <div className="web-banner">
               <div className="wb-icon"><i className="ti ti-device-mobile" /></div>
