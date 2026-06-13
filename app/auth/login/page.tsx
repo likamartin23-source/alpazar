@@ -431,6 +431,10 @@ export default function Auth() {
           setLoading(false)
           return
         }
+        // Set the password the user chose during registration
+        if (regPass) {
+          await supabase.auth.updateUser({ password: regPass })
+        }
         const { data: { user: currentUser } } = await supabase.auth.getUser()
         if (currentUser) {
           if (originalPhone) {
