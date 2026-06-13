@@ -27,9 +27,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
-    # Kalo nëse ANTHROPIC_API_KEY nuk është vendosur
-    if: ${{ secrets.ANTHROPIC_API_KEY != '' }}
-
     # Mos rri në queue nëse ka tashmë një run aktiv
     concurrency:
       group: claude-${{ github.ref }}
@@ -39,7 +36,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.ALPAZAR_CLAUD_SECRET || secrets.GITHUB_TOKEN }}
 
       - uses: anthropics/claude-code-action@beta
         with:
