@@ -2,8 +2,9 @@
 
 export const dynamic = 'force-dynamic'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { useRealtimeTable } from '../hooks/useRealtimeTable'
 import type { Category, Listing } from '../lib/types'
 import { SkeletonGrid } from './components/Skeleton'
 import Avatar from './components/Avatar'
@@ -248,7 +249,30 @@ export default function Home() {
   // settings now from app_config via context (cfg helper)
   const settings: Record<string, string> = {}
   const [newListingBadge, setNewListingBadge] = useState(false)
-  const listingsChRef = useRef<any>(null)
+
+  // Realtime listings via hook
+  useRealtimeTable<Listing>(
+    'listings',
+    null,
+    (row) => {
+      if (!row.is_active) return
+      setListings(prev => prev.find(l => l.id === row.id) ? prev : [row, ...prev].slice(0, 20))
+      setListingCount(c => c + 1)
+      setNewListingBadge(true)
+      setTimeout(() => setNewListingBadge(false), 4000)
+    },
+    (row) => {
+      setListings(prev =>
+        (row as any).is_active
+          ? prev.map(l => l.id === row.id ? { ...l, ...row } : l)
+          : prev.filter(l => l.id !== row.id)
+      )
+    },
+    (row) => {
+      setListings(prev => prev.filter(l => l.id !== row.id))
+      setListingCount(c => Math.max(0, c - 1))
+    }
+  )
 
   useEffect(() => {
     saveRefFromUrl()
@@ -269,34 +293,7 @@ export default function Home() {
       fetchCounts()
     }, 10000)
 
-    // Supabase Realtime si bonus (kur replication është aktive)
-    const lch = supabase
-      .channel('listings-live')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'listings' }, (payload) => {
-        const n = payload.new as any
-        if (!n.is_active) return
-        setListings(prev => prev.find(l => l.id === n.id) ? prev : [n, ...prev].slice(0, 20))
-        setListingCount(c => c + 1)
-        setNewListingBadge(true)
-        setTimeout(() => setNewListingBadge(false), 4000)
-      })
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'listings' }, (payload) => {
-        const n = payload.new as any
-        setListings(prev =>
-          n.is_active
-            ? prev.map(l => l.id === n.id ? { ...l, ...n } : l)
-            : prev.filter(l => l.id !== n.id)
-        )
-      })
-      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'listings' }, (payload) => {
-        setListings(prev => prev.filter(l => l.id !== (payload.old as any).id))
-        setListingCount(c => Math.max(0, c - 1))
-      })
-      .subscribe()
-    listingsChRef.current = lch
-
     return () => {
-      if (listingsChRef.current) supabase.removeChannel(listingsChRef.current)
       clearInterval(listingsPoll)
       document.removeEventListener('visibilitychange', onVisible)
     }
@@ -737,7 +734,7 @@ export default function Home() {
                   <div key={listing.id} className="listing-card" onClick={() => go(`/listing/${listing.id}`)}>
                     <div className="card-img">
                       {listing.images?.[0]
-                        ? <img src={listing.images[0]} alt={listing.title} loading="lazy" onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
+                        ? <img src={listing.images[0]} alt={listing.title} loading="lazy" width={400} height={300} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
                         : <i className="ti ti-photo" style={{ fontSize: 26, color: '#ccc' }} />
                       }
                       {listing.condition === 'i_ri' && <span className="badge-new">I ri</span>}

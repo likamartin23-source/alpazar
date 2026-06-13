@@ -38,7 +38,7 @@ function BusinessMiniCard({ bizId }: { bizId: string }) {
   return (
     <div style={{ margin: '0 0 12px', padding: '10px 12px', background: '#F5F5F5', borderRadius: 12, display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => window.location.href = `/biznese/${biz.id}`}>
       <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#fff', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, border: '1px solid #eee', flexShrink: 0 }}>
-        {biz.logo_url ? <img src={biz.logo_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : '🏢'}
+        {biz.logo_url ? <img src={biz.logo_url} alt="" loading="lazy" width={36} height={36} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : '🏢'}
       </div>
       <div style={{ flex: 1 }}>
         <div style={{ fontSize: 12, fontWeight: 700, color: '#111' }}>{biz.name} {biz.is_verified && <span style={{ color: '#16a34a' }}>✓ Biznes</span>}</div>
@@ -957,7 +957,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                     >
                       <div style={{ width: '100%', aspectRatio: '4/3', background: '#F6F6F6', overflow: 'hidden', position: 'relative' }}>
                         {img
-                          ? <img src={img} alt={s.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          ? <img src={img} alt={s.title} loading="lazy" width={400} height={300} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                           : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><i className="ti ti-photo" style={{ fontSize: 24, color: '#ccc' }} /></div>
                         }
                         {s.is_premium && (
