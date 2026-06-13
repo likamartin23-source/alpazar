@@ -5,8 +5,6 @@ export const dynamic = 'force-dynamic'
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 
-const CITIES = ['Tiranë', 'Durrës', 'Vlorë', 'Shkodër', 'Elbasan', 'Fier', 'Korçë', 'Berat', 'Lushnjë', 'Kavajë', 'Gjirokastër', 'Sarandë', 'Lezhë', 'Kukës', 'Pogradec', 'Peshkopi', 'Tropojë', 'Përmet', 'Tepelenë', 'Tjetër']
-
 export default function SearchPage() {
   const [q, setQ]               = useState('')
   const [categories, setCategories] = useState<any[]>([])
@@ -61,25 +59,27 @@ export default function SearchPage() {
     city  = cityFilter,
     pMin  = priceMin,
     pMax  = priceMax,
+    prem  = premiumOnly,
   ) {
     const params = new URLSearchParams()
     if (query.trim()) params.set('q', query.trim())
     if (cat)  params.set('cat',  cat)
     if (cond) params.set('cond', cond)
-    if (city) params.set('city', city)
+    if (city.trim()) params.set('city', city.trim())
     if (pMin) params.set('pmin', pMin)
     if (pMax) params.set('pmax', pMax)
+    if (prem) params.set('prem', '1')
     window.location.href = `/search/results?${params.toString()}`
   }
 
   function applyFilters() {
     setFiltersOpen(false)
-    goToResults(q, catFilter, condFilter, cityFilter, priceMin, priceMax)
+    goToResults(q, catFilter, condFilter, cityFilter, priceMin, priceMax, premiumOnly)
   }
 
   function clearFilters() {
-    setCondFilter(''); setCityFilter(''); setPriceMin(''); setPriceMax('')
-    goToResults(q, catFilter, '', '', '', '')
+    setCatFilter(''); setCondFilter(''); setCityFilter(''); setPriceMin(''); setPriceMax(''); setPremiumOnly(false)
+    goToResults(q, '', '', '', '', '', false)
   }
 
   function handleSubmit(e: React.FormEvent) { e.preventDefault(); goToResults() }
@@ -147,8 +147,8 @@ export default function SearchPage() {
         .fp-row select:focus,.fp-row input:focus{border-color:#F5C842;}
         .price-range{display:flex;gap:8px;}
         .price-range input{flex:1;}
-        .cond-row{display:flex;gap:8px;}
-        .cond-btn{flex:1;border:1.5px solid #ddd;border-radius:9px;padding:9px;font-size:12px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;}
+        .cond-row{display:flex;gap:6px;flex-wrap:wrap;}
+        .cond-btn{flex:1;min-width:70px;border:1.5px solid #ddd;border-radius:9px;padding:8px 6px;font-size:11px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;white-space:nowrap;}
         .cond-btn.active{border-color:#E63312;background:#FFF0EE;color:#E63312;}
         .fp-actions{display:flex;gap:8px;margin-top:6px;}
         .fp-apply{flex:1;background:#E63312;color:#fff;border:none;border-radius:11px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
@@ -195,10 +195,12 @@ export default function SearchPage() {
         {/* Active filters bar */}
         {activeFilterCount > 0 && (
           <div className="active-filters">
-            {condFilter && <span className="afilter">{condFilter === 'i_ri' ? '✨ I ri' : '🔄 I përdorur'}</span>}
-            {cityFilter && <span className="afilter">📍 {cityFilter}</span>}
-            {priceMin   && <span className="afilter">Min: {priceMin} L</span>}
-            {priceMax   && <span className="afilter">Max: {priceMax} L</span>}
+            {catFilter   && <span className="afilter">🏷 {categories.find(c => c.id === catFilter)?.name || catFilter}</span>}
+            {condFilter  && <span className="afilter">{condFilter === 'i_ri' ? '✨ I ri' : condFilter === 'i_mire' ? '👍 I mirë' : '🔄 I përdorur'}</span>}
+            {cityFilter  && <span className="afilter">📍 {cityFilter}</span>}
+            {priceMin    && <span className="afilter">Min: {priceMin} L</span>}
+            {priceMax    && <span className="afilter">Max: {priceMax} L</span>}
+            {premiumOnly && <span className="afilter">⭐ Premium</span>}
           </div>
         )}
 
@@ -217,28 +219,33 @@ export default function SearchPage() {
           <div className="filter-overlay" onClick={() => setFiltersOpen(false)} />
           <div className="filter-panel">
             <div className="fp-handle" />
-            <div className="fp-title">🎛 Filtrat e Avancuar</div>
+            <div className="fp-title">Filtrat e Avancuar</div>
 
+            {/* Kategoria */}
             <div className="fp-row">
-              <span className="fp-label">Gjendja</span>
-              <div className="cond-row">
-                <button className={`cond-btn ${condFilter === '' ? 'active' : ''}`}
-                  onClick={() => setCondFilter('')}>Të gjitha</button>
-                <button className={`cond-btn ${condFilter === 'i_ri' ? 'active' : ''}`}
-                  onClick={() => setCondFilter(condFilter === 'i_ri' ? '' : 'i_ri')}>✨ I ri</button>
-                <button className={`cond-btn ${condFilter === 'i_perdorur' ? 'active' : ''}`}
-                  onClick={() => setCondFilter(condFilter === 'i_perdorur' ? '' : 'i_perdorur')}>🔄 I përdorur</button>
-              </div>
-            </div>
-
-            <div className="fp-row">
-              <span className="fp-label">Qyteti</span>
-              <select value={cityFilter} onChange={e => setCityFilter(e.target.value)}>
-                <option value="">Të gjitha qytetet</option>
-                {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
+              <span className="fp-label">Kategoria</span>
+              <select value={catFilter} onChange={e => setCatFilter(e.target.value)}
+                style={{ width: '100%', border: '1.5px solid #ddd', borderRadius: 10, padding: '10px 13px', fontSize: 13, fontFamily: 'inherit', outline: 'none', background: '#fff', color: '#111' }}>
+                <option value="">Të gjitha kategoritë</option>
+                {categories.map(c => (
+                  <option key={c.id} value={c.id}>{c.icon ? `${c.icon} ` : ''}{c.name}</option>
+                ))}
               </select>
             </div>
 
+            {/* Qyteti */}
+            <div className="fp-row">
+              <span className="fp-label">Qyteti</span>
+              <input
+                type="text"
+                placeholder="p.sh. Tiranë, Durrës..."
+                value={cityFilter}
+                onChange={e => setCityFilter(e.target.value)}
+                style={{ width: '100%', border: '1.5px solid #ddd', borderRadius: 10, padding: '10px 13px', fontSize: 13, fontFamily: 'inherit', outline: 'none', background: '#fff', color: '#111' }}
+              />
+            </div>
+
+            {/* Çmimi */}
             <div className="fp-row">
               <span className="fp-label">Çmimi (L)</span>
               <div className="price-range">
@@ -246,6 +253,40 @@ export default function SearchPage() {
                   onChange={e => setPriceMin(e.target.value)} min="0" />
                 <input type="number" placeholder="Max" value={priceMax}
                   onChange={e => setPriceMax(e.target.value)} min="0" />
+              </div>
+            </div>
+
+            {/* Gjendja */}
+            <div className="fp-row">
+              <span className="fp-label">Gjendja</span>
+              <div className="cond-row">
+                <button className={`cond-btn ${condFilter === '' ? 'active' : ''}`}
+                  onClick={() => setCondFilter('')}>Të gjitha</button>
+                <button className={`cond-btn ${condFilter === 'i_ri' ? 'active' : ''}`}
+                  onClick={() => setCondFilter(condFilter === 'i_ri' ? '' : 'i_ri')}>I ri</button>
+                <button className={`cond-btn ${condFilter === 'i_mire' ? 'active' : ''}`}
+                  onClick={() => setCondFilter(condFilter === 'i_mire' ? '' : 'i_mire')}>I mirë</button>
+                <button className={`cond-btn ${condFilter === 'i_perdorur' ? 'active' : ''}`}
+                  onClick={() => setCondFilter(condFilter === 'i_perdorur' ? '' : 'i_perdorur')}>I përdorur</button>
+              </div>
+            </div>
+
+            {/* Premium only */}
+            <div className="fp-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: premiumOnly ? '#FFF8EE' : '#f9f9f7', border: `1.5px solid ${premiumOnly ? '#e0b030' : '#eee'}`, borderRadius: 12, padding: '12px 14px', cursor: 'pointer' }}
+              onClick={() => setPremiumOnly(v => !v)}>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#111' }}>Vetëm Premium</div>
+                <div style={{ fontSize: 11, color: '#888', marginTop: 2 }}>Shpallje të verifikuara</div>
+              </div>
+              <div style={{
+                width: 44, height: 24, borderRadius: 12, background: premiumOnly ? '#F5C842' : '#ddd',
+                position: 'relative', transition: 'background .2s', flexShrink: 0,
+              }}>
+                <div style={{
+                  width: 18, height: 18, borderRadius: '50%', background: '#fff',
+                  position: 'absolute', top: 3, left: premiumOnly ? 23 : 3,
+                  transition: 'left .2s', boxShadow: '0 1px 4px rgba(0,0,0,.2)',
+                }} />
               </div>
             </div>
 
