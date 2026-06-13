@@ -86,22 +86,27 @@ export default function NotificationsPage() {
       }, payload => {
         setNotifs(prev => prev.map(n => n.id === payload.new.id ? { ...n, ...(payload.new as Notif) } : n))
       })
+      .on('postgres_changes', {
+        event: 'DELETE', schema: 'public', table: 'notifications',
+      }, payload => {
+        setNotifs(prev => prev.filter(n => n.id !== (payload.old as any).id))
+      })
       .subscribe()
 
     return () => { supabase.removeChannel(ch) }
   }, [user])
 
   const dismiss = useCallback(async (id: string) => {
-    setNotifs(prev => prev.filter(n => n.id !== id))
     const { error } = await supabase.from('notifications').delete().eq('id', id)
-    if (error) console.warn('dismiss notif failed:', error.message)
+    if (!error) setNotifs(prev => prev.filter(n => n.id !== id))
+    else console.warn('dismiss notif failed:', error.message)
   }, [])
 
   const markAllRead = useCallback(async () => {
     if (!user) return
-    setNotifs([])
     const { error } = await supabase.from('notifications').delete().eq('user_id', user.id)
-    if (error) console.warn('markAllRead failed:', error.message)
+    if (!error) setNotifs([])
+    else console.warn('markAllRead failed:', error.message)
   }, [user])
 
   const handleClick = useCallback((n: Notif) => {
