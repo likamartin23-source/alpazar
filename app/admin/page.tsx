@@ -74,6 +74,8 @@ tr:last-child td{border:none;}
 .maint-banner p{font-size:12px;font-weight:700;flex:1;}
 `
 
+const ADMIN_PIN = process.env.NEXT_PUBLIC_ADMIN_PIN || '000000'
+
 /* ─── Referral Tab ─────────────────────────────────────────── */
 function ReferralTab() {
   const [refs, setRefs] = useState<any[]>([])
@@ -256,21 +258,23 @@ function AppConfigTab() {
 function ModerationTab() {
   const [reports, setReports] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [deactivating, setDeactivating] = useState<Record<string, boolean>>({})
 
-  useEffect(() => {
+  const fetchReports = () => {
     supabase.from('reports')
-      .select('*,listings(title),profiles!reporter_id(username)')
+      .select('*,listings(id,title,is_active,seller_id),profiles!reporter_id(username)')
       .eq('status', 'pending')
       .order('created_at', { ascending: true })
       .limit(50)
       .then(({ data }) => { setReports(data || []); setLoading(false) })
+  }
+
+  useEffect(() => {
+    fetchReports()
 
     const ch = supabase.channel('mod_live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'reports' }, () => {
-        supabase.from('reports')
-          .select('*,listings(title),profiles!reporter_id(username)')
-          .eq('status', 'pending').order('created_at', { ascending: true }).limit(50)
-          .then(({ data }) => setReports(data || []))
+        fetchReports()
       }).subscribe()
 
     return () => { supabase.removeChannel(ch) }
@@ -280,6 +284,24 @@ function ModerationTab() {
     const { error } = await supabase.from('reports').update({ status: action }).eq('id', id)
     if (error) { alert('Gabim: ' + error.message); return }
     setReports(prev => prev.filter(r => r.id !== id))
+  }
+
+  const deactivateListing = async (listingId: string, reportId: string, sellerId: string) => {
+    if (!listingId) { alert('ID e shpalljes mungon.'); return }
+    setDeactivating(prev => ({ ...prev, [reportId]: true }))
+    const { error: e1 } = await supabase.from('listings').update({ is_active: false }).eq('id', listingId)
+    if (e1) { alert('Gabim çaktivizimi: ' + e1.message); setDeactivating(prev => ({ ...prev, [reportId]: false })); return }
+    if (sellerId) {
+      await supabase.from('notifications').insert({
+        user_id: sellerId,
+        type: 'listing_removed',
+        title: 'Shpallja u çaktivizua',
+        body: 'Shpallja juaj u çaktivizua nga admin-i pas një raporti. Kontaktoni support për sqarime.',
+        link: `/listing/${listingId}`
+      })
+    }
+    setDeactivating(prev => ({ ...prev, [reportId]: false }))
+    fetchReports()
   }
 
   return (
@@ -298,13 +320,33 @@ function ModerationTab() {
               <thead><tr><th>Shpallja</th><th>Raportuar nga</th><th>Arsyeja</th><th>Data</th><th>Veprime</th></tr></thead>
               <tbody>{reports.map((r: any) => (
                 <tr key={r.id}>
-                  <td style={{ fontWeight: 700 }}>{r.listings?.title || '—'}</td>
+                  <td style={{ fontWeight: 700 }}>
+                    {r.listings?.title || '—'}
+                    {r.listings?.is_active === false && (
+                      <span style={{ marginLeft: 6, background: '#FFF0EE', color: '#E63312', borderRadius: 4, padding: '1px 5px', fontSize: 9, fontWeight: 700 }}>çaktivizuar</span>
+                    )}
+                  </td>
                   <td>{r.profiles?.username || '—'}</td>
                   <td>{r.reason}</td>
                   <td style={{ color: '#888' }}>{new Date(r.created_at).toLocaleDateString('sq-AL')}</td>
                   <td>
-                    <button className="btn btn-green" onClick={() => resolve(r.id, 'resolved')}>Zgjidh</button>
-                    <button className="btn btn-orange" onClick={() => resolve(r.id, 'dismissed')}>Inoro</button>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                      <div style={{ display: 'flex', gap: 4 }}>
+                        <button className="btn btn-green" onClick={() => resolve(r.id, 'resolved')}>Zgjidh</button>
+                        <button className="btn btn-orange" onClick={() => resolve(r.id, 'dismissed')}>Inoro</button>
+                      </div>
+                      {r.listings?.is_active !== false ? (
+                        <button
+                          onClick={() => deactivateListing(r.listings?.id || r.listing_id, r.id, r.listings?.seller_id)}
+                          disabled={deactivating[r.id]}
+                          style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 7, padding: '6px 12px', fontSize: 11, fontWeight: 700, cursor: deactivating[r.id] ? 'not-allowed' : 'pointer', opacity: deactivating[r.id] ? 0.6 : 1 }}
+                        >
+                          {deactivating[r.id] ? 'Duke çaktivizuar...' : 'Çaktivizo Shpalljen'}
+                        </button>
+                      ) : (
+                        <span style={{ fontSize: 10, color: '#E63312', fontWeight: 700, padding: '4px 0' }}>✓ Shpallja tashmë çaktive</span>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}</tbody>
@@ -402,6 +444,9 @@ export default function Admin() {
   const [loading, setLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState(new Date())
   const [liveStats, setLiveStats] = useState({ newListings: 0, newReports: 0 })
+  const [adminUnlocked, setAdminUnlocked] = useState(false)
+  const [pinInput, setPinInput] = useState('')
+  const [pinError, setPinError] = useState('')
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
@@ -508,6 +553,16 @@ export default function Admin() {
     return () => clearInterval(interval)
   }, [fetchAll])
 
+  function checkPin() {
+    if (pinInput === ADMIN_PIN) {
+      setAdminUnlocked(true)
+      setPinError('')
+    } else {
+      setPinError('PIN i gabuar. Provo sërisht.')
+      setPinInput('')
+    }
+  }
+
   const isMaint = (config['maintenance_mode'] ?? 'false') === 'true'
 
   const tabs: [string, string, string][] = [
@@ -537,6 +592,35 @@ export default function Admin() {
       <span style={{ fontSize:24 }}>🔐</span> Duke verifikuar aksesin...
     </div>
   )
+
+  if (!adminUnlocked) {
+    return (
+      <div style={{ minHeight: '100dvh', background: '#FFFBEA', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
+        <div style={{ background: '#fff', border: '1.5px solid #f0e6b0', borderRadius: 18, padding: 36, maxWidth: 340, width: '90%', textAlign: 'center' }}>
+          <div style={{ fontSize: 40, marginBottom: 12 }}>🔐</div>
+          <h2 style={{ fontSize: 18, fontWeight: 800, color: '#111', marginBottom: 6 }}>Admin PIN</h2>
+          <p style={{ fontSize: 12, color: '#888', marginBottom: 20 }}>Fut kodin 6-shifror për të hyrë në panel</p>
+          <input
+            type="password"
+            value={pinInput}
+            onChange={e => { setPinInput(e.target.value); setPinError('') }}
+            onKeyDown={e => { if (e.key === 'Enter') checkPin() }}
+            maxLength={6}
+            placeholder="••••••"
+            style={{ width: '100%', border: '2px solid #F5C842', borderRadius: 10, padding: '12px', fontSize: 22, textAlign: 'center', letterSpacing: 8, fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' as const, marginBottom: 12 }}
+            autoFocus
+          />
+          {pinError && <div style={{ color: '#E63312', fontSize: 12, marginBottom: 10 }}>{pinError}</div>}
+          <button
+            onClick={checkPin}
+            style={{ width: '100%', background: '#111', color: '#fff', border: 'none', borderRadius: 10, padding: '13px', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}
+          >
+            Hyr →
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <>

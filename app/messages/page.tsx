@@ -406,7 +406,7 @@ export default function MessagesPage() {
     const rep  = replyTo
 
     const { error } = await supabase.storage.from('message-attachments').upload(path, f, { contentType: f.type })
-    if (error) { setUploading(false); return }
+    if (error) { setUploading(false); alert('Nuk u ngarkua foto: ' + (error.message || 'gabim storage')); return }
 
     const { data: urlData } = supabase.storage.from('message-attachments').getPublicUrl(path)
 
@@ -467,7 +467,7 @@ export default function MessagesPage() {
     const rep  = replyTo
 
     const { error } = await supabase.storage.from('message-attachments').upload(path, blob, { contentType: mimeType })
-    if (error) return
+    if (error) { alert('Nuk u ngarkua audio: ' + (error.message || 'gabim storage')); return }
 
     const { data: urlData } = supabase.storage.from('message-attachments').getPublicUrl(path)
 
