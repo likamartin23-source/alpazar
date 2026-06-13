@@ -82,6 +82,7 @@ export default function SearchResultsPage() {
   const [cityFilter, setCityFilter] = useState('')
   const [priceMin, setPriceMin]     = useState('')
   const [priceMax, setPriceMax]     = useState('')
+  const [premiumOnly, setPremiumOnly] = useState(false)
 
   const [shops, setShops]           = useState<any[]>([])
   const [premium, setPremium]       = useState<any[]>([])
@@ -109,6 +110,7 @@ export default function SearchResultsPage() {
     if (cityFilter) filters.city = cityFilter
     if (priceMin) filters.priceMin = priceMin
     if (priceMax) filters.priceMax = priceMax
+    if (premiumOnly) filters.prem = '1'
     await supabase.from('saved_searches').insert({
       user_id: userId, query: q || null, filters, notify: true
     })
@@ -128,6 +130,7 @@ export default function SearchResultsPage() {
     const cityp = params.get('city') || ''
     const pminp = params.get('pmin') || ''
     const pmaxp = params.get('pmax') || ''
+    const premp = params.get('prem') === '1'
 
     setQ(qp)
     setCatFilter(catp)
@@ -135,18 +138,21 @@ export default function SearchResultsPage() {
     setCityFilter(cityp)
     setPriceMin(pminp)
     setPriceMax(pmaxp)
+    setPremiumOnly(premp)
 
-    doSearch(qp, catp, condp, cityp, pminp, pmaxp)
+    doSearch(qp, catp, condp, cityp, pminp, pmaxp, premp)
   }, [])
 
   useEffect(() => {
     let n = 0
-    if (condFilter) n++
-    if (cityFilter) n++
-    if (priceMin)   n++
-    if (priceMax)   n++
+    if (catFilter)   n++
+    if (condFilter)  n++
+    if (cityFilter)  n++
+    if (priceMin)    n++
+    if (priceMax)    n++
+    if (premiumOnly) n++
     setActiveFilterCount(n)
-  }, [condFilter, cityFilter, priceMin, priceMax])
+  }, [catFilter, condFilter, cityFilter, priceMin, priceMax, premiumOnly])
 
   // Realtime: update/remove premium + regular listings
   useEffect(() => {
@@ -184,18 +190,13 @@ export default function SearchResultsPage() {
     city     = cityFilter,
     pMin     = priceMin,
     pMax     = priceMax,
+    premOnly = premiumOnly,
   ) {
     setLoading(true)
 
-    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-    const baseFilters: string[] = ['is_active = true']
-    if (cat && UUID_RE.test(cat)) baseFilters.push(`category_id = "${cat}"`)
-    if (cond) baseFilters.push(`condition = "${cond}"`)
-    if (city) baseFilters.push(`city = "${city}"`)
-
-    // ── 1) SHOPS ──────────────────────────────────────────────
+    // ── 1) SHOPS — skip if premiumOnly (shops are always premium) ──
     let shopResults: any[] = []
-    {
+    if (!premOnly) {
       let qb = supabase
         .from('profiles')
         .select('id,full_name,username,avatar_url,city,bio,is_premium,shop_name,shop_description,shop_category,shop_banner_url')
@@ -204,9 +205,9 @@ export default function SearchResultsPage() {
         .limit(20)
 
       if (query.trim()) {
-        // ilike match on shop_name or full_name
         qb = (qb as any).or(`shop_name.ilike.%${query}%,full_name.ilike.%${query}%,city.ilike.%${query}%`)
       }
+      if (city.trim()) qb = (qb as any).ilike('city', `%${city.trim()}%`)
 
       const { data: profiles } = await qb
       if (profiles?.length) {
@@ -235,42 +236,51 @@ export default function SearchResultsPage() {
         .limit(40)
 
       if (query.trim()) qb = (qb as any).textSearch('search_tsv', query.trim(), { type: 'websearch', config: 'simple' })
-      if (cat)  qb = qb.eq('category_id', cat)
-      if (cond) qb = qb.eq('condition', cond)
-      if (city) qb = qb.eq('city', city)
-      if (pMin) qb = qb.gte('price', parseFloat(pMin))
-      if (pMax) qb = qb.lte('price', parseFloat(pMax))
+      if (cat)        qb = qb.eq('category_id', cat)
+      if (cond)       qb = qb.eq('condition', cond)
+      if (city.trim()) qb = (qb as any).ilike('city', `%${city.trim()}%`)
+      if (pMin)       qb = qb.gte('price', parseFloat(pMin))
+      if (pMax)       qb = qb.lte('price', parseFloat(pMax))
       return qb
     }
 
-    const [premRes, regRes] = await Promise.all([
-      buildQb(true),
-      buildQb(false),
-    ])
-
-    setPremium(premRes.data || [])
-    setRegular(regRes.data || [])
+    if (premOnly) {
+      // Vetëm premium listings
+      const premRes = await buildQb(true)
+      setPremium(premRes.data || [])
+      setRegular([])
+    } else {
+      const [premRes, regRes] = await Promise.all([
+        buildQb(true),
+        buildQb(false),
+      ])
+      setPremium(premRes.data || [])
+      setRegular(regRes.data || [])
+    }
     setLoading(false)
   }
 
   function applyFilters() {
     setFiltersOpen(false)
     const url = new URL(window.location.href)
-    if (condFilter) url.searchParams.set('cond', condFilter); else url.searchParams.delete('cond')
-    if (cityFilter) url.searchParams.set('city', cityFilter); else url.searchParams.delete('city')
-    if (priceMin)   url.searchParams.set('pmin', priceMin);   else url.searchParams.delete('pmin')
-    if (priceMax)   url.searchParams.set('pmax', priceMax);   else url.searchParams.delete('pmax')
+    if (catFilter)   url.searchParams.set('cat',  catFilter);  else url.searchParams.delete('cat')
+    if (condFilter)  url.searchParams.set('cond', condFilter); else url.searchParams.delete('cond')
+    if (cityFilter)  url.searchParams.set('city', cityFilter); else url.searchParams.delete('city')
+    if (priceMin)    url.searchParams.set('pmin', priceMin);   else url.searchParams.delete('pmin')
+    if (priceMax)    url.searchParams.set('pmax', priceMax);   else url.searchParams.delete('pmax')
+    if (premiumOnly) url.searchParams.set('prem', '1');        else url.searchParams.delete('prem')
     window.history.replaceState(null, '', url.toString())
-    doSearch(q, catFilter, condFilter, cityFilter, priceMin, priceMax)
+    doSearch(q, catFilter, condFilter, cityFilter, priceMin, priceMax, premiumOnly)
   }
 
   function clearFilters() {
-    setCondFilter(''); setCityFilter(''); setPriceMin(''); setPriceMax('')
+    setCatFilter(''); setCondFilter(''); setCityFilter(''); setPriceMin(''); setPriceMax(''); setPremiumOnly(false)
     const url = new URL(window.location.href)
-    url.searchParams.delete('cond'); url.searchParams.delete('city')
-    url.searchParams.delete('pmin'); url.searchParams.delete('pmax')
+    url.searchParams.delete('cat');  url.searchParams.delete('cond')
+    url.searchParams.delete('city'); url.searchParams.delete('pmin')
+    url.searchParams.delete('pmax'); url.searchParams.delete('prem')
     window.history.replaceState(null, '', url.toString())
-    doSearch(q, catFilter, '', '', '', '')
+    doSearch(q, '', '', '', '', '', false)
   }
 
   function newSearch(e: React.FormEvent) {
@@ -373,8 +383,8 @@ export default function SearchResultsPage() {
         .fp-row select:focus,.fp-row input:focus{border-color:#F5C842;}
         .price-range{display:flex;gap:8px;}
         .price-range input{flex:1;}
-        .cond-row{display:flex;gap:8px;}
-        .cond-btn{flex:1;border:1.5px solid #ddd;border-radius:9px;padding:9px;font-size:12px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;}
+        .cond-row{display:flex;gap:6px;flex-wrap:wrap;}
+        .cond-btn{flex:1;min-width:70px;border:1.5px solid #ddd;border-radius:9px;padding:8px 6px;font-size:11px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;white-space:nowrap;}
         .cond-btn.active{border-color:#E63312;background:#FFF0EE;color:#E63312;}
         .fp-actions{display:flex;gap:8px;margin-top:6px;}
         .fp-apply{flex:1;background:#E63312;color:#fff;border:none;border-radius:11px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
@@ -423,10 +433,12 @@ export default function SearchResultsPage() {
         {/* ── ACTIVE FILTERS BAR ── */}
         {activeFilterCount > 0 && (
           <div className="active-filters">
-            {condFilter && <span className="afilter">{condFilter === 'i_ri' ? '✨ I ri' : '🔄 I përdorur'}</span>}
-            {cityFilter && <span className="afilter">📍 {cityFilter}</span>}
-            {priceMin   && <span className="afilter">Min: {priceMin} L</span>}
-            {priceMax   && <span className="afilter">Max: {priceMax} L</span>}
+            {catFilter   && <span className="afilter">🏷 {categories.find(c => c.id === catFilter)?.name || catFilter}</span>}
+            {condFilter  && <span className="afilter">{condFilter === 'i_ri' ? '✨ I ri' : condFilter === 'i_mire' ? '👍 I mirë' : '🔄 I përdorur'}</span>}
+            {cityFilter  && <span className="afilter">📍 {cityFilter}</span>}
+            {priceMin    && <span className="afilter">Min: {priceMin} L</span>}
+            {priceMax    && <span className="afilter">Max: {priceMax} L</span>}
+            {premiumOnly && <span className="afilter">⭐ Premium</span>}
           </div>
         )}
 
@@ -519,30 +531,33 @@ export default function SearchResultsPage() {
       {filtersOpen && (
         <>
           <div className="filter-overlay" onClick={() => setFiltersOpen(false)} />
-          <div className="filter-panel">
+          <div className="filter-panel" style={{ overflowY: 'auto', maxHeight: '85vh' }}>
             <div className="fp-handle" />
-            <div className="fp-title">🎛 Filtrat e Avancuar</div>
+            <div className="fp-title">Filtrat e Avancuar</div>
 
+            {/* Kategoria */}
             <div className="fp-row">
-              <span className="fp-label">Gjendja</span>
-              <div className="cond-row">
-                <button className={`cond-btn ${condFilter === '' ? 'active' : ''}`}
-                  onClick={() => setCondFilter('')}>Të gjitha</button>
-                <button className={`cond-btn ${condFilter === 'i_ri' ? 'active' : ''}`}
-                  onClick={() => setCondFilter(condFilter === 'i_ri' ? '' : 'i_ri')}>✨ I ri</button>
-                <button className={`cond-btn ${condFilter === 'i_perdorur' ? 'active' : ''}`}
-                  onClick={() => setCondFilter(condFilter === 'i_perdorur' ? '' : 'i_perdorur')}>🔄 I përdorur</button>
-              </div>
-            </div>
-
-            <div className="fp-row">
-              <span className="fp-label">Qyteti</span>
-              <select value={cityFilter} onChange={e => setCityFilter(e.target.value)}>
-                <option value="">Të gjitha qytetet</option>
-                {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
+              <span className="fp-label">Kategoria</span>
+              <select value={catFilter} onChange={e => setCatFilter(e.target.value)}>
+                <option value="">Të gjitha kategoritë</option>
+                {categories.map(c => (
+                  <option key={c.id} value={c.id}>{c.icon ? `${c.icon} ` : ''}{c.name}</option>
+                ))}
               </select>
             </div>
 
+            {/* Qyteti */}
+            <div className="fp-row">
+              <span className="fp-label">Qyteti</span>
+              <input
+                type="text"
+                placeholder="p.sh. Tiranë, Durrës..."
+                value={cityFilter}
+                onChange={e => setCityFilter(e.target.value)}
+              />
+            </div>
+
+            {/* Çmimi */}
             <div className="fp-row">
               <span className="fp-label">Çmimi (L)</span>
               <div className="price-range">
@@ -550,6 +565,41 @@ export default function SearchResultsPage() {
                   onChange={e => setPriceMin(e.target.value)} min="0" />
                 <input type="number" placeholder="Max" value={priceMax}
                   onChange={e => setPriceMax(e.target.value)} min="0" />
+              </div>
+            </div>
+
+            {/* Gjendja */}
+            <div className="fp-row">
+              <span className="fp-label">Gjendja</span>
+              <div className="cond-row">
+                <button className={`cond-btn ${condFilter === '' ? 'active' : ''}`}
+                  onClick={() => setCondFilter('')}>Të gjitha</button>
+                <button className={`cond-btn ${condFilter === 'i_ri' ? 'active' : ''}`}
+                  onClick={() => setCondFilter(condFilter === 'i_ri' ? '' : 'i_ri')}>I ri</button>
+                <button className={`cond-btn ${condFilter === 'i_mire' ? 'active' : ''}`}
+                  onClick={() => setCondFilter(condFilter === 'i_mire' ? '' : 'i_mire')}>I mirë</button>
+                <button className={`cond-btn ${condFilter === 'i_perdorur' ? 'active' : ''}`}
+                  onClick={() => setCondFilter(condFilter === 'i_perdorur' ? '' : 'i_perdorur')}>I përdorur</button>
+              </div>
+            </div>
+
+            {/* Premium only */}
+            <div className="fp-row"
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: premiumOnly ? '#FFF8EE' : '#f9f9f7', border: `1.5px solid ${premiumOnly ? '#e0b030' : '#eee'}`, borderRadius: 12, padding: '12px 14px', cursor: 'pointer' }}
+              onClick={() => setPremiumOnly(v => !v)}>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#111' }}>Vetëm Premium</div>
+                <div style={{ fontSize: 11, color: '#888', marginTop: 2 }}>Shpallje të verifikuara</div>
+              </div>
+              <div style={{
+                width: 44, height: 24, borderRadius: 12, background: premiumOnly ? '#F5C842' : '#ddd',
+                position: 'relative', transition: 'background .2s', flexShrink: 0,
+              }}>
+                <div style={{
+                  width: 18, height: 18, borderRadius: '50%', background: '#fff',
+                  position: 'absolute', top: 3, left: premiumOnly ? 23 : 3,
+                  transition: 'left .2s', boxShadow: '0 1px 4px rgba(0,0,0,.2)',
+                }} />
               </div>
             </div>
 
