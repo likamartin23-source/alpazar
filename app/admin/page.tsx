@@ -74,7 +74,6 @@ tr:last-child td{border:none;}
 .maint-banner p{font-size:12px;font-weight:700;flex:1;}
 `
 
-const ADMIN_PIN = process.env.NEXT_PUBLIC_ADMIN_PIN || '000000'
 
 /* ─── Referral Tab ─────────────────────────────────────────── */
 function ReferralTab() {
@@ -553,13 +552,22 @@ export default function Admin() {
     return () => clearInterval(interval)
   }, [fetchAll])
 
-  function checkPin() {
-    if (pinInput === ADMIN_PIN) {
-      setAdminUnlocked(true)
-      setPinError('')
-    } else {
-      setPinError('PIN i gabuar. Provo sërisht.')
-      setPinInput('')
+  async function checkPin() {
+    try {
+      const res = await fetch('/api/admin/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: pinInput }),
+      })
+      if (res.ok) {
+        setAdminUnlocked(true)
+        setPinError('')
+      } else {
+        setPinError('PIN i gabuar. Provo sërisht.')
+        setPinInput('')
+      }
+    } catch {
+      setPinError('Gabim rrjeti. Provo sërisht.')
     }
   }
 
