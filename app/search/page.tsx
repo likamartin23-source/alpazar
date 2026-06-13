@@ -17,6 +17,7 @@ export default function SearchPage() {
   const [cityFilter, setCityFilter]       = useState('')
   const [priceMin, setPriceMin]           = useState('')
   const [priceMax, setPriceMax]           = useState('')
+  const [premiumOnly, setPremiumOnly]     = useState(false)
   const [filtersOpen, setFiltersOpen]     = useState(false)
   const [activeFilterCount, setActiveFilterCount] = useState(0)
 
@@ -27,25 +28,30 @@ export default function SearchPage() {
     const params = new URLSearchParams(window.location.search)
     const qp = params.get('q')
     const cp = params.get('cat')
+    const pp = params.get('prem')
     if (cp) setCatFilter(cp)
+    if (pp === '1') setPremiumOnly(true)
     if (qp) {
       setQ(qp)
       // If arriving with a query, go directly to results page
       const p = new URLSearchParams()
       p.set('q', qp)
       if (cp) p.set('cat', cp)
+      if (pp) p.set('prem', pp)
       window.location.href = `/search/results?${p.toString()}`
     }
   }, [])
 
   useEffect(() => {
     let n = 0
-    if (condFilter) n++
-    if (cityFilter) n++
-    if (priceMin)   n++
-    if (priceMax)   n++
+    if (catFilter)   n++
+    if (condFilter)  n++
+    if (cityFilter)  n++
+    if (priceMin)    n++
+    if (priceMax)    n++
+    if (premiumOnly) n++
     setActiveFilterCount(n)
-  }, [condFilter, cityFilter, priceMin, priceMax])
+  }, [catFilter, condFilter, cityFilter, priceMin, priceMax, premiumOnly])
 
 
   function goToResults(
