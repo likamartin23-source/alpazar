@@ -92,11 +92,11 @@ export default function Kushtet() {
           <p>Alpazar nuk mban përgjegjësi për: saktësinë e informacionit të postuar nga përdoruesit; humbjet financiare nga transaksionet mes palëve; dëmet e shkaktuara nga ndërprerjet teknike; apo veprimet e palëve të treta. Limiti maksimal i përgjegjësisë së Alpazar ndaj çdo përdoruesi është i barabartë me shumën e paguar prej tij gjatë 12 muajve të fundit.</p>
 
           <h2>10. Pronësia Intelektuale</h2>
-          <p>E gjithë platforma Alpazar — logo, dizajni, kodi burimor dhe brendi — mbrohet me <strong>Ligjin Nr. 35/2016 "Për të Drejtat e Autorit dhe të Drejtat e Tjera të Lidhura me To"</strong>. Çdo riprodhim, kopjim ose shpërndarje pa autorizim të shkruar është i ndaluar rreptësisht.</p>
+          <p>E gjithë platforma Alpazar — logo, dizajni, kodi burimor dhe brendi — mbrohet me <strong>Ligjin Nr. 35/2016 "Për të Drejtat e Autorit dhe të Drejtat e Tjera të Lidhura me To"</strong> dhe Ligjin Nr. 52/2025 "Për markat tregtare dhe treguesit gjeografikë". Çdo riprodhim, kopjim ose shpërndarje pa autorizim të shkruar është i ndaluar rreptësisht.</p>
           <p>Përdoruesit mbajnë të drejtën e autorit mbi fotografitë dhe përshkrimet e tyre, por japin Alpazar licencë jo-ekskluzive për t'i shfaqur ato brenda platformës.</p>
 
           <h2>11. Ligji i Aplikueshëm dhe Juridiksioni</h2>
-          <p>Këto kushte rregullohen ekskluzivisht nga legjislacioni i Republikës së Shqipërisë. Çdo mosmarrëveshje paraqitet fillimisht tek procedura e zgjidhjes alternative të mosmarrëveshjeve (ODR), dhe nëse nuk zgjidhet brenda 30 ditëve, i paraqitet Gjykatës Administrative të Rrethit Gjyqësor Tiranë.</p>
+          <p>Këto kushte rregullohen ekskluzivisht nga legjislacioni i Republikës së Shqipërisë. Çdo mosmarrëveshje paraqitet fillimisht tek procedura e zgjidhjes alternative të mosmarrëveshjeve (ODR), dhe nëse nuk zgjidhet brenda 30 ditëve, i paraqitet Gjykatës së Rrethit Gjyqësor Tiranë (juridiksioni i përgjithshëm).</p>
 
           <h2>12. Ndryshimet e Kushteve</h2>
           <p>Alpazar njofton ndryshimet e rëndësishme të kushteve të paktën 30 ditë para hyrjes në fuqi, me email dhe njoftim brenda platformës. Vazhdimi i përdorimit pas datës efektive nënkupton pranimin e plotë të kushteve të reja.</p>
