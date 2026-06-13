@@ -138,6 +138,10 @@ export default function Auth() {
   const [mfaFactorId, setMfaFactorId] = useState('')
   const [forgotTokens, setForgotTokens] = useState<{access: string; refresh: string} | null>(null)
 
+  // KOMA 6-b: Age gate 16+ per L.124/2024 n.8
+  const [showAgeGate, setShowAgeGate] = useState(false)
+  const [ageGateUserId, setAgeGateUserId] = useState('')
+
   // Auto-submit cancel — tregon "Duke verifikuar në Xs..." me mundësi anulimi
   const autoSubmitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [autoSubmitIn, setAutoSubmitIn] = useState<number>(0)
@@ -427,10 +431,23 @@ export default function Auth() {
           setLoading(false)
           return
         }
-        if (originalPhone) {
-          const { data: { user: currentUser } } = await supabase.auth.getUser()
-          if (currentUser) {
+        const { data: { user: currentUser } } = await supabase.auth.getUser()
+        if (currentUser) {
+          if (originalPhone) {
             await supabase.from('profiles').update({ phone: originalPhone }).eq('id', currentUser.id)
+          }
+          // KOMA 6-b: kontrollo nëse profili ka birth_year (përdorues i ri)
+          const { data: profileRow } = await supabase
+            .from('profiles')
+            .select('id, birth_year')
+            .eq('id', currentUser.id)
+            .single()
+          const isNewProfile = !profileRow || !profileRow.birth_year
+          if (isNewProfile) {
+            setAgeGateUserId(currentUser.id)
+            setShowAgeGate(true)
+            setLoading(false)
+            return // mos ridrejto ende — prit konfirmimin e moshës
           }
         }
         setMsg('ok:Llogaria u krijua! Duke u ridrejtuar...')
@@ -617,6 +634,72 @@ export default function Auth() {
   return (
     <>
       <style>{CSS}</style>
+
+      {/* ════════════════════════════════════════
+          KOMA 6-b: Age gate modal — L.124/2024, neni 8
+          Shfaqet vetëm pas OTP të suksesshëm për profil të ri
+          ════════════════════════════════════════ */}
+      {showAgeGate && (
+        <div style={{
+          position: 'fixed', inset: 0,
+          background: 'rgba(0,0,0,0.72)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 99999,
+          fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
+        }}>
+          <div style={{
+            background: '#fff', borderRadius: 18, padding: '36px 28px',
+            maxWidth: 340, width: '90%', textAlign: 'center',
+            boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
+          }}>
+            <div style={{ fontSize: 52, marginBottom: 10 }}>🔞</div>
+            <h2 style={{ fontSize: 18, fontWeight: 800, color: '#111', marginBottom: 8, margin: '0 0 8px' }}>
+              Konfirmo moshën
+            </h2>
+            <p style={{ fontSize: 13, color: '#555', lineHeight: 1.6, marginBottom: 24 }}>
+              Alpazar është vetëm për persona <strong>16 vjeç e lart</strong><br />
+              (Ligji 124/2024, neni 8).<br />
+              Konfirmo që je 16 vjeç ose më i madh për të vazhduar.
+            </p>
+            <button
+              onClick={async () => {
+                // Konfirmo moshën — ruaj birth_year=2009 (max 16 vjeç)
+                await supabase
+                  .from('profiles')
+                  .upsert({ id: ageGateUserId, birth_year: 2009 })
+                blockAuthRedirectRef.current = false
+                window.location.href = '/'
+              }}
+              style={{
+                width: '100%', background: '#111', color: '#fff',
+                border: 'none', borderRadius: 10, padding: '13px',
+                fontSize: 14, fontWeight: 700, cursor: 'pointer',
+                marginBottom: 10, fontFamily: 'inherit',
+              }}
+            >
+              Po, jam 16 vjeç ose më i madh
+            </button>
+            <button
+              onClick={async () => {
+                await supabase.auth.signOut()
+                setShowAgeGate(false)
+                setAgeGateUserId('')
+                blockAuthRedirectRef.current = false
+                setMsg('warn:Ke dalë — platforma është vetëm për përdorues 16+ vjeç.')
+                setStep('form')
+              }}
+              style={{
+                width: '100%', background: '#fff', color: '#888',
+                border: '1.5px solid #ddd', borderRadius: 10, padding: '13px',
+                fontSize: 14, cursor: 'pointer', fontFamily: 'inherit',
+              }}
+            >
+              Jo, jam nën 16 vjeç
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="wrap">
         <div className="card">
           {Logo}

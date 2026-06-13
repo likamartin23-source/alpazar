@@ -67,6 +67,16 @@ export default function Kushtet() {
           </ul>
           <div className="note">Raportimi i shpalljeve të dyshimta bëhet me butonin "Raporto" ose me email tek support@alpazar.al. Shpalljet ilegale i raportohen autoriteteve kompetente.</div>
 
+          <h2>5-a. Mbrojtja e Fëmijëve dhe Raportimi i Shkeljeve</h2>
+          <p>Alpazar zbaton tolerancë zero ndaj çdo përmbajtjeje që dëmton ose shfrytëzon fëmijët:</p>
+          <ul>
+            <li>Çdo material seksual që përfshin të mitur <span className="law">(Kodi Penal, neni 117)</span> raportohet <strong>MENJËHERË</strong> te Policia e Shtetit dhe prokuroria kompetente — dhe hiqet pa paralajmërim.</li>
+            <li>Moshat nën 16 vjeç nuk mund të regjistrohen <span className="law">(Ligji 124/2024, neni 8)</span>.</li>
+            <li>Nuk lejohet asnjë kontakt privat i rritur–fëmijë brenda platformës.</li>
+            <li>Çdo shpallje ose aktivitet i dyshimtë raportohet me butonin ⚠️ ose nëpërmjet <a href="/takedown" style={{ color: '#E63312' }}>/takedown</a>.</li>
+          </ul>
+          <div className="note">Shkeljet penale raportohen edhe pa kërkesën e viktimës. Platforma bashkëpunon plotësisht me autoritetet hetimore.</div>
+
           <h2>6. Shërbimi Premium</h2>
           <p>Shërbimi Premium ofrohet me tarifa mujore ose vjetore të publikuara në platformë. Pagesa konfirmohet brenda 24 orësh pune. Anulimi bëhet duke kontaktuar administratorët. Rimbursimi nuk ofrohet për periudha të shfrytëzuara plotësisht, por mund të merret parasysh rast pas rasti sipas ligjit të konsumatorëve (Ligji Nr. 9902/2008, Neni 35).</p>
 
