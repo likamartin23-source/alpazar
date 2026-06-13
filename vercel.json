@@ -3,6 +3,10 @@
     {
       "path": "/api/indexnow",
       "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/expire-premium",
+      "schedule": "0 1 * * *"
     }
   ],
   "headers": [
