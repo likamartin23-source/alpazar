@@ -283,7 +283,14 @@ export default function Auth() {
     if (error) {
       const raw2 = error.message.toLowerCase()
       const isWrong = raw2.includes('invalid') || raw2.includes('credentials') || raw2.includes('phone') || raw2.includes('disabled')
-      setMsg(`err:${isWrong ? 'Email/telefon ose fjalëkalim i gabuar!' : error.message}`)
+      const isUnconfirmed = raw2.includes('email not confirmed') || raw2.includes('email_not_confirmed')
+      setMsg(`err:${
+        isUnconfirmed
+          ? 'Llogaria nuk është konfirmuar. Përdor "Harrova fjalëkalimin" për të konfirmuar numrin/emailin.'
+          : isWrong
+            ? 'Email/telefon ose fjalëkalim i gabuar!'
+            : error.message
+      }`)
     } else {
       // Check if 2FA is required
       const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
