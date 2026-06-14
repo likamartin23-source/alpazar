@@ -42,4 +42,4 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Confirm
-        run: echo "✅ Mesazhi u dërgua në Slack #all-alpazar"
+        run: echo "OK - message sent to Slack"
