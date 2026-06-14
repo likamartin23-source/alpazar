@@ -333,6 +333,31 @@ export default function Auth() {
     setResolvedId(id)
     setLoading(true); setMsg('')
     try {
+      // Email: Supabase native OTP — bypasses Resend (not configured)
+      if (type === 'email') {
+        const fullName = [firstName.trim(), lastName.trim()].filter(Boolean).join(' ')
+        const { error: otpErr } = await supabase.auth.signInWithOtp({
+          email: id,
+          options: {
+            shouldCreateUser: mode === 'register',
+            ...(fullName && { data: { full_name: fullName } }),
+          },
+        })
+        if (otpErr) {
+          const em = otpErr.message.toLowerCase()
+          setMsg(`err:${em.includes('not found') || em.includes('not exist') || em.includes('signup')
+            ? 'Ky email nuk është i regjistruar. Regjistrohu fillimisht.'
+            : otpErr.message}`)
+        } else {
+          setStep('otp'); startCountdown(); setOtp(['', '', '', '', '', ''])
+          setMsg(`info:Kodi u dërgua te 📧 ${id} — kontrollo Spam/Junk nëse nuk e gjen`)
+          setTimeout(() => inputRefs.current[0]?.focus(), 150)
+        }
+        setLoading(false)
+        return
+      }
+
+      // Phone: custom edge function (SMS gateway)
       const res = await fetch(`${FN_URL}/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -347,21 +372,16 @@ export default function Auth() {
         } else {
           const rawErr = String(data.error ?? '')
           let friendlyErr = 'Gabim gjatë dërgimit të kodit. Provo sërish.'
-          if (rawErr === 'email_not_configured' || rawErr.includes('validation_error') || rawErr.includes('403') || rawErr.includes('domain') || rawErr.includes('verify')) {
-            friendlyErr = 'Dërgimi i emailit nuk është konfiguruar ende. Ju lutem përdorni numrin e telefonit (+355...).'
-          } else if (rawErr === 'email_send_failed') {
-            friendlyErr = 'Gabim gjatë dërgimit të emailit. Provo sërish.'
-          } else if (rawErr.includes('rate') || rawErr.includes('429')) {
+          if (rawErr.includes('rate') || rawErr.includes('429')) {
             friendlyErr = 'Shumë kërkesa. Provo sërish pas pak sekondash.'
           } else if (rawErr.includes('invalid') || rawErr.includes('not found')) {
-            friendlyErr = 'Adresa e emailit ose numri i telefonit është i pavlefshëm.'
+            friendlyErr = 'Numri i telefonit është i pavlefshëm.'
           }
           setMsg(`err:${friendlyErr}`)
         }
       } else {
         setStep('otp'); startCountdown(); setOtp(['', '', '', '', '', ''])
-        const where = type === 'email' ? `📧 ${id}` : `📱 ${id}`
-        setMsg(`info:Kodi u dërgua te ${where}`)
+        setMsg(`info:Kodi u dërgua te 📱 ${id}`)
         setTimeout(() => inputRefs.current[0]?.focus(), 150)
       }
     } catch (e: unknown) {
@@ -377,25 +397,16 @@ export default function Auth() {
     setLoading(true); setMsg('')
     setResolvedId(email)
     try {
-      const res = await fetch(`${FN_URL}/send-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identifier: email, mode }),
+      const { error: otpErr } = await supabase.auth.signInWithOtp({
+        email,
+        options: { shouldCreateUser: mode === 'register' },
       })
-      const data = await res.json()
-      if (!res.ok || data.error) {
-        const rawErrEmail = String(data.error ?? '')
-        let friendlyErrEmail = 'Gabim gjatë dërgimit të emailit. Provo sërish.'
-        if (rawErrEmail === 'email_not_configured') {
-          friendlyErrEmail = 'Dërgimi i emailit nuk është konfiguruar ende nga administratori.'
-        } else if (rawErrEmail === 'email_send_failed') {
-          friendlyErrEmail = 'Gabim gjatë dërgimit. Kontrolloni adresën e emailit dhe provoni sërish.'
-        }
-        setMsg(`err:${friendlyErrEmail}`)
+      if (otpErr) {
+        setMsg(`err:Gabim gjatë dërgimit të emailit. Kontrolloni adresën dhe provoni sërish.`)
       } else {
         setSmsFailMode(false)
         setStep('otp'); startCountdown(); setOtp(['', '', '', '', '', ''])
-        setMsg(`info:Kodi u dërgua te 📧 ${email}`)
+        setMsg(`info:Kodi u dërgua te 📧 ${email} — kontrollo Spam/Junk`)
         setTimeout(() => inputRefs.current[0]?.focus(), 150)
       }
     } catch (e: unknown) {
@@ -412,7 +423,60 @@ export default function Auth() {
     if (expired) { setMsg('err:Kodi ka skaduar! Klikoje "Ridërgo" për kod të ri.'); return }
     setLoading(true); setMsg('')
     try {
-      // Module 7: pass referral code on registration
+      // Email: Supabase native OTP verification — bypasses custom edge function
+      if (detectType(resolvedId) === 'email') {
+        blockAuthRedirectRef.current = true
+        const { data: vd, error: vErr } = await supabase.auth.verifyOtp({
+          email: resolvedId,
+          token: code,
+          type: 'email',
+        })
+        if (vErr || !vd.session) {
+          blockAuthRedirectRef.current = false
+          const em = vErr?.message ?? ''
+          setMsg(`err:${em.includes('expired') || em.includes('invalid') || em.includes('otp') || em.includes('token')
+            ? 'Kodi i gabuar ose ka skaduar! Klikoje "Ridërgo" për kod të ri.'
+            : em || 'Kodi i gabuar ose ka skaduar!'}`)
+          setLoading(false)
+          return
+        }
+        if (timerRef.current) clearInterval(timerRef.current)
+
+        if (mode === 'forgot') {
+          setForgotTokens({ access: vd.session.access_token, refresh: vd.session.refresh_token })
+          setStep('new-pass')
+          setMsg('')
+          setLoading(false)
+          return
+        }
+
+        // Registration: set password + update profile
+        if (regPass) await supabase.auth.updateUser({ password: regPass })
+        const refCookieEmail = document.cookie.match(/alpazar_ref=([^;]+)/)?.[1]
+        const uid = vd.session.user.id
+        const profileUpdate: Record<string, unknown> = {}
+        const fn = firstName.trim(); const ln = lastName.trim()
+        if (fn || ln) profileUpdate.full_name = [fn, ln].filter(Boolean).join(' ')
+        if (age) profileUpdate.age = parseInt(age)
+        if (refCookieEmail) profileUpdate.referred_by = refCookieEmail
+        if (Object.keys(profileUpdate).length > 0) {
+          await supabase.from('profiles').update(profileUpdate).eq('id', uid)
+        }
+        const { data: profileRow } = await supabase
+          .from('profiles').select('id, birth_year').eq('id', uid).single()
+        if (!profileRow || !profileRow.birth_year) {
+          setAgeGateUserId(uid)
+          setShowAgeGate(true)
+          setLoading(false)
+          return
+        }
+        setMsg('ok:Llogaria u krijua! Duke u ridrejtuar...')
+        setTimeout(() => { blockAuthRedirectRef.current = false; window.location.href = '/' }, 700)
+        setLoading(false)
+        return
+      }
+
+      // Phone: custom edge function
       const refCookie = document.cookie.match(/alpazar_ref=([^;]+)/)?.[1]
       const res = await fetch(`${FN_URL}/verify-otp`, {
         method: 'POST',
