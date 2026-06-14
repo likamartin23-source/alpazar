@@ -308,7 +308,7 @@ export default function Auth() {
     const raw = contact.trim()
     if (!raw) { setMsg('err:Fut emailin ose numrin e telefonit!'); return }
 
-    if (mode === 'register') {
+    if (mode === 'register' && step !== 'otp') {
       if (!firstName.trim()) { setMsg('err:Emri është i detyrueshëm!'); return }
       if (!lastName.trim()) { setMsg('err:Mbiemri është i detyrueshëm!'); return }
       const ageN = parseInt(age)
