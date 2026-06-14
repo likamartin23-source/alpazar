@@ -14,3 +14,7 @@ tsconfig.tsbuildinfo
 .mcp.json
 .agents/
 skills-lock.json
+
+# Code intelligence indexes (generated)
+.codegraph/
+.graphify/

@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { rateLimit, getClientIp } from '../../../lib/rateLimit'
 
 export const runtime = 'nodejs'
-export const maxDuration = 30
+export const maxDuration = 55
 
 const SYSTEM_PROMPT = `Ti je **Albi 🤖** — asistenti virtual i ALPAZAR, platforma #1 shqiptare e tregtisë online.
 
@@ -136,7 +136,7 @@ export async function POST(req: NextRequest) {
 
   if (apiKey) {
     try {
-      const client = new Anthropic({ apiKey, timeout: 25000 })
+      const client = new Anthropic({ apiKey, timeout: 50000 })
 
       // Sanitize conversation: strip empty, ensure first is 'user', merge consecutive same-role
       let convo = messages.slice(-20)
@@ -181,8 +181,9 @@ export async function POST(req: NextRequest) {
       return new Response(readable, {
         headers: {
           'Content-Type': 'text/event-stream',
-          'Cache-Control': 'no-cache',
+          'Cache-Control': 'no-cache, no-transform',
           'Connection': 'keep-alive',
+          'X-Accel-Buffering': 'no',
         },
       })
     } catch (err: any) {

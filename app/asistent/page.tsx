@@ -130,9 +130,9 @@ export default function AsistentPage() {
     // Force scroll to bottom when user sends
     setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 30)
 
-    // Timeout covers entire operation including streaming (40s)
+    // Timeout covers entire operation including streaming (52s, server maxDuration is 55s)
     const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 40000)
+    const timeout = setTimeout(() => controller.abort(), 52000)
 
     try {
       const res = await fetch('/api/ai', {
@@ -161,31 +161,35 @@ export default function AsistentPage() {
         let buf = ''
         let done = false
 
-        while (!done) {
-          const { done: d, value } = await reader.read()
-          if (d) break
-          buf += decoder.decode(value, { stream: true })
-          const lines = buf.split('\n')
-          buf = lines.pop() ?? ''
+        try {
+          while (!done) {
+            const { done: d, value } = await reader.read()
+            if (d) break
+            buf += decoder.decode(value, { stream: true })
+            const lines = buf.split('\n')
+            buf = lines.pop() ?? ''
 
-          for (const line of lines) {
-            if (!line.startsWith('data: ')) continue
-            const raw = line.slice(6).trim()
-            if (raw === '[DONE]') { done = true; break }
-            try {
-              const parsed = JSON.parse(raw)
-              if (parsed.t) {
-                setMessages(prev => {
-                  const copy = [...prev]
-                  copy[newIdx] = { ...copy[newIdx], content: copy[newIdx].content + parsed.t }
-                  return copy
-                })
-              }
-            } catch {}
+            for (const line of lines) {
+              if (!line.startsWith('data: ')) continue
+              const raw = line.slice(6).trim()
+              if (raw === '[DONE]') { done = true; break }
+              try {
+                const parsed = JSON.parse(raw)
+                if (parsed.t) {
+                  setMessages(prev => {
+                    const copy = [...prev]
+                    copy[newIdx] = { ...copy[newIdx], content: copy[newIdx].content + parsed.t }
+                    return copy
+                  })
+                }
+              } catch {}
+            }
           }
+        } finally {
+          reader.cancel().catch(() => {})
+          clearTimeout(timeout)
+          setStreamingIdx(null)
         }
-        clearTimeout(timeout)
-        setStreamingIdx(null)
       } else {
         // Non-streaming fallback (FAQ)
         const data = await res.json()
