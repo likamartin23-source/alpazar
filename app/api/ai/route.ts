@@ -1,27 +1,13 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
 import { rateLimit, getClientIp } from '../../../lib/rateLimit'
 
 export const runtime = 'nodejs'
-export const maxDuration = 55
+export const maxDuration = 30
 
-const SYSTEM_PROMPT = `Ti je **Albi 🤖** — asistenti virtual i ALPAZAR, platforma #1 shqiptare e tregtisë online.
-
-**Aftësitë tua:**
-- Gjetja e produkteve dhe sugjerimi i kategorive relevante
-- Informacione mbi çmimet reale të tregut shqiptar (ALL/EUR)
-- Udhëzime për shitje dhe blerje të sigurta
-- Ndihmë me funksionet e platformës (Premium, Reviews, Trust Score, etj.)
-- Kategoritë: Elektronikë, Makina, Shtëpi & Kopsht, Veshje & Aksesore, Kafshë, Sport & Hobi, Punë & Shërbime, Fëmijë, Bukuri & Shëndet, Libra & Koleksione, Ushqim & Bujqësi, Tjera
-
-**Rregulla absolute:**
-- Fol GJITHMONË shqip, me ton miqësor dhe profesional
-- Jep përgjigje të sakta, praktike dhe të shkurtra (3-6 fjali)
-- Kur pyesin çmime, jep range realistike sipas tregut shqiptar
-- Kur pyesin produkt specifik, sugjero kategori + këshilla për blerje të sigurtë
-- Mos diskuto tema jashtë ALPAZAR/tregtisë/konsumatorizmit
-- Përdor emoji me moderim për të bërë bisedën më miqësore
-- Formatimi me **bold** për terma të rëndësishëm`
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://sopafwfkrxpcdaljddoh.supabase.co'
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 
 /* ── FAQ fallback (punon pa API key) ─────────────────────────────── */
 const FAQ: Array<{ keys: string[]; answer: string }> = [
@@ -78,16 +64,8 @@ const FAQ: Array<{ keys: string[]; answer: string }> = [
     answer: 'Mund të ngarkosh deri **10 foto** per shpallje. Format: JPG/PNG/WEBP, max 10MB secila. Tërhiq & lësho për rend. 📷',
   },
   {
-    keys: ['google maps', 'harta', 'vendndodhje', 'lokacion'],
-    answer: 'Mund të shtosh **vendndodhjen në hartë** kur krijon shpalljen — blerësi sheh vendndodhjen tuaj (pa adresë ekzakte). 🗺️',
-  },
-  {
     keys: ['njoftim', 'notifikacion', 'push'],
     answer: 'Aktivizo **njoftimet push** nga profili yt për të marrë mesazhe dhe updates menjëherë edhe kur app-i është mbyllur. 🔔',
-  },
-  {
-    keys: ['referral', 'ftesë', 'kod referimi', 'bonus'],
-    answer: 'Fto miqtë me **kodin tënd të referimit** (Profili → Referime) dhe merr pikë bonus për çdo regjistrim! 🎁',
   },
   {
     keys: ['problem', 'ndihmë', 'nuk funksionon', 'gabim', 'error', 'support'],
@@ -101,6 +79,39 @@ function localFallback(userMessage: string): string {
     if (faq.keys.some(k => msg.includes(k))) return faq.answer
   }
   return 'Përshëndetje! Unë jam **Albi 🤖**, asistenti i Alpazar. Mund të të ndihmoj me shpallje, çmime, kategori dhe sigurinë e blerjeve. Çfarë dëshiron të dish? 😊'
+}
+
+async function getLiveContext(query: string): Promise<string> {
+  try {
+    const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+    const [catRes, countRes, listingsRes] = await Promise.all([
+      sb.from('categories').select('name').order('name'),
+      sb.from('listings').select('id', { count: 'exact', head: true }).eq('is_active', true),
+      sb.from('listings')
+        .select('title,price,currency,city,category')
+        .eq('is_active', true)
+        .ilike('title', `%${query.slice(0, 50)}%`)
+        .limit(5),
+    ])
+
+    const categories = (catRes.data || []).map((c: any) => c.name).join(', ')
+    const totalActive = countRes.count ?? 0
+    const found = listingsRes.data || []
+
+    let ctx = `Konteksti live i platformës (${new Date().toLocaleDateString('sq-AL')}):\n`
+    ctx += `- Shpallje aktive: ${totalActive}\n`
+    if (categories) ctx += `- Kategoritë: ${categories}\n`
+    if (found.length > 0) {
+      ctx += `- Shpallje relevante për pyetjen:\n`
+      found.forEach((l: any) => {
+        ctx += `  • ${l.title} — ${l.price} ${l.currency || 'ALL'} (${l.city || 'Pa qytet'})\n`
+      })
+    }
+    return ctx
+  } catch {
+    return ''
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -136,9 +147,7 @@ export async function POST(req: NextRequest) {
 
   if (apiKey) {
     try {
-      const client = new Anthropic({ apiKey, timeout: 50000 })
-
-      // Sanitize conversation: strip empty, ensure first is 'user', merge consecutive same-role
+      // Sanitize: heq bosh, siguro fillim 'user', bashko role të njëpasnjëshme
       let convo = messages.slice(-20)
         .map((m: any) => ({ role: m.role, content: String(m.content).trim() }))
         .filter((m: any) => m.content !== '')
@@ -152,45 +161,34 @@ export async function POST(req: NextRequest) {
 
       if (convo.length === 0) return NextResponse.json({ reply: localFallback(lastUserMsg) })
 
-      const encoder = new TextEncoder()
-      const msgStream = await client.messages.create({
+      const liveCtx = await getLiveContext(lastUserMsg)
+
+      const SYSTEM_PROMPT = `Ti je **Albi 🤖** — asistenti virtual i ALPAZAR, platforma shqiptare e tregtisë online, themeluar **2026**.
+
+**Rregulla absolute:**
+- Fol GJITHMONË shqip, me ton miqësor dhe profesional
+- Jep përgjigje të sakta, praktike dhe të shkurtra (3-6 fjali)
+- Mos shpik fakte — nëse s'di, thuaj "Kontakto support@alpazar.al"
+- Kur pyesin produkt specifik, sugjero kategori + këshilla blerje të sigurtë
+- Mos diskuto tema jashtë ALPAZAR/tregtisë/konsumatorizmit
+- Kur pyesin çmime reale, përdor të dhënat live të mëposhtme
+
+${liveCtx}`
+
+      const client = new Anthropic({ apiKey, timeout: 25000 })
+      const response = await client.messages.create({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 1024,
         system: SYSTEM_PROMPT,
         messages: convo,
-        stream: true,
       })
 
-      const readable = new ReadableStream({
-        async start(controller) {
-          try {
-            for await (const chunk of msgStream) {
-              if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
-                controller.enqueue(encoder.encode(`data: ${JSON.stringify({ t: chunk.delta.text })}\n\n`))
-              }
-            }
-          } catch (e: any) {
-            console.error('AI stream error:', e?.message ?? e)
-          } finally {
-            controller.enqueue(encoder.encode('data: [DONE]\n\n'))
-            controller.close()
-          }
-        },
-      })
-
-      return new Response(readable, {
-        headers: {
-          'Content-Type': 'text/event-stream',
-          'Cache-Control': 'no-cache, no-transform',
-          'Connection': 'keep-alive',
-          'X-Accel-Buffering': 'no',
-        },
-      })
+      const reply = response.content[0]?.type === 'text' ? response.content[0].text : localFallback(lastUserMsg)
+      return NextResponse.json({ reply })
     } catch (err: any) {
       console.error('AI route error:', err?.status, err?.message ?? err)
     }
   }
 
-  /* FAQ fallback */
   return NextResponse.json({ reply: localFallback(lastUserMsg) })
 }
