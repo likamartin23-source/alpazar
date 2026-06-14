@@ -152,7 +152,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <a href="/takedown" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>IP / Takedown</a>
                 <a href="/referral" style={{ color: '#F5C842', fontSize: 11, textDecoration: 'none', fontWeight: 600 }}>🎁 Referral</a>
               </nav>
-              <div style={{ fontSize: 10, color: '#444' }}>© 2025–2026 Alpazar · NIPT/QKB: (në regjistrim) · Tiranë, Shqipëri · Të gjitha të drejtat e rezervuara</div>
+              <div style={{ fontSize: 10, color: '#444' }}>© 2026 Alpazar · NIPT/QKB: (në regjistrim) · Tiranë, Shqipëri · Të gjitha të drejtat e rezervuara</div>
             </div>
           </footer>
           </GlobalErrorBoundaryDyn>

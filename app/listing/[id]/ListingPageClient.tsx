@@ -112,13 +112,13 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         reviewer_id: user.id,
         seller_id: seller.id,
         listing_id: params.id,
-        stars: reviewStars,
+        rating: reviewStars,
         comment: reviewComment.trim() || null,
         purchase_verified: isVerified,
-      }, { onConflict: 'reviewer_id,listing_id' })
+      }, { onConflict: 'reviewer_id,seller_id' })
 
       if (error) { setReviewMsg(`err:${error.message}`); return }
-      setMyReview({ stars: reviewStars, comment: reviewComment, purchase_verified: isVerified })
+      setMyReview({ rating: reviewStars, comment: reviewComment, purchase_verified: isVerified })
       setReviewMsg('ok:Faleminderit! Vlerësimi u ruajt.')
     } catch (e: any) {
       setReviewMsg(`err:${e.message}`)
@@ -343,7 +343,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
       .maybeSingle()
     if (data) {
       setMyReview(data)
-      setReviewStars(data.stars)
+      setReviewStars(data.rating)
       setReviewComment(data.comment || '')
     }
   }
@@ -895,7 +895,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
               {myReview ? (
                 <div style={{ background: '#EAF3DE', border: '0.5px solid #97C459', borderRadius: 10, padding: '10px 13px', fontSize: 12 }}>
                   <div style={{ color: '#3B6D11', fontWeight: 700, marginBottom: 4 }}>
-                    {'⭐'.repeat(myReview.stars)} Vlerësimi yt u ruajt
+                    {'⭐'.repeat(myReview.rating)} Vlerësimi yt u ruajt
                     {myReview.purchase_verified && (
                       <span style={{ marginLeft: 6, background: '#0E7A35', color: '#fff', fontSize: 9.5, fontWeight: 700, padding: '1px 6px', borderRadius: 6 }}>✅ Blerje e verifikuar</span>
                     )}

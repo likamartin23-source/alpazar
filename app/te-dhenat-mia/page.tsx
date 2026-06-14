@@ -22,11 +22,11 @@ export default function TeDhenatMiaPage() {
       setUserId(session.user.id)
       const { data: p } = await supabase
         .from('profiles')
-        .select('full_name,username,email,city,created_at,marketing_opt_in')
+        .select('full_name,username,city,created_at,marketing_opt_in')
         .eq('id', session.user.id)
         .single()
       if (p) {
-        setProfile(p)
+        setProfile({ ...p, email: session.user.email })
         setMarketingOpt(p.marketing_opt_in ?? false)
       }
       setLoading(false)
