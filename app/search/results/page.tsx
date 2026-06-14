@@ -92,6 +92,7 @@ export default function SearchResultsPage() {
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [savedOk, setSavedOk]         = useState(false)
   const [userId, setUserId]           = useState<string | null>(null)
+  const [sortBy, setSortBy]           = useState('newest')
 
   const [activeFilterCount, setActiveFilterCount] = useState(0)
 
@@ -131,6 +132,7 @@ export default function SearchResultsPage() {
     const pminp = params.get('pmin') || ''
     const pmaxp = params.get('pmax') || ''
     const premp = params.get('prem') === '1'
+    const sortp = params.get('sort') || 'newest'
 
     setQ(qp)
     setCatFilter(catp)
@@ -139,20 +141,22 @@ export default function SearchResultsPage() {
     setPriceMin(pminp)
     setPriceMax(pmaxp)
     setPremiumOnly(premp)
+    setSortBy(sortp)
 
-    doSearch(qp, catp, condp, cityp, pminp, pmaxp, premp)
+    doSearch(qp, catp, condp, cityp, pminp, pmaxp, premp, sortp)
   }, [])
 
   useEffect(() => {
     let n = 0
-    if (catFilter)   n++
-    if (condFilter)  n++
-    if (cityFilter)  n++
-    if (priceMin)    n++
-    if (priceMax)    n++
-    if (premiumOnly) n++
+    if (catFilter)            n++
+    if (condFilter)           n++
+    if (cityFilter)           n++
+    if (priceMin)             n++
+    if (priceMax)             n++
+    if (premiumOnly)          n++
+    if (sortBy !== 'newest')  n++
     setActiveFilterCount(n)
-  }, [catFilter, condFilter, cityFilter, priceMin, priceMax, premiumOnly])
+  }, [catFilter, condFilter, cityFilter, priceMin, priceMax, premiumOnly, sortBy])
 
   // Realtime: update/remove premium + regular listings
   useEffect(() => {
@@ -191,6 +195,7 @@ export default function SearchResultsPage() {
     pMin     = priceMin,
     pMax     = priceMax,
     premOnly = premiumOnly,
+    sort     = sortBy,
   ) {
     setLoading(true)
 
@@ -226,21 +231,27 @@ export default function SearchResultsPage() {
     setShops(shopResults)
 
     // ── 2 + 3) LISTINGS — FTS GIN ───────────────────────────
+    const sortOrder: { col: string; asc: boolean } =
+      sort === 'price_asc'  ? { col: 'price',        asc: true  } :
+      sort === 'price_desc' ? { col: 'price',        asc: false } :
+      sort === 'views'      ? { col: 'views_count',  asc: false } :
+                              { col: 'created_at',   asc: false }
+
     const buildQb = (isPrem: boolean) => {
       let qb = supabase
         .from('listings')
-        .select('id,title,price,currency,condition,city,is_premium,images,created_at,category_id')
+        .select('id,title,price,currency,condition,city,is_premium,images,created_at,views_count,category_id')
         .eq('is_active', true)
         .eq('is_premium', isPrem)
-        .order('created_at', { ascending: false })
+        .order(sortOrder.col, { ascending: sortOrder.asc })
         .limit(40)
 
       if (query.trim()) qb = (qb as any).textSearch('search_tsv', query.trim(), { type: 'websearch', config: 'simple' })
-      if (cat)        qb = qb.eq('category_id', cat)
-      if (cond)       qb = qb.eq('condition', cond)
+      if (cat)         qb = qb.eq('category_id', cat)
+      if (cond)        qb = qb.eq('condition', cond)
       if (city.trim()) qb = (qb as any).ilike('city', `%${city.trim()}%`)
-      if (pMin)       qb = qb.gte('price', parseFloat(pMin))
-      if (pMax)       qb = qb.lte('price', parseFloat(pMax))
+      if (pMin)        qb = qb.gte('price', parseFloat(pMin))
+      if (pMax)        qb = qb.lte('price', parseFloat(pMax))
       return qb
     }
 
@@ -263,24 +274,26 @@ export default function SearchResultsPage() {
   function applyFilters() {
     setFiltersOpen(false)
     const url = new URL(window.location.href)
-    if (catFilter)   url.searchParams.set('cat',  catFilter);  else url.searchParams.delete('cat')
-    if (condFilter)  url.searchParams.set('cond', condFilter); else url.searchParams.delete('cond')
-    if (cityFilter)  url.searchParams.set('city', cityFilter); else url.searchParams.delete('city')
-    if (priceMin)    url.searchParams.set('pmin', priceMin);   else url.searchParams.delete('pmin')
-    if (priceMax)    url.searchParams.set('pmax', priceMax);   else url.searchParams.delete('pmax')
-    if (premiumOnly) url.searchParams.set('prem', '1');        else url.searchParams.delete('prem')
+    if (catFilter)          url.searchParams.set('cat',  catFilter);  else url.searchParams.delete('cat')
+    if (condFilter)         url.searchParams.set('cond', condFilter); else url.searchParams.delete('cond')
+    if (cityFilter)         url.searchParams.set('city', cityFilter); else url.searchParams.delete('city')
+    if (priceMin)           url.searchParams.set('pmin', priceMin);   else url.searchParams.delete('pmin')
+    if (priceMax)           url.searchParams.set('pmax', priceMax);   else url.searchParams.delete('pmax')
+    if (premiumOnly)        url.searchParams.set('prem', '1');        else url.searchParams.delete('prem')
+    if (sortBy !== 'newest') url.searchParams.set('sort', sortBy);    else url.searchParams.delete('sort')
     window.history.replaceState(null, '', url.toString())
-    doSearch(q, catFilter, condFilter, cityFilter, priceMin, priceMax, premiumOnly)
+    doSearch(q, catFilter, condFilter, cityFilter, priceMin, priceMax, premiumOnly, sortBy)
   }
 
   function clearFilters() {
-    setCatFilter(''); setCondFilter(''); setCityFilter(''); setPriceMin(''); setPriceMax(''); setPremiumOnly(false)
+    setCatFilter(''); setCondFilter(''); setCityFilter(''); setPriceMin(''); setPriceMax(''); setPremiumOnly(false); setSortBy('newest')
     const url = new URL(window.location.href)
     url.searchParams.delete('cat');  url.searchParams.delete('cond')
     url.searchParams.delete('city'); url.searchParams.delete('pmin')
     url.searchParams.delete('pmax'); url.searchParams.delete('prem')
+    url.searchParams.delete('sort')
     window.history.replaceState(null, '', url.toString())
-    doSearch(q, '', '', '', '', '', false)
+    doSearch(q, '', '', '', '', '', false, 'newest')
   }
 
   function newSearch(e: React.FormEvent) {
@@ -433,12 +446,15 @@ export default function SearchResultsPage() {
         {/* ── ACTIVE FILTERS BAR ── */}
         {activeFilterCount > 0 && (
           <div className="active-filters">
-            {catFilter   && <span className="afilter">🏷 {categories.find(c => c.id === catFilter)?.name || catFilter}</span>}
-            {condFilter  && <span className="afilter">{condFilter === 'i_ri' ? '✨ I ri' : condFilter === 'i_mire' ? '👍 I mirë' : '🔄 I përdorur'}</span>}
-            {cityFilter  && <span className="afilter">📍 {cityFilter}</span>}
-            {priceMin    && <span className="afilter">Min: {priceMin} L</span>}
-            {priceMax    && <span className="afilter">Max: {priceMax} L</span>}
-            {premiumOnly && <span className="afilter">⭐ Premium</span>}
+            {catFilter              && <span className="afilter">🏷 {categories.find(c => c.id === catFilter)?.name || catFilter}</span>}
+            {condFilter             && <span className="afilter">{condFilter === 'i_ri' ? '✨ I ri' : condFilter === 'i_mire' ? '👍 I mirë' : '🔄 I përdorur'}</span>}
+            {cityFilter             && <span className="afilter">📍 {cityFilter}</span>}
+            {priceMin               && <span className="afilter">Min: {priceMin} L</span>}
+            {priceMax               && <span className="afilter">Max: {priceMax} L</span>}
+            {premiumOnly            && <span className="afilter">⭐ Premium</span>}
+            {sortBy === 'price_asc' && <span className="afilter">↑ Çmimi</span>}
+            {sortBy === 'price_desc'&& <span className="afilter">↓ Çmimi</span>}
+            {sortBy === 'views'     && <span className="afilter">👁 Shikimet</span>}
           </div>
         )}
 
@@ -549,12 +565,10 @@ export default function SearchResultsPage() {
             {/* Qyteti */}
             <div className="fp-row">
               <span className="fp-label">Qyteti</span>
-              <input
-                type="text"
-                placeholder="p.sh. Tiranë, Durrës..."
-                value={cityFilter}
-                onChange={e => setCityFilter(e.target.value)}
-              />
+              <select value={cityFilter} onChange={e => setCityFilter(e.target.value)}>
+                <option value="">Të gjitha qytetet</option>
+                {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
             </div>
 
             {/* Çmimi */}
@@ -600,6 +614,25 @@ export default function SearchResultsPage() {
                   position: 'absolute', top: 3, left: premiumOnly ? 23 : 3,
                   transition: 'left .2s', boxShadow: '0 1px 4px rgba(0,0,0,.2)',
                 }} />
+              </div>
+            </div>
+
+            {/* Renditja */}
+            <div className="fp-row">
+              <span className="fp-label">Rendit sipas</span>
+              <div className="cond-row">
+                {[
+                  { v: 'newest',     label: '🕐 Më të rejat' },
+                  { v: 'price_asc',  label: '↑ Çmim' },
+                  { v: 'price_desc', label: '↓ Çmim' },
+                  { v: 'views',      label: '👁 Shikimet' },
+                ].map(o => (
+                  <button key={o.v}
+                    className={`cond-btn ${sortBy === o.v ? 'active' : ''}`}
+                    onClick={() => setSortBy(o.v)}>
+                    {o.label}
+                  </button>
+                ))}
               </div>
             </div>
 
