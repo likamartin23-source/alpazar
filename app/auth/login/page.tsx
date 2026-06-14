@@ -338,7 +338,18 @@ export default function Auth() {
           setSmsFailMode(true)
           setMsg('')
         } else {
-          setMsg(`err:${data.error ?? 'Gabim gjatë dërgimit.'}`)
+          const rawErr = String(data.error ?? '')
+          let friendlyErr = 'Gabim gjatë dërgimit të kodit. Provo sërish.'
+          if (rawErr === 'email_not_configured' || rawErr.includes('validation_error') || rawErr.includes('403') || rawErr.includes('domain') || rawErr.includes('verify')) {
+            friendlyErr = 'Dërgimi i emailit nuk është konfiguruar ende. Ju lutem përdorni numrin e telefonit (+355...).'
+          } else if (rawErr === 'email_send_failed') {
+            friendlyErr = 'Gabim gjatë dërgimit të emailit. Provo sërish.'
+          } else if (rawErr.includes('rate') || rawErr.includes('429')) {
+            friendlyErr = 'Shumë kërkesa. Provo sërish pas pak sekondash.'
+          } else if (rawErr.includes('invalid') || rawErr.includes('not found')) {
+            friendlyErr = 'Adresa e emailit ose numri i telefonit është i pavlefshëm.'
+          }
+          setMsg(`err:${friendlyErr}`)
         }
       } else {
         setStep('otp'); startCountdown(); setOtp(['', '', '', '', '', ''])
@@ -366,7 +377,14 @@ export default function Auth() {
       })
       const data = await res.json()
       if (!res.ok || data.error) {
-        setMsg(`err:${data.error ?? 'Gabim gjatë dërgimit.'}`)
+        const rawErrEmail = String(data.error ?? '')
+        let friendlyErrEmail = 'Gabim gjatë dërgimit të emailit. Provo sërish.'
+        if (rawErrEmail === 'email_not_configured') {
+          friendlyErrEmail = 'Dërgimi i emailit nuk është konfiguruar ende nga administratori.'
+        } else if (rawErrEmail === 'email_send_failed') {
+          friendlyErrEmail = 'Gabim gjatë dërgimit. Kontrolloni adresën e emailit dhe provoni sërish.'
+        }
+        setMsg(`err:${friendlyErrEmail}`)
       } else {
         setSmsFailMode(false)
         setStep('otp'); startCountdown(); setOtp(['', '', '', '', '', ''])
