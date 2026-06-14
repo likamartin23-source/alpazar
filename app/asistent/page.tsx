@@ -130,9 +130,9 @@ export default function AsistentPage() {
     // Force scroll to bottom when user sends
     setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 30)
 
-    // Timeout covers entire operation including streaming (52s, server maxDuration is 55s)
+    // Timeout covers entire operation (32s, server maxDuration is 30s)
     const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 52000)
+    const timeout = setTimeout(() => controller.abort(), 32000)
 
     try {
       const res = await fetch('/api/ai', {
