@@ -1,0 +1,6 @@
+{
+  "$schema": "https://agent-browser.dev/schema.json",
+  "executablePath": "/opt/pw-browsers/chromium-1194/chrome-linux/chrome",
+  "ignoreHttpsErrors": true,
+  "headed": false
+}
