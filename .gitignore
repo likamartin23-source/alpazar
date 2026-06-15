@@ -18,3 +18,4 @@ skills-lock.json
 # Code intelligence indexes (generated)
 .codegraph/
 .graphify/
+.claude/skills/
