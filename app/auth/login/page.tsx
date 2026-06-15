@@ -365,19 +365,18 @@ export default function Auth() {
       })
       const data = await res.json()
       if (!res.ok || data.error) {
-        if (data.error === 'sms_not_configured' || (res.status === 429 && type === 'phone')) {
+        const rawErr = String(data.error ?? '')
+        const isRateLimit = rawErr.includes('rate') || rawErr.includes('429') || res.status === 429
+        const isInvalidPhone = rawErr.includes('invalid') || rawErr.includes('not found')
+        if (isRateLimit) {
+          setMsg('err:Shumë kërkesa. Provo sërish pas pak sekondash.')
+        } else if (isInvalidPhone && !rawErr.includes('sms')) {
+          setMsg('err:Numri i telefonit është i pavlefshëm.')
+        } else {
+          // Any SMS delivery/gateway failure → email fallback
           setOriginalPhone(id)
           setSmsFailMode(true)
           setMsg('')
-        } else {
-          const rawErr = String(data.error ?? '')
-          let friendlyErr = 'Gabim gjatë dërgimit të kodit. Provo sërish.'
-          if (rawErr.includes('rate') || rawErr.includes('429')) {
-            friendlyErr = 'Shumë kërkesa. Provo sërish pas pak sekondash.'
-          } else if (rawErr.includes('invalid') || rawErr.includes('not found')) {
-            friendlyErr = 'Numri i telefonit është i pavlefshëm.'
-          }
-          setMsg(`err:${friendlyErr}`)
         }
       } else {
         setStep('otp'); startCountdown(); setOtp(['', '', '', '', '', ''])
@@ -402,7 +401,13 @@ export default function Auth() {
         options: { shouldCreateUser: mode === 'register' },
       })
       if (otpErr) {
-        setMsg(`err:Gabim gjatë dërgimit të emailit. Kontrolloni adresën dhe provoni sërish.`)
+        const em = otpErr.message.toLowerCase()
+        const notFound = em.includes('not found') || em.includes('not exist') || em.includes('signup') || em.includes('invalid')
+        if (mode === 'forgot' && notFound) {
+          setMsg('err:Nuk gjetëm llogari me këtë email. Nëse u regjistruat me numër telefoni, hyni direkt me: Numrin tuaj + Fjalëkalimin (nuk kërkohet SMS).')
+        } else {
+          setMsg('err:Gabim gjatë dërgimit të emailit. Kontrolloni adresën dhe provoni sërish.')
+        }
       } else {
         setSmsFailMode(false)
         setStep('otp'); startCountdown(); setOtp(['', '', '', '', '', ''])
@@ -1028,10 +1033,15 @@ export default function Auth() {
                   <div className="sms-fail-header">
                     <span>📱</span>
                     <div>
-                      <strong>SMS nuk funksionon për {originalPhone}</strong>
-                      <p>Konfirmo me email — numri ruhet në profil.</p>
+                      <strong>SMS nuk funksionoi për {originalPhone}</strong>
+                      <p>Nëse e di fjalëkalimin, hyr direkt. Nëse jo, fut emailin për ta rivendosur.</p>
                     </div>
                   </div>
+                  <button className="btn-yellow" style={{ marginBottom: 10 }}
+                    onClick={() => { const ph = contact; switchMode('login'); setTimeout(() => setContact(ph), 0) }}>
+                    🔑 Hyr me Numrin + Fjalëkalim
+                  </button>
+                  <div className="divider">ose rivendos fjalëkalimin me email</div>
                   <div className="field" style={{ marginBottom: 10 }}>
                     <label>📧 Emaili yt *</label>
                     <input type="email" placeholder="emri@domain.com"
@@ -1040,7 +1050,7 @@ export default function Auth() {
                       onKeyDown={e => e.key === 'Enter' && sendOtpViaEmail()}
                       autoComplete="email"
                       autoFocus />
-                    <p className="hint">Kodi do të dërgohet te ky email.</p>
+                    <p className="hint">Duhet të jetë emaili me të cilin u regjistruat.</p>
                   </div>
                   <button className="btn" onClick={sendOtpViaEmail} disabled={loading}>
                     {loading ? '⏳ Duke dërguar...' : '📧 Dërgo Kodin në Email'}
