@@ -37,7 +37,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/privatesia`,   lastModified: new Date(), changeFrequency: 'monthly', priority: 0.4 },
     { url: `${BASE}/cookies`,      lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
     { url: `${BASE}/siguria`,      lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
-    { url: `${BASE}/te-dhenat-mia`,lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
   ]
 
   const listingPages: MetadataRoute.Sitemap = (listings ?? []).map(l => ({

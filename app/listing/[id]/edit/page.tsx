@@ -246,6 +246,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
               <label>Përshkrimi</label>
               <textarea placeholder="Përshkruaj artikullin..." value={form.description}
                 onChange={e => set('description', e.target.value)} maxLength={2000} />
+              <div style={{ textAlign: 'right', fontSize: 10, color: form.description.length > 1800 ? '#E63312' : '#aaa', marginTop: 2 }}>{form.description.length}/2000</div>
             </div>
 
             <div className="field">
