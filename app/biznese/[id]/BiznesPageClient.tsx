@@ -58,6 +58,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
       .eq('business_id', b.id)
       .eq('is_active', true)
       .order('created_at', { ascending: false })
+      .limit(20)
     if (ls) {
       setListings(ls)
       setTotalViews(ls.reduce((s: number, l: any) => s + (l.views_count || 0), 0))
