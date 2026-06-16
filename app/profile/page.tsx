@@ -61,6 +61,11 @@ export default function ProfilePage() {
   const [msg, setMsg] = useState('')
   const [shopMsg, setShopMsg] = useState('')
 
+  // Email change
+  const [newEmail, setNewEmail] = useState('')
+  const [emailMsg, setEmailMsg] = useState('')
+  const [changingEmail, setChangingEmail] = useState(false)
+
   // Password change
   const [newPass, setNewPass] = useState('')
   const [newPass2, setNewPass2] = useState('')
@@ -256,6 +261,21 @@ export default function ProfilePage() {
   async function signOut() {
     await supabase.auth.signOut()
     window.location.href = '/auth/login'
+  }
+
+  async function changeEmail() {
+    const trimmed = newEmail.trim().toLowerCase()
+    if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) { setEmailMsg('err:Shkruaj një adresë email të vlefshme.'); return }
+    if (trimmed === user?.email) { setEmailMsg('err:Emaili i ri duhet të jetë i ndryshëm nga ai aktual.'); return }
+    setChangingEmail(true); setEmailMsg('')
+    const { error } = await supabase.auth.updateUser({ email: trimmed })
+    if (error) {
+      setEmailMsg(`err:${error.message}`)
+    } else {
+      setEmailMsg('ok:U dërgua email konfirmimi. Kontrollo kutinë postare.')
+      setNewEmail('')
+    }
+    setChangingEmail(false)
   }
 
   async function changePassword() {
@@ -702,6 +722,28 @@ export default function ProfilePage() {
                     🔒 Menaxho të gjitha të dhënat e mia (GDPR) →
                   </a>
                 </div>
+              </div>
+
+              {/* ── Ndrysho Email-in ── */}
+              <div className="card">
+                <div className="card-hdr">
+                  <span className="card-title">✉️ Ndrysho Email-in</span>
+                </div>
+                {emailMsg && (
+                  <div className={`msg-box msg-sm ${emailMsg.split(':')[0]}`}>{emailMsg.split(/:(.+)/)[1]}</div>
+                )}
+                <label>Email aktual: <strong>{user?.email}</strong></label>
+                <input
+                  type="email"
+                  placeholder="Email i ri..."
+                  value={newEmail}
+                  onChange={e => setNewEmail(e.target.value)}
+                  autoComplete="email"
+                  style={{ marginTop: 6 }}
+                />
+                <button className="sec-btn" onClick={changeEmail} disabled={changingEmail || !newEmail} style={{ marginTop: 8 }}>
+                  {changingEmail ? '⏳ Duke dërguar...' : '✉️ Ndrysho Email-in'}
+                </button>
               </div>
 
               {/* ── Ndrysho Fjalëkalimin ── */}
