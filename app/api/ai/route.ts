@@ -114,6 +114,56 @@ async function getLiveContext(query: string): Promise<string> {
   }
 }
 
+function buildSystemPrompt(liveCtx: string): string {
+  return `Ti je **Albi 🤖** — asistenti virtual i ALPAZAR, platforma shqiptare e tregtisë online, themeluar **2026**.
+
+**Rregulla absolute:**
+- Fol GJITHMONË shqip, me ton miqësor dhe profesional
+- Jep përgjigje të sakta, praktike dhe të shkurtra (3-6 fjali)
+- Mos shpik fakte — nëse s'di, thuaj "Kontakto support@alpazar.al"
+- Kur pyesin produkt specifik, sugjero kategori + këshilla blerje të sigurtë
+- Mos diskuto tema jashtë ALPAZAR/tregtisë/konsumatorizmit
+- Kur pyesin çmime reale, përdor të dhënat live të mëposhtme
+
+${liveCtx}`
+}
+
+function sanitizeConvo(messages: any[]): any[] {
+  let convo = messages.slice(-20)
+    .map((m: any) => ({ role: m.role, content: String(m.content).trim() }))
+    .filter((m: any) => m.content !== '')
+  while (convo.length > 0 && convo[0].role !== 'user') convo.shift()
+  return convo.reduce((acc: any[], m: any) => {
+    const last = acc[acc.length - 1]
+    if (last && last.role === m.role) last.content += '\n' + m.content
+    else acc.push({ ...m })
+    return acc
+  }, [])
+}
+
+async function tryGroq(convo: any[], systemPrompt: string): Promise<string | null> {
+  const groqKey = process.env.GROQ_API_KEY
+  if (!groqKey) return null
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${groqKey}` },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [{ role: 'system', content: systemPrompt }, ...convo],
+        max_tokens: 1024,
+        temperature: 0.7,
+      }),
+      signal: AbortSignal.timeout(20000),
+    })
+    if (!res.ok) return null
+    const data = await res.json()
+    return data.choices?.[0]?.message?.content ?? null
+  } catch {
+    return null
+  }
+}
+
 export async function POST(req: NextRequest) {
   const ip = getClientIp(req)
   const rl = rateLimit(`ai:${ip}`, { limit: 20, windowMs: 60_000 })
@@ -143,52 +193,34 @@ export async function POST(req: NextRequest) {
   }
 
   const lastUserMsg: string = [...messages].reverse().find((m: any) => m.role === 'user')?.content ?? ''
-  const apiKey = process.env.ANTHROPIC_API_KEY
+  const convo = sanitizeConvo(messages)
+  if (convo.length === 0) return NextResponse.json({ reply: localFallback(lastUserMsg) })
 
-  if (apiKey) {
+  const liveCtx = await getLiveContext(lastUserMsg)
+  const systemPrompt = buildSystemPrompt(liveCtx)
+
+  // 1. Try Anthropic Claude (paid, best quality)
+  const anthropicKey = process.env.ANTHROPIC_API_KEY
+  if (anthropicKey) {
     try {
-      // Sanitize: heq bosh, siguro fillim 'user', bashko role të njëpasnjëshme
-      let convo = messages.slice(-20)
-        .map((m: any) => ({ role: m.role, content: String(m.content).trim() }))
-        .filter((m: any) => m.content !== '')
-      while (convo.length > 0 && convo[0].role !== 'user') convo.shift()
-      convo = convo.reduce((acc: any[], m: any) => {
-        const last = acc[acc.length - 1]
-        if (last && last.role === m.role) last.content += '\n' + m.content
-        else acc.push({ ...m })
-        return acc
-      }, [])
-
-      if (convo.length === 0) return NextResponse.json({ reply: localFallback(lastUserMsg) })
-
-      const liveCtx = await getLiveContext(lastUserMsg)
-
-      const SYSTEM_PROMPT = `Ti je **Albi 🤖** — asistenti virtual i ALPAZAR, platforma shqiptare e tregtisë online, themeluar **2026**.
-
-**Rregulla absolute:**
-- Fol GJITHMONË shqip, me ton miqësor dhe profesional
-- Jep përgjigje të sakta, praktike dhe të shkurtra (3-6 fjali)
-- Mos shpik fakte — nëse s'di, thuaj "Kontakto support@alpazar.al"
-- Kur pyesin produkt specifik, sugjero kategori + këshilla blerje të sigurtë
-- Mos diskuto tema jashtë ALPAZAR/tregtisë/konsumatorizmit
-- Kur pyesin çmime reale, përdor të dhënat live të mëposhtme
-
-${liveCtx}`
-
-      const client = new Anthropic({ apiKey, timeout: 25000 })
+      const client = new Anthropic({ apiKey: anthropicKey, timeout: 25000 })
       const response = await client.messages.create({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 1024,
-        system: SYSTEM_PROMPT,
+        system: systemPrompt,
         messages: convo,
       })
-
-      const reply = response.content[0]?.type === 'text' ? response.content[0].text : localFallback(lastUserMsg)
-      return NextResponse.json({ reply })
+      const reply = response.content[0]?.type === 'text' ? response.content[0].text : null
+      if (reply) return NextResponse.json({ reply })
     } catch (err: any) {
-      console.error('AI route error:', err?.status, err?.message ?? err)
+      console.error('Anthropic error:', err?.status, err?.message ?? err)
     }
   }
 
+  // 2. Try Groq (free tier — llama-3.3-70b, 100K tokens/day)
+  const groqReply = await tryGroq(convo, systemPrompt)
+  if (groqReply) return NextResponse.json({ reply: groqReply })
+
+  // 3. Local FAQ fallback
   return NextResponse.json({ reply: localFallback(lastUserMsg) })
 }
