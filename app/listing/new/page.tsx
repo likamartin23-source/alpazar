@@ -123,7 +123,11 @@ export default function NewListing() {
     }
     const files = all.slice(0, maxImages)
     setImageFiles(files)
-    setMsg('')
+    if (all.length > maxImages) {
+      setMsg(`err:Mund të ngarkoni max ${maxImages} foto. U morën vetëm ${maxImages} të parat.`)
+    } else {
+      setMsg('')
+    }
     // Revoke old object URLs to prevent memory leaks
     imagePreviews.forEach(url => URL.revokeObjectURL(url))
     const previews = files.map(f => URL.createObjectURL(f))
@@ -386,7 +390,7 @@ export default function NewListing() {
           </div>
 
           <div className="card">
-            <div className="card-title"><i className="ti ti-photo" />Fotot (max {maxImages})</div>
+            <div className="card-title"><i className="ti ti-photo" />Fotot <span style={{ fontWeight: 400, color: imagePreviews.length >= maxImages ? '#E63312' : '#888', fontSize: 12 }}>({imagePreviews.length}/{maxImages})</span></div>
             <label className="img-zone" onClick={() => document.getElementById('img-input')?.click()}>
               <input id="img-input" type="file" accept="image/*" multiple onChange={handleImages} />
               <i className="ti ti-cloud-upload" />
