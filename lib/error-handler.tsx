@@ -6,9 +6,7 @@ import { supabase } from './supabase'
 // Auth state sinkronizim global
 export function initAuthSync() {
   supabase.auth.onAuthStateChange((event) => {
-    if (event === 'TOKEN_REFRESHED') {
-      console.log('[Auth] Token u rifreskua automatikisht')
-    }
+    if (event === 'TOKEN_REFRESHED') { /* silent */ }
     if (event === 'SIGNED_OUT') {
       localStorage.removeItem('alpazar_cart')
       window.location.href = '/auth/login?reason=session_expired'

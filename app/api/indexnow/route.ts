@@ -9,7 +9,7 @@ const BASE_URL = 'https://alpazar.vercel.app'
 const STATIC_URLS = [
   `${BASE_URL}/`,
   `${BASE_URL}/search`,
-  `${BASE_URL}/dyqane`,
+  `${BASE_URL}/biznese`,
   `${BASE_URL}/premium`,
   `${BASE_URL}/asistent`,
   `${BASE_URL}/rreth-nesh`,
@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
       .limit(200)
 
     const listingUrls = (listings || []).map(l => `${BASE_URL}/listing/${l.id}`)
-    const shopUrls = (shops || []).map(s => `${BASE_URL}/dyqane/${s.id}`)
+    const shopUrls = (shops || []).map(s => `${BASE_URL}/biznese/${s.id}`)
 
     const allUrls = [...STATIC_URLS, ...listingUrls, ...shopUrls]
 
