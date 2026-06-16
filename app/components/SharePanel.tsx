@@ -72,7 +72,7 @@ function VbIcon() {
 
 // ─── Platform config ──────────────────────────────────────────────────────────
 
-type PlatformId = 'facebook' | 'instagram' | 'linkedin' | 'tiktok' | 'whatsapp' | 'viber' | 'copy'
+type PlatformId = 'facebook' | 'instagram' | 'linkedin' | 'tiktok' | 'whatsapp' | 'viber' | 'copy' | 'native'
 
 interface Platform {
   id: PlatformId
@@ -242,6 +242,26 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
           </svg>
           <span>Me kodin tënd — nëse miku regjistrohet fiton <strong>50 pikë!</strong> 🎁</span>
         </div>
+      )}
+
+      {/* Native share — shown only on mobile/supported browsers */}
+      {typeof navigator !== 'undefined' && 'share' in navigator && (
+        <button
+          onClick={() => {
+            navigator.share({ title: 'ALPAZAR', text: shareText, url: shareUrl })
+              .then(() => { if (userId) logShare(userId, 'native', listingId, refCode) })
+              .catch(() => {})
+          }}
+          style={{
+            width: '100%', background: '#111', color: '#F5C842', border: 'none',
+            borderRadius: 10, padding: '11px 16px', fontWeight: 700, fontSize: 13,
+            cursor: 'pointer', fontFamily: 'inherit', display: 'flex',
+            alignItems: 'center', justifyContent: 'center', gap: 8,
+          }}
+        >
+          <i className="ti ti-share" style={{ fontSize: 16 }} />
+          Ndaj tani
+        </button>
       )}
 
       {/* Mode toggle */}
