@@ -138,6 +138,8 @@ export default function NewListing() {
     if (!form.title.trim()) { setMsg('err:Titulli është i detyrueshëm!'); return }
     if (!form.category_id) { setMsg('err:Zgjidh kategorinë!'); return }
     if (!form.city) { setMsg('err:Shkruaj qytetin!'); return }
+    const priceNum = parseFloat(form.price)
+    if (form.price && (isNaN(priceNum) || priceNum < 0)) { setMsg('err:Çmimi duhet të jetë një numër pozitiv!'); return }
 
     setLoading(true); setMsg(''); setUploadProgress(null)
     try {

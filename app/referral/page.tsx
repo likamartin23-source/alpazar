@@ -265,9 +265,17 @@ export default function ReferralPage() {
               {/* Referral link + SharePanel */}
               <div className="card">
                 <div className="card-title"><i className="ti ti-link" />Linku yt i Referimit</div>
-                <div className="ref-box" style={{ marginBottom: 14 }}>
-                  <div className="ref-code">{refCode.toUpperCase()}</div>
-                  <div className="ref-url">{refUrl}</div>
+                <div className="ref-box" style={{ marginBottom: 14, display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div className="ref-code">{refCode.toUpperCase()}</div>
+                    <div className="ref-url" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{refUrl}</div>
+                  </div>
+                  <button
+                    onClick={() => { navigator.clipboard.writeText(refUrl); setCopied(true); setTimeout(() => setCopied(false), 2000) }}
+                    style={{ flexShrink: 0, background: copied ? '#1D9E75' : '#F5C842', color: copied ? '#fff' : '#111', border: 'none', borderRadius: 10, padding: '8px 14px', fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: 'inherit', transition: 'all .2s', whiteSpace: 'nowrap' }}
+                  >
+                    {copied ? '✓ Kopjuar!' : '📋 Kopjo'}
+                  </button>
                 </div>
                 <SharePanel
                   shareUrl={refUrl}

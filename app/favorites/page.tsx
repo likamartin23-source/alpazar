@@ -67,7 +67,7 @@ export default function FavoritesPage() {
                     : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><i className="ti ti-photo" style={{ fontSize: 28, color: '#ccc' }} /></div>
                   }
                   <div style={{ position: 'absolute', top: 6, right: 6 }}>
-                    <FavoriteButton listingId={l.id} size={28} />
+                    <FavoriteButton listingId={l.id} size={28} onUnfavorite={() => setListings(prev => prev.filter(x => x.id !== l.id))} />
                   </div>
                   {l.is_premium && (
                     <div style={{ position: 'absolute', top: 6, left: 6, background: 'linear-gradient(90deg,#FFD700,#FFA500)', color: '#7B5000', fontSize: 9, fontWeight: 800, padding: '2px 6px', borderRadius: 5 }}>GOLD</div>

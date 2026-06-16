@@ -7,9 +7,10 @@ interface Props {
   listingId: string
   size?: number
   style?: React.CSSProperties
+  onUnfavorite?: () => void
 }
 
-export function FavoriteButton({ listingId, size = 32, style }: Props) {
+export function FavoriteButton({ listingId, size = 32, style, onUnfavorite }: Props) {
   const [saved, setSaved]   = useState(false)
   const [userId, setUserId] = useState<string | null>(null)
   const [busy, setBusy]     = useState(false)
@@ -35,7 +36,7 @@ export function FavoriteButton({ listingId, size = 32, style }: Props) {
     if (prev) {
       const { error } = await supabase.from('favorites').delete()
         .eq('user_id', userId).eq('listing_id', listingId)
-      if (error) setSaved(prev)
+      if (error) { setSaved(prev) } else { onUnfavorite?.() }
     } else {
       const { error } = await supabase.from('favorites').insert({ user_id: userId, listing_id: listingId })
       if (error) setSaved(prev)
