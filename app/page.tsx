@@ -253,6 +253,7 @@ export default function Home() {
   // settings now from app_config via context (cfg helper)
   const settings: Record<string, string> = {}
   const [newListingBadge, setNewListingBadge] = useState(false)
+  const [recentlyViewed, setRecentlyViewed] = useState<any[]>([])
 
   // Realtime listings via hook
   useRealtimeTable<Listing>(
@@ -279,6 +280,10 @@ export default function Home() {
   )
 
   useEffect(() => {
+    try {
+      const rv = JSON.parse(localStorage.getItem('_alpazar_rv') || '[]')
+      if (Array.isArray(rv) && rv.length > 0) setRecentlyViewed(rv)
+    } catch { /* ignore */ }
     saveRefFromUrl()
     fetchAll()
 
@@ -763,6 +768,37 @@ export default function Home() {
             <h3>🔥 Shpallje të fundit</h3>
             <a onClick={() => { setActiveCategory('all'); fetchListings('all', 'all') }}>Të gjitha →</a>
           </div>
+
+          {/* Recently viewed listings */}
+          {recentlyViewed.length > 0 && (
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px', marginBottom: 10 }}>
+                <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: '#111' }}>👁 Rishikimet e fundit</h3>
+                <button onClick={() => { localStorage.removeItem('_alpazar_rv'); setRecentlyViewed([]) }} style={{ background: 'none', border: 'none', fontSize: 10, color: '#aaa', cursor: 'pointer', fontFamily: 'inherit' }}>Pastro</button>
+              </div>
+              <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, scrollbarWidth: 'none' }}>
+                {recentlyViewed.map(item => {
+                  const price = item.currency === 'EUR'
+                    ? `€${Number(item.price).toLocaleString('sq-AL')}`
+                    : `${Number(item.price).toLocaleString('sq-AL')} L`
+                  return (
+                    <div key={item.id} onClick={() => { window.location.href = `/listing/${item.id}` }} style={{ flex: '0 0 120px', borderRadius: 10, overflow: 'hidden', background: '#fff', border: '1px solid #F0F0F0', boxShadow: '0 1px 4px rgba(0,0,0,.06)', cursor: 'pointer' }}>
+                      <div style={{ width: '100%', aspectRatio: '4/3', background: '#F6F6F6', overflow: 'hidden' }}>
+                        {item.img
+                          ? <img src={item.img} alt={item.title} loading="lazy" width={120} height={90} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><i className="ti ti-photo" style={{ fontSize: 20, color: '#ccc' }} /></div>
+                        }
+                      </div>
+                      <div style={{ padding: '6px 8px' }}>
+                        <div style={{ fontSize: 10, fontWeight: 600, color: '#111', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', lineHeight: 1.3, marginBottom: 2 }}>{item.title}</div>
+                        <div style={{ fontSize: 11, fontWeight: 800, color: '#E63312' }}>{price}</div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
 
           {/* 6. Shpalljet — -30% madhësi */}
           {loading ? (

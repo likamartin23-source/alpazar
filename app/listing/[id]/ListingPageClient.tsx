@@ -229,6 +229,13 @@ export default function ListingPageClient({ params, initialListing }: { params: 
       let sid = typeof window !== 'undefined' ? localStorage.getItem('_alpazar_sid') : null
       if (!sid) { sid = crypto.randomUUID(); if (typeof window !== 'undefined') localStorage.setItem('_alpazar_sid', sid) }
       supabase.rpc('increment_listing_views', { p_listing_id: data.id, p_viewer_id: userRef.current?.id ?? null, p_ip_hash: sid }).then(() => {}, () => {})
+      // Track recently viewed
+      try {
+        const rv = JSON.parse(localStorage.getItem('_alpazar_rv') || '[]')
+        const entry = { id: data.id, title: data.title, price: data.price, currency: data.currency, img: Array.isArray(data.images) ? data.images[0] : null, city: data.city, ts: Date.now() }
+        const filtered = rv.filter((x: any) => x.id !== data.id)
+        localStorage.setItem('_alpazar_rv', JSON.stringify([entry, ...filtered].slice(0, 8)))
+      } catch { /* ignore */ }
       if (data.category_id) fetchSimilarListings(data.category_id, data.id, data.city, data.price)
       if (data.user_id) {
         const [{ data: p }, { count }] = await Promise.all([
