@@ -95,6 +95,9 @@ export default function SearchResultsPage() {
   const [sortBy, setSortBy]           = useState('newest')
 
   const [activeFilterCount, setActiveFilterCount] = useState(0)
+  const [hasMore, setHasMore] = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [regularOffset, setRegularOffset] = useState(0)
 
   // Load user id for save search
   useEffect(() => {
@@ -255,11 +258,12 @@ export default function SearchResultsPage() {
       return qb
     }
 
+    const PAGE = 40
     if (premOnly) {
-      // Vetëm premium listings
       const premRes = await buildQb(true)
       setPremium(premRes.data || [])
       setRegular([])
+      setHasMore(false)
     } else {
       const [premRes, regRes] = await Promise.all([
         buildQb(true),
@@ -267,8 +271,46 @@ export default function SearchResultsPage() {
       ])
       setPremium(premRes.data || [])
       setRegular(regRes.data || [])
+      setHasMore((regRes.data?.length ?? 0) >= PAGE)
     }
+    setRegularOffset(0)
     setLoading(false)
+  }
+
+  async function loadMore() {
+    setLoadingMore(true)
+    const PAGE = 40
+    const nextOffset = regularOffset + PAGE
+    let qb = supabase
+      .from('listings')
+      .select('id,title,price,currency,condition,city,is_premium,images,created_at,views_count,category_id')
+      .eq('is_active', true)
+      .eq('is_premium', false)
+      .range(nextOffset, nextOffset + PAGE - 1)
+
+    const sortOrder: { col: string; asc: boolean } =
+      sortBy === 'price_asc'  ? { col: 'price',       asc: true  } :
+      sortBy === 'price_desc' ? { col: 'price',       asc: false } :
+      sortBy === 'views'      ? { col: 'views_count', asc: false } :
+                                { col: 'created_at',  asc: false }
+    qb = qb.order(sortOrder.col, { ascending: sortOrder.asc })
+
+    if (q.trim())         qb = (qb as any).textSearch('search_tsv', q.trim(), { type: 'websearch', config: 'simple' })
+    if (catFilter)        qb = qb.eq('category_id', catFilter)
+    if (condFilter)       qb = qb.eq('condition', condFilter)
+    if (cityFilter.trim()) qb = (qb as any).ilike('city', `%${cityFilter.trim()}%`)
+    if (priceMin)         qb = qb.gte('price', parseFloat(priceMin))
+    if (priceMax)         qb = qb.lte('price', parseFloat(priceMax))
+
+    const { data } = await qb
+    if (data?.length) {
+      setRegular(prev => [...prev, ...data])
+      setHasMore(data.length >= PAGE)
+      setRegularOffset(nextOffset)
+    } else {
+      setHasMore(false)
+    }
+    setLoadingMore(false)
   }
 
   function applyFilters() {
@@ -535,6 +577,17 @@ export default function SearchResultsPage() {
                 ) : (
                   <div className="listings-grid">
                     {regular.map(l => <ListingCard key={l.id} l={l} premium={false} />)}
+                  </div>
+                )}
+                {hasMore && (
+                  <div style={{ textAlign: 'center', padding: '16px 0' }}>
+                    <button
+                      onClick={loadMore}
+                      disabled={loadingMore}
+                      style={{ background: '#111', color: '#F5C842', border: 'none', borderRadius: 24, padding: '11px 28px', fontWeight: 700, fontSize: 13, cursor: loadingMore ? 'not-allowed' : 'pointer', fontFamily: 'inherit', opacity: loadingMore ? 0.7 : 1 }}
+                    >
+                      {loadingMore ? '⏳ Duke ngarkuar...' : 'Shiko më shumë →'}
+                    </button>
                   </div>
                 )}
               </div>
