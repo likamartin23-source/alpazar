@@ -37,7 +37,7 @@ function ShopCard({ shop }: { shop: any }) {
       }}>
         <div className="shop-avatar">
           {shop.avatar_url
-            ? <img src={shop.avatar_url} alt={shop.shop_name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+            ? <img src={shop.avatar_url} alt={shop.shop_name} loading="lazy" width={60} height={60} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
             : <span style={{ fontSize: 17, fontWeight: 700, color: '#E63312' }}>{initials}</span>
           }
         </div>

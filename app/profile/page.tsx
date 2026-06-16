@@ -463,7 +463,7 @@ export default function ProfilePage() {
           {/* Cover 16:6 */}
           <div style={{ position: 'relative', width: '100%', aspectRatio: '16/6', overflow: 'hidden', borderRadius: '20px 20px 0 0', background: 'linear-gradient(135deg,#F5C842,#E63312)' }}>
             {profile?.cover_url && (
-              <img src={profile.cover_url} alt="Kopertina" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
+              <img src={profile.cover_url} alt="Kopertina" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
             )}
             <label style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,.52)', color: '#fff', borderRadius: 8, padding: '5px 10px', fontSize: 11, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
               {coverUploading ? '⏳' : '📷'} Kopertina
@@ -793,7 +793,7 @@ export default function ProfilePage() {
                   myListings.filter(l => l.is_active).map(l => (
                     <div key={l.id} className="listing-row">
                       <div className="listing-thumb" onClick={() => window.location.href = `/listing/${l.id}`}>
-                        {l.images?.[0] ? <img src={l.images[0]} alt="" /> : <i className="ti ti-photo" style={{ color: '#ccc', fontSize: 20 }} />}
+                        {l.images?.[0] ? <img src={l.images[0]} alt="" loading="lazy" width={80} height={80} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <i className="ti ti-photo" style={{ color: '#ccc', fontSize: 20 }} />}
                       </div>
                       <div className="listing-info" onClick={() => window.location.href = `/listing/${l.id}`}>
                         <div className="listing-title">{l.title}</div>
@@ -834,7 +834,7 @@ export default function ProfilePage() {
                 savedListings.map((l: any) => (
                   <div key={l.id} className="listing-row" onClick={() => window.location.href = `/listing/${l.id}`} style={{ cursor: 'pointer' }}>
                     <div className="listing-thumb">
-                      {l.images?.[0] ? <img src={l.images[0]} alt="" /> : <i className="ti ti-photo" style={{ color: '#ccc', fontSize: 20 }} />}
+                      {l.images?.[0] ? <img src={l.images[0]} alt="" loading="lazy" width={80} height={80} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <i className="ti ti-photo" style={{ color: '#ccc', fontSize: 20 }} />}
                     </div>
                     <div className="listing-info">
                       <div className="listing-title">{l.title}</div>

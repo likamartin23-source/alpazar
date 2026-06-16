@@ -96,6 +96,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
           <img
             src={profile.cover_url}
             alt=""
+            loading="lazy"
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
           />
@@ -224,6 +225,9 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
                       <img
                         src={img}
                         alt={l.title}
+                        loading="lazy"
+                        width={400}
+                        height={400}
                         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                         onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
                       />

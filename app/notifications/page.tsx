@@ -227,6 +227,9 @@ function NotifRow({ n, onClick, isLast }: { n: Notif; onClick: (n: Notif) => voi
           <img
             src={n.image_url}
             alt=""
+            loading="lazy"
+            width={46}
+            height={46}
             style={{ width: 46, height: 46, borderRadius: '50%', objectFit: 'cover', border: '2px solid #f0e6b0' }}
             onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
           />
