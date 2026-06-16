@@ -98,6 +98,14 @@ export default function SearchResultsPage() {
   const [hasMore, setHasMore] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
   const [regularOffset, setRegularOffset] = useState(0)
+  const [showScrollTop, setShowScrollTop] = useState(false)
+
+  // Show/hide scroll-to-top button
+  useEffect(() => {
+    const onScroll = () => setShowScrollTop(window.scrollY > 400)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   // Load user id for save search
   useEffect(() => {
@@ -699,6 +707,17 @@ export default function SearchResultsPage() {
             </div>
           </div>
         </>
+      )}
+
+      {/* Scroll to top button */}
+      {showScrollTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          style={{ position: 'fixed', bottom: 80, right: 16, width: 42, height: 42, borderRadius: '50%', background: '#111', color: '#F5C842', border: 'none', boxShadow: '0 2px 12px rgba(0,0,0,.25)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, zIndex: 99 }}
+          aria-label="Kthehu në krye"
+        >
+          <i className="ti ti-arrow-up" />
+        </button>
       )}
     </>
   )

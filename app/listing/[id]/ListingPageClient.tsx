@@ -321,6 +321,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
     if (!session) { window.location.href = '/auth/login'; return }
     const price = parseFloat(alertTarget)
     if (!price || price <= 0) { setAlertMsg('err:Vendos një çmim të vlefshëm'); return }
+    if (listing.price && price >= listing.price) { setAlertMsg('err:Çmimi i alarmit duhet të jetë më i ulët se çmimi aktual.'); return }
     setAlertSaving(true); setAlertMsg('')
     try {
       const res = await fetch('/api/price-alerts', {
