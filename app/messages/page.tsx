@@ -1285,7 +1285,7 @@ export default function MessagesPage() {
                         )}
                       </div>
                       {replyTo.type === 'image' && replyTo.attachment_url && (
-                        <img className="rs-img" src={replyTo.attachment_url} alt="" />
+                        <img className="rs-img" src={replyTo.attachment_url} alt="" loading="lazy" width={40} height={40} />
                       )}
                       <button onClick={() => setReplyTo(null)} style={{ background:'none', border:'none', color:'#bbb', fontSize:20, cursor:'pointer', padding:0, lineHeight:1, flexShrink:0 }}>✕</button>
                     </div>

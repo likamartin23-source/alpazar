@@ -42,6 +42,7 @@ export default function NewListing() {
   const [descLoading, setDescLoading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null)
   const [showUpsell, setShowUpsell] = useState(false)
+  const [draftRestored, setDraftRestored] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -64,6 +65,30 @@ export default function NewListing() {
   useEffect(() => {
     return () => { imagePreviews.forEach(url => URL.revokeObjectURL(url)) }
   }, [imagePreviews])
+
+  // Restore draft from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('alpazar_listing_draft')
+      if (saved) {
+        const draft = JSON.parse(saved)
+        if (draft.title) {
+          setForm(f => ({ ...f, ...draft }))
+          setDraftRestored(true)
+          setTimeout(() => setDraftRestored(false), 4000)
+        }
+      }
+    } catch { /* ignore */ }
+  }, [])
+
+  // Autosave draft to localStorage (text fields only, not images)
+  useEffect(() => {
+    const { title, description, price, currency, condition, category_id, city, location_address } = form
+    if (!title && !description) return
+    try {
+      localStorage.setItem('alpazar_listing_draft', JSON.stringify({ title, description, price, currency, condition, category_id, city, location_address }))
+    } catch { /* ignore */ }
+  }, [form.title, form.description, form.price, form.currency, form.condition, form.category_id, form.city, form.location_address])
 
   function set(k: string, v: string) { setForm(f => ({ ...f, [k]: v })) }
 
@@ -178,6 +203,7 @@ export default function NewListing() {
       }).select().single()
 
       if (error) { setMsg(`err:${error.message}`); setLoading(false); return }
+      try { localStorage.removeItem('alpazar_listing_draft') } catch { /* ignore */ }
       const bonusMsg = myListingCount === 0 ? ' +35 pikë gamifikimi (bonus fillestar)! 🎉' : ' +10 pikë gamifikimi! ⚡'
       setMsg(`ok:Shpallja u publikua me sukses!${bonusMsg}`)
       // IndexNow ping — instant Bing/Yandex indexing (key kept server-side)
@@ -261,6 +287,12 @@ export default function NewListing() {
         <div className="body">
           {/* Marketing: banner kufiri falas */}
           <FreeTierBanner listingCount={myListingCount} freeLimit={freeLimit} />
+          {draftRestored && (
+            <div style={{ background:'#F0FDF4', border:'1px solid #86EFAC', borderRadius:10, padding:'8px 14px', marginBottom:10, fontSize:12, color:'#166534', display:'flex', alignItems:'center', gap:8 }}>
+              <span>💾</span> Draft-i u rikthye automatikisht.
+              <button onClick={() => { localStorage.removeItem('alpazar_listing_draft'); setForm({ title:'', description:'', price:'', currency:'ALL', condition:'', category_id:'', city:'', images:[], latitude:null, longitude:null, location_address:'' }); setDraftRestored(false) }} style={{ marginLeft:'auto', background:'none', border:'none', color:'#166534', cursor:'pointer', fontSize:11, textDecoration:'underline', fontFamily:'inherit' }}>Fshi draft-in</button>
+            </div>
+          )}
           {msg && <div className={`msg-box ${mt}`}>{mm}</div>}
           {uploadProgress && (
             <div style={{ background:'#e8f4fd', border:'1px solid #90caf9', borderRadius:10, padding:'10px 14px', marginBottom:10, fontSize:13, color:'#1565c0', display:'flex', alignItems:'center', gap:8 }}>
