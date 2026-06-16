@@ -279,6 +279,7 @@ export default function NewListing() {
             <div className="field">
               <label>Titulli *</label>
               <input type="text" placeholder="p.sh. iPhone 13 Pro Max 256GB..." value={form.title} onChange={e => set('title', e.target.value)} maxLength={100} />
+              <div style={{ textAlign: 'right', fontSize: 10, color: form.title.length > 85 ? '#E63312' : '#aaa', marginTop: 2 }}>{form.title.length}/100</div>
             </div>
 
             <div className="field">

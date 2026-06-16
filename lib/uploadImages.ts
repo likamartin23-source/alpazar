@@ -68,7 +68,16 @@ export async function uploadImages(
   const errors: string[] = []
   let done = 0
 
+  const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'image/avif', 'image/heic', 'image/heif']
+
   for (const file of files) {
+    if (!ALLOWED_TYPES.includes(file.type) && !file.type.startsWith('image/')) {
+      errors.push(`${file.name}: Lloji i skedarit nuk lejohet. Provo JPG, PNG ose WebP.`)
+      done++
+      onProgress?.({ done, total: files.length })
+      continue
+    }
+
     onProgress?.({ done, total: files.length, currentName: file.name })
 
     let blob: Blob = file
