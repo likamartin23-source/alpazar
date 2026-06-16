@@ -72,6 +72,7 @@ export default function ProfilePage() {
   const [deleteConfirm, setDeleteConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [deleteMsg, setDeleteMsg] = useState('')
+  const [deletePassword, setDeletePassword] = useState('')
 
   // Listing deletion inline confirm
   const [pendingDelete, setPendingDelete] = useState<string | null>(null)
@@ -272,10 +273,13 @@ export default function ProfilePage() {
   }
 
   async function deleteAccount() {
+    if (!deletePassword) { setDeleteMsg('err:Shkruaj fjalëkalimin për të konfirmuar.'); return }
     setDeleting(true); setDeleteMsg('')
     try {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) { setDeleteMsg('err:Sesioni ka skaduar.'); setDeleting(false); return }
+      const { error: authErr } = await supabase.auth.signInWithPassword({ email: session.user.email!, password: deletePassword })
+      if (authErr) { setDeleteMsg('err:Fjalëkalimi është i gabuar.'); setDeleting(false); return }
       const res = await fetch(`${FN_URL}/delete-account`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${session.access_token}` },
@@ -752,11 +756,18 @@ export default function ProfilePage() {
                 ) : (
                   <div className="delete-confirm">
                     <p>Je i sigurt? Kjo veprim <strong>nuk mund të kthehet</strong>.<br />Të gjitha të dhënat fshihen përgjithmonë.</p>
+                    <input
+                      type="password"
+                      placeholder="Shkruaj fjalëkalimin për të konfirmuar"
+                      value={deletePassword}
+                      onChange={e => setDeletePassword(e.target.value)}
+                      style={{ width: '100%', border: '1.5px solid #E63312', borderRadius: 8, padding: '8px 10px', fontSize: 13, fontFamily: 'inherit', marginBottom: 10, boxSizing: 'border-box', outline: 'none' }}
+                    />
                     <div className="delete-confirm-btns">
-                      <button onClick={deleteAccount} disabled={deleting}>
+                      <button onClick={deleteAccount} disabled={deleting || !deletePassword}>
                         {deleting ? '⏳ Duke fshirë...' : '✅ Po, fshi llogarinë'}
                       </button>
-                      <button onClick={() => { setDeleteConfirm(false); setDeleteMsg('') }}>
+                      <button onClick={() => { setDeleteConfirm(false); setDeleteMsg(''); setDeletePassword('') }}>
                         ✕ Anulo
                       </button>
                     </div>
