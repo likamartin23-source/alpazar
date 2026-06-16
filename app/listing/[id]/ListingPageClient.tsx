@@ -79,6 +79,10 @@ export default function ListingPageClient({ params, initialListing }: { params: 
   const [alertSaving, setAlertSaving]       = useState(false)
   const [alertMsg, setAlertMsg]             = useState('')
 
+  // Bump
+  const [bumpLoading, setBumpLoading] = useState(false)
+  const [bumpMsg, setBumpMsg]         = useState('')
+
   // Report
   const [reportOpen, setReportOpen]   = useState(false)
   const [reportReason, setReportReason] = useState('')
@@ -216,6 +220,26 @@ export default function ListingPageClient({ params, initialListing }: { params: 
   }, [])
 
   useEffect(() => { if (chatMsgs.length) scrollChat() }, [chatMsgs])
+
+  function canBump(lastBumped: string | null): boolean {
+    if (!lastBumped) return true
+    return Date.now() - new Date(lastBumped).getTime() >= 7 * 24 * 60 * 60 * 1000
+  }
+
+  async function doBump() {
+    if (bumpLoading) return
+    setBumpLoading(true)
+    const now = new Date().toISOString()
+    const { error } = await supabase.from('listings').update({ created_at: now, last_bumped_at: now }).eq('id', params.id)
+    if (error) {
+      setBumpMsg('err:Gabim gjatë ngritjes.')
+    } else {
+      setListing((l: any) => l ? { ...l, last_bumped_at: now, created_at: now } : l)
+      setBumpMsg('ok:Shpallja u ngrit në krye! ⬆️')
+      setTimeout(() => setBumpMsg(''), 3000)
+    }
+    setBumpLoading(false)
+  }
 
   async function fetchListing() {
     let data: any = initialListing ?? null
@@ -882,12 +906,26 @@ export default function ListingPageClient({ params, initialListing }: { params: 
 
           {/* Owner actions */}
           {isOwner && (
-            <div style={{ padding: '0 13px 14px', display: 'flex', gap: 8 }}>
-              <button
-                onClick={() => window.location.href = `/listing/${params.id}/edit`}
-                style={{ flex: 1, background: '#F5C842', color: '#111', border: 'none', borderRadius: 10, padding: '10px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-                <i className="ti ti-pencil" style={{ fontSize: 14 }} />Ndrysho
-              </button>
+            <div style={{ padding: '0 13px 14px' }}>
+              <div style={{ display: 'flex', gap: 8, marginBottom: bumpMsg ? 8 : 0 }}>
+                <button
+                  onClick={() => window.location.href = `/listing/${params.id}/edit`}
+                  style={{ flex: 1, background: '#F5C842', color: '#111', border: 'none', borderRadius: 10, padding: '10px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+                  <i className="ti ti-pencil" style={{ fontSize: 14 }} />Ndrysho
+                </button>
+                <button
+                  onClick={doBump}
+                  disabled={bumpLoading || !canBump(listing.last_bumped_at)}
+                  title={canBump(listing.last_bumped_at) ? 'Ngrije shpalljen në krye' : 'Mund ta ngresh pas 7 ditësh'}
+                  style={{ flex: 1, background: canBump(listing.last_bumped_at) ? '#E63312' : '#F0F0F0', color: canBump(listing.last_bumped_at) ? '#fff' : '#999', border: 'none', borderRadius: 10, padding: '10px', fontSize: 12, fontWeight: 700, cursor: canBump(listing.last_bumped_at) ? 'pointer' : 'not-allowed', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, opacity: bumpLoading ? 0.7 : 1 }}>
+                  <i className="ti ti-arrow-up" style={{ fontSize: 14 }} />{canBump(listing.last_bumped_at) ? 'Ngrije' : 'Ngritur'}
+                </button>
+              </div>
+              {bumpMsg && (
+                <div style={{ fontSize: 12, fontWeight: 600, color: bumpMsg.startsWith('ok:') ? '#1D9E75' : '#E63312', textAlign: 'center', padding: '4px 0' }}>
+                  {bumpMsg.replace(/^(ok:|err:)/, '')}
+                </div>
+              )}
             </div>
           )}
 
