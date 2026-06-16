@@ -91,6 +91,11 @@ export default function NotificationsPage() {
       }, payload => {
         setNotifs(prev => prev.filter(n => n.id !== (payload.old as any).id))
       })
+      .on('postgres_changes', {
+        event: 'UPDATE', schema: 'public', table: 'notifications',
+      }, payload => {
+        setNotifs(prev => prev.map(n => n.id === (payload.new as any).id ? { ...n, ...(payload.new as any) } : n))
+      })
       .subscribe()
 
     return () => { supabase.removeChannel(ch) }
@@ -102,17 +107,28 @@ export default function NotificationsPage() {
     else console.warn('dismiss notif failed:', error.message)
   }, [])
 
+  const markRead = useCallback(async (id: string) => {
+    const { error } = await supabase.from('notifications')
+      .update({ is_read: true, read_at: new Date().toISOString() })
+      .eq('id', id)
+    if (!error) setNotifs(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n))
+    else console.warn('markRead failed:', error.message)
+  }, [])
+
   const markAllRead = useCallback(async () => {
     if (!user) return
-    const { error } = await supabase.from('notifications').delete().eq('user_id', user.id)
-    if (!error) setNotifs([])
+    const { error } = await supabase.from('notifications')
+      .update({ is_read: true, read_at: new Date().toISOString() })
+      .eq('user_id', user.id)
+      .eq('is_read', false)
+    if (!error) setNotifs(prev => prev.map(n => ({ ...n, is_read: true })))
     else console.warn('markAllRead failed:', error.message)
   }, [user])
 
   const handleClick = useCallback((n: Notif) => {
-    dismiss(n.id)
+    if (!n.is_read) markRead(n.id)
     if (n.link?.startsWith('/')) window.location.href = n.link
-  }, [dismiss])
+  }, [markRead])
 
   // Not logged in
   if (authReady && !user) {
@@ -189,7 +205,7 @@ export default function NotificationsPage() {
       {!loading && notifs.length > 0 && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
           {notifs.map((n, idx) => (
-            <NotifRow key={n.id} n={n} onClick={handleClick} isLast={idx === notifs.length - 1} />
+            <NotifRow key={n.id} n={n} onClick={handleClick} onDismiss={dismiss} isLast={idx === notifs.length - 1} />
           ))}
         </div>
       )}
@@ -197,7 +213,7 @@ export default function NotificationsPage() {
   )
 }
 
-function NotifRow({ n, onClick, isLast }: { n: Notif; onClick: (n: Notif) => void; isLast: boolean }) {
+function NotifRow({ n, onClick, onDismiss, isLast }: { n: Notif; onClick: (n: Notif) => void; onDismiss: (id: string) => void; isLast: boolean }) {
   const icon = TYPE_ICON[n.type] ?? '🔔'
   const isClickable = !!n.link
 
@@ -281,12 +297,19 @@ function NotifRow({ n, onClick, isLast }: { n: Notif; onClick: (n: Notif) => voi
         )}
       </div>
 
-      {/* Chevron if clickable */}
-      {isClickable && (
-        <div style={{ color: '#ccc', fontSize: 16, flexShrink: 0, display: 'flex', alignItems: 'center' }}>
-          <i className="ti ti-chevron-right" style={{ fontSize: 16 }} />
-        </div>
-      )}
+      {/* Dismiss / Chevron */}
+      <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 4 }}>
+        {isClickable && (
+          <i className="ti ti-chevron-right" style={{ fontSize: 16, color: '#ccc' }} />
+        )}
+        <button
+          onClick={e => { e.stopPropagation(); onDismiss(n.id) }}
+          style={{ background: 'none', border: 'none', color: '#ccc', cursor: 'pointer', padding: '2px 4px', fontSize: 14, lineHeight: 1, display: 'flex', alignItems: 'center' }}
+          title="Fshij"
+        >
+          <i className="ti ti-x" style={{ fontSize: 14 }} />
+        </button>
+      </div>
     </div>
   )
 }
