@@ -357,12 +357,14 @@ export default function ListingPageClient({ params, initialListing }: { params: 
 
   async function toggleSave() {
     if (!user) { window.location.href = '/auth/login'; return }
-    if (liked) {
+    const prev = liked
+    setLiked(!prev)
+    if (prev) {
       const { error } = await supabase.from('saved_listings').delete().eq('user_id', user.id).eq('listing_id', params.id)
-      if (!error) setLiked(false)
+      if (error) setLiked(prev)
     } else {
       const { error } = await supabase.from('saved_listings').insert({ user_id: user.id, listing_id: params.id })
-      if (!error) setLiked(true)
+      if (error) setLiked(prev)
     }
   }
 

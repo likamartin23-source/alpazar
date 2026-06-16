@@ -50,6 +50,7 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<any>(null)
   const [myListings, setMyListings] = useState<any[]>([])
   const [savedListings, setSavedListings] = useState<any[]>([])
+  const [savedSearches, setSavedSearches] = useState<any[]>([])
   const [conversations, setConversations] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'profile'|'listings'|'saved'|'shop'|'messages'>('profile')
@@ -142,7 +143,7 @@ export default function ProfilePage() {
       setShopForm({ shop_name: p.shop_name || '', shop_description: p.shop_description || '', shop_category: p.shop_category || '', shop_banner_url: p.shop_banner_url || '' })
     }
     if (ls) setMyListings(ls)
-    await Promise.all([fetchConversations(uid), fetchSavedListings(uid)])
+    await Promise.all([fetchConversations(uid), fetchSavedListings(uid), fetchSavedSearches(uid)])
     setLoading(false)
   }
 
@@ -194,6 +195,16 @@ export default function ProfilePage() {
       .eq('user_id', uid)
       .order('created_at', { ascending: false })
     if (data) setSavedListings(data.map((r: any) => r.listings).filter(Boolean))
+  }
+
+  async function fetchSavedSearches(uid: string) {
+    const { data } = await supabase
+      .from('saved_searches')
+      .select('id, query, filters, created_at')
+      .eq('user_id', uid)
+      .order('created_at', { ascending: false })
+      .limit(20)
+    if (data) setSavedSearches(data)
   }
 
   async function fetchConversations(uid: string) {
@@ -909,6 +920,33 @@ export default function ProfilePage() {
                   </div>
                 ))
               )}
+            </div>
+          )}
+
+          {/* Saved Searches */}
+          {activeTab === 'saved' && savedSearches.length > 0 && (
+            <div className="card" style={{ marginTop: 10 }}>
+              <div className="card-hdr">
+                <span className="card-title">🔔 Kërkimet e ruajtura ({savedSearches.length})</span>
+              </div>
+              {savedSearches.map((s: any) => {
+                const parts = [s.query, s.filters?.city, s.filters?.cat, s.filters?.cond === 'i_ri' ? 'I ri' : s.filters?.cond === 'i_perdorur' ? 'I përdorur' : null, s.filters?.priceMin ? `Min: ${s.filters.priceMin}` : null, s.filters?.priceMax ? `Max: ${s.filters.priceMax}` : null].filter(Boolean)
+                const urlParams = new URLSearchParams()
+                if (s.query) urlParams.set('q', s.query)
+                if (s.filters?.city) urlParams.set('city', s.filters.city)
+                if (s.filters?.cat) urlParams.set('cat', s.filters.cat)
+                if (s.filters?.cond) urlParams.set('cond', s.filters.cond)
+                if (s.filters?.priceMin) urlParams.set('priceMin', s.filters.priceMin)
+                if (s.filters?.priceMax) urlParams.set('priceMax', s.filters.priceMax)
+                return (
+                  <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0', borderBottom: '1px solid #F6F6F6' }}>
+                    <div style={{ flex: 1, fontSize: 12, color: '#111', cursor: 'pointer', fontWeight: 600 }} onClick={() => { window.location.href = `/search/results?${urlParams.toString()}` }}>
+                      🔍 {parts.length > 0 ? parts.join(' · ') : 'Kërkim i ruajtur'}
+                    </div>
+                    <button onClick={async () => { await supabase.from('saved_searches').delete().eq('id', s.id); setSavedSearches(prev => prev.filter(x => x.id !== s.id)) }} style={{ background: 'none', border: 'none', color: '#ccc', cursor: 'pointer', fontSize: 16, lineHeight: 1, padding: 0 }}>✕</button>
+                  </div>
+                )
+              })}
             </div>
           )}
 
