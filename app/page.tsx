@@ -356,16 +356,9 @@ export default function Home() {
 
   async function handleSearch(e: React.FormEvent) {
     e.preventDefault()
-    if (!searchQuery.trim()) return fetchListings()
-    setLoading(true)
-    const { data } = await supabase
-      .from('listings')
-      .select('id,title,price,currency,condition,city,is_premium,images,category_id,created_at')
-      .ilike('title', `%${searchQuery.trim()}%`)
-      .eq('is_active', true)
-      .limit(20)
-    if (data) setListings(data as unknown as Listing[])
-    setLoading(false)
+    const q = searchQuery.trim()
+    if (!q) return fetchListings()
+    window.location.href = `/search/results?q=${encodeURIComponent(q)}`
   }
 
   const fmt = (price: number, cur: string) =>
