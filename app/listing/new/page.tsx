@@ -394,7 +394,7 @@ export default function NewListing() {
             {imagePreviews.length > 0 && (
               <div className="img-previews">
                 {imagePreviews.map((src, i) => (
-                  <img key={i} src={src} className="img-prev" alt="" />
+                  <img key={i} src={src} className="img-prev" alt="" loading="lazy" />
                 ))}
               </div>
             )}

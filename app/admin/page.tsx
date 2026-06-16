@@ -258,6 +258,7 @@ function ModerationTab() {
   const [reports, setReports] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [deactivating, setDeactivating] = useState<Record<string, boolean>>({})
+  const [adminMsg, setAdminMsg] = useState('')
 
   const fetchReports = () => {
     supabase.from('reports')
@@ -281,15 +282,15 @@ function ModerationTab() {
 
   const resolve = async (id: string, action: 'resolved' | 'dismissed') => {
     const { error } = await supabase.from('reports').update({ status: action }).eq('id', id)
-    if (error) { alert('Gabim: ' + error.message); return }
+    if (error) { setAdminMsg('Gabim: ' + error.message); return }
     setReports(prev => prev.filter(r => r.id !== id))
   }
 
   const deactivateListing = async (listingId: string, reportId: string, sellerId: string) => {
-    if (!listingId) { alert('ID e shpalljes mungon.'); return }
+    if (!listingId) { setAdminMsg('ID e shpalljes mungon.'); return }
     setDeactivating(prev => ({ ...prev, [reportId]: true }))
     const { error: e1 } = await supabase.from('listings').update({ is_active: false }).eq('id', listingId)
-    if (e1) { alert('Gabim çaktivizimi: ' + e1.message); setDeactivating(prev => ({ ...prev, [reportId]: false })); return }
+    if (e1) { setAdminMsg('Gabim çaktivizimi: ' + e1.message); setDeactivating(prev => ({ ...prev, [reportId]: false })); return }
     if (sellerId) {
       await supabase.from('notifications').insert({
         user_id: sellerId,
@@ -309,6 +310,12 @@ function ModerationTab() {
         <div className="pt">🛡️ Moderimi</div>
         <div className="live-dot">● Live</div>
       </div>
+      {adminMsg && (
+        <div style={{ background: '#FFF0EE', border: '0.5px solid #F09595', color: '#E63312', fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 8, margin: '8px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ flex: 1 }}>⚠️ {adminMsg}</span>
+          <button onClick={() => setAdminMsg('')} style={{ background: 'none', border: 'none', color: '#E63312', cursor: 'pointer', fontSize: 14 }}>✕</button>
+        </div>
+      )}
       <div className="card">
         <div className="ct">Raporte të hapura ({reports.length})</div>
         {loading ? <p style={{ color: '#aaa', fontSize: 12, padding: '12px 0' }}>Duke ngarkuar...</p> :
@@ -440,6 +447,7 @@ export default function Admin() {
   const [mfaFactorId, setMfaFactorId] = useState('')
   const [totpCode, setTotpCode] = useState('')
   const [mfaError, setMfaError] = useState('')
+  const [payMsg, setPayMsg] = useState('')
   const [loading, setLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState(new Date())
   const [liveStats, setLiveStats] = useState({ newListings: 0, newReports: 0 })
@@ -502,22 +510,22 @@ export default function Admin() {
 
   async function updateStatus(id: string, status: string, userId?: string) {
     const { error: e1 } = await supabase.from('premium_subscriptions').update({ status }).eq('id', id)
-    if (e1) { alert('Gabim ndryshim abonimi: ' + e1.message); return }
+    if (e1) { setPayMsg('Gabim ndryshim abonimi: ' + e1.message); return }
     if (status === 'active' && userId) {
       const sub = payments.find(p => p.id === id)
       const { error: e2 } = await supabase.from('profiles').update({ is_premium: true, premium_expires_at: sub?.end_date }).eq('id', userId)
-      if (e2) alert('Abonimi u ndryshua por profili nuk u përditësua: ' + e2.message)
+      if (e2) setPayMsg('Abonimi u ndryshua por profili nuk u përditësua: ' + e2.message)
     }
     if ((status === 'cancelled' || status === 'suspended') && userId) {
       const { error: e2 } = await supabase.from('profiles').update({ is_premium: false }).eq('id', userId)
-      if (e2) alert('Abonimi u ndryshua por profili nuk u përditësua: ' + e2.message)
+      if (e2) setPayMsg('Abonimi u ndryshua por profili nuk u përditësua: ' + e2.message)
     }
     fetchAll()
   }
 
   async function toggleMethod(id: string, cur: boolean) {
     const { error } = await supabase.from('payment_methods').update({ is_active: !cur }).eq('id', id)
-    if (error) alert('Gabim: ' + error.message)
+    if (error) setPayMsg('Gabim: ' + error.message)
     fetchAll()
   }
 
@@ -729,6 +737,12 @@ export default function Admin() {
               {tab === 'payments' && (
                 <>
                   <div className="ph"><div className="pt">💳 Pagesat ({payments.length})</div></div>
+                  {payMsg && (
+                    <div style={{ background: '#FFF0EE', border: '0.5px solid #F09595', color: '#E63312', fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 8, margin: '8px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ flex: 1 }}>⚠️ {payMsg}</span>
+                      <button onClick={() => setPayMsg('')} style={{ background: 'none', border: 'none', color: '#E63312', cursor: 'pointer', fontSize: 14 }}>✕</button>
+                    </div>
+                  )}
                   <div className="card">
                     <table>
                       <thead><tr><th>Përdoruesi</th><th>Plan</th><th>Shuma</th><th>Metoda</th><th>Statusi</th><th>Data</th><th>Veprime</th></tr></thead>

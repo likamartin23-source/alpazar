@@ -317,7 +317,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
                 <div className="img-previews">
                   {existingImages.map((url, i) => (
                     <div key={i} className="img-prev-wrap">
-                      <img src={url} className="img-prev" alt="" />
+                      <img src={url} className="img-prev" alt="" loading="lazy" />
                       <button className="img-remove" onClick={() => removeExistingImage(url)}>✕</button>
                     </div>
                   ))}
@@ -335,7 +335,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
             {imagePreviews.length > 0 && (
               <div className="img-previews" style={{ marginTop: 10 }}>
                 {imagePreviews.map((src, i) => (
-                  <img key={i} src={src} className="img-prev" alt="" />
+                  <img key={i} src={src} className="img-prev" alt="" loading="lazy" />
                 ))}
               </div>
             )}
