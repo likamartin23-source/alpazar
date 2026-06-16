@@ -73,6 +73,9 @@ export default function ProfilePage() {
   const [deleting, setDeleting] = useState(false)
   const [deleteMsg, setDeleteMsg] = useState('')
 
+  // Listing deletion inline confirm
+  const [pendingDelete, setPendingDelete] = useState<string | null>(null)
+
   // Cover + Avatar upload
   const [coverUploading, setCoverUploading] = useState(false)
   const [avatarUploading, setAvatarUploading] = useState(false)
@@ -289,9 +292,8 @@ export default function ProfilePage() {
   }
 
   async function deleteListing(id: string) {
-    if (!confirm('Fshi këtë shpallje?')) return
     const { error } = await supabase.from('listings').update({ is_active: false }).eq('id', id)
-    if (!error) setMyListings(ls => ls.filter(l => l.id !== id))
+    if (!error) { setMyListings(ls => ls.filter(l => l.id !== id)); setPendingDelete(null) }
   }
 
   function canBump(lastBumped: string | null): boolean {
@@ -811,7 +813,14 @@ export default function ProfilePage() {
                         <span title={`Mund ta rifreskosh pas ${bumpDaysLeft(l.last_bumped_at)} ditësh`} style={{ fontSize: 10, color: '#aaa', padding: '0 4px', cursor: 'default' }}>{bumpDaysLeft(l.last_bumped_at)}d</span>
                       )}
                       <button className="edit-listing-btn" onClick={() => window.location.href = `/listing/${l.id}/edit`} title="Ndrysho">✏️</button>
-                      <button className="del-btn" onClick={() => deleteListing(l.id)} title="Fshi">🗑</button>
+                      {pendingDelete === l.id ? (
+                        <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
+                          <button onClick={() => deleteListing(l.id)} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Fshi</button>
+                          <button onClick={() => setPendingDelete(null)} style={{ background: '#eee', color: '#555', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Jo</button>
+                        </div>
+                      ) : (
+                        <button className="del-btn" onClick={() => setPendingDelete(l.id)} title="Fshi">🗑</button>
+                      )}
                     </div>
                   ))
                 )}
