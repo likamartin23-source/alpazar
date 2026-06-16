@@ -163,6 +163,7 @@ export default function MessagesPage() {
   // Image attachment
   const [imgPreview,    setImgPreview]    = useState<{file:File; url:string}|null>(null)
   const [uploading,     setUploading]     = useState(false)
+  const [uploadErr,     setUploadErr]     = useState('')
 
   // Lightbox
   const [lightbox, setLightbox] = useState<string|null>(null)
@@ -406,7 +407,7 @@ export default function MessagesPage() {
     const rep  = replyTo
 
     const { error } = await supabase.storage.from('message-attachments').upload(path, f, { contentType: f.type })
-    if (error) { setUploading(false); alert('Nuk u ngarkua foto: ' + (error.message || 'gabim storage')); return }
+    if (error) { setUploading(false); setUploadErr('Nuk u ngarkua foto: ' + (error.message || 'gabim storage')); return }
 
     const { data: urlData } = supabase.storage.from('message-attachments').getPublicUrl(path)
 
@@ -450,7 +451,7 @@ export default function MessagesPage() {
       mediaRecRef.current = mr
       setRecording(true); setRecTime(0)
       recTimerRef.current = setInterval(() => setRecTime(t => t + 1), 1000)
-    } catch { alert('Lejo aksesin te mikrofoni') }
+    } catch { setUploadErr('Lejo aksesin te mikrofoni') }
   }
 
   function stopRecording(cancel = false) {
@@ -467,7 +468,7 @@ export default function MessagesPage() {
     const rep  = replyTo
 
     const { error } = await supabase.storage.from('message-attachments').upload(path, blob, { contentType: mimeType })
-    if (error) { alert('Nuk u ngarkua audio: ' + (error.message || 'gabim storage')); return }
+    if (error) { setUploadErr('Nuk u ngarkua audio: ' + (error.message || 'gabim storage')); return }
 
     const { data: urlData } = supabase.storage.from('message-attachments').getPublicUrl(path)
 
@@ -1287,6 +1288,14 @@ export default function MessagesPage() {
                         <img className="rs-img" src={replyTo.attachment_url} alt="" />
                       )}
                       <button onClick={() => setReplyTo(null)} style={{ background:'none', border:'none', color:'#bbb', fontSize:20, cursor:'pointer', padding:0, lineHeight:1, flexShrink:0 }}>✕</button>
+                    </div>
+                  )}
+
+                  {/* Upload error toast */}
+                  {uploadErr && (
+                    <div style={{ background:'#FFF0EE', border:'1px solid #f8c0b8', color:'#E63312', fontSize:11, fontWeight:600, padding:'6px 12px', display:'flex', alignItems:'center', gap:8 }}>
+                      <span style={{ flex:1 }}>⚠️ {uploadErr}</span>
+                      <button onClick={() => setUploadErr('')} style={{ background:'none', border:'none', color:'#E63312', cursor:'pointer', padding:0, fontSize:14, lineHeight:1 }}>✕</button>
                     </div>
                   )}
 

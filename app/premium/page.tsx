@@ -40,7 +40,7 @@ export default function PremiumPage() {
   async function onPaymentSuccess(userId: string) {
     const { error } = await supabase.from('profiles').update({ is_premium: true }).eq('id', userId)
     if (error) {
-      alert('Gabim gjatë aktivizimit. Kontakto support.')
+      setMsg('err:Gabim gjatë aktivizimit. Kontakto support.')
       return
     }
     await supabase.auth.refreshSession()
