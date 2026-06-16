@@ -60,7 +60,7 @@ function ListingCard({ l, premium }: { l: any; premium?: boolean }) {
     <div className="listing-card" onClick={() => window.location.href = `/listing/${l.id}`}>
       <div className="card-img">
         {l.images?.[0]
-          ? <img src={l.images[0]} alt={l.title} loading="lazy" />
+          ? <img src={l.images[0]} alt={l.title} loading="lazy" width={400} height={300} />
           : <i className="ti ti-photo" style={{ fontSize: 30, color: '#ccc' }} />}
         {l.condition === 'i_ri'       && <span className="badge-new">I ri</span>}
         {l.condition === 'i_perdorur' && <span className="badge-used">I përdorur</span>}
