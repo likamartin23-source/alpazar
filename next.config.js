@@ -44,6 +44,7 @@ const nextConfig = {
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
+      "worker-src blob:",
       "upgrade-insecure-requests",
     ].join('; ')
 
