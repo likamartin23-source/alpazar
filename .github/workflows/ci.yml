@@ -36,40 +36,46 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
-      - name: Notify Slack on failure
-        if: failure() && env.SLACK_WEBHOOK_URL != ''
+      - name: Notify on failure (Slack + email fallback)
+        if: failure()
         run: |
-          curl -s -X POST "$SLACK_WEBHOOK_URL" \
-            -H "Content-Type: application/json" \
-            -d "{
-              \"text\": \"❌ *CI dështoi* në Alpazar!\",
-              \"attachments\": [{
-                \"color\": \"danger\",
-                \"fields\": [
-                  {\"title\": \"Branch\", \"value\": \"${{ github.ref_name }}\", \"short\": true},
-                  {\"title\": \"Commit\", \"value\": \"${{ github.sha }}\", \"short\": true},
-                  {\"title\": \"Author\", \"value\": \"${{ github.actor }}\", \"short\": true},
-                  {\"title\": \"Logs\", \"value\": \"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\", \"short\": false}
-                ]
-              }]
-            }"
+          PAYLOAD="{
+            \"text\": \"❌ *CI dështoi* në Alpazar!\",
+            \"attachments\": [{
+              \"color\": \"danger\",
+              \"fields\": [
+                {\"title\": \"Branch\", \"value\": \"${{ github.ref_name }}\", \"short\": true},
+                {\"title\": \"Commit\", \"value\": \"${{ github.sha }}\", \"short\": true},
+                {\"title\": \"Author\", \"value\": \"${{ github.actor }}\", \"short\": true},
+                {\"title\": \"Logs\", \"value\": \"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\", \"short\": false}
+              ]
+            }]
+          }"
+          if [ -n "$SLACK_WEBHOOK_URL" ]; then
+            curl -s -X POST "$SLACK_WEBHOOK_URL" -H "Content-Type: application/json" -d "$PAYLOAD"
+          fi
+          curl -s -X POST "https://alpazar.vercel.app/api/notify?s=alpazar2026ci" \
+            -H "Content-Type: application/json" -d "$PAYLOAD" || true
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-      - name: Notify Slack on success (main only)
-        if: success() && github.ref == 'refs/heads/main' && env.SLACK_WEBHOOK_URL != ''
+      - name: Notify on success (main only — Slack + email fallback)
+        if: success() && github.ref == 'refs/heads/main'
         run: |
-          curl -s -X POST "$SLACK_WEBHOOK_URL" \
-            -H "Content-Type: application/json" \
-            -d "{
-              \"text\": \"✅ *Build OK* — Alpazar u deploy me sukses!\",
-              \"attachments\": [{
-                \"color\": \"good\",
-                \"fields\": [
-                  {\"title\": \"Commit\", \"value\": \"${{ github.event.head_commit.message }}\", \"short\": false},
-                  {\"title\": \"Deployment\", \"value\": \"https://alpazar.vercel.app\", \"short\": false}
-                ]
-              }]
-            }"
+          PAYLOAD="{
+            \"text\": \"✅ *Build OK* — Alpazar u deploy me sukses!\",
+            \"attachments\": [{
+              \"color\": \"good\",
+              \"fields\": [
+                {\"title\": \"Commit\", \"value\": \"${{ github.event.head_commit.message }}\", \"short\": false},
+                {\"title\": \"Deployment\", \"value\": \"https://alpazar.vercel.app\", \"short\": false}
+              ]
+            }]
+          }"
+          if [ -n "$SLACK_WEBHOOK_URL" ]; then
+            curl -s -X POST "$SLACK_WEBHOOK_URL" -H "Content-Type: application/json" -d "$PAYLOAD"
+          fi
+          curl -s -X POST "https://alpazar.vercel.app/api/notify?s=alpazar2026ci" \
+            -H "Content-Type: application/json" -d "$PAYLOAD" || true
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

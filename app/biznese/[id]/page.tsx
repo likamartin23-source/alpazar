@@ -128,7 +128,7 @@ export default function BiznesPage({ params }: { params: { id: string } }) {
       <div style={{ position: 'relative' }}>
         <div style={{ aspectRatio: '16/7', overflow: 'hidden', background: 'linear-gradient(135deg,#F5C842,#E63312)' }}>
           {biz.cover_url && (
-            <img src={biz.cover_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            <img src={biz.cover_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
           )}
         </div>
@@ -292,7 +292,7 @@ export default function BiznesPage({ params }: { params: { id: string } }) {
                 return (
                   <div key={l.id} className="ig-cell" onClick={() => window.location.href = `/listing/${l.id}`}>
                     {img
-                      ? <img src={img} alt={l.title} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
+                      ? <img src={img} alt={l.title} loading="lazy" width={400} height={400} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
                       : <div style={{ width: '100%', height: '100%', background: '#e8e8e8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><i className="ti ti-photo" style={{ fontSize: 22, color: '#ccc' }} /></div>
                     }
                     <div className="ig-overlay" />

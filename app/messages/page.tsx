@@ -1194,7 +1194,7 @@ export default function MessagesPage() {
                                       )}
                                     </div>
                                     {m.reply_msg.type === 'image' && m.reply_msg.attachment_url && (
-                                      <img className="rp-img" src={m.reply_msg.attachment_url} alt="" />
+                                      <img className="rp-img" src={m.reply_msg.attachment_url} alt="" loading="lazy" />
                                     )}
                                   </div>
                                 </div>
@@ -1210,6 +1210,7 @@ export default function MessagesPage() {
                                   className="bubble-img"
                                   src={m.attachment_url}
                                   alt=""
+                                  loading="lazy"
                                   onClick={e => { e.stopPropagation(); setLightbox(m.attachment_url) }}
                                   style={{ marginBottom: m.content ? 6 : 0 }}
                                 />

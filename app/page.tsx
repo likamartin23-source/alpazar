@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { useRealtimeTable } from '../hooks/useRealtimeTable'
 import type { Category, Listing } from '../lib/types'
@@ -243,6 +243,10 @@ export default function Home() {
   const [activeCategory, setActiveCategory] = useState('all')
   const [activeFilter, setActiveFilter] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
+  const [suggestions, setSuggestions] = useState<{id:string;title:string;price:number;currency:string;images:string[]|null}[]>([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const searchRef = useRef<HTMLDivElement>(null)
+  const suggestTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [loading, setLoading] = useState(true)
   const [listingCount, setListingCount] = useState(0)
   const [userCount, setUserCount] = useState(0)
@@ -357,9 +361,33 @@ export default function Home() {
   async function handleSearch(e: React.FormEvent) {
     e.preventDefault()
     const q = searchQuery.trim()
+    setShowSuggestions(false)
     if (!q) return fetchListings()
     window.location.href = `/search/results?q=${encodeURIComponent(q)}`
   }
+
+  useEffect(() => {
+    const q = searchQuery.trim()
+    if (suggestTimer.current) clearTimeout(suggestTimer.current)
+    if (q.length < 2) { setSuggestions([]); setShowSuggestions(false); return }
+    suggestTimer.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/search/fts?q=${encodeURIComponent(q)}`)
+        const json = await res.json()
+        if (json.results?.length) { setSuggestions(json.results.slice(0, 5)); setShowSuggestions(true) }
+        else { setSuggestions([]); setShowSuggestions(false) }
+      } catch { setSuggestions([]); setShowSuggestions(false) }
+    }, 280)
+    return () => { if (suggestTimer.current) clearTimeout(suggestTimer.current) }
+  }, [searchQuery])
+
+  useEffect(() => {
+    function handleOutside(e: MouseEvent) {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) setShowSuggestions(false)
+    }
+    document.addEventListener('mousedown', handleOutside)
+    return () => document.removeEventListener('mousedown', handleOutside)
+  }, [])
 
   const fmt = (price: number, cur: string) =>
     !price ? 'Çmim me marrëveshje' :
@@ -405,6 +433,12 @@ export default function Home() {
         .search-wrap input{border:none;background:transparent;font-size:13px;color:#111;outline:none;flex:1;padding:10px 0;font-family:inherit;}
         .search-wrap input::placeholder{color:#bbb;}
         .search-btn{background:#111;color:#F5C842;border:none;border-radius:10px;padding:10px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .search-suggestions{position:absolute;left:12px;right:12px;top:100%;background:#fff;border-radius:0 0 12px 12px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:200;overflow:hidden;border:1.5px solid rgba(0,0,0,.08);border-top:none;}
+        .sug-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;transition:background .1s;}
+        .sug-item:hover{background:#FFFBEA;}
+        .sug-img{width:38px;height:38px;border-radius:6px;object-fit:cover;flex-shrink:0;background:#f0e8d0;}
+        .sug-title{font-size:13px;font-weight:600;color:#111;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .sug-price{font-size:12px;font-weight:700;color:#E63312;white-space:nowrap;}
         /* Categories */
         .cat-scroll{display:flex;gap:6px;padding:0 10px 10px;overflow-x:auto;scroll-snap-type:x mandatory;}
         .cat-scroll::-webkit-scrollbar{display:none;}
@@ -561,18 +595,40 @@ export default function Home() {
             </div>
           </div>
 
-          <form className="searchbar" onSubmit={handleSearch}>
-            <div className="search-wrap">
-              <i className="ti ti-search" />
-              <input
-                type="text"
-                placeholder="Kërko çdo gjë në Shqipëri..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <button type="submit" className="search-btn">Kërko</button>
-          </form>
+          <div ref={searchRef} style={{ position: 'relative' }}>
+            <form className="searchbar" onSubmit={handleSearch}>
+              <div className="search-wrap">
+                <i className="ti ti-search" />
+                <input
+                  type="text"
+                  placeholder="Kërko çdo gjë në Shqipëri..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+                  autoComplete="off"
+                />
+              </div>
+              <button type="submit" className="search-btn">Kërko</button>
+            </form>
+            {showSuggestions && suggestions.length > 0 && (
+              <div className="search-suggestions">
+                {suggestions.map(s => {
+                  const img = Array.isArray(s.images) && s.images.length ? s.images[0] : null
+                  const price = !s.price ? 'Falas' : s.currency === 'EUR' ? `${s.price.toLocaleString('sq-AL')} €` : `${s.price.toLocaleString('sq-AL')} L`
+                  return (
+                    <div key={s.id} className="sug-item" onMouseDown={() => { setShowSuggestions(false); window.location.href = `/listing/${s.id}` }}>
+                      {img
+                        ? <img src={img} alt="" className="sug-img" loading="lazy" />
+                        : <div className="sug-img" style={{ display:'flex', alignItems:'center', justifyContent:'center', fontSize:18 }}>📦</div>
+                      }
+                      <span className="sug-title">{s.title}</span>
+                      <span className="sug-price">{price}</span>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
 
           <div className="cat-scroll">
             <button className={`cat-item ${activeCategory === 'all' ? 'active' : ''}`} onClick={() => { setActiveCategory('all'); fetchListings('all', activeFilter) }}>
