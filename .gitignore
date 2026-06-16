@@ -19,3 +19,5 @@ skills-lock.json
 .codegraph/
 .graphify/
 .claude/skills/
+.playwright-mcp/
+alpazar-playwright.png
