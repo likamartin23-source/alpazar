@@ -224,10 +224,13 @@ export default function ProfilePage() {
   }
 
   async function saveProfile() {
+    const uname = form.username.trim().toLowerCase().replace(/\s+/g, '_')
+    if (uname.length < 3) { setMsg('err:Emri i përdoruesit duhet të ketë të paktën 3 karaktere.'); return }
+    if (!/^[a-z0-9_]+$/.test(uname)) { setMsg('err:Emri i përdoruesit mund të përmbajë vetëm shkronja, numra dhe nënvija (_).'); return }
     setSaving(true); setMsg('')
     const { error } = await supabase.from('profiles').update({
       full_name: form.full_name.trim(),
-      username: form.username.trim().toLowerCase().replace(/\s+/g, '_'),
+      username: uname,
       city: form.city,
       bio: form.bio.trim(),
     }).eq('id', user.id)

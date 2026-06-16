@@ -472,7 +472,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
   const hasShop = seller?.is_premium && seller?.shop_name
   const initials  = (seller?.shop_name || seller?.full_name || '?').slice(0, 2).toUpperCase()
   const groups    = buildGroups(chatMsgs)
-  const showChatSheet = !isOwner && (user || !user)
+  const showChatSheet = !isOwner
   const chatPanelOpen = chatOpen && showChatSheet
 
   return (
