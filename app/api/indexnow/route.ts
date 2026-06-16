@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../lib/supabase'
 
-const INDEXNOW_KEY = '825731eba0e14fec916791e52a62816c'
+const INDEXNOW_KEY = process.env.INDEXNOW_KEY || '825731eba0e14fec916791e52a62816c'
 const BASE_URL = 'https://alpazar.vercel.app'
 
 // Faqet statike gjithmonë të rëndësishme
@@ -24,6 +24,25 @@ const INDEXNOW_ENDPOINTS = [
   { name: 'naver',   url: 'https://searchadvisor.naver.com/indexnow' },
   { name: 'seznam',  url: 'https://search.seznam.cz/indexnow' },
 ]
+
+// Called from client after creating a listing — pings a single URL
+export async function POST(req: NextRequest) {
+  let body: any = {}
+  try { body = await req.json() } catch { /* ignore */ }
+
+  const url = String(body.url || '').trim()
+  if (!url.startsWith(`${BASE_URL}/`)) {
+    return NextResponse.json({ ok: false }, { status: 400 })
+  }
+
+  fetch('https://api.indexnow.org/indexnow', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json; charset=utf-8' },
+    body: JSON.stringify({ host: 'alpazar.vercel.app', key: INDEXNOW_KEY, urlList: [url] }),
+  }).catch(() => {})
+
+  return NextResponse.json({ ok: true })
+}
 
 export async function GET(req: NextRequest) {
   // Fail-closed: kërko gjithmonë CRON_SECRET

@@ -180,15 +180,11 @@ export default function NewListing() {
       if (error) { setMsg(`err:${error.message}`); setLoading(false); return }
       const bonusMsg = myListingCount === 0 ? ' +35 pikë gamifikimi (bonus fillestar)! 🎉' : ' +10 pikë gamifikimi! ⚡'
       setMsg(`ok:Shpallja u publikua me sukses!${bonusMsg}`)
-      // IndexNow ping — instant Bing/Yandex indexing
-      fetch('https://www.bing.com/indexnow', {
+      // IndexNow ping — instant Bing/Yandex indexing (key kept server-side)
+      fetch('/api/indexnow', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          host: 'alpazar.vercel.app',
-          key: 'alpazar2025vercel',
-          urlList: [`https://alpazar.vercel.app/listing/${data.id}`],
-        }),
+        body: JSON.stringify({ url: `https://alpazar.vercel.app/listing/${data.id}` }),
       }).catch(() => {})
       // Upsell pas shpalljes së 2-të — max 1 herë/sesion
       if (myListingCount === 1 && !sessionStorage.getItem('alpazar_upsell_shown')) {

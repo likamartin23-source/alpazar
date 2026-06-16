@@ -3,8 +3,8 @@ import { Resend } from 'resend'
 
 export const runtime = 'nodejs'
 
-const NOTIFY_SECRET = process.env.NOTIFY_WEBHOOK_SECRET || 'alpazar2026ci'
-const NOTIFY_EMAIL  = 'likamartin23@gmail.com'
+const NOTIFY_SECRET = process.env.NOTIFY_WEBHOOK_SECRET
+const NOTIFY_EMAIL  = process.env.ADMIN_EMAIL || 'likamartin23@gmail.com'
 
 function getResend(): Resend | null {
   const key = process.env.RESEND_API_KEY
@@ -13,8 +13,11 @@ function getResend(): Resend | null {
 
 // Accepts Slack Incoming Webhook format — used by GitHub Actions CI
 export async function POST(req: NextRequest) {
+  if (!NOTIFY_SECRET) {
+    return NextResponse.json({ error: 'Not configured' }, { status: 500 })
+  }
   const secret = req.nextUrl.searchParams.get('s')
-  if (secret !== NOTIFY_SECRET) {
+  if (!secret || secret !== NOTIFY_SECRET) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
