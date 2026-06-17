@@ -626,9 +626,9 @@ export default function ProfilePage() {
                 {editing ? (
                   <>
                     <label>Emri i plotë</label>
-                    <input type="text" value={form.full_name} onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))} placeholder="Emri Mbiemri" />
+                    <input type="text" value={form.full_name} onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))} placeholder="Emri Mbiemri" maxLength={80} autoComplete="name" />
                     <label>Username</label>
-                    <input type="text" value={form.username} onChange={e => setForm(f => ({ ...f, username: e.target.value }))} placeholder="username123" />
+                    <input type="text" value={form.username} onChange={e => setForm(f => ({ ...f, username: e.target.value }))} placeholder="username123" maxLength={30} autoComplete="username" />
                     <label>Qyteti</label>
                     <select value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))}>
                       <option value="">— Zgjidh —</option>
@@ -830,6 +830,7 @@ export default function ProfilePage() {
                       placeholder="Shkruaj fjalëkalimin për të konfirmuar"
                       value={deletePassword}
                       onChange={e => setDeletePassword(e.target.value)}
+                      autoComplete="current-password"
                       style={{ width: '100%', border: '1.5px solid #E63312', borderRadius: 8, padding: '8px 10px', fontSize: 13, fontFamily: 'inherit', marginBottom: 10, boxSizing: 'border-box', outline: 'none' }}
                     />
                     <div className="delete-confirm-btns">

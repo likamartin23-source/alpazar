@@ -200,6 +200,7 @@ export default function TeDhenatMiaPage() {
                 value={deletePassword}
                 onChange={e => setDeletePassword(e.target.value)}
                 placeholder="Shkruaj fjalëkalimin për të konfirmuar"
+                autoComplete="current-password"
                 style={{ width: '100%', border: '1.5px solid #dc2626', borderRadius: 10, padding: '10px 12px', fontSize: 13, marginBottom: 10, fontFamily: 'inherit', boxSizing: 'border-box', outline: 'none' }}
               />
               <div style={{ display: 'flex', gap: 8 }}>
