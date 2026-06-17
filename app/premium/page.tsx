@@ -55,17 +55,23 @@ export default function PremiumPage() {
     const endDate = new Date()
     endDate.setMonth(endDate.getMonth() + (plan === 'monthly' ? 1 : 12))
 
-    const { error } = await supabase.from('premium_subscriptions').insert({
-      user_id: user.id,
-      plan,
-      amount_eur: amount,
-      period: plan === 'monthly' ? 1 : 12,
-      end_date: endDate.toISOString(),
-      payment_method: payMethod,
-      status: 'pending',
-    })
+    const [{ error }, { error: reqErr }] = await Promise.all([
+      supabase.from('premium_subscriptions').insert({
+        user_id: user.id,
+        plan,
+        amount_eur: amount,
+        period: plan === 'monthly' ? 1 : 12,
+        end_date: endDate.toISOString(),
+        payment_method: payMethod,
+        status: 'pending',
+      }),
+      supabase.from('premium_requests').upsert(
+        { user_id: user.id, plan, status: 'pending' },
+        { onConflict: 'user_id', ignoreDuplicates: false }
+      ),
+    ])
     if (error) { setMsg(`err:${error.message}`); setSubmitting(false); return }
-    // Rifresko session për claims të reja pas dërgimit të kërkesës
+    if (reqErr) console.warn('premium_requests insert:', reqErr.message)
     await supabase.auth.refreshSession()
     setMsg('ok:Kërkesa u dërgua! Admini do ta konfirmojë brenda 24 orësh.')
     setSubmitting(false)

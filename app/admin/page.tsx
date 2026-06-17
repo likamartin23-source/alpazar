@@ -441,6 +441,7 @@ export default function Admin() {
   const [tab, setTab] = useState('dash')
   const [stats, setStats] = useState({ users: 0, premium: 0, revenue: 0, listings: 0, messages: 0, reports: 0 })
   const [payments, setPayments] = useState<any[]>([])
+  const [premiumRequests, setPremiumRequests] = useState<any[]>([])
   const [methods, setMethods] = useState<any[]>([])
   const [authChecked, setAuthChecked] = useState(false)
   const [mfaRequired, setMfaRequired] = useState(false)
@@ -489,7 +490,7 @@ export default function Admin() {
     const [
       { count: u }, { count: pr }, { count: l },
       { count: msgs }, { count: reps },
-      { data: pm }, { data: mt },
+      { data: pm }, { data: mt }, { data: preq },
     ] = await Promise.all([
       supabase.from('profiles').select('*', { count: 'exact', head: true }),
       supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('is_premium', true),
@@ -499,12 +500,15 @@ export default function Admin() {
       supabase.from('premium_subscriptions')
         .select('*,profiles(full_name,username)').order('created_at', { ascending: false }).limit(50),
       supabase.from('payment_methods').select('*').order('sort_order'),
+      supabase.from('premium_requests')
+        .select('*,profiles(full_name,username)').order('created_at', { ascending: false }).limit(100),
     ])
     const rev = (pm || []).filter((p: any) => p.status === 'active')
       .reduce((s: number, p: any) => s + (p.amount_eur || 0), 0)
     setStats({ users: u||0, premium: pr||0, revenue: rev, listings: l||0, messages: msgs||0, reports: reps||0 })
     setPayments(pm || [])
     setMethods(mt || [])
+    setPremiumRequests(preq || [])
     setLoading(false)
   }, [])
 
@@ -521,6 +525,20 @@ export default function Admin() {
       if (e2) setPayMsg('Abonimi u ndryshua por profili nuk u përditësua: ' + e2.message)
     }
     fetchAll()
+  }
+
+  async function handlePremiumRequest(id: string, action: 'approved' | 'rejected' | 'gifted', userId: string, plan: string) {
+    const { error: e1 } = await supabase.from('premium_requests').update({ status: action }).eq('id', id)
+    if (e1) { setPayMsg('Gabim: ' + e1.message); return }
+    if (action === 'approved' || action === 'gifted') {
+      const months = plan === 'yearly' ? 12 : 1
+      const expiry = new Date()
+      expiry.setMonth(expiry.getMonth() + months)
+      const { error: e2 } = await supabase.from('profiles')
+        .update({ is_premium: true, premium_expires_at: expiry.toISOString() }).eq('id', userId)
+      if (e2) setPayMsg('Kërkesa u përpunua por profili nuk u përditësua: ' + e2.message)
+    }
+    setPremiumRequests(prev => prev.map(r => r.id === id ? { ...r, status: action } : r))
   }
 
   async function toggleMethod(id: string, cur: boolean) {
@@ -736,13 +754,54 @@ export default function Admin() {
               {/* PAYMENTS */}
               {tab === 'payments' && (
                 <>
-                  <div className="ph"><div className="pt">💳 Pagesat ({payments.length})</div></div>
+                  <div className="ph"><div className="pt">💳 Pagesat</div></div>
                   {payMsg && (
                     <div style={{ background: '#FFF0EE', border: '0.5px solid #F09595', color: '#E63312', fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 8, margin: '8px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span style={{ flex: 1 }}>⚠️ {payMsg}</span>
                       <button onClick={() => setPayMsg('')} style={{ background: 'none', border: 'none', color: '#E63312', cursor: 'pointer', fontSize: 14 }}>✕</button>
                     </div>
                   )}
+
+                  {/* Premium Requests (FAZA 4-c) */}
+                  <div className="card" style={{ marginBottom: 16 }}>
+                    <div className="ct">
+                      🎁 Kërkesat Premium
+                      {premiumRequests.filter(r => r.status === 'pending').length > 0 && (
+                        <span style={{ background: '#E63312', color: '#fff', borderRadius: 10, fontSize: 9, fontWeight: 800, padding: '1px 7px' }}>
+                          {premiumRequests.filter(r => r.status === 'pending').length} të reja
+                        </span>
+                      )}
+                    </div>
+                    {premiumRequests.length === 0 ? (
+                      <p style={{ color: '#aaa', fontSize: 12 }}>Asnjë kërkesë premium</p>
+                    ) : (
+                      <table>
+                        <thead><tr><th>Përdoruesi</th><th>Plan</th><th>Statusi</th><th>Data</th><th>Veprime</th></tr></thead>
+                        <tbody>{premiumRequests.map((r: any) => (
+                          <tr key={r.id}>
+                            <td>{r.profiles?.full_name || r.profiles?.username || '—'}</td>
+                            <td>{r.plan === 'yearly' ? 'Vjetor' : 'Mujor'}</td>
+                            <td>
+                              <span className={`badge ${r.status === 'approved' || r.status === 'gifted' ? 'ba' : r.status === 'pending' ? 'bp' : 'bd'}`}>
+                                {r.status === 'approved' ? 'Aprovuar' : r.status === 'rejected' ? 'Refuzuar' : r.status === 'gifted' ? '🎁 Dhuruar' : 'Në pritje'}
+                              </span>
+                            </td>
+                            <td style={{ color: '#888' }}>{new Date(r.created_at).toLocaleDateString('sq-AL')}</td>
+                            <td>
+                              {r.status === 'pending' && (
+                                <>
+                                  <button className="btn btn-green" onClick={() => handlePremiumRequest(r.id, 'approved', r.user_id, r.plan)}>✓ Aprovo</button>
+                                  <button className="btn btn-orange" onClick={() => handlePremiumRequest(r.id, 'gifted', r.user_id, r.plan)}>🎁 Dhuratë</button>
+                                  <button className="btn btn-red" onClick={() => handlePremiumRequest(r.id, 'rejected', r.user_id, r.plan)}>✕ Refuzo</button>
+                                </>
+                              )}
+                            </td>
+                          </tr>
+                        ))}</tbody>
+                      </table>
+                    )}
+                  </div>
+
                   <div className="card">
                     <table>
                       <thead><tr><th>Përdoruesi</th><th>Plan</th><th>Shuma</th><th>Metoda</th><th>Statusi</th><th>Data</th><th>Veprime</th></tr></thead>
