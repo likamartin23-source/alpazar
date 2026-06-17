@@ -885,6 +885,7 @@ export default function MessagesPage() {
         ref={fileInputRef} type="file" accept="image/*" style={{ display:'none' }}
         onChange={e => {
           const f = e.target.files?.[0]; if (!f) return
+          if (f.size > 25 * 1024 * 1024) { setUploadErr('Skedari është shumë i madh (max 25MB).'); e.target.value = ''; return }
           const url = URL.createObjectURL(f)
           setImgPreview({ file: f, url })
           e.target.value = ''

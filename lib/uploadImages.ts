@@ -69,10 +69,17 @@ export async function uploadImages(
   let done = 0
 
   const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'image/avif', 'image/heic', 'image/heif']
+  const MAX_FILE_SIZE = 25 * 1024 * 1024 // 25 MB
 
   for (const file of files) {
-    if (!ALLOWED_TYPES.includes(file.type) && !file.type.startsWith('image/')) {
+    if (!ALLOWED_TYPES.includes(file.type)) {
       errors.push(`${file.name}: Lloji i skedarit nuk lejohet. Provo JPG, PNG ose WebP.`)
+      done++
+      onProgress?.({ done, total: files.length })
+      continue
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      errors.push(`${file.name}: Skedari është shumë i madh (max 25MB).`)
       done++
       onProgress?.({ done, total: files.length })
       continue
