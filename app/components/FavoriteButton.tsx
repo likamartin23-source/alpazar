@@ -48,7 +48,6 @@ export function FavoriteButton({ listingId, size = 32, style, onUnfavorite }: Pr
     <button
       onClick={toggle}
       aria-label={saved ? 'Hiq nga të preferuarat' : 'Ruaj në të preferuara'}
-      title={saved ? 'Hiq nga të preferuarat' : 'Ruaj'}
       style={{
         width: size, height: size, borderRadius: '50%',
         background: 'rgba(255,255,255,.92)', border: 'none',
