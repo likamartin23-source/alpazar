@@ -58,7 +58,7 @@ function InstallBanner() {
         <i className="ti ti-device-mobile-down" style={{ fontSize: 16, color: '#fff' }} />
         <span style={{ fontSize: 7, color: '#fff', fontWeight: 800, letterSpacing: .3, lineHeight: 1 }}>Instalo</span>
       </button>
-      <button onClick={() => setDismissed(true)} style={{ background: 'none', border: 'none', color: 'rgba(34,197,94,.7)', cursor: 'pointer', fontSize: 7, padding: 0, lineHeight: 1, alignSelf: 'center' }}>✕</button>
+      <button aria-label="Mbyll" onClick={() => setDismissed(true)} style={{ background: 'none', border: 'none', color: 'rgba(34,197,94,.7)', cursor: 'pointer', fontSize: 7, padding: 0, lineHeight: 1, alignSelf: 'center' }}>✕</button>
     </div>
   )
 }
@@ -210,7 +210,7 @@ function ShareBox({ refCode }: { refCode?: string }) {
         <i className={`ti ti-${open ? 'x' : 'share-2'}`} style={{ fontSize: 16, color: '#fff' }} />
         <span style={{ fontSize: 7, color: '#fff', fontWeight: 800, letterSpacing: .3, lineHeight: 1 }}>Ndaj</span>
       </button>
-      <button onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', color: 'rgba(59,130,246,.7)', cursor: 'pointer', fontSize: 8, padding: 0, lineHeight: 1, alignSelf: 'center', display: open ? 'block' : 'none' }}>✕</button>
+      <button aria-label="Mbyll" onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', color: 'rgba(59,130,246,.7)', cursor: 'pointer', fontSize: 8, padding: 0, lineHeight: 1, alignSelf: 'center', display: open ? 'block' : 'none' }}>✕</button>
     </div>
   )
 }
@@ -893,18 +893,18 @@ export default function Home() {
             <span>Kreu</span>
           </button>
           <button className="nav-item" onClick={() => go('/search')}>
-            <i className="ti ti-search" /><span>Kërko</span>
+            <i className="ti ti-search" aria-hidden="true" /><span>Kërko</span>
           </button>
-          <div className="nav-add" onClick={() => go(user ? '/listing/new' : '/auth/login')}>
-            <i className="ti ti-plus" />
-          </div>
+          <button className="nav-add" aria-label="Shto shpallje të re" onClick={() => go(user ? '/listing/new' : '/auth/login')}>
+            <i className="ti ti-plus" aria-hidden="true" />
+          </button>
           <button className="nav-item" onClick={() => go(user ? '/messages' : '/auth/login')} style={{ position: 'relative' }}>
-            <i className="ti ti-message-circle" />
+            <i className="ti ti-message-circle" aria-hidden="true" />
             {unreadCount > 0 && <span className="nav-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>}
             <span>Mesazhe</span>
           </button>
           <button className="nav-item" onClick={() => go(user ? '/profile' : '/auth/login')} style={{ position: 'relative' }}>
-            <i className="ti ti-user-circle" />
+            <i className="ti ti-user-circle" aria-hidden="true" />
             {authReady && user && (
               <span style={{ position: 'absolute', top: 4, right: 12, width: 8, height: 8, background: '#22C55E', borderRadius: '50%', border: '1.5px solid #111' }} />
             )}
