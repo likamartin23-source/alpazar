@@ -10,31 +10,43 @@ import { FavoriteButton } from '../components/FavoriteButton'
 export default function FavoritesPage() {
   const [listings, setListings] = useState<any[]>([])
   const [loading, setLoading]   = useState(true)
+  const [loadError, setLoadError] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/auth/login'; return }
-      const { data } = await supabase
-        .from('favorites')
-        .select('listing_id, created_at, listings(id,title,price,currency,city,images,condition,is_active,is_premium)')
-        .eq('user_id', session.user.id)
-        .order('created_at', { ascending: false })
-        .limit(50)
-      setListings((data || []).map((f: any) => f.listings).filter(Boolean))
-      setLoading(false)
-    })
+      try {
+        const { data } = await supabase
+          .from('favorites')
+          .select('listing_id, created_at, listings(id,title,price,currency,city,images,condition,is_active,is_premium)')
+          .eq('user_id', session.user.id)
+          .order('created_at', { ascending: false })
+          .limit(50)
+        setListings((data || []).map((f: any) => f.listings).filter(Boolean))
+      } catch {
+        setLoadError(true)
+      } finally {
+        setLoading(false)
+      }
+    }).catch(() => { setLoadError(true); setLoading(false) })
   }, [])
 
   return (
     <div style={{ maxWidth: 480, margin: '0 auto', padding: '16px 0 80px' }}>
       <div style={{ padding: '12px 16px 0', display: 'flex', alignItems: 'center', gap: 10 }}>
-        <button onClick={() => window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
-          <i className="ti ti-arrow-left" style={{ fontSize: 22, color: '#111' }} />
+        <button type="button" aria-label="Kthehu mbrapa" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+          <i className="ti ti-arrow-left" aria-hidden="true" style={{ fontSize: 22, color: '#111' }} />
         </button>
         <h1 style={{ fontSize: 18, fontWeight: 800, color: '#111', margin: 0 }}>Të preferuarat ❤️</h1>
       </div>
 
-      {loading ? (
+      {loadError ? (
+        <div style={{ textAlign: 'center', padding: '40px 24px' }}>
+          <div style={{ fontSize: 32, marginBottom: 12 }}>⚠️</div>
+          <div style={{ fontSize: 14, color: '#E63312', marginBottom: 16 }}>Nuk u ngarkuan të dhënat. Kontrollo lidhjen dhe provo sërish.</div>
+          <button type="button" onClick={() => window.location.reload()} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
+        </div>
+      ) : loading ? (
         <div style={{ padding: '16px' }}><SkeletonGrid count={4} /></div>
       ) : listings.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '60px 24px' }}>
@@ -42,6 +54,7 @@ export default function FavoritesPage() {
           <div style={{ fontSize: 17, fontWeight: 700, color: '#111', marginBottom: 8 }}>Ende s'ke ruajtur asgjë</div>
           <div style={{ fontSize: 13, color: '#888', marginBottom: 24 }}>Shfleto shpalljet dhe ruaj ato që të pëlqejnë</div>
           <button
+            type="button"
             onClick={() => { window.location.href = '/search' }}
             style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 24px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
           >

@@ -8,20 +8,26 @@ import { supabase } from '../../lib/supabase'
 export default function SavedSearchesPage() {
   const [searches, setSearches] = useState<any[]>([])
   const [loading, setLoading]   = useState(true)
+  const [loadError, setLoadError] = useState(false)
   const [userId, setUserId]     = useState<string | null>(null)
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/auth/login'; return }
       setUserId(session.user.id)
-      const { data } = await supabase
-        .from('saved_searches')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .order('created_at', { ascending: false })
-      setSearches(data || [])
-      setLoading(false)
-    })
+      try {
+        const { data } = await supabase
+          .from('saved_searches')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .order('created_at', { ascending: false })
+        setSearches(data || [])
+      } catch {
+        setLoadError(true)
+      } finally {
+        setLoading(false)
+      }
+    }).catch(() => { setLoadError(true); setLoading(false) })
   }, [])
 
   async function toggleNotify(id: string, current: boolean) {
@@ -52,14 +58,20 @@ export default function SavedSearchesPage() {
   return (
     <div style={{ maxWidth: 480, margin: '0 auto', padding: '16px 0 80px' }}>
       <div style={{ padding: '12px 16px 0', display: 'flex', alignItems: 'center', gap: 10 }}>
-        <button onClick={() => window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
-          <i className="ti ti-arrow-left" style={{ fontSize: 22, color: '#111' }} />
+        <button type="button" aria-label="Kthehu mbrapa" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+          <i className="ti ti-arrow-left" aria-hidden="true" style={{ fontSize: 22, color: '#111' }} />
         </button>
         <h1 style={{ fontSize: 18, fontWeight: 800, color: '#111', margin: 0 }}>Kërkimet e ruajtura 🔔</h1>
       </div>
 
       <div style={{ padding: '16px' }}>
-        {loading ? (
+        {loadError ? (
+          <div style={{ textAlign: 'center', padding: '40px 24px' }}>
+            <div style={{ fontSize: 32, marginBottom: 12 }}>⚠️</div>
+            <div style={{ fontSize: 14, color: '#E63312', marginBottom: 16 }}>Nuk u ngarkuan të dhënat. Kontrollo lidhjen dhe provo sërish.</div>
+            <button type="button" onClick={() => { setLoadError(false); setLoading(true); window.location.reload() }} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
+          </div>
+        ) : loading ? (
           <div style={{ color: '#888', textAlign: 'center', padding: 40 }}>Duke ngarkuar...</div>
         ) : searches.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px 24px' }}>
@@ -67,6 +79,7 @@ export default function SavedSearchesPage() {
             <div style={{ fontSize: 17, fontWeight: 700, color: '#111', marginBottom: 8 }}>Ende s'ke kërkime të ruajtura</div>
             <div style={{ fontSize: 13, color: '#888', marginBottom: 24 }}>Ruaj filtrat e kërkimit dhe njoftohu kur dalin shpallje të reja</div>
             <button
+              type="button"
               onClick={() => { window.location.href = '/search' }}
               style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 24px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
             >
