@@ -69,7 +69,7 @@ export default async function ListingPage({ params }: { params: { id: string } }
             : 'https://schema.org/OutOfStock',
           url: `${SITE_URL}/listing/${params.id}`,
         },
-      })
+      }).replace(/</g, '\\u003c').replace(/>/g, '\\u003e')
     : null
 
   return (
