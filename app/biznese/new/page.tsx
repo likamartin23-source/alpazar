@@ -153,8 +153,8 @@ export default function BiznesNewPage() {
 
       {/* Header */}
       <div style={{ background: 'linear-gradient(180deg,#F5C842,#f0bc30)', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10, position: 'sticky', top: 0, zIndex: 10 }}>
-        <button onClick={() => step > 1 ? setStep(s => s - 1) : window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
-          <i className="ti ti-arrow-left" style={{ fontSize: 22, color: '#111' }} />
+        <button aria-label="Kthehu mbrapa" onClick={() => step > 1 ? setStep(s => s - 1) : window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+          <i className="ti ti-arrow-left" aria-hidden="true" style={{ fontSize: 22, color: '#111' }} />
         </button>
         <span style={{ fontSize: 15, fontWeight: 700, color: '#111', flex: 1 }}>🏢 Krijo Biznes Online</span>
         {/* Progress dots */}

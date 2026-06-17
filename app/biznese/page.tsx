@@ -49,8 +49,8 @@ export default function BiznestPage() {
     <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh', paddingBottom: 80, fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
       {/* Header */}
       <div style={{ background: 'linear-gradient(180deg,#F5C842,#f0bc30)', padding: '14px 16px 16px' }}>
-        <button onClick={() => window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', marginBottom: 10, padding: 0 }}>
-          <i className="ti ti-arrow-left" style={{ fontSize: 22, color: '#111' }} />
+        <button aria-label="Kthehu mbrapa" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', marginBottom: 10, padding: 0 }}>
+          <i className="ti ti-arrow-left" aria-hidden="true" style={{ fontSize: 22, color: '#111' }} />
         </button>
         <h1 style={{ fontSize: 22, fontWeight: 800, color: '#111', margin: '0 0 4px' }}>🏢 Bizneset</h1>
         <p style={{ fontSize: 13, color: '#7B5000', margin: 0 }}>Zbulo bizneset shqiptare në Alpazar</p>
