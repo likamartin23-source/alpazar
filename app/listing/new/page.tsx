@@ -322,14 +322,14 @@ export default function NewListing() {
             <div className="card-title"><i className="ti ti-info-circle" />Informacioni bazë</div>
 
             <div className="field">
-              <label>Titulli *</label>
-              <input type="text" placeholder="p.sh. iPhone 13 Pro Max 256GB..." value={form.title} onChange={e => set('title', e.target.value)} maxLength={100} />
+              <label htmlFor="listing-title">Titulli *</label>
+              <input id="listing-title" type="text" placeholder="p.sh. iPhone 13 Pro Max 256GB..." value={form.title} onChange={e => set('title', e.target.value)} maxLength={100} />
               <div style={{ textAlign: 'right', fontSize: 10, color: form.title.length > 85 ? '#E63312' : '#aaa', marginTop: 2 }}>{form.title.length}/100</div>
             </div>
 
             <div className="field">
-              <label>Përshkrimi</label>
-              <textarea placeholder="Përshkruaj artikullin — gjendje, veçori, arsye shitjeje..." value={form.description} onChange={e => set('description', e.target.value)} maxLength={2000} />
+              <label htmlFor="listing-description">Përshkrimi</label>
+              <textarea id="listing-description" placeholder="Përshkruaj artikullin — gjendje, veçori, arsye shitjeje..." value={form.description} onChange={e => set('description', e.target.value)} maxLength={2000} />
               <div style={{ textAlign: 'right', fontSize: 10, color: form.description.length > 1800 ? '#E63312' : '#aaa', marginTop: 2 }}>{form.description.length}/2000</div>
               <button
                 type="button"
@@ -347,9 +347,9 @@ export default function NewListing() {
             </div>
 
             <div className="field">
-              <label>Çmimi</label>
+              <label htmlFor="listing-price">Çmimi</label>
               <div className="price-row">
-                <input type="number" placeholder="0" value={form.price} onChange={e => set('price', e.target.value)} min="0" />
+                <input id="listing-price" type="number" placeholder="0" value={form.price} onChange={e => set('price', e.target.value)} min="0" />
                 <select value={form.currency} onChange={e => set('currency', e.target.value)}>
                   <option value="ALL">L (Lekë)</option>
                   <option value="EUR">€ (Euro)</option>
@@ -384,7 +384,7 @@ export default function NewListing() {
 
             <div className="field">
               <label>Gjendja</label>
-              <div className="cond-row">
+              <div className="cond-row" aria-label="Gjendja">
                 <button className={`cond-btn ${form.condition === 'i_ri' ? 'active' : ''}`} onClick={() => set('condition', 'i_ri')}>✨ I ri</button>
                 <button className={`cond-btn ${form.condition === 'i_perdorur' ? 'active' : ''}`} onClick={() => set('condition', 'i_perdorur')}>🔄 I përdorur</button>
               </div>
@@ -410,8 +410,9 @@ export default function NewListing() {
           <div className="card">
             <div className="card-title"><i className="ti ti-map-pin" />Vendndodhja *</div>
             <div className="field">
-              <label>Qyteti *</label>
+              <label htmlFor="listing-city">Qyteti *</label>
               <input
+                id="listing-city"
                 type="text"
                 placeholder="p.sh. Tiranë, Durrës, Vlorë..."
                 value={form.city}

@@ -163,8 +163,8 @@ export default function ReferralPage() {
       <style>{CSS}</style>
       <div className="wrap">
         <div className="topbar">
-          <button className="back" onClick={() => window.history.back()}>
-            <i className="ti ti-arrow-left" />
+          <button type="button" className="back" aria-label="Kthehu mbrapa" onClick={() => window.history.back()}>
+            <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
           <span className="topbar-title">🎁 Programi i Referimit</span>
         </div>
@@ -182,7 +182,7 @@ export default function ReferralPage() {
             <div className="card">
               <div className="card-title"><i className="ti ti-lock" />Hyr për të parë referalet</div>
               <p style={{ fontSize: 12, color: '#888', marginBottom: 14 }}>Krijo llogari falas dhe fillo të fitosh pikë duke ftuar miqtë.</p>
-              <button className="login-cta" onClick={() => window.location.href = '/auth/login'}>
+              <button type="button" className="login-cta" onClick={() => window.location.href = '/auth/login'}>
                 🔑 Hyr / Regjistrohu
               </button>
             </div>
@@ -271,6 +271,8 @@ export default function ReferralPage() {
                     <div className="ref-url" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{refUrl}</div>
                   </div>
                   <button
+                    type="button"
+                    aria-label="Kopjo linkun e referimit"
                     onClick={() => { navigator.clipboard.writeText(refUrl); setCopied(true); setTimeout(() => setCopied(false), 2000) }}
                     style={{ flexShrink: 0, background: copied ? '#1D9E75' : '#F5C842', color: copied ? '#fff' : '#111', border: 'none', borderRadius: 10, padding: '8px 14px', fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: 'inherit', transition: 'all .2s', whiteSpace: 'nowrap' }}
                   >

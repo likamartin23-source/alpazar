@@ -117,8 +117,8 @@ export default function TeDhenatMiaPage() {
     <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh', paddingBottom: 80, fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
       {/* Header */}
       <div style={{ background: 'linear-gradient(180deg,#F5C842,#f0bc30)', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10, position: 'sticky', top: 0, zIndex: 10 }}>
-        <button onClick={() => window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
-          <i className="ti ti-arrow-left" style={{ fontSize: 22, color: '#111' }} />
+        <button type="button" aria-label="Kthehu mbrapa" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+          <i className="ti ti-arrow-left" aria-hidden="true" style={{ fontSize: 22, color: '#111' }} />
         </button>
         <span style={{ fontSize: 15, fontWeight: 700, color: '#111', flex: 1 }}>🔒 Të dhënat e mia (GDPR)</span>
       </div>
@@ -153,6 +153,7 @@ export default function TeDhenatMiaPage() {
             <div>🚫 <strong>Art.21</strong> — E drejta e kundërshtimit (opt-out marketing)</div>
           </div>
           <button
+            type="button"
             onClick={exportData}
             disabled={exporting}
             style={{ width: '100%', background: '#111', color: '#F5C842', border: 'none', borderRadius: 11, padding: '12px 0', fontSize: 13, fontWeight: 700, cursor: exporting ? 'not-allowed' : 'pointer', opacity: exporting ? 0.6 : 1, fontFamily: 'inherit' }}
@@ -187,6 +188,7 @@ export default function TeDhenatMiaPage() {
           </div>
           {!confirmDelete ? (
             <button
+              type="button"
               onClick={() => setConfirmDelete(true)}
               style={{ width: '100%', background: 'transparent', color: '#dc2626', border: '1.5px solid #dc2626', borderRadius: 11, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
             >
@@ -196,21 +198,25 @@ export default function TeDhenatMiaPage() {
             <div>
               <div style={{ fontSize: 12, fontWeight: 700, color: '#dc2626', marginBottom: 10 }}>Jeni i sigurt? Ky veprim NUK mund të kthehet!</div>
               <input
+                id="delete-confirm-password"
                 type="password"
                 value={deletePassword}
                 onChange={e => setDeletePassword(e.target.value)}
                 placeholder="Shkruaj fjalëkalimin për të konfirmuar"
+                aria-label="Fjalëkalimi për konfirmim fshirjeje"
                 autoComplete="current-password"
                 style={{ width: '100%', border: '1.5px solid #dc2626', borderRadius: 10, padding: '10px 12px', fontSize: 13, marginBottom: 10, fontFamily: 'inherit', boxSizing: 'border-box', outline: 'none' }}
               />
               <div style={{ display: 'flex', gap: 8 }}>
                 <button
+                  type="button"
                   onClick={() => setConfirmDelete(false)}
                   style={{ flex: 1, background: '#f0f0f0', color: '#333', border: 'none', borderRadius: 10, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
                 >
                   Anulo
                 </button>
                 <button
+                  type="button"
                   onClick={deleteAccount}
                   disabled={deleting}
                   style={{ flex: 1, background: '#dc2626', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: deleting ? 'not-allowed' : 'pointer', opacity: deleting ? 0.7 : 1, fontFamily: 'inherit' }}

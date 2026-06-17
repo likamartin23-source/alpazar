@@ -639,17 +639,17 @@ export default function ProfilePage() {
 
                 {editing ? (
                   <>
-                    <label>Emri i plotë</label>
-                    <input type="text" value={form.full_name} onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))} placeholder="Emri Mbiemri" maxLength={80} autoComplete="name" />
-                    <label>Username</label>
-                    <input type="text" value={form.username} onChange={e => setForm(f => ({ ...f, username: e.target.value }))} placeholder="username123" maxLength={30} autoComplete="username" />
-                    <label>Qyteti</label>
-                    <select value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))}>
+                    <label htmlFor="prof-fullname">Emri i plotë</label>
+                    <input id="prof-fullname" type="text" value={form.full_name} onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))} placeholder="Emri Mbiemri" maxLength={80} autoComplete="name" />
+                    <label htmlFor="prof-username">Username</label>
+                    <input id="prof-username" type="text" value={form.username} onChange={e => setForm(f => ({ ...f, username: e.target.value }))} placeholder="username123" maxLength={30} autoComplete="username" />
+                    <label htmlFor="prof-city">Qyteti</label>
+                    <select id="prof-city" value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))}>
                       <option value="">— Zgjidh —</option>
                       {['Tiranë', 'Durrës', 'Vlorë', 'Shkodër', 'Elbasan', 'Fier', 'Korçë', 'Berat', 'Sarandë', 'Tjetër'].map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
-                    <label>Bio</label>
-                    <textarea value={form.bio} onChange={e => setForm(f => ({ ...f, bio: e.target.value }))} placeholder="Pak fjalë rreth vetes..." maxLength={300} />
+                    <label htmlFor="prof-bio">Bio</label>
+                    <textarea id="prof-bio" value={form.bio} onChange={e => setForm(f => ({ ...f, bio: e.target.value }))} placeholder="Pak fjalë rreth vetes..." maxLength={300} />
                   </>
                 ) : (
                   <>
@@ -773,8 +773,9 @@ export default function ProfilePage() {
                 {emailMsg && (
                   <div className={`msg-box msg-sm ${emailMsg.split(':')[0]}`}>{emailMsg.split(/:(.+)/)[1]}</div>
                 )}
-                <label>Email aktual: <strong>{user?.email}</strong></label>
+                <label htmlFor="prof-new-email">Email aktual: <strong>{user?.email}</strong></label>
                 <input
+                  id="prof-new-email"
                   type="email"
                   placeholder="Email i ri..."
                   value={newEmail}
@@ -795,9 +796,10 @@ export default function ProfilePage() {
                 {passMsg && (
                   <div className={`msg-box msg-sm ${passMsg.split(':')[0]}`}>{passMsg.split(/:(.+)/)[1]}</div>
                 )}
-                <label>Fjalëkalimi i ri (min. 8 karaktere)</label>
+                <label htmlFor="prof-new-pass">Fjalëkalimi i ri (min. 8 karaktere)</label>
                 <div className="pass-wrap">
                   <input
+                    id="prof-new-pass"
                     type={showNewPass ? 'text' : 'password'}
                     placeholder="••••••••"
                     value={newPass}
@@ -809,8 +811,9 @@ export default function ProfilePage() {
                     {showNewPass ? '🙈' : '👁️'}
                   </button>
                 </div>
-                <label>Konfirmo fjalëkalimin e ri</label>
+                <label htmlFor="prof-confirm-pass">Konfirmo fjalëkalimin e ri</label>
                 <input
+                  id="prof-confirm-pass"
                   type="password"
                   placeholder="••••••••"
                   value={newPass2}
@@ -1088,8 +1091,9 @@ export default function ProfilePage() {
                       <span className="card-title">🏢 Konfiguro Biznesin</span>
                     </div>
 
-                    <label>Emri i biznesit *</label>
+                    <label htmlFor="shop-name">Emri i biznesit *</label>
                     <input
+                      id="shop-name"
                       type="text"
                       value={shopForm.shop_name}
                       onChange={e => setShopForm(f => ({ ...f, shop_name: e.target.value }))}
@@ -1097,21 +1101,23 @@ export default function ProfilePage() {
                       maxLength={60}
                     />
 
-                    <label>Kategoria kryesore</label>
-                    <select value={shopForm.shop_category} onChange={e => setShopForm(f => ({ ...f, shop_category: e.target.value }))}>
+                    <label htmlFor="shop-category">Kategoria kryesore</label>
+                    <select id="shop-category" value={shopForm.shop_category} onChange={e => setShopForm(f => ({ ...f, shop_category: e.target.value }))}>
                       {SHOP_CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
                     </select>
 
-                    <label>Përshkrimi i biznesit</label>
+                    <label htmlFor="shop-description">Përshkrimi i biznesit</label>
                     <textarea
+                      id="shop-description"
                       value={shopForm.shop_description}
                       onChange={e => setShopForm(f => ({ ...f, shop_description: e.target.value }))}
                       placeholder="Përshkruaj biznesin tënd — çfarë shet, ku je, si kontaktoni..."
                       maxLength={300}
                     />
 
-                    <label>URL e bannerit (opsionale)</label>
+                    <label htmlFor="shop-banner-url">URL e bannerit (opsionale)</label>
                     <input
+                      id="shop-banner-url"
                       type="url"
                       value={shopForm.shop_banner_url}
                       onChange={e => setShopForm(f => ({ ...f, shop_banner_url: e.target.value }))}

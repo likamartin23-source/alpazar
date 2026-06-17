@@ -222,18 +222,19 @@ function AppConfigTab() {
         <div className="ct">Vlerat e Tekstit / Numrave</div>
         {otherKeys.map(s => (
           <div key={s.key} style={{ marginBottom: 14 }}>
-            <label style={{ fontSize: 10, color: '#888', display: 'block', marginBottom: 2 }}>
+            <label htmlFor={`cfg-${s.key}`} style={{ fontSize: 10, color: '#888', display: 'block', marginBottom: 2 }}>
               {s.label} <span style={{ color: '#ccc' }}>— {s.desc}</span>
             </label>
             <div className="save-row">
               <input
+                id={`cfg-${s.key}`}
                 className="finput"
                 type={s.type === 'int' || s.type === 'float' ? 'number' : 'text'}
                 value={localVals[s.key] ?? config[s.key] ?? ''}
                 onChange={e => setLocalVals(prev => ({ ...prev, [s.key]: e.target.value }))}
                 onKeyDown={e => e.key === 'Enter' && save(s.key)}
               />
-              <button className="save-btn" onClick={() => save(s.key)} style={{ whiteSpace: 'nowrap' }}>
+              <button type="button" className="save-btn" onClick={() => save(s.key)} style={{ whiteSpace: 'nowrap' }}>
                 {saved[s.key] ? '✓ Ruajtur' : 'Ruaj'}
               </button>
             </div>

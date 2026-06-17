@@ -821,9 +821,10 @@ export default function Auth() {
               <p className="sub">Shit · Bli · Bëj Pazrin Tënd</p>
 
               <div className="field">
-                <label>Email ose Numër Telefoni</label>
+                <label htmlFor="login-identifier">Email ose Numër Telefoni</label>
                 <div className="contact-wrap">
                   <input
+                    id="login-identifier"
                     type="text"
                     placeholder="+355 6X XXX XXXX  ose  email@domain.com"
                     value={contact}
@@ -839,9 +840,10 @@ export default function Auth() {
               </div>
 
               <div className="field">
-                <label>Fjalëkalimi</label>
+                <label htmlFor="login-password">Fjalëkalimi</label>
                 <div className="pass-wrap">
                   <input
+                    id="login-password"
                     type={showPass ? 'text' : 'password'}
                     placeholder="••••••••"
                     value={password}
@@ -891,27 +893,27 @@ export default function Auth() {
 
               <div className="row-2">
                 <div className="field">
-                  <label>Emri *</label>
-                  <input type="text" placeholder="Arta" value={firstName}
+                  <label htmlFor="reg-firstname">Emri *</label>
+                  <input id="reg-firstname" type="text" placeholder="Arta" value={firstName}
                     onChange={e => setFirstName(e.target.value)} autoComplete="given-name" />
                 </div>
                 <div className="field">
-                  <label>Mbiemri *</label>
-                  <input type="text" placeholder="Hoxha" value={lastName}
+                  <label htmlFor="reg-lastname">Mbiemri *</label>
+                  <input id="reg-lastname" type="text" placeholder="Hoxha" value={lastName}
                     onChange={e => setLastName(e.target.value)} autoComplete="family-name" />
                 </div>
               </div>
 
               <div className="field">
-                <label>Mosha * (min. 16 vjeç)</label>
-                <input type="number" placeholder="25" value={age} min="16" max="120"
+                <label htmlFor="reg-age">Mosha * (min. 16 vjeç)</label>
+                <input id="reg-age" type="number" placeholder="25" value={age} min="16" max="120"
                   onChange={e => setAge(e.target.value)} />
               </div>
 
               <div className="field">
-                <label>Email ose Numër Telefoni *</label>
+                <label htmlFor="reg-identifier">Email ose Numër Telefoni *</label>
                 <div className="contact-wrap">
-                  <input type="text"
+                  <input id="reg-identifier" type="text"
                     placeholder="+355 6X XXX XXXX  ose  email@domain.com"
                     value={contact}
                     onChange={e => setContact(e.target.value)}
@@ -926,9 +928,9 @@ export default function Auth() {
               </div>
 
               <div className="field">
-                <label>Fjalëkalimi * (min. 8 karaktere)</label>
+                <label htmlFor="reg-password">Fjalëkalimi * (min. 8 karaktere)</label>
                 <div className="pass-wrap">
-                  <input type={showRegPass ? 'text' : 'password'} placeholder="••••••••"
+                  <input id="reg-password" type={showRegPass ? 'text' : 'password'} placeholder="••••••••"
                     value={regPass} onChange={e => setRegPass(e.target.value)}
                     autoComplete="new-password" style={{ paddingRight: 36 }} />
                   <button type="button" className="pass-toggle" onClick={() => setShowRegPass(v => !v)}>
@@ -941,8 +943,8 @@ export default function Auth() {
               </div>
 
               <div className="field">
-                <label>Konfirmo Fjalëkalimin *</label>
-                <input type="password" placeholder="••••••••"
+                <label htmlFor="reg-password-confirm">Konfirmo Fjalëkalimin *</label>
+                <input id="reg-password-confirm" type="password" placeholder="••••••••"
                   value={regPass2} onChange={e => setRegPass2(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && sendOtp()}
                   autoComplete="new-password" />
@@ -973,8 +975,8 @@ export default function Auth() {
                     </div>
                   </div>
                   <div className="field" style={{ marginBottom: 10 }}>
-                    <label>📧 Emaili yt *</label>
-                    <input type="email" placeholder="emri@domain.com"
+                    <label htmlFor="otp-email-1">📧 Emaili yt *</label>
+                    <input id="otp-email-1" type="email" placeholder="emri@domain.com"
                       value={smsFailEmail}
                       onChange={e => setSmsFailEmail(e.target.value)}
                       onKeyDown={e => e.key === 'Enter' && sendOtpViaEmail()}
@@ -1006,9 +1008,9 @@ export default function Auth() {
               </p>
 
               <div className="field">
-                <label>Email ose Numër Telefoni *</label>
+                <label htmlFor="forgot-identifier">Email ose Numër Telefoni *</label>
                 <div className="contact-wrap">
-                  <input type="text"
+                  <input id="forgot-identifier" type="text"
                     placeholder="+355 6X XXX XXXX  ose  email@domain.com"
                     value={contact}
                     onChange={e => setContact(e.target.value)}
@@ -1043,8 +1045,8 @@ export default function Auth() {
                   </button>
                   <div className="divider">ose rivendos fjalëkalimin me email</div>
                   <div className="field" style={{ marginBottom: 10 }}>
-                    <label>📧 Emaili yt *</label>
-                    <input type="email" placeholder="emri@domain.com"
+                    <label htmlFor="otp-email-2">📧 Emaili yt *</label>
+                    <input id="otp-email-2" type="email" placeholder="emri@domain.com"
                       value={smsFailEmail}
                       onChange={e => setSmsFailEmail(e.target.value)}
                       onKeyDown={e => e.key === 'Enter' && sendOtpViaEmail()}
@@ -1076,8 +1078,9 @@ export default function Auth() {
               <h2>🔐 Verifikimi me 2 Hapa</h2>
               <p className="sub">Fut kodin 6-shifror nga<br /><strong>Google Authenticator / Authy</strong></p>
               <div className="field">
-                <label>Kodi i autentikimit (TOTP)</label>
+                <label htmlFor="totp-code">Kodi i autentikimit (TOTP)</label>
                 <input
+                  id="totp-code"
                   type="text" inputMode="numeric" pattern="[0-9]*" maxLength={6}
                   placeholder="123456" value={totpCode}
                   onChange={e => setTotpCode(e.target.value.replace(/\D/g, ''))}
@@ -1101,9 +1104,9 @@ export default function Auth() {
               <p className="sub">Zgjidh një fjalëkalim të sigurt (min. 8 karaktere)</p>
 
               <div className="field">
-                <label>Fjalëkalimi i ri *</label>
+                <label htmlFor="reset-new-password">Fjalëkalimi i ri *</label>
                 <div className="pass-wrap">
-                  <input type={showNewPass ? 'text' : 'password'} placeholder="••••••••" value={newPass}
+                  <input id="reset-new-password" type={showNewPass ? 'text' : 'password'} placeholder="••••••••" value={newPass}
                     onChange={e => setNewPass(e.target.value)} autoComplete="new-password"
                     style={{ paddingRight: 36 }} />
                   <button type="button" className="pass-toggle" onClick={() => setShowNewPass(v => !v)}>
@@ -1112,8 +1115,8 @@ export default function Auth() {
                 </div>
               </div>
               <div className="field">
-                <label>Konfirmo fjalëkalimin *</label>
-                <input type="password" placeholder="••••••••" value={newPass2}
+                <label htmlFor="reset-confirm-password">Konfirmo fjalëkalimin *</label>
+                <input id="reset-confirm-password" type="password" placeholder="••••••••" value={newPass2}
                   onChange={e => setNewPass2(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && setNewPassword()}
                   autoComplete="new-password" />

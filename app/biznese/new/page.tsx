@@ -277,15 +277,15 @@ export default function BiznesNewPage() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>Emri i biznesit *</label>
-                <input className="biz-input" value={form.name} onChange={e => setF('name', e.target.value)} placeholder="p.sh. Elektro Servisi Tirana" maxLength={80} />
+                <label htmlFor="biz-name" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>Emri i biznesit *</label>
+                <input id="biz-name" className="biz-input" value={form.name} onChange={e => setF('name', e.target.value)} placeholder="p.sh. Elektro Servisi Tirana" maxLength={80} />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>Përshkrim</label>
-                <textarea className="biz-input" value={form.description} onChange={e => setF('description', e.target.value)} placeholder="Çfarë bëni? Si mund t'ju ndihmojmë..." maxLength={500} style={{ resize: 'none', minHeight: 80 }} />
+                <label htmlFor="biz-description" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>Përshkrim</label>
+                <textarea id="biz-description" className="biz-input" value={form.description} onChange={e => setF('description', e.target.value)} placeholder="Çfarë bëni? Si mund t'ju ndihmojmë..." maxLength={500} style={{ resize: 'none', minHeight: 80 }} />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>📍 Adresa (harta OSM)</label>
+                <label htmlFor="biz-address" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>📍 Adresa (harta OSM)</label>
                 <MapPicker
                   address={form.address}
                   lat={form.latitude}
@@ -294,36 +294,36 @@ export default function BiznesNewPage() {
                 />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>☎ Telefon</label>
-                <input className="biz-input" type="tel" value={form.phone} onChange={e => setF('phone', e.target.value)} placeholder="+355 6X XXX XXXX" />
+                <label htmlFor="biz-phone" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>☎ Telefon</label>
+                <input id="biz-phone" className="biz-input" type="tel" value={form.phone} onChange={e => setF('phone', e.target.value)} placeholder="+355 6X XXX XXXX" />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>✉️ Email</label>
-                <input className="biz-input" type="email" value={form.email} onChange={e => setF('email', e.target.value)} placeholder="info@biznesi.al" />
+                <label htmlFor="biz-email" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>✉️ Email</label>
+                <input id="biz-email" className="biz-input" type="email" value={form.email} onChange={e => setF('email', e.target.value)} placeholder="info@biznesi.al" />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>🌐 Website</label>
-                <input className="biz-input" type="url" value={form.website} onChange={e => setF('website', e.target.value)} placeholder="https://..." />
+                <label htmlFor="biz-website" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>🌐 Website</label>
+                <input id="biz-website" className="biz-input" type="url" value={form.website} onChange={e => setF('website', e.target.value)} placeholder="https://..." />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>🏙️ Qyteti</label>
-                <input className="biz-input" value={form.city} onChange={e => setF('city', e.target.value)} placeholder="p.sh. Tiranë" maxLength={80} />
+                <label htmlFor="biz-city" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>🏙️ Qyteti</label>
+                <input id="biz-city" className="biz-input" value={form.city} onChange={e => setF('city', e.target.value)} placeholder="p.sh. Tiranë" maxLength={80} />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>🕐 Orari</label>
-                <input className="biz-input" value={form.hours} onChange={e => setF('hours', e.target.value)} placeholder="Hënë–Premte 09:00–18:00" />
+                <label htmlFor="biz-hours" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>🕐 Orari</label>
+                <input id="biz-hours" className="biz-input" value={form.hours} onChange={e => setF('hours', e.target.value)} placeholder="Hënë–Premte 09:00–18:00" />
               </div>
               <div style={{ background: '#FFFBEA', borderRadius: 12, padding: 14, border: '1px solid #F5C84266' }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: '#7B5000', marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 }}>⚖️ Të dhëna ligjore (B2C)</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   <div>
-                    <label style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>NIPT / Nr. TVSH (opsional)</label>
-                    <input className="biz-input" value={form.nipt} onChange={e => setF('nipt', e.target.value.toUpperCase())} placeholder="p.sh. K12345678A" maxLength={20} />
+                    <label htmlFor="biz-nipt" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>NIPT / Nr. TVSH (opsional)</label>
+                    <input id="biz-nipt" className="biz-input" value={form.nipt} onChange={e => setF('nipt', e.target.value.toUpperCase())} placeholder="p.sh. K12345678A" maxLength={20} />
                     <div style={{ fontSize: 10, color: '#888', marginTop: 3 }}>Detyrueshëm nëse shet B2C sipas ligjit shqiptar</div>
                   </div>
                   <div>
-                    <label style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>E drejta e tërheqjes (ditë)</label>
-                    <input className="biz-input" type="number" min={14} max={30} value={form.withdrawal_days} onChange={e => setF('withdrawal_days', parseInt(e.target.value) || 14)} />
+                    <label htmlFor="biz-withdrawal" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>E drejta e tërheqjes (ditë)</label>
+                    <input id="biz-withdrawal" className="biz-input" type="number" min={14} max={30} value={form.withdrawal_days} onChange={e => setF('withdrawal_days', parseInt(e.target.value) || 14)} />
                     <div style={{ fontSize: 10, color: '#888', marginTop: 3 }}>Direktiva EU 2011/83/EU — minimum 14 ditë</div>
                   </div>
                 </div>
