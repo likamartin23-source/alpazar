@@ -131,9 +131,9 @@ export async function POST(req: NextRequest) {
       }
 
       const rl = rateLimit(`email:welcome:${ip}`, { limit: 10, windowMs: 60_000 })
-      if (!rl.allowed) {
-        return NextResponse.json({ error: 'Shumë kërkesa.' }, { status: 429 })
-      }
+      if (!rl.allowed) return NextResponse.json({ error: 'Shumë kërkesa.' }, { status: 429 })
+      const rlUser = rateLimit(`email:welcome:user:${authUser.id}`, { limit: 2, windowMs: 24 * 60 * 60_000 })
+      if (!rlUser.allowed) return NextResponse.json({ error: 'Shumë kërkesa.' }, { status: 429 })
 
       // Always send to the authenticated user's own email — never arbitrary targets
       const to   = authUser.email
