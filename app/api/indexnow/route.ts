@@ -27,6 +27,13 @@ const INDEXNOW_ENDPOINTS = [
 
 // Called from client after creating a listing — pings a single URL
 export async function POST(req: NextRequest) {
+  // Require authenticated user — only logged-in users submit listing URLs
+  const token = req.headers.get('authorization')?.replace('Bearer ', '')
+  if (!token) return NextResponse.json({ ok: false }, { status: 401 })
+  const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { global: { headers: { Authorization: `Bearer ${token}` } } })
+  const { data: { user } } = await sb.auth.getUser()
+  if (!user) return NextResponse.json({ ok: false }, { status: 401 })
+
   let body: any = {}
   try { body = await req.json() } catch { /* ignore */ }
 

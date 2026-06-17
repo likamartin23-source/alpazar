@@ -130,12 +130,12 @@ export default function Kontakt() {
             <form onSubmit={sendForm}>
               <div className="form-field">
                 <label>Emri juaj *</label>
-                <input type="text" placeholder="Arta Hoxha" value={name}
+                <input type="text" placeholder="Arta Hoxha" value={name} autoComplete="name"
                   onChange={e => setName(e.target.value)} maxLength={100} required />
               </div>
               <div className="form-field">
                 <label>Email-i juaj *</label>
-                <input type="email" placeholder="arta@email.com" value={email}
+                <input type="email" placeholder="arta@email.com" value={email} autoComplete="email"
                   onChange={e => setEmail(e.target.value)} maxLength={200} required />
               </div>
               <div className="form-field">

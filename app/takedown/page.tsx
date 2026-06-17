@@ -103,7 +103,7 @@ export default function TakedownPage() {
               </div>
               <div>
                 <label style={{ fontSize: 11, fontWeight: 700, color: '#555', display: 'block', marginBottom: 4 }}>Email kontakti (opsionale)</label>
-                <input type="email" value={contactEmail} onChange={e => setContactEmail(e.target.value)} placeholder="juaj@email.com" style={{ width: '100%', border: '1.5px solid #ddd', borderRadius: 8, padding: '10px 12px', fontSize: 13, fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' as const }} />
+                <input type="email" value={contactEmail} onChange={e => setContactEmail(e.target.value)} placeholder="juaj@email.com" autoComplete="email" style={{ width: '100%', border: '1.5px solid #ddd', borderRadius: 8, padding: '10px 12px', fontSize: 13, fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' as const }} />
               </div>
               {error && <div style={{ background: '#FFF0EE', color: '#E63312', border: '1px solid #F09595', borderRadius: 8, padding: '10px 12px', fontSize: 12 }}>{error}</div>}
               <button type="submit" disabled={submitting} style={{ background: '#111', color: '#fff', border: 'none', borderRadius: 10, padding: '13px', fontSize: 14, fontWeight: 700, cursor: 'pointer', opacity: submitting ? 0.7 : 1 }}>

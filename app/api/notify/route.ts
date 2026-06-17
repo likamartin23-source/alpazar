@@ -4,7 +4,7 @@ import { Resend } from 'resend'
 export const runtime = 'nodejs'
 
 const NOTIFY_SECRET = process.env.NOTIFY_WEBHOOK_SECRET
-const NOTIFY_EMAIL  = process.env.ADMIN_EMAIL || 'likamartin23@gmail.com'
+const NOTIFY_EMAIL  = process.env.ADMIN_EMAIL || ''
 
 function getResend(): Resend | null {
   const key = process.env.RESEND_API_KEY

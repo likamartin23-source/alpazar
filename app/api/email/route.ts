@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
 
       const { data, error } = await r.client.emails.send({
         from: r.from,
-        to: [process.env.ADMIN_EMAIL || 'likamartin23@gmail.com'],
+        to: [process.env.ADMIN_EMAIL || ''],
         replyTo: email,
         subject: subject ? `[Kontakt] ${esc(subject)}` : `Mesazh nga ${esc(name)} - Alpazar`,
         html: `
