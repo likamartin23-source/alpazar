@@ -221,6 +221,8 @@ function NotifRow({ n, onClick, onDismiss, isLast }: { n: Notif; onClick: (n: No
   return (
     <div
       onClick={() => onClick(n)}
+      tabIndex={isClickable ? 0 : undefined}
+      onKeyDown={isClickable ? (e) => { if (e.key === 'Enter' || e.key === ' ') onClick(n) } : undefined}
       style={{
         display: 'flex', gap: 14, padding: '14px 16px',
         background: n.is_read ? '#fff' : '#FFFBEA',

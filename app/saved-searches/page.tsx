@@ -115,7 +115,7 @@ export default function SavedSearchesPage() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <button
                         onClick={() => toggleNotify(s.id, s.notify)}
-                        title={s.notify ? 'Çaktivizo njoftime' : 'Aktivizo njoftime'}
+                        aria-label={s.notify ? 'Çaktivizo njoftime' : 'Aktivizo njoftime'}
                         style={{
                           width: 36, height: 20, borderRadius: 10, border: 'none', cursor: 'pointer',
                           background: s.notify ? '#E63312' : '#ddd', position: 'relative', transition: 'background .2s',
