@@ -642,6 +642,7 @@ export default function Admin() {
             onKeyDown={e => { if (e.key === 'Enter') checkPin() }}
             maxLength={6}
             placeholder="••••••"
+            autoComplete="off"
             style={{ width: '100%', border: '2px solid #F5C842', borderRadius: 10, padding: '12px', fontSize: 22, textAlign: 'center', letterSpacing: 8, fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' as const, marginBottom: 12 }}
             autoFocus
           />

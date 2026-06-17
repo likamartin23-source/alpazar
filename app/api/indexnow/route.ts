@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../lib/supabase'
+import { rateLimit } from '../../../lib/rateLimit'
 
 const INDEXNOW_KEY = process.env.INDEXNOW_KEY || '825731eba0e14fec916791e52a62816c'
 const BASE_URL = 'https://alpazar.vercel.app'
@@ -33,6 +34,11 @@ export async function POST(req: NextRequest) {
   const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { global: { headers: { Authorization: `Bearer ${token}` } } })
   const { data: { user } } = await sb.auth.getUser()
   if (!user) return NextResponse.json({ ok: false }, { status: 401 })
+
+  const rl = rateLimit(`indexnow:${user.id}`, { limit: 20, windowMs: 60 * 60_000 })
+  if (!rl.allowed) {
+    return NextResponse.json({ ok: false, error: 'Too many requests' }, { status: 429 })
+  }
 
   let body: any = {}
   try { body = await req.json() } catch { /* ignore */ }

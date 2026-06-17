@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { rateLimit, getClientIp } from '../../../lib/rateLimit'
 
 export const runtime = 'nodejs'
 
@@ -13,6 +14,12 @@ function getResend(): Resend | null {
 
 // Accepts Slack Incoming Webhook format — used by GitHub Actions CI
 export async function POST(req: NextRequest) {
+  const ip = getClientIp(req)
+  const rl = rateLimit(`notify:${ip}`, { limit: 10, windowMs: 5 * 60_000 })
+  if (!rl.allowed) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
+
   if (!NOTIFY_SECRET) {
     return NextResponse.json({ error: 'Not configured' }, { status: 500 })
   }
