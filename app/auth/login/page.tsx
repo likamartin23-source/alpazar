@@ -850,7 +850,7 @@ export default function Auth() {
                     autoComplete="current-password"
                     style={{ paddingRight: 36 }}
                   />
-                  <button className="pass-toggle" onClick={() => setShowPass(v => !v)}>
+                  <button type="button" className="pass-toggle" onClick={() => setShowPass(v => !v)}>
                     {showPass ? '🙈' : '👁️'}
                   </button>
                 </div>
@@ -931,7 +931,7 @@ export default function Auth() {
                   <input type={showRegPass ? 'text' : 'password'} placeholder="••••••••"
                     value={regPass} onChange={e => setRegPass(e.target.value)}
                     autoComplete="new-password" style={{ paddingRight: 36 }} />
-                  <button className="pass-toggle" onClick={() => setShowRegPass(v => !v)}>
+                  <button type="button" className="pass-toggle" onClick={() => setShowRegPass(v => !v)}>
                     {showRegPass ? '🙈' : '👁️'}
                   </button>
                 </div>
@@ -1106,7 +1106,7 @@ export default function Auth() {
                   <input type={showNewPass ? 'text' : 'password'} placeholder="••••••••" value={newPass}
                     onChange={e => setNewPass(e.target.value)} autoComplete="new-password"
                     style={{ paddingRight: 36 }} />
-                  <button className="pass-toggle" onClick={() => setShowNewPass(v => !v)}>
+                  <button type="button" className="pass-toggle" onClick={() => setShowNewPass(v => !v)}>
                     {showNewPass ? '🙈' : '👁️'}
                   </button>
                 </div>

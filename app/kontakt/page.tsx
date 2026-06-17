@@ -129,23 +129,23 @@ export default function Kontakt() {
             {msg && <div className={`msg-box ${mt}`}>{mm}</div>}
             <form onSubmit={sendForm}>
               <div className="form-field">
-                <label>Emri juaj *</label>
-                <input type="text" placeholder="Arta Hoxha" value={name} autoComplete="name"
+                <label htmlFor="kontakt-name">Emri juaj *</label>
+                <input id="kontakt-name" type="text" placeholder="Arta Hoxha" value={name} autoComplete="name"
                   onChange={e => setName(e.target.value)} maxLength={100} required />
               </div>
               <div className="form-field">
-                <label>Email-i juaj *</label>
-                <input type="email" placeholder="arta@email.com" value={email} autoComplete="email"
+                <label htmlFor="kontakt-email">Email-i juaj *</label>
+                <input id="kontakt-email" type="email" placeholder="arta@email.com" value={email} autoComplete="email"
                   onChange={e => setEmail(e.target.value)} maxLength={200} required />
               </div>
               <div className="form-field">
-                <label>Subjekti</label>
-                <input type="text" placeholder="p.sh. Pyetje rreth Premium..." value={subject}
+                <label htmlFor="kontakt-subject">Subjekti</label>
+                <input id="kontakt-subject" type="text" placeholder="p.sh. Pyetje rreth Premium..." value={subject}
                   onChange={e => setSubject(e.target.value)} maxLength={200} />
               </div>
               <div className="form-field">
-                <label>Mesazhi *</label>
-                <textarea placeholder="Shkruaj mesazhin tënd këtu..." value={message}
+                <label htmlFor="kontakt-message">Mesazhi *</label>
+                <textarea id="kontakt-message" placeholder="Shkruaj mesazhin tënd këtu..." value={message}
                   onChange={e => setMessage(e.target.value)} maxLength={3000} required />
               </div>
               <button className="send-btn" type="submit" disabled={loading}>

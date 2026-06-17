@@ -805,7 +805,7 @@ export default function ProfilePage() {
                     autoComplete="new-password"
                     style={{ paddingRight: 36 }}
                   />
-                  <button className="pass-toggle" onClick={() => setShowNewPass(v => !v)}>
+                  <button type="button" className="pass-toggle" onClick={() => setShowNewPass(v => !v)}>
                     {showNewPass ? '🙈' : '👁️'}
                   </button>
                 </div>
