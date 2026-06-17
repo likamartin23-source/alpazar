@@ -283,8 +283,8 @@ export default function AsistentPage() {
 
       <div className="page">
         <div className="header">
-          <button className="back-btn" onClick={() => window.history.length > 1 ? window.history.back() : window.location.href = '/'}>
-            <i className="ti ti-arrow-left" />
+          <button className="back-btn" aria-label="Kthehu mbrapa" onClick={() => window.history.length > 1 ? window.history.back() : window.location.href = '/'}>
+            <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
           <div className="ai-avatar"><i className="ti ti-robot" /></div>
           <div className="header-info">

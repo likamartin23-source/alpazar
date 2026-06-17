@@ -151,10 +151,11 @@ export default function NotificationsPage() {
         borderBottom: '1px solid #222',
       }}>
         <button
+          aria-label="Kthehu mbrapa"
           onClick={() => window.history.length > 1 ? window.history.back() : window.location.href = '/'}
           style={{ background: 'none', border: 'none', color: '#F5C842', fontSize: 22, cursor: 'pointer', padding: '0 4px', lineHeight: 1, display: 'flex', alignItems: 'center' }}
         >
-          <i className="ti ti-arrow-left" style={{ fontSize: 22 }} />
+          <i className="ti ti-arrow-left" style={{ fontSize: 22 }} aria-hidden="true" />
         </button>
         <div style={{ flex: 1, fontWeight: 700, fontSize: 16, color: '#fff', display: 'flex', alignItems: 'center', gap: 8 }}>
           Njoftimet
@@ -302,9 +303,9 @@ function NotifRow({ n, onClick, onDismiss, isLast }: { n: Notif; onClick: (n: No
         <button
           onClick={e => { e.stopPropagation(); onDismiss(n.id) }}
           style={{ background: 'none', border: 'none', color: '#ccc', cursor: 'pointer', padding: '2px 4px', fontSize: 14, lineHeight: 1, display: 'flex', alignItems: 'center' }}
-          title="Fshij"
+          aria-label="Fshij njoftimin"
         >
-          <i className="ti ti-x" style={{ fontSize: 14 }} />
+          <i className="ti ti-x" style={{ fontSize: 14 }} aria-hidden="true" />
         </button>
       </div>
     </div>
