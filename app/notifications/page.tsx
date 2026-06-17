@@ -43,7 +43,7 @@ function timeAgo(iso: string): string {
 }
 
 export default function NotificationsPage() {
-  const { user, authReady } = useAlpazar()
+  const { user, authReady, refreshUnread } = useAlpazar()
   const [notifs, setNotifs]   = useState<Notif[]>([])
   const [loading, setLoading] = useState(true)
   const userRef = useRef<any>(null)
@@ -121,9 +121,9 @@ export default function NotificationsPage() {
       .update({ is_read: true, read_at: new Date().toISOString() })
       .eq('user_id', user.id)
       .eq('is_read', false)
-    if (!error) setNotifs(prev => prev.map(n => ({ ...n, is_read: true })))
+    if (!error) { setNotifs(prev => prev.map(n => ({ ...n, is_read: true }))); refreshUnread(user.id) }
     else console.warn('markAllRead failed:', error.message)
-  }, [user])
+  }, [user, refreshUnread])
 
   const handleClick = useCallback((n: Notif) => {
     if (!n.is_read) markRead(n.id)
