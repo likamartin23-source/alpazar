@@ -1359,6 +1359,7 @@ export default function MessagesPage() {
                           <div className="input-wrap">
                             <textarea
                               ref={inputRef} rows={1}
+                              aria-label="Shkruaj mesazhin"
                               placeholder={`Mesazh...`}
                               value={draft}
                               maxLength={2000}

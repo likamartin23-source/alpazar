@@ -630,7 +630,7 @@ const [searchError, setSearchError] = useState(false)
             {/* Kategoria */}
             <div className="fp-row">
               <span className="fp-label">Kategoria</span>
-              <select value={catFilter} onChange={e => setCatFilter(e.target.value)}>
+              <select aria-label="Kategoria" value={catFilter} onChange={e => setCatFilter(e.target.value)}>
                 <option value="">Të gjitha kategoritë</option>
                 {categories.map(c => (
                   <option key={c.id} value={c.id}>{c.icon ? `${c.icon} ` : ''}{c.name}</option>
@@ -641,7 +641,7 @@ const [searchError, setSearchError] = useState(false)
             {/* Qyteti */}
             <div className="fp-row">
               <span className="fp-label">Qyteti</span>
-              <select value={cityFilter} onChange={e => setCityFilter(e.target.value)}>
+              <select aria-label="Qyteti" value={cityFilter} onChange={e => setCityFilter(e.target.value)}>
                 <option value="">Të gjitha qytetet</option>
                 {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>

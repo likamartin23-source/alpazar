@@ -350,7 +350,7 @@ export default function NewListing() {
               <label htmlFor="listing-price">Çmimi</label>
               <div className="price-row">
                 <input id="listing-price" type="number" placeholder="0" value={form.price} onChange={e => set('price', e.target.value)} min="0" />
-                <select value={form.currency} onChange={e => set('currency', e.target.value)}>
+                <select aria-label="Monedha" value={form.currency} onChange={e => set('currency', e.target.value)}>
                   <option value="ALL">L (Lekë)</option>
                   <option value="EUR">€ (Euro)</option>
                 </select>

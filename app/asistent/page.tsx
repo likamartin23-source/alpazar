@@ -357,6 +357,7 @@ export default function AsistentPage() {
             <div className="input-wrap">
               <textarea
                 ref={inputRef}
+                aria-label="Dërgo mesazh tek Albi"
                 rows={1}
                 placeholder="Pyet Albin çdo gjë..."
                 value={input}

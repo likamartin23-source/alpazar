@@ -224,7 +224,7 @@ export default function SearchPage() {
             {/* Kategoria */}
             <div className="fp-row">
               <span className="fp-label">Kategoria</span>
-              <select value={catFilter} onChange={e => setCatFilter(e.target.value)}
+              <select aria-label="Kategoria" value={catFilter} onChange={e => setCatFilter(e.target.value)}
                 style={{ width: '100%', border: '1.5px solid #ddd', borderRadius: 10, padding: '10px 13px', fontSize: 13, fontFamily: 'inherit', outline: 'none', background: '#fff', color: '#111' }}>
                 <option value="">Të gjitha kategoritë</option>
                 {categories.map(c => (

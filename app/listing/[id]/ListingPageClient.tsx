@@ -984,6 +984,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                   </div>
                   {/* Koment */}
                   <textarea
+                    aria-label="Komenti"
                     placeholder="Komenti (opsional)..."
                     value={reviewComment}
                     onChange={e => setReviewComment(e.target.value)}
@@ -1231,6 +1232,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                   <div className="cs-input-wrap">
                     <textarea
                       ref={inputRef}
+                      aria-label="Shkruaj mesazhin tënd"
                       rows={1}
                       placeholder="Shkruaj mesazhin tënd..."
                       value={draft}
