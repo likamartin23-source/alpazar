@@ -572,15 +572,15 @@ export default function Home() {
             </div>
             <div className="nav">
               {user && unreadNotifications > 0 && (
-                <button className="icon-btn" onClick={() => go('/notifications')} style={{ position: 'relative' }}>
-                  <i className="ti ti-bell-ringing" />
-                  <span style={{ position: 'absolute', top: 2, right: 2, background: '#E63312', color: '#fff', fontSize: 7, fontWeight: 700, borderRadius: 8, padding: '1px 3px', minWidth: 12, textAlign: 'center', lineHeight: '12px' }}>{unreadNotifications > 9 ? '9+' : unreadNotifications}</span>
+                <button className="icon-btn" aria-label={`${unreadNotifications} njoftime të palexuara`} onClick={() => go('/notifications')} style={{ position: 'relative' }}>
+                  <i className="ti ti-bell-ringing" aria-hidden="true" />
+                  <span aria-hidden="true" style={{ position: 'absolute', top: 2, right: 2, background: '#E63312', color: '#fff', fontSize: 7, fontWeight: 700, borderRadius: 8, padding: '1px 3px', minWidth: 12, textAlign: 'center', lineHeight: '12px' }}>{unreadNotifications > 9 ? '9+' : unreadNotifications}</span>
                 </button>
               )}
               {user && unreadNotifications === 0 && unreadCount > 0 && (
-                <button className="icon-btn" onClick={() => go('/messages')} style={{ position: 'relative' }}>
-                  <i className="ti ti-bell" />
-                  <span style={{ position: 'absolute', top: 2, right: 2, background: '#E63312', color: '#fff', fontSize: 7, fontWeight: 700, borderRadius: 8, padding: '1px 3px', minWidth: 12, textAlign: 'center', lineHeight: '12px' }}>{unreadCount > 9 ? '9+' : unreadCount}</span>
+                <button className="icon-btn" aria-label={`${unreadCount} mesazhe të palexuara`} onClick={() => go('/messages')} style={{ position: 'relative' }}>
+                  <i className="ti ti-bell" aria-hidden="true" />
+                  <span aria-hidden="true" style={{ position: 'absolute', top: 2, right: 2, background: '#E63312', color: '#fff', fontSize: 7, fontWeight: 700, borderRadius: 8, padding: '1px 3px', minWidth: 12, textAlign: 'center', lineHeight: '12px' }}>{unreadCount > 9 ? '9+' : unreadCount}</span>
                 </button>
               )}
               {!authReady ? (
@@ -616,7 +616,7 @@ export default function Home() {
               <div className="search-wrap">
                 <i className="ti ti-search" aria-hidden="true" />
                 <input
-                  type="text"
+                  type="search"
                   placeholder="Kërko çdo gjë në Shqipëri..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}

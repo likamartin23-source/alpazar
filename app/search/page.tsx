@@ -163,7 +163,7 @@ export default function SearchPage() {
           <form className="search-wrap" onSubmit={handleSubmit}>
             <i className="ti ti-search" />
             <input
-              type="text"
+              type="search"
               placeholder="Kërko çdo gjë..."
               value={q}
               onChange={e => setQ(e.target.value)}

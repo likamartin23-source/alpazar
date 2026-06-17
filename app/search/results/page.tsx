@@ -475,7 +475,7 @@ const [searchError, setSearchError] = useState(false)
           <form className="search-wrap" onSubmit={newSearch} style={{ flex: 1 }}>
             <i className="ti ti-search" />
             <input
-              type="text"
+              type="search"
               placeholder="Kërko çdo gjë..."
               value={q}
               onChange={e => setQ(e.target.value)}
