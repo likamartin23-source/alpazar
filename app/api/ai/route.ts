@@ -91,7 +91,7 @@ async function getLiveContext(query: string): Promise<string> {
       sb.from('listings')
         .select('title,price,currency,city,category')
         .eq('is_active', true)
-        .ilike('title', `%${query.slice(0, 50)}%`)
+        .ilike('title', `%${query.slice(0, 50).replace(/[%_\\]/g, '\\$&')}%`)
         .limit(5),
     ])
 

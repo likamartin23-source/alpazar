@@ -25,7 +25,8 @@ export async function GET(req: NextRequest) {
   if (!token) return NextResponse.json({ error: 'Kërkohet hyrja' }, { status: 401 })
 
   const listingId = req.nextUrl.searchParams.get('listing_id')
-  if (!listingId) return NextResponse.json({ error: 'listing_id mungon' }, { status: 400 })
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+  if (!listingId || !UUID_RE.test(listingId)) return NextResponse.json({ error: 'listing_id i pavlefshëm' }, { status: 400 })
 
   const sb = userSupabase(token)
   const { data: { user } } = await sb.auth.getUser()

@@ -25,7 +25,8 @@ export async function GET(req: NextRequest) {
   const { data: { user } } = await sb.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Token i pavlefshëm' }, { status: 401 })
 
-  const days = Math.min(Math.max(parseInt(req.nextUrl.searchParams.get('days') || '30'), 1), 90)
+  const _daysRaw = parseInt(req.nextUrl.searchParams.get('days') ?? '', 10)
+  const days = Math.min(Math.max(Number.isFinite(_daysRaw) ? _daysRaw : 30, 1), 90)
   const since = new Date(Date.now() - days * 86400000).toISOString()
 
   // 1. User's listings
