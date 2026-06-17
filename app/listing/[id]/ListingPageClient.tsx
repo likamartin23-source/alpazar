@@ -729,6 +729,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
           {!isOwner && (
             <button
               onClick={toggleSave}
+              aria-label={liked ? 'Hiq nga të preferuarat' : 'Shto te të preferuarat'}
               style={{
                 position: 'absolute', top: 10, right: 23,
                 width: 34, height: 34, background: '#fff',

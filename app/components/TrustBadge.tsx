@@ -63,7 +63,7 @@ export function TrustBadge({ createdAt, listingsActive, gamificationPoints = 0, 
       <div style={{
         position: 'relative', width: 40, height: 40, flexShrink: 0,
       }}>
-        <svg width="40" height="40" style={{ transform: 'rotate(-90deg)' }}>
+        <svg width="40" height="40" aria-hidden="true" style={{ transform: 'rotate(-90deg)' }}>
           <circle cx="20" cy="20" r="16" fill="none" stroke="#e0e0e0" strokeWidth="3.5" />
           <circle
             cx="20" cy="20" r="16" fill="none"
