@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { rateLimit, getClientIp } from '../../../../lib/rateLimit'
 
@@ -17,7 +18,9 @@ export async function POST(req: NextRequest) {
 
   const { pin } = await req.json().catch(() => ({ pin: '' }))
 
-  if (!pin || pin !== ADMIN_PIN) {
+  const pinMatch = pin.length === ADMIN_PIN.length &&
+    timingSafeEqual(Buffer.from(pin), Buffer.from(ADMIN_PIN))
+  if (!pin || !pinMatch) {
     return NextResponse.json({ ok: false }, { status: 401 })
   }
 

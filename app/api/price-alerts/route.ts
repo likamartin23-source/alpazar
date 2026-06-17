@@ -39,6 +39,7 @@ export async function GET(req: NextRequest) {
     .from('price_alerts')
     .select('id,target_price,triggered,created_at')
     .eq('listing_id', listingId)
+    .eq('user_id', user.id)
     .maybeSingle()
 
   return NextResponse.json({ alert: data }, { headers: NO_STORE })
