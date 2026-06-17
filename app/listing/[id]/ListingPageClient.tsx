@@ -58,6 +58,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
   const [seller, setSeller]           = useState<any>(null)
   const [sellerCount, setSellerCount] = useState(0)
   const [loading, setLoading]         = useState(!initialListing)
+  const [loadError, setLoadError]     = useState(false)
   const [similar, setSimilar]         = useState<any[]>([])
   const [user, setUser]               = useState<any>(null)
   const [liked, setLiked]             = useState(false)
@@ -256,6 +257,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
     let data: any = initialListing ?? null
     if (!data) {
       const res = await supabase.from('listings').select('*').eq('id', params.id).single()
+      if (res.error && res.error.code !== 'PGRST116') { setLoadError(true); setLoading(false); return }
       data = res.data
       if (data) { setListing(data); listingRef.current = data }
       setLoading(false)
@@ -489,6 +491,14 @@ export default function ListingPageClient({ params, initialListing }: { params: 
   useEffect(() => () => {
     if (channelRef.current) supabase.removeChannel(channelRef.current)
   }, [])
+
+  if (loadError) return (
+    <div style={{ textAlign: 'center', padding: 60, fontFamily: "'Plus Jakarta Sans',system-ui" }}>
+      <p style={{ fontSize: 40, marginBottom: 12 }}>⚠️</p>
+      <h2 style={{ color: '#111', marginBottom: 8 }}>Gabim gjatë ngarkimit</h2>
+      <button onClick={() => window.location.reload()} style={{ background: '#F5C842', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Rifresko</button>
+    </div>
+  )
 
   if (loading) return (
     <div style={{ textAlign: 'center', padding: 60 }}>

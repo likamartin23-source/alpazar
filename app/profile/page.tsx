@@ -53,6 +53,7 @@ export default function ProfilePage() {
   const [savedSearches, setSavedSearches] = useState<any[]>([])
   const [conversations, setConversations] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
   const [activeTab, setActiveTab] = useState<'profile'|'listings'|'saved'|'shop'|'messages'>('profile')
   const [editing, setEditing] = useState(false)
   const [form, setForm] = useState({ full_name: '', username: '', city: '', bio: '' })
@@ -135,18 +136,23 @@ export default function ProfilePage() {
   }, [])
 
   async function fetchProfile(uid: string) {
-    const [{ data: p }, { data: ls }] = await Promise.all([
-      supabase.from('profiles').select('*').eq('id', uid).single(),
-      supabase.from('listings').select('*').eq('user_id', uid).order('created_at', { ascending: false }),
-    ])
-    if (p) {
-      setProfile(p)
-      setForm({ full_name: p.full_name || '', username: p.username || '', city: p.city || '', bio: p.bio || '' })
-      setShopForm({ shop_name: p.shop_name || '', shop_description: p.shop_description || '', shop_category: p.shop_category || '', shop_banner_url: p.shop_banner_url || '' })
+    try {
+      const [{ data: p }, { data: ls }] = await Promise.all([
+        supabase.from('profiles').select('*').eq('id', uid).single(),
+        supabase.from('listings').select('*').eq('user_id', uid).order('created_at', { ascending: false }),
+      ])
+      if (p) {
+        setProfile(p)
+        setForm({ full_name: p.full_name || '', username: p.username || '', city: p.city || '', bio: p.bio || '' })
+        setShopForm({ shop_name: p.shop_name || '', shop_description: p.shop_description || '', shop_category: p.shop_category || '', shop_banner_url: p.shop_banner_url || '' })
+      }
+      if (ls) setMyListings(ls)
+      await Promise.all([fetchConversations(uid), fetchSavedListings(uid), fetchSavedSearches(uid)])
+    } catch {
+      setLoadError(true)
+    } finally {
+      setLoading(false)
     }
-    if (ls) setMyListings(ls)
-    await Promise.all([fetchConversations(uid), fetchSavedListings(uid), fetchSavedSearches(uid)])
-    setLoading(false)
   }
 
   async function compressImage(file: File, maxW = 1920): Promise<Blob> {
@@ -365,6 +371,14 @@ export default function ProfilePage() {
 
   const [mt, mm] = msg.split(/:(.+)/)
   const [smt, smm] = shopMsg.split(/:(.+)/)
+
+  if (loadError) return (
+    <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
+      <div style={{ fontSize: 40 }}>⚠️</div>
+      <div style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
+      <button onClick={() => window.location.reload()} style={{ padding: '10px 24px', background: '#F5C842', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Rifresko</button>
+    </div>
+  )
 
   if (loading) return (
     <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh' }}>
