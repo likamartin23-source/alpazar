@@ -62,6 +62,7 @@ export default function AnalyticsPage() {
   const [user, setUser]         = useState<any>(null)
   const [data, setData]         = useState<any>(null)
   const [loading, setLoading]   = useState(true)
+const [loadError, setLoadError] = useState(false)
   const [period, setPeriod]     = useState(30)
   const [showUpsell, setShowUpsell] = useState(false)
 
@@ -87,7 +88,7 @@ export default function AnalyticsPage() {
       const json = await res.json()
       setData(json)
     } catch {
-      // silently fail — loading state will clear
+      setLoadError(true)
     }
     setLoading(false)
   }
@@ -97,6 +98,14 @@ export default function AnalyticsPage() {
     const { data: { session } } = await supabase.auth.getSession()
     if (session) fetchAnalytics(session.access_token, days)
   }
+
+  if (loadError) return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: 12, fontFamily: "'Segoe UI',sans-serif" }}>
+      <div style={{ fontSize: 36 }}>⚠️</div>
+      <div style={{ fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
+      <button onClick={() => { setLoadError(false); changePeriod(period) }} style={{ background: '#F5C842', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Rifresko</button>
+    </div>
+  )
 
   if (!user || loading) return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: 12 }}>
@@ -135,8 +144,8 @@ export default function AnalyticsPage() {
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
 
       <div className="topbar">
-        <button className="back-btn" onClick={() => window.location.href = '/profile'}>
-          <i className="ti ti-arrow-left" style={{ fontSize: 16 }} />
+        <button className="back-btn" aria-label="Kthehu në profil" onClick={() => window.location.href = '/profile'}>
+          <i className="ti ti-arrow-left" style={{ fontSize: 16 }} aria-hidden="true" />
         </button>
         <span style={{ fontWeight: 800, fontSize: 16, color: '#111' }}>Statistikat e Shpalljeve</span>
       </div>

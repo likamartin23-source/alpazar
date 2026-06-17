@@ -157,8 +157,8 @@ export default function SearchPage() {
 
       <div className="wrap">
         <div className="topbar">
-          <button className="back" onClick={() => window.location.href = '/'}>
-            <i className="ti ti-arrow-left" />
+          <button className="back" aria-label="Kthehu në ballina" onClick={() => window.location.href = '/'}>
+            <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
           <form className="search-wrap" onSubmit={handleSubmit}>
             <i className="ti ti-search" />
@@ -171,8 +171,8 @@ export default function SearchPage() {
             />
           </form>
           <button className="search-btn" onClick={() => goToResults()}>Kërko</button>
-          <button className="filter-btn" onClick={() => setFiltersOpen(true)}>
-            <i className="ti ti-adjustments-horizontal" />
+          <button className="filter-btn" aria-label="Filtrat e kërkimit" onClick={() => setFiltersOpen(true)}>
+            <i className="ti ti-adjustments-horizontal" aria-hidden="true" />
             {activeFilterCount > 0 && <span className="filter-badge">{activeFilterCount}</span>}
           </button>
         </div>

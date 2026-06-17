@@ -469,8 +469,8 @@ const [searchError, setSearchError] = useState(false)
       <div className="wrap">
         {/* ── TOP BAR ── */}
         <div className="topbar">
-          <button className="back" onClick={() => window.location.href = '/search'}>
-            <i className="ti ti-arrow-left" />
+          <button className="back" aria-label="Kthehu te kërkimi" onClick={() => window.location.href = '/search'}>
+            <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
           <form className="search-wrap" onSubmit={newSearch} style={{ flex: 1 }}>
             <i className="ti ti-search" />
@@ -481,8 +481,8 @@ const [searchError, setSearchError] = useState(false)
               onChange={e => setQ(e.target.value)}
             />
           </form>
-          <button className="filter-btn" onClick={() => setFiltersOpen(true)}>
-            <i className="ti ti-adjustments-horizontal" />
+          <button className="filter-btn" aria-label="Hap filtrat" onClick={() => setFiltersOpen(true)}>
+            <i className="ti ti-adjustments-horizontal" aria-hidden="true" />
             {activeFilterCount > 0 && <span className="filter-badge">{activeFilterCount}</span>}
           </button>
         </div>
