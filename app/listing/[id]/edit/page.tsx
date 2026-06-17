@@ -306,8 +306,10 @@ export default function EditListing({ params }: { params: { id: string } }) {
                 id="listing-city"
                 type="text"
                 placeholder="p.sh. Tiranë, Durrës, Vlorë..."
+                autoComplete="address-level2"
                 value={form.city}
                 onChange={e => set('city', e.target.value)}
+                required
               />
             </div>
             <div className="field">

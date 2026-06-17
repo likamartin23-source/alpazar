@@ -181,7 +181,7 @@ export default function BiznesEditPage({ params }: { params: { id: string } }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <div>
               <label htmlFor="biz-name" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>Emri i biznesit *</label>
-              <input id="biz-name" type="text" className="biz-input" autoComplete="organization" value={form.name} onChange={e => setF('name', e.target.value)} placeholder="p.sh. Elektro Servisi Tirana" maxLength={80} />
+              <input id="biz-name" type="text" className="biz-input" autoComplete="organization" value={form.name} onChange={e => setF('name', e.target.value)} placeholder="p.sh. Elektro Servisi Tirana" maxLength={80} required />
             </div>
             <div>
               <label htmlFor="biz-description" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>Përshkrim</label>

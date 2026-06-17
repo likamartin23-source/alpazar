@@ -418,8 +418,10 @@ export default function NewListing() {
                 id="listing-city"
                 type="text"
                 placeholder="p.sh. Tiranë, Durrës, Vlorë..."
+                autoComplete="address-level2"
                 value={form.city}
                 onChange={e => set('city', e.target.value)}
+                required
               />
             </div>
             <div className="field">
