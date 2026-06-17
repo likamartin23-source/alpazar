@@ -38,7 +38,7 @@ function BusinessMiniCard({ bizId }: { bizId: string }) {
   return (
     <div style={{ margin: '0 0 12px', padding: '10px 12px', background: '#F5F5F5', borderRadius: 12, display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => window.location.href = `/biznese/${biz.id}`}>
       <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#fff', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, border: '1px solid #eee', flexShrink: 0 }}>
-        {biz.logo_url ? <img src={biz.logo_url} alt="" loading="lazy" width={36} height={36} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : '🏢'}
+        {biz.logo_url ? <img src={biz.logo_url} alt={biz.name} loading="lazy" width={36} height={36} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : '🏢'}
       </div>
       <div style={{ flex: 1 }}>
         <div style={{ fontSize: 12, fontWeight: 700, color: '#111' }}>{biz.name} {biz.is_verified && <span style={{ color: '#16a34a' }}>✓ Biznes</span>}</div>

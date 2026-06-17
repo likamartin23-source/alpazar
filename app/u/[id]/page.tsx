@@ -95,7 +95,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
         {profile.cover_url && (
           <img
             src={profile.cover_url}
-            alt=""
+            alt={`Foto kopertinë e ${profile.full_name || profile.username || 'profilit'}`}
             loading="lazy"
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}

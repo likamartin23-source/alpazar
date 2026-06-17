@@ -442,7 +442,7 @@ export default function NewListing() {
               <div className="img-previews">
                 {imagePreviews.map((src, i) => (
                   <div key={i} style={{ position: 'relative', display: 'inline-block' }}>
-                    <img src={src} className="img-prev" alt="" loading="lazy" />
+                    <img src={src} className="img-prev" alt={`Foto ${i + 1}`} loading="lazy" />
                     {i === 0 && (
                       <span style={{ position: 'absolute', top: 4, left: 4, background: '#F5C842', color: '#111', fontSize: 8, fontWeight: 800, padding: '2px 5px', borderRadius: 4, lineHeight: 1.4, pointerEvents: 'none' }}>
                         Kryesore

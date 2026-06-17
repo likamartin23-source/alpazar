@@ -905,7 +905,7 @@ export default function MessagesPage() {
       {/* Lightbox */}
       {lightbox && (
         <div className="lightbox" onClick={() => setLightbox(null)}>
-          <img src={lightbox} alt="" />
+          <img src={lightbox} alt="Imazh i mesazhit" />
         </div>
       )}
 

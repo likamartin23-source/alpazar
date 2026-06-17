@@ -256,7 +256,7 @@ export default function BiznesNewPage() {
 
             {/* Cover upload */}
             <div style={{ position: 'relative', width: '100%', aspectRatio: '16/6', borderRadius: 12, overflow: 'hidden', marginBottom: 40, background: coverPreview ? 'transparent' : 'linear-gradient(135deg,#F5C842,#E63312)', cursor: 'pointer' }}>
-              {coverPreview && <img src={coverPreview} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+              {coverPreview && <img src={coverPreview} alt="Foto kopertinë" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
               <label style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: coverPreview ? 'rgba(0,0,0,.3)' : 'none' }}>
                 <span style={{ background: 'rgba(0,0,0,.5)', color: '#fff', borderRadius: 10, padding: '8px 16px', fontSize: 12, fontWeight: 700 }}>📷 {coverPreview ? 'Ndrysho kopertinën' : 'Shto kopertinën'}</span>
                 <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) { setCoverFile(f); setCoverPreview(URL.createObjectURL(f)) } }} />
@@ -265,7 +265,7 @@ export default function BiznesNewPage() {
               <div style={{ position: 'absolute', bottom: -28, left: 16 }}>
                 <div style={{ position: 'relative', width: 56, height: 56 }}>
                   <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#fff', border: '3px solid #fff', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, boxShadow: '0 2px 8px rgba(0,0,0,.15)' }}>
-                    {logoPreview ? <img src={logoPreview} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : '🏢'}
+                    {logoPreview ? <img src={logoPreview} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : '🏢'}
                   </div>
                   <label style={{ position: 'absolute', bottom: -2, right: -2, background: '#E63312', width: 20, height: 20, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, cursor: 'pointer', border: '2px solid #fff' }}>
                     📷

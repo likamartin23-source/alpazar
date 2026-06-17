@@ -21,6 +21,7 @@ const TYPE_LABELS: Record<string, string> = {
 export default function BiznestPage() {
   const [businesses, setBusinesses] = useState<Biz[]>([])
   const [loading, setLoading]       = useState(true)
+  const [loadError, setLoadError]   = useState(false)
   const [search, setSearch]         = useState('')
   const [typeFilter, setTypeFilter] = useState('')
 
@@ -31,7 +32,8 @@ export default function BiznestPage() {
       .order('is_verified', { ascending: false })
       .order('created_at', { ascending: false })
       .limit(100)
-      .then(({ data }) => {
+      .then(({ data, error }) => {
+        if (error) { setLoadError(true); setLoading(false); return }
         setBusinesses(data || [])
         setLoading(false)
       })
@@ -92,7 +94,13 @@ export default function BiznestPage() {
 
       {/* List */}
       <div style={{ padding: '8px 12px' }}>
-        {loading ? (
+        {loadError ? (
+          <div style={{ textAlign: 'center', padding: '60px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+            <div style={{ fontSize: 40 }}>⚠️</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
+            <button onClick={() => window.location.reload()} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 8, padding: '9px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
+          </div>
+        ) : loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {[1, 2, 3, 4].map(i => (
               <div key={i} style={{ background: '#fff', borderRadius: 14, padding: 14, display: 'flex', gap: 12, alignItems: 'center' }}>
