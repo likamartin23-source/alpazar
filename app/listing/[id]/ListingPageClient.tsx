@@ -940,7 +940,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                 <button
                   onClick={doBump}
                   disabled={bumpLoading || !canBump(listing.last_bumped_at)}
-                  title={canBump(listing.last_bumped_at) ? 'Ngrije shpalljen në krye' : 'Mund ta ngresh pas 7 ditësh'}
+                  aria-label={canBump(listing.last_bumped_at) ? 'Ngrije shpalljen në krye' : 'Mund ta ngresh pas 7 ditësh'}
                   style={{ flex: 1, background: canBump(listing.last_bumped_at) ? '#E63312' : '#F0F0F0', color: canBump(listing.last_bumped_at) ? '#fff' : '#999', border: 'none', borderRadius: 10, padding: '10px', fontSize: 12, fontWeight: 700, cursor: canBump(listing.last_bumped_at) ? 'pointer' : 'not-allowed', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, opacity: bumpLoading ? 0.7 : 1 }}>
                   <i className="ti ti-arrow-up" style={{ fontSize: 14 }} />{canBump(listing.last_bumped_at) ? 'Ngrije' : 'Ngritur'}
                 </button>
@@ -1093,7 +1093,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
             />
             <div className="alert-btn-row">
               {priceAlert && (
-                <button className="alert-del" onClick={deleteAlert} disabled={alertSaving} title="Fshi alarmin">
+                <button className="alert-del" onClick={deleteAlert} disabled={alertSaving} aria-label="Fshi alarmin">
                   <i className="ti ti-trash" />
                 </button>
               )}
@@ -1273,7 +1273,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
               target="_blank"
               rel="noopener noreferrer"
               className="wa-btn"
-              title="Kontakto me WhatsApp">
+              aria-label="Kontakto me WhatsApp">
               <i className="ti ti-brand-whatsapp" />
             </a>
           )}
@@ -1283,7 +1283,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
               target="_blank"
               rel="noopener noreferrer"
               className="viber-btn"
-              title="Kontakto me Viber">
+              aria-label="Kontakto me Viber">
               <i className="ti ti-brand-viber" />
             </a>
           )}

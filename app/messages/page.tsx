@@ -1464,7 +1464,7 @@ export default function MessagesPage() {
               </div>
             )}
 
-            <button className="fab" onClick={() => window.location.href='/'} title="Bisedë e re">
+            <button className="fab" onClick={() => window.location.href='/'} aria-label="Bisedë e re">
               <i className="ti ti-edit" />
             </button>
           </>

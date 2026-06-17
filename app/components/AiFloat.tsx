@@ -39,7 +39,7 @@ export default function AiFloat() {
         <button
           className="ai-float-btn"
           onClick={() => { window.location.href = '/asistent' }}
-          title="Albi — Asistenti Virtual"
+          aria-label="Albi — Asistenti Virtual"
         >
           <i className="ti ti-robot" />
         </button>

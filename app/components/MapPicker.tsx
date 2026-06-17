@@ -88,7 +88,7 @@ export function MapPicker({ lat, lng, address, onChange, onCityChange }: MapPick
           type="button"
           onClick={getGPS}
           disabled={loading}
-          title="Gjej lokacionin tim automatikisht"
+          aria-label="Gjej lokacionin tim automatikisht"
           style={{
             width: 42, height: 42, background: '#EEF4FF', border: '1px solid #C3DAFB',
             borderRadius: 9, cursor: loading ? 'wait' : 'pointer', display: 'flex',

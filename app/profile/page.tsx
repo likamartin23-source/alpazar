@@ -907,20 +907,20 @@ export default function ProfilePage() {
                         <button
                           className="edit-listing-btn"
                           onClick={() => bumpListing(l.id)}
-                          title="Rifresko shpalljen"
+                          aria-label="Rifresko shpalljen"
                           style={{ fontSize: 13 }}
                         >⬆️</button>
                       ) : (
                         <span title={`Mund ta rifreskosh pas ${bumpDaysLeft(l.last_bumped_at)} ditësh`} style={{ fontSize: 10, color: '#aaa', padding: '0 4px', cursor: 'default' }}>{bumpDaysLeft(l.last_bumped_at)}d</span>
                       )}
-                      <button className="edit-listing-btn" onClick={() => window.location.href = `/listing/${l.id}/edit`} title="Ndrysho">✏️</button>
+                      <button className="edit-listing-btn" onClick={() => window.location.href = `/listing/${l.id}/edit`} aria-label="Ndrysho">✏️</button>
                       {pendingDelete === l.id ? (
                         <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
                           <button onClick={() => deleteListing(l.id)} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Fshi</button>
                           <button onClick={() => setPendingDelete(null)} style={{ background: '#eee', color: '#555', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Jo</button>
                         </div>
                       ) : (
-                        <button className="del-btn" onClick={() => setPendingDelete(l.id)} title="Fshi">🗑</button>
+                        <button className="del-btn" onClick={() => setPendingDelete(l.id)} aria-label="Fshi shpalljen">🗑</button>
                       )}
                     </div>
                   ))

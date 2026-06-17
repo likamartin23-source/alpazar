@@ -539,7 +539,7 @@ const [searchError, setSearchError] = useState(false)
                 {(q || activeFilterCount > 0) && (
                   <button
                     onClick={saveSearch}
-                    title="Ruaj këtë kërkim"
+                    aria-label="Ruaj këtë kërkim"
                     style={{
                       background: savedOk ? '#10B981' : '#fff',
                       color: savedOk ? '#fff' : '#E63312',

@@ -690,7 +690,7 @@ export default function Auth() {
           className="resend-btn"
           onClick={sendOtp}
           disabled={!expired && countdown > 0}
-          title={!expired && countdown > 0 ? `Prit ${countdown}s` : 'Ridërgo kodin'}
+          aria-label="Ridërgo kodin"
         >
           Ridërgo
         </button>
