@@ -172,7 +172,7 @@ function logShare(userId: string, platform: PlatformId, listingId?: string | nul
     listing_id: listingId ?? null,
     platform,
     ref_code: refCode ?? null,
-  }).then(({ error }) => { if (error) console.error('share log:', error.message) })
+  }).then(() => {})
 }
 
 function copyText(text: string) {
