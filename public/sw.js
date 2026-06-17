@@ -42,7 +42,8 @@ self.addEventListener('fetch', (event) => {
 })
 
 self.addEventListener('push', (event) => {
-  const data = event.data?.json() || { title: 'ALPAZAR', body: 'Ke një mesazh të ri!' }
+  let data = { title: 'ALPAZAR', body: 'Ke një mesazh të ri!' }
+  try { if (event.data) data = event.data.json() } catch { /* malformed push payload — use defaults */ }
   event.waitUntil(
     self.registration.showNotification(data.title, {
       body: data.body,
