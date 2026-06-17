@@ -18,14 +18,18 @@ export function AgeGate({ children }: { children: React.ReactNode }) {
 
   if (!confirmed) return (
     <>
-      <div style={{
-        position: 'fixed', inset: 0, zIndex: 99999,
-        background: 'rgba(17,17,17,0.97)',
-        display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center',
-        gap: 20, padding: 24,
-        fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-      }}>
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Konfirmimi i moshës"
+        style={{
+          position: 'fixed', inset: 0, zIndex: 99999,
+          background: 'rgba(17,17,17,0.97)',
+          display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          gap: 20, padding: 24,
+          fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
+        }}>
         <div style={{ fontSize: 48 }}>🦅</div>
         <div style={{ fontSize: 24, fontWeight: 900, color: '#F5C842', letterSpacing: 2 }}>ALPAZAR</div>
         <div style={{ fontSize: 14, fontWeight: 700, color: '#fff', textAlign: 'center' }}>

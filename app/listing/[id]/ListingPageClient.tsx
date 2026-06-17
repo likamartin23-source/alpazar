@@ -1040,7 +1040,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
       {alertOpen && (
         <>
           <div className="alert-overlay" onClick={() => { setAlertOpen(false); setAlertMsg('') }} />
-          <div className="alert-panel">
+          <div className="alert-panel" role="dialog" aria-modal="true" aria-label="Alarmi i Çmimit">
             <div className="alert-handle" />
             <div className="alert-title">
               <i className="ti ti-bell-ringing" style={{ color: '#E63312' }} />
@@ -1093,7 +1093,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
       {reportOpen && (
         <>
           <div className="report-overlay" onClick={() => setReportOpen(false)} />
-          <div className="report-panel">
+          <div className="report-panel" role="dialog" aria-modal="true" aria-label="Raporto këtë shpallje">
             <div className="report-handle" />
             {reportSent ? (
               <div className="report-success">
@@ -1144,8 +1144,8 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                 {seller.shop_name || seller.full_name || seller.username || 'Shitës'}
               </span>
               <span className="cs-priv">🔒 Private</span>
-              <button className="cs-close" onClick={() => setChatOpen(false)}>
-                <i className="ti ti-x" />
+              <button className="cs-close" aria-label="Mbyll bisedën" onClick={() => setChatOpen(false)}>
+                <i className="ti ti-x" aria-hidden="true" />
               </button>
             </div>
 

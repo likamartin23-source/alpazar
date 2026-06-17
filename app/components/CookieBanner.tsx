@@ -28,14 +28,18 @@ export function CookieBanner() {
   if (!visible) return null
 
   return (
-    <div style={{
-      position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 9999,
-      background: '#111', color: '#fff',
-      padding: '14px 16px 18px',
-      boxShadow: '0 -4px 24px rgba(0,0,0,.4)',
-      fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif",
-      maxWidth: 480, margin: '0 auto',
-    }}>
+    <div
+      role="alertdialog"
+      aria-modal="true"
+      aria-label="Cookies"
+      style={{
+        position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 9999,
+        background: '#111', color: '#fff',
+        padding: '14px 16px 18px',
+        boxShadow: '0 -4px 24px rgba(0,0,0,.4)',
+        fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif",
+        maxWidth: 480, margin: '0 auto',
+      }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 12 }}>
         <span style={{ fontSize: 20, flexShrink: 0 }}>🍪</span>
         <div>

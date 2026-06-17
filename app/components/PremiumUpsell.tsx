@@ -56,11 +56,15 @@ export function PremiumUpsellModal({
   const secs = (countdown % 60).toString().padStart(2, '0')
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, background: 'rgba(0,0,0,.65)', zIndex: 9999,
-      display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
-      animation: 'fadeIn .2s ease',
-    }}
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Aktivizo Premium"
+      style={{
+        position: 'fixed', inset: 0, background: 'rgba(0,0,0,.65)', zIndex: 9999,
+        display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+        animation: 'fadeIn .2s ease',
+      }}
       onClick={close}
     >
       <style>{`

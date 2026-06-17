@@ -2,8 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { SUPABASE_URL } from '../../../lib/supabase'
 import { getSupabaseAdmin } from '../../../lib/supabase-admin'
+import { rateLimit, getClientIp } from '../../../lib/rateLimit'
 
 export async function POST(req: NextRequest) {
+  const ip = getClientIp(req)
+  const rl = rateLimit(`delete-account:${ip}`, { limit: 3, windowMs: 60 * 60_000 })
+  if (!rl.allowed) {
+    return NextResponse.json({ error: 'Shumë kërkesa. Provo përsëri pas pak.' }, { status: 429 })
+  }
   try {
     const auth = req.headers.get('authorization')
     if (!auth?.startsWith('Bearer ')) {

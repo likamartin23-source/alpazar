@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../lib/supabase'
+import { rateLimit, getClientIp } from '../../../lib/rateLimit'
 
 export const runtime = 'nodejs'
 
@@ -16,6 +17,10 @@ function getToken(req: NextRequest): string | null {
 
 // GET /api/price-alerts?listing_id=xxx
 export async function GET(req: NextRequest) {
+  const ip = getClientIp(req)
+  const rl = rateLimit(`price-alerts:${ip}`, { limit: 20, windowMs: 60_000 })
+  if (!rl.allowed) return NextResponse.json({ error: 'Shumë kërkesa.' }, { status: 429 })
+
   const token = getToken(req)
   if (!token) return NextResponse.json({ error: 'Kërkohet hyrja' }, { status: 401 })
 

@@ -153,6 +153,9 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3' }: Props) 
       {/* Lightbox */}
       {lightbox && (
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Shfaqje foto në madhësinë e plotë"
           onClick={() => setLightbox(false)}
           style={{
             position: 'fixed', inset: 0, background: 'rgba(0,0,0,.92)', zIndex: 9999,
@@ -161,7 +164,7 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3' }: Props) 
           }}
         >
           <style>{`@keyframes lb-fade{from{opacity:0}to{opacity:1}} .carousel-track::-webkit-scrollbar{display:none}`}</style>
-          <button onClick={() => setLightbox(false)} style={{ position: 'absolute', top: 16, right: 16, background: 'rgba(255,255,255,.15)', border: 'none', color: '#fff', borderRadius: '50%', width: 36, height: 36, fontSize: 18, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
+          <button aria-label="Mbyll" onClick={() => setLightbox(false)} style={{ position: 'absolute', top: 16, right: 16, background: 'rgba(255,255,255,.15)', border: 'none', color: '#fff', borderRadius: '50%', width: 36, height: 36, fontSize: 18, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
           {current > 0 && (
             <button onClick={e => { e.stopPropagation(); goTo(current - 1) }} style={{ position: 'absolute', left: 12, background: 'rgba(255,255,255,.15)', border: 'none', color: '#fff', borderRadius: '50%', width: 40, height: 40, fontSize: 20, cursor: 'pointer' }}>‹</button>
           )}

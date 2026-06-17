@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../lib/supabase'
+import { rateLimit, getClientIp } from '../../../lib/rateLimit'
 
 export const runtime = 'nodejs'
 
@@ -11,6 +12,12 @@ function userSb(token: string) {
 }
 
 export async function GET(req: NextRequest) {
+  const ip = getClientIp(req)
+  const rl = rateLimit(`analytics:${ip}`, { limit: 10, windowMs: 60_000 })
+  if (!rl.allowed) {
+    return NextResponse.json({ error: 'Shumë kërkesa. Provo përsëri pas pak.' }, { status: 429 })
+  }
+
   const token = req.headers.get('authorization')?.replace('Bearer ', '')
   if (!token) return NextResponse.json({ error: 'Kërkohet hyrja' }, { status: 401 })
 
