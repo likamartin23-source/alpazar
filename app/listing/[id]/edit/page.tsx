@@ -230,7 +230,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
         </div>
 
         <div className="body">
-          {msg && <div className={`msg-box ${mt}`}>{mm}</div>}
+          {msg && <div className={`msg-box ${mt}`} role="alert">{mm}</div>}
           {uploadProgress && (
             <div style={{ background:'#e8f4fd', border:'1px solid #90caf9', borderRadius:10, padding:'10px 14px', marginBottom:10, fontSize:13, color:'#1565c0', display:'flex', alignItems:'center', gap:8 }}>
               <span style={{ fontSize:16 }}>⏳</span>

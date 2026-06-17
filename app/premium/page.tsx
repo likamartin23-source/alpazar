@@ -166,7 +166,7 @@ export default function PremiumPage() {
             </div>
           )}
 
-          {msg && <div className={`msg-box ${mt}`}>{mm}</div>}
+          {msg && <div className={`msg-box ${mt}`} role="alert">{mm}</div>}
 
           <div className="plan-row">
             <div className={`plan-card ${plan === 'monthly' ? 'active' : ''}`} onClick={() => setPlan('monthly')}>

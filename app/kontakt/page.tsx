@@ -126,7 +126,7 @@ export default function Kontakt() {
           {/* ── FORMA E KONTAKTIT ── */}
           <div className="section">
             <div className="sec-title"><i className="ti ti-send" />Dërgo Mesazh</div>
-            {msg && <div className={`msg-box ${mt}`}>{mm}</div>}
+            {msg && <div className={`msg-box ${mt}`} role="alert">{mm}</div>}
             <form onSubmit={sendForm}>
               <div className="form-field">
                 <label htmlFor="kontakt-name">Emri juaj *</label>

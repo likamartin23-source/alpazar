@@ -621,7 +621,7 @@ export default function ProfilePage() {
           {/* Profile Tab */}
           {activeTab === 'profile' && (
             <>
-              {msg && <div className={`msg-box ${mt}`}>{mm}</div>}
+              {msg && <div className={`msg-box ${mt}`} role="alert">{mm}</div>}
 
               {profile?.is_admin && (
                 <button className="admin-btn" onClick={() => window.location.href = '/admin'}>
@@ -772,7 +772,7 @@ export default function ProfilePage() {
                   <span className="card-title">✉️ Ndrysho Email-in</span>
                 </div>
                 {emailMsg && (
-                  <div className={`msg-box msg-sm ${emailMsg.split(':')[0]}`}>{emailMsg.split(/:(.+)/)[1]}</div>
+                  <div className={`msg-box msg-sm ${emailMsg.split(':')[0]}`} role="alert">{emailMsg.split(/:(.+)/)[1]}</div>
                 )}
                 <label htmlFor="prof-new-email">Email aktual: <strong>{user?.email}</strong></label>
                 <input
@@ -795,7 +795,7 @@ export default function ProfilePage() {
                   <span className="card-title">🔒 Ndrysho Fjalëkalimin</span>
                 </div>
                 {passMsg && (
-                  <div className={`msg-box msg-sm ${passMsg.split(':')[0]}`}>{passMsg.split(/:(.+)/)[1]}</div>
+                  <div className={`msg-box msg-sm ${passMsg.split(':')[0]}`} role="alert">{passMsg.split(/:(.+)/)[1]}</div>
                 )}
                 <label htmlFor="prof-new-pass">Fjalëkalimi i ri (min. 8 karaktere)</label>
                 <div className="pass-wrap">
@@ -834,7 +834,7 @@ export default function ProfilePage() {
                   Fshirja e llogarisë është <strong>e pakthyeshme</strong>. Të gjitha shpalljet dhe të dhënat tuaja do të fshihen përgjithmonë.
                 </div>
                 {deleteMsg && (
-                  <div className={`msg-box msg-sm ${deleteMsg.split(':')[0]}`}>{deleteMsg.split(/:(.+)/)[1]}</div>
+                  <div className={`msg-box msg-sm ${deleteMsg.split(':')[0]}`} role="alert">{deleteMsg.split(/:(.+)/)[1]}</div>
                 )}
                 {!deleteConfirm ? (
                   <button className="delete-btn" onClick={() => setDeleteConfirm(true)}>
@@ -1064,7 +1064,7 @@ export default function ProfilePage() {
           {/* Shop Tab */}
           {activeTab === 'shop' && (
             <>
-              {shopMsg && <div className={`msg-box ${smt}`}>{smm}</div>}
+              {shopMsg && <div className={`msg-box ${smt}`} role="alert">{smm}</div>}
 
               {!profile?.is_premium ? (
                 <div className="prem-card">

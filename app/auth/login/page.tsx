@@ -698,7 +698,7 @@ export default function Auth() {
         </button>
       </div>
 
-      {expired && <div className="msg warn">Kodi ka skaduar. Klikoje &quot;Ridërgo&quot; për kod të ri.</div>}
+      {expired && <div className="msg warn" role="alert">Kodi ka skaduar. Klikoje &quot;Ridërgo&quot; për kod të ri.</div>}
 
       <div className="otp-row" onPaste={handleOtpPaste}>
         {otp.map((d, i) => (
@@ -812,7 +812,7 @@ export default function Auth() {
             </div>
           )}
 
-          {msg && <div className={`msg ${t}`}>{m}</div>}
+          {msg && <div className={`msg ${t}`} role="alert">{m}</div>}
 
           {/* ════════════════════════════════════════
               1. HYRJA — email/telefon + fjalëkalim (PRIMARE)

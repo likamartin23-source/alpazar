@@ -307,7 +307,7 @@ export default function NewListing() {
               <button onClick={() => { localStorage.removeItem('alpazar_listing_draft'); setForm({ title:'', description:'', price:'', currency:'ALL', condition:'', category_id:'', city:'', images:[], latitude:null, longitude:null, location_address:'' }); setDraftRestored(false) }} style={{ marginLeft:'auto', background:'none', border:'none', color:'#166534', cursor:'pointer', fontSize:11, textDecoration:'underline', fontFamily:'inherit' }}>Fshi draft-in</button>
             </div>
           )}
-          {msg && <div className={`msg-box ${mt}`}>{mm}</div>}
+          {msg && <div className={`msg-box ${mt}`} role="alert">{mm}</div>}
           {uploadProgress && (
             <div style={{ background:'#e8f4fd', border:'1px solid #90caf9', borderRadius:10, padding:'10px 14px', marginBottom:10, fontSize:13, color:'#1565c0', display:'flex', alignItems:'center', gap:8 }}>
               <span style={{ fontSize:16 }}>⏳</span>
