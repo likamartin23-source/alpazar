@@ -85,6 +85,7 @@ const [loadError, setLoadError] = useState(false)
       const res = await fetch(`/api/analytics?days=${days}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
+      if (!res.ok) { setLoadError(true); return }
       const json = await res.json()
       setData(json)
     } catch {

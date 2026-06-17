@@ -379,6 +379,7 @@ export default function Home() {
     suggestTimer.current = setTimeout(async () => {
       try {
         const res = await fetch(`/api/search/fts?q=${encodeURIComponent(q)}`)
+        if (!res.ok) { setSuggestions([]); setShowSuggestions(false); return }
         const json = await res.json()
         if (json.results?.length) { setSuggestions(json.results.slice(0, 5)); setShowSuggestions(true) }
         else { setSuggestions([]); setShowSuggestions(false) }
