@@ -88,6 +88,7 @@ export default function SearchResultsPage() {
   const [premium, setPremium]       = useState<any[]>([])
   const [regular, setRegular]       = useState<any[]>([])
   const [loading, setLoading]       = useState(true)
+const [searchError, setSearchError] = useState(false)
   const [categories, setCategories] = useState<any[]>([])
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [savedOk, setSavedOk]         = useState(false)
@@ -211,6 +212,8 @@ export default function SearchResultsPage() {
     sort     = sortBy,
   ) {
     setLoading(true)
+    setSearchError(false)
+    try {
 
     // ── 1) SHOPS — skip if premiumOnly (shops are always premium) ──
     let shopResults: any[] = []
@@ -284,7 +287,11 @@ export default function SearchResultsPage() {
       setHasMore((regRes.data?.length ?? 0) >= PAGE)
     }
     setRegularOffset(0)
-    setLoading(false)
+    } catch {
+      setSearchError(true)
+    } finally {
+      setLoading(false)
+    }
   }
 
   async function loadMore() {
@@ -512,7 +519,13 @@ export default function SearchResultsPage() {
 
         {/* ── BODY ── */}
         <div className="body">
-          {loading ? (
+          {searchError ? (
+            <div style={{ textAlign: 'center', padding: '48px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+              <div style={{ fontSize: 36 }}>⚠️</div>
+              <div style={{ fontWeight: 700, color: '#111' }}>Gabim gjatë kërkimit</div>
+              <button onClick={() => doSearch()} style={{ background: '#F5C842', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Provo Përsëri</button>
+            </div>
+          ) : loading ? (
             <SkeletonGrid count={6} />
           ) : (
             <>

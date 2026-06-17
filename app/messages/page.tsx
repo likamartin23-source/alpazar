@@ -1087,8 +1087,8 @@ export default function MessagesPage() {
           <>
             {selectMode ? (
               <div className="select-bar">
-                <button className="back-btn" onClick={() => { setSelectMode(false); setSelectedMsgs(new Set()) }}>
-                  <i className="ti ti-x" />
+                <button className="back-btn" aria-label="Anulo zgjedhjen" onClick={() => { setSelectMode(false); setSelectedMsgs(new Set()) }}>
+                  <i className="ti ti-x" aria-hidden="true" />
                 </button>
                 <div className="select-bar-text">{selectedMsgs.size} të zgjedhura</div>
                 {selectedMsgs.size > 0 && (
@@ -1099,7 +1099,7 @@ export default function MessagesPage() {
               </div>
             ) : (
               <div className="topbar chat">
-                <button className="back-btn" onClick={back}><i className="ti ti-arrow-left" /></button>
+                <button className="back-btn" aria-label="Kthehu në biseda" onClick={back}><i className="ti ti-arrow-left" aria-hidden="true" /></button>
                 <Avatar profile={selected.other} size={36} online={isOtherOnline} />
                 <div className="t-meta" style={{ cursor:'pointer' }} onClick={() => setShowInfo(true)}>
                   <div className="t-name">{displayName(selected.other)}</div>
@@ -1113,17 +1113,17 @@ export default function MessagesPage() {
                 </div>
                 <div className="t-actions">
                   {waLink && (
-                    <button className="t-action-btn" onClick={() => setShowWhatsApp(true)}>
-                      <i className="ti ti-brand-whatsapp" style={{ color:'#25D366' }} />
+                    <button className="t-action-btn" aria-label="Hap WhatsApp" onClick={() => setShowWhatsApp(true)}>
+                      <i className="ti ti-brand-whatsapp" style={{ color:'#25D366' }} aria-hidden="true" />
                     </button>
                   )}
                   {viberLink && (
-                    <button className="t-action-btn" onClick={() => setShowViber(true)}>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="#7360F2" style={{display:'block'}}><path d="M11.5 1C5.7 1.1 1.1 5.7 1 11.5c-.04 2.1.55 4 1.53 5.65L1 23l6.09-1.5c1.57.9 3.4 1.41 5.27 1.45C18.1 23.02 23 18.1 23 12c0-6.07-5.1-11.09-11.5-11zm4.55 15.9c-.31.85-1.5 1.58-2.26 1.6-.77.05-1.51-.16-4.45-1.4C6.08 15.6 3.83 12.17 3.63 11.9c-.2-.28-1.63-2.16-1.63-4.13 0-1.96.85-2.95 1.18-3.37.33-.42.64-.62.9-.64.32 0 .62 0 .9.02.3.02.7-.11.97.74.32.94 1.08 3.26 1.18 3.49.1.24.16.5.03.8-.12.3-.18.48-.36.74-.18.26-.38.57-.55.76-.18.2-.36.42-.16.83.2.4.9 1.48 1.93 2.4 1.33 1.19 2.45 1.56 2.8 1.74.34.18.55.15.75-.08.2-.22.87-1.02 1.1-1.37.23-.34.46-.28.78-.17.33.11 2.07.98 2.43 1.16.35.18.58.27.67.42.09.15.09.85-.22 1.62z"/></svg>
+                    <button className="t-action-btn" aria-label="Hap Viber" onClick={() => setShowViber(true)}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="#7360F2" style={{display:'block'}} aria-hidden="true"><path d="M11.5 1C5.7 1.1 1.1 5.7 1 11.5c-.04 2.1.55 4 1.53 5.65L1 23l6.09-1.5c1.57.9 3.4 1.41 5.27 1.45C18.1 23.02 23 18.1 23 12c0-6.07-5.1-11.09-11.5-11zm4.55 15.9c-.31.85-1.5 1.58-2.26 1.6-.77.05-1.51-.16-4.45-1.4C6.08 15.6 3.83 12.17 3.63 11.9c-.2-.28-1.63-2.16-1.63-4.13 0-1.96.85-2.95 1.18-3.37.33-.42.64-.62.9-.64.32 0 .62 0 .9.02.3.02.7-.11.97.74.32.94 1.08 3.26 1.18 3.49.1.24.16.5.03.8-.12.3-.18.48-.36.74-.18.26-.38.57-.55.76-.18.2-.36.42-.16.83.2.4.9 1.48 1.93 2.4 1.33 1.19 2.45 1.56 2.8 1.74.34.18.55.15.75-.08.2-.22.87-1.02 1.1-1.37.23-.34.46-.28.78-.17.33.11 2.07.98 2.43 1.16.35.18.58.27.67.42.09.15.09.85-.22 1.62z"/></svg>
                     </button>
                   )}
-                  <button className="t-action-btn" onClick={() => setShowInfo(true)}>
-                    <i className="ti ti-dots-vertical" />
+                  <button className="t-action-btn" aria-label="Më shumë veprime" onClick={() => setShowInfo(true)}>
+                    <i className="ti ti-dots-vertical" aria-hidden="true" />
                   </button>
                 </div>
               </div>
@@ -1200,7 +1200,7 @@ export default function MessagesPage() {
                                       )}
                                     </div>
                                     {m.reply_msg.type === 'image' && m.reply_msg.attachment_url && (
-                                      <img className="rp-img" src={m.reply_msg.attachment_url} alt="" loading="lazy" />
+                                      <img className="rp-img" src={m.reply_msg.attachment_url} alt="Imazh i thënë" loading="lazy" />
                                     )}
                                   </div>
                                 </div>
@@ -1215,7 +1215,7 @@ export default function MessagesPage() {
                                 <img
                                   className="bubble-img"
                                   src={m.attachment_url}
-                                  alt=""
+                                  alt="Imazh i mesazhit"
                                   loading="lazy"
                                   onClick={e => { e.stopPropagation(); setLightbox(m.attachment_url) }}
                                   style={{ marginBottom: m.content ? 6 : 0 }}
@@ -1290,7 +1290,7 @@ export default function MessagesPage() {
                         )}
                       </div>
                       {replyTo.type === 'image' && replyTo.attachment_url && (
-                        <img className="rs-img" src={replyTo.attachment_url} alt="" loading="lazy" width={40} height={40} />
+                        <img className="rs-img" src={replyTo.attachment_url} alt="Imazh i thënë" loading="lazy" width={40} height={40} />
                       )}
                       <button onClick={() => setReplyTo(null)} style={{ background:'none', border:'none', color:'#bbb', fontSize:20, cursor:'pointer', padding:0, lineHeight:1, flexShrink:0 }}>✕</button>
                     </div>
@@ -1307,7 +1307,7 @@ export default function MessagesPage() {
                   {/* Image preview bar */}
                   {imgPreview && (
                     <div className="img-preview-bar">
-                      <img className="img-preview-thumb" src={imgPreview.url} alt="" />
+                      <img className="img-preview-thumb" src={imgPreview.url} alt="Pamje e imazhit për të dërguar" />
                       <div style={{ flex:1 }}>
                         <div style={{ fontSize:12, fontWeight:700, color:'#111', marginBottom:2 }}>Dërgo foton</div>
                         <div style={{ fontSize:11, color:'#888' }}>{imgPreview.file.name}</div>
@@ -1397,8 +1397,8 @@ export default function MessagesPage() {
           /* ══════════════ THREAD LIST ══════════════ */
           <>
             <div className="topbar">
-              <button className="back-btn" onClick={() => window.location.href = '/'}>
-                <i className="ti ti-arrow-left" />
+              <button className="back-btn" aria-label="Kthehu në ballina" onClick={() => window.location.href = '/'}>
+                <i className="ti ti-arrow-left" aria-hidden="true" />
               </button>
               <div className="t-meta">
                 <div className="t-name" style={{ color:'#F5C842' }}>
@@ -1408,8 +1408,8 @@ export default function MessagesPage() {
                   )}
                 </div>
               </div>
-              <button className="t-action-btn" onClick={() => window.location.href = '/notifications'} title="Njoftimet">
-                <i className="ti ti-bell" />
+              <button className="t-action-btn" aria-label="Njoftimet" onClick={() => window.location.href = '/notifications'}>
+                <i className="ti ti-bell" aria-hidden="true" />
               </button>
             </div>
 

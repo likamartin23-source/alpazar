@@ -70,7 +70,6 @@ export default function PremiumPage() {
       ),
     ])
     if (error) { setMsg(`err:${error.message}`); setSubmitting(false); return }
-    if (reqErr) console.warn('premium_requests insert:', reqErr.message)
     await supabase.auth.refreshSession()
     setMsg('ok:Kërkesa u dërgua! Admini do ta konfirmojë brenda 24 orësh.')
     setSubmitting(false)

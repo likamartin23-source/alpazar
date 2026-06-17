@@ -104,7 +104,6 @@ export default function NotificationsPage() {
   const dismiss = useCallback(async (id: string) => {
     const { error } = await supabase.from('notifications').delete().eq('id', id)
     if (!error) setNotifs(prev => prev.filter(n => n.id !== id))
-    else console.warn('dismiss notif failed:', error.message)
   }, [])
 
   const markRead = useCallback(async (id: string) => {
@@ -112,7 +111,6 @@ export default function NotificationsPage() {
       .update({ is_read: true, read_at: new Date().toISOString() })
       .eq('id', id)
     if (!error) setNotifs(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n))
-    else console.warn('markRead failed:', error.message)
   }, [])
 
   const markAllRead = useCallback(async () => {
@@ -122,7 +120,6 @@ export default function NotificationsPage() {
       .eq('user_id', user.id)
       .eq('is_read', false)
     if (!error) { setNotifs(prev => prev.map(n => ({ ...n, is_read: true }))); refreshUnread(user.id) }
-    else console.warn('markAllRead failed:', error.message)
   }, [user, refreshUnread])
 
   const handleClick = useCallback((n: Notif) => {

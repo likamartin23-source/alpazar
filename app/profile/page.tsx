@@ -893,7 +893,7 @@ export default function ProfilePage() {
                   myListings.filter(l => l.is_active).map(l => (
                     <div key={l.id} className="listing-row">
                       <div className="listing-thumb" onClick={() => window.location.href = `/listing/${l.id}`}>
-                        {l.images?.[0] ? <img src={l.images[0]} alt="" loading="lazy" width={80} height={80} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <i className="ti ti-photo" style={{ color: '#ccc', fontSize: 20 }} />}
+                        {l.images?.[0] ? <img src={l.images[0]} alt={l.title} loading="lazy" width={80} height={80} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <i className="ti ti-photo" style={{ color: '#ccc', fontSize: 20 }} />}
                       </div>
                       <div className="listing-info" onClick={() => window.location.href = `/listing/${l.id}`}>
                         <div className="listing-title">{l.title}</div>
@@ -941,7 +941,7 @@ export default function ProfilePage() {
                 savedListings.map((l: any) => (
                   <div key={l.id} className="listing-row" onClick={() => window.location.href = `/listing/${l.id}`} style={{ cursor: 'pointer' }}>
                     <div className="listing-thumb">
-                      {l.images?.[0] ? <img src={l.images[0]} alt="" loading="lazy" width={80} height={80} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <i className="ti ti-photo" style={{ color: '#ccc', fontSize: 20 }} />}
+                      {l.images?.[0] ? <img src={l.images[0]} alt={l.title} loading="lazy" width={80} height={80} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <i className="ti ti-photo" style={{ color: '#ccc', fontSize: 20 }} />}
                     </div>
                     <div className="listing-info">
                       <div className="listing-title">{l.title}</div>
