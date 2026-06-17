@@ -1,4 +1,4 @@
-const CACHE_NAME = 'alpazar-v8'
+const CACHE_NAME = 'alpazar-v9'
 
 self.addEventListener('install', () => self.skipWaiting())
 

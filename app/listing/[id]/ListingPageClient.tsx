@@ -321,6 +321,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
       const res = await fetch(`/api/price-alerts?listing_id=${listingId}`, {
         headers: { Authorization: `Bearer ${session.access_token}` },
       })
+      if (!res.ok) return
       const json = await res.json()
       if (json.alert) {
         setPriceAlert(json.alert)
@@ -342,8 +343,12 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
         body: JSON.stringify({ listing_id: params.id, target_price: price }),
       })
+      if (!res.ok) {
+        let errMsg = 'Gabim i serverit.'
+        try { const e = await res.json(); if (e?.error) errMsg = e.error } catch {}
+        setAlertMsg(`err:${errMsg}`); return
+      }
       const json = await res.json()
-      if (!res.ok) { setAlertMsg(`err:${json.error}`); return }
       setPriceAlert(json.alert)
       setAlertMsg('ok:Alarmi u ruajt! Do të njoftohesh kur çmimi ulet.')
       setTimeout(() => setAlertOpen(false), 1800)
