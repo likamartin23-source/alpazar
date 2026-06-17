@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { createClient } from '@supabase/supabase-js'
 import { rateLimit, getClientIp } from '../../../lib/rateLimit'
+import { SITE_URL } from '../../../lib/siteConfig'
 import { SUPABASE_URL, SUPABASE_ANON_KEY as SUPABASE_ANON } from '../../../lib/supabase'
 
 /** Escape HTML entities — prevents injection in email bodies */
@@ -159,7 +160,7 @@ export async function POST(req: NextRequest) {
                 Llogaria jote te Alpazar është krijuar me sukses.<br>
                 Tani mund të postosh shpallje, të kontaktosh shitësit dhe të gjesh gjithçka ke nevojë.
               </p>
-              <a href="https://alpazar.vercel.app" style="background:#E63312;color:#fff;text-decoration:none;padding:14px 32px;border-radius:10px;font-weight:700;font-size:15px;display:inline-block;">
+              <a href="${SITE_URL}" style="background:#E63312;color:#fff;text-decoration:none;padding:14px 32px;border-radius:10px;font-weight:700;font-size:15px;display:inline-block;">
                 Hap Alpazar →
               </a>
               <p style="color:#aaa;font-size:12px;margin-top:24px;">

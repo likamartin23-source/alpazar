@@ -7,6 +7,7 @@ import nextDynamic from 'next/dynamic'
 import { supabase } from '../../../lib/supabase'
 import { useAlpazar } from '../../../lib/context'
 import { uploadImages, UploadProgress } from '../../../lib/uploadImages'
+import { SITE_URL } from '../../../lib/siteConfig'
 import { FreeTierBanner, PremiumUpsellModal, SellerPremiumUpsell } from '../../components/PremiumUpsell'
 
 const MapPicker = nextDynamic(() => import('../../components/MapPicker').then(m => ({ default: m.MapPicker })), { ssr: false })
@@ -222,7 +223,7 @@ export default function NewListing() {
         fetch('/api/indexnow', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${s.access_token}` },
-          body: JSON.stringify({ url: `https://alpazar.vercel.app/listing/${data.id}` }),
+          body: JSON.stringify({ url: `${SITE_URL}/listing/${data.id}` }),
         }).catch(() => {})
       })
       // Upsell pas shpalljes së 2-të — max 1 herë/sesion

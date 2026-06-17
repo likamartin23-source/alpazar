@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic'
 import { useEffect, useState, useRef } from 'react'
 import Avatar from '../components/Avatar'
 import { supabase } from '../../lib/supabase'
+import { SITE_URL } from '../../lib/siteConfig'
 import { getLevel, isNewMember } from '../components/Badges'
 import { SkeletonProfile, SkeletonList } from '../components/Skeleton'
 
@@ -552,7 +553,7 @@ export default function ProfilePage() {
             {profile?.username && <div className="handle" style={{ margin: 0 }}>@{profile.username}</div>}
             <button
               onClick={() => {
-                const url = `https://alpazar.vercel.app/u/${profile?.id}`
+                const url = `${SITE_URL}/u/${profile?.id}`
                 navigator.clipboard?.writeText(url).catch(() => {})
                 setProfileCopied(true)
                 setTimeout(() => setProfileCopied(false), 2000)
