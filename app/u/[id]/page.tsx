@@ -2,10 +2,9 @@ import { createClient } from '@supabase/supabase-js'
 import type { Metadata } from 'next'
 import UserProfileClient from './UserProfileClient'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../lib/supabase'
+import { SITE_URL } from '../../../lib/siteConfig'
 
 export const dynamic = 'force-dynamic'
-
-const SITE_URL = 'https://alpazar.vercel.app'
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)

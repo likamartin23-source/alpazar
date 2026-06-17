@@ -2,10 +2,9 @@ import { createClient } from '@supabase/supabase-js'
 import type { Metadata } from 'next'
 import ListingPageClient from './ListingPageClient'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../lib/supabase'
+import { SITE_URL } from '../../../lib/siteConfig'
 
 export const dynamic = 'force-dynamic'
-
-const SITE_URL = 'https://alpazar.vercel.app'
 
 async function fetchListingData(id: string) {
   const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)

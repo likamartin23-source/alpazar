@@ -2,9 +2,10 @@ import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../lib/supabase'
 import { rateLimit } from '../../../lib/rateLimit'
+import { SITE_URL, SITE_HOST } from '../../../lib/siteConfig'
 
 const INDEXNOW_KEY = process.env.INDEXNOW_KEY || '825731eba0e14fec916791e52a62816c'
-const BASE_URL = 'https://alpazar.vercel.app'
+const BASE_URL = SITE_URL
 
 // Faqet statike gjithmonë të rëndësishme
 const STATIC_URLS = [
@@ -51,7 +52,7 @@ export async function POST(req: NextRequest) {
   fetch('https://api.indexnow.org/indexnow', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json; charset=utf-8' },
-    body: JSON.stringify({ host: 'alpazar.vercel.app', key: INDEXNOW_KEY, urlList: [url] }),
+    body: JSON.stringify({ host: SITE_HOST, key: INDEXNOW_KEY, urlList: [url] }),
   }).catch((err) => { console.error('[indexnow] submit failed:', err) })
 
   return NextResponse.json({ ok: true })
@@ -88,7 +89,7 @@ export async function GET(req: NextRequest) {
     const allUrls = [...STATIC_URLS, ...listingUrls, ...shopUrls]
 
     const payload = {
-      host: 'alpazar.vercel.app',
+      host: SITE_HOST,
       key: INDEXNOW_KEY,
       keyLocation: `${BASE_URL}/${INDEXNOW_KEY}.txt`,
       urlList: allUrls.slice(0, 1000),

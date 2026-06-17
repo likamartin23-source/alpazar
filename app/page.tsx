@@ -13,6 +13,7 @@ import { PremiumUpsellModal } from './components/PremiumUpsell'
 import { Onboarding } from './components/Onboarding'
 import { useAlpazar } from '../lib/context'
 import { saveRefFromUrl } from '../lib/referral'
+import { SITE_URL } from '../lib/siteConfig'
 
 // Banner shkarkim — buton i vogël katrore pulsues (fixed, vetem faqja kryesore)
 function InstallBanner() {
@@ -68,7 +69,7 @@ function ShareBox({ refCode }: { refCode?: string }) {
   const [mode, setMode] = useState<'feed' | 'msg'>('feed')
   const [copied, setCopied] = useState<string | null>(null)
 
-  const base = 'https://alpazar.vercel.app'
+  const base = SITE_URL
   const url  = refCode ? `${base}?ref=${refCode}` : base
   const text = refCode
     ? 'Bashkohu me mua në ALPAZAR — marketplace #1 shqiptar! Shit, bli dhe bëj pazarin tënd falas:'

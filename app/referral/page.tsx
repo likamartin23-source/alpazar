@@ -6,8 +6,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { getLevel } from '../components/Badges'
 import { SharePanel } from '../components/SharePanel'
-
-const SITE = 'https://alpazar.vercel.app'
+import { SITE_URL as SITE } from '../../lib/siteConfig'
 
 const LEVELS = [
   { name: 'Fillestar', icon: '🌱', min: 0,   max: 99,  color: '#888',    bg: '#f5f5f5' },
