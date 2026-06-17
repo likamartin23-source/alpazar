@@ -1417,7 +1417,7 @@ export default function MessagesPage() {
             <div className="search-wrap">
               <div className="search-inner">
                 <i className="ti ti-search" />
-                <input placeholder="Kërko bisedë..." value={search} onChange={e => setSearch(e.target.value)} />
+                <input type="search" placeholder="Kërko bisedë..." aria-label="Kërko bisedë" value={search} onChange={e => setSearch(e.target.value)} />
               </div>
             </div>
 

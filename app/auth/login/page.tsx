@@ -117,11 +117,13 @@ export default function Auth() {
   const [regPass, setRegPass] = useState('')
   const [regPass2, setRegPass2] = useState('')
   const [showRegPass, setShowRegPass] = useState(false)
+  const [showRegPass2, setShowRegPass2] = useState(false)
 
   // new password (forgot flow)
   const [newPass, setNewPass] = useState('')
   const [newPass2, setNewPass2] = useState('')
   const [showNewPass, setShowNewPass] = useState(false)
+  const [showNewPass2, setShowNewPass2] = useState(false)
 
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
   const [countdown, setCountdown] = useState(0)
@@ -944,10 +946,15 @@ export default function Auth() {
 
               <div className="field">
                 <label htmlFor="reg-password-confirm">Konfirmo Fjalëkalimin *</label>
-                <input id="reg-password-confirm" type="password" placeholder="••••••••"
-                  value={regPass2} onChange={e => setRegPass2(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && sendOtp()}
-                  autoComplete="new-password" />
+                <div className="pass-wrap">
+                  <input id="reg-password-confirm" type={showRegPass2 ? 'text' : 'password'} placeholder="••••••••"
+                    value={regPass2} onChange={e => setRegPass2(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && sendOtp()}
+                    autoComplete="new-password" />
+                  <button type="button" className="pass-toggle" onClick={() => setShowRegPass2(v => !v)}>
+                    {showRegPass2 ? '🙈' : '👁️'}
+                  </button>
+                </div>
                 {regPass2.length > 0 && regPass !== regPass2 && (
                   <p className="hint warn">Fjalëkalimet nuk përputhen</p>
                 )}
@@ -1116,10 +1123,15 @@ export default function Auth() {
               </div>
               <div className="field">
                 <label htmlFor="reset-confirm-password">Konfirmo fjalëkalimin *</label>
-                <input id="reset-confirm-password" type="password" placeholder="••••••••" value={newPass2}
-                  onChange={e => setNewPass2(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && setNewPassword()}
-                  autoComplete="new-password" />
+                <div className="pass-wrap">
+                  <input id="reset-confirm-password" type={showNewPass2 ? 'text' : 'password'} placeholder="••••••••" value={newPass2}
+                    onChange={e => setNewPass2(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && setNewPassword()}
+                    autoComplete="new-password" />
+                  <button type="button" className="pass-toggle" onClick={() => setShowNewPass2(v => !v)}>
+                    {showNewPass2 ? '🙈' : '👁️'}
+                  </button>
+                </div>
               </div>
 
               <button className="btn" onClick={setNewPassword} disabled={loading}>

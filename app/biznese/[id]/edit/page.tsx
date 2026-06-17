@@ -181,7 +181,7 @@ export default function BiznesEditPage({ params }: { params: { id: string } }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <div>
               <label htmlFor="biz-name" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>Emri i biznesit *</label>
-              <input id="biz-name" className="biz-input" value={form.name} onChange={e => setF('name', e.target.value)} placeholder="p.sh. Elektro Servisi Tirana" maxLength={80} />
+              <input id="biz-name" type="text" className="biz-input" autoComplete="organization" value={form.name} onChange={e => setF('name', e.target.value)} placeholder="p.sh. Elektro Servisi Tirana" maxLength={80} />
             </div>
             <div>
               <label htmlFor="biz-description" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>Përshkrim</label>
@@ -215,7 +215,7 @@ export default function BiznesEditPage({ params }: { params: { id: string } }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <div>
               <label htmlFor="biz-city" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>🏙️ Qyteti</label>
-              <input id="biz-city" className="biz-input" value={form.city} onChange={e => setF('city', e.target.value)} placeholder="p.sh. Tiranë" maxLength={80} />
+              <input id="biz-city" type="text" className="biz-input" autoComplete="address-level2" value={form.city} onChange={e => setF('city', e.target.value)} placeholder="p.sh. Tiranë" maxLength={80} />
             </div>
             <div>
               <label htmlFor="biz-address" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>📍 Adresa (harta OSM)</label>
@@ -232,7 +232,7 @@ export default function BiznesEditPage({ params }: { params: { id: string } }) {
         {/* Hours */}
         <div>
           <label htmlFor="biz-hours" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>🕐 Orari</label>
-          <input id="biz-hours" className="biz-input" value={form.hours} onChange={e => setF('hours', e.target.value)} placeholder="Hënë–Premte 09:00–18:00" />
+          <input id="biz-hours" type="text" className="biz-input" autoComplete="off" value={form.hours} onChange={e => setF('hours', e.target.value)} placeholder="Hënë–Premte 09:00–18:00" />
         </div>
 
         {/* Legal — B2C */}
@@ -241,7 +241,7 @@ export default function BiznesEditPage({ params }: { params: { id: string } }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <div>
               <label htmlFor="biz-nipt" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>NIPT / Nr. TVSH</label>
-              <input id="biz-nipt" className="biz-input" value={form.nipt} onChange={e => setF('nipt', e.target.value.toUpperCase())} placeholder="p.sh. K12345678A" maxLength={20} />
+              <input id="biz-nipt" type="text" className="biz-input" autoComplete="off" value={form.nipt} onChange={e => setF('nipt', e.target.value.toUpperCase())} placeholder="p.sh. K12345678A" maxLength={20} />
               <div style={{ fontSize: 11, color: '#888', marginTop: 4 }}>Numri i Identifikimit të Personit të Tatueshëm — detyrueshëm nëse shet B2C</div>
             </div>
             <div>
