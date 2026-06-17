@@ -13,6 +13,7 @@ export default function TeDhenatMiaPage() {
   const [deleting, setDeleting]   = useState(false)
   const [msg, setMsg]             = useState('')
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deletePassword, setDeletePassword] = useState('')
   const [marketingOpt, setMarketingOpt]   = useState(false)
   const [savingOpt, setSavingOpt]         = useState(false)
 
@@ -81,9 +82,12 @@ export default function TeDhenatMiaPage() {
 
   async function deleteAccount() {
     if (!userId) return
+    if (!deletePassword) { setMsg('err:Shkruaj fjalëkalimin për të konfirmuar.'); return }
     const { data: { session } } = await supabase.auth.getSession()
     if (!session) return
     setDeleting(true)
+    const { error: authErr } = await supabase.auth.signInWithPassword({ email: session.user.email!, password: deletePassword })
+    if (authErr) { setMsg('err:Fjalëkalimi është i gabuar.'); setDeleting(false); return }
     try {
       const res = await fetch('/api/delete-account', {
         method: 'POST',
@@ -191,6 +195,13 @@ export default function TeDhenatMiaPage() {
           ) : (
             <div>
               <div style={{ fontSize: 12, fontWeight: 700, color: '#dc2626', marginBottom: 10 }}>Jeni i sigurt? Ky veprim NUK mund të kthehet!</div>
+              <input
+                type="password"
+                value={deletePassword}
+                onChange={e => setDeletePassword(e.target.value)}
+                placeholder="Shkruaj fjalëkalimin për të konfirmuar"
+                style={{ width: '100%', border: '1.5px solid #dc2626', borderRadius: 10, padding: '10px 12px', fontSize: 13, marginBottom: 10, fontFamily: 'inherit', boxSizing: 'border-box', outline: 'none' }}
+              />
               <div style={{ display: 'flex', gap: 8 }}>
                 <button
                   onClick={() => setConfirmDelete(false)}

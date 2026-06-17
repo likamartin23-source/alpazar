@@ -787,7 +787,7 @@ export default function Admin() {
                           <span className={`tgl ${m.is_active ? 'tgl-on' : 'tgl-off'}`} onClick={() => toggleMethod(m.id, m.is_active)}>
                             <span className="tdot" />
                           </span>
-                          <button className="btn btn-red" onClick={async () => { const { error } = await supabase.from('payment_methods').delete().eq('id',m.id); if (error) alert('Gabim: ' + error.message); fetchAll() }}>Fshi</button>
+                          <button className="btn btn-red" onClick={async () => { const { error } = await supabase.from('payment_methods').delete().eq('id',m.id); if (error) setPayMsg('Gabim: ' + error.message); fetchAll() }}>Fshi</button>
                         </div>
                       </div>
                     ))}
