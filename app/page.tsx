@@ -610,9 +610,9 @@ export default function Home() {
           </div>
 
           <div ref={searchRef} style={{ position: 'relative' }}>
-            <form className="searchbar" onSubmit={handleSearch}>
+            <form className="searchbar" onSubmit={handleSearch} role="search" aria-label="Kërko shpallje">
               <div className="search-wrap">
-                <i className="ti ti-search" />
+                <i className="ti ti-search" aria-hidden="true" />
                 <input
                   type="text"
                   placeholder="Kërko çdo gjë në Shqipëri..."
@@ -620,6 +620,7 @@ export default function Home() {
                   onChange={e => setSearchQuery(e.target.value)}
                   onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
                   autoComplete="off"
+                  aria-label="Kërko shpallje"
                 />
               </div>
               <button type="submit" className="search-btn">Kërko</button>

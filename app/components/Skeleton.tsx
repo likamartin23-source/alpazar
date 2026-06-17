@@ -18,7 +18,7 @@ export function SkeletonCard() {
   return (
     <>
       <style>{shimmer}</style>
-      <div style={{
+      <div role="status" aria-busy="true" aria-label="Duke ngarkuar..." style={{
         background: '#fff', borderRadius: 12, overflow: 'hidden',
         border: '0.5px solid #eee', flexShrink: 0,
       }}>
@@ -44,7 +44,7 @@ export function SkeletonGrid({ count = 6 }: { count?: number }) {
   return (
     <>
       <style>{shimmer}</style>
-      <div style={{
+      <div role="status" aria-busy="true" aria-label="Duke ngarkuar..." style={{
         display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)',
         gap: 10, padding: '0 13px',
       }}>
@@ -78,7 +78,7 @@ export function SkeletonList({ count = 5 }: { count?: number }) {
   return (
     <>
       <style>{shimmer}</style>
-      <div>
+      <div role="status" aria-busy="true" aria-label="Duke ngarkuar...">
         {Array.from({ length: count }).map((_, i) => (
           <div key={i}>
             <SkeletonRow />
