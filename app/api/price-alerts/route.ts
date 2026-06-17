@@ -54,6 +54,10 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await sb.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Token i pavlefshëm' }, { status: 401 })
 
+  // Verify listing exists before creating alert
+  const { data: listing } = await sb.from('listings').select('id').eq('id', listing_id).eq('is_active', true).single()
+  if (!listing) return NextResponse.json({ error: 'Shpallja nuk u gjet' }, { status: 404 })
+
   const { data, error } = await sb
     .from('price_alerts')
     .upsert(

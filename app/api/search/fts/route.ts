@@ -87,5 +87,7 @@ export async function GET(req: NextRequest) {
     if (!seen.has(item.id)) { seen.add(item.id); merged.push(item) }
   }
 
-  return NextResponse.json({ results: merged, mode: 'fts' })
+  const res = NextResponse.json({ results: merged, mode: 'fts' })
+  res.headers.set('Cache-Control', 'public, max-age=10, stale-while-revalidate=30')
+  return res
 }

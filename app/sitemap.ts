@@ -2,6 +2,8 @@ import { createClient } from '@supabase/supabase-js'
 import { MetadataRoute } from 'next'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../lib/supabase'
 
+export const revalidate = 3600 // Rigjeneroj çdo orë
+
 const BASE = 'https://alpazar.vercel.app'
 
 // Safe limit: Next.js sitemap times out above ~5s; 5000 rows is well within budget
