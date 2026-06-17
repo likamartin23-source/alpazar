@@ -26,12 +26,15 @@ export default function SavedSearchesPage() {
 
   async function toggleNotify(id: string, current: boolean) {
     setSearches(prev => prev.map(s => s.id === id ? { ...s, notify: !current } : s))
-    await supabase.from('saved_searches').update({ notify: !current }).eq('id', id)
+    const { error } = await supabase.from('saved_searches').update({ notify: !current }).eq('id', id)
+    if (error) setSearches(prev => prev.map(s => s.id === id ? { ...s, notify: current } : s))
   }
 
   async function deleteSearch(id: string) {
-    setSearches(prev => prev.filter(s => s.id !== id))
-    await supabase.from('saved_searches').delete().eq('id', id)
+    const prev = searches
+    setSearches(p => p.filter(s => s.id !== id))
+    const { error } = await supabase.from('saved_searches').delete().eq('id', id)
+    if (error) setSearches(prev)
   }
 
   function runSearch(s: any) {

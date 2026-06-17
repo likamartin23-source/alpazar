@@ -221,6 +221,17 @@ export default function ListingPageClient({ params, initialListing }: { params: 
 
   useEffect(() => { if (chatMsgs.length) scrollChat() }, [chatMsgs])
 
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      if (alertOpen) { setAlertOpen(false); setAlertMsg('') }
+      if (reportOpen) setReportOpen(false)
+      if (chatOpen) setChatOpen(false)
+    }
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
+  }, [alertOpen, reportOpen, chatOpen])
+
   function canBump(lastBumped: string | null): boolean {
     if (!lastBumped) return true
     return Date.now() - new Date(lastBumped).getTime() >= 7 * 24 * 60 * 60 * 1000

@@ -45,7 +45,9 @@ export function PremiumUpsellModal({
     if (!show) return
     localStorage.setItem(`alpazar_upsell_${trigger}`, String(Date.now()))
     const t = setInterval(() => setCountdown(c => c > 0 ? c - 1 : 0), 1000)
-    return () => clearInterval(t)
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close() }
+    document.addEventListener('keydown', onKey)
+    return () => { clearInterval(t); document.removeEventListener('keydown', onKey) }
   }, [show])
 
   function close() { setShow(false); setDismissed(true); onClose?.() }

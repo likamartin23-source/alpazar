@@ -123,11 +123,13 @@ export default function SearchResultsPage() {
     if (priceMin) filters.priceMin = priceMin
     if (priceMax) filters.priceMax = priceMax
     if (premiumOnly) filters.prem = '1'
-    await supabase.from('saved_searches').insert({
+    const { error } = await supabase.from('saved_searches').insert({
       user_id: userId, query: q || null, filters, notify: true
     })
-    setSavedOk(true)
-    setTimeout(() => setSavedOk(false), 3000)
+    if (!error) {
+      setSavedOk(true)
+      setTimeout(() => setSavedOk(false), 3000)
+    }
   }
 
   // Read params from URL on mount and search

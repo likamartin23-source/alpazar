@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 interface Props {
   images: string[]
@@ -12,6 +12,14 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3' }: Props) 
   const [current, setCurrent] = useState(0)
   const [lightbox, setLightbox] = useState(false)
   const trackRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!lightbox) return
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setLightbox(false) }
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
+  }, [lightbox])
+
   const touchStartX = useRef<number | null>(null)
   const touchStartY = useRef<number | null>(null)
   const touchMoved = useRef(false)
