@@ -23,6 +23,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
   const [subcats, setSubcats]       = useState<any[]>([])
   const [listings, setListings]     = useState<any[]>([])
   const [loading, setLoading]       = useState(true)
+  const [loadError, setLoadError]   = useState(false)
   const [activeTab, setActiveTab]   = useState<'grid' | 'info' | 'reviews'>('grid')
   const [userId, setUserId]         = useState<string | null>(null)
   const [isOwner, setIsOwner]       = useState(false)
@@ -37,34 +38,38 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
   }, [])
 
   async function fetchBiz() {
-    let { data: b } = await supabase.from('businesses').select('*').eq('id', params.id).maybeSingle()
-    if (!b) {
-      const res = await supabase.from('businesses').select('*').eq('owner_id', params.id).maybeSingle()
-      b = res.data
+    try {
+      let { data: b } = await supabase.from('businesses').select('*').eq('id', params.id).maybeSingle()
+      if (!b) {
+        const res = await supabase.from('businesses').select('*').eq('owner_id', params.id).maybeSingle()
+        b = res.data
+      }
+      if (!b) { setLoading(false); return }
+      setBiz(b)
+      setIsOwner((await supabase.auth.getSession()).data.session?.user.id === b.owner_id)
+
+      const { data: mapRows } = await supabase
+        .from('business_subcategory_map')
+        .select('subcategory_id, business_subcategories(name, icon)')
+        .eq('business_id', b.id)
+      if (mapRows) setSubcats(mapRows.map((r: any) => r.business_subcategories).filter(Boolean))
+
+      const { data: ls } = await supabase
+        .from('listings')
+        .select('id,title,price,currency,images,condition,city,is_premium,views_count')
+        .eq('business_id', b.id)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
+        .limit(20)
+      if (ls) {
+        setListings(ls)
+        setTotalViews(ls.reduce((s: number, l: any) => s + (l.views_count || 0), 0))
+      }
+    } catch {
+      setLoadError(true)
+    } finally {
+      setLoading(false)
     }
-    if (!b) { setLoading(false); return }
-    setBiz(b)
-    setIsOwner((await supabase.auth.getSession()).data.session?.user.id === b.owner_id)
-
-    const { data: mapRows } = await supabase
-      .from('business_subcategory_map')
-      .select('subcategory_id, business_subcategories(name, icon)')
-      .eq('business_id', b.id)
-    if (mapRows) setSubcats(mapRows.map((r: any) => r.business_subcategories).filter(Boolean))
-
-    const { data: ls } = await supabase
-      .from('listings')
-      .select('id,title,price,currency,images,condition,city,is_premium,views_count')
-      .eq('business_id', b.id)
-      .eq('is_active', true)
-      .order('created_at', { ascending: false })
-      .limit(20)
-    if (ls) {
-      setListings(ls)
-      setTotalViews(ls.reduce((s: number, l: any) => s + (l.views_count || 0), 0))
-    }
-
-    setLoading(false)
   }
 
   function fmt(price: number, cur: string) {
@@ -76,6 +81,14 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
     if (navigator.share) navigator.share({ title: biz?.name, url: window.location.href })
     else navigator.clipboard?.writeText(window.location.href)
   }
+
+  if (loadError) return (
+    <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+      <div style={{ fontSize: 32, marginBottom: 12 }}>⚠️</div>
+      <div style={{ fontSize: 14, color: '#E63312', marginBottom: 16, textAlign: 'center' }}>Nuk u ngarkua biznesi. Kontrollo lidhjen dhe provo sërish.</div>
+      <button type="button" onClick={() => window.location.reload()} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
+    </div>
+  )
 
   if (loading) return (
     <div style={{ maxWidth: 480, margin: '0 auto', background: '#f8f8f8', minHeight: '100vh' }}>

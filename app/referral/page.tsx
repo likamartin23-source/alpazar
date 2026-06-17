@@ -122,24 +122,27 @@ export default function ReferralPage() {
   }, [])
 
   async function fetchData(uid: string) {
-    const [{ data: p }, { count: sc }] = await Promise.all([
-      supabase.from('profiles')
-        .select('id,username,full_name,gamification_points,gamification_level,referral_code')
-        .eq('id', uid).single(),
-      supabase.from('shares').select('*', { count: 'exact', head: true }).eq('user_id', uid),
-    ])
-    if (p) {
-      setProfile(p)
-      const code = p.referral_code || p.username || uid.replace(/-/g,'').slice(0,8).toUpperCase()
-      const codes = [...new Set([p.referral_code, p.username, code].filter(Boolean))] as string[]
-      const { data: refs } = await supabase.from('profiles')
-        .select('id,full_name,username,created_at')
-        .in('referred_by', codes)
-        .order('created_at', { ascending: false }).limit(20)
-      if (refs) setReferrals(refs)
+    try {
+      const [{ data: p }, { count: sc }] = await Promise.all([
+        supabase.from('profiles')
+          .select('id,username,full_name,gamification_points,gamification_level,referral_code')
+          .eq('id', uid).single(),
+        supabase.from('shares').select('*', { count: 'exact', head: true }).eq('user_id', uid),
+      ])
+      if (p) {
+        setProfile(p)
+        const code = p.referral_code || p.username || uid.replace(/-/g,'').slice(0,8).toUpperCase()
+        const codes = [...new Set([p.referral_code, p.username, code].filter(Boolean))] as string[]
+        const { data: refs } = await supabase.from('profiles')
+          .select('id,full_name,username,created_at')
+          .in('referred_by', codes)
+          .order('created_at', { ascending: false }).limit(20)
+        if (refs) setReferrals(refs)
+      }
+      if (sc !== null) setShareCount(sc)
+    } catch { /* network error — show empty state */ } finally {
+      setLoading(false)
     }
-    if (sc !== null) setShareCount(sc)
-    setLoading(false)
   }
 
   const refCode = profile?.referral_code || profile?.username || user?.id?.replace(/-/g,'').slice(0,8).toUpperCase() || ''

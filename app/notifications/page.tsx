@@ -53,14 +53,17 @@ export default function NotificationsPage() {
   const unreadCount = notifs.filter(n => !n.is_read).length
 
   const loadNotifs = useCallback(async (uid: string) => {
-    const { data } = await supabase
-      .from('notifications')
-      .select('id,type,title,body,link,image_url,is_read,read_at,created_at')
-      .eq('user_id', uid)
-      .order('created_at', { ascending: false })
-      .limit(60)
-    if (data) setNotifs(data as Notif[])
-    setLoading(false)
+    try {
+      const { data } = await supabase
+        .from('notifications')
+        .select('id,type,title,body,link,image_url,is_read,read_at,created_at')
+        .eq('user_id', uid)
+        .order('created_at', { ascending: false })
+        .limit(60)
+      if (data) setNotifs(data as Notif[])
+    } catch { /* network error — notifs stay empty, user can retry by refreshing */ } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => {
