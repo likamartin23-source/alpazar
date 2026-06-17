@@ -148,6 +148,7 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3' }: Props) 
             <button
               key={i}
               onClick={() => goTo(i)}
+              aria-label={`Foto ${i + 1}`}
               style={{
                 width: i === current ? 18 : 7, height: 7, borderRadius: 4, border: 'none',
                 background: i === current ? '#E63312' : '#ccc',
@@ -174,7 +175,7 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3' }: Props) 
           <style>{`@keyframes lb-fade{from{opacity:0}to{opacity:1}} .carousel-track::-webkit-scrollbar{display:none}`}</style>
           <button aria-label="Mbyll" onClick={() => setLightbox(false)} style={{ position: 'absolute', top: 16, right: 16, background: 'rgba(255,255,255,.15)', border: 'none', color: '#fff', borderRadius: '50%', width: 36, height: 36, fontSize: 18, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
           {current > 0 && (
-            <button onClick={e => { e.stopPropagation(); goTo(current - 1) }} style={{ position: 'absolute', left: 12, background: 'rgba(255,255,255,.15)', border: 'none', color: '#fff', borderRadius: '50%', width: 40, height: 40, fontSize: 20, cursor: 'pointer' }}>‹</button>
+            <button onClick={e => { e.stopPropagation(); goTo(current - 1) }} aria-label="Foto e mëparshme" style={{ position: 'absolute', left: 12, background: 'rgba(255,255,255,.15)', border: 'none', color: '#fff', borderRadius: '50%', width: 40, height: 40, fontSize: 20, cursor: 'pointer' }}>‹</button>
           )}
           <img
             src={images[current]}
@@ -183,7 +184,7 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3' }: Props) 
             style={{ maxWidth: '92vw', maxHeight: '86vh', objectFit: 'contain', borderRadius: 8 }}
           />
           {current < count - 1 && (
-            <button onClick={e => { e.stopPropagation(); goTo(current + 1) }} style={{ position: 'absolute', right: 12, background: 'rgba(255,255,255,.15)', border: 'none', color: '#fff', borderRadius: '50%', width: 40, height: 40, fontSize: 20, cursor: 'pointer' }}>›</button>
+            <button onClick={e => { e.stopPropagation(); goTo(current + 1) }} aria-label="Foto e ardhshme" style={{ position: 'absolute', right: 12, background: 'rgba(255,255,255,.15)', border: 'none', color: '#fff', borderRadius: '50%', width: 40, height: 40, fontSize: 20, cursor: 'pointer' }}>›</button>
           )}
           {count > 1 && (
             <div style={{ position: 'absolute', bottom: 20, display: 'flex', gap: 6 }}>
