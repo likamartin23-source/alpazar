@@ -549,7 +549,7 @@ export default function Home() {
         .nav-item.active i{transform:scale(1.12);}
         .nav-item span{font-size:10px;color:inherit;font-weight:600;}
         .nav-badge{position:absolute;top:2px;right:6px;background:#E63312;color:#fff;font-size:7px;font-weight:700;border-radius:10px;padding:1px 4px;min-width:14px;text-align:center;line-height:14px;}
-        .nav-add{width:50px;height:50px;background:linear-gradient(135deg,#E63312,#c42a0e);border-radius:50%;display:flex;align-items:center;justify-content:center;border:3px solid #111;margin-top:-18px;cursor:pointer;box-shadow:0 4px 16px rgba(230,51,18,.5);transition:transform .15s,box-shadow .15s;}
+        .nav-add{width:50px;height:50px;background:linear-gradient(135deg,#E63312,#c42a0e);border-radius:50%;display:flex;align-items:center;justify-content:center;border:3px solid #111;margin-top:-18px;cursor:pointer;box-shadow:0 4px 16px rgba(230,51,18,.5);transition:transform .15s,box-shadow .15s;padding:0;appearance:none;}
         .nav-add:active{transform:scale(.9);box-shadow:0 2px 8px rgba(230,51,18,.3);}
         .nav-add i{font-size:24px;color:#fff;}
         /* Floating pulsing squares */
@@ -828,7 +828,7 @@ export default function Home() {
                 </div>
               ) : (
                 listings.map(listing => (
-                  <div key={listing.id} className="listing-card" onClick={() => go(`/listing/${listing.id}`)}>
+                  <div key={listing.id} className="listing-card" role="link" tabIndex={0} onClick={() => go(`/listing/${listing.id}`)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') go(`/listing/${listing.id}`) }}>
                     <div className="card-img">
                       {listing.images?.[0]
                         ? <img src={listing.images[0]} alt={listing.title} loading="lazy" width={400} height={300} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
@@ -843,7 +843,7 @@ export default function Home() {
                       <div className="card-price">{fmt(listing.price, listing.currency)}</div>
                       <div className="card-meta">
                         <span className="card-loc">
-                          <i className="ti ti-map-pin" />
+                          <i className="ti ti-map-pin" aria-hidden="true" />
                           {listing.city || 'Shqipëri'}
                         </span>
                         <span style={{ fontSize: 6, color: '#ccc', flexShrink: 0 }}>{timeAgo(listing.created_at)}</span>

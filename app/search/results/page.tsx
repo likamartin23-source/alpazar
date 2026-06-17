@@ -29,7 +29,7 @@ function ShopCard({ shop }: { shop: any }) {
   const catLabel = SHOP_CATEGORIES.find(c => c.id === shop.shop_category)?.label
 
   return (
-    <div className="shop-card" onClick={() => window.location.href = `/biznese/${shop.id}`}>
+    <a className="shop-card" href={`/biznese/${shop.id}`}>
       <div className="shop-banner" style={{
         background: shop.shop_banner_url
           ? `url(${shop.shop_banner_url}) center/cover`
@@ -51,13 +51,13 @@ function ShopCard({ shop }: { shop: any }) {
           <span className="shop-count">{shop.listing_count || 0} shpallje</span>
         </div>
       </div>
-    </div>
+    </a>
   )
 }
 
 function ListingCard({ l, premium }: { l: any; premium?: boolean }) {
   return (
-    <div className="listing-card" onClick={() => window.location.href = `/listing/${l.id}`}>
+    <a className="listing-card" href={`/listing/${l.id}`}>
       <div className="card-img">
         {l.images?.[0]
           ? <img src={l.images[0]} alt={l.title} loading="lazy" width={400} height={300} />
@@ -69,9 +69,9 @@ function ListingCard({ l, premium }: { l: any; premium?: boolean }) {
       <div className="card-body">
         <div className="card-title">{l.title}</div>
         <div className="card-price">{fmt(l.price, l.currency)}</div>
-        <div className="card-loc"><i className="ti ti-map-pin" style={{ fontSize: 10 }} />{l.city || 'Shqipëri'}</div>
+        <div className="card-loc"><i className="ti ti-map-pin" style={{ fontSize: 10 }} aria-hidden="true" />{l.city || 'Shqipëri'}</div>
       </div>
-    </div>
+    </a>
   )
 }
 
@@ -408,7 +408,7 @@ const [searchError, setSearchError] = useState(false)
 
         /* Shop grid */
         .shops-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
-        .shop-card{background:#fff;border:0.5px solid #eee;border-radius:13px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.04);transition:transform .12s;}
+        .shop-card{background:#fff;border:0.5px solid #eee;border-radius:13px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.04);transition:transform .12s;text-decoration:none;color:inherit;display:block;}
         .shop-card:active{transform:scale(.97);}
         .shop-banner{height:56px;position:relative;display:flex;align-items:flex-end;padding:6px;}
         .shop-avatar{width:40px;height:40px;border-radius:50%;background:#fff;border:2.5px solid #F5C842;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.12);}
@@ -422,7 +422,7 @@ const [searchError, setSearchError] = useState(false)
 
         /* Listing grid */
         .listings-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
-        .listing-card{background:#fff;border:0.5px solid #eee;border-radius:11px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;aspect-ratio:3/4;transition:transform .12s;}
+        .listing-card{background:#fff;border:0.5px solid #eee;border-radius:11px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;aspect-ratio:3/4;transition:transform .12s;text-decoration:none;color:inherit;}
         .listing-card:active{transform:scale(.98);}
         .card-img{flex:0 0 70%;position:relative;background:#f9f5e0;overflow:hidden;}
         .card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
