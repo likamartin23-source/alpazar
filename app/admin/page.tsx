@@ -683,6 +683,11 @@ export default function Admin() {
                   {stats.reports}
                 </span>
               )}
+              {id === 'payments' && premiumRequests.filter(r => r.status === 'pending').length > 0 && (
+                <span style={{ marginLeft: 'auto', background: '#BA7517', color: '#fff', borderRadius: 10, fontSize: 9, fontWeight: 800, padding: '1px 5px' }}>
+                  {premiumRequests.filter(r => r.status === 'pending').length}
+                </span>
+              )}
             </button>
           ))}
 

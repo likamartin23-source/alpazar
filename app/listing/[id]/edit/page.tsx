@@ -30,10 +30,20 @@ export default function EditListing({ params }: { params: { id: string } }) {
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
   const [existingImages, setExistingImages] = useState<string[]>([])
   const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null)
+  const [isDirty, setIsDirty] = useState(false)
 
   useEffect(() => {
     return () => { imagePreviews.forEach(url => URL.revokeObjectURL(url)) }
   }, [imagePreviews])
+
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (!isDirty) return
+      e.preventDefault()
+    }
+    window.addEventListener('beforeunload', handler)
+    return () => window.removeEventListener('beforeunload', handler)
+  }, [isDirty])
 
   useEffect(() => {
     let mounted = true
@@ -83,7 +93,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
     }
   }, [params.id])
 
-  function set(k: string, v: string) { setForm(f => ({ ...f, [k]: v })) }
+  function set(k: string, v: string) { setForm(f => ({ ...f, [k]: v })); setIsDirty(true) }
 
   function handleImages(e: React.ChangeEvent<HTMLInputElement>) {
     const MAX_MB = 25
@@ -147,6 +157,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
       }).eq('id', params.id).eq('user_id', user.id)
 
       if (error) { setMsg(`err:${error.message}`); setLoading(false); return }
+      setIsDirty(false)
       setMsg('ok:Shpallja u përditësua me sukses!')
       setTimeout(() => { window.location.href = `/listing/${params.id}` }, 900)
     } catch (e: any) {
