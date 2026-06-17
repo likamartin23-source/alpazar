@@ -43,6 +43,7 @@ export default function NewListing() {
   const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null)
   const [showUpsell, setShowUpsell] = useState(false)
   const [draftRestored, setDraftRestored] = useState(false)
+  const [isDirty, setIsDirty] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -90,7 +91,13 @@ export default function NewListing() {
     } catch { /* ignore */ }
   }, [form.title, form.description, form.price, form.currency, form.condition, form.category_id, form.city, form.location_address])
 
-  function set(k: string, v: string) { setForm(f => ({ ...f, [k]: v })) }
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => { if (!isDirty) return; e.preventDefault() }
+    window.addEventListener('beforeunload', handler)
+    return () => window.removeEventListener('beforeunload', handler)
+  }, [isDirty])
+
+  function set(k: string, v: string) { setIsDirty(true); setForm(f => ({ ...f, [k]: v })) }
 
   async function generateDescription() {
     if (!form.title.trim()) { setMsg('err:Shkruaj titullin para se të gjenerosh përshkrimin.'); return }
@@ -147,7 +154,7 @@ export default function NewListing() {
       return
     }
     const files = all.slice(0, maxImages)
-    setImageFiles(files)
+    setImageFiles(files); setIsDirty(true)
     if (all.length > maxImages) {
       setMsg(`err:Mund të ngarkoni max ${maxImages} foto. U morën vetëm ${maxImages} të parat.`)
     } else {
@@ -204,6 +211,7 @@ export default function NewListing() {
 
       if (error) { setMsg(`err:${error.message}`); setLoading(false); return }
       try { localStorage.removeItem('alpazar_listing_draft') } catch { /* ignore */ }
+      setIsDirty(false)
       const bonusMsg = myListingCount === 0 ? ' +35 pikë gamifikimi (bonus fillestar)! 🎉' : ' +10 pikë gamifikimi! ⚡'
       setMsg(`ok:Shpallja u publikua me sukses!${bonusMsg}`)
       // IndexNow ping — instant Bing/Yandex indexing (key kept server-side)
