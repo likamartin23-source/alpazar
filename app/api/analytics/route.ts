@@ -4,6 +4,9 @@ import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../lib/supabase'
 import { rateLimit, getClientIp } from '../../../lib/rateLimit'
 
 export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
+const NO_STORE = { 'Cache-Control': 'no-store, private' }
 
 function userSb(token: string) {
   return createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
@@ -41,7 +44,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       views_by_day: [], top_listings: [], hourly: [],
       total_views: 0, total_contacts: 0,
-    })
+    }, { headers: NO_STORE })
   }
 
   const listingIds = listings.map((l: any) => l.id)
@@ -110,5 +113,5 @@ export async function GET(req: NextRequest) {
     total_views: (rawViews ?? []).length,
     total_contacts: (msgCounts ?? []).length,
     period_days: days,
-  })
+  }, { headers: NO_STORE })
 }

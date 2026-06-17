@@ -4,6 +4,9 @@ import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../lib/supabase'
 import { rateLimit, getClientIp } from '../../../lib/rateLimit'
 
 export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
+const NO_STORE = { 'Cache-Control': 'no-store, private' }
 
 function userSupabase(token: string) {
   return createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
@@ -38,7 +41,7 @@ export async function GET(req: NextRequest) {
     .eq('listing_id', listingId)
     .maybeSingle()
 
-  return NextResponse.json({ alert: data })
+  return NextResponse.json({ alert: data }, { headers: NO_STORE })
 }
 
 // POST /api/price-alerts — krijo ose përditëso alert
