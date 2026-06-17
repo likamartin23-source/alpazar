@@ -110,6 +110,7 @@ export default function NewListing() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: [{ role: 'user', content: userMsg }] }),
       })
+      if (!res.ok) throw new Error('api_error')
       const json = await res.json()
       if (json.reply) {
         set('description', json.reply.trim())
@@ -136,6 +137,7 @@ export default function NewListing() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: [{ role: 'user', content: userMsg }] }),
       })
+      if (!res.ok) throw new Error('api_error')
       const json = await res.json()
       setPriceSuggestion(json.reply || 'err:Nuk mund të sugjeroj çmim tani.')
     } catch {

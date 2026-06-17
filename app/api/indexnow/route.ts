@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json; charset=utf-8' },
     body: JSON.stringify({ host: 'alpazar.vercel.app', key: INDEXNOW_KEY, urlList: [url] }),
-  }).catch(() => {})
+  }).catch((err) => { console.error('[indexnow] submit failed:', err) })
 
   return NextResponse.json({ ok: true })
 }
