@@ -369,7 +369,9 @@ export default function ListingPageClient({ params, initialListing }: { params: 
       })
       setPriceAlert(null); setAlertTarget(''); setAlertMsg('')
       setAlertOpen(false)
-    } catch {}
+    } catch {
+      setAlertMsg('err:Gabim në fshirjen e alarmit. Provo sërisht.')
+    }
     setAlertSaving(false)
   }
 
