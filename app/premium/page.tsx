@@ -65,9 +65,8 @@ export default function PremiumPage() {
         payment_method: payMethod,
         status: 'pending',
       }),
-      supabase.from('premium_requests').upsert(
-        { user_id: user.id, plan, status: 'pending' },
-        { onConflict: 'user_id', ignoreDuplicates: false }
+      supabase.from('premium_requests').insert(
+        { user_id: user.id, plan, status: 'pending' }
       ),
     ])
     if (error) { setMsg(`err:${error.message}`); setSubmitting(false); return }
