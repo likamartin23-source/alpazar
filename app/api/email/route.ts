@@ -5,6 +5,8 @@ import { rateLimit, getClientIp } from '../../../lib/rateLimit'
 import { SITE_URL } from '../../../lib/siteConfig'
 import { SUPABASE_URL, SUPABASE_ANON_KEY as SUPABASE_ANON } from '../../../lib/supabase'
 
+export const dynamic = 'force-dynamic'
+
 /** Escape HTML entities — prevents injection in email bodies */
 function esc(s: unknown): string {
   return String(s ?? '')

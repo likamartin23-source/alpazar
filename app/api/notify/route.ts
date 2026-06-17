@@ -3,6 +3,7 @@ import { Resend } from 'resend'
 import { rateLimit, getClientIp } from '../../../lib/rateLimit'
 
 export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 
 const NOTIFY_SECRET = process.env.NOTIFY_WEBHOOK_SECRET
 const NOTIFY_EMAIL  = process.env.ADMIN_EMAIL || ''
