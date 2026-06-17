@@ -136,6 +136,7 @@ export default function MessagesPage() {
   const [draft,          setDraft]          = useState('')
   const [sending,        setSending]        = useState(false)
   const [loading,        setLoading]        = useState(true)
+  const [loadError,      setLoadError]      = useState(false)
   const [search,         setSearch]         = useState('')
   const [typingVisible,  setTypingVisible]  = useState(false)
   const [onlineIds,      setOnlineIds]      = useState<Set<string>>(new Set())
@@ -193,7 +194,11 @@ export default function MessagesPage() {
   // ── Init ──────────────────────────────────────────────────────────────────
   useEffect(() => {
     async function init(myId: string) {
-      await Promise.all([fetchThreads(myId), fetchBlocked(myId)])
+      try {
+        await Promise.all([fetchThreads(myId), fetchBlocked(myId)])
+      } catch {
+        setLoadError(true); setLoading(false); return
+      }
       const withId = new URLSearchParams(window.location.search).get('with')
       if (withId) openThreadById(withId, myId)
 
@@ -1415,7 +1420,13 @@ export default function MessagesPage() {
               </div>
             </div>
 
-            {loading ? (
+            {loadError ? (
+              <div className="spin-center">
+                <div style={{ fontSize: 32 }}>⚠️</div>
+                <div style={{ fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
+                <button onClick={() => window.location.reload()} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
+              </div>
+            ) : loading ? (
               <div className="spin-center"><span className="spinner" />Duke ngarkuar...</div>
             ) : filteredThreads.length === 0 ? (
               <div className="empty">
