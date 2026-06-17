@@ -398,6 +398,15 @@ export default function Home() {
     !price ? 'Çmim me marrëveshje' :
     cur === 'EUR' ? `${price.toLocaleString('sq-AL')} €` : `${price.toLocaleString('sq-AL')} L`
 
+  function timeAgo(iso: string): string {
+    const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000)
+    if (diff < 60)    return 'tani'
+    if (diff < 3600)  return `${Math.floor(diff / 60)}min`
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h`
+    if (diff < 604800) return `${Math.floor(diff / 86400)}d`
+    return new Date(iso).toLocaleDateString('sq-AL', { day: 'numeric', month: 'short' })
+  }
+
   const go = (path: string) => { window.location.href = path }
 
   const SHOP_COLORS = ['#3B82F6', '#EF4444', '#10B981', '#8B5CF6', '#F59E0B', '#06B6D4']
@@ -834,9 +843,7 @@ export default function Home() {
                           <i className="ti ti-map-pin" />
                           {listing.city || 'Shqipëri'}
                         </span>
-                        <button className="card-like" onClick={e => { e.stopPropagation(); go(user ? '#' : '/auth/login') }}>
-                          <i className="ti ti-heart" />
-                        </button>
+                        <span style={{ fontSize: 6, color: '#ccc', flexShrink: 0 }}>{timeAgo(listing.created_at)}</span>
                       </div>
                       {(listing as any).author && (
                         <div

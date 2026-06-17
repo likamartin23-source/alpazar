@@ -80,6 +80,8 @@ export default function ProfilePage() {
   const [deleteMsg, setDeleteMsg] = useState('')
   const [deletePassword, setDeletePassword] = useState('')
 
+  const [profileCopied, setProfileCopied] = useState(false)
+
   // Listing deletion inline confirm
   const [pendingDelete, setPendingDelete] = useState<string | null>(null)
 
@@ -532,7 +534,21 @@ export default function ProfilePage() {
         {/* Name + handle + badges */}
         <div style={{ padding: '0 16px 4px' }}>
           <div className="name" style={{ textAlign: 'left', marginBottom: 2 }}>{profile?.full_name || profile?.username || 'Përdoruesi'}</div>
-          {profile?.username && <div className="handle" style={{ textAlign: 'left' }}>@{profile.username}</div>}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
+            {profile?.username && <div className="handle" style={{ margin: 0 }}>@{profile.username}</div>}
+            <button
+              onClick={() => {
+                const url = `https://alpazar.vercel.app/u/${profile?.id}`
+                navigator.clipboard?.writeText(url).catch(() => {})
+                setProfileCopied(true)
+                setTimeout(() => setProfileCopied(false), 2000)
+              }}
+              style={{ background: profileCopied ? '#EAF3DE' : '#f5f5f5', border: 'none', borderRadius: 6, padding: '3px 8px', fontSize: 10, fontWeight: 700, cursor: 'pointer', color: profileCopied ? '#3B6D11' : '#555', display: 'flex', alignItems: 'center', gap: 3, transition: 'all .15s' }}
+            >
+              <i className={`ti ti-${profileCopied ? 'check' : 'share-2'}`} style={{ fontSize: 11 }} />
+              {profileCopied ? 'Kopjuar!' : 'Ndaj'}
+            </button>
+          </div>
           {profile?.city && <div style={{ fontSize: 11, color: '#888', marginBottom: 4 }}>📍 {profile.city}{profile?.created_at ? ` · Anëtar prej ${new Date(profile.created_at).getFullYear()}` : ''}</div>}
           <div className="email-row" style={{ justifyContent: 'flex-start' }}><i className="ti ti-mail" />{user?.email}</div>
           <div className="badges-row" style={{ justifyContent: 'flex-start', marginTop: 8 }}>
