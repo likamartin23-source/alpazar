@@ -18,9 +18,13 @@ export async function POST(req: NextRequest) {
 
   const { pin } = await req.json().catch(() => ({ pin: '' }))
 
+  if (!pin || typeof pin !== 'string' || pin.length > 200) {
+    return NextResponse.json({ ok: false }, { status: 401 })
+  }
+
   const pinMatch = pin.length === ADMIN_PIN.length &&
     timingSafeEqual(Buffer.from(pin), Buffer.from(ADMIN_PIN))
-  if (!pin || !pinMatch) {
+  if (!pinMatch) {
     return NextResponse.json({ ok: false }, { status: 401 })
   }
 

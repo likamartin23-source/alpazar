@@ -141,7 +141,7 @@ export default function Kontakt() {
               <div className="form-field">
                 <label htmlFor="kontakt-subject">Subjekti</label>
                 <input id="kontakt-subject" type="text" placeholder="p.sh. Pyetje rreth Premium..." value={subject}
-                  onChange={e => setSubject(e.target.value)} maxLength={200} />
+                  autoComplete="off" onChange={e => setSubject(e.target.value)} maxLength={200} />
               </div>
               <div className="form-field">
                 <label htmlFor="kontakt-message">Mesazhi *</label>

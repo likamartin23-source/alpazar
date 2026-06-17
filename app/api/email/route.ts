@@ -91,11 +91,12 @@ export async function POST(req: NextRequest) {
       }
 
       const r = await getResend()
-      if (!r) return NextResponse.json({ error: 'Email nuk është konfiguruar' }, { status: 503 })
+      const adminEmail = process.env.ADMIN_EMAIL?.trim()
+      if (!r || !adminEmail) return NextResponse.json({ error: 'Email nuk është konfiguruar' }, { status: 503 })
 
       const { data, error } = await r.client.emails.send({
         from: r.from,
-        to: [process.env.ADMIN_EMAIL || ''],
+        to: [adminEmail],
         replyTo: email,
         subject: subject ? `[Kontakt] ${esc(subject)}` : `Mesazh nga ${esc(name)} - Alpazar`,
         html: `

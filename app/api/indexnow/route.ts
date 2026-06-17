@@ -4,6 +4,8 @@ import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../lib/supabase'
 import { rateLimit } from '../../../lib/rateLimit'
 import { SITE_URL, SITE_HOST } from '../../../lib/siteConfig'
 
+export const dynamic = 'force-dynamic'
+
 const INDEXNOW_KEY = process.env.INDEXNOW_KEY || '825731eba0e14fec916791e52a62816c'
 const BASE_URL = SITE_URL
 

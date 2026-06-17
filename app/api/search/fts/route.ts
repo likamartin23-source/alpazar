@@ -4,6 +4,8 @@ import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../../lib/supabase'
 import { rateLimit, getClientIp } from '../../../../lib/rateLimit'
 
 export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+export const maxDuration = 10
 
 const anonSb = () => createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
