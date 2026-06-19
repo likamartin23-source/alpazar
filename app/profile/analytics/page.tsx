@@ -19,7 +19,7 @@ function BarChart({ data, color = '#E63312' }: { data: { date: string; count: nu
   const max = Math.max(...data.map(d => d.count), 1)
   const w = 100 / data.length
   return (
-    <svg viewBox={`0 0 ${data.length * 10} 40`} style={{ width: '100%', height: 80, display: 'block' }}>
+    <svg viewBox={`0 0 ${data.length * 10} 40`} style={{ width: '100%', height: 80, display: 'block' }} aria-hidden="true">
       {data.map((d, i) => {
         const h = (d.count / max) * 36
         return (
@@ -35,7 +35,7 @@ function BarChart({ data, color = '#E63312' }: { data: { date: string; count: nu
 function HeatmapChart({ data }: { data: { hour: number; count: number }[] }) {
   const max = Math.max(...data.map(d => d.count), 1)
   return (
-    <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap', marginTop: 8 }}>
+    <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap', marginTop: 8 }} aria-hidden="true">
       {data.map(d => {
         const intensity = d.count / max
         const bg = intensity === 0
@@ -148,13 +148,13 @@ const [loadError, setLoadError] = useState(false)
         <button className="back-btn" aria-label="Kthehu në profil" onClick={() => window.location.href = '/profile'}>
           <i className="ti ti-arrow-left" style={{ fontSize: 16 }} aria-hidden="true" />
         </button>
-        <span style={{ fontWeight: 800, fontSize: 16, color: '#111' }}>Statistikat e Shpalljeve</span>
+        <h1 style={{ fontWeight: 800, fontSize: 16, color: '#111', margin: 0 }}>Statistikat e Shpalljeve</h1>
       </div>
 
       {/* Period selector */}
       <div className="period-row">
         {PERIODS.map(p => (
-          <button key={p.days} className={`period-btn${period === p.days ? ' active' : ''}`} onClick={() => changePeriod(p.days)}>
+          <button key={p.days} className={`period-btn${period === p.days ? ' active' : ''}`} aria-pressed={period === p.days} onClick={() => changePeriod(p.days)}>
             {p.label}
           </button>
         ))}
@@ -213,7 +213,7 @@ const [loadError, setLoadError] = useState(false)
           <div className="an-card">
             <div className="an-title">Shpalljet — Krahasim</div>
             {data.top_listings.slice(0, 10).map((l: any, i: number) => (
-              <div key={l.id} className="listing-row" tabIndex={0} onClick={() => window.location.href = `/listing/${l.id}`} onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/listing/${l.id}` }} style={{ cursor: 'pointer' }}>
+              <div key={l.id} className="listing-row" role="link" tabIndex={0} onClick={() => window.location.href = `/listing/${l.id}`} onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/listing/${l.id}` }} style={{ cursor: 'pointer' }} aria-label={`${l.title} — ${l.total_views} pamje, ${l.contacts} kontaktime`}>
                 <div className="listing-rank">{i + 1}</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="listing-name">{l.title}</div>
