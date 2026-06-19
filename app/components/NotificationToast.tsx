@@ -78,7 +78,9 @@ export function NotificationToast() {
       {toasts.map(t => (
         <div
           key={t.id}
+          role="button" tabIndex={0}
           onClick={() => { dismiss(t.id); if (t.link?.startsWith('/')) window.location.href = t.link }}
+          onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { dismiss(t.id); if (t.link?.startsWith('/')) window.location.href = t.link } }}
           style={{
             pointerEvents: 'all',
             maxWidth: 420, width: '100%',

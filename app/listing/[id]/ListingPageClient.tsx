@@ -1030,7 +1030,9 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                   return (
                     <div
                       key={s.id}
+                      role="link" tabIndex={0}
                       onClick={() => { window.location.href = `/listing/${s.id}` }}
+                      onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/listing/${s.id}` }}
                       style={{ borderRadius: 12, overflow: 'hidden', background: '#fff', border: '1px solid #F0F0F0', boxShadow: '0 1px 6px rgba(0,0,0,0.06)', cursor: 'pointer' }}
                     >
                       <div style={{ width: '100%', aspectRatio: '4/3', background: '#F6F6F6', overflow: 'hidden', position: 'relative' }}>

@@ -33,7 +33,9 @@ function BizUpsellBanner({ userId }: { userId?: string }) {
   if (hasBiz !== false) return null
   return (
     <div
+      role="link" tabIndex={0}
       onClick={() => window.location.href = '/biznese/new'}
+      onKeyDown={e => { if (e.key === 'Enter') window.location.href = '/biznese/new' }}
       style={{ background: 'linear-gradient(135deg,#111,#1c1c1c)', borderRadius: 13, padding: '14px 16px', marginBottom: 12, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12 }}
     >
       <span style={{ fontSize: 28 }}>🏢</span>
@@ -896,10 +898,10 @@ export default function ProfilePage() {
                 ) : (
                   myListings.filter(l => l.is_active).map(l => (
                     <div key={l.id} className="listing-row">
-                      <div className="listing-thumb" onClick={() => window.location.href = `/listing/${l.id}`}>
+                      <div role="link" tabIndex={0} className="listing-thumb" onClick={() => window.location.href = `/listing/${l.id}`} onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/listing/${l.id}` }}>
                         {l.images?.[0] ? <img src={l.images[0]} alt={l.title} loading="lazy" width={80} height={80} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <i className="ti ti-photo" style={{ color: '#ccc', fontSize: 20 }} aria-hidden="true" />}
                       </div>
-                      <div className="listing-info" onClick={() => window.location.href = `/listing/${l.id}`}>
+                      <div role="link" tabIndex={0} className="listing-info" onClick={() => window.location.href = `/listing/${l.id}`} onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/listing/${l.id}` }}>
                         <div className="listing-title">{l.title}</div>
                         <div className="listing-price">{fmt(l.price, l.currency)}</div>
                         <div className="listing-meta">👁 {l.views_count || 0} · 📍 {l.city || 'Shqipëri'}{l.is_premium ? ' · ⭐ Premium' : ''}</div>
@@ -1020,8 +1022,9 @@ export default function ProfilePage() {
                         : time.toLocaleDateString('sq-AL', { day: 'numeric', month: 'short' })
 
                       return (
-                        <div key={conv.otherId} className="conv-row"
-                          onClick={() => window.location.href = `/messages?with=${conv.otherId}`}>
+                        <div key={conv.otherId} role="link" tabIndex={0} className="conv-row"
+                          onClick={() => window.location.href = `/messages?with=${conv.otherId}`}
+                          onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/messages?with=${conv.otherId}` }}>
                           <div style={{ position: 'relative', flexShrink: 0 }}>
                             <Avatar
                               src={p?.avatar_url}
