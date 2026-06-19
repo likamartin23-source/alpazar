@@ -207,7 +207,7 @@ function ShareBox({ refCode }: { refCode?: string }) {
         onMouseDown={e => (e.currentTarget.style.transform = 'scale(.92)')}
         onMouseUp={e => (e.currentTarget.style.transform = '')}
       >
-        <i className={`ti ti-${open ? 'x' : 'share-2'}`} style={{ fontSize: 16, color: '#fff' }} />
+        <i className={`ti ti-${open ? 'x' : 'share-2'}`} aria-hidden="true" style={{ fontSize: 16, color: '#fff' }} />
         <span style={{ fontSize: 7, color: '#fff', fontWeight: 800, letterSpacing: .3, lineHeight: 1 }}>Ndaj</span>
       </button>
       <button aria-label="Mbyll" onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', color: 'rgba(59,130,246,.7)', cursor: 'pointer', fontSize: 8, padding: 0, lineHeight: 1, alignSelf: 'center', display: open ? 'block' : 'none' }}>✕</button>

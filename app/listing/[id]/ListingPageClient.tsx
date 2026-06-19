@@ -737,7 +737,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 boxShadow: '0 2px 8px rgba(0,0,0,.15)', zIndex: 5,
               }}>
-              <i className={`ti ti-heart${liked ? '-filled' : ''}`}
+              <i className={`ti ti-heart${liked ? '-filled' : ''}`} aria-hidden="true"
                 style={{ fontSize: 17, color: liked ? '#E63312' : '#888' }} />
             </button>
           )}

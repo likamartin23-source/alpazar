@@ -291,7 +291,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
                 <button key={c.id}
                   className={`cat-btn ${form.category_id === c.id ? 'active' : ''}`}
                   onClick={() => set('category_id', c.id)}>
-                  <i className={`ti ti-${c.icon}`} />
+                  <i className={`ti ti-${c.icon}`} aria-hidden="true" />
                   {c.name}
                 </button>
               ))}

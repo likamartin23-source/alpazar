@@ -109,7 +109,7 @@ export function PremiumUpsellModal({
             ['chart-bar', 'Statistika live'],
           ].map(([icon, text]) => (
             <div key={icon} className="ups-feat">
-              <i className={`ti ti-${icon}`} />
+              <i className={`ti ti-${icon}`} aria-hidden="true" />
               <span>{text}</span>
             </div>
           ))}

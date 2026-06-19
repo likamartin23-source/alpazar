@@ -74,7 +74,7 @@ function AudioPlayer({ url, mine }: { url: string; mine: boolean }) {
         background: mine ? 'rgba(245,200,66,.22)' : 'rgba(230,51,18,.12)',
         display:'flex', alignItems:'center', justifyContent:'center',
       }}>
-        <i className={`ti ti-${playing ? 'player-pause-filled' : 'player-play-filled'}`}
+        <i className={`ti ti-${playing ? 'player-pause-filled' : 'player-play-filled'}`} aria-hidden="true"
           style={{ fontSize:19, color: mine ? '#F5C842' : '#E63312' }} />
       </button>
 

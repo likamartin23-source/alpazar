@@ -678,7 +678,7 @@ export default function Admin() {
 
           {tabs.map(([id, icon, label]) => (
             <button key={id} className={`nl ${tab === id ? 'on' : ''}`} onClick={() => setTab(id)}>
-              <i className={`ti ti-${icon}`} />
+              <i className={`ti ti-${icon}`} aria-hidden="true" />
               <span>{label}</span>
               {id === 'moderation' && stats.reports > 0 && (
                 <span style={{ marginLeft: 'auto', background: '#E63312', color: '#fff', borderRadius: 10, fontSize: 9, fontWeight: 800, padding: '1px 5px' }}>

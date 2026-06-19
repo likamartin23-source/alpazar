@@ -550,7 +550,7 @@ const [searchError, setSearchError] = useState(false)
                       transition: 'all .2s',
                     }}
                   >
-                    <i className={`ti ti-bell${savedOk ? '-ringing' : ''}`} style={{ fontSize: 11 }} />
+                    <i className={`ti ti-bell${savedOk ? '-ringing' : ''}`} aria-hidden="true" style={{ fontSize: 11 }} />
                     {savedOk ? '✓ Ruajtur!' : 'Ruaj'}
                   </button>
                 )}

@@ -562,7 +562,7 @@ export default function ProfilePage() {
               }}
               style={{ background: profileCopied ? '#EAF3DE' : '#f5f5f5', border: 'none', borderRadius: 6, padding: '3px 8px', fontSize: 10, fontWeight: 700, cursor: 'pointer', color: profileCopied ? '#3B6D11' : '#555', display: 'flex', alignItems: 'center', gap: 3, transition: 'all .15s' }}
             >
-              <i className={`ti ti-${profileCopied ? 'check' : 'share-2'}`} style={{ fontSize: 11 }} />
+              <i className={`ti ti-${profileCopied ? 'check' : 'share-2'}`} aria-hidden="true" style={{ fontSize: 11 }} />
               {profileCopied ? 'Kopjuar!' : 'Ndaj'}
             </button>
           </div>
