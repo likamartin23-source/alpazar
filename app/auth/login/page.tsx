@@ -859,7 +859,7 @@ export default function Auth() {
                   </button>
                 </div>
                 {/* 3. Rikthimi — tertiar, nën fjalëkalim */}
-                <span className="forgot-link" onClick={() => switchMode('forgot')}>
+                <span className="forgot-link" role="button" tabIndex={0} onClick={() => switchMode('forgot')} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') switchMode('forgot') }}>
                   Keni harruar fjalëkalimin?
                 </span>
               </div>
@@ -1140,7 +1140,7 @@ export default function Auth() {
             </>
           )}
 
-          <div className="back" onClick={() => window.location.href = '/'}>
+          <div className="back" role="button" tabIndex={0} onClick={() => window.location.href = '/'} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') window.location.href = '/' }}>
             ← Kthehu te faqja kryesore
           </div>
         </div>

@@ -213,7 +213,7 @@ const [loadError, setLoadError] = useState(false)
           <div className="an-card">
             <div className="an-title">Shpalljet — Krahasim</div>
             {data.top_listings.slice(0, 10).map((l: any, i: number) => (
-              <div key={l.id} className="listing-row" onClick={() => window.location.href = `/listing/${l.id}`} style={{ cursor: 'pointer' }}>
+              <div key={l.id} className="listing-row" tabIndex={0} onClick={() => window.location.href = `/listing/${l.id}`} onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/listing/${l.id}` }} style={{ cursor: 'pointer' }}>
                 <div className="listing-rank">{i + 1}</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="listing-name">{l.title}</div>

@@ -933,23 +933,20 @@ export default function MessagesPage() {
               </div>
             )}
 
-            <div className="mi" onClick={() => {
-              setReplyTo(ctxMenu.msg); setCtxMenu(null)
-              setTimeout(() => inputRef.current?.focus(), 120)
-            }}>
+            <div role="button" tabIndex={0} className="mi" onClick={() => { setReplyTo(ctxMenu.msg); setCtxMenu(null); setTimeout(() => inputRef.current?.focus(), 120) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setReplyTo(ctxMenu.msg); setCtxMenu(null); setTimeout(() => inputRef.current?.focus(), 120) } }}>
               <i className="ti ti-corner-up-left" style={{ color:'#E63312' }} aria-hidden="true" />
               <span>Përgjigju</span>
             </div>
 
             {!ctxMenu.msg.deleted_at && ctxMenu.msg.type !== 'audio' && (
-              <div className="mi" onClick={() => copyMsg(ctxMenu.msg.content)}>
+              <div role="button" tabIndex={0} className="mi" onClick={() => copyMsg(ctxMenu.msg.content)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') copyMsg(ctxMenu.msg.content) }}>
                 <i className="ti ti-copy" aria-hidden="true" />
                 <span>Kopjo</span>
               </div>
             )}
 
             {ctxMenu.msg.type === 'image' && ctxMenu.msg.attachment_url && (
-              <div className="mi" onClick={() => { setLightbox(ctxMenu.msg.attachment_url); setCtxMenu(null) }}>
+              <div role="button" tabIndex={0} className="mi" onClick={() => { setLightbox(ctxMenu.msg.attachment_url); setCtxMenu(null) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setLightbox(ctxMenu.msg.attachment_url); setCtxMenu(null) } }}>
                 <i className="ti ti-photo" style={{ color:'#F5C842' }} aria-hidden="true" />
                 <span>Shiko foton</span>
               </div>
@@ -958,11 +955,11 @@ export default function MessagesPage() {
             {ctxMenu.isOwn && !ctxMenu.msg.deleted_at && (
               <>
                 <div className="sep" />
-                <div className="mi" onClick={() => { setSelectMode(true); setSelectedMsgs(new Set([ctxMenu.msg.id])); setCtxMenu(null) }}>
+                <div role="button" tabIndex={0} className="mi" onClick={() => { setSelectMode(true); setSelectedMsgs(new Set([ctxMenu.msg.id])); setCtxMenu(null) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setSelectMode(true); setSelectedMsgs(new Set([ctxMenu.msg.id])); setCtxMenu(null) } }}>
                   <i className="ti ti-select" aria-hidden="true" />
                   <span>Zgjidh</span>
                 </div>
-                <div className="mi danger" onClick={() => deleteMsg(ctxMenu.msg.id)}>
+                <div role="button" tabIndex={0} className="mi danger" onClick={() => deleteMsg(ctxMenu.msg.id)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') deleteMsg(ctxMenu.msg.id) }}>
                   <i className="ti ti-trash" aria-hidden="true" />
                   <span>Fshi mesazhin</span>
                 </div>
@@ -986,33 +983,33 @@ export default function MessagesPage() {
                 </div>
               </div>
             </div>
-            <div className="mi" onClick={() => { setShowInfo(false); window.location.href=`/biznese/${selected.otherId}` }}>
+            <div role="button" tabIndex={0} className="mi" onClick={() => { setShowInfo(false); window.location.href=`/biznese/${selected.otherId}` }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setShowInfo(false); window.location.href=`/biznese/${selected.otherId}` } }}>
               <i className="ti ti-building-store" style={{ color:'#F5C842' }} aria-hidden="true" />
               <span>Shiko biznesin</span>
             </div>
-            <div className="mi" onClick={() => { setShowInfo(false); window.location.href='/notifications' }}>
+            <div role="button" tabIndex={0} className="mi" onClick={() => { setShowInfo(false); window.location.href='/notifications' }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setShowInfo(false); window.location.href='/notifications' } }}>
               <i className="ti ti-bell" aria-hidden="true" />
               <span>Njoftimet e mia</span>
             </div>
             {waLink && (
-              <div className="mi wa" onClick={() => { setShowInfo(false); setShowWhatsApp(true) }}>
+              <div role="button" tabIndex={0} className="mi wa" onClick={() => { setShowInfo(false); setShowWhatsApp(true) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setShowInfo(false); setShowWhatsApp(true) } }}>
                 <i className="ti ti-brand-whatsapp" aria-hidden="true" />
                 <span>Vazhdo në WhatsApp</span>
               </div>
             )}
             {viberLink && (
-              <div className="mi" style={{ '--mi-accent': '#7360F2' } as any} onClick={() => { setShowInfo(false); setShowViber(true) }}>
+              <div role="button" tabIndex={0} className="mi" style={{ '--mi-accent': '#7360F2' } as any} onClick={() => { setShowInfo(false); setShowViber(true) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setShowInfo(false); setShowViber(true) } }}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="#7360F2" style={{display:'inline-block',verticalAlign:'middle',flexShrink:0}}><path d="M11.5 1C5.7 1.1 1.1 5.7 1 11.5c-.04 2.1.55 4 1.53 5.65L1 23l6.09-1.5c1.57.9 3.4 1.41 5.27 1.45C18.1 23.02 23 18.1 23 12c0-6.07-5.1-11.09-11.5-11zm4.55 15.9c-.31.85-1.5 1.58-2.26 1.6-.77.05-1.51-.16-4.45-1.4C6.08 15.6 3.83 12.17 3.63 11.9c-.2-.28-1.63-2.16-1.63-4.13 0-1.96.85-2.95 1.18-3.37.33-.42.64-.62.9-.64.32 0 .62 0 .9.02.3.02.7-.11.97.74.32.94 1.08 3.26 1.18 3.49.1.24.16.5.03.8-.12.3-.18.48-.36.74-.18.26-.38.57-.55.76-.18.2-.36.42-.16.83.2.4.9 1.48 1.93 2.4 1.33 1.19 2.45 1.56 2.8 1.74.34.18.55.15.75-.08.2-.22.87-1.02 1.1-1.37.23-.34.46-.28.78-.17.33.11 2.07.98 2.43 1.16.35.18.58.27.67.42.09.15.09.85-.22 1.62z"/></svg>
                 <span>Vazhdo në Viber</span>
               </div>
             )}
             <div className="sep" />
             {isBlocked ? (
-              <div className="mi success" onClick={() => { setShowInfo(false); unblockUser(selected.otherId) }}>
+              <div role="button" tabIndex={0} className="mi success" onClick={() => { setShowInfo(false); unblockUser(selected.otherId) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setShowInfo(false); unblockUser(selected.otherId) } }}>
                 <i className="ti ti-lock-open" aria-hidden="true" /><span>Hiqe bllokimin</span>
               </div>
             ) : (
-              <div className="mi danger" onClick={() => { setShowInfo(false); setShowBlockConf(true) }}>
+              <div role="button" tabIndex={0} className="mi danger" onClick={() => { setShowInfo(false); setShowBlockConf(true) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setShowInfo(false); setShowBlockConf(true) } }}>
                 <i className="ti ti-ban" aria-hidden="true" /><span>Blloko përdoruesin</span>
               </div>
             )}
@@ -1180,7 +1177,7 @@ export default function MessagesPage() {
                           >
                             {/* Swipe reply icon */}
                             <div className="swipe-icon" aria-hidden="true">
-                              <i className="ti ti-corner-up-left" />
+                              <i className="ti ti-corner-up-left" aria-hidden="true" />
                             </div>
 
                             <div className={`bubble ${isTmp ? 'tmp' : ''} ${isDeleted ? 'deleted' : ''} ${isSel ? 'sel' : ''}`}>

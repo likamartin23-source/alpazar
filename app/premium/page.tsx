@@ -169,12 +169,12 @@ export default function PremiumPage() {
           {msg && <div className={`msg-box ${mt}`} role="alert">{mm}</div>}
 
           <div className="plan-row">
-            <div className={`plan-card ${plan === 'monthly' ? 'active' : ''}`} onClick={() => setPlan('monthly')}>
+            <div role="radio" aria-checked={plan === 'monthly'} tabIndex={0} className={`plan-card ${plan === 'monthly' ? 'active' : ''}`} onClick={() => setPlan('monthly')} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setPlan('monthly') }}>
               <div className="plan-label">MUJOR</div>
               <div className="plan-price">9.99€</div>
               <div className="plan-sub">/ muaj</div>
             </div>
-            <div className={`plan-card ${plan === 'yearly' ? 'active' : ''}`} onClick={() => setPlan('yearly')}>
+            <div role="radio" aria-checked={plan === 'yearly'} tabIndex={0} className={`plan-card ${plan === 'yearly' ? 'active' : ''}`} onClick={() => setPlan('yearly')} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setPlan('yearly') }}>
               <div className="plan-label">VJETOR</div>
               <div className="plan-price">7.99€</div>
               <div className="plan-sub">/ muaj · 95.88€/vit</div>
@@ -198,7 +198,7 @@ export default function PremiumPage() {
               {payMethods.map(m => {
                 const icons: Record<string, string> = { card: 'ti ti-credit-card', paypal: 'ti ti-brand-paypal', bank: 'ti ti-building-bank', mobile: 'ti ti-device-mobile' }
                 return (
-                  <div key={m.id} className={`pm-opt ${payMethod === m.id ? 'active' : ''}`} onClick={() => setPayMethod(m.id)}>
+                  <div key={m.id} role="radio" aria-checked={payMethod === m.id} tabIndex={0} className={`pm-opt ${payMethod === m.id ? 'active' : ''}`} onClick={() => setPayMethod(m.id)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setPayMethod(m.id) }}>
                     <i className={icons[m.type] || 'ti ti-wallet'} aria-hidden="true" />
                     <span>{m.name}</span>
                     {payMethod === m.id && <i className="ti ti-circle-check" style={{ marginLeft: 'auto', color: '#E63312' }} aria-hidden="true" />}

@@ -850,7 +850,7 @@ export default function Admin() {
                           <span>{m.type}</span>
                         </div>
                         <div style={{ display:'flex', gap:8, alignItems:'center' }}>
-                          <span className={`tgl ${m.is_active ? 'tgl-on' : 'tgl-off'}`} onClick={() => toggleMethod(m.id, m.is_active)}>
+                          <span role="switch" aria-checked={m.is_active} tabIndex={0} className={`tgl ${m.is_active ? 'tgl-on' : 'tgl-off'}`} onClick={() => toggleMethod(m.id, m.is_active)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') toggleMethod(m.id, m.is_active) }}>
                             <span className="tdot" />
                           </span>
                           <button className="btn btn-red" onClick={async () => { const { error } = await supabase.from('payment_methods').delete().eq('id',m.id); if (error) setPayMsg('Gabim: ' + error.message); fetchAll() }}>Fshi</button>

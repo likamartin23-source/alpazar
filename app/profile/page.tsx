@@ -943,7 +943,7 @@ export default function ProfilePage() {
                 </div>
               ) : (
                 savedListings.map((l: any) => (
-                  <div key={l.id} className="listing-row" onClick={() => window.location.href = `/listing/${l.id}`} style={{ cursor: 'pointer' }}>
+                  <div key={l.id} className="listing-row" tabIndex={0} onClick={() => window.location.href = `/listing/${l.id}`} onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/listing/${l.id}` }} style={{ cursor: 'pointer' }}>
                     <div className="listing-thumb">
                       {l.images?.[0] ? <img src={l.images[0]} alt={l.title} loading="lazy" width={80} height={80} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <i className="ti ti-photo" style={{ color: '#ccc', fontSize: 20 }} aria-hidden="true" />}
                     </div>
