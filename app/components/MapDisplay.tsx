@@ -41,7 +41,7 @@ export function MapDisplay({ lat, lng, address }: MapDisplayProps) {
             padding: '6px 12px', fontSize: 11, fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap',
           }}
         >
-          <i className="ti ti-map" style={{ fontSize: 13 }} />
+          <i className="ti ti-map" style={{ fontSize: 13 }} aria-hidden="true" />
           Hap në Maps
         </a>
       </div>

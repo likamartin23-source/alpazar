@@ -259,7 +259,7 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
             alignItems: 'center', justifyContent: 'center', gap: 8,
           }}
         >
-          <i className="ti ti-share" style={{ fontSize: 16 }} />
+          <i className="ti ti-share" style={{ fontSize: 16 }} aria-hidden="true" />
           Ndaj tani
         </button>
       )}

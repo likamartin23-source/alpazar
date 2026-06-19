@@ -41,7 +41,7 @@ export default function AiFloat() {
           onClick={() => { window.location.href = '/asistent' }}
           aria-label="Albi — Asistenti Virtual"
         >
-          <i className="ti ti-robot" />
+          <i className="ti ti-robot" aria-hidden="true" />
         </button>
       </div>
     </>

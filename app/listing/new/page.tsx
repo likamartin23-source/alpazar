@@ -322,7 +322,7 @@ export default function NewListing() {
           )}
 
           <div className="card">
-            <div className="card-title"><i className="ti ti-info-circle" />Informacioni bazë</div>
+            <div className="card-title"><i className="ti ti-info-circle" aria-hidden="true" />Informacioni bazë</div>
 
             <div className="field">
               <label htmlFor="listing-title">Titulli *</label>
@@ -395,7 +395,7 @@ export default function NewListing() {
           </div>
 
           <div className="card">
-            <div className="card-title"><i className="ti ti-category" />Kategoria *</div>
+            <div className="card-title"><i className="ti ti-category" aria-hidden="true" />Kategoria *</div>
             <div className="cat-grid">
               {categories.map(c => (
                 <button
@@ -437,10 +437,10 @@ export default function NewListing() {
           </div>
 
           <div className="card">
-            <div className="card-title"><i className="ti ti-photo" />Fotot <span style={{ fontWeight: 400, color: imagePreviews.length >= maxImages ? '#E63312' : '#888', fontSize: 12 }}>({imagePreviews.length}/{maxImages})</span></div>
+            <div className="card-title"><i className="ti ti-photo" aria-hidden="true" />Fotot <span style={{ fontWeight: 400, color: imagePreviews.length >= maxImages ? '#E63312' : '#888', fontSize: 12 }}>({imagePreviews.length}/{maxImages})</span></div>
             <label className="img-zone" onClick={() => document.getElementById('img-input')?.click()}>
               <input id="img-input" type="file" accept="image/*" multiple onChange={handleImages} />
-              <i className="ti ti-cloud-upload" />
+              <i className="ti ti-cloud-upload" aria-hidden="true" />
               <p>Kliko për të ngarkuar fotot</p>
               <p style={{ fontSize: 10, marginTop: 4, color: '#bbb' }}>JPG, PNG, WebP · max 5MB secila</p>
             </label>

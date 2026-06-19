@@ -188,7 +188,7 @@ function AppConfigTab() {
 
       {isMaint && (
         <div className="maint-banner">
-          <i className="ti ti-alert-triangle" />
+          <i className="ti ti-alert-triangle" aria-hidden="true" />
           <p>Modaliteti i mirëmbajtjes është AKTIV — platforma është bllokuar për përdorues.</p>
           <button className="btn btn-red" onClick={() => toggleBool('maintenance_mode')}>Çaktivizo</button>
         </div>
@@ -695,7 +695,7 @@ export default function Admin() {
 
           <div style={{ marginTop: 'auto', padding: '12px 14px', borderTop: '1px solid #1e1e1e' }}>
             <a href="/" style={{ color: '#666', fontSize: 11, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
-              <i className="ti ti-arrow-left" style={{ fontSize: 13 }} />Kthehu
+              <i className="ti ti-arrow-left" style={{ fontSize: 13 }} aria-hidden="true" />Kthehu
             </a>
           </div>
         </div>

@@ -818,7 +818,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                     target="_blank"
                     rel="noopener noreferrer"
                     className="map-link">
-                    <i className="ti ti-map" />Hap në Maps
+                    <i className="ti ti-map" aria-hidden="true" />Hap në Maps
                   </a>
                 </div>
               )}
@@ -882,10 +882,10 @@ export default function ListingPageClient({ params, initialListing }: { params: 
 
                 {/* Stats */}
                 <div className="seller-stats">
-                  <span className="stat-chip"><i className="ti ti-package" />{sellerCount} shpallje aktive</span>
-                  {seller.username && <span className="stat-chip"><i className="ti ti-at" />{seller.username}</span>}
+                  <span className="stat-chip"><i className="ti ti-package" aria-hidden="true" />{sellerCount} shpallje aktive</span>
+                  {seller.username && <span className="stat-chip"><i className="ti ti-at" aria-hidden="true" />{seller.username}</span>}
                   {seller.gamification_points > 0 &&
-                    <span className="stat-chip"><i className="ti ti-bolt" />{seller.gamification_points} pikë</span>}
+                    <span className="stat-chip"><i className="ti ti-bolt" aria-hidden="true" />{seller.gamification_points} pikë</span>}
                 </div>
 
                 {/* Trust Score — respekto opt-out (Ligj 124/2024 n.19) */}
@@ -908,14 +908,14 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                 {!isOwner && hasShop && (
                   <button className="view-profile-btn"
                     onClick={() => window.location.href = `/biznese/${seller.id}`}>
-                    <i className="ti ti-building-store" />
+                    <i className="ti ti-building-store" aria-hidden="true" />
                     Shiko biznesin →
                   </button>
                 )}
                 {!isOwner && !hasShop && (
                   <button className="view-profile-btn"
                     onClick={() => window.location.href = `/u/${seller.id}`}>
-                    <i className="ti ti-user" />
+                    <i className="ti ti-user" aria-hidden="true" />
                     Shiko profilin →
                   </button>
                 )}
@@ -928,7 +928,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                       <span>{seller.shop_name}</span>
                       <small>Shfleto të gjitha shpalljet e biznesit</small>
                     </div>
-                    <i className="ti ti-chevron-right" style={{ fontSize: 13, color: '#aaa', marginLeft: 'auto' }} />
+                    <i className="ti ti-chevron-right" style={{ fontSize: 13, color: '#aaa', marginLeft: 'auto' }} aria-hidden="true" />
                   </a>
                 )}
               </div>
@@ -943,14 +943,14 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                 <button
                   onClick={() => window.location.href = `/listing/${params.id}/edit`}
                   style={{ flex: 1, background: '#F5C842', color: '#111', border: 'none', borderRadius: 10, padding: '10px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-                  <i className="ti ti-pencil" style={{ fontSize: 14 }} />Ndrysho
+                  <i className="ti ti-pencil" style={{ fontSize: 14 }} aria-hidden="true" />Ndrysho
                 </button>
                 <button
                   onClick={doBump}
                   disabled={bumpLoading || !canBump(listing.last_bumped_at)}
                   aria-label={canBump(listing.last_bumped_at) ? 'Ngrije shpalljen në krye' : 'Mund ta ngresh pas 7 ditësh'}
                   style={{ flex: 1, background: canBump(listing.last_bumped_at) ? '#E63312' : '#F0F0F0', color: canBump(listing.last_bumped_at) ? '#fff' : '#999', border: 'none', borderRadius: 10, padding: '10px', fontSize: 12, fontWeight: 700, cursor: canBump(listing.last_bumped_at) ? 'pointer' : 'not-allowed', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, opacity: bumpLoading ? 0.7 : 1 }}>
-                  <i className="ti ti-arrow-up" style={{ fontSize: 14 }} />{canBump(listing.last_bumped_at) ? 'Ngrije' : 'Ngritur'}
+                  <i className="ti ti-arrow-up" style={{ fontSize: 14 }} aria-hidden="true" />{canBump(listing.last_bumped_at) ? 'Ngrije' : 'Ngritur'}
                 </button>
               </div>
               {bumpMsg && (
@@ -1036,7 +1036,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                       <div style={{ width: '100%', aspectRatio: '4/3', background: '#F6F6F6', overflow: 'hidden', position: 'relative' }}>
                         {img
                           ? <img src={img} alt={s.title} loading="lazy" width={400} height={300} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                          : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><i className="ti ti-photo" style={{ fontSize: 24, color: '#ccc' }} /></div>
+                          : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><i className="ti ti-photo" style={{ fontSize: 24, color: '#ccc' }} aria-hidden="true" /></div>
                         }
                         {s.is_premium && (
                           <div style={{ position: 'absolute', top: 5, left: 5, background: 'linear-gradient(90deg,#FFD700,#FFA500)', color: '#7B5000', fontSize: 9, fontWeight: 800, padding: '2px 6px', borderRadius: 5 }}>GOLD</div>
@@ -1059,7 +1059,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
             <div style={{ padding: '0 13px 20px', textAlign: 'center' }}>
               <button onClick={() => setReportOpen(true)}
                 style={{ background: 'none', border: 'none', color: '#ccc', fontSize: 11, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                <i className="ti ti-flag" style={{ fontSize: 12 }} />Raporto këtë shpallje
+                <i className="ti ti-flag" style={{ fontSize: 12 }} aria-hidden="true" />Raporto këtë shpallje
               </button>
             </div>
           )}
@@ -1073,7 +1073,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
           <div className="alert-panel" role="dialog" aria-modal="true" aria-label="Alarmi i Çmimit">
             <div className="alert-handle" />
             <div className="alert-title">
-              <i className="ti ti-bell-ringing" style={{ color: '#E63312' }} />
+              <i className="ti ti-bell-ringing" style={{ color: '#E63312' }} aria-hidden="true" />
               Alarmi i Çmimit
             </div>
             <div className="alert-sub">
@@ -1103,7 +1103,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
             <div className="alert-btn-row">
               {priceAlert && (
                 <button className="alert-del" onClick={deleteAlert} disabled={alertSaving} aria-label="Fshi alarmin">
-                  <i className="ti ti-trash" />
+                  <i className="ti ti-trash" aria-hidden="true" />
                 </button>
               )}
               <button className="alert-save" onClick={saveAlert} disabled={alertSaving || !alertTarget}>
@@ -1181,7 +1181,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
 
             {/* Listing reference */}
             <div className="cs-ref">
-              <i className="ti ti-bookmark" />
+              <i className="ti ti-bookmark" aria-hidden="true" />
               <span className="cs-ref-text">📌 {listing.title}</span>
               {listing.price > 0 && (
                 <span className="cs-ref-price">{fmt(listing.price, listing.currency)}</span>
@@ -1274,7 +1274,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
             setChatOpen(true)
             setTimeout(() => inputRef.current?.focus(), 350)
           }}>
-            <i className="ti ti-messages" />
+            <i className="ti ti-messages" aria-hidden="true" />
             {user ? '💬 Fillo bisedën' : '🔑 Hyr për të biseduar'}
           </button>
           {seller.phone && (
@@ -1284,7 +1284,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
               rel="noopener noreferrer"
               className="wa-btn"
               aria-label="Kontakto me WhatsApp">
-              <i className="ti ti-brand-whatsapp" />
+              <i className="ti ti-brand-whatsapp" aria-hidden="true" />
             </a>
           )}
           {seller.phone && (
@@ -1294,7 +1294,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
               rel="noopener noreferrer"
               className="viber-btn"
               aria-label="Kontakto me Viber">
-              <i className="ti ti-brand-viber" />
+              <i className="ti ti-brand-viber" aria-hidden="true" />
             </a>
           )}
         </div>

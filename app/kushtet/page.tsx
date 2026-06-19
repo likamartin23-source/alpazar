@@ -26,7 +26,7 @@ export default function Kushtet() {
       <style>{css}</style>
       <div className="wrap">
         <div className="topbar">
-          <a href="/" className="back"><i className="ti ti-arrow-left" /></a>
+          <a href="/" className="back" aria-label="Kthehu mbrapa"><i className="ti ti-arrow-left" aria-hidden="true" /></a>
           <span className="topbar-title">Kushtet e Përdorimit</span>
         </div>
         <div className="content">

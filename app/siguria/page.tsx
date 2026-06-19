@@ -40,7 +40,7 @@ export default function Siguria() {
       <style>{css}</style>
       <div className="wrap">
         <div className="topbar">
-          <a href="/" className="back"><i className="ti ti-arrow-left" /></a>
+          <a href="/" className="back" aria-label="Kthehu mbrapa"><i className="ti ti-arrow-left" aria-hidden="true" /></a>
           <span className="topbar-title">Siguria</span>
         </div>
 
@@ -52,7 +52,7 @@ export default function Siguria() {
 
         <div className="body">
           <div className="alert">
-            <i className="ti ti-alert-triangle" />
+            <i className="ti ti-alert-triangle" aria-hidden="true" />
             <div className="alert-text">
               <strong>Kurrë mos paguani paraprakisht!</strong>
               <span>Mashtrimet më të shpeshta fillojnë me kërkesën për pagesë përpara takimit fizik ose dorëzimit të produktit. Kini kujdes gjithmonë.</span>
@@ -60,41 +60,41 @@ export default function Siguria() {
           </div>
 
           <div className="section">
-            <div className="sec-title"><i className="ti ti-shield-check" />Si të Blini me Siguri</div>
+            <div className="sec-title"><i className="ti ti-shield-check" aria-hidden="true" />Si të Blini me Siguri</div>
             <div className="tip">
-              <div className="tip-icon t-green"><i className="ti ti-check" /></div>
+              <div className="tip-icon t-green"><i className="ti ti-check" aria-hidden="true" /></div>
               <div className="tip-text"><strong>Takohuni personalisht</strong><span>Gjithmonë takohuni në vende publike për të shikuar produktin para pagesës</span></div>
             </div>
             <div className="tip">
-              <div className="tip-icon t-green"><i className="ti ti-check" /></div>
+              <div className="tip-icon t-green"><i className="ti ti-check" aria-hidden="true" /></div>
               <div className="tip-text"><strong>Kontrolloni produktin</strong><span>Testoni elektronikën, kontrolloni dokumentet e automjetit, shikoni pronën para çdo pagese</span></div>
             </div>
             <div className="tip">
-              <div className="tip-icon t-green"><i className="ti ti-check" /></div>
+              <div className="tip-icon t-green"><i className="ti ti-check" aria-hidden="true" /></div>
               <div className="tip-text"><strong>Shmangni transfertat bankare</strong><span>Mos transferoni para kurrë pa e parë produktin. Preferoni pagesën fizike në dorë</span></div>
             </div>
             <div className="tip">
-              <div className="tip-icon t-red"><i className="ti ti-x" /></div>
+              <div className="tip-icon t-red"><i className="ti ti-x" aria-hidden="true" /></div>
               <div className="tip-text"><strong>Mos i besoni "ofertave tepër të mira"</strong><span>iPhone 15 Pro me 50€? Ndoshta mashtrim. Çmimet shumë poshtë tregut janë flamur i kuq</span></div>
             </div>
             <div className="tip">
-              <div className="tip-icon t-red"><i className="ti ti-x" /></div>
+              <div className="tip-icon t-red"><i className="ti ti-x" aria-hidden="true" /></div>
               <div className="tip-text"><strong>Mos paguani me dhurata/kartëmonedha</strong><span>Kurrë mos dërgoni para me Western Union, kartëmonedha, apo kriptomonedhë te të panjohur</span></div>
             </div>
           </div>
 
           <div className="section">
-            <div className="sec-title"><i className="ti ti-tag" />Si të Shisni me Siguri</div>
+            <div className="sec-title"><i className="ti ti-tag" aria-hidden="true" />Si të Shisni me Siguri</div>
             <div className="tip">
-              <div className="tip-icon t-green"><i className="ti ti-check" /></div>
+              <div className="tip-icon t-green"><i className="ti ti-check" aria-hidden="true" /></div>
               <div className="tip-text"><strong>Fotografitë origjinale</strong><span>Postoni vetëm foto tuajat — fotografitë e interneti-t tregojnë mungesë vullneti të mirë</span></div>
             </div>
             <div className="tip">
-              <div className="tip-icon t-green"><i className="ti ti-check" /></div>
+              <div className="tip-icon t-green"><i className="ti ti-check" aria-hidden="true" /></div>
               <div className="tip-text"><strong>Çmim i drejtë</strong><span>Çmimet e arsyeshme tërheqin blerës seriozë dhe mbrojnë reputacionin tuaj</span></div>
             </div>
             <div className="tip">
-              <div className="tip-icon t-red"><i className="ti ti-x" /></div>
+              <div className="tip-icon t-red"><i className="ti ti-x" aria-hidden="true" /></div>
               <div className="tip-text"><strong>Mos jepni të dhëna personale</strong><span>Kurrë mos ndani numrin e kartës, fjalëkalimin, ose kopjet e dokumenteve me blerës</span></div>
             </div>
           </div>

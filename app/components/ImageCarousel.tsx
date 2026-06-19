@@ -29,7 +29,7 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3' }: Props) 
   const count = images.length
   if (count === 0) return (
     <div style={{ width: '100%', aspectRatio, background: '#F6F6F6', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <i className="ti ti-photo" style={{ fontSize: 36, color: '#ccc' }} />
+      <i className="ti ti-photo" style={{ fontSize: 36, color: '#ccc' }} aria-hidden="true" />
     </div>
   )
 

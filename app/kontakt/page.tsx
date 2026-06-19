@@ -89,7 +89,7 @@ export default function Kontakt() {
       <style>{css}</style>
       <div className="wrap">
         <div className="topbar">
-          <a href="/" className="back"><i className="ti ti-arrow-left" /></a>
+          <a href="/" className="back" aria-label="Kthehu mbrapa"><i className="ti ti-arrow-left" aria-hidden="true" /></a>
           <span className="topbar-title">Kontaktoni</span>
         </div>
 
@@ -102,22 +102,22 @@ export default function Kontakt() {
         <div className="body">
           <div className="cards">
             <a href="mailto:likamartin23@gmail.com" className="ccard">
-              <i className="ti ti-mail" />
+              <i className="ti ti-mail" aria-hidden="true" />
               <strong>Email</strong>
               <span>likamartin23@gmail.com</span>
             </a>
             <a href="mailto:likamartin23@gmail.com" className="ccard">
-              <i className="ti ti-headset" />
+              <i className="ti ti-headset" aria-hidden="true" />
               <strong>Mbështetje</strong>
               <span>likamartin23@gmail.com</span>
             </a>
             <a href="mailto:likamartin23@gmail.com" className="ccard">
-              <i className="ti ti-scale" />
+              <i className="ti ti-scale" aria-hidden="true" />
               <strong>Çështje Ligjore</strong>
               <span>likamartin23@gmail.com</span>
             </a>
             <a href="mailto:likamartin23@gmail.com" className="ccard">
-              <i className="ti ti-alert-triangle" />
+              <i className="ti ti-alert-triangle" aria-hidden="true" />
               <strong>Raporto Abuzim</strong>
               <span>likamartin23@gmail.com</span>
             </a>
@@ -125,7 +125,7 @@ export default function Kontakt() {
 
           {/* ── FORMA E KONTAKTIT ── */}
           <div className="section">
-            <div className="sec-title"><i className="ti ti-send" />Dërgo Mesazh</div>
+            <div className="sec-title"><i className="ti ti-send" aria-hidden="true" />Dërgo Mesazh</div>
             {msg && <div className={`msg-box ${mt}`} role="alert">{mm}</div>}
             <form onSubmit={sendForm}>
               <div className="form-field">
@@ -155,7 +155,7 @@ export default function Kontakt() {
           </div>
 
           <div className="section">
-            <div className="sec-title"><i className="ti ti-clock" />Oraret e Mbështetjes</div>
+            <div className="sec-title"><i className="ti ti-clock" aria-hidden="true" />Oraret e Mbështetjes</div>
             <div className="hours"><span>E Hënë — E Premte</span><span>09:00 — 18:00</span></div>
             <div className="hours"><span>E Shtunë</span><span>10:00 — 14:00</span></div>
             <div className="hours"><span>E Dielë</span><span>Mbyllur</span></div>
@@ -163,7 +163,7 @@ export default function Kontakt() {
           </div>
 
           <div className="section">
-            <div className="sec-title"><i className="ti ti-help-circle" />Pyetjet e Shpeshta</div>
+            <div className="sec-title"><i className="ti ti-help-circle" aria-hidden="true" />Pyetjet e Shpeshta</div>
             <div className="faq-item">
               <div className="faq-q">Si ta fshij llogarinë time?</div>
               <div className="faq-a">Dërgoni email në likamartin23@gmail.com me subjektin "Fshirja e llogarisë". Procesojmë brenda 30 ditësh si kërkon ligji.</div>
@@ -194,7 +194,7 @@ export default function Kontakt() {
               target="_blank"
               rel="noopener noreferrer"
               style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 10, background: '#EEF4FF', color: '#185FA5', borderRadius: 8, padding: '7px 13px', fontSize: 12, fontWeight: 600, textDecoration: 'none', border: '1px solid #C3DAFB' }}>
-              <i className="ti ti-map" style={{ fontSize: 14 }} />Hap në Google Maps
+              <i className="ti ti-map" style={{ fontSize: 14 }} aria-hidden="true" />Hap në Google Maps
             </a>
           </div>
         </div>
