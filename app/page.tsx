@@ -649,7 +649,7 @@ export default function Home() {
           </div>
 
           <div className="cat-scroll">
-            <button className={`cat-item ${activeCategory === 'all' ? 'active' : ''}`} onClick={() => { setActiveCategory('all'); fetchListings('all', activeFilter) }}>
+            <button className={`cat-item ${activeCategory === 'all' ? 'active' : ''}`} aria-pressed={activeCategory === 'all'} onClick={() => { setActiveCategory('all'); fetchListings('all', activeFilter) }}>
               <i className="ti ti-layout-grid" aria-hidden="true" />
               <span>Të gjitha</span>
             </button>
@@ -657,6 +657,7 @@ export default function Home() {
               <button
                 key={cat.id}
                 className={`cat-item ${activeCategory === cat.slug ? 'active' : ''}`}
+                aria-pressed={activeCategory === cat.slug}
                 onClick={() => { setActiveCategory(cat.slug); fetchListings(cat.slug, activeFilter) }}
               >
                 <i className={`ti ti-${cat.icon}`} aria-hidden="true" />
@@ -771,6 +772,7 @@ export default function Home() {
               <button
                 key={f.id}
                 className={`filter-btn ${activeFilter === f.id ? 'active' : ''}`}
+                aria-pressed={activeFilter === f.id}
                 onClick={() => { setActiveFilter(f.id); fetchListings(activeCategory, f.id) }}
               >
                 {f.label}

@@ -678,7 +678,7 @@ export default function Admin() {
           </div>
 
           {tabs.map(([id, icon, label]) => (
-            <button key={id} className={`nl ${tab === id ? 'on' : ''}`} onClick={() => setTab(id)}>
+            <button key={id} className={`nl ${tab === id ? 'on' : ''}`} aria-pressed={tab === id} onClick={() => setTab(id)}>
               <i className={`ti ti-${icon}`} aria-hidden="true" />
               <span>{label}</span>
               {id === 'moderation' && stats.reports > 0 && (

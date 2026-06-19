@@ -705,6 +705,7 @@ const [searchError, setSearchError] = useState(false)
                 ].map(o => (
                   <button key={o.v}
                     className={`cond-btn ${sortBy === o.v ? 'active' : ''}`}
+                    aria-pressed={sortBy === o.v}
                     onClick={() => setSortBy(o.v)}>
                     {o.label}
                   </button>
