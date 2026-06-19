@@ -100,7 +100,7 @@ export default function Siguria() {
           </div>
 
           <div className="section">
-            <div className="sec-title"><i className="ti ti-flag" />Si të Raportoni</div>
+            <div className="sec-title"><i className="ti ti-flag" aria-hidden="true" />Si të Raportoni</div>
             <p style={{ fontSize: 13, color: '#444', lineHeight: 1.7, marginBottom: 12 }}>
               Nëse hasni një shpallje mashtruese ose sjellje abuzive, raportojeni menjëherë. Ekipi ynë shqyrton çdo raportim brenda 24 orësh.
             </p>
@@ -110,17 +110,17 @@ export default function Siguria() {
           </div>
 
           <div className="section">
-            <div className="sec-title"><i className="ti ti-phone" />Numrat e Emergjencës</div>
+            <div className="sec-title"><i className="ti ti-phone" aria-hidden="true" />Numrat e Emergjencës</div>
             <div className="tip">
-              <div className="tip-icon t-red"><i className="ti ti-phone" /></div>
+              <div className="tip-icon t-red"><i className="ti ti-phone" aria-hidden="true" /></div>
               <div className="tip-text"><strong>Policia e Shtetit</strong><span>129 (emergjencë) · 0800 33 33 (pa pagesë)</span></div>
             </div>
             <div className="tip">
-              <div className="tip-icon t-red"><i className="ti ti-building" /></div>
+              <div className="tip-icon t-red"><i className="ti ti-building" aria-hidden="true" /></div>
               <div className="tip-text"><strong>Prokuroria</strong><span>Për regjistrim ankese formale për mashtrim</span></div>
             </div>
             <div className="tip">
-              <div className="tip-icon t-green"><i className="ti ti-shield" /></div>
+              <div className="tip-icon t-green"><i className="ti ti-shield" aria-hidden="true" /></div>
               <div className="tip-text"><strong>CERT Albania</strong><span>cert.gov.al — për incidente kibernetike</span></div>
             </div>
           </div>

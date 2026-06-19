@@ -55,7 +55,7 @@ function InstallBanner() {
         onMouseDown={e => (e.currentTarget.style.transform = 'scale(.92)')}
         onMouseUp={e => (e.currentTarget.style.transform = '')}
       >
-        <i className="ti ti-device-mobile-down" style={{ fontSize: 16, color: '#fff' }} />
+        <i className="ti ti-device-mobile-down" style={{ fontSize: 16, color: '#fff' }} aria-hidden="true" />
         <span style={{ fontSize: 7, color: '#fff', fontWeight: 800, letterSpacing: .3, lineHeight: 1 }}>Instalo</span>
       </button>
       <button aria-label="Mbyll" onClick={() => setDismissed(true)} style={{ background: 'none', border: 'none', color: 'rgba(34,197,94,.7)', cursor: 'pointer', fontSize: 7, padding: 0, lineHeight: 1, alignSelf: 'center' }}>✕</button>
@@ -649,7 +649,7 @@ export default function Home() {
 
           <div className="cat-scroll">
             <button className={`cat-item ${activeCategory === 'all' ? 'active' : ''}`} onClick={() => { setActiveCategory('all'); fetchListings('all', activeFilter) }}>
-              <i className="ti ti-layout-grid" />
+              <i className="ti ti-layout-grid" aria-hidden="true" />
               <span>Të gjitha</span>
             </button>
             {categories.map(cat => (
@@ -658,7 +658,7 @@ export default function Home() {
                 className={`cat-item ${activeCategory === cat.slug ? 'active' : ''}`}
                 onClick={() => { setActiveCategory(cat.slug); fetchListings(cat.slug, activeFilter) }}
               >
-                <i className={`ti ti-${cat.icon}`} />
+                <i className={`ti ti-${cat.icon}`} aria-hidden="true" />
                 <span>{cat.name}</span>
               </button>
             ))}
@@ -667,7 +667,7 @@ export default function Home() {
 
         <div className="body">
           <div className="no-ads">
-            <i className="ti ti-ad-off" />
+            <i className="ti ti-ad-off" aria-hidden="true" />
             <span>Pa reklama — për të gjithë gjithmonë falas</span>
           </div>
 
@@ -697,7 +697,7 @@ export default function Home() {
 
           {/* 2. Premium CTA — vendosur ku ishte AI asistenti */}
           <div className="premium-cta">
-            <div className="prem-icon"><i className="ti ti-crown" /></div>
+            <div className="prem-icon"><i className="ti ti-crown" aria-hidden="true" /></div>
             <div className="prem-text">
               <strong>👑 Bëhu Anëtar Premium</strong>
               <span>Biznes · Badge · Shpallje ∞ · {cfg('premium_monthly_price','9.99')}€/muaj</span>
@@ -708,13 +708,13 @@ export default function Home() {
           {/* 3. Trust row */}
           <div className="trust-row">
             <div className="trust-card tc-green">
-              <i className="ti ti-shield-check" /><span>Shitës të verifikuar</span>
+              <i className="ti ti-shield-check" aria-hidden="true" /><span>Shitës të verifikuar</span>
             </div>
             <div className="trust-card tc-blue">
-              <i className="ti ti-star" /><span>Vlerësime ⭐</span>
+              <i className="ti ti-star" aria-hidden="true" /><span>Vlerësime ⭐</span>
             </div>
             <div className="trust-card tc-red">
-              <i className="ti ti-message-circle" /><span>Chat live</span>
+              <i className="ti ti-message-circle" aria-hidden="true" /><span>Chat live</span>
             </div>
           </div>
 
@@ -745,7 +745,7 @@ export default function Home() {
                   )
                 })}
                 <div className="shop-mini" onClick={() => go('/biznese')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#fff', border: '1.5px dashed #F5C842', cursor: 'pointer' }}>
-                  <i className="ti ti-arrow-right" style={{ fontSize: 14, color: '#E63312' }} />
+                  <i className="ti ti-arrow-right" style={{ fontSize: 14, color: '#E63312' }} aria-hidden="true" />
                   <div style={{ fontSize: 7, color: '#E63312', fontWeight: 700, marginTop: 3, textAlign: 'center', padding: '0 4px' }}>Shiko të gjitha</div>
                 </div>
               </div>

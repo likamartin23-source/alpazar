@@ -161,7 +161,7 @@ export default function SearchPage() {
             <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
           <form className="search-wrap" onSubmit={handleSubmit}>
-            <i className="ti ti-search" />
+            <i className="ti ti-search" aria-hidden="true" />
             <input
               type="search"
               placeholder="Kërko çdo gjë..."
@@ -206,7 +206,7 @@ export default function SearchPage() {
 
         <div className="body">
           <div className="initial">
-            <i className="ti ti-search" />
+            <i className="ti ti-search" aria-hidden="true" />
             <h3>Kërko çdo gjë në Shqipëri</h3>
             <p>Elektronikë, Automjete, Prona,<br />Kafshë, Shërbime dhe shumë të tjera</p>
           </div>

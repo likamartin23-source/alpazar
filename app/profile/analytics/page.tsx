@@ -221,11 +221,11 @@ const [loadError, setLoadError] = useState(false)
                 </div>
                 <div className="listing-stats">
                   <div className="listing-stat">
-                    <i className="ti ti-eye" style={{ fontSize: 11 }} />
+                    <i className="ti ti-eye" style={{ fontSize: 11 }} aria-hidden="true" />
                     {l.total_views}
                   </div>
                   <div className="listing-stat">
-                    <i className="ti ti-message" style={{ fontSize: 11 }} />
+                    <i className="ti ti-message" style={{ fontSize: 11 }} aria-hidden="true" />
                     {l.contacts}
                   </div>
                   {l.ctr > 0 && <div className="ctr-pill">{l.ctr}%</div>}

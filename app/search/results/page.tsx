@@ -61,7 +61,7 @@ function ListingCard({ l, premium }: { l: any; premium?: boolean }) {
       <div className="card-img">
         {l.images?.[0]
           ? <img src={l.images[0]} alt={l.title} loading="lazy" width={400} height={300} />
-          : <i className="ti ti-photo" style={{ fontSize: 30, color: '#ccc' }} />}
+          : <i className="ti ti-photo" style={{ fontSize: 30, color: '#ccc' }} aria-hidden="true" />}
         {l.condition === 'i_ri'       && <span className="badge-new">I ri</span>}
         {l.condition === 'i_perdorur' && <span className="badge-used">I përdorur</span>}
         {premium && <span className="badge-premium">⭐</span>}
@@ -473,7 +473,7 @@ const [searchError, setSearchError] = useState(false)
             <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
           <form className="search-wrap" onSubmit={newSearch} style={{ flex: 1 }}>
-            <i className="ti ti-search" />
+            <i className="ti ti-search" aria-hidden="true" />
             <input
               type="search"
               placeholder="Kërko çdo gjë..."
@@ -731,7 +731,7 @@ const [searchError, setSearchError] = useState(false)
           style={{ position: 'fixed', bottom: 80, right: 16, width: 42, height: 42, borderRadius: '50%', background: '#111', color: '#F5C842', border: 'none', boxShadow: '0 2px 12px rgba(0,0,0,.25)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, zIndex: 99 }}
           aria-label="Kthehu në krye"
         >
-          <i className="ti ti-arrow-up" />
+          <i className="ti ti-arrow-up" aria-hidden="true" />
         </button>
       )}
     </>

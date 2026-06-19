@@ -41,7 +41,7 @@ function BizUpsellBanner({ userId }: { userId?: string }) {
         <div style={{ fontSize: 13, fontWeight: 800, color: '#F5C842', marginBottom: 3 }}>Krijo Biznes Online</div>
         <div style={{ fontSize: 11, color: '#aaa', lineHeight: 1.5 }}>Faqe e dedikuar · Shpallje pa limit · Badge ✓ Biznes</div>
       </div>
-      <i className="ti ti-chevron-right" style={{ color: '#F5C842', fontSize: 18 }} />
+      <i className="ti ti-chevron-right" style={{ color: '#F5C842', fontSize: 18 }} aria-hidden="true" />
     </div>
   )
 }
@@ -508,8 +508,8 @@ export default function ProfilePage() {
 
       <div className="wrap">
         <div className="topbar">
-          <button className="back" onClick={() => window.location.href = '/'}>
-            <i className="ti ti-arrow-left" />
+          <button className="back" aria-label="Kthehu mbrapa" onClick={() => window.location.href = '/'}>
+            <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
           <span className="topbar-title">Profili im</span>
           <button className="logout" onClick={signOut}>Dil ↗</button>
@@ -565,7 +565,7 @@ export default function ProfilePage() {
             </button>
           </div>
           {profile?.city && <div style={{ fontSize: 11, color: '#888', marginBottom: 4 }}>📍 {profile.city}{profile?.created_at ? ` · Anëtar prej ${new Date(profile.created_at).getFullYear()}` : ''}</div>}
-          <div className="email-row" style={{ justifyContent: 'flex-start' }}><i className="ti ti-mail" />{user?.email}</div>
+          <div className="email-row" style={{ justifyContent: 'flex-start' }}><i className="ti ti-mail" aria-hidden="true" />{user?.email}</div>
           <div className="badges-row" style={{ justifyContent: 'flex-start', marginTop: 8 }}>
             {profile?.is_admin && <span className="badge b-admin">🛡 Admin</span>}
             {(user?.email_confirmed_at || user?.phone_confirmed_at) && <span className="badge b-verif">✓ Verifikuar</span>}
@@ -596,23 +596,23 @@ export default function ProfilePage() {
         {/* Tabs */}
         <div className="tabs">
           <button className={`tab ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => setActiveTab('profile')}>
-            <i className="ti ti-user" />Profili
+            <i className="ti ti-user" aria-hidden="true" />Profili
           </button>
           <button className={`tab ${activeTab === 'listings' ? 'active' : ''}`} onClick={() => setActiveTab('listings')}>
-            <i className="ti ti-package" />Shpalljet
+            <i className="ti ti-package" aria-hidden="true" />Shpalljet
           </button>
           <button className={`tab ${activeTab === 'saved' ? 'active' : ''}`} onClick={() => setActiveTab('saved')}>
-            <i className="ti ti-heart" />Të ruajtura
+            <i className="ti ti-heart" aria-hidden="true" />Të ruajtura
           </button>
           <button className={`tab ${activeTab === 'messages' ? 'active' : ''}`} onClick={() => setActiveTab('messages')}>
-            <i className="ti ti-message-circle" />
+            <i className="ti ti-message-circle" aria-hidden="true" />
             Mesazhet
             {conversations.some(c => c.unread > 0) && (
               <span className="tab-badge">{conversations.reduce((s, c) => s + c.unread, 0)}</span>
             )}
           </button>
           <button className={`tab ${activeTab === 'shop' ? 'active' : ''}`} onClick={() => setActiveTab('shop')}>
-            <i className="ti ti-building-store" />Biznes
+            <i className="ti ti-building-store" aria-hidden="true" />Biznes
           </button>
         </div>
 
@@ -625,7 +625,7 @@ export default function ProfilePage() {
 
               {profile?.is_admin && (
                 <button className="admin-btn" onClick={() => window.location.href = '/admin'}>
-                  <i className="ti ti-shield" /> Paneli i Adminit
+                  <i className="ti ti-shield" aria-hidden="true" /> Paneli i Adminit
                 </button>
               )}
 
@@ -875,12 +875,12 @@ export default function ProfilePage() {
                 style={{ width: '100%', background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 13, padding: '14px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}
                 onClick={() => window.location.href = '/profile/analytics'}
               >
-                <i className="ti ti-chart-bar" style={{ fontSize: 20 }} />
+                <i className="ti ti-chart-bar" style={{ fontSize: 20 }} aria-hidden="true" />
                 <div style={{ textAlign: 'left' }}>
                   <div>📊 Statistikat e Shpalljeve</div>
                   <div style={{ fontSize: 10, fontWeight: 500, opacity: 0.85, marginTop: 2 }}>Pamje, kontaktime, CTR — 7 ose 30 ditë</div>
                 </div>
-                <i className="ti ti-chevron-right" style={{ fontSize: 16, marginLeft: 'auto' }} />
+                <i className="ti ti-chevron-right" style={{ fontSize: 16, marginLeft: 'auto' }} aria-hidden="true" />
               </button>
 
               <div className="card">
@@ -890,14 +890,14 @@ export default function ProfilePage() {
                 </div>
                 {myListings.filter(l => l.is_active).length === 0 ? (
                   <div style={{ textAlign: 'center', padding: '24px 0', color: '#aaa', fontSize: 12 }}>
-                    <i className="ti ti-package" style={{ fontSize: 36, display: 'block', marginBottom: 10, color: '#F5C842' }} />
+                    <i className="ti ti-package" style={{ fontSize: 36, display: 'block', marginBottom: 10, color: '#F5C842' }} aria-hidden="true" />
                     Nuk ke shpallje aktive.<br />Shto tani falas!
                   </div>
                 ) : (
                   myListings.filter(l => l.is_active).map(l => (
                     <div key={l.id} className="listing-row">
                       <div className="listing-thumb" onClick={() => window.location.href = `/listing/${l.id}`}>
-                        {l.images?.[0] ? <img src={l.images[0]} alt={l.title} loading="lazy" width={80} height={80} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <i className="ti ti-photo" style={{ color: '#ccc', fontSize: 20 }} />}
+                        {l.images?.[0] ? <img src={l.images[0]} alt={l.title} loading="lazy" width={80} height={80} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <i className="ti ti-photo" style={{ color: '#ccc', fontSize: 20 }} aria-hidden="true" />}
                       </div>
                       <div className="listing-info" onClick={() => window.location.href = `/listing/${l.id}`}>
                         <div className="listing-title">{l.title}</div>
@@ -938,14 +938,14 @@ export default function ProfilePage() {
               </div>
               {savedListings.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '24px 0', color: '#aaa', fontSize: 12 }}>
-                  <i className="ti ti-heart" style={{ fontSize: 36, display: 'block', marginBottom: 10, color: '#F5C842' }} />
-                  Nuk ke shpallje të ruajtura.<br />Hap zemrën <i className="ti ti-heart" style={{ fontSize: 11 }} /> në çdo shpallje!
+                  <i className="ti ti-heart" style={{ fontSize: 36, display: 'block', marginBottom: 10, color: '#F5C842' }} aria-hidden="true" />
+                  Nuk ke shpallje të ruajtura.<br />Hap zemrën <i className="ti ti-heart" style={{ fontSize: 11 }} aria-hidden="true" /> në çdo shpallje!
                 </div>
               ) : (
                 savedListings.map((l: any) => (
                   <div key={l.id} className="listing-row" onClick={() => window.location.href = `/listing/${l.id}`} style={{ cursor: 'pointer' }}>
                     <div className="listing-thumb">
-                      {l.images?.[0] ? <img src={l.images[0]} alt={l.title} loading="lazy" width={80} height={80} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <i className="ti ti-photo" style={{ color: '#ccc', fontSize: 20 }} />}
+                      {l.images?.[0] ? <img src={l.images[0]} alt={l.title} loading="lazy" width={80} height={80} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <i className="ti ti-photo" style={{ color: '#ccc', fontSize: 20 }} aria-hidden="true" />}
                     </div>
                     <div className="listing-info">
                       <div className="listing-title">{l.title}</div>
@@ -998,7 +998,7 @@ export default function ProfilePage() {
 
                 {conversations.length === 0 ? (
                   <div className="inbox-empty">
-                    <i className="ti ti-messages" />
+                    <i className="ti ti-messages" aria-hidden="true" />
                     <p>Nuk ke biseda ende.<br />Kontakto një shitës nga shpalljet!</p>
                     <button className="inbox-empty-btn" onClick={() => window.location.href = '/'}>
                       Shfleto shpalljet
@@ -1056,7 +1056,7 @@ export default function ProfilePage() {
               </div>
 
               <button className="open-msgs-btn" onClick={() => window.location.href = '/messages'}>
-                <i className="ti ti-messages" /> Hap Mesazherin e Plotë
+                <i className="ti ti-messages" aria-hidden="true" /> Hap Mesazherin e Plotë
               </button>
             </>
           )}
@@ -1076,7 +1076,7 @@ export default function ProfilePage() {
                 <>
                   {profile?.shop_name && (
                     <div className="shop-preview">
-                      <div className="shop-preview-icon"><i className="ti ti-building-store" /></div>
+                      <div className="shop-preview-icon"><i className="ti ti-building-store" aria-hidden="true" /></div>
                       <div className="shop-preview-text">
                         <strong>🏪 {profile.shop_name}</strong>
                         <span>{profile.shop_description?.slice(0, 60) || 'Biznes premium i verifikuar'}...</span>
@@ -1130,7 +1130,7 @@ export default function ProfilePage() {
                       onClick={saveShop}
                       disabled={savingShop || !shopForm.shop_name.trim()}
                     >
-                      <i className="ti ti-device-floppy" />
+                      <i className="ti ti-device-floppy" aria-hidden="true" />
                       {savingShop ? 'Duke ruajtur...' : 'Ruaj Biznesin'}
                     </button>
                   </div>
