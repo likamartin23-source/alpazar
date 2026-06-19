@@ -122,11 +122,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         `}} />
       </head>
       <body style={{ margin: 0, background: '#FFFBEA', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
+        <a href="#main-content" style={{ position: 'absolute', left: -9999, top: 'auto', width: 1, height: 1, overflow: 'hidden', zIndex: 9999, background: '#F5C842', color: '#111', padding: '8px 16px', fontWeight: 700 }} onFocus={e => { e.currentTarget.style.left = '16px'; e.currentTarget.style.width = 'auto'; e.currentTarget.style.height = 'auto' }} onBlur={e => { e.currentTarget.style.left = '-9999px'; e.currentTarget.style.width = '1px'; e.currentTarget.style.height = '1px' }}>Kalo tek përmbajtja kryesore</a>
         <AlpazarProviderDyn>
           <GlobalErrorBoundaryDyn>
           <MaintenanceBanner />
           <NotificationToast />
-          <AgeGateDyn>{children}</AgeGateDyn>
+          <AgeGateDyn><main id="main-content">{children}</main></AgeGateDyn>
           <AiFloat />
           <CookieBannerDyn />
           <Analytics />
