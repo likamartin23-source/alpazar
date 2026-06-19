@@ -21,6 +21,7 @@ export function MapPicker({ lat, lng, address, onChange, onCityChange }: MapPick
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${newLat}&lon=${newLng}&accept-language=sq`,
         { headers: { 'User-Agent': 'Alpazar/1.0 contact@alpazar.al' } }
       )
+      if (!res.ok) throw new Error('geocode error')
       const data = await res.json()
       const addr = data.display_name || `${newLat.toFixed(5)}, ${newLng.toFixed(5)}`
       setInput(addr)

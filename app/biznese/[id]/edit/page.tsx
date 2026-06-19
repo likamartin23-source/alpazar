@@ -196,11 +196,11 @@ export default function BiznesEditPage({ params }: { params: { id: string } }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <div>
               <label htmlFor="biz-phone" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>☎ Telefon</label>
-              <input id="biz-phone" className="biz-input" type="tel" value={form.phone} onChange={e => setF('phone', e.target.value)} placeholder="+355 6X XXX XXXX" />
+              <input id="biz-phone" className="biz-input" type="tel" autoComplete="tel" value={form.phone} onChange={e => setF('phone', e.target.value)} placeholder="+355 6X XXX XXXX" />
             </div>
             <div>
               <label htmlFor="biz-email" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>✉️ Email</label>
-              <input id="biz-email" className="biz-input" type="email" value={form.email} onChange={e => setF('email', e.target.value)} placeholder="info@biznesi.al" />
+              <input id="biz-email" className="biz-input" type="email" autoComplete="email" value={form.email} onChange={e => setF('email', e.target.value)} placeholder="info@biznesi.al" />
             </div>
             <div>
               <label htmlFor="biz-website" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>🌐 Website</label>
