@@ -77,7 +77,7 @@ export default function FavoritesPage() {
                 <div style={{ width: '100%', aspectRatio: '4/3', background: '#F6F6F6', position: 'relative', overflow: 'hidden' }}>
                   {img
                     ? <img src={img} alt={l.title} loading="lazy" width={400} height={300} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><i className="ti ti-photo" style={{ fontSize: 28, color: '#ccc' }} /></div>
+                    : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><i className="ti ti-photo" style={{ fontSize: 28, color: '#ccc' }} aria-hidden="true" /></div>
                   }
                   <div style={{ position: 'absolute', top: 6, right: 6 }}>
                     <FavoriteButton listingId={l.id} size={28} onUnfavorite={() => setListings(prev => prev.filter(x => x.id !== l.id))} />

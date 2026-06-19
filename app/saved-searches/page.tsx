@@ -129,9 +129,10 @@ export default function SavedSearchesPage() {
                       </button>
                       <button
                         onClick={() => deleteSearch(s.id)}
+                        aria-label="Fshi kërkimin e ruajtur"
                         style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ccc', padding: 4 }}
                       >
-                        <i className="ti ti-trash" style={{ fontSize: 16 }} />
+                        <i className="ti ti-trash" style={{ fontSize: 16 }} aria-hidden="true" />
                       </button>
                     </div>
                   </div>

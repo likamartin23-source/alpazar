@@ -142,8 +142,8 @@ export default function BiznesEditPage({ params }: { params: { id: string } }) {
 
       {/* Header */}
       <div style={{ background: 'linear-gradient(180deg,#F5C842,#f0bc30)', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10, position: 'sticky', top: 0, zIndex: 10 }}>
-        <button onClick={() => window.location.href = `/biznese/${params.id}`} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
-          <i className="ti ti-arrow-left" style={{ fontSize: 22, color: '#111' }} />
+        <button aria-label="Kthehu mbrapa" onClick={() => window.location.href = `/biznese/${params.id}`} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+          <i className="ti ti-arrow-left" style={{ fontSize: 22, color: '#111' }} aria-hidden="true" />
         </button>
         <span style={{ fontSize: 15, fontWeight: 700, color: '#111', flex: 1 }}>✏️ Edito Biznesin</span>
       </div>

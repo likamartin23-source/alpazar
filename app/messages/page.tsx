@@ -937,20 +937,20 @@ export default function MessagesPage() {
               setReplyTo(ctxMenu.msg); setCtxMenu(null)
               setTimeout(() => inputRef.current?.focus(), 120)
             }}>
-              <i className="ti ti-corner-up-left" style={{ color:'#E63312' }} />
+              <i className="ti ti-corner-up-left" style={{ color:'#E63312' }} aria-hidden="true" />
               <span>Përgjigju</span>
             </div>
 
             {!ctxMenu.msg.deleted_at && ctxMenu.msg.type !== 'audio' && (
               <div className="mi" onClick={() => copyMsg(ctxMenu.msg.content)}>
-                <i className="ti ti-copy" />
+                <i className="ti ti-copy" aria-hidden="true" />
                 <span>Kopjo</span>
               </div>
             )}
 
             {ctxMenu.msg.type === 'image' && ctxMenu.msg.attachment_url && (
               <div className="mi" onClick={() => { setLightbox(ctxMenu.msg.attachment_url); setCtxMenu(null) }}>
-                <i className="ti ti-photo" style={{ color:'#F5C842' }} />
+                <i className="ti ti-photo" style={{ color:'#F5C842' }} aria-hidden="true" />
                 <span>Shiko foton</span>
               </div>
             )}
@@ -959,11 +959,11 @@ export default function MessagesPage() {
               <>
                 <div className="sep" />
                 <div className="mi" onClick={() => { setSelectMode(true); setSelectedMsgs(new Set([ctxMenu.msg.id])); setCtxMenu(null) }}>
-                  <i className="ti ti-select" />
+                  <i className="ti ti-select" aria-hidden="true" />
                   <span>Zgjidh</span>
                 </div>
                 <div className="mi danger" onClick={() => deleteMsg(ctxMenu.msg.id)}>
-                  <i className="ti ti-trash" />
+                  <i className="ti ti-trash" aria-hidden="true" />
                   <span>Fshi mesazhin</span>
                 </div>
               </>
@@ -987,16 +987,16 @@ export default function MessagesPage() {
               </div>
             </div>
             <div className="mi" onClick={() => { setShowInfo(false); window.location.href=`/biznese/${selected.otherId}` }}>
-              <i className="ti ti-building-store" style={{ color:'#F5C842' }} />
+              <i className="ti ti-building-store" style={{ color:'#F5C842' }} aria-hidden="true" />
               <span>Shiko biznesin</span>
             </div>
             <div className="mi" onClick={() => { setShowInfo(false); window.location.href='/notifications' }}>
-              <i className="ti ti-bell" />
+              <i className="ti ti-bell" aria-hidden="true" />
               <span>Njoftimet e mia</span>
             </div>
             {waLink && (
               <div className="mi wa" onClick={() => { setShowInfo(false); setShowWhatsApp(true) }}>
-                <i className="ti ti-brand-whatsapp" />
+                <i className="ti ti-brand-whatsapp" aria-hidden="true" />
                 <span>Vazhdo në WhatsApp</span>
               </div>
             )}
@@ -1009,11 +1009,11 @@ export default function MessagesPage() {
             <div className="sep" />
             {isBlocked ? (
               <div className="mi success" onClick={() => { setShowInfo(false); unblockUser(selected.otherId) }}>
-                <i className="ti ti-lock-open" /><span>Hiqe bllokimin</span>
+                <i className="ti ti-lock-open" aria-hidden="true" /><span>Hiqe bllokimin</span>
               </div>
             ) : (
               <div className="mi danger" onClick={() => { setShowInfo(false); setShowBlockConf(true) }}>
-                <i className="ti ti-ban" /><span>Blloko përdoruesin</span>
+                <i className="ti ti-ban" aria-hidden="true" /><span>Blloko përdoruesin</span>
               </div>
             )}
           </div>
@@ -1034,7 +1034,7 @@ export default function MessagesPage() {
               <a href={waLink} target="_blank" rel="noopener noreferrer"
                 style={{ display:'block', background:'#25D366', color:'#fff', textDecoration:'none', padding:'14px', borderRadius:14, fontWeight:700, fontSize:15, marginBottom:10 }}
                 onClick={() => setShowWhatsApp(false)}>
-                <i className="ti ti-brand-whatsapp" style={{ marginRight:8 }} />Hap WhatsApp
+                <i className="ti ti-brand-whatsapp" style={{ marginRight:8 }} aria-hidden="true" />Hap WhatsApp
               </a>
               <button style={{ width:'100%', padding:'13px', background:'#f5f5f0', border:'none', borderRadius:14, fontWeight:600, fontSize:14, cursor:'pointer', color:'#555', fontFamily:'inherit' }}
                 onClick={() => setShowWhatsApp(false)}>Anulo</button>
@@ -1094,7 +1094,7 @@ export default function MessagesPage() {
                 <div className="select-bar-text">{selectedMsgs.size} të zgjedhura</div>
                 {selectedMsgs.size > 0 && (
                   <button className="sel-delete" onClick={deleteSelected}>
-                    <i className="ti ti-trash" style={{ marginRight:6 }} />Fshi
+                    <i className="ti ti-trash" style={{ marginRight:6 }} aria-hidden="true" />Fshi
                   </button>
                 )}
               </div>
@@ -1179,7 +1179,7 @@ export default function MessagesPage() {
                             onClick={() => { if (selectMode && mine) toggleSelect(m.id, mine) }}
                           >
                             {/* Swipe reply icon */}
-                            <div className="swipe-icon">
+                            <div className="swipe-icon" aria-hidden="true">
                               <i className="ti ti-corner-up-left" />
                             </div>
 
@@ -1210,7 +1210,7 @@ export default function MessagesPage() {
                               {/* Content */}
                               {isDeleted ? (
                                 <span style={{ fontStyle:'italic', opacity:.6, fontSize:12, display:'flex', alignItems:'center', gap:5 }}>
-                                  <i className="ti ti-ban" style={{ fontSize:12 }} /> Mesazhi u fshi
+                                  <i className="ti ti-ban" style={{ fontSize:12 }} aria-hidden="true" /> Mesazhi u fshi
                                 </span>
                               ) : m.type === 'image' && m.attachment_url ? (
                                 <img
@@ -1263,8 +1263,8 @@ export default function MessagesPage() {
               </div>
 
               {showScrollBtn && (
-                <button className="scroll-btn" onClick={() => { userScrolledUp.current = false; scrollBottom() }}>
-                  <i className="ti ti-chevron-down" />
+                <button className="scroll-btn" aria-label="Shko poshtë" onClick={() => { userScrolledUp.current = false; scrollBottom() }}>
+                  <i className="ti ti-chevron-down" aria-hidden="true" />
                 </button>
               )}
 
@@ -1279,7 +1279,7 @@ export default function MessagesPage() {
                   {/* Reply strip */}
                   {replyTo && (
                     <div className="reply-strip">
-                      <i className="ti ti-corner-up-left" style={{ color:'#E63312', fontSize:16, flexShrink:0 }} />
+                      <i className="ti ti-corner-up-left" style={{ color:'#E63312', fontSize:16, flexShrink:0 }} aria-hidden="true" />
                       <div className="rs-bar">
                         <div className="rs-name">{replyTo.sender_id === user?.id ? 'Unë' : displayName(selected.other)}</div>
                         {replyTo.type === 'audio' ? (
@@ -1344,12 +1344,12 @@ export default function MessagesPage() {
                                 <div key={i} style={{ width:2.5, height: h * 1.4 + Math.sin(Date.now()/200+i)*3, borderRadius:3, background:'#E63312', opacity:.7, flexShrink:0 }} />
                               ))}
                             </div>
-                            <button className="rec-cancel" onClick={() => stopRecording(true)}>
-                              <i className="ti ti-x" />
+                            <button className="rec-cancel" aria-label="Anulo regjistrim" onClick={() => stopRecording(true)}>
+                              <i className="ti ti-x" aria-hidden="true" />
                             </button>
                           </div>
-                          <button className="mic-btn recording" onClick={() => stopRecording(false)}>
-                            <i className="ti ti-send" />
+                          <button className="mic-btn recording" aria-label="Dërgo mesazhin zanor" onClick={() => stopRecording(false)}>
+                            <i className="ti ti-send" aria-hidden="true" />
                           </button>
                         </>
                       ) : (
@@ -1373,18 +1373,18 @@ export default function MessagesPage() {
                               onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() } }}
                               onFocus={() => setEmojiOpen(false)}
                             />
-                            <button className="attach-btn" onClick={() => fileInputRef.current?.click()}>
-                              <i className="ti ti-paperclip" />
+                            <button className="attach-btn" aria-label="Bashkëngjit foto" onClick={() => fileInputRef.current?.click()}>
+                              <i className="ti ti-paperclip" aria-hidden="true" />
                             </button>
                           </div>
                           {draft.trim() ? (
-                            <button className="send-btn" onClick={send} disabled={!canSend}>
-                              <i className={`ti ti-${sending ? 'loader-2' : 'send'}`}
+                            <button className="send-btn" aria-label="Dërgo mesazhin" onClick={send} disabled={!canSend}>
+                              <i className={`ti ti-${sending ? 'loader-2' : 'send'}`} aria-hidden="true"
                                 style={sending ? { animation:'spin .7s linear infinite' } : {}} />
                             </button>
                           ) : (
-                            <button className="mic-btn" onTouchStart={() => startRecording()} onClick={() => startRecording()}>
-                              <i className="ti ti-microphone" />
+                            <button className="mic-btn" aria-label="Regjistro mesazh zanor" onTouchStart={() => startRecording()} onClick={() => startRecording()}>
+                              <i className="ti ti-microphone" aria-hidden="true" />
                             </button>
                           )}
                         </>
@@ -1417,7 +1417,7 @@ export default function MessagesPage() {
 
             <div className="search-wrap">
               <div className="search-inner">
-                <i className="ti ti-search" />
+                <i className="ti ti-search" aria-hidden="true" />
                 <input type="search" placeholder="Kërko bisedë..." aria-label="Kërko bisedë" value={search} onChange={e => setSearch(e.target.value)} />
               </div>
             </div>
@@ -1467,7 +1467,7 @@ export default function MessagesPage() {
             )}
 
             <button className="fab" onClick={() => window.location.href='/'} aria-label="Bisedë e re">
-              <i className="ti ti-edit" />
+              <i className="ti ti-edit" aria-hidden="true" />
             </button>
           </>
         )}

@@ -286,7 +286,7 @@ export default function AsistentPage() {
           <button className="back-btn" aria-label="Kthehu mbrapa" onClick={() => window.history.length > 1 ? window.history.back() : window.location.href = '/'}>
             <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
-          <div className="ai-avatar"><i className="ti ti-robot" /></div>
+          <div className="ai-avatar" aria-hidden="true"><i className="ti ti-robot" /></div>
           <div className="header-info">
             <div className="header-name">Albi — AI Asistent 🤖</div>
             <div className="header-status">
@@ -300,7 +300,7 @@ export default function AsistentPage() {
         <div className="msgs" ref={msgsRef}>
           {!isPWA && messages.length <= 2 && (
             <div className="web-banner">
-              <div className="wb-icon"><i className="ti ti-device-mobile" /></div>
+              <div className="wb-icon" aria-hidden="true"><i className="ti ti-device-mobile" /></div>
               <div className="wb-text">
                 <strong>📲 Instalo si App</strong>
                 <span>Akses më i shpejtë · Pa browser · Offline</span>
@@ -318,7 +318,7 @@ export default function AsistentPage() {
               <div key={i} className={`msg-row ${isBot ? 'bot' : 'user'}`}>
                 {isBot && (
                   <div className={`bot-av${prevSameRole ? ' spacer' : ''}`}>
-                    {!prevSameRole && <i className="ti ti-robot" />}
+                    {!prevSameRole && <i className="ti ti-robot" aria-hidden="true" />}
                   </div>
                 )}
                 <div className={`bubble ${isBot ? 'bot' : 'user'}`}>
@@ -330,7 +330,7 @@ export default function AsistentPage() {
 
           {loading && streamingIdx === null && (
             <div className="msg-row bot">
-              <div className="bot-av"><i className="ti ti-robot" /></div>
+              <div className="bot-av" aria-hidden="true"><i className="ti ti-robot" /></div>
               <div className="typing">
                 <span className="dot" /><span className="dot" /><span className="dot" />
               </div>
@@ -369,8 +369,8 @@ export default function AsistentPage() {
                 onKeyDown={handleKey}
               />
             </div>
-            <button className="send-btn" onClick={() => sendMessage()} disabled={!input.trim() || loading || streamingIdx !== null}>
-              <i className="ti ti-send" />
+            <button className="send-btn" aria-label="Dërgo mesazhin" onClick={() => sendMessage()} disabled={!input.trim() || loading || streamingIdx !== null}>
+              <i className="ti ti-send" aria-hidden="true" />
             </button>
           </div>
         </div>

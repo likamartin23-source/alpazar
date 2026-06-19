@@ -754,7 +754,7 @@ export default function Home() {
 
           {newListingBadge && (
             <div className="new-listing-toast" onClick={() => { fetchListings(); setNewListingBadge(false) }}>
-              <i className="ti ti-sparkles" style={{ fontSize: 14, color: '#3B6D11' }} />
+              <i className="ti ti-sparkles" style={{ fontSize: 14, color: '#3B6D11' }} aria-hidden="true" />
               <span>Shpallje e re u shtua — klikoni për të rifreskuar</span>
             </div>
           )}
@@ -798,7 +798,7 @@ export default function Home() {
                       <div style={{ width: '100%', aspectRatio: '4/3', background: '#F6F6F6', overflow: 'hidden' }}>
                         {item.img
                           ? <img src={item.img} alt={item.title} loading="lazy" width={120} height={90} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                          : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><i className="ti ti-photo" style={{ fontSize: 20, color: '#ccc' }} /></div>
+                          : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><i className="ti ti-photo" style={{ fontSize: 20, color: '#ccc' }} aria-hidden="true" /></div>
                         }
                       </div>
                       <div style={{ padding: '6px 8px' }}>
@@ -819,7 +819,7 @@ export default function Home() {
             <div className="listings-grid">
               {listings.length === 0 ? (
                 <div className="empty-state">
-                  <i className="ti ti-mood-empty" />
+                  <i className="ti ti-mood-empty" aria-hidden="true" />
                   <h3>Nuk ka shpallje aktualisht</h3>
                   <p>Bëhu i pari që shton!<br />Regjistrimi është falas.</p>
                   <button className="empty-cta" onClick={() => go(user ? '/listing/new' : '/auth/login')}>
@@ -832,7 +832,7 @@ export default function Home() {
                     <div className="card-img">
                       {listing.images?.[0]
                         ? <img src={listing.images[0]} alt={listing.title} loading="lazy" width={400} height={300} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
-                        : <i className="ti ti-photo" style={{ fontSize: 26, color: '#ccc' }} />
+                        : <i className="ti ti-photo" style={{ fontSize: 26, color: '#ccc' }} aria-hidden="true" />
                       }
                       {listing.condition === 'i_ri' && <span className="badge-new">I ri</span>}
                       {listing.condition === 'i_perdorur' && <span className="badge-used">I përdorur</span>}

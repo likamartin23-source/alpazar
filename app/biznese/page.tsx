@@ -89,7 +89,7 @@ export default function BiznestPage() {
           <div style={{ color: '#F5C842', fontWeight: 800, fontSize: 14, marginBottom: 2 }}>+ Krijo Biznesin Tënd</div>
           <div style={{ color: '#aaa', fontSize: 11 }}>Falas · Prezencë profesionale online</div>
         </div>
-        <i className="ti ti-arrow-right" style={{ fontSize: 20, color: '#F5C842' }} />
+        <i className="ti ti-arrow-right" style={{ fontSize: 20, color: '#F5C842' }} aria-hidden="true" />
       </div>
 
       {/* List */}
@@ -152,7 +152,7 @@ export default function BiznestPage() {
                     </div>
                   )}
                 </div>
-                <i className="ti ti-chevron-right" style={{ fontSize: 16, color: '#ccc', flexShrink: 0 }} />
+                <i className="ti ti-chevron-right" style={{ fontSize: 16, color: '#ccc', flexShrink: 0 }} aria-hidden="true" />
               </div>
             ))}
             <div style={{ textAlign: 'center', padding: '12px 0', fontSize: 11, color: '#bbb' }}>

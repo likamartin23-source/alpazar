@@ -303,7 +303,7 @@ function NotifRow({ n, onClick, onDismiss, isLast }: { n: Notif; onClick: (n: No
       {/* Dismiss / Chevron */}
       <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 4 }}>
         {isClickable && (
-          <i className="ti ti-chevron-right" style={{ fontSize: 16, color: '#ccc' }} />
+          <i className="ti ti-chevron-right" style={{ fontSize: 16, color: '#ccc' }} aria-hidden="true" />
         )}
         <button
           onClick={e => { e.stopPropagation(); onDismiss(n.id) }}

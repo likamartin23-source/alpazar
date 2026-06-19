@@ -44,7 +44,7 @@ export default function RrethNesh() {
       <style>{css}</style>
       <div className="wrap">
         <div className="topbar">
-          <a href="/" className="back"><i className="ti ti-arrow-left" /></a>
+          <a href="/" className="back" aria-label="Kthehu mbrapa"><i className="ti ti-arrow-left" aria-hidden="true" /></a>
           <span className="topbar-title">Rreth Nesh</span>
         </div>
 
@@ -56,33 +56,33 @@ export default function RrethNesh() {
 
         <div className="body">
           <div className="section">
-            <div className="sec-title"><i className="ti ti-bulb" />Historia jonë</div>
+            <div className="sec-title"><i className="ti ti-bulb" aria-hidden="true" />Historia jonë</div>
             <p>Alpazar lindi nga një ide e thjeshtë: shqiptarët meritojnë një platformë tregtie online moderne, pa reklama, dhe falas — një hapësirë ku çdo gjë mund të shitet dhe blihet me besim.</p>
             <p>Emri "Alpazar" kombinon "Al" (Shqipëria) me "pazar" (tregti, shkëmbim) — reflektim i traditës sonë historike të tregtisë dhe komunitetit.</p>
             <p>Ne besojmë se teknologjia duhet t'i shërbejë njerëzve, jo reklamuesve. Kjo është arsyeja pse Alpazar ka zero reklama — gjithmonë.</p>
           </div>
 
           <div className="section">
-            <div className="sec-title"><i className="ti ti-target" />Misioni ynë</div>
+            <div className="sec-title"><i className="ti ti-target" aria-hidden="true" />Misioni ynë</div>
             <p>Të bëhemi platforma #1 e tregtisë online në Shqipëri — e besueshme, e sigurt, dhe e aksesueshme për të gjithë shqiptarët kudo ku janë.</p>
             <div className="values">
               <div className="val">
-                <i className="ti ti-shield-check" />
+                <i className="ti ti-shield-check" aria-hidden="true" />
                 <strong>Besueshmëri</strong>
                 <span>Shitës të verifikuar, raportim i shpejtë</span>
               </div>
               <div className="val">
-                <i className="ti ti-ad-off" />
+                <i className="ti ti-ad-off" aria-hidden="true" />
                 <strong>Zero Reklama</strong>
                 <span>Asnjëherë — për të gjithë gjithmonë</span>
               </div>
               <div className="val">
-                <i className="ti ti-heart" />
+                <i className="ti ti-heart" aria-hidden="true" />
                 <strong>Komunitet</strong>
                 <span>Ndërtuar nga shqiptarët, për shqiptarët</span>
               </div>
               <div className="val">
-                <i className="ti ti-lock" />
+                <i className="ti ti-lock" aria-hidden="true" />
                 <strong>Siguri</strong>
                 <span>Të dhënat tuaja janë të mbrojtura</span>
               </div>
@@ -90,7 +90,7 @@ export default function RrethNesh() {
           </div>
 
           <div className="section">
-            <div className="sec-title"><i className="ti ti-chart-bar" />Alpazar në numra</div>
+            <div className="sec-title"><i className="ti ti-chart-bar" aria-hidden="true" />Alpazar në numra</div>
             <div className="stats">
               <div className="stat">
                 <div className="stat-n">0€</div>
@@ -108,7 +108,7 @@ export default function RrethNesh() {
           </div>
 
           <div className="section">
-            <div className="sec-title"><i className="ti ti-clock" />Historia</div>
+            <div className="sec-title"><i className="ti ti-clock" aria-hidden="true" />Historia</div>
             <div className="timeline">
               <div className="tl-item">
                 <div className="tl-date">2024 — Fillimi</div>

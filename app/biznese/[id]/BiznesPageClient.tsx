@@ -152,12 +152,12 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
           <i className="ti ti-arrow-left" aria-hidden="true" style={{ fontSize: 18, color: '#fff' }} />
         </button>
         <div style={{ position: 'absolute', top: 12, right: 12, display: 'flex', gap: 8 }}>
-          <button onClick={share} style={{ background: 'rgba(0,0,0,.45)', border: 'none', borderRadius: '50%', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-            <i className="ti ti-share" style={{ fontSize: 16, color: '#fff' }} />
+          <button aria-label="Ndaj biznesin" onClick={share} style={{ background: 'rgba(0,0,0,.45)', border: 'none', borderRadius: '50%', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+            <i className="ti ti-share" style={{ fontSize: 16, color: '#fff' }} aria-hidden="true" />
           </button>
           {isOwner && (
-            <button onClick={() => window.location.href = `/biznese/${biz.id}/edit`} style={{ background: 'rgba(0,0,0,.45)', border: 'none', borderRadius: '50%', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-              <i className="ti ti-pencil" style={{ fontSize: 16, color: '#fff' }} />
+            <button aria-label="Edito biznesin" onClick={() => window.location.href = `/biznese/${biz.id}/edit`} style={{ background: 'rgba(0,0,0,.45)', border: 'none', borderRadius: '50%', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+              <i className="ti ti-pencil" style={{ fontSize: 16, color: '#fff' }} aria-hidden="true" />
             </button>
           )}
         </div>
@@ -221,15 +221,15 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
           <div style={{ display: 'flex', gap: 8 }}>
             {biz.phone && (
               <a href={`tel:${biz.phone}`} className="action-btn" style={{ background: '#E63312', color: '#fff' }}>
-                <i className="ti ti-phone" style={{ fontSize: 15 }} /> Telefono
+                <i className="ti ti-phone" style={{ fontSize: 15 }} aria-hidden="true" /> Telefono
               </a>
             )}
             <button onClick={() => { if (!userId) { window.location.href = '/auth/login'; return } window.location.href = `/messages?biz=${biz.id}` }}
               className="action-btn" style={{ background: '#111', color: '#F5C842' }}>
-              <i className="ti ti-message" style={{ fontSize: 15 }} /> Mesazh
+              <i className="ti ti-message" style={{ fontSize: 15 }} aria-hidden="true" /> Mesazh
             </button>
-            <button onClick={share} className="action-btn" style={{ background: '#f0f0f0', color: '#333', flex: '0 0 48px' }}>
-              <i className="ti ti-share-3" style={{ fontSize: 17 }} />
+            <button aria-label="Ndaj" onClick={share} className="action-btn" style={{ background: '#f0f0f0', color: '#333', flex: '0 0 48px' }}>
+              <i className="ti ti-share-3" style={{ fontSize: 17 }} aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -278,13 +278,13 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
       {/* ── Sticky tabs ──────────────────────────────────────── */}
       <div style={{ position: 'sticky', top: 0, zIndex: 10, background: '#fff', borderBottom: '1px solid #eee', display: 'flex', marginBottom: 2 }}>
         <button className={`biz-tab ${activeTab === 'grid' ? 'active' : ''}`} onClick={() => setActiveTab('grid')}>
-          <i className="ti ti-layout-grid" style={{ fontSize: 14 }} /> Shpalljet
+          <i className="ti ti-layout-grid" style={{ fontSize: 14 }} aria-hidden="true" /> Shpalljet
         </button>
         <button className={`biz-tab ${activeTab === 'info' ? 'active' : ''}`} onClick={() => setActiveTab('info')}>
-          <i className="ti ti-info-circle" style={{ fontSize: 14 }} /> Info
+          <i className="ti ti-info-circle" style={{ fontSize: 14 }} aria-hidden="true" /> Info
         </button>
         <button className={`biz-tab ${activeTab === 'reviews' ? 'active' : ''}`} onClick={() => setActiveTab('reviews')}>
-          <i className="ti ti-star" style={{ fontSize: 14 }} /> Vlerësime
+          <i className="ti ti-star" style={{ fontSize: 14 }} aria-hidden="true" /> Vlerësime
         </button>
       </div>
 
@@ -307,7 +307,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
                   <div key={l.id} className="ig-cell" onClick={() => window.location.href = `/listing/${l.id}`}>
                     {img
                       ? <img src={img} alt={l.title} loading="lazy" width={400} height={400} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
-                      : <div style={{ width: '100%', height: '100%', background: '#e8e8e8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><i className="ti ti-photo" style={{ fontSize: 22, color: '#ccc' }} /></div>
+                      : <div style={{ width: '100%', height: '100%', background: '#e8e8e8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><i className="ti ti-photo" style={{ fontSize: 22, color: '#ccc' }} aria-hidden="true" /></div>
                     }
                     <div className="ig-overlay" />
                     <div className="ig-price">{fmt(l.price, l.currency)}</div>
@@ -329,7 +329,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
       {activeTab === 'info' && (
         <div style={{ padding: '8px 0' }}>
           <div className="card">
-            <div className="card-title"><i className="ti ti-building-store" style={{ fontSize: 16, color: '#E63312' }} /> Rreth biznesit</div>
+            <div className="card-title"><i className="ti ti-building-store" style={{ fontSize: 16, color: '#E63312' }} aria-hidden="true" /> Rreth biznesit</div>
             {biz.description
               ? <p style={{ fontSize: 13, color: '#444', lineHeight: 1.7, marginBottom: 12 }}>{biz.description}</p>
               : <p style={{ fontSize: 12, color: '#aaa', marginBottom: 12 }}>Nuk ka përshkrim.</p>
@@ -384,7 +384,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
 
           {subcats.length > 0 && (
             <div className="card">
-              <div className="card-title"><i className="ti ti-tag" style={{ fontSize: 16, color: '#E63312' }} /> Kategoritë</div>
+              <div className="card-title"><i className="ti ti-tag" style={{ fontSize: 16, color: '#E63312' }} aria-hidden="true" /> Kategoritë</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                 {subcats.map((s, i) => (
                   <span key={i} style={{ fontSize: 12, background: '#FFF8E1', color: '#7B5000', padding: '5px 12px', borderRadius: 20, fontWeight: 700, border: '1px solid #F5C84244' }}>
@@ -403,7 +403,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
 
           {(biz.nipt || biz.withdrawal_days) && (
             <div className="card">
-              <div className="card-title"><i className="ti ti-scale" style={{ fontSize: 16, color: '#E63312' }} /> Informacion ligjor</div>
+              <div className="card-title"><i className="ti ti-scale" style={{ fontSize: 16, color: '#E63312' }} aria-hidden="true" /> Informacion ligjor</div>
               {biz.nipt && (
                 <div className="info-row">
                   <span className="info-icon">🏛️</span>

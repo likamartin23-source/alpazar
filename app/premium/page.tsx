@@ -160,7 +160,7 @@ export default function PremiumPage() {
         <div className="body">
           {profile?.is_premium && (
             <div className="already">
-              <i className="ti ti-crown" />
+              <i className="ti ti-crown" aria-hidden="true" />
               <strong>Je tashmë Premium! 👑</strong>
               <span>Gëzon të gjitha privilegjet e anëtarësisë Premium</span>
             </div>
@@ -186,7 +186,7 @@ export default function PremiumPage() {
             <div className="feat-title">✅ Çfarë përfshihet</div>
             {features.map((f, i) => (
               <div key={i} className="feat-row">
-                <i className={`ti ti-${f.icon}`} />
+                <i className={`ti ti-${f.icon}`} aria-hidden="true" />
                 <span>{f.text}</span>
               </div>
             ))}
@@ -199,9 +199,9 @@ export default function PremiumPage() {
                 const icons: Record<string, string> = { card: 'ti ti-credit-card', paypal: 'ti ti-brand-paypal', bank: 'ti ti-building-bank', mobile: 'ti ti-device-mobile' }
                 return (
                   <div key={m.id} className={`pm-opt ${payMethod === m.id ? 'active' : ''}`} onClick={() => setPayMethod(m.id)}>
-                    <i className={icons[m.type] || 'ti ti-wallet'} />
+                    <i className={icons[m.type] || 'ti ti-wallet'} aria-hidden="true" />
                     <span>{m.name}</span>
-                    {payMethod === m.id && <i className="ti ti-circle-check" style={{ marginLeft: 'auto', color: '#E63312' }} />}
+                    {payMethod === m.id && <i className="ti ti-circle-check" style={{ marginLeft: 'auto', color: '#E63312' }} aria-hidden="true" />}
                   </div>
                 )
               })}
