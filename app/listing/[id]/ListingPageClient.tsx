@@ -36,7 +36,7 @@ function BusinessMiniCard({ bizId }: { bizId: string }) {
   }, [bizId])
   if (!biz) return null
   return (
-    <div style={{ margin: '0 0 12px', padding: '10px 12px', background: '#F5F5F5', borderRadius: 12, display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => window.location.href = `/biznese/${biz.id}`}>
+    <div role="link" tabIndex={0} style={{ margin: '0 0 12px', padding: '10px 12px', background: '#F5F5F5', borderRadius: 12, display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => window.location.href = `/biznese/${biz.id}`} onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/biznese/${biz.id}` }}>
       <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#fff', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, border: '1px solid #eee', flexShrink: 0 }}>
         {biz.logo_url ? <img src={biz.logo_url} alt={biz.name} loading="lazy" width={36} height={36} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : '🏢'}
       </div>
@@ -843,7 +843,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                 <div className="sec-label">Shitësi</div>
 
                 {/* Avatar row */}
-                <div className="seller-av-row" onClick={() => window.location.href = hasShop ? `/biznese/${seller.id}` : `/u/${seller.id}`} style={{ cursor: 'pointer' }}>
+                <div role="link" tabIndex={0} className="seller-av-row" onClick={() => window.location.href = hasShop ? `/biznese/${seller.id}` : `/u/${seller.id}`} onKeyDown={e => { if (e.key === 'Enter') window.location.href = hasShop ? `/biznese/${seller.id}` : `/u/${seller.id}` }} style={{ cursor: 'pointer' }}>
                   <Avatar
                     src={seller.avatar_url}
                     name={seller.shop_name || seller.full_name || seller.username}
