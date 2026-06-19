@@ -84,7 +84,7 @@ export default function BiznestPage() {
       </div>
 
       {/* Create business CTA */}
-      <div style={{ margin: '12px 16px 4px', background: 'linear-gradient(135deg,#111,#333)', borderRadius: 14, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }} onClick={() => window.location.href = '/biznese/new'}>
+      <div role="link" tabIndex={0} style={{ margin: '12px 16px 4px', background: 'linear-gradient(135deg,#111,#333)', borderRadius: 14, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }} onClick={() => window.location.href = '/biznese/new'} onKeyDown={e => { if (e.key === 'Enter') window.location.href = '/biznese/new' }}>
         <div>
           <div style={{ color: '#F5C842', fontWeight: 800, fontSize: 14, marginBottom: 2 }}>+ Krijo Biznesin Tënd</div>
           <div style={{ color: '#aaa', fontSize: 11 }}>Falas · Prezencë profesionale online</div>

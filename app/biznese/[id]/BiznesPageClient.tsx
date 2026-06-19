@@ -304,7 +304,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
               {listings.map(l => {
                 const img = Array.isArray(l.images) && l.images.length ? l.images[0] : null
                 return (
-                  <div key={l.id} className="ig-cell" onClick={() => window.location.href = `/listing/${l.id}`}>
+                  <div key={l.id} role="link" tabIndex={0} className="ig-cell" onClick={() => window.location.href = `/listing/${l.id}`} onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/listing/${l.id}` }}>
                     {img
                       ? <img src={img} alt={l.title} loading="lazy" width={400} height={400} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
                       : <div style={{ width: '100%', height: '100%', background: '#e8e8e8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><i className="ti ti-photo" style={{ fontSize: 22, color: '#ccc' }} aria-hidden="true" /></div>
