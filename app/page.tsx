@@ -25,9 +25,10 @@ function InstallBanner() {
   useEffect(() => {
     if (window.matchMedia('(display-mode: standalone)').matches) return
     const handler = (e: any) => { e.preventDefault(); setDeferredPrompt(e); setShow(true) }
+    const installedHandler = () => { setInstalled(true); setShow(false) }
     window.addEventListener('beforeinstallprompt', handler)
-    window.addEventListener('appinstalled', () => { setInstalled(true); setShow(false) })
-    return () => window.removeEventListener('beforeinstallprompt', handler)
+    window.addEventListener('appinstalled', installedHandler)
+    return () => { window.removeEventListener('beforeinstallprompt', handler); window.removeEventListener('appinstalled', installedHandler) }
   }, [])
 
   async function install() {
