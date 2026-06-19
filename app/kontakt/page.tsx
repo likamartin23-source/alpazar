@@ -183,7 +183,7 @@ export default function Kontakt() {
           </div>
 
           <div className="section">
-            <div className="sec-title"><i className="ti ti-map-pin" />Adresa</div>
+            <div className="sec-title"><i className="ti ti-map-pin" aria-hidden="true" />Adresa</div>
             <p style={{ fontSize: 13, color: '#444', lineHeight: 1.7 }}>
               Alpazar<br />
               Tiranë, Shqipëri<br />

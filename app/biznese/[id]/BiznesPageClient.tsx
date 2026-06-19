@@ -343,7 +343,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
           </div>
 
           <div className="card">
-            <div className="card-title"><i className="ti ti-map-pin" style={{ fontSize: 16, color: '#E63312' }} /> Vendndodhja & Kontakti</div>
+            <div className="card-title"><i className="ti ti-map-pin" style={{ fontSize: 16, color: '#E63312' }} aria-hidden="true" /> Vendndodhja & Kontakti</div>
             {biz.address && (
               <div className="info-row">
                 <span className="info-icon">📍</span>

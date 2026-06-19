@@ -89,7 +89,7 @@ export default function FavoritesPage() {
                 <div style={{ padding: '8px 10px 10px' }}>
                   <div style={{ fontSize: 12, fontWeight: 600, color: '#111', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', lineHeight: 1.4, marginBottom: 4 }}>{l.title}</div>
                   <div style={{ fontSize: 14, fontWeight: 800, color: '#E63312' }}>{price}</div>
-                  {l.city && <div style={{ fontSize: 10, color: '#888', marginTop: 2 }}><i className="ti ti-map-pin" style={{ fontSize: 10 }} /> {l.city}</div>}
+                  {l.city && <div style={{ fontSize: 10, color: '#888', marginTop: 2 }}><i className="ti ti-map-pin" style={{ fontSize: 10 }} aria-hidden="true" /> {l.city}</div>}
                 </div>
               </div>
             )

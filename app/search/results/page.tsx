@@ -47,7 +47,7 @@ function ShopCard({ shop }: { shop: any }) {
         <div className="shop-name">{shop.shop_name || shop.full_name}</div>
         {catLabel && <div className="shop-cat-tag">{catLabel}</div>}
         <div className="shop-meta">
-          <span className="shop-city"><i className="ti ti-map-pin" style={{ fontSize: 10 }} /> {shop.city || 'Shqipëri'}</span>
+          <span className="shop-city"><i className="ti ti-map-pin" style={{ fontSize: 10 }} aria-hidden="true" /> {shop.city || 'Shqipëri'}</span>
           <span className="shop-count">{shop.listing_count || 0} shpallje</span>
         </div>
       </div>

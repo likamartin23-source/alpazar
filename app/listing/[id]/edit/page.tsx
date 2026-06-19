@@ -299,7 +299,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
           </div>
 
           <div className="card">
-            <div className="card-title"><i className="ti ti-map-pin" />Vendndodhja *</div>
+            <div className="card-title"><i className="ti ti-map-pin" aria-hidden="true" />Vendndodhja *</div>
             <div className="field">
               <label htmlFor="listing-city">Qyteti *</label>
               <input
