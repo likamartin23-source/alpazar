@@ -1441,7 +1441,7 @@ export default function MessagesPage() {
                   const lastIsAudio   = !lastIsDeleted && t.lastMsg?.type === 'audio'
                   const lastIsImage   = !lastIsDeleted && t.lastMsg?.type === 'image'
                   return (
-                    <div key={t.otherId} className={`thread ${t.unread > 0 ? 'unread-thread' : ''}`} onClick={() => openThread(t)}>
+                    <div key={t.otherId} role="button" tabIndex={0} className={`thread ${t.unread > 0 ? 'unread-thread' : ''}`} onClick={() => openThread(t)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') openThread(t) }}>
                       <Avatar profile={t.other} size={50} online={onlineIds.has(t.otherId)} />
                       <div className="t-info">
                         <div className="t-thread-name">{displayName(t.other)}</div>

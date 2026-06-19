@@ -724,14 +724,14 @@ export default function Home() {
             <>
               <div className="section-hdr">
                 <h3>🏢 Biznese Online</h3>
-                <a onClick={() => go('/biznese')}>Të gjitha →</a>
+                <a role="button" tabIndex={0} onClick={() => go('/biznese')} onKeyDown={e => { if (e.key === 'Enter') go('/biznese') }} style={{ cursor: 'pointer' }}>Të gjitha →</a>
               </div>
               <div className="shops-grid">
                 {shops.map((shop, idx) => {
                   const col = SHOP_COLORS[idx % SHOP_COLORS.length]
                   const initials = (shop.shop_name || shop.full_name || '?').slice(0, 2).toUpperCase()
                   return (
-                    <div key={shop.id} className="shop-mini" onClick={() => go(`/biznese/${shop.id}`)}>
+                    <div key={shop.id} role="link" tabIndex={0} className="shop-mini" onClick={() => go(`/biznese/${shop.id}`)} onKeyDown={e => { if (e.key === 'Enter') go(`/biznese/${shop.id}`) }}>
                       <div className="shop-top" style={{ background: `linear-gradient(135deg,${col}22,${col}44)` }}>
                         <div className="shop-av" style={{ background: 'transparent' }}>
                           <Avatar src={shop.avatar_url} name={shop.shop_name || shop.full_name} type="business" verified={shop.is_premium} size={40} />
@@ -779,7 +779,7 @@ export default function Home() {
 
           <div className="section-hdr">
             <h3>🔥 Shpallje të fundit</h3>
-            <a onClick={() => { setActiveCategory('all'); fetchListings('all', 'all') }}>Të gjitha →</a>
+            <a role="button" tabIndex={0} onClick={() => { setActiveCategory('all'); fetchListings('all', 'all') }} onKeyDown={e => { if (e.key === 'Enter') { setActiveCategory('all'); fetchListings('all', 'all') } }} style={{ cursor: 'pointer' }}>Të gjitha →</a>
           </div>
 
           {/* Recently viewed listings */}

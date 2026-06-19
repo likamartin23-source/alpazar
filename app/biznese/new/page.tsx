@@ -206,7 +206,7 @@ export default function BiznesNewPage() {
                 <div style={{ fontSize: 12, fontWeight: 700, color: '#E63312', marginBottom: 8 }}>🛠️ SHËRBIME</div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
                   {subcats.filter(s => s.parent_type === 'sherbime').map(s => (
-                    <div key={s.id} onClick={() => toggleSub(s.id)} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: selSubs.includes(s.id) ? '#F5C842' : '#fff', border: `1.5px solid ${selSubs.includes(s.id) ? '#F5C842' : '#ddd'}`, borderRadius: 20, padding: '7px 13px', fontSize: 12, fontWeight: 600, cursor: 'pointer', transition: 'all .15s' }}>
+                    <div key={s.id} role="checkbox" aria-checked={selSubs.includes(s.id)} tabIndex={0} onClick={() => toggleSub(s.id)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') toggleSub(s.id) }} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: selSubs.includes(s.id) ? '#F5C842' : '#fff', border: `1.5px solid ${selSubs.includes(s.id) ? '#F5C842' : '#ddd'}`, borderRadius: 20, padding: '7px 13px', fontSize: 12, fontWeight: 600, cursor: 'pointer', transition: 'all .15s' }}>
                       {s.icon} {s.name}
                     </div>
                   ))}
@@ -214,7 +214,7 @@ export default function BiznesNewPage() {
                 <div style={{ fontSize: 12, fontWeight: 700, color: '#E63312', marginBottom: 8 }}>📦 PRODUKTE</div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
                   {subcats.filter(s => s.parent_type === 'produkte').map(s => (
-                    <div key={s.id} onClick={() => toggleSub(s.id)} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: selSubs.includes(s.id) ? '#F5C842' : '#fff', border: `1.5px solid ${selSubs.includes(s.id) ? '#F5C842' : '#ddd'}`, borderRadius: 20, padding: '7px 13px', fontSize: 12, fontWeight: 600, cursor: 'pointer', transition: 'all .15s' }}>
+                    <div key={s.id} role="checkbox" aria-checked={selSubs.includes(s.id)} tabIndex={0} onClick={() => toggleSub(s.id)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') toggleSub(s.id) }} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: selSubs.includes(s.id) ? '#F5C842' : '#fff', border: `1.5px solid ${selSubs.includes(s.id) ? '#F5C842' : '#ddd'}`, borderRadius: 20, padding: '7px 13px', fontSize: 12, fontWeight: 600, cursor: 'pointer', transition: 'all .15s' }}>
                       {s.icon} {s.name}
                     </div>
                   ))}
@@ -224,7 +224,7 @@ export default function BiznesNewPage() {
                     <div style={{ fontSize: 12, fontWeight: 700, color: '#E63312', marginBottom: 8 }}>🔁 TË DYJA</div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
                       {subcats.filter(s => s.parent_type === 'sherbime_produkte').map(s => (
-                        <div key={s.id} onClick={() => toggleSub(s.id)} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: selSubs.includes(s.id) ? '#F5C842' : '#fff', border: `1.5px solid ${selSubs.includes(s.id) ? '#F5C842' : '#ddd'}`, borderRadius: 20, padding: '7px 13px', fontSize: 12, fontWeight: 600, cursor: 'pointer', transition: 'all .15s' }}>
+                        <div key={s.id} role="checkbox" aria-checked={selSubs.includes(s.id)} tabIndex={0} onClick={() => toggleSub(s.id)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') toggleSub(s.id) }} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: selSubs.includes(s.id) ? '#F5C842' : '#fff', border: `1.5px solid ${selSubs.includes(s.id) ? '#F5C842' : '#ddd'}`, borderRadius: 20, padding: '7px 13px', fontSize: 12, fontWeight: 600, cursor: 'pointer', transition: 'all .15s' }}>
                           {s.icon} {s.name}
                         </div>
                       ))}
