@@ -617,7 +617,7 @@ export default function Admin() {
       <div style={{ color:'#F5C842', fontWeight:800, fontSize:16 }}>Verifikimi 2FA i Adminit</div>
       <div style={{ color:'#666', fontSize:12 }}>Fut kodin nga Google Authenticator / Authy</div>
       <input type="text" maxLength={6} value={totpCode} onChange={e => setTotpCode(e.target.value.replace(/\D/g,''))} placeholder="000000" onKeyDown={e => e.key === 'Enter' && verifyAdminMfa()} autoFocus />
-      {mfaError && <div style={{ color:'#E63312', fontSize:12 }}>{mfaError}</div>}
+      {mfaError && <div role="alert" style={{ color:'#E63312', fontSize:12 }}>{mfaError}</div>}
       <button onClick={verifyAdminMfa} style={{ background:'#F5C842', color:'#111', border:'none', borderRadius:8, padding:'10px 28px', fontWeight:800, fontSize:14, cursor:'pointer' }}>Konfirmo</button>
     </div>
   )
@@ -646,7 +646,7 @@ export default function Admin() {
             style={{ width: '100%', border: '2px solid #F5C842', borderRadius: 10, padding: '12px', fontSize: 22, textAlign: 'center', letterSpacing: 8, fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' as const, marginBottom: 12 }}
             autoFocus
           />
-          {pinError && <div style={{ color: '#E63312', fontSize: 12, marginBottom: 10 }}>{pinError}</div>}
+          {pinError && <div role="alert" style={{ color: '#E63312', fontSize: 12, marginBottom: 10 }}>{pinError}</div>}
           <button
             onClick={checkPin}
             style={{ width: '100%', background: '#111', color: '#fff', border: 'none', borderRadius: 10, padding: '13px', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}

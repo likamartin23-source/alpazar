@@ -954,7 +954,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                 </button>
               </div>
               {bumpMsg && (
-                <div style={{ fontSize: 12, fontWeight: 600, color: bumpMsg.startsWith('ok:') ? '#1D9E75' : '#E63312', textAlign: 'center', padding: '4px 0' }}>
+                <div role="alert" style={{ fontSize: 12, fontWeight: 600, color: bumpMsg.startsWith('ok:') ? '#1D9E75' : '#E63312', textAlign: 'center', padding: '4px 0' }}>
                   {bumpMsg.replace(/^(ok:|err:)/, '')}
                 </div>
               )}
@@ -1113,7 +1113,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
               </button>
             </div>
             {alertMsg && (
-              <div className="alert-msg" style={{ color: alertMsg.startsWith('ok:') ? '#2e7d32' : '#E63312' }}>
+              <div role="alert" className="alert-msg" style={{ color: alertMsg.startsWith('ok:') ? '#2e7d32' : '#E63312' }}>
                 {alertMsg.replace(/^(ok|err):/, '')}
               </div>
             )}
