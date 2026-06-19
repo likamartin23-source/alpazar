@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 
-// Kodi i verifikimit nga Google Search Console
-// Ndryshoni GOOGLE_SITE_VERIFICATION në .env.local ose Vercel Environment Variables
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   const code = process.env.GOOGLE_SITE_VERIFICATION || ''
   if (!code) {
