@@ -663,6 +663,7 @@ export default function Admin() {
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
       <style>{CSS}</style>
       <div className="wrap">
+        <h1 style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', margin: 0 }}>Paneli Administrativ — Alpazar</h1>
 
         {/* ── Sidebar ── */}
         <div className="sb">

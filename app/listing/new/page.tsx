@@ -295,7 +295,7 @@ export default function NewListing() {
           <button className="back" aria-label="Kthehu mbrapa" onClick={() => window.history.back()}>
             <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
-          <span className="topbar-title">➕ Shto Shpallje</span>
+          <h1 className="topbar-title" style={{ margin: 0 }}>➕ Shto Shpallje</h1>
         </div>
 
         <div className="body">

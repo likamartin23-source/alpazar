@@ -145,7 +145,7 @@ export default function BiznesEditPage({ params }: { params: { id: string } }) {
         <button aria-label="Kthehu mbrapa" onClick={() => window.location.href = `/biznese/${params.id}`} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
           <i className="ti ti-arrow-left" style={{ fontSize: 22, color: '#111' }} aria-hidden="true" />
         </button>
-        <span style={{ fontSize: 15, fontWeight: 700, color: '#111', flex: 1 }}>✏️ Edito Biznesin</span>
+        <h1 style={{ fontSize: 15, fontWeight: 700, color: '#111', flex: 1, margin: 0 }}>✏️ Edito Biznesin</h1>
       </div>
 
       <div style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 14 }}>

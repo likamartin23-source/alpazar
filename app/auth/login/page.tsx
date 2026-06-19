@@ -802,6 +802,7 @@ export default function Auth() {
 
       <div className="wrap">
         <div className="card">
+          <h1 style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', margin: 0 }}>Alpazar — Autentikimi</h1>
           {Logo}
 
           {mode !== 'login' && (

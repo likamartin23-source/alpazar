@@ -1400,12 +1400,12 @@ export default function MessagesPage() {
                 <i className="ti ti-arrow-left" aria-hidden="true" />
               </button>
               <div className="t-meta">
-                <div className="t-name" style={{ color:'#F5C842' }}>
+                <h1 className="t-name" style={{ color:'#F5C842', margin: 0 }}>
                   Mesazhet
                   {totalUnread > 0 && (
                     <span style={{ background:'#E63312', color:'#fff', borderRadius:10, padding:'1px 8px', fontSize:10, fontWeight:800, marginLeft:8 }}>{totalUnread}</span>
                   )}
-                </div>
+                </h1>
               </div>
               <button className="t-action-btn" aria-label="Njoftimet" onClick={() => window.location.href = '/notifications'}>
                 <i className="ti ti-bell" aria-hidden="true" />

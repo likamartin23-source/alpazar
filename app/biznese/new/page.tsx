@@ -156,7 +156,7 @@ export default function BiznesNewPage() {
         <button aria-label="Kthehu mbrapa" onClick={() => step > 1 ? setStep(s => s - 1) : window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
           <i className="ti ti-arrow-left" aria-hidden="true" style={{ fontSize: 22, color: '#111' }} />
         </button>
-        <span style={{ fontSize: 15, fontWeight: 700, color: '#111', flex: 1 }}>🏢 Krijo Biznes Online</span>
+        <h1 style={{ fontSize: 15, fontWeight: 700, color: '#111', flex: 1, margin: 0 }}>🏢 Krijo Biznes Online</h1>
         {/* Progress dots */}
         <div style={{ display: 'flex', gap: 5 }}>
           {dots.map(i => (

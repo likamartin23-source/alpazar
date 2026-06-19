@@ -675,6 +675,7 @@ export default function Home() {
           {/* 1. Hero — 40% më i shkurtër vertikalisht */}
           <div className="hero">
             <div>
+              <h1 style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', margin: 0 }}>Alpazar — Treg Online Shqipëri</h1>
               <h2>🦅 {cfg('site_slogan', 'Shit · Bli · Bëj Pazrin Tënd')}</h2>
               <p><span style={{color:'#E63312',fontWeight:800}}>Platforma #1 shqiptare<br />e tregtisë online</span></p>
             </div>

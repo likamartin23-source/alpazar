@@ -513,7 +513,7 @@ export default function ProfilePage() {
           <button className="back" aria-label="Kthehu mbrapa" onClick={() => window.location.href = '/'}>
             <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
-          <span className="topbar-title">Profili im</span>
+          <h1 className="topbar-title" style={{ margin: 0 }}>Profili im</h1>
           <button className="logout" onClick={signOut}>Dil ↗</button>
         </div>
 

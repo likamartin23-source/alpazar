@@ -160,14 +160,14 @@ export default function NotificationsPage() {
         >
           <i className="ti ti-arrow-left" style={{ fontSize: 22 }} aria-hidden="true" />
         </button>
-        <div style={{ flex: 1, fontWeight: 700, fontSize: 16, color: '#fff', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <h1 style={{ flex: 1, fontWeight: 700, fontSize: 16, color: '#fff', display: 'flex', alignItems: 'center', gap: 8, margin: 0 }}>
           Njoftimet
           {unreadCount > 0 && (
             <span style={{ background: '#F5C842', color: '#111', borderRadius: 20, padding: '1px 8px', fontSize: 11, fontWeight: 800 }}>
               {unreadCount > 99 ? '99+' : unreadCount}
             </span>
           )}
-        </div>
+        </h1>
         {unreadCount > 0 && (
           <button
             onClick={markAllRead}

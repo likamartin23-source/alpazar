@@ -207,7 +207,7 @@ export default function SearchPage() {
         <div className="body">
           <div className="initial">
             <i className="ti ti-search" aria-hidden="true" />
-            <h3>Kërko çdo gjë në Shqipëri</h3>
+            <h1 style={{ fontSize: 15, fontWeight: 700, color: '#111', marginBottom: 6, marginTop: 0 }}>Kërko çdo gjë në Shqipëri</h1>
             <p>Elektronikë, Automjete, Prona,<br />Kafshë, Shërbime dhe shumë të tjera</p>
           </div>
         </div>
