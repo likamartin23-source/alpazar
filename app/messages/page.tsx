@@ -863,7 +863,7 @@ export default function MessagesPage() {
         /* Reaction overlay */
         .rxn-overlay{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;animation:fadeIn .15s;}
         .rxn-picker{background:#fff;border-radius:50px;padding:10px 14px;display:flex;gap:8px;box-shadow:0 16px 40px rgba(0,0,0,.3);animation:popIn .15s;}
-        .rxn-btn{font-size:26px;cursor:pointer;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .1s;}
+        .rxn-btn{font-size:26px;cursor:pointer;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .1s;background:none;border:none;padding:0;}
         .rxn-btn:hover{transform:scale(1.3);}
 
         /* Lightbox */
@@ -897,7 +897,7 @@ export default function MessagesPage() {
         <div className="rxn-overlay" onClick={() => setReactionMsg(null)}>
           <div className="rxn-picker" onClick={e => e.stopPropagation()}>
             {EMOJI_QUICK.map(e => (
-              <div key={e} className="rxn-btn" onClick={() => sendReaction(reactionMsg, e)}>{e}</div>
+              <button key={e} type="button" aria-label={`Reaksion ${e}`} className="rxn-btn" onClick={() => sendReaction(reactionMsg, e)}>{e}</button>
             ))}
           </div>
         </div>
@@ -905,7 +905,7 @@ export default function MessagesPage() {
 
       {/* Lightbox */}
       {lightbox && (
-        <div className="lightbox" onClick={() => setLightbox(null)}>
+        <div role="dialog" aria-modal="true" aria-label="Shiko imazhin" className="lightbox" onClick={() => setLightbox(null)} onKeyDown={e => { if (e.key === 'Escape') setLightbox(null) }}>
           <img src={lightbox} alt="Imazh i mesazhit" />
         </div>
       )}
