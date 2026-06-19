@@ -913,7 +913,7 @@ export default function MessagesPage() {
       {/* Context menu sheet */}
       {ctxMenu && (
         <div className="overlay" onClick={() => setCtxMenu(null)}>
-          <div className="sheet" onClick={e => e.stopPropagation()}>
+          <div role="menu" aria-label="Veprimet e mesazhit" className="sheet" onClick={e => e.stopPropagation()}>
             <div className="handle" />
             {ctxMenu.msg.content && !ctxMenu.msg.deleted_at && (
               <div style={{ padding:'0 20px 12px', fontSize:12.5, color:'#555', fontStyle:'italic', borderBottom:'0.5px solid #f0f0f0', marginBottom:4, lineHeight:1.5 }}>
@@ -972,7 +972,7 @@ export default function MessagesPage() {
       {/* Info / actions sheet */}
       {showInfo && selected && (
         <div className="overlay" onClick={() => setShowInfo(false)}>
-          <div className="sheet" onClick={e => e.stopPropagation()}>
+          <div role="dialog" aria-modal="true" aria-label="Informacioni i bisedës" className="sheet" onClick={e => e.stopPropagation()}>
             <div className="handle" />
             <div style={{ display:'flex', alignItems:'center', gap:12, padding:'0 20px 16px', borderBottom:'0.5px solid #f0f0f0', marginBottom:4 }}>
               <Avatar profile={selected.other} size={52} online={isOtherOnline} />
@@ -1020,7 +1020,7 @@ export default function MessagesPage() {
       {/* WhatsApp handoff */}
       {showWhatsApp && selected && waLink && (
         <div className="overlay" onClick={() => setShowWhatsApp(false)}>
-          <div className="sheet" onClick={e => e.stopPropagation()}>
+          <div role="dialog" aria-modal="true" aria-label="Vazhdo në WhatsApp" className="sheet" onClick={e => e.stopPropagation()}>
             <div className="handle" />
             <div style={{ padding:'4px 20px 20px', textAlign:'center' }}>
               <div style={{ fontSize:52, marginBottom:10 }}>💬</div>
@@ -1043,7 +1043,7 @@ export default function MessagesPage() {
       {/* Viber handoff */}
       {showViber && selected && viberLink && (
         <div className="overlay" onClick={() => setShowViber(false)}>
-          <div className="sheet" onClick={e => e.stopPropagation()}>
+          <div role="dialog" aria-modal="true" aria-label="Vazhdo në Viber" className="sheet" onClick={e => e.stopPropagation()}>
             <div className="handle" />
             <div style={{ padding:'4px 20px 20px', textAlign:'center' }}>
               <div style={{ fontSize:52, marginBottom:10 }}>📲</div>

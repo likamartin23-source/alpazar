@@ -1158,7 +1158,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
       {chatPanelOpen && seller && (
         <>
           <div className="cs-overlay" onClick={() => setChatOpen(false)} />
-          <div className="cs-panel">
+          <div role="dialog" aria-modal="true" aria-label="Kontakto shitësin" className="cs-panel">
             <div className="cs-handle-row"><div className="cs-handle" /></div>
 
             {/* Header */}
