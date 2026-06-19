@@ -747,7 +747,7 @@ export default function Auth() {
           zIndex: 99999,
           fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
         }}>
-          <div style={{
+          <div role="dialog" aria-modal="true" aria-label="Konfirmimi i moshës" style={{
             background: '#fff', borderRadius: 18, padding: '36px 28px',
             maxWidth: 340, width: '90%', textAlign: 'center',
             boxShadow: '0 8px 40px rgba(0,0,0,0.18)',

@@ -217,7 +217,7 @@ export default function SearchPage() {
       {filtersOpen && (
         <>
           <div className="filter-overlay" onClick={() => setFiltersOpen(false)} />
-          <div className="filter-panel">
+          <div className="filter-panel" role="dialog" aria-modal="true" aria-label="Filtrat e Avancuar">
             <div className="fp-handle" />
             <div className="fp-title">Filtrat e Avancuar</div>
 
