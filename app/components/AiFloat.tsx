@@ -33,7 +33,7 @@ export default function AiFloat() {
         {showTip && (
           <div className="ai-bubble">
             💬 Keni nevojë për ndihmë?
-            <button className="ai-close-btn" onClick={() => setShowTip(false)}>✕</button>
+            <button className="ai-close-btn" aria-label="Mbyll sugjerimin" onClick={() => setShowTip(false)}>✕</button>
           </div>
         )}
         <button
