@@ -334,7 +334,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
                   {existingImages.map((url, i) => (
                     <div key={i} className="img-prev-wrap">
                       <img src={url} className="img-prev" alt={`Foto ${i + 1}`} loading="lazy" />
-                      <button className="img-remove" onClick={() => removeExistingImage(url)}>✕</button>
+                      <button className="img-remove" aria-label={`Hiq foton ${i + 1}`} type="button" onClick={() => removeExistingImage(url)}>✕</button>
                       {i === 0 && (
                         <span style={{ position: 'absolute', top: 4, left: 4, background: '#F5C842', color: '#111', fontSize: 8, fontWeight: 800, padding: '2px 5px', borderRadius: 4, lineHeight: 1.4, pointerEvents: 'none' }}>
                           Kryesore
