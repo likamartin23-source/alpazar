@@ -567,7 +567,7 @@ export default function Home() {
       <div className="wrap">
         <div className="header">
           <div className="topbar">
-            <div className="logo" onClick={() => go('/')}>
+            <div role="link" tabIndex={0} className="logo" onClick={() => go('/')} onKeyDown={e => { if (e.key === 'Enter') go('/') }}>
               <AlpazarIcon />
               <span className="brand">{settings.site_name || 'ALPAZAR'}</span>
             </div>
@@ -745,7 +745,7 @@ export default function Home() {
                     </div>
                   )
                 })}
-                <div className="shop-mini" onClick={() => go('/biznese')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#fff', border: '1.5px dashed #F5C842', cursor: 'pointer' }}>
+                <div role="link" tabIndex={0} className="shop-mini" onClick={() => go('/biznese')} onKeyDown={e => { if (e.key === 'Enter') go('/biznese') }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#fff', border: '1.5px dashed #F5C842', cursor: 'pointer' }}>
                   <i className="ti ti-arrow-right" style={{ fontSize: 14, color: '#E63312' }} aria-hidden="true" />
                   <div style={{ fontSize: 7, color: '#E63312', fontWeight: 700, marginTop: 3, textAlign: 'center', padding: '0 4px' }}>Shiko të gjitha</div>
                 </div>
@@ -754,7 +754,7 @@ export default function Home() {
           )}
 
           {newListingBadge && (
-            <div className="new-listing-toast" onClick={() => { fetchListings(); setNewListingBadge(false) }}>
+            <div role="button" tabIndex={0} className="new-listing-toast" onClick={() => { fetchListings(); setNewListingBadge(false) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { fetchListings(); setNewListingBadge(false) } }}>
               <i className="ti ti-sparkles" style={{ fontSize: 14, color: '#3B6D11' }} aria-hidden="true" />
               <span>Shpallje e re u shtua — klikoni për të rifreskuar</span>
             </div>

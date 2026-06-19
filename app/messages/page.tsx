@@ -89,7 +89,7 @@ function AudioPlayer({ url, mine }: { url: string; mine: boolean }) {
           ))}
         </div>
         {/* Seekbar */}
-        <div onClick={seek} style={{ height:3, background:track, borderRadius:4, cursor:'pointer', overflow:'hidden' }}>
+        <div role="slider" aria-label="Pozicioni i audios" aria-valuenow={Math.round(progress)} aria-valuemin={0} aria-valuemax={100} tabIndex={0} onClick={seek} onKeyDown={e => { if (e.key === 'ArrowRight') { /* handled by audio element */ } }} style={{ height:3, background:track, borderRadius:4, cursor:'pointer', overflow:'hidden' }}>
           <div style={{ width:`${progress}%`, height:'100%', background:accent, borderRadius:4 }} />
         </div>
         <div style={{ fontSize:9, marginTop:3, color: mine ? 'rgba(245,200,66,.7)' : '#999' }}>
@@ -1099,7 +1099,7 @@ export default function MessagesPage() {
               <div className="topbar chat">
                 <button className="back-btn" aria-label="Kthehu në biseda" onClick={back}><i className="ti ti-arrow-left" aria-hidden="true" /></button>
                 <Avatar profile={selected.other} size={36} online={isOtherOnline} />
-                <div className="t-meta" style={{ cursor:'pointer' }} onClick={() => setShowInfo(true)}>
+                <div role="button" tabIndex={0} aria-label="Shiko informacionin e bisedës" className="t-meta" style={{ cursor:'pointer' }} onClick={() => setShowInfo(true)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setShowInfo(true) }}>
                   <div className="t-name">{displayName(selected.other)}</div>
                   <div className="t-sub">
                     {typingVisible
@@ -1183,7 +1183,7 @@ export default function MessagesPage() {
                             <div className={`bubble ${isTmp ? 'tmp' : ''} ${isDeleted ? 'deleted' : ''} ${isSel ? 'sel' : ''}`}>
                               {/* Reply preview */}
                               {m.reply_msg && !isDeleted && (
-                                <div className="rp" onClick={() => scrollToMsg(m.reply_msg.id)}>
+                                <div role="button" tabIndex={0} aria-label="Shko tek mesazhi origjinal" className="rp" onClick={() => scrollToMsg(m.reply_msg.id)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') scrollToMsg(m.reply_msg.id) }}>
                                   <div style={{ display:'flex', gap:6, alignItems:'flex-start' }}>
                                     <div style={{ flex:1, minWidth:0 }}>
                                       <div className="rp-name">

@@ -965,7 +965,7 @@ export default function Auth() {
                   <button className="btn" onClick={sendOtp} disabled={loading}>
                     {loading ? '⏳ Duke dërguar kodin...' : '📨 Dërgo Kodin e Konfirmimit'}
                   </button>
-                  <div className="sec-row">Ke llogari? &nbsp;<a onClick={() => switchMode('login')}>Hyr →</a></div>
+                  <div className="sec-row">Ke llogari? &nbsp;<a role="button" tabIndex={0} onClick={() => switchMode('login')} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') switchMode('login') }} style={{ cursor: 'pointer' }}>Hyr →</a></div>
                   <p className="terms">
                     Duke u regjistruar pranon{' '}
                     <a href="/kushtet">Kushtet e Përdorimit</a> dhe{' '}
