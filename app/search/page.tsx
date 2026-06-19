@@ -217,7 +217,7 @@ export default function SearchPage() {
       {filtersOpen && (
         <>
           <div className="filter-overlay" onClick={() => setFiltersOpen(false)} />
-          <div className="filter-panel" role="dialog" aria-modal="true" aria-label="Filtrat e Avancuar">
+          <div className="filter-panel" role="dialog" aria-modal="true" aria-label="Filtrat e Avancuar" onKeyDown={e => { if (e.key === 'Escape') setFiltersOpen(false) }}>
             <div className="fp-handle" />
             <div className="fp-title">Filtrat e Avancuar</div>
 

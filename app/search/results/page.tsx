@@ -623,7 +623,7 @@ const [searchError, setSearchError] = useState(false)
       {filtersOpen && (
         <>
           <div className="filter-overlay" onClick={() => setFiltersOpen(false)} />
-          <div className="filter-panel" role="dialog" aria-modal="true" aria-label="Filtrat e Avancuar" style={{ overflowY: 'auto', maxHeight: '85vh' }}>
+          <div className="filter-panel" role="dialog" aria-modal="true" aria-label="Filtrat e Avancuar" onKeyDown={e => { if (e.key === 'Escape') setFiltersOpen(false) }} style={{ overflowY: 'auto', maxHeight: '85vh' }}>
             <div className="fp-handle" />
             <div className="fp-title">Filtrat e Avancuar</div>
 

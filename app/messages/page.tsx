@@ -895,7 +895,7 @@ export default function MessagesPage() {
       {/* Reaction picker overlay */}
       {reactionMsg && (
         <div className="rxn-overlay" onClick={() => setReactionMsg(null)}>
-          <div className="rxn-picker" role="dialog" aria-modal="true" aria-label="Zgjidh reaksionin" onClick={e => e.stopPropagation()}>
+          <div className="rxn-picker" role="dialog" aria-modal="true" aria-label="Zgjidh reaksionin" onClick={e => e.stopPropagation()} onKeyDown={e => { if (e.key === 'Escape') setReactionMsg(null) }}>
             {EMOJI_QUICK.map(e => (
               <button key={e} type="button" aria-label={`Reaksion ${e}`} className="rxn-btn" onClick={() => sendReaction(reactionMsg, e)}>{e}</button>
             ))}
@@ -1066,7 +1066,7 @@ export default function MessagesPage() {
       {/* Block confirm */}
       {showBlockConf && selected && (
         <div className="overlay-center" onClick={() => setShowBlockConf(false)}>
-          <div className="confirm-card" role="dialog" aria-modal="true" aria-label="Konfirmo bllokimin" onClick={e => e.stopPropagation()}>
+          <div className="confirm-card" role="dialog" aria-modal="true" aria-label="Konfirmo bllokimin" onClick={e => e.stopPropagation()} onKeyDown={e => { if (e.key === 'Escape') setShowBlockConf(false) }}>
             <div style={{ fontSize:40, marginBottom:12 }}>🚫</div>
             <div className="confirm-title">Blloko {displayName(selected.other)}?</div>
             <div className="confirm-desc">Ai/ajo nuk mund t'ju dërgojë mesazhe.</div>
