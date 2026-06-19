@@ -651,9 +651,9 @@ const [searchError, setSearchError] = useState(false)
             <div className="fp-row">
               <span className="fp-label">Çmimi (L)</span>
               <div className="price-range">
-                <input type="number" placeholder="Min" value={priceMin}
+                <input type="number" aria-label="Çmimi minimal (Lekë)" placeholder="Min" value={priceMin}
                   onChange={e => setPriceMin(e.target.value)} min="0" />
-                <input type="number" placeholder="Max" value={priceMax}
+                <input type="number" aria-label="Çmimi maksimal (Lekë)" placeholder="Max" value={priceMax}
                   onChange={e => setPriceMax(e.target.value)} min="0" />
               </div>
             </div>
