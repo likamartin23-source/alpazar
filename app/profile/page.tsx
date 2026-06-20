@@ -574,9 +574,9 @@ export default function ProfilePage() {
             {(user?.email_confirmed_at || user?.phone_confirmed_at) && <span className="badge b-verif">✓ Verifikuar</span>}
             {profile?.is_premium && <span className="badge b-prem"><span aria-hidden="true">👑</span> Premium</span>}
             {profile?.shop_name && <span className="badge b-shop"><span aria-hidden="true">🏢</span> Biznes</span>}
-            {(() => { const l = getLevel(profile?.gamification_points || 0); return <span className="badge" style={{ background: l.bg, color: l.color }}>{l.icon} {l.name}</span> })()}
+            {(() => { const l = getLevel(profile?.gamification_points || 0); return <span className="badge" style={{ background: l.bg, color: l.color }}><span aria-hidden="true">{l.icon}</span> {l.name}</span> })()}
             {myListings.some(l => l.is_active) && <span className="badge b-seller"><span aria-hidden="true">📦</span> Shitës aktiv</span>}
-            {isNewMember(profile?.created_at) && <span className="badge b-new">🆕 Anëtar i ri</span>}
+            {isNewMember(profile?.created_at) && <span className="badge b-new"><span aria-hidden="true">🆕</span> Anëtar i ri</span>}
             {profile?.gamification_points > 0 && <span className="badge b-pts"><span aria-hidden="true">⚡</span> {profile.gamification_points} pikë</span>}
           </div>
         </div>
@@ -1078,7 +1078,7 @@ export default function ProfilePage() {
                 <div className="prem-card">
                   <h3><span aria-hidden="true">🏢</span> Hap Biznesin Tënd</h3>
                   <p>Biznesi online është i disponueshëm vetëm për anëtarët Premium. Merr badge ⭐ verifikimi, shpal produkte të pakufizuara dhe menaxho biznesin tënd!</p>
-                  <button type="button" className="prem-cta" onClick={() => window.location.href = '/premium'}>👑 Bëhu Premium — 9.99€/muaj</button>
+                  <button type="button" className="prem-cta" onClick={() => window.location.href = '/premium'}><span aria-hidden="true">👑</span> Bëhu Premium — 9.99€/muaj</button>
                 </div>
               ) : (
                 <>

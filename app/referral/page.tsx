@@ -205,8 +205,8 @@ export default function ReferralPage() {
                   }} />
                 </div>
                 {lp.next
-                  ? <div className="level-hint">{lp.remaining} pikë deri në {lp.next.icon} {lp.next.name}</div>
-                  : <div className="level-hint" style={{ color: '#F5C842' }}>💎 Nivel maksimal i arritur!</div>
+                  ? <div className="level-hint">{lp.remaining} pikë deri në <span aria-hidden="true">{lp.next.icon}</span> {lp.next.name}</div>
+                  : <div className="level-hint" style={{ color: '#F5C842' }}><span aria-hidden="true">💎</span> Nivel maksimal i arritur!</div>
                 }
               </div>
 

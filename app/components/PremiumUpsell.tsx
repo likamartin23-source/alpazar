@@ -210,7 +210,7 @@ export function SellerPremiumUpsell({ isPremium, price = '9.99' }: { isPremium: 
             padding: '7px 12px', fontSize: 11, fontWeight: 800, cursor: 'pointer', whiteSpace: 'nowrap',
           }}
         >
-          👑 {price}€/muaj
+          <span aria-hidden="true">👑</span> {price}€/muaj
         </button>
         <button type="button" aria-label="Mbyll ofertën" onClick={() => setVisible(false)} style={{
           background: 'none', border: 'none', color: '#555', fontSize: 9, cursor: 'pointer',
@@ -264,7 +264,7 @@ export function FreeTierBanner({
             padding: '7px 12px', fontSize: 11, fontWeight: 700, cursor: 'pointer', flexShrink: 0, marginLeft: 10,
           }}
         >
-          👑 {price}€/muaj
+          <span aria-hidden="true">👑</span> {price}€/muaj
         </button>
       </div>
     </div>
