@@ -379,7 +379,7 @@ export default function ProfilePage() {
     <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
       <div style={{ fontSize: 40 }}>⚠️</div>
       <div style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
-      <button onClick={() => window.location.reload()} style={{ padding: '10px 24px', background: '#F5C842', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Rifresko</button>
+      <button type="button" onClick={() => window.location.reload()} style={{ padding: '10px 24px', background: '#F5C842', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Rifresko</button>
     </div>
   )
 
@@ -510,11 +510,11 @@ export default function ProfilePage() {
 
       <div className="wrap">
         <div className="topbar">
-          <button className="back" aria-label="Kthehu mbrapa" onClick={() => window.location.href = '/'}>
+          <button type="button" className="back" aria-label="Kthehu mbrapa" onClick={() => window.location.href = '/'}>
             <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
           <h1 className="topbar-title" style={{ margin: 0 }}>Profili im</h1>
-          <button className="logout" onClick={signOut}>Dil ↗</button>
+          <button type="button" className="logout" onClick={signOut}>Dil ↗</button>
         </div>
 
         {/* Cover + Avatar — Facebook-style */}
@@ -554,6 +554,7 @@ export default function ProfilePage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
             {profile?.username && <div className="handle" style={{ margin: 0 }}>@{profile.username}</div>}
             <button
+              type="button"
               onClick={() => {
                 const url = `${SITE_URL}/u/${profile?.id}`
                 navigator.clipboard?.writeText(url).catch(() => {})
@@ -597,23 +598,23 @@ export default function ProfilePage() {
 
         {/* Tabs */}
         <div className="tabs" role="tablist" aria-label="Seksionet e profilit">
-          <button role="tab" aria-selected={activeTab === 'profile'} className={`tab ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => setActiveTab('profile')}>
+          <button type="button" role="tab" aria-selected={activeTab === 'profile'} className={`tab ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => setActiveTab('profile')}>
             <i className="ti ti-user" aria-hidden="true" />Profili
           </button>
-          <button role="tab" aria-selected={activeTab === 'listings'} className={`tab ${activeTab === 'listings' ? 'active' : ''}`} onClick={() => setActiveTab('listings')}>
+          <button type="button" role="tab" aria-selected={activeTab === 'listings'} className={`tab ${activeTab === 'listings' ? 'active' : ''}`} onClick={() => setActiveTab('listings')}>
             <i className="ti ti-package" aria-hidden="true" />Shpalljet
           </button>
-          <button role="tab" aria-selected={activeTab === 'saved'} className={`tab ${activeTab === 'saved' ? 'active' : ''}`} onClick={() => setActiveTab('saved')}>
+          <button type="button" role="tab" aria-selected={activeTab === 'saved'} className={`tab ${activeTab === 'saved' ? 'active' : ''}`} onClick={() => setActiveTab('saved')}>
             <i className="ti ti-heart" aria-hidden="true" />Të ruajtura
           </button>
-          <button role="tab" aria-selected={activeTab === 'messages'} className={`tab ${activeTab === 'messages' ? 'active' : ''}`} onClick={() => setActiveTab('messages')}>
+          <button type="button" role="tab" aria-selected={activeTab === 'messages'} className={`tab ${activeTab === 'messages' ? 'active' : ''}`} onClick={() => setActiveTab('messages')}>
             <i className="ti ti-message-circle" aria-hidden="true" />
             Mesazhet
             {conversations.some(c => c.unread > 0) && (
               <span className="tab-badge">{conversations.reduce((s, c) => s + c.unread, 0)}</span>
             )}
           </button>
-          <button role="tab" aria-selected={activeTab === 'shop'} className={`tab ${activeTab === 'shop' ? 'active' : ''}`} onClick={() => setActiveTab('shop')}>
+          <button type="button" role="tab" aria-selected={activeTab === 'shop'} className={`tab ${activeTab === 'shop' ? 'active' : ''}`} onClick={() => setActiveTab('shop')}>
             <i className="ti ti-building-store" aria-hidden="true" />Biznes
           </button>
         </div>
@@ -626,7 +627,7 @@ export default function ProfilePage() {
               {msg && <div className={`msg-box ${mt}`} role="alert">{mm}</div>}
 
               {profile?.is_admin && (
-                <button className="admin-btn" onClick={() => window.location.href = '/admin'}>
+                <button type="button" className="admin-btn" onClick={() => window.location.href = '/admin'}>
                   <i className="ti ti-shield" aria-hidden="true" /> Paneli i Adminit
                 </button>
               )}
@@ -635,8 +636,8 @@ export default function ProfilePage() {
                 <div className="card-hdr">
                   <span className="card-title">Informacioni personal</span>
                   {editing
-                    ? <button className="save-btn" onClick={saveProfile} disabled={saving}>{saving ? '⏳' : 'Ruaj'}</button>
-                    : <button className="edit-btn" onClick={() => setEditing(true)}>✏️ Ndrysho</button>
+                    ? <button type="button" className="save-btn" onClick={saveProfile} disabled={saving}>{saving ? '⏳' : 'Ruaj'}</button>
+                    : <button type="button" className="edit-btn" onClick={() => setEditing(true)}>✏️ Ndrysho</button>
                   }
                 </div>
 
@@ -669,7 +670,7 @@ export default function ProfilePage() {
                 <div className="prem-card">
                   <h3>👑 Bëhu Premium — 9.99€/muaj</h3>
                   <p>Biznes online · Badge verifikimi · Shpallje të pakufizuara · Statistika të avancuara</p>
-                  <button className="prem-cta" onClick={() => window.location.href = '/premium'}>Shiko planin →</button>
+                  <button type="button" className="prem-cta" onClick={() => window.location.href = '/premium'}>Shiko planin →</button>
                 </div>
               )}
 
@@ -686,6 +687,7 @@ export default function ProfilePage() {
                   {profile?.gamification_points > 0 && ` Ke ${profile.gamification_points} pikë aktualisht.`}
                 </div>
                 <button
+                  type="button"
                   style={{ background: '#fff', color: '#E63312', border: 'none', borderRadius: 9, padding: '9px 18px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
                   onClick={() => window.location.href = '/referral'}
                 >
@@ -786,7 +788,7 @@ export default function ProfilePage() {
                   autoComplete="email"
                   style={{ marginTop: 6 }}
                 />
-                <button className="sec-btn" onClick={changeEmail} disabled={changingEmail || !newEmail} style={{ marginTop: 8 }}>
+                <button type="button" className="sec-btn" onClick={changeEmail} disabled={changingEmail || !newEmail} style={{ marginTop: 8 }}>
                   {changingEmail ? '⏳ Duke dërguar...' : '✉️ Ndrysho Email-in'}
                 </button>
               </div>
@@ -824,7 +826,7 @@ export default function ProfilePage() {
                   onKeyDown={e => e.key === 'Enter' && changePassword()}
                   autoComplete="new-password"
                 />
-                <button className="sec-btn" onClick={changePassword} disabled={savingPass || !newPass || !newPass2}>
+                <button type="button" className="sec-btn" onClick={changePassword} disabled={savingPass || !newPass || !newPass2}>
                   {savingPass ? '⏳ Duke ruajtur...' : '🔒 Ndrysho Fjalëkalimin'}
                 </button>
               </div>
@@ -839,7 +841,7 @@ export default function ProfilePage() {
                   <div className={`msg-box msg-sm ${deleteMsg.split(':')[0]}`} role="alert">{deleteMsg.split(/:(.+)/)[1]}</div>
                 )}
                 {!deleteConfirm ? (
-                  <button className="delete-btn" onClick={() => setDeleteConfirm(true)}>
+                  <button type="button" className="delete-btn" onClick={() => setDeleteConfirm(true)}>
                     🗑 Fshi Llogarinë
                   </button>
                 ) : (
@@ -854,10 +856,10 @@ export default function ProfilePage() {
                       style={{ width: '100%', border: '1.5px solid #E63312', borderRadius: 8, padding: '8px 10px', fontSize: 13, fontFamily: 'inherit', marginBottom: 10, boxSizing: 'border-box', outline: 'none' }}
                     />
                     <div className="delete-confirm-btns">
-                      <button onClick={deleteAccount} disabled={deleting || !deletePassword}>
+                      <button type="button" onClick={deleteAccount} disabled={deleting || !deletePassword}>
                         {deleting ? '⏳ Duke fshirë...' : '✅ Po, fshi llogarinë'}
                       </button>
-                      <button onClick={() => { setDeleteConfirm(false); setDeleteMsg(''); setDeletePassword('') }}>
+                      <button type="button" onClick={() => { setDeleteConfirm(false); setDeleteMsg(''); setDeletePassword('') }}>
                         ✕ Anulo
                       </button>
                     </div>
@@ -874,6 +876,7 @@ export default function ProfilePage() {
               <BizUpsellBanner userId={user?.id} />
 
               <button
+                type="button"
                 style={{ width: '100%', background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 13, padding: '14px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}
                 onClick={() => window.location.href = '/profile/analytics'}
               >
@@ -888,7 +891,7 @@ export default function ProfilePage() {
               <div className="card">
                 <div className="card-hdr">
                   <span className="card-title">Shpalljet e mia ({myListings.filter(l => l.is_active).length})</span>
-                  <button className="edit-btn" onClick={() => window.location.href = '/listing/new'}>+ Shto</button>
+                  <button type="button" className="edit-btn" onClick={() => window.location.href = '/listing/new'}>+ Shto</button>
                 </div>
                 {myListings.filter(l => l.is_active).length === 0 ? (
                   <div style={{ textAlign: 'center', padding: '24px 0', color: '#aaa', fontSize: 12 }}>
@@ -908,6 +911,7 @@ export default function ProfilePage() {
                       </div>
                       {canBump(l.last_bumped_at) ? (
                         <button
+                          type="button"
                           className="edit-listing-btn"
                           onClick={() => bumpListing(l.id)}
                           aria-label="Rifresko shpalljen"
@@ -916,14 +920,14 @@ export default function ProfilePage() {
                       ) : (
                         <span title={`Mund ta rifreskosh pas ${bumpDaysLeft(l.last_bumped_at)} ditësh`} style={{ fontSize: 10, color: '#aaa', padding: '0 4px', cursor: 'default' }}>{bumpDaysLeft(l.last_bumped_at)}d</span>
                       )}
-                      <button className="edit-listing-btn" onClick={() => window.location.href = `/listing/${l.id}/edit`} aria-label="Ndrysho">✏️</button>
+                      <button type="button" className="edit-listing-btn" onClick={() => window.location.href = `/listing/${l.id}/edit`} aria-label="Ndrysho">✏️</button>
                       {pendingDelete === l.id ? (
                         <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
-                          <button onClick={() => deleteListing(l.id)} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Fshi</button>
-                          <button onClick={() => setPendingDelete(null)} style={{ background: '#eee', color: '#555', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Jo</button>
+                          <button type="button" onClick={() => deleteListing(l.id)} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Fshi</button>
+                          <button type="button" onClick={() => setPendingDelete(null)} style={{ background: '#eee', color: '#555', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Jo</button>
                         </div>
                       ) : (
-                        <button className="del-btn" onClick={() => setPendingDelete(l.id)} aria-label="Fshi shpalljen">🗑</button>
+                        <button type="button" className="del-btn" onClick={() => setPendingDelete(l.id)} aria-label="Fshi shpalljen">🗑</button>
                       )}
                     </div>
                   ))
@@ -980,7 +984,7 @@ export default function ProfilePage() {
                     <div role="link" tabIndex={0} style={{ flex: 1, fontSize: 12, color: '#111', cursor: 'pointer', fontWeight: 600 }} onClick={() => { window.location.href = `/search/results?${urlParams.toString()}` }} onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/search/results?${urlParams.toString()}` }}>
                       🔍 {parts.length > 0 ? parts.join(' · ') : 'Kërkim i ruajtur'}
                     </div>
-                    <button onClick={async () => { await supabase.from('saved_searches').delete().eq('id', s.id); setSavedSearches(prev => prev.filter(x => x.id !== s.id)) }} style={{ background: 'none', border: 'none', color: '#ccc', cursor: 'pointer', fontSize: 16, lineHeight: 1, padding: 0 }}>✕</button>
+                    <button type="button" aria-label="Fshi kërkimin e ruajtur" onClick={async () => { await supabase.from('saved_searches').delete().eq('id', s.id); setSavedSearches(prev => prev.filter(x => x.id !== s.id)) }} style={{ background: 'none', border: 'none', color: '#ccc', cursor: 'pointer', fontSize: 16, lineHeight: 1, padding: 0 }}>✕</button>
                   </div>
                 )
               })}
@@ -993,7 +997,7 @@ export default function ProfilePage() {
               <div className="card">
                 <div className="card-hdr">
                   <span className="card-title">💬 Bisedat e mia</span>
-                  <button className="edit-btn" onClick={() => window.location.href = '/messages'}>
+                  <button type="button" className="edit-btn" onClick={() => window.location.href = '/messages'}>
                     Hap →
                   </button>
                 </div>
@@ -1002,7 +1006,7 @@ export default function ProfilePage() {
                   <div className="inbox-empty">
                     <i className="ti ti-messages" aria-hidden="true" />
                     <p>Nuk ke biseda ende.<br />Kontakto një shitës nga shpalljet!</p>
-                    <button className="inbox-empty-btn" onClick={() => window.location.href = '/'}>
+                    <button type="button" className="inbox-empty-btn" onClick={() => window.location.href = '/'}>
                       Shfleto shpalljet
                     </button>
                   </div>
@@ -1058,7 +1062,7 @@ export default function ProfilePage() {
                 )}
               </div>
 
-              <button className="open-msgs-btn" onClick={() => window.location.href = '/messages'}>
+              <button type="button" className="open-msgs-btn" onClick={() => window.location.href = '/messages'}>
                 <i className="ti ti-messages" aria-hidden="true" /> Hap Mesazherin e Plotë
               </button>
             </>
@@ -1073,7 +1077,7 @@ export default function ProfilePage() {
                 <div className="prem-card">
                   <h3>🏢 Hap Biznesin Tënd</h3>
                   <p>Biznesi online është i disponueshëm vetëm për anëtarët Premium. Merr badge ⭐ verifikimi, shpal produkte të pakufizuara dhe menaxho biznesin tënd!</p>
-                  <button className="prem-cta" onClick={() => window.location.href = '/premium'}>👑 Bëhu Premium — 9.99€/muaj</button>
+                  <button type="button" className="prem-cta" onClick={() => window.location.href = '/premium'}>👑 Bëhu Premium — 9.99€/muaj</button>
                 </div>
               ) : (
                 <>
@@ -1084,7 +1088,7 @@ export default function ProfilePage() {
                         <strong>🏪 {profile.shop_name}</strong>
                         <span>{profile.shop_description?.slice(0, 60) || 'Biznes premium i verifikuar'}...</span>
                       </div>
-                      <button className="shop-preview-btn" onClick={() => window.location.href = `/biznese/${user.id}`}>
+                      <button type="button" className="shop-preview-btn" onClick={() => window.location.href = `/biznese/${user.id}`}>
                         Shiko →
                       </button>
                     </div>
@@ -1129,6 +1133,7 @@ export default function ProfilePage() {
                     />
 
                     <button
+                      type="button"
                       className="save-shop-btn"
                       onClick={saveShop}
                       disabled={savingShop || !shopForm.shop_name.trim()}

@@ -157,7 +157,7 @@ export default function SearchPage() {
 
       <div className="wrap">
         <div className="topbar">
-          <button className="back" aria-label="Kthehu në ballina" onClick={() => window.location.href = '/'}>
+          <button type="button" className="back" aria-label="Kthehu në ballina" onClick={() => window.location.href = '/'}>
             <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
           <form className="search-wrap" onSubmit={handleSubmit}>
@@ -170,8 +170,8 @@ export default function SearchPage() {
               autoFocus
             />
           </form>
-          <button className="search-btn" onClick={() => goToResults()}>Kërko</button>
-          <button className="filter-btn" aria-label="Filtrat e kërkimit" onClick={() => setFiltersOpen(true)}>
+          <button type="button" className="search-btn" onClick={() => goToResults()}>Kërko</button>
+          <button type="button" className="filter-btn" aria-label="Filtrat e kërkimit" aria-expanded={filtersOpen} onClick={() => setFiltersOpen(true)}>
             <i className="ti ti-adjustments-horizontal" aria-hidden="true" />
             {activeFilterCount > 0 && <span className="filter-badge">{activeFilterCount}</span>}
           </button>
@@ -179,13 +179,14 @@ export default function SearchPage() {
 
         {/* Category chips */}
         <div className="cats">
-          <button className={`cb ${!catFilter ? 'on' : ''}`}
+          <button type="button" className={`cb ${!catFilter ? 'on' : ''}`} aria-pressed={!catFilter}
             onClick={() => { setCatFilter(''); if (q) goToResults(q, '', condFilter, cityFilter, priceMin, priceMax) }}>
             Të gjitha
           </button>
           {categories.map(c => (
-            <button key={c.id}
+            <button type="button" key={c.id}
               className={`cb ${catFilter === c.id ? 'on' : ''}`}
+              aria-pressed={catFilter === c.id}
               onClick={() => { setCatFilter(c.id); if (q) goToResults(q, c.id, condFilter, cityFilter, priceMin, priceMax) }}>
               {c.name}
             </button>
@@ -260,20 +261,22 @@ export default function SearchPage() {
             <div className="fp-row">
               <span className="fp-label">Gjendja</span>
               <div className="cond-row">
-                <button className={`cond-btn ${condFilter === '' ? 'active' : ''}`}
+                <button type="button" className={`cond-btn ${condFilter === '' ? 'active' : ''}`} aria-pressed={condFilter === ''}
                   onClick={() => setCondFilter('')}>Të gjitha</button>
-                <button className={`cond-btn ${condFilter === 'i_ri' ? 'active' : ''}`}
+                <button type="button" className={`cond-btn ${condFilter === 'i_ri' ? 'active' : ''}`} aria-pressed={condFilter === 'i_ri'}
                   onClick={() => setCondFilter(condFilter === 'i_ri' ? '' : 'i_ri')}>I ri</button>
-                <button className={`cond-btn ${condFilter === 'i_mire' ? 'active' : ''}`}
+                <button type="button" className={`cond-btn ${condFilter === 'i_mire' ? 'active' : ''}`} aria-pressed={condFilter === 'i_mire'}
                   onClick={() => setCondFilter(condFilter === 'i_mire' ? '' : 'i_mire')}>I mirë</button>
-                <button className={`cond-btn ${condFilter === 'i_perdorur' ? 'active' : ''}`}
+                <button type="button" className={`cond-btn ${condFilter === 'i_perdorur' ? 'active' : ''}`} aria-pressed={condFilter === 'i_perdorur'}
                   onClick={() => setCondFilter(condFilter === 'i_perdorur' ? '' : 'i_perdorur')}>I përdorur</button>
               </div>
             </div>
 
             {/* Premium only */}
-            <div className="fp-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: premiumOnly ? '#FFF8EE' : '#f9f9f7', border: `1.5px solid ${premiumOnly ? '#e0b030' : '#eee'}`, borderRadius: 12, padding: '12px 14px', cursor: 'pointer' }}
-              onClick={() => setPremiumOnly(v => !v)}>
+            <div className="fp-row" role="switch" aria-checked={premiumOnly} tabIndex={0}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: premiumOnly ? '#FFF8EE' : '#f9f9f7', border: `1.5px solid ${premiumOnly ? '#e0b030' : '#eee'}`, borderRadius: 12, padding: '12px 14px', cursor: 'pointer' }}
+              onClick={() => setPremiumOnly(v => !v)}
+              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setPremiumOnly(v => !v) } }}>
               <div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: '#111' }}>Vetëm Premium</div>
                 <div style={{ fontSize: 11, color: '#888', marginTop: 2 }}>Shpallje të verifikuara</div>
@@ -291,10 +294,10 @@ export default function SearchPage() {
             </div>
 
             <div className="fp-actions">
-              <button className="fp-clear" onClick={() => { clearFilters(); setFiltersOpen(false) }}>
+              <button type="button" className="fp-clear" onClick={() => { clearFilters(); setFiltersOpen(false) }}>
                 Pastro
               </button>
-              <button className="fp-apply" onClick={applyFilters}>
+              <button type="button" className="fp-apply" onClick={applyFilters}>
                 Apliko filtrat {activeFilterCount > 0 && `(${activeFilterCount})`}
               </button>
             </div>
