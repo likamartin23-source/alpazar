@@ -65,7 +65,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
     <div style={{ minHeight: '100vh', background: '#FFFBEA', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
       <div style={{ fontSize: 48 }}>👤</div>
       <div style={{ fontSize: 18, fontWeight: 700, color: '#111' }}>Profili nuk u gjet</div>
-      <button onClick={() => window.location.href = '/'} style={{ marginTop: 8, padding: '10px 24px', background: '#F5C842', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>← Kthehu</button>
+      <button type="button" onClick={() => window.location.href = '/'} style={{ marginTop: 8, padding: '10px 24px', background: '#F5C842', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>← Kthehu</button>
     </div>
   )
 
@@ -83,6 +83,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
     <div style={{ minHeight: '100vh', background: '#FFFBEA', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", paddingBottom: 80 }}>
       {/* Back button */}
       <button
+        type="button"
         onClick={() => window.history.length > 1 ? window.history.back() : window.location.href = '/'}
         style={{ position: 'fixed', top: 12, left: 12, zIndex: 100, background: 'rgba(255,255,255,0.9)', border: 'none', borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,.15)' }}
         aria-label="Kthehu"
@@ -159,6 +160,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {!isOwnProfile && (
               <button
+                type="button"
                 onClick={() => {
                   if (!user) { window.location.href = '/auth/login'; return }
                   window.location.href = `/messages?with=${profile.id}`
@@ -170,6 +172,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
             )}
             {isOwnProfile && (
               <button
+                type="button"
                 onClick={() => window.location.href = '/profile'}
                 style={{ flex: 1, minWidth: 120, padding: '10px 16px', background: '#F5C842', color: '#111', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}
               >
@@ -178,6 +181,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
             )}
             {isBusiness && (
               <button
+                type="button"
                 onClick={() => window.location.href = `/biznese/${profile.id}`}
                 style={{ padding: '10px 16px', background: '#111', color: '#F5C842', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}
               >
@@ -189,10 +193,13 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
       </div>
 
       {/* Tab bar */}
-      <div style={{ background: '#fff', display: 'flex', borderBottom: '1px solid #eee', marginBottom: 8, position: 'sticky', top: 0, zIndex: 10 }}>
+      <div role="tablist" aria-label="Seksionet e profilit" style={{ background: '#fff', display: 'flex', borderBottom: '1px solid #eee', marginBottom: 8, position: 'sticky', top: 0, zIndex: 10 }}>
         {tabs.map(t => (
           <button
             key={t.key}
+            type="button"
+            role="tab"
+            aria-selected={activeTab === t.key}
             onClick={() => setActiveTab(t.key as any)}
             style={{ flex: 1, padding: '14px 8px', border: 'none', background: 'transparent', fontWeight: activeTab === t.key ? 800 : 500, fontSize: 13, color: activeTab === t.key ? '#E63312' : '#666', borderBottom: activeTab === t.key ? '2px solid #E63312' : '2px solid transparent', cursor: 'pointer', transition: 'all .15s' }}
           >
@@ -216,7 +223,11 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
                 return (
                   <div
                     key={l.id}
+                    role="link"
+                    tabIndex={0}
+                    aria-label={`${l.title} — ${l.price ? `${l.price.toLocaleString('sq-AL')} ${l.currency || 'L'}` : 'Falas'}`}
                     onClick={() => window.location.href = `/listing/${l.id}`}
+                    onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/listing/${l.id}` }}
                     style={{ position: 'relative', aspectRatio: '1/1', background: '#eee', overflow: 'hidden', cursor: 'pointer' }}
                   >
                     {img ? (

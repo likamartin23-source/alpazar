@@ -503,7 +503,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
     <div style={{ textAlign: 'center', padding: 60, fontFamily: "'Plus Jakarta Sans',system-ui" }}>
       <p style={{ fontSize: 40, marginBottom: 12 }}>⚠️</p>
       <h2 style={{ color: '#111', marginBottom: 8 }}>Gabim gjatë ngarkimit</h2>
-      <button onClick={() => window.location.reload()} style={{ background: '#F5C842', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Rifresko</button>
+      <button type="button" onClick={() => window.location.reload()} style={{ background: '#F5C842', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Rifresko</button>
     </div>
   )
 
@@ -694,7 +694,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
 
       <div className="wrap">
         <div className="topbar">
-          <button className="back" aria-label="Kthehu mbrapa" onClick={() => window.history.back()}>
+          <button type="button" className="back" aria-label="Kthehu mbrapa" onClick={() => window.history.back()}>
             <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
           <span className="topbar-title">Shpallja</span>
@@ -906,14 +906,14 @@ export default function ListingPageClient({ params, initialListing }: { params: 
 
                 {/* Profile / Business button */}
                 {!isOwner && hasShop && (
-                  <button className="view-profile-btn"
+                  <button type="button" className="view-profile-btn"
                     onClick={() => window.location.href = `/biznese/${seller.id}`}>
                     <i className="ti ti-building-store" aria-hidden="true" />
                     Shiko biznesin →
                   </button>
                 )}
                 {!isOwner && !hasShop && (
-                  <button className="view-profile-btn"
+                  <button type="button" className="view-profile-btn"
                     onClick={() => window.location.href = `/u/${seller.id}`}>
                     <i className="ti ti-user" aria-hidden="true" />
                     Shiko profilin →
@@ -941,11 +941,13 @@ export default function ListingPageClient({ params, initialListing }: { params: 
             <div style={{ padding: '0 13px 14px' }}>
               <div style={{ display: 'flex', gap: 8, marginBottom: bumpMsg ? 8 : 0 }}>
                 <button
+                  type="button"
                   onClick={() => window.location.href = `/listing/${params.id}/edit`}
                   style={{ flex: 1, background: '#F5C842', color: '#111', border: 'none', borderRadius: 10, padding: '10px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
                   <i className="ti ti-pencil" style={{ fontSize: 14 }} aria-hidden="true" />Ndrysho
                 </button>
                 <button
+                  type="button"
                   onClick={doBump}
                   disabled={bumpLoading || !canBump(listing.last_bumped_at)}
                   aria-label={canBump(listing.last_bumped_at) ? 'Ngrije shpalljen në krye' : 'Mund ta ngresh pas 7 ditësh'}
@@ -982,9 +984,9 @@ export default function ListingPageClient({ params, initialListing }: { params: 
               ) : (
                 <div style={{ background: '#fff', border: '0.5px solid #eee', borderRadius: 10, padding: '12px 13px' }}>
                   {/* Yjet */}
-                  <div style={{ display: 'flex', gap: 5, marginBottom: 10 }}>
+                  <div role="group" aria-label="Vlerëso me yje" style={{ display: 'flex', gap: 5, marginBottom: 10 }}>
                     {[1, 2, 3, 4, 5].map(s => (
-                      <button key={s} onClick={() => setReviewStars(s)}
+                      <button key={s} type="button" aria-label={`${s} yll${s > 1 ? 'e' : ''}`} aria-pressed={s <= reviewStars} onClick={() => setReviewStars(s)}
                         style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, padding: 0, opacity: s <= reviewStars ? 1 : 0.3 }}>
                         ⭐
                       </button>
@@ -1005,6 +1007,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                     </div>
                   )}
                   <button
+                    type="button"
                     onClick={submitReview}
                     disabled={reviewStars === 0 || reviewSaving}
                     style={{ marginTop: 8, width: '100%', background: reviewStars ? '#E63312' : '#ccc', color: '#fff', border: 'none', borderRadius: 9, padding: '10px', fontSize: 12, fontWeight: 700, cursor: reviewStars ? 'pointer' : 'not-allowed', fontFamily: 'inherit' }}>
@@ -1137,19 +1140,19 @@ export default function ListingPageClient({ params, initialListing }: { params: 
               <>
                 <div className="report-title">⚑ Raporto shpalljen</div>
                 <div className="report-sub">Zgjidh arsyen e raportimit</div>
-                <div className="reason-list">
+                <div role="group" aria-label="Arsyeja e raportimit" className="reason-list">
                   {REPORT_REASONS.map(r => (
-                    <button key={r} className={`reason-btn ${reportReason === r ? 'sel' : ''}`}
+                    <button key={r} type="button" aria-pressed={reportReason === r} className={`reason-btn ${reportReason === r ? 'sel' : ''}`}
                       onClick={() => setReportReason(r)}>
                       {reportReason === r ? '●' : '○'} {r}
                     </button>
                   ))}
                 </div>
-                <button className="report-submit" onClick={submitReport}
+                <button type="button" className="report-submit" onClick={submitReport}
                   disabled={!reportReason || reportLoading}>
                   {reportLoading ? '⏳ Duke dërguar...' : 'Dërgo raportin'}
                 </button>
-                <button className="report-link" onClick={() => setReportOpen(false)}>Anulo</button>
+                <button type="button" className="report-link" onClick={() => setReportOpen(false)}>Anulo</button>
               </>
             )}
           </div>
@@ -1194,7 +1197,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
             {!user ? (
               <div className="login-prompt">
                 <p>Hyr në llogarinë tënde për të biseduar me shitësin</p>
-                <button className="login-prompt-btn"
+                <button type="button" className="login-prompt-btn"
                   onClick={() => window.location.href = '/auth/login'}>
                   🔑 Hyr / Regjistrohu
                 </button>
@@ -1271,7 +1274,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
       {/* Bottom bar — visible when chat sheet is closed */}
       {!isOwner && !chatPanelOpen && seller && (
         <div className="bottom-bar">
-          <button className="main-chat-btn" onClick={() => {
+          <button type="button" className="main-chat-btn" onClick={() => {
             if (!user) { window.location.href = '/auth/login'; return }
             setChatOpen(true)
             setTimeout(() => inputRef.current?.focus(), 350)

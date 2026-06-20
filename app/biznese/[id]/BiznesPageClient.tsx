@@ -104,7 +104,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
     <div style={{ maxWidth: 480, margin: '0 auto', padding: 40, textAlign: 'center', background: '#FFFBEA', minHeight: '100vh' }}>
       <div style={{ fontSize: 48, marginBottom: 16 }}>🏢</div>
       <div style={{ fontWeight: 700, color: '#111', marginBottom: 16 }}>Biznesi nuk u gjet</div>
-      <button onClick={() => window.history.back()} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 20px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>← Kthehu</button>
+      <button type="button" onClick={() => window.history.back()} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 20px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>← Kthehu</button>
     </div>
   )
 
@@ -148,15 +148,15 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
         </div>
 
         {/* Floating buttons */}
-        <button aria-label="Kthehu mbrapa" onClick={() => window.history.back()} style={{ position: 'absolute', top: 12, left: 12, background: 'rgba(0,0,0,.45)', border: 'none', borderRadius: '50%', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+        <button type="button" aria-label="Kthehu mbrapa" onClick={() => window.history.back()} style={{ position: 'absolute', top: 12, left: 12, background: 'rgba(0,0,0,.45)', border: 'none', borderRadius: '50%', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
           <i className="ti ti-arrow-left" aria-hidden="true" style={{ fontSize: 18, color: '#fff' }} />
         </button>
         <div style={{ position: 'absolute', top: 12, right: 12, display: 'flex', gap: 8 }}>
-          <button aria-label="Ndaj biznesin" onClick={share} style={{ background: 'rgba(0,0,0,.45)', border: 'none', borderRadius: '50%', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+          <button type="button" aria-label="Ndaj biznesin" onClick={share} style={{ background: 'rgba(0,0,0,.45)', border: 'none', borderRadius: '50%', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
             <i className="ti ti-share" style={{ fontSize: 16, color: '#fff' }} aria-hidden="true" />
           </button>
           {isOwner && (
-            <button aria-label="Edito biznesin" onClick={() => window.location.href = `/biznese/${biz.id}/edit`} style={{ background: 'rgba(0,0,0,.45)', border: 'none', borderRadius: '50%', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+            <button type="button" aria-label="Edito biznesin" onClick={() => window.location.href = `/biznese/${biz.id}/edit`} style={{ background: 'rgba(0,0,0,.45)', border: 'none', borderRadius: '50%', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
               <i className="ti ti-pencil" style={{ fontSize: 16, color: '#fff' }} aria-hidden="true" />
             </button>
           )}
@@ -224,11 +224,11 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
                 <i className="ti ti-phone" style={{ fontSize: 15 }} aria-hidden="true" /> Telefono
               </a>
             )}
-            <button onClick={() => { if (!userId) { window.location.href = '/auth/login'; return } window.location.href = `/messages?biz=${biz.id}` }}
+            <button type="button" aria-label="Dërgo mesazh" onClick={() => { if (!userId) { window.location.href = '/auth/login'; return } window.location.href = `/messages?biz=${biz.id}` }}
               className="action-btn" style={{ background: '#111', color: '#F5C842' }}>
               <i className="ti ti-message" style={{ fontSize: 15 }} aria-hidden="true" /> Mesazh
             </button>
-            <button aria-label="Ndaj" onClick={share} className="action-btn" style={{ background: '#f0f0f0', color: '#333', flex: '0 0 48px' }}>
+            <button type="button" aria-label="Ndaj" onClick={share} className="action-btn" style={{ background: '#f0f0f0', color: '#333', flex: '0 0 48px' }}>
               <i className="ti ti-share-3" style={{ fontSize: 17 }} aria-hidden="true" />
             </button>
           </div>
@@ -240,7 +240,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
         <div style={{ background: '#fff', margin: '0 0 8px', padding: '14px 16px' }}>
           <p style={{ fontSize: 13, color: '#444', lineHeight: 1.65, margin: 0 }}>{descText}</p>
           {descShort && (
-            <button onClick={() => setDescExpanded(e => !e)} style={{ marginTop: 6, background: 'none', border: 'none', color: '#E63312', fontSize: 12, fontWeight: 700, cursor: 'pointer', padding: 0, fontFamily: 'inherit' }}>
+            <button type="button" aria-expanded={descExpanded} onClick={() => setDescExpanded(e => !e)} style={{ marginTop: 6, background: 'none', border: 'none', color: '#E63312', fontSize: 12, fontWeight: 700, cursor: 'pointer', padding: 0, fontFamily: 'inherit' }}>
               {descExpanded ? 'Shfaq më pak ↑' : 'Shfaq më shumë ↓'}
             </button>
           )}
@@ -276,14 +276,14 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
       </div>
 
       {/* ── Sticky tabs ──────────────────────────────────────── */}
-      <div style={{ position: 'sticky', top: 0, zIndex: 10, background: '#fff', borderBottom: '1px solid #eee', display: 'flex', marginBottom: 2 }}>
-        <button className={`biz-tab ${activeTab === 'grid' ? 'active' : ''}`} onClick={() => setActiveTab('grid')}>
+      <div role="tablist" aria-label="Seksionet e biznesit" style={{ position: 'sticky', top: 0, zIndex: 10, background: '#fff', borderBottom: '1px solid #eee', display: 'flex', marginBottom: 2 }}>
+        <button type="button" role="tab" aria-selected={activeTab === 'grid'} className={`biz-tab ${activeTab === 'grid' ? 'active' : ''}`} onClick={() => setActiveTab('grid')}>
           <i className="ti ti-layout-grid" style={{ fontSize: 14 }} aria-hidden="true" /> Shpalljet
         </button>
-        <button className={`biz-tab ${activeTab === 'info' ? 'active' : ''}`} onClick={() => setActiveTab('info')}>
+        <button type="button" role="tab" aria-selected={activeTab === 'info'} className={`biz-tab ${activeTab === 'info' ? 'active' : ''}`} onClick={() => setActiveTab('info')}>
           <i className="ti ti-info-circle" style={{ fontSize: 14 }} aria-hidden="true" /> Info
         </button>
-        <button className={`biz-tab ${activeTab === 'reviews' ? 'active' : ''}`} onClick={() => setActiveTab('reviews')}>
+        <button type="button" role="tab" aria-selected={activeTab === 'reviews'} className={`biz-tab ${activeTab === 'reviews' ? 'active' : ''}`} onClick={() => setActiveTab('reviews')}>
           <i className="ti ti-star" style={{ fontSize: 14 }} aria-hidden="true" /> Vlerësime
         </button>
       </div>
@@ -296,7 +296,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
               <div style={{ fontSize: 48, marginBottom: 12 }}>🛍️</div>
               <div style={{ fontSize: 14, fontWeight: 600, color: '#666', marginBottom: 6 }}>Asnjë shpallje ende</div>
               {isOwner && (
-                <button onClick={() => window.location.href = '/listing/new'} style={{ marginTop: 8, background: '#E63312', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 24px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: 13 }}>+ Shto shpallje</button>
+                <button type="button" onClick={() => window.location.href = '/listing/new'} style={{ marginTop: 8, background: '#E63312', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 24px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: 13 }}>+ Shto shpallje</button>
               )}
             </div>
           ) : (
@@ -304,7 +304,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
               {listings.map(l => {
                 const img = Array.isArray(l.images) && l.images.length ? l.images[0] : null
                 return (
-                  <div key={l.id} role="link" tabIndex={0} className="ig-cell" onClick={() => window.location.href = `/listing/${l.id}`} onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/listing/${l.id}` }}>
+                  <div key={l.id} role="link" tabIndex={0} aria-label={`${l.title} — ${fmt(l.price, l.currency)}`} className="ig-cell" onClick={() => window.location.href = `/listing/${l.id}`} onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/listing/${l.id}` }}>
                     {img
                       ? <img src={img} alt={l.title} loading="lazy" width={400} height={400} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
                       : <div style={{ width: '100%', height: '100%', background: '#e8e8e8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><i className="ti ti-photo" style={{ fontSize: 22, color: '#ccc' }} aria-hidden="true" /></div>
