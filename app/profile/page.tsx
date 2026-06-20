@@ -849,6 +849,7 @@ export default function ProfilePage() {
                     <p>Je i sigurt? Kjo veprim <strong>nuk mund të kthehet</strong>.<br />Të gjitha të dhënat fshihen përgjithmonë.</p>
                     <input
                       type="password"
+                      aria-label="Fjalëkalimi për konfirmim fshirjeje"
                       placeholder="Shkruaj fjalëkalimin për të konfirmuar"
                       value={deletePassword}
                       onChange={e => setDeletePassword(e.target.value)}

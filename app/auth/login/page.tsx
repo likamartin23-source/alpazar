@@ -700,10 +700,11 @@ export default function Auth() {
 
       {expired && <div className="msg warn" role="alert">Kodi ka skaduar. Klikoje &quot;Ridërgo&quot; për kod të ri.</div>}
 
-      <div className="otp-row" onPaste={handleOtpPaste}>
+      <div className="otp-row" role="group" aria-label="Kodi i konfirmimit 6-shifror" onPaste={handleOtpPaste}>
         {otp.map((d, i) => (
           <input key={i}
             ref={el => { inputRefs.current[i] = el }}
+            aria-label={`Shifra ${i + 1}`}
             className={`otp-input${d ? ' filled' : ''}`}
             type="text" inputMode="numeric" pattern="[0-9]*" maxLength={1}
             value={d} disabled={expired || loading}

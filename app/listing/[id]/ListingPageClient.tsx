@@ -1100,6 +1100,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
             <input
               className="alert-input"
               type="number"
+              aria-label="Çmimi target i alarmit"
               placeholder="Çmimi target (p.sh. 5000)"
               value={alertTarget}
               onChange={e => setAlertTarget(e.target.value)}

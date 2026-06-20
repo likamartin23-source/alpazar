@@ -638,6 +638,7 @@ export default function Admin() {
           <p style={{ fontSize: 12, color: '#888', marginBottom: 20 }}>Fut kodin 6-shifror për të hyrë në panel</p>
           <input
             type="password"
+            aria-label="Admin PIN 6-shifror"
             value={pinInput}
             onChange={e => { setPinInput(e.target.value); setPinError('') }}
             onKeyDown={e => { if (e.key === 'Enter') checkPin() }}

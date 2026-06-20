@@ -75,6 +75,7 @@ export function MapPicker({ lat, lng, address, onChange, onCityChange }: MapPick
       <div style={{ display: 'flex', gap: 7, alignItems: 'center' }}>
         <input
           type="text"
+          aria-label="Adresa (rruga, qyteti, zona)"
           placeholder="Shkruaj adresën (rruga, qyteti, zona)..."
           value={input}
           onChange={handleInput}
