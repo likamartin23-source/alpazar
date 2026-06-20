@@ -22,7 +22,7 @@ export function isOnline(lastSeen?: string | null): boolean {
   return Date.now() - new Date(lastSeen).getTime() < 3 * 60 * 1000
 }
 
-type Badge = { label: string; bg: string; color: string }
+type Badge = { icon: string; text: string; bg: string; color: string }
 
 export type BadgeInput = {
   is_admin?: boolean
@@ -40,19 +40,19 @@ export type BadgeInput = {
 
 export function buildBadges(p: BadgeInput): Badge[] {
   const out: Badge[] = []
-  if (p.is_admin)    out.push({ label: '🛡 Admin',      bg: '#F3ECFE', color: '#7C3AED' })
-  if (p.is_verified) out.push({ label: '✓ Verifikuar',  bg: '#EAF3DE', color: '#3B6D11' })
-  if (p.is_premium)  out.push({ label: '👑 Premium',    bg: '#FEF6DA', color: '#A87900' })
-  if (p.shop_name)   out.push({ label: '🏢 Biznes',      bg: '#E7F8F1', color: '#0B8A5A' })
+  if (p.is_admin)    out.push({ icon: '🛡', text: 'Admin',        bg: '#F3ECFE', color: '#7C3AED' })
+  if (p.is_verified) out.push({ icon: '✓', text: 'Verifikuar',    bg: '#EAF3DE', color: '#3B6D11' })
+  if (p.is_premium)  out.push({ icon: '👑', text: 'Premium',      bg: '#FEF6DA', color: '#A87900' })
+  if (p.shop_name)   out.push({ icon: '🏢', text: 'Biznes',       bg: '#E7F8F1', color: '#0B8A5A' })
   if ((p.reviews_count ?? 0) > 0 && (p.seller_rating ?? 0) > 0) {
-    out.push({ label: `⭐ ${Number(p.seller_rating).toFixed(1)} (${p.reviews_count})`, bg: '#FEF6DA', color: '#A87900' })
+    out.push({ icon: '⭐', text: `${Number(p.seller_rating).toFixed(1)} (${p.reviews_count})`, bg: '#FEF6DA', color: '#A87900' })
   }
   if (p.showLevel) {
     const lvl = getLevel(p.gamification_points || 0)
-    out.push({ label: `${lvl.icon} ${lvl.name}`, bg: lvl.bg, color: lvl.color })
+    out.push({ icon: lvl.icon, text: lvl.name, bg: lvl.bg, color: lvl.color })
   }
-  if ((p.activeListings ?? 0) > 0) out.push({ label: '📦 Shitës aktiv', bg: '#EEF4FF', color: '#185FA5' })
-  if (isNewMember(p.created_at))   out.push({ label: '🆕 Anëtar i ri',  bg: '#FFF4E5', color: '#B45309' })
+  if ((p.activeListings ?? 0) > 0) out.push({ icon: '📦', text: 'Shitës aktiv', bg: '#EEF4FF', color: '#185FA5' })
+  if (isNewMember(p.created_at))   out.push({ icon: '🆕', text: 'Anëtar i ri',  bg: '#FFF4E5', color: '#B45309' })
   return out
 }
 
@@ -68,7 +68,7 @@ export function UserBadges({ profile, size = 'md', max }: { profile: BadgeInput;
         <span key={i} style={{
           fontSize: fs, padding: pad, borderRadius: 12, fontWeight: 700,
           background: b.bg, color: b.color, whiteSpace: 'nowrap', lineHeight: 1.3,
-        }}>{b.label}</span>
+        }}><span aria-hidden="true">{b.icon}</span>{' '}{b.text}</span>
       ))}
     </div>
   )

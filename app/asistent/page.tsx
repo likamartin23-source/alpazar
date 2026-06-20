@@ -302,7 +302,7 @@ export default function AsistentPage() {
             <div className="web-banner">
               <div className="wb-icon" aria-hidden="true"><i className="ti ti-device-mobile" /></div>
               <div className="wb-text">
-                <strong>📲 Instalo si App</strong>
+                <strong><span aria-hidden="true">📲</span> Instalo si App</strong>
                 <span>Akses më i shpejtë · Pa browser · Offline</span>
               </div>
               <button type="button" className="wb-btn" onClick={() => window.location.href = '/'}>Shko →</button>

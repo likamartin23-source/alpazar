@@ -85,7 +85,7 @@ export function Onboarding() {
 
         {step === 2 && (
           <>
-            <div style={{ fontSize: 22, fontWeight: 800, color: '#111', textAlign: 'center', marginBottom: 8 }}>Gati? 🚀</div>
+            <div style={{ fontSize: 22, fontWeight: 800, color: '#111', textAlign: 'center', marginBottom: 8 }}>Gati? <span aria-hidden="true">🚀</span></div>
             <div style={{ fontSize: 13, color: '#888', textAlign: 'center', marginBottom: 24 }}>Zgjidh si dëshiron të fillosh</div>
             <button type="button" onClick={() => { close(); window.location.href = '/listing/new' }} style={{ width: '100%', background: '#E63312', color: '#fff', border: 'none', borderRadius: 12, padding: 14, fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', marginBottom: 10 }}><span aria-hidden="true">➕</span> Shto shpalljen e parë</button>
             <button type="button" onClick={() => { close(); window.location.href = '/search' }} style={{ width: '100%', background: '#F5C842', color: '#111', border: 'none', borderRadius: 12, padding: 14, fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', marginBottom: 10 }}><span aria-hidden="true">🔍</span> Eksploro</button>

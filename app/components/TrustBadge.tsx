@@ -48,7 +48,7 @@ export function TrustBadge({ createdAt, listingsActive, gamificationPoints = 0, 
         borderRadius: 9, padding: '2px 8px',
         fontSize: 9.5, fontWeight: 700,
       }}>
-        {level.icon} {level.label}
+        <span aria-hidden="true">{level.icon}</span> {level.label}
       </span>
     )
   }
@@ -81,7 +81,7 @@ export function TrustBadge({ createdAt, listingsActive, gamificationPoints = 0, 
 
       <div>
         <div style={{ fontSize: 11, fontWeight: 700, color: level.color }}>
-          {level.icon} {level.label}
+          <span aria-hidden="true">{level.icon}</span> {level.label}
         </div>
         <div style={{ fontSize: 10, color: '#888', marginTop: 2 }}>
           Trust Score {score}/100

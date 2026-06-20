@@ -637,7 +637,7 @@ export default function ProfilePage() {
                   <span className="card-title">Informacioni personal</span>
                   {editing
                     ? <button type="button" className="save-btn" onClick={saveProfile} disabled={saving}>{saving ? '⏳' : 'Ruaj'}</button>
-                    : <button type="button" className="edit-btn" onClick={() => setEditing(true)}>✏️ Ndrysho</button>
+                    : <button type="button" className="edit-btn" onClick={() => setEditing(true)}><span aria-hidden="true">✏️</span> Ndrysho</button>
                   }
                 </div>
 
@@ -698,7 +698,7 @@ export default function ProfilePage() {
               {/* ── Trust Score — Kundërshtim Profilizimit (Ligj 124/2024 n.19) ── */}
               <div className="card">
                 <div className="card-hdr">
-                  <span className="card-title">🔵 Trust Score — Privatësia</span>
+                  <span className="card-title"><span aria-hidden="true">🔵</span> Trust Score — Privatësia</span>
                 </div>
                 <p style={{ fontSize: 12, color: '#555', lineHeight: 1.6, marginBottom: 12 }}>
                   <strong>Ç'është Trust Score?</strong> Është një vlerë 0–100 që tregon besueshmërinë
@@ -741,7 +741,7 @@ export default function ProfilePage() {
               {/* ── Marketing Opt-in (GDPR Art.7) ── */}
               <div className="card">
                 <div className="card-hdr">
-                  <span className="card-title">📢 Komunikim Marketing</span>
+                  <span className="card-title"><span aria-hidden="true">📢</span> Komunikim Marketing</span>
                 </div>
                 <p style={{ fontSize: 12, color: '#666', marginBottom: 10, lineHeight: 1.6 }}>
                   Zgjidhni nëse doni të merrni oferta speciale, lajme dhe këshilla nga Alpazar. Mund ta ndryshoni kurdo. (GDPR Art.7)
@@ -917,7 +917,7 @@ export default function ProfilePage() {
                           onClick={() => bumpListing(l.id)}
                           aria-label="Rifresko shpalljen"
                           style={{ fontSize: 13 }}
-                        >⬆️</button>
+                        ><span aria-hidden="true">⬆️</span></button>
                       ) : (
                         <span title={`Mund ta rifreskosh pas ${bumpDaysLeft(l.last_bumped_at)} ditësh`} style={{ fontSize: 10, color: '#aaa', padding: '0 4px', cursor: 'default' }}>{bumpDaysLeft(l.last_bumped_at)}d</span>
                       )}
@@ -1086,7 +1086,7 @@ export default function ProfilePage() {
                     <div className="shop-preview">
                       <div className="shop-preview-icon"><i className="ti ti-building-store" aria-hidden="true" /></div>
                       <div className="shop-preview-text">
-                        <strong>🏪 {profile.shop_name}</strong>
+                        <strong><span aria-hidden="true">🏪</span> {profile.shop_name}</strong>
                         <span>{profile.shop_description?.slice(0, 60) || 'Biznes premium i verifikuar'}...</span>
                       </div>
                       <button type="button" className="shop-preview-btn" onClick={() => window.location.href = `/biznese/${user.id}`}>

@@ -562,7 +562,7 @@ const [searchError, setSearchError] = useState(false)
               {/* ── SECTION 1: SHOPS ── */}
               <div className="section">
                 <div className="section-hdr">
-                  <span className="section-icon">🏪</span>
+                  <span className="section-icon" aria-hidden="true">🏪</span>
                   <h2>Bizneset</h2>
                   <span className="section-count">{shops.length}</span>
                 </div>
