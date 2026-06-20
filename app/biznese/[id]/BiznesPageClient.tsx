@@ -277,20 +277,20 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
 
       {/* ── Sticky tabs ──────────────────────────────────────── */}
       <div role="tablist" aria-label="Seksionet e biznesit" style={{ position: 'sticky', top: 0, zIndex: 10, background: '#fff', borderBottom: '1px solid #eee', display: 'flex', marginBottom: 2 }}>
-        <button type="button" role="tab" aria-selected={activeTab === 'grid'} className={`biz-tab ${activeTab === 'grid' ? 'active' : ''}`} onClick={() => setActiveTab('grid')}>
+        <button id="tab-grid" type="button" role="tab" aria-selected={activeTab === 'grid'} aria-controls="tabpanel-grid" className={`biz-tab ${activeTab === 'grid' ? 'active' : ''}`} onClick={() => setActiveTab('grid')}>
           <i className="ti ti-layout-grid" style={{ fontSize: 14 }} aria-hidden="true" /> Shpalljet
         </button>
-        <button type="button" role="tab" aria-selected={activeTab === 'info'} className={`biz-tab ${activeTab === 'info' ? 'active' : ''}`} onClick={() => setActiveTab('info')}>
+        <button id="tab-info" type="button" role="tab" aria-selected={activeTab === 'info'} aria-controls="tabpanel-info" className={`biz-tab ${activeTab === 'info' ? 'active' : ''}`} onClick={() => setActiveTab('info')}>
           <i className="ti ti-info-circle" style={{ fontSize: 14 }} aria-hidden="true" /> Info
         </button>
-        <button type="button" role="tab" aria-selected={activeTab === 'reviews'} className={`biz-tab ${activeTab === 'reviews' ? 'active' : ''}`} onClick={() => setActiveTab('reviews')}>
+        <button id="tab-reviews" type="button" role="tab" aria-selected={activeTab === 'reviews'} aria-controls="tabpanel-reviews" className={`biz-tab ${activeTab === 'reviews' ? 'active' : ''}`} onClick={() => setActiveTab('reviews')}>
           <i className="ti ti-star" style={{ fontSize: 14 }} aria-hidden="true" /> Vlerësime
         </button>
       </div>
 
       {/* ── Instagram grid tab ───────────────────────────────── */}
       {activeTab === 'grid' && (
-        <>
+        <div id="tabpanel-grid" role="tabpanel" aria-labelledby="tab-grid">
           {listings.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '48px 16px', color: '#aaa', background: '#fff' }}>
               <div style={{ fontSize: 48, marginBottom: 12 }}>🛍️</div>
@@ -322,12 +322,12 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
           <div style={{ textAlign: 'center', padding: '14px 0', fontSize: 11, color: '#bbb' }}>
             {listings.length} shpallje aktive ♾️
           </div>
-        </>
+        </div>
       )}
 
       {/* ── Info tab ─────────────────────────────────────────── */}
       {activeTab === 'info' && (
-        <div style={{ padding: '8px 0' }}>
+        <div id="tabpanel-info" role="tabpanel" aria-labelledby="tab-info" style={{ padding: '8px 0' }}>
           <div className="card">
             <div className="card-title"><i className="ti ti-building-store" style={{ fontSize: 16, color: '#E63312' }} aria-hidden="true" /> Rreth biznesit</div>
             {biz.description
@@ -427,7 +427,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
 
       {/* ── Reviews tab ──────────────────────────────────────── */}
       {activeTab === 'reviews' && (
-        <div style={{ background: '#fff', margin: 8, borderRadius: 16, padding: '40px 16px', textAlign: 'center' }}>
+        <div id="tabpanel-reviews" role="tabpanel" aria-labelledby="tab-reviews" style={{ background: '#fff', margin: 8, borderRadius: 16, padding: '40px 16px', textAlign: 'center' }}>
           <div style={{ fontSize: 44, marginBottom: 14 }}>⭐</div>
           <div style={{ fontSize: 16, fontWeight: 800, color: '#111', marginBottom: 6 }}>Vlerësimet vijnë së shpejti</div>
           <div style={{ fontSize: 12, color: '#888', lineHeight: 1.6 }}>Klientët do të mund të lënë vlerësime<br />për shërbimin dhe produktet e biznesit.</div>

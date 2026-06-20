@@ -598,28 +598,28 @@ export default function ProfilePage() {
 
         {/* Tabs */}
         <div className="tabs" role="tablist" aria-label="Seksionet e profilit">
-          <button type="button" role="tab" aria-selected={activeTab === 'profile'} className={`tab ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => setActiveTab('profile')}>
+          <button id="tab-profile" type="button" role="tab" aria-selected={activeTab === 'profile'} aria-controls="tabpanel-profile" className={`tab ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => setActiveTab('profile')}>
             <i className="ti ti-user" aria-hidden="true" />Profili
           </button>
-          <button type="button" role="tab" aria-selected={activeTab === 'listings'} className={`tab ${activeTab === 'listings' ? 'active' : ''}`} onClick={() => setActiveTab('listings')}>
+          <button id="tab-listings" type="button" role="tab" aria-selected={activeTab === 'listings'} aria-controls="tabpanel-listings" className={`tab ${activeTab === 'listings' ? 'active' : ''}`} onClick={() => setActiveTab('listings')}>
             <i className="ti ti-package" aria-hidden="true" />Shpalljet
           </button>
-          <button type="button" role="tab" aria-selected={activeTab === 'saved'} className={`tab ${activeTab === 'saved' ? 'active' : ''}`} onClick={() => setActiveTab('saved')}>
+          <button id="tab-saved" type="button" role="tab" aria-selected={activeTab === 'saved'} aria-controls="tabpanel-saved" className={`tab ${activeTab === 'saved' ? 'active' : ''}`} onClick={() => setActiveTab('saved')}>
             <i className="ti ti-heart" aria-hidden="true" />Të ruajtura
           </button>
-          <button type="button" role="tab" aria-selected={activeTab === 'messages'} className={`tab ${activeTab === 'messages' ? 'active' : ''}`} onClick={() => setActiveTab('messages')}>
+          <button id="tab-messages" type="button" role="tab" aria-selected={activeTab === 'messages'} aria-controls="tabpanel-messages" className={`tab ${activeTab === 'messages' ? 'active' : ''}`} onClick={() => setActiveTab('messages')}>
             <i className="ti ti-message-circle" aria-hidden="true" />
             Mesazhet
             {conversations.some(c => c.unread > 0) && (
               <span className="tab-badge">{conversations.reduce((s, c) => s + c.unread, 0)}</span>
             )}
           </button>
-          <button type="button" role="tab" aria-selected={activeTab === 'shop'} className={`tab ${activeTab === 'shop' ? 'active' : ''}`} onClick={() => setActiveTab('shop')}>
+          <button id="tab-shop" type="button" role="tab" aria-selected={activeTab === 'shop'} aria-controls="tabpanel-shop" className={`tab ${activeTab === 'shop' ? 'active' : ''}`} onClick={() => setActiveTab('shop')}>
             <i className="ti ti-building-store" aria-hidden="true" />Biznes
           </button>
         </div>
 
-        <div className="body">
+        <div id={`tabpanel-${activeTab}`} role="tabpanel" aria-labelledby={`tab-${activeTab}`} className="body">
 
           {/* Profile Tab */}
           {activeTab === 'profile' && (

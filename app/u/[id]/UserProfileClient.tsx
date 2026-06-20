@@ -197,9 +197,11 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
         {tabs.map(t => (
           <button
             key={t.key}
+            id={`tab-${t.key}`}
             type="button"
             role="tab"
             aria-selected={activeTab === t.key}
+            aria-controls={`tabpanel-${t.key}`}
             onClick={() => setActiveTab(t.key as any)}
             style={{ flex: 1, padding: '14px 8px', border: 'none', background: 'transparent', fontWeight: activeTab === t.key ? 800 : 500, fontSize: 13, color: activeTab === t.key ? '#E63312' : '#666', borderBottom: activeTab === t.key ? '2px solid #E63312' : '2px solid transparent', cursor: 'pointer', transition: 'all .15s' }}
           >
@@ -210,7 +212,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
 
       {/* Listings grid tab */}
       {activeTab === 'listings' && (
-        <div style={{ padding: '0 2px' }}>
+        <div id="tabpanel-listings" role="tabpanel" aria-labelledby="tab-listings" style={{ padding: '0 2px' }}>
           {listings.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '48px 16px', color: '#888', fontSize: 14 }}>
               <div style={{ fontSize: 36, marginBottom: 8 }}>📭</div>
@@ -261,7 +263,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
 
       {/* About tab */}
       {activeTab === 'about' && (
-        <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div id="tabpanel-about" role="tabpanel" aria-labelledby="tab-about" style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
           {profile.bio && (
             <div style={{ background: '#fff', borderRadius: 14, padding: 16, boxShadow: '0 1px 6px rgba(0,0,0,.06)' }}>
               <div style={{ fontWeight: 700, fontSize: 13, color: '#888', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5 }}>Për Mua</div>
