@@ -283,7 +283,7 @@ export default function AsistentPage() {
 
       <div className="page">
         <div className="header">
-          <button className="back-btn" aria-label="Kthehu mbrapa" onClick={() => window.history.length > 1 ? window.history.back() : window.location.href = '/'}>
+          <button type="button" className="back-btn" aria-label="Kthehu mbrapa" onClick={() => window.history.length > 1 ? window.history.back() : window.location.href = '/'}>
             <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
           <div className="ai-avatar" aria-hidden="true"><i className="ti ti-robot" /></div>
@@ -294,7 +294,7 @@ export default function AsistentPage() {
               {loading || streamingIdx !== null ? 'Duke shkruar...' : 'Online 24/7 · ALPAZAR'}
             </div>
           </div>
-          <button className="clear-btn" onClick={clearChat}>🗑 Pastro</button>
+          <button type="button" className="clear-btn" aria-label="Pastro bisedën" onClick={clearChat}>🗑 Pastro</button>
         </div>
 
         <div className="msgs" ref={msgsRef}>
@@ -305,7 +305,7 @@ export default function AsistentPage() {
                 <strong>📲 Instalo si App</strong>
                 <span>Akses më i shpejtë · Pa browser · Offline</span>
               </div>
-              <button className="wb-btn" onClick={() => window.location.href = '/'}>Shko →</button>
+              <button type="button" className="wb-btn" onClick={() => window.location.href = '/'}>Shko →</button>
             </div>
           )}
 
@@ -344,7 +344,7 @@ export default function AsistentPage() {
             <div className="quick-label">Pyetje të shpejta</div>
             <div className="quick-grid">
               {QUICK_ACTIONS.map(q => (
-                <button key={q.label} className="quick-btn" onClick={() => sendMessage(q.msg)}>
+                <button key={q.label} type="button" className="quick-btn" onClick={() => sendMessage(q.msg)}>
                   {q.label}
                 </button>
               ))}
@@ -369,7 +369,7 @@ export default function AsistentPage() {
                 onKeyDown={handleKey}
               />
             </div>
-            <button className="send-btn" aria-label="Dërgo mesazhin" onClick={() => sendMessage()} disabled={!input.trim() || loading || streamingIdx !== null}>
+            <button type="button" className="send-btn" aria-label="Dërgo mesazhin" onClick={() => sendMessage()} disabled={!input.trim() || loading || streamingIdx !== null}>
               <i className="ti ti-send" aria-hidden="true" />
             </button>
           </div>

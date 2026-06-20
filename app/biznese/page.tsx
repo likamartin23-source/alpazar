@@ -49,7 +49,7 @@ export default function BiznestPage() {
     <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh', paddingBottom: 80, fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
       {/* Header */}
       <div style={{ background: 'linear-gradient(180deg,#F5C842,#f0bc30)', padding: '14px 16px 16px' }}>
-        <button aria-label="Kthehu mbrapa" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', marginBottom: 10, padding: 0 }}>
+        <button type="button" aria-label="Kthehu mbrapa" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', marginBottom: 10, padding: 0 }}>
           <i className="ti ti-arrow-left" aria-hidden="true" style={{ fontSize: 22, color: '#111' }} />
         </button>
         <h1 style={{ fontSize: 22, fontWeight: 800, color: '#111', margin: '0 0 4px' }}>🏢 Bizneset</h1>
@@ -74,6 +74,8 @@ export default function BiznestPage() {
           ].map(f => (
             <button
               key={f.key}
+              type="button"
+              aria-pressed={typeFilter === f.key}
               onClick={() => setTypeFilter(f.key)}
               style={{ flexShrink: 0, padding: '6px 14px', background: typeFilter === f.key ? '#111' : '#f0f0f0', color: typeFilter === f.key ? '#F5C842' : '#555', border: 'none', borderRadius: 20, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}
             >
@@ -98,7 +100,7 @@ export default function BiznestPage() {
           <div style={{ textAlign: 'center', padding: '60px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
             <div style={{ fontSize: 40 }}>⚠️</div>
             <div style={{ fontSize: 14, fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
-            <button onClick={() => window.location.reload()} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 8, padding: '9px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
+            <button type="button" onClick={() => window.location.reload()} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 8, padding: '9px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
           </div>
         ) : loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -117,7 +119,7 @@ export default function BiznestPage() {
             <div style={{ fontSize: 40, marginBottom: 10 }}>🏢</div>
             <div style={{ fontSize: 14, fontWeight: 600 }}>{search || typeFilter ? 'Asnjë biznes nuk përputhet' : 'Asnjë biznes ende'}</div>
             {(search || typeFilter) && (
-              <button onClick={() => { setSearch(''); setTypeFilter('') }} style={{ marginTop: 12, background: '#F5C842', border: 'none', borderRadius: 10, padding: '8px 20px', fontWeight: 700, fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>
+              <button type="button" onClick={() => { setSearch(''); setTypeFilter('') }} style={{ marginTop: 12, background: '#F5C842', border: 'none', borderRadius: 10, padding: '8px 20px', fontWeight: 700, fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>
                 Pastro filtrat
               </button>
             )}

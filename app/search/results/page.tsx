@@ -469,7 +469,7 @@ const [searchError, setSearchError] = useState(false)
       <div className="wrap">
         {/* ── TOP BAR ── */}
         <div className="topbar">
-          <button className="back" aria-label="Kthehu te kërkimi" onClick={() => window.location.href = '/search'}>
+          <button type="button" className="back" aria-label="Kthehu te kërkimi" onClick={() => window.location.href = '/search'}>
             <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
           <form className="search-wrap" onSubmit={newSearch} style={{ flex: 1 }}>
@@ -481,7 +481,7 @@ const [searchError, setSearchError] = useState(false)
               onChange={e => setQ(e.target.value)}
             />
           </form>
-          <button className="filter-btn" aria-label="Hap filtrat" onClick={() => setFiltersOpen(true)}>
+          <button type="button" className="filter-btn" aria-label="Hap filtrat" aria-expanded={filtersOpen} onClick={() => setFiltersOpen(true)}>
             <i className="ti ti-adjustments-horizontal" aria-hidden="true" />
             {activeFilterCount > 0 && <span className="filter-badge">{activeFilterCount}</span>}
           </button>
@@ -489,12 +489,14 @@ const [searchError, setSearchError] = useState(false)
 
         {/* ── CATEGORY CHIPS ── */}
         <div className="cats">
-          <button className={`cb ${!catFilter ? 'on' : ''}`}
+          <button type="button" aria-pressed={!catFilter} className={`cb ${!catFilter ? 'on' : ''}`}
             onClick={() => { setCatFilter(''); doSearch(q, '', condFilter, cityFilter, priceMin, priceMax) }}>
             Të gjitha
           </button>
           {categories.map(c => (
             <button key={c.id}
+              type="button"
+              aria-pressed={catFilter === c.id}
               className={`cb ${catFilter === c.id ? 'on' : ''}`}
               onClick={() => { setCatFilter(c.id); doSearch(q, c.id, condFilter, cityFilter, priceMin, priceMax) }}>
               {c.name}
@@ -523,7 +525,7 @@ const [searchError, setSearchError] = useState(false)
             <div style={{ textAlign: 'center', padding: '48px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
               <div style={{ fontSize: 36 }}>⚠️</div>
               <div style={{ fontWeight: 700, color: '#111' }}>Gabim gjatë kërkimit</div>
-              <button onClick={() => doSearch()} style={{ background: '#F5C842', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Provo Përsëri</button>
+              <button type="button" onClick={() => doSearch()} style={{ background: '#F5C842', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Provo Përsëri</button>
             </div>
           ) : loading ? (
             <SkeletonGrid count={6} />
@@ -538,6 +540,7 @@ const [searchError, setSearchError] = useState(false)
                 </span>
                 {(q || activeFilterCount > 0) && (
                   <button
+                    type="button"
                     onClick={saveSearch}
                     aria-label="Ruaj këtë kërkim"
                     style={{
@@ -605,6 +608,7 @@ const [searchError, setSearchError] = useState(false)
                 {hasMore && (
                   <div style={{ textAlign: 'center', padding: '16px 0' }}>
                     <button
+                      type="button"
                       onClick={loadMore}
                       disabled={loadingMore}
                       style={{ background: '#111', color: '#F5C842', border: 'none', borderRadius: 24, padding: '11px 28px', fontWeight: 700, fontSize: 13, cursor: loadingMore ? 'not-allowed' : 'pointer', fontFamily: 'inherit', opacity: loadingMore ? 0.7 : 1 }}
@@ -662,13 +666,13 @@ const [searchError, setSearchError] = useState(false)
             <div className="fp-row">
               <span className="fp-label">Gjendja</span>
               <div className="cond-row">
-                <button className={`cond-btn ${condFilter === '' ? 'active' : ''}`}
+                <button type="button" aria-pressed={condFilter === ''} className={`cond-btn ${condFilter === '' ? 'active' : ''}`}
                   onClick={() => setCondFilter('')}>Të gjitha</button>
-                <button className={`cond-btn ${condFilter === 'i_ri' ? 'active' : ''}`}
+                <button type="button" aria-pressed={condFilter === 'i_ri'} className={`cond-btn ${condFilter === 'i_ri' ? 'active' : ''}`}
                   onClick={() => setCondFilter(condFilter === 'i_ri' ? '' : 'i_ri')}>I ri</button>
-                <button className={`cond-btn ${condFilter === 'i_mire' ? 'active' : ''}`}
+                <button type="button" aria-pressed={condFilter === 'i_mire'} className={`cond-btn ${condFilter === 'i_mire' ? 'active' : ''}`}
                   onClick={() => setCondFilter(condFilter === 'i_mire' ? '' : 'i_mire')}>I mirë</button>
-                <button className={`cond-btn ${condFilter === 'i_perdorur' ? 'active' : ''}`}
+                <button type="button" aria-pressed={condFilter === 'i_perdorur'} className={`cond-btn ${condFilter === 'i_perdorur' ? 'active' : ''}`}
                   onClick={() => setCondFilter(condFilter === 'i_perdorur' ? '' : 'i_perdorur')}>I përdorur</button>
               </div>
             </div>
@@ -704,6 +708,7 @@ const [searchError, setSearchError] = useState(false)
                   { v: 'views',      label: '👁 Shikimet' },
                 ].map(o => (
                   <button key={o.v}
+                    type="button"
                     className={`cond-btn ${sortBy === o.v ? 'active' : ''}`}
                     aria-pressed={sortBy === o.v}
                     onClick={() => setSortBy(o.v)}>
@@ -714,10 +719,10 @@ const [searchError, setSearchError] = useState(false)
             </div>
 
             <div className="fp-actions">
-              <button className="fp-clear" onClick={() => { clearFilters(); setFiltersOpen(false) }}>
+              <button type="button" className="fp-clear" onClick={() => { clearFilters(); setFiltersOpen(false) }}>
                 Pastro
               </button>
-              <button className="fp-apply" onClick={applyFilters}>
+              <button type="button" className="fp-apply" onClick={applyFilters}>
                 Apliko filtrat {activeFilterCount > 0 && `(${activeFilterCount})`}
               </button>
             </div>
@@ -728,6 +733,7 @@ const [searchError, setSearchError] = useState(false)
       {/* Scroll to top button */}
       {showScrollTop && (
         <button
+          type="button"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           style={{ position: 'fixed', bottom: 80, right: 16, width: 42, height: 42, borderRadius: '50%', background: '#111', color: '#F5C842', border: 'none', boxShadow: '0 2px 12px rgba(0,0,0,.25)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, zIndex: 99 }}
           aria-label="Kthehu në krye"

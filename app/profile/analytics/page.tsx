@@ -104,7 +104,7 @@ const [loadError, setLoadError] = useState(false)
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: 12, fontFamily: "'Segoe UI',sans-serif" }}>
       <div style={{ fontSize: 36 }}>⚠️</div>
       <div style={{ fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
-      <button onClick={() => { setLoadError(false); changePeriod(period) }} style={{ background: '#F5C842', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Rifresko</button>
+      <button type="button" onClick={() => { setLoadError(false); changePeriod(period) }} style={{ background: '#F5C842', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Rifresko</button>
     </div>
   )
 
@@ -145,7 +145,7 @@ const [loadError, setLoadError] = useState(false)
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
 
       <div className="topbar">
-        <button className="back-btn" aria-label="Kthehu në profil" onClick={() => window.location.href = '/profile'}>
+        <button type="button" className="back-btn" aria-label="Kthehu në profil" onClick={() => window.location.href = '/profile'}>
           <i className="ti ti-arrow-left" style={{ fontSize: 16 }} aria-hidden="true" />
         </button>
         <h1 style={{ fontWeight: 800, fontSize: 16, color: '#111', margin: 0 }}>Statistikat e Shpalljeve</h1>
@@ -154,7 +154,7 @@ const [loadError, setLoadError] = useState(false)
       {/* Period selector */}
       <div className="period-row">
         {PERIODS.map(p => (
-          <button key={p.days} className={`period-btn${period === p.days ? ' active' : ''}`} aria-pressed={period === p.days} onClick={() => changePeriod(p.days)}>
+          <button key={p.days} type="button" className={`period-btn${period === p.days ? ' active' : ''}`} aria-pressed={period === p.days} onClick={() => changePeriod(p.days)}>
             {p.label}
           </button>
         ))}
