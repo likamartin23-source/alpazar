@@ -902,10 +902,10 @@ export default function Home() {
           <button type="button" className="nav-add" aria-label="Shto shpallje të re" onClick={() => go(user ? '/listing/new' : '/auth/login')}>
             <i className="ti ti-plus" aria-hidden="true" />
           </button>
-          <button type="button" className="nav-item" onClick={() => go(user ? '/messages' : '/auth/login')} style={{ position: 'relative' }}>
+          <button type="button" className="nav-item" onClick={() => go(user ? '/messages' : '/auth/login')} style={{ position: 'relative' }} aria-label={unreadCount > 0 ? `Mesazhe (${unreadCount > 9 ? '9+' : unreadCount} të palexuara)` : 'Mesazhe'}>
             <i className="ti ti-message-circle" aria-hidden="true" />
-            {unreadCount > 0 && <span className="nav-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>}
-            <span>Mesazhe</span>
+            {unreadCount > 0 && <span className="nav-badge" aria-hidden="true">{unreadCount > 9 ? '9+' : unreadCount}</span>}
+            <span aria-hidden="true">Mesazhe</span>
           </button>
           <button type="button" className="nav-item" onClick={() => go(user ? '/profile' : '/auth/login')} style={{ position: 'relative' }}>
             <i className="ti ti-user-circle" aria-hidden="true" />
