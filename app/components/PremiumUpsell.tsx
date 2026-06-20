@@ -91,7 +91,7 @@ export function PremiumUpsellModal({
         .ups-skip{width:100%;background:none;border:none;color:#aaa;font-size:12px;cursor:pointer;font-family:inherit;padding:4px;}
       `}</style>
       <div className="ups-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative' }}>
-        <button className="ups-close" aria-label="Mbyll" onClick={close}>✕</button>
+        <button type="button" className="ups-close" aria-label="Mbyll" onClick={close}>✕</button>
         <span className="ups-crown">👑</span>
         <div className="ups-h">Bëhu Premium Sot!</div>
         <div className="ups-sub">
@@ -125,10 +125,10 @@ export function PremiumUpsellModal({
             </div>
           )}
         </div>
-        <button className="ups-cta" onClick={() => { window.location.href = '/premium'; close() }}>
+        <button type="button" className="ups-cta" onClick={() => { window.location.href = '/premium'; close() }}>
           👑 Aktivizo Premium Tani
         </button>
-        <button className="ups-skip" onClick={close}>Tani jo, ndoshta më vonë</button>
+        <button type="button" className="ups-skip" onClick={close}>Tani jo, ndoshta më vonë</button>
       </div>
     </div>
   )
@@ -203,6 +203,7 @@ export function SellerPremiumUpsell({ isPremium, price = '9.99' }: { isPremium: 
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
         <button
+          type="button"
           onClick={() => window.location.href = '/premium'}
           style={{
             background: '#F5C842', color: '#111', border: 'none', borderRadius: 8,
@@ -211,7 +212,7 @@ export function SellerPremiumUpsell({ isPremium, price = '9.99' }: { isPremium: 
         >
           👑 {price}€/muaj
         </button>
-        <button onClick={() => setVisible(false)} style={{
+        <button type="button" onClick={() => setVisible(false)} style={{
           background: 'none', border: 'none', color: '#555', fontSize: 9, cursor: 'pointer',
         }}>Tani jo ✕</button>
       </div>
@@ -256,6 +257,7 @@ export function FreeTierBanner({
           Premium → shpallje të pakufizuara + biznes online
         </span>
         <button
+          type="button"
           onClick={() => window.location.href = '/premium'}
           style={{
             background: '#E63312', color: '#fff', border: 'none', borderRadius: 8,

@@ -247,6 +247,7 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
       {/* Native share — shown only on mobile/supported browsers */}
       {typeof navigator !== 'undefined' && 'share' in navigator && (
         <button
+          type="button"
           onClick={() => {
             navigator.share({ title: 'ALPAZAR', text: shareText, url: shareUrl })
               .then(() => { if (userId) logShare(userId, 'native', listingId, refCode) })
@@ -269,6 +270,8 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
         display: 'flex', background: '#f0f0f0', borderRadius: 10, padding: 3, gap: 3,
       }}>
         <button
+          type="button"
+          aria-pressed={mode === 'feed'}
           onClick={() => setMode('feed')}
           style={{
             flex: 1, border: 'none', borderRadius: 8, padding: '8px 4px',
@@ -281,6 +284,8 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
           📢 Statusi / Feed
         </button>
         <button
+          type="button"
+          aria-pressed={mode === 'msg'}
           onClick={() => setMode('msg')}
           style={{
             flex: 1, border: 'none', borderRadius: 8, padding: '8px 4px',
@@ -303,6 +308,8 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
           return (
             <button
               key={p.id}
+              type="button"
+              aria-label={p.label}
               onClick={() => handlePlatform(p)}
               style={{
                 background: isCopying ? '#EAF3DE' : p.bg,
@@ -339,6 +346,8 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
         }}>{shareUrl}</span>
         <button
+          type="button"
+          aria-label={linkCopied ? 'Linku u kopjua' : 'Kopjo linkun'}
           onClick={handleCopyLink}
           style={{
             background: linkCopied ? '#EAF3DE' : '#111',
