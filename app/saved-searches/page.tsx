@@ -106,6 +106,7 @@ export default function SavedSearchesPage() {
                         ))}
                       </div>
                       <button
+                        type="button"
                         onClick={() => runSearch(s)}
                         style={{ background: 'none', border: 'none', color: '#E63312', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', padding: 0 }}
                       >
@@ -114,6 +115,9 @@ export default function SavedSearchesPage() {
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <button
+                        type="button"
+                        role="switch"
+                        aria-checked={s.notify}
                         onClick={() => toggleNotify(s.id, s.notify)}
                         aria-label={s.notify ? 'Çaktivizo njoftime' : 'Aktivizo njoftime'}
                         style={{
@@ -128,6 +132,7 @@ export default function SavedSearchesPage() {
                         }} />
                       </button>
                       <button
+                        type="button"
                         onClick={() => deleteSearch(s.id)}
                         aria-label="Fshi kërkimin e ruajtur"
                         style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ccc', padding: 4 }}

@@ -71,7 +71,11 @@ export default function FavoritesPage() {
             return (
               <div
                 key={l.id}
+                role="link"
+                tabIndex={0}
+                aria-label={`${l.title} — ${price}`}
                 onClick={() => { window.location.href = `/listing/${l.id}` }}
+                onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/listing/${l.id}` }}
                 style={{ borderRadius: 14, overflow: 'hidden', background: '#fff', border: '1px solid #F0F0F0', boxShadow: '0 1px 8px rgba(0,0,0,.06)', cursor: 'pointer', position: 'relative' }}
               >
                 <div style={{ width: '100%', aspectRatio: '4/3', background: '#F6F6F6', position: 'relative', overflow: 'hidden' }}>

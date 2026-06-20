@@ -145,7 +145,7 @@ export default function PremiumPage() {
 
       <div className="wrap">
         <div className="topbar">
-          <button className="back" aria-label="Kthehu mbrapa" onClick={() => window.history.back()}>
+          <button type="button" className="back" aria-label="Kthehu mbrapa" onClick={() => window.history.back()}>
             <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
           <span className="topbar-title">👑 Premium</span>
@@ -168,7 +168,7 @@ export default function PremiumPage() {
 
           {msg && <div className={`msg-box ${mt}`} role="alert">{mm}</div>}
 
-          <div className="plan-row">
+          <div role="radiogroup" aria-label="Zgjidhni planin" className="plan-row">
             <div role="radio" aria-checked={plan === 'monthly'} tabIndex={0} className={`plan-card ${plan === 'monthly' ? 'active' : ''}`} onClick={() => setPlan('monthly')} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setPlan('monthly') }}>
               <div className="plan-label">MUJOR</div>
               <div className="plan-price">9.99€</div>
@@ -193,8 +193,8 @@ export default function PremiumPage() {
           </div>
 
           {payMethods.length > 0 && (
-            <div className="payment-card">
-              <div className="payment-title">Metoda e pagesës</div>
+            <div role="radiogroup" aria-labelledby="pm-label" className="payment-card">
+              <div className="payment-title" id="pm-label">Metoda e pagesës</div>
               {payMethods.map(m => {
                 const icons: Record<string, string> = { card: 'ti ti-credit-card', paypal: 'ti ti-brand-paypal', bank: 'ti ti-building-bank', mobile: 'ti ti-device-mobile' }
                 return (
@@ -208,7 +208,7 @@ export default function PremiumPage() {
             </div>
           )}
 
-          <button className="sub-btn" onClick={subscribe} disabled={submitting || (profile?.is_premium || false)}>
+          <button type="button" className="sub-btn" onClick={subscribe} disabled={submitting || (profile?.is_premium || false)}>
             {profile?.is_premium ? '✅ Tashmë Premium' : submitting ? '⏳ Duke dërguar...' : `🚀 Abonohem — ${plan === 'monthly' ? '9.99€/muaj' : '95.88€/vit'}`}
           </button>
 
