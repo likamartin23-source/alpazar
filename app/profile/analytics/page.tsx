@@ -102,7 +102,7 @@ const [loadError, setLoadError] = useState(false)
 
   if (loadError) return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: 12, fontFamily: "'Segoe UI',sans-serif" }}>
-      <div style={{ fontSize: 36 }}>⚠️</div>
+      <div style={{ fontSize: 36 }} aria-hidden="true">⚠️</div>
       <div style={{ fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
       <button type="button" onClick={() => { setLoadError(false); changePeriod(period) }} style={{ background: '#F5C842', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Rifresko</button>
     </div>
@@ -163,7 +163,7 @@ const [loadError, setLoadError] = useState(false)
       {!hasData ? (
         <div className="an-card" style={{ margin: '20px 12px' }}>
           <div className="empty-state">
-            <div style={{ fontSize: 48, marginBottom: 12 }}>📊</div>
+            <div style={{ fontSize: 48, marginBottom: 12 }} aria-hidden="true">📊</div>
             <div style={{ fontWeight: 700, color: '#333', marginBottom: 8 }}>Ende nuk ka statistika</div>
             <div style={{ fontSize: 13 }}>Publiko shpallje dhe prit të akumulohen pamjet.</div>
           </div>
@@ -176,15 +176,15 @@ const [loadError, setLoadError] = useState(false)
             <div className="stat-row">
               <div className="stat-box">
                 <div className="stat-num">{data.total_views.toLocaleString()}</div>
-                <div className="stat-lbl">👁 Pamje</div>
+                <div className="stat-lbl"><span aria-hidden="true">👁</span> Pamje</div>
               </div>
               <div className="stat-box">
                 <div className="stat-num">{data.total_contacts}</div>
-                <div className="stat-lbl">💬 Kontaktime</div>
+                <div className="stat-lbl"><span aria-hidden="true">💬</span> Kontaktime</div>
               </div>
               <div className="stat-box">
                 <div className="stat-num">{data.total_views > 0 ? Math.round((data.total_contacts / data.total_views) * 100) : 0}%</div>
-                <div className="stat-lbl">🎯 CTR</div>
+                <div className="stat-lbl"><span aria-hidden="true">🎯</span> CTR</div>
               </div>
             </div>
           </div>
