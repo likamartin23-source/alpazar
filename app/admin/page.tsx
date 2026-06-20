@@ -182,7 +182,7 @@ function AppConfigTab() {
   return (
     <>
       <div className="ph">
-        <div className="pt">⚙️ Konfigurimet Live</div>
+        <div className="pt"><span aria-hidden="true">⚙️</span> Konfigurimet Live</div>
         <div className="live-dot">● Transmetim Real-Time</div>
       </div>
 
@@ -243,7 +243,7 @@ function AppConfigTab() {
       </div>
 
       <div className="card" style={{ background: '#f9f9f9', border: '1px dashed #ddd' }}>
-        <div className="ct" style={{ color: '#888' }}>ℹ️ Si funksionon?</div>
+        <div className="ct" style={{ color: '#888' }}><span aria-hidden="true">ℹ️</span> Si funksionon?</div>
         <p style={{ fontSize: 11, color: '#888', lineHeight: 1.7 }}>
           Çdo ndryshim ruhet direkt në tabelën <code style={{ background: '#eee', padding: '1px 4px', borderRadius: 3 }}>app_config</code> të Supabase.
           Falë <strong>Supabase Realtime</strong>, të gjithë klientët e lidhur e marrin ndryshimin
@@ -389,7 +389,7 @@ function TakedownTab() {
 
   return (
     <>
-      <div className="ph"><div className="pt">⚖️ Heqja e Përmbajtjes (Notice &amp; Takedown)</div></div>
+      <div className="ph"><div className="pt"><span aria-hidden="true">⚖️</span> Heqja e Përmbajtjes (Notice &amp; Takedown)</div></div>
       <div className="card">
         <div className="ct">Kërkesat ({requests.filter(r => r.status === 'pending').length} të hapura)</div>
         {loading ? <p role="status" aria-live="polite" style={{ color:'#aaa', fontSize:12 }}>Duke ngarkuar...</p> :
@@ -614,7 +614,7 @@ export default function Admin() {
   if (mfaRequired) return (
     <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'#111', flexDirection:'column', gap:20 }}>
       <style>{`input[type=text]{background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:8px;padding:12px 16px;font-size:20px;letter-spacing:8px;text-align:center;width:180px;outline:none;font-family:monospace;}`}</style>
-      <div style={{ fontSize:32 }}>🔐</div>
+      <div style={{ fontSize:32 }} aria-hidden="true">🔐</div>
       <div style={{ color:'#F5C842', fontWeight:800, fontSize:16 }}>Verifikimi 2FA i Adminit</div>
       <div style={{ color:'#666', fontSize:12 }}>Fut kodin nga Google Authenticator / Authy</div>
       <input type="text" aria-label="Kodi 2FA (6 shifra)" inputMode="numeric" pattern="[0-9]*" autoComplete="one-time-code" maxLength={6} value={totpCode} onChange={e => setTotpCode(e.target.value.replace(/\D/g,''))} placeholder="000000" onKeyDown={e => e.key === 'Enter' && verifyAdminMfa()} autoFocus />
@@ -625,7 +625,7 @@ export default function Admin() {
 
   if (!authChecked) return (
     <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'#111', color:'#F5C842', fontFamily:'system-ui', gap:12 }}>
-      <span style={{ fontSize:24 }}>🔐</span> Duke verifikuar aksesin...
+      <span style={{ fontSize:24 }} aria-hidden="true">🔐</span> Duke verifikuar aksesin...
     </div>
   )
 
@@ -633,7 +633,7 @@ export default function Admin() {
     return (
       <div style={{ minHeight: '100dvh', background: '#FFFBEA', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
         <div style={{ background: '#fff', border: '1.5px solid #f0e6b0', borderRadius: 18, padding: 36, maxWidth: 340, width: '90%', textAlign: 'center' }}>
-          <div style={{ fontSize: 40, marginBottom: 12 }}>🔐</div>
+          <div style={{ fontSize: 40, marginBottom: 12 }} aria-hidden="true">🔐</div>
           <h2 style={{ fontSize: 18, fontWeight: 800, color: '#111', marginBottom: 6 }}>Admin PIN</h2>
           <p style={{ fontSize: 12, color: '#888', marginBottom: 20 }}>Fut kodin 6-shifror për të hyrë në panel</p>
           <input
@@ -765,7 +765,7 @@ export default function Admin() {
               {/* PAYMENTS */}
               {tab === 'payments' && (
                 <>
-                  <div className="ph"><div className="pt">💳 Pagesat</div></div>
+                  <div className="ph"><div className="pt"><span aria-hidden="true">💳</span> Pagesat</div></div>
                   {payMsg && (
                     <div style={{ background: '#FFF0EE', border: '0.5px solid #F09595', color: '#E63312', fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 8, margin: '8px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span style={{ flex: 1 }}><span aria-hidden="true">⚠️</span> {payMsg}</span>
@@ -802,7 +802,7 @@ export default function Admin() {
                               {r.status === 'pending' && (
                                 <>
                                   <button type="button" className="btn btn-green" onClick={() => handlePremiumRequest(r.id, 'approved', r.user_id, r.plan)}>✓ Aprovo</button>
-                                  <button type="button" className="btn btn-orange" onClick={() => handlePremiumRequest(r.id, 'gifted', r.user_id, r.plan)}>🎁 Dhuratë</button>
+                                  <button type="button" className="btn btn-orange" onClick={() => handlePremiumRequest(r.id, 'gifted', r.user_id, r.plan)}><span aria-hidden="true">🎁</span> Dhuratë</button>
                                   <button type="button" className="btn btn-red" onClick={() => handlePremiumRequest(r.id, 'rejected', r.user_id, r.plan)}>✕ Refuzo</button>
                                 </>
                               )}
@@ -828,9 +828,9 @@ export default function Admin() {
                               <td><span className={`badge ${p.status==='active'?'ba':p.status==='pending'?'bp':'bd'}`}>{p.status}</span></td>
                               <td style={{ color:'#888' }}>{new Date(p.created_at).toLocaleDateString('sq-AL')}</td>
                               <td>
-                                {p.status!=='active' && <button type="button" className="btn btn-green" onClick={() => updateStatus(p.id,'active',p.user_id)}>✓</button>}
-                                {p.status==='active' && <button type="button" className="btn btn-orange" onClick={() => updateStatus(p.id,'suspended',p.user_id)}>⏸</button>}
-                                <button type="button" className="btn btn-red" onClick={() => updateStatus(p.id,'cancelled',p.user_id)}>✕</button>
+                                {p.status!=='active' && <button type="button" aria-label="Aktivizo" className="btn btn-green" onClick={() => updateStatus(p.id,'active',p.user_id)}>✓</button>}
+                                {p.status==='active' && <button type="button" aria-label="Pezullo" className="btn btn-orange" onClick={() => updateStatus(p.id,'suspended',p.user_id)}>⏸</button>}
+                                <button type="button" aria-label="Anulo" className="btn btn-red" onClick={() => updateStatus(p.id,'cancelled',p.user_id)}>✕</button>
                               </td>
                             </tr>
                           ))
@@ -844,7 +844,7 @@ export default function Admin() {
               {/* PAYMENT METHODS */}
               {tab === 'methods' && (
                 <>
-                  <div className="ph"><div className="pt">💳 Metodat e Pagesës</div></div>
+                  <div className="ph"><div className="pt"><span aria-hidden="true">💳</span> Metodat e Pagesës</div></div>
                   <div className="card">
                     <div className="ct">Aktivizo / Çaktivizo</div>
                     {methods.map((m: any) => (

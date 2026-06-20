@@ -644,13 +644,13 @@ export default function Auth() {
 
   const contactHint = contact.length > 2
     ? cType === 'email'
-      ? <p className="hint ok">📧 Kodi konfirmimit dërgohet me <strong>email</strong></p>
+      ? <p className="hint ok"><span aria-hidden="true">📧</span> Kodi konfirmimit dërgohet me <strong>email</strong></p>
       : cType === 'phone'
         ? smsFailMode
-          ? <p className="hint ok">📧 Numri ruhet — kodi dërgohet me <strong>email</strong></p>
-          : <p className="hint ok">📱 Kodi konfirmimit dërgohet me <strong>SMS</strong></p>
+          ? <p className="hint ok"><span aria-hidden="true">📧</span> Numri ruhet — kodi dërgohet me <strong>email</strong></p>
+          : <p className="hint ok"><span aria-hidden="true">📱</span> Kodi konfirmimit dërgohet me <strong>SMS</strong></p>
         : <p className="hint warn">Fut email (user@domain.com) ose nr. telefoni (+355, +1, +44...)</p>
-    : <p className="hint">📧 Email &nbsp;·&nbsp; 📱 Çdo numër telefoni bote (+355, +1, +44...)</p>
+    : <p className="hint"><span aria-hidden="true">📧</span> Email &nbsp;·&nbsp; <span aria-hidden="true">📱</span> Çdo numër telefoni bote (+355, +1, +44...)</p>
 
   const Logo = (
     <div className="logo">
@@ -674,7 +674,7 @@ export default function Auth() {
 
   const OtpStep = (
     <>
-      <h2>🔐 Konfirmo Kodin</h2>
+      <h2><span aria-hidden="true">🔐</span> Konfirmo Kodin</h2>
       <p className="sub">
         Kodi 6-shifror u dërgua te<br />
         <strong>{resolvedId}</strong><br />
@@ -719,7 +719,7 @@ export default function Auth() {
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
           background:'#EEF4FF', border:'1px solid #85B7EB', borderRadius:8,
           padding:'8px 12px', marginBottom:10, fontSize:12 }}>
-          <span style={{ color:'#185FA5' }}>⏳ Duke verifikuar automatikisht në <strong>{autoSubmitIn.toFixed(1)}s</strong>…</span>
+          <span style={{ color:'#185FA5' }}><span aria-hidden="true">⏳</span> Duke verifikuar automatikisht në <strong>{autoSubmitIn.toFixed(1)}s</strong>…</span>
           <button type="button" onClick={cancelAutoSubmit}
             style={{ background:'none', border:'none', color:'#E63312', cursor:'pointer',
               fontWeight:700, fontSize:12, padding:'0 4px' }}>✕ Anulo</button>
@@ -754,7 +754,7 @@ export default function Auth() {
             maxWidth: 340, width: '90%', textAlign: 'center',
             boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
           }}>
-            <div style={{ fontSize: 52, marginBottom: 10 }}>🔞</div>
+            <div aria-hidden="true" style={{ fontSize: 52, marginBottom: 10 }}>🔞</div>
             <h2 style={{ fontSize: 18, fontWeight: 800, color: '#111', marginBottom: 8, margin: '0 0 8px' }}>
               Konfirmo moshën
             </h2>
@@ -895,7 +895,7 @@ export default function Auth() {
               ════════════════════════════════════════ */}
           {mode === 'register' && step === 'form' && (
             <>
-              <h2>📝 Regjistrohu Falas</h2>
+              <h2><span aria-hidden="true">📝</span> Regjistrohu Falas</h2>
               <p className="sub">Krijo llogarinë tënde — konfirmo me kod</p>
 
               <div className="row-2">
@@ -980,14 +980,14 @@ export default function Auth() {
               ) : (
                 <div className="sms-fail-box">
                   <div className="sms-fail-header">
-                    <span>📱</span>
+                    <span aria-hidden="true">📱</span>
                     <div>
                       <strong>SMS nuk funksionon për {originalPhone}</strong>
                       <p>Konfirmo regjistrimin me email — numri ruhet në profil.</p>
                     </div>
                   </div>
                   <div className="field" style={{ marginBottom: 10 }}>
-                    <label htmlFor="otp-email-1">📧 Emaili yt *</label>
+                    <label htmlFor="otp-email-1"><span aria-hidden="true">📧</span> Emaili yt *</label>
                     <input id="otp-email-1" type="email" placeholder="emri@domain.com"
                       value={smsFailEmail}
                       onChange={e => setSmsFailEmail(e.target.value)}
@@ -1014,7 +1014,7 @@ export default function Auth() {
               ════════════════════════════════════════ */}
           {mode === 'forgot' && step === 'form' && (
             <>
-              <h2>🔓 Rikthe Llogarinë</h2>
+              <h2><span aria-hidden="true">🔓</span> Rikthe Llogarinë</h2>
               <p className="sub">
                 Fut emailin ose numrin e telefonit të llogarisë — dërgojmë kod konfirmimi, pastaj vendos fjalëkalim të ri
               </p>
@@ -1045,7 +1045,7 @@ export default function Auth() {
               {smsFailMode && (
                 <div className="sms-fail-box" style={{ marginTop: 4 }}>
                   <div className="sms-fail-header">
-                    <span>📱</span>
+                    <span aria-hidden="true">📱</span>
                     <div>
                       <strong>SMS nuk funksionoi për {originalPhone}</strong>
                       <p>Nëse e di fjalëkalimin, hyr direkt. Nëse jo, fut emailin për ta rivendosur.</p>
@@ -1057,7 +1057,7 @@ export default function Auth() {
                   </button>
                   <div className="divider">ose rivendos fjalëkalimin me email</div>
                   <div className="field" style={{ marginBottom: 10 }}>
-                    <label htmlFor="otp-email-2">📧 Emaili yt *</label>
+                    <label htmlFor="otp-email-2"><span aria-hidden="true">📧</span> Emaili yt *</label>
                     <input id="otp-email-2" type="email" placeholder="emri@domain.com"
                       value={smsFailEmail}
                       onChange={e => setSmsFailEmail(e.target.value)}
@@ -1087,7 +1087,7 @@ export default function Auth() {
           {/* Module 1: 2FA TOTP verification step */}
           {step === 'totp' && (
             <>
-              <h2>🔐 Verifikimi me 2 Hapa</h2>
+              <h2><span aria-hidden="true">🔐</span> Verifikimi me 2 Hapa</h2>
               <p className="sub">Fut kodin 6-shifror nga<br /><strong>Google Authenticator / Authy</strong></p>
               <div className="field">
                 <label htmlFor="totp-code">Kodi i autentikimit (TOTP)</label>
@@ -1112,7 +1112,7 @@ export default function Auth() {
 
           {mode === 'forgot' && step === 'new-pass' && (
             <>
-              <h2>🔒 Fjalëkalim i Ri</h2>
+              <h2><span aria-hidden="true">🔒</span> Fjalëkalim i Ri</h2>
               <p className="sub">Zgjidh një fjalëkalim të sigurt (min. 8 karaktere)</p>
 
               <div className="field">

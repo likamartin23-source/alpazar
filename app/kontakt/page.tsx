@@ -94,7 +94,7 @@ export default function Kontakt() {
         </div>
 
         <div className="hero">
-          <span className="hero-icon">📬</span>
+          <span className="hero-icon" aria-hidden="true">📬</span>
           <h1>Si mund t'ju ndihmojmë?</h1>
           <p>Ekipi ynë është gjithmonë gati<br />t'ju ndihmojë me çdo pyetje</p>
         </div>
