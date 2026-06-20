@@ -41,7 +41,7 @@ export function Onboarding() {
         animation: 'ob-up .2s ease',
       }}>
         {/* Dots */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginBottom: 20 }}>
+        <div aria-hidden="true" style={{ display: 'flex', justifyContent: 'center', gap: 6, marginBottom: 20 }}>
           {[0,1,2].map(i => (
             <div key={i} style={{
               width: i === step ? 20 : 8, height: 8, borderRadius: 4,

@@ -130,7 +130,7 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3' }: Props) 
 
         {/* Counter top-right */}
         {count > 1 && (
-          <div style={{
+          <div aria-hidden="true" style={{
             position: 'absolute', top: 10, right: 10,
             background: 'rgba(0,0,0,.6)', color: '#fff',
             fontSize: 11, fontWeight: 700, padding: '3px 8px', borderRadius: 10,
@@ -189,7 +189,7 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3' }: Props) 
             <button type="button" onClick={e => { e.stopPropagation(); goTo(current + 1) }} aria-label="Foto e ardhshme" style={{ position: 'absolute', right: 12, background: 'rgba(255,255,255,.15)', border: 'none', color: '#fff', borderRadius: '50%', width: 40, height: 40, fontSize: 20, cursor: 'pointer' }}>›</button>
           )}
           {count > 1 && (
-            <div style={{ position: 'absolute', bottom: 20, display: 'flex', gap: 6 }}>
+            <div aria-hidden="true" style={{ position: 'absolute', bottom: 20, display: 'flex', gap: 6 }}>
               {images.map((_, i) => (
                 <div key={i} style={{ width: i === current ? 18 : 7, height: 7, borderRadius: 4, background: i === current ? '#E63312' : 'rgba(255,255,255,.4)', transition: 'all .2s' }} />
               ))}

@@ -212,7 +212,7 @@ export function SellerPremiumUpsell({ isPremium, price = '9.99' }: { isPremium: 
         >
           👑 {price}€/muaj
         </button>
-        <button type="button" onClick={() => setVisible(false)} style={{
+        <button type="button" aria-label="Mbyll ofertën" onClick={() => setVisible(false)} style={{
           background: 'none', border: 'none', color: '#555', fontSize: 9, cursor: 'pointer',
         }}>Tani jo ✕</button>
       </div>

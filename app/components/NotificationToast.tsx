@@ -68,17 +68,21 @@ export function NotificationToast() {
   if (toasts.length === 0) return null
 
   return (
-    <div style={{
-      position: 'fixed', top: 16, right: 0, left: 0,
-      zIndex: 9999,
-      display: 'flex', flexDirection: 'column', alignItems: 'center',
-      gap: 8, pointerEvents: 'none',
-      padding: '0 12px',
-    }}>
+    <div
+      aria-live="polite"
+      aria-atomic="false"
+      style={{
+        position: 'fixed', top: 16, right: 0, left: 0,
+        zIndex: 9999,
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+        gap: 8, pointerEvents: 'none',
+        padding: '0 12px',
+      }}>
       {toasts.map(t => (
         <div
           key={t.id}
           role="button" tabIndex={0}
+          aria-label={t.title + (t.body ? ` — ${t.body}` : '')}
           onClick={() => { dismiss(t.id); if (t.link?.startsWith('/')) window.location.href = t.link }}
           onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { dismiss(t.id); if (t.link?.startsWith('/')) window.location.href = t.link } }}
           style={{
@@ -94,7 +98,7 @@ export function NotificationToast() {
             animation: 'toast-in .25s ease',
           }}
         >
-          <span style={{ fontSize: 22, lineHeight: 1 }}>{TYPE_ICON[t.type] ?? '🔔'}</span>
+          <span aria-hidden="true" style={{ fontSize: 22, lineHeight: 1 }}>{TYPE_ICON[t.type] ?? '🔔'}</span>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 12, fontWeight: 700, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {t.title}
