@@ -654,7 +654,7 @@ export default function Auth() {
 
   const Logo = (
     <div className="logo">
-      <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
+      <svg width="36" height="36" viewBox="0 0 40 40" fill="none" aria-hidden="true">
         <rect width="40" height="40" rx="10" fill="#E63312"/>
         <g fill="#111">
           <ellipse cx="20" cy="22" rx="4" ry="5.5"/>
@@ -857,7 +857,7 @@ export default function Auth() {
                     autoComplete="current-password"
                     style={{ paddingRight: 36 }}
                   />
-                  <button type="button" className="pass-toggle" onClick={() => setShowPass(v => !v)}>
+                  <button type="button" className="pass-toggle" aria-label={showPass ? 'Fshih fjalëkalimin' : 'Shfaq fjalëkalimin'} aria-pressed={showPass} onClick={() => setShowPass(v => !v)}>
                     {showPass ? '🙈' : '👁️'}
                   </button>
                 </div>
@@ -876,7 +876,7 @@ export default function Auth() {
               <div className="divider">ose vazhdo me</div>
               <button className="btn-ghost" type="button" onClick={loginWithGoogle} disabled={loading}
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2v6h7.8c4.5-4.2 7.1-10.3 7.1-17.2z"/><path fill="#34A853" d="M24 47c6.5 0 11.9-2.1 15.9-5.8l-7.8-6c-2.1 1.4-4.8 2.3-8.1 2.3-6.2 0-11.5-4.2-13.4-9.9H2.6v6.2C6.5 41.7 14.7 47 24 47z"/><path fill="#FBBC04" d="M10.6 27.6c-.5-1.4-.8-2.9-.8-4.6s.3-3.2.8-4.6v-6.2H2.6C1 15.6 0 19.7 0 24s1 8.4 2.6 11.8l8-6.2z"/><path fill="#E94235" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.5l6.8-6.8C35.9 2.4 30.5 0 24 0 14.7 0 6.5 5.3 2.6 13.2l8 6.2C12.5 13.7 17.8 9.5 24 9.5z"/></svg>
+                <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2v6h7.8c4.5-4.2 7.1-10.3 7.1-17.2z"/><path fill="#34A853" d="M24 47c6.5 0 11.9-2.1 15.9-5.8l-7.8-6c-2.1 1.4-4.8 2.3-8.1 2.3-6.2 0-11.5-4.2-13.4-9.9H2.6v6.2C6.5 41.7 14.7 47 24 47z"/><path fill="#FBBC04" d="M10.6 27.6c-.5-1.4-.8-2.9-.8-4.6s.3-3.2.8-4.6v-6.2H2.6C1 15.6 0 19.7 0 24s1 8.4 2.6 11.8l8-6.2z"/><path fill="#E94235" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.5l6.8-6.8C35.9 2.4 30.5 0 24 0 14.7 0 6.5 5.3 2.6 13.2l8 6.2C12.5 13.7 17.8 9.5 24 9.5z"/></svg>
                 Hyr me Google
               </button>
 
@@ -938,7 +938,7 @@ export default function Auth() {
                   <input id="reg-password" type={showRegPass ? 'text' : 'password'} placeholder="••••••••"
                     value={regPass} onChange={e => setRegPass(e.target.value)}
                     autoComplete="new-password" style={{ paddingRight: 36 }} />
-                  <button type="button" className="pass-toggle" onClick={() => setShowRegPass(v => !v)}>
+                  <button type="button" className="pass-toggle" aria-label={showRegPass ? 'Fshih fjalëkalimin' : 'Shfaq fjalëkalimin'} aria-pressed={showRegPass} onClick={() => setShowRegPass(v => !v)}>
                     {showRegPass ? '🙈' : '👁️'}
                   </button>
                 </div>
@@ -954,7 +954,7 @@ export default function Auth() {
                     value={regPass2} onChange={e => setRegPass2(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && sendOtp()}
                     autoComplete="new-password" />
-                  <button type="button" className="pass-toggle" onClick={() => setShowRegPass2(v => !v)}>
+                  <button type="button" className="pass-toggle" aria-label={showRegPass2 ? 'Fshih fjalëkalimin' : 'Shfaq fjalëkalimin'} aria-pressed={showRegPass2} onClick={() => setShowRegPass2(v => !v)}>
                     {showRegPass2 ? '🙈' : '👁️'}
                   </button>
                 </div>
@@ -1119,7 +1119,7 @@ export default function Auth() {
                   <input id="reset-new-password" type={showNewPass ? 'text' : 'password'} placeholder="••••••••" value={newPass}
                     onChange={e => setNewPass(e.target.value)} autoComplete="new-password"
                     style={{ paddingRight: 36 }} />
-                  <button type="button" className="pass-toggle" onClick={() => setShowNewPass(v => !v)}>
+                  <button type="button" className="pass-toggle" aria-label={showNewPass ? 'Fshih fjalëkalimin' : 'Shfaq fjalëkalimin'} aria-pressed={showNewPass} onClick={() => setShowNewPass(v => !v)}>
                     {showNewPass ? '🙈' : '👁️'}
                   </button>
                 </div>
@@ -1131,7 +1131,7 @@ export default function Auth() {
                     onChange={e => setNewPass2(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && setNewPassword()}
                     autoComplete="new-password" />
-                  <button type="button" className="pass-toggle" onClick={() => setShowNewPass2(v => !v)}>
+                  <button type="button" className="pass-toggle" aria-label={showNewPass2 ? 'Fshih fjalëkalimin' : 'Shfaq fjalëkalimin'} aria-pressed={showNewPass2} onClick={() => setShowNewPass2(v => !v)}>
                     {showNewPass2 ? '🙈' : '👁️'}
                   </button>
                 </div>

@@ -99,7 +99,7 @@ export function MapPicker({ lat, lng, address, onChange, onCityChange }: MapPick
           {loading ? (
             <div style={{ width: 16, height: 16, border: '2px solid #C3DAFB', borderTopColor: '#185FA5', borderRadius: '50%', animation: 'spin .7s linear infinite' }} />
           ) : (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#185FA5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#185FA5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="3"/>
               <line x1="12" y1="2" x2="12" y2="6"/>
               <line x1="12" y1="18" x2="12" y2="22"/>

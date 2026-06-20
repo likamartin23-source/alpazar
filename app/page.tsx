@@ -218,7 +218,7 @@ function ShareBox({ refCode }: { refCode?: string }) {
 
 function AlpazarIcon() {
   return (
-    <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
+    <svg width="34" height="34" viewBox="0 0 40 40" fill="none" aria-hidden="true">
       <rect width="40" height="40" rx="10" fill="#E63312"/>
       <g fill="#111">
         <ellipse cx="20" cy="22" rx="4" ry="5.5"/>

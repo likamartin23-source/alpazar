@@ -812,7 +812,7 @@ export default function ProfilePage() {
                     autoComplete="new-password"
                     style={{ paddingRight: 36 }}
                   />
-                  <button type="button" className="pass-toggle" onClick={() => setShowNewPass(v => !v)}>
+                  <button type="button" className="pass-toggle" aria-label={showNewPass ? 'Fshih fjalëkalimin' : 'Shfaq fjalëkalimin'} aria-pressed={showNewPass} onClick={() => setShowNewPass(v => !v)}>
                     {showNewPass ? '🙈' : '👁️'}
                   </button>
                 </div>
