@@ -530,7 +530,7 @@ const [searchError, setSearchError] = useState(false)
           ) : (
             <>
               <div className="results-meta" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-                <span>
+                <span aria-live="polite" aria-atomic="true">
                   {q
                     ? <>Rezultate për <strong>"{q}"</strong> — <strong>{totalResults}</strong> gjëra</>
                     : <><strong>{totalResults}</strong> shpallje</>

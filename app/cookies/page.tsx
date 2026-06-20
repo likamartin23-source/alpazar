@@ -63,10 +63,10 @@ export default function Cookies() {
             <table>
               <thead>
                 <tr>
-                  <th>Emri</th>
-                  <th>Qëllimi</th>
-                  <th>Jetëgjatësia</th>
-                  <th>Ofruesi</th>
+                  <th scope="col">Emri</th>
+                  <th scope="col">Qëllimi</th>
+                  <th scope="col">Jetëgjatësia</th>
+                  <th scope="col">Ofruesi</th>
                 </tr>
               </thead>
               <tbody>
@@ -101,10 +101,10 @@ export default function Cookies() {
             <table>
               <thead>
                 <tr>
-                  <th>Teknologjia</th>
-                  <th>Qëllimi</th>
-                  <th>Cookie?</th>
-                  <th>Ofruesi</th>
+                  <th scope="col">Teknologjia</th>
+                  <th scope="col">Qëllimi</th>
+                  <th scope="col">Cookie?</th>
+                  <th scope="col">Ofruesi</th>
                 </tr>
               </thead>
               <tbody>

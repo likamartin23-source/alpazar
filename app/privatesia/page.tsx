@@ -58,10 +58,10 @@ export default function Privatesia() {
             <table>
               <thead>
                 <tr>
-                  <th>Kategoria</th>
-                  <th>Të dhënat</th>
-                  <th>Qëllimi</th>
-                  <th>Baza ligjore</th>
+                  <th scope="col">Kategoria</th>
+                  <th scope="col">Të dhënat</th>
+                  <th scope="col">Qëllimi</th>
+                  <th scope="col">Baza ligjore</th>
                 </tr>
               </thead>
               <tbody>

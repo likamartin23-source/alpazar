@@ -106,7 +106,7 @@ function ReferralTab() {
         <div className="ct">Top Referues</div>
         {loading ? <p style={{ color: '#aaa', fontSize: 12, padding: '12px 0' }}>Duke ngarkuar...</p> :
           <table>
-            <thead><tr><th>#</th><th>Kodi</th><th>Të ftuar</th><th>Pikë</th></tr></thead>
+            <thead><tr><th scope="col">#</th><th scope="col">Kodi</th><th scope="col">Të ftuar</th><th scope="col">Pikë</th></tr></thead>
             <tbody>{ranked.map((r: any, i) => (
               <tr key={r.code}>
                 <td style={{ fontWeight: 800, color: '#F5C842' }}>{i + 1}</td>
@@ -324,7 +324,7 @@ function ModerationTab() {
             <p style={{ color: '#1D9E75', fontSize: 12, padding: '12px 0', fontWeight: 700 }}>✓ Asnjë raport i hapur</p>
           ) : (
             <table>
-              <thead><tr><th>Shpallja</th><th>Raportuar nga</th><th>Arsyeja</th><th>Data</th><th>Veprime</th></tr></thead>
+              <thead><tr><th scope="col">Shpallja</th><th scope="col">Raportuar nga</th><th scope="col">Arsyeja</th><th scope="col">Data</th><th scope="col">Veprime</th></tr></thead>
               <tbody>{reports.map((r: any) => (
                 <tr key={r.id}>
                   <td style={{ fontWeight: 700 }}>
@@ -396,7 +396,7 @@ function TakedownTab() {
             <p style={{ color:'#1D9E75', fontSize:12, padding:'12px 0', fontWeight:700 }}>✓ Asnjë kërkesë heqje</p>
           ) : (
             <table>
-              <thead><tr><th>Lloji</th><th>URL</th><th>Kontakti</th><th>Përshkrimi</th><th>Data</th><th>Statusi</th><th>Veprime</th></tr></thead>
+              <thead><tr><th scope="col">Lloji</th><th scope="col">URL</th><th scope="col">Kontakti</th><th scope="col">Përshkrimi</th><th scope="col">Data</th><th scope="col">Statusi</th><th scope="col">Veprime</th></tr></thead>
               <tbody>{requests.map((r: any) => (
                 <tr key={r.id}>
                   <td style={{ fontWeight:700 }}>{r.type}</td>
@@ -735,7 +735,7 @@ export default function Admin() {
                   <div className="card">
                     <div className="ct">Pagesat e fundit</div>
                     <table>
-                      <thead><tr><th>Përdoruesi</th><th>Plan</th><th>Shuma</th><th>Statusi</th><th>Veprime</th></tr></thead>
+                      <thead><tr><th scope="col">Përdoruesi</th><th scope="col">Plan</th><th scope="col">Shuma</th><th scope="col">Statusi</th><th scope="col">Veprime</th></tr></thead>
                       <tbody>
                         {payments.length === 0
                           ? <tr><td colSpan={5} style={{ textAlign:'center', color:'#aaa', padding:20 }}>Nuk ka pagesa</td></tr>
@@ -784,7 +784,7 @@ export default function Admin() {
                       <p style={{ color: '#aaa', fontSize: 12 }}>Asnjë kërkesë premium</p>
                     ) : (
                       <table>
-                        <thead><tr><th>Përdoruesi</th><th>Plan</th><th>Statusi</th><th>Data</th><th>Veprime</th></tr></thead>
+                        <thead><tr><th scope="col">Përdoruesi</th><th scope="col">Plan</th><th scope="col">Statusi</th><th scope="col">Data</th><th scope="col">Veprime</th></tr></thead>
                         <tbody>{premiumRequests.map((r: any) => (
                           <tr key={r.id}>
                             <td>{r.profiles?.full_name || r.profiles?.username || '—'}</td>
@@ -812,7 +812,7 @@ export default function Admin() {
 
                   <div className="card">
                     <table>
-                      <thead><tr><th>Përdoruesi</th><th>Plan</th><th>Shuma</th><th>Metoda</th><th>Statusi</th><th>Data</th><th>Veprime</th></tr></thead>
+                      <thead><tr><th scope="col">Përdoruesi</th><th scope="col">Plan</th><th scope="col">Shuma</th><th scope="col">Metoda</th><th scope="col">Statusi</th><th scope="col">Data</th><th scope="col">Veprime</th></tr></thead>
                       <tbody>
                         {payments.length === 0
                           ? <tr><td colSpan={7} style={{ textAlign:'center', color:'#aaa', padding:20 }}>Nuk ka kërkesa</td></tr>
