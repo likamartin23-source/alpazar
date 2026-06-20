@@ -96,7 +96,7 @@ function ReferralTab() {
 
   return (
     <>
-      <div className="ph"><div className="pt">🎁 Referalet</div></div>
+      <div className="ph"><div className="pt"><span aria-hidden="true">🎁</span> Referalet</div></div>
       <div className="stats" style={{ gridTemplateColumns: 'repeat(3,1fr)' }}>
         <div className="sc"><div className="sn">{refs.length}</div><div className="sl">Me referim</div></div>
         <div className="sc"><div className="sn">{ranked.length}</div><div className="sl">Referues aktiv</div></div>
@@ -308,12 +308,12 @@ function ModerationTab() {
   return (
     <>
       <div className="ph">
-        <div className="pt">🛡️ Moderimi</div>
+        <div className="pt"><span aria-hidden="true">🛡️</span> Moderimi</div>
         <div className="live-dot">● Live</div>
       </div>
       {adminMsg && (
         <div style={{ background: '#FFF0EE', border: '0.5px solid #F09595', color: '#E63312', fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 8, margin: '8px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ flex: 1 }}>⚠️ {adminMsg}</span>
+          <span style={{ flex: 1 }}><span aria-hidden="true">⚠️</span> {adminMsg}</span>
           <button type="button" aria-label="Mbyll mesazhin" onClick={() => setAdminMsg('')} style={{ background: 'none', border: 'none', color: '#E63312', cursor: 'pointer', fontSize: 14 }}>✕</button>
         </div>
       )}
@@ -427,7 +427,7 @@ function TakedownTab() {
         }
       </div>
       <div className="card" style={{ marginTop:16 }}>
-        <div className="ct">📋 Si bëhet dorëzimi?</div>
+        <div className="ct"><span aria-hidden="true">📋</span> Si bëhet dorëzimi?</div>
         <p style={{ fontSize:11, color:'#888', lineHeight:1.7 }}>
           Kërkesat e heqjes dorëzohen përmes faqes <strong>/takedown</strong> ose me email.
           Afati ligjor i përgjigjes: <strong>72 orë</strong> për përmbajtje të paligjshme, <strong>14 ditë</strong> për të drejtat e autorit.
@@ -671,7 +671,7 @@ export default function Admin() {
         {/* ── Sidebar ── */}
         <div className="sb">
           <div className="sb-logo">
-            <div className="n">🦅 ALPAZAR</div>
+            <div className="n"><span aria-hidden="true">🦅</span> ALPAZAR</div>
             <div className="r">Admin Panel</div>
             {isMaint && (
               <div style={{ marginTop: 8, background: '#E63312', color: '#fff', borderRadius: 4, padding: '2px 6px', fontSize: 9, fontWeight: 700 }}>
@@ -714,7 +714,7 @@ export default function Admin() {
               {tab === 'dash' && (
                 <>
                   <div className="ph">
-                    <div className="pt">📊 Dashboard</div>
+                    <div className="pt"><span aria-hidden="true">📊</span> Dashboard</div>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
                       <div className="live-dot">● Live</div>
                       <span style={{ fontSize: 9, color: '#aaa' }}>
@@ -768,7 +768,7 @@ export default function Admin() {
                   <div className="ph"><div className="pt">💳 Pagesat</div></div>
                   {payMsg && (
                     <div style={{ background: '#FFF0EE', border: '0.5px solid #F09595', color: '#E63312', fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 8, margin: '8px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ flex: 1 }}>⚠️ {payMsg}</span>
+                      <span style={{ flex: 1 }}><span aria-hidden="true">⚠️</span> {payMsg}</span>
                       <button type="button" aria-label="Mbyll mesazhin" onClick={() => setPayMsg('')} style={{ background: 'none', border: 'none', color: '#E63312', cursor: 'pointer', fontSize: 14 }}>✕</button>
                     </div>
                   )}

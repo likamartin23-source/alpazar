@@ -134,7 +134,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Analytics />
           <footer style={{ background: '#111', padding: '22px 16px 28px', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
             <div style={{ maxWidth: 480, margin: '0 auto', textAlign: 'center' }}>
-              <div style={{ color: '#F5C842', fontWeight: 700, fontSize: 13, letterSpacing: 1, marginBottom: 14 }}>🦅 ALPAZAR</div>
+              <div style={{ color: '#F5C842', fontWeight: 700, fontSize: 13, letterSpacing: 1, marginBottom: 14 }}><span aria-hidden="true">🦅</span> ALPAZAR</div>
               <div style={{ display: 'flex', justifyContent: 'center', gap: 18, marginBottom: 14 }}>
                 <a href="https://facebook.com/alpazaral" aria-label="Facebook" target="_blank" rel="noopener noreferrer" style={{ color: '#555', fontSize: 19, textDecoration: 'none' }}><i className="ti ti-brand-facebook" aria-hidden="true" /></a>
                 <a href="https://instagram.com/alpazaral" aria-label="Instagram" target="_blank" rel="noopener noreferrer" style={{ color: '#555', fontSize: 19, textDecoration: 'none' }}><i className="ti ti-brand-instagram" aria-hidden="true" /></a>
@@ -154,7 +154,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <a href="/siguria" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Siguria</a>
                 <a href="/te-dhenat-mia" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Të dhënat e mia</a>
                 <a href="/takedown" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>IP / Takedown</a>
-                <a href="/referral" style={{ color: '#F5C842', fontSize: 11, textDecoration: 'none', fontWeight: 600 }}>🎁 Referral</a>
+                <a href="/referral" style={{ color: '#F5C842', fontSize: 11, textDecoration: 'none', fontWeight: 600 }}><span aria-hidden="true">🎁</span> Referral</a>
               </nav>
               <div style={{ fontSize: 10, color: '#444' }}>© 2026 Alpazar · NIPT/QKB: (në regjistrim) · Tiranë, Shqipëri · Të gjitha të drejtat e rezervuara</div>
             </div>

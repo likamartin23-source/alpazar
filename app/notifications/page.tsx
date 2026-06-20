@@ -134,7 +134,7 @@ export default function NotificationsPage() {
   if (authReady && !user) {
     return (
       <div style={{ minHeight: '100dvh', background: '#FFFBEA', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24 }}>
-        <div style={{ fontSize: 48 }}>🔔</div>
+        <div style={{ fontSize: 48 }} aria-hidden="true">🔔</div>
         <div style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>Kyçu për të parë njoftimet</div>
         <button type="button" onClick={() => window.location.href = '/auth/login'} style={{ background: '#F5C842', border: 'none', borderRadius: 12, padding: '12px 28px', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>
           Kyçu

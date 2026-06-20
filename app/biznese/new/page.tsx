@@ -156,7 +156,7 @@ export default function BiznesNewPage() {
         <button type="button" aria-label="Kthehu mbrapa" onClick={() => step > 1 ? setStep(s => s - 1) : window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
           <i className="ti ti-arrow-left" aria-hidden="true" style={{ fontSize: 22, color: '#111' }} />
         </button>
-        <h1 style={{ fontSize: 15, fontWeight: 700, color: '#111', flex: 1, margin: 0 }}>🏢 Krijo Biznes Online</h1>
+        <h1 style={{ fontSize: 15, fontWeight: 700, color: '#111', flex: 1, margin: 0 }}><span aria-hidden="true">🏢</span> Krijo Biznes Online</h1>
         {/* Progress dots */}
         <div style={{ display: 'flex', gap: 5 }}>
           {dots.map(i => (
@@ -207,7 +207,7 @@ export default function BiznesNewPage() {
             </div>
             {mainType === 'sherbime_produkte' && (
               <>
-                <div style={{ fontSize: 12, fontWeight: 700, color: '#E63312', marginBottom: 8 }}>🛠️ SHËRBIME</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#E63312', marginBottom: 8 }}><span aria-hidden="true">🛠️</span> SHËRBIME</div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
                   {subcats.filter(s => s.parent_type === 'sherbime').map(s => (
                     <div key={s.id} role="checkbox" aria-checked={selSubs.includes(s.id)} tabIndex={0} onClick={() => toggleSub(s.id)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') toggleSub(s.id) }} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: selSubs.includes(s.id) ? '#F5C842' : '#fff', border: `1.5px solid ${selSubs.includes(s.id) ? '#F5C842' : '#ddd'}`, borderRadius: 20, padding: '7px 13px', fontSize: 12, fontWeight: 600, cursor: 'pointer', transition: 'all .15s' }}>
@@ -215,7 +215,7 @@ export default function BiznesNewPage() {
                     </div>
                   ))}
                 </div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: '#E63312', marginBottom: 8 }}>📦 PRODUKTE</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#E63312', marginBottom: 8 }}><span aria-hidden="true">📦</span> PRODUKTE</div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
                   {subcats.filter(s => s.parent_type === 'produkte').map(s => (
                     <div key={s.id} role="checkbox" aria-checked={selSubs.includes(s.id)} tabIndex={0} onClick={() => toggleSub(s.id)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') toggleSub(s.id) }} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: selSubs.includes(s.id) ? '#F5C842' : '#fff', border: `1.5px solid ${selSubs.includes(s.id) ? '#F5C842' : '#ddd'}`, borderRadius: 20, padding: '7px 13px', fontSize: 12, fontWeight: 600, cursor: 'pointer', transition: 'all .15s' }}>
@@ -225,7 +225,7 @@ export default function BiznesNewPage() {
                 </div>
                 {subcats.filter(s => s.parent_type === 'sherbime_produkte').length > 0 && (
                   <>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: '#E63312', marginBottom: 8 }}>🔁 TË DYJA</div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: '#E63312', marginBottom: 8 }}><span aria-hidden="true">🔁</span> TË DYJA</div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
                       {subcats.filter(s => s.parent_type === 'sherbime_produkte').map(s => (
                         <div key={s.id} role="checkbox" aria-checked={selSubs.includes(s.id)} tabIndex={0} onClick={() => toggleSub(s.id)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') toggleSub(s.id) }} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: selSubs.includes(s.id) ? '#F5C842' : '#fff', border: `1.5px solid ${selSubs.includes(s.id) ? '#F5C842' : '#ddd'}`, borderRadius: 20, padding: '7px 13px', fontSize: 12, fontWeight: 600, cursor: 'pointer', transition: 'all .15s' }}>
@@ -262,7 +262,7 @@ export default function BiznesNewPage() {
             <div style={{ position: 'relative', width: '100%', aspectRatio: '16/6', borderRadius: 12, overflow: 'hidden', marginBottom: 40, background: coverPreview ? 'transparent' : 'linear-gradient(135deg,#F5C842,#E63312)', cursor: 'pointer' }}>
               {coverPreview && <img src={coverPreview} alt="Foto kopertinë" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
               <label style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: coverPreview ? 'rgba(0,0,0,.3)' : 'none' }}>
-                <span style={{ background: 'rgba(0,0,0,.5)', color: '#fff', borderRadius: 10, padding: '8px 16px', fontSize: 12, fontWeight: 700 }}>📷 {coverPreview ? 'Ndrysho kopertinën' : 'Shto kopertinën'}</span>
+                <span style={{ background: 'rgba(0,0,0,.5)', color: '#fff', borderRadius: 10, padding: '8px 16px', fontSize: 12, fontWeight: 700 }}><span aria-hidden="true">📷</span> {coverPreview ? 'Ndrysho kopertinën' : 'Shto kopertinën'}</span>
                 <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) { setCoverFile(f); setCoverPreview(URL.createObjectURL(f)) } }} />
               </label>
               {/* Logo overlay */}
@@ -271,8 +271,8 @@ export default function BiznesNewPage() {
                   <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#fff', border: '3px solid #fff', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, boxShadow: '0 2px 8px rgba(0,0,0,.15)' }}>
                     {logoPreview ? <img src={logoPreview} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : '🏢'}
                   </div>
-                  <label style={{ position: 'absolute', bottom: -2, right: -2, background: '#E63312', width: 20, height: 20, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, cursor: 'pointer', border: '2px solid #fff' }}>
-                    📷
+                  <label aria-label="Ndrysho logon" style={{ position: 'absolute', bottom: -2, right: -2, background: '#E63312', width: 20, height: 20, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, cursor: 'pointer', border: '2px solid #fff' }}>
+                    <span aria-hidden="true">📷</span>
                     <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) { setLogoFile(f); setLogoPreview(URL.createObjectURL(f)) } }} />
                   </label>
                 </div>
@@ -289,7 +289,7 @@ export default function BiznesNewPage() {
                 <textarea id="biz-description" className="biz-input" value={form.description} onChange={e => setF('description', e.target.value)} placeholder="Çfarë bëni? Si mund t'ju ndihmojmë..." maxLength={500} style={{ resize: 'none', minHeight: 80 }} />
               </div>
               <div>
-                <label htmlFor="biz-address" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>📍 Adresa (harta OSM)</label>
+                <label htmlFor="biz-address" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}><span aria-hidden="true">📍</span> Adresa (harta OSM)</label>
                 <MapPicker
                   address={form.address}
                   lat={form.latitude}
@@ -298,27 +298,27 @@ export default function BiznesNewPage() {
                 />
               </div>
               <div>
-                <label htmlFor="biz-phone" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>☎ Telefon</label>
+                <label htmlFor="biz-phone" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}><span aria-hidden="true">☎</span> Telefon</label>
                 <input id="biz-phone" className="biz-input" type="tel" autoComplete="tel" value={form.phone} onChange={e => setF('phone', e.target.value)} placeholder="+355 6X XXX XXXX" />
               </div>
               <div>
-                <label htmlFor="biz-email" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>✉️ Email</label>
+                <label htmlFor="biz-email" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}><span aria-hidden="true">✉️</span> Email</label>
                 <input id="biz-email" className="biz-input" type="email" autoComplete="email" value={form.email} onChange={e => setF('email', e.target.value)} placeholder="info@biznesi.al" />
               </div>
               <div>
-                <label htmlFor="biz-website" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>🌐 Website</label>
+                <label htmlFor="biz-website" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}><span aria-hidden="true">🌐</span> Website</label>
                 <input id="biz-website" className="biz-input" type="url" value={form.website} onChange={e => setF('website', e.target.value)} placeholder="https://..." />
               </div>
               <div>
-                <label htmlFor="biz-city" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>🏙️ Qyteti</label>
+                <label htmlFor="biz-city" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}><span aria-hidden="true">🏙️</span> Qyteti</label>
                 <input id="biz-city" type="text" className="biz-input" autoComplete="address-level2" value={form.city} onChange={e => setF('city', e.target.value)} placeholder="p.sh. Tiranë" maxLength={80} />
               </div>
               <div>
-                <label htmlFor="biz-hours" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>🕐 Orari</label>
+                <label htmlFor="biz-hours" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}><span aria-hidden="true">🕐</span> Orari</label>
                 <input id="biz-hours" type="text" className="biz-input" autoComplete="off" value={form.hours} onChange={e => setF('hours', e.target.value)} placeholder="Hënë–Premte 09:00–18:00" />
               </div>
               <div style={{ background: '#FFFBEA', borderRadius: 12, padding: 14, border: '1px solid #F5C84266' }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#7B5000', marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 }}>⚖️ Të dhëna ligjore (B2C)</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#7B5000', marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 }}><span aria-hidden="true">⚖️</span> Të dhëna ligjore (B2C)</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   <div>
                     <label htmlFor="biz-nipt" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>NIPT / Nr. TVSH (opsional)</label>

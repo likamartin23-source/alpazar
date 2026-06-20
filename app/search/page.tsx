@@ -196,12 +196,12 @@ export default function SearchPage() {
         {/* Active filters bar */}
         {activeFilterCount > 0 && (
           <div className="active-filters">
-            {catFilter   && <span className="afilter">🏷 {categories.find(c => c.id === catFilter)?.name || catFilter}</span>}
-            {condFilter  && <span className="afilter">{condFilter === 'i_ri' ? '✨ I ri' : condFilter === 'i_mire' ? '👍 I mirë' : '🔄 I përdorur'}</span>}
-            {cityFilter  && <span className="afilter">📍 {cityFilter}</span>}
+            {catFilter   && <span className="afilter"><span aria-hidden="true">🏷</span> {categories.find(c => c.id === catFilter)?.name || catFilter}</span>}
+            {condFilter  && <span className="afilter">{condFilter === 'i_ri' ? <><span aria-hidden="true">✨</span> I ri</> : condFilter === 'i_mire' ? <><span aria-hidden="true">👍</span> I mirë</> : <><span aria-hidden="true">🔄</span> I përdorur</>}</span>}
+            {cityFilter  && <span className="afilter"><span aria-hidden="true">📍</span> {cityFilter}</span>}
             {priceMin    && <span className="afilter">Min: {priceMin} L</span>}
             {priceMax    && <span className="afilter">Max: {priceMax} L</span>}
-            {premiumOnly && <span className="afilter">⭐ Premium</span>}
+            {premiumOnly && <span className="afilter"><span aria-hidden="true">⭐</span> Premium</span>}
           </div>
         )}
 

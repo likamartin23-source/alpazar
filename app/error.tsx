@@ -23,7 +23,7 @@ export default function GlobalError({
             padding: '36px 28px', maxWidth: 380, width: '100%', textAlign: 'center',
             boxShadow: '0 4px 24px rgba(0,0,0,.06)',
           }}>
-            <div style={{ fontSize: 52, marginBottom: 12 }}>⚠️</div>
+            <div style={{ fontSize: 52, marginBottom: 12 }} aria-hidden="true">⚠️</div>
             <div style={{
               background: '#111', color: '#F5C842', fontWeight: 800,
               letterSpacing: 3, fontSize: 18, padding: '6px 16px',

@@ -41,7 +41,7 @@ function ShopCard({ shop }: { shop: any }) {
             : <span style={{ fontSize: 17, fontWeight: 700, color: '#E63312' }}>{initials}</span>
           }
         </div>
-        <div className="shop-premium-badge">⭐ Premium</div>
+        <div className="shop-premium-badge"><span aria-hidden="true">⭐</span> Premium</div>
       </div>
       <div className="shop-body">
         <div className="shop-name">{shop.shop_name || shop.full_name}</div>
@@ -64,7 +64,7 @@ function ListingCard({ l, premium }: { l: any; premium?: boolean }) {
           : <i className="ti ti-photo" style={{ fontSize: 30, color: '#ccc' }} aria-hidden="true" />}
         {l.condition === 'i_ri'       && <span className="badge-new">I ri</span>}
         {l.condition === 'i_perdorur' && <span className="badge-used">I përdorur</span>}
-        {premium && <span className="badge-premium">⭐</span>}
+        {premium && <span className="badge-premium" aria-label="Premium">⭐</span>}
       </div>
       <div className="card-body">
         <div className="card-title">{l.title}</div>
@@ -507,15 +507,15 @@ const [searchError, setSearchError] = useState(false)
         {/* ── ACTIVE FILTERS BAR ── */}
         {activeFilterCount > 0 && (
           <div className="active-filters">
-            {catFilter              && <span className="afilter">🏷 {categories.find(c => c.id === catFilter)?.name || catFilter}</span>}
-            {condFilter             && <span className="afilter">{condFilter === 'i_ri' ? '✨ I ri' : condFilter === 'i_mire' ? '👍 I mirë' : '🔄 I përdorur'}</span>}
-            {cityFilter             && <span className="afilter">📍 {cityFilter}</span>}
+            {catFilter              && <span className="afilter"><span aria-hidden="true">🏷</span> {categories.find(c => c.id === catFilter)?.name || catFilter}</span>}
+            {condFilter             && <span className="afilter">{condFilter === 'i_ri' ? <><span aria-hidden="true">✨</span> I ri</> : condFilter === 'i_mire' ? <><span aria-hidden="true">👍</span> I mirë</> : <><span aria-hidden="true">🔄</span> I përdorur</>}</span>}
+            {cityFilter             && <span className="afilter"><span aria-hidden="true">📍</span> {cityFilter}</span>}
             {priceMin               && <span className="afilter">Min: {priceMin} L</span>}
             {priceMax               && <span className="afilter">Max: {priceMax} L</span>}
-            {premiumOnly            && <span className="afilter">⭐ Premium</span>}
+            {premiumOnly            && <span className="afilter"><span aria-hidden="true">⭐</span> Premium</span>}
             {sortBy === 'price_asc' && <span className="afilter">↑ Çmimi</span>}
             {sortBy === 'price_desc'&& <span className="afilter">↓ Çmimi</span>}
-            {sortBy === 'views'     && <span className="afilter">👁 Shikimet</span>}
+            {sortBy === 'views'     && <span className="afilter"><span aria-hidden="true">👁</span> Shikimet</span>}
           </div>
         )}
 
@@ -523,7 +523,7 @@ const [searchError, setSearchError] = useState(false)
         <div className="body">
           {searchError ? (
             <div style={{ textAlign: 'center', padding: '48px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-              <div style={{ fontSize: 36 }}>⚠️</div>
+              <div style={{ fontSize: 36 }} aria-hidden="true">⚠️</div>
               <div style={{ fontWeight: 700, color: '#111' }}>Gabim gjatë kërkimit</div>
               <button type="button" onClick={() => doSearch()} style={{ background: '#F5C842', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Provo Përsëri</button>
             </div>
@@ -578,7 +578,7 @@ const [searchError, setSearchError] = useState(false)
               {/* ── SECTION 2: PREMIUM LISTINGS ── */}
               <div className="section">
                 <div className="section-hdr">
-                  <span className="section-icon">⭐</span>
+                  <span className="section-icon" aria-label="Premium">⭐</span>
                   <h2>Shpallje Premium</h2>
                   <span className="section-count">{premium.length}</span>
                 </div>
@@ -594,7 +594,7 @@ const [searchError, setSearchError] = useState(false)
               {/* ── SECTION 3: ALL OTHER LISTINGS ── */}
               <div className="section">
                 <div className="section-hdr">
-                  <span className="section-icon">📋</span>
+                  <span className="section-icon" aria-hidden="true">📋</span>
                   <h2>Të gjitha shpalljet</h2>
                   <span className="section-count">{regular.length}</span>
                 </div>

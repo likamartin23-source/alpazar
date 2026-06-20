@@ -52,7 +52,7 @@ export default function BiznestPage() {
         <button type="button" aria-label="Kthehu mbrapa" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', marginBottom: 10, padding: 0 }}>
           <i className="ti ti-arrow-left" aria-hidden="true" style={{ fontSize: 22, color: '#111' }} />
         </button>
-        <h1 style={{ fontSize: 22, fontWeight: 800, color: '#111', margin: '0 0 4px' }}>🏢 Bizneset</h1>
+        <h1 style={{ fontSize: 22, fontWeight: 800, color: '#111', margin: '0 0 4px' }}><span aria-hidden="true">🏢</span> Bizneset</h1>
         <p style={{ fontSize: 13, color: '#7B5000', margin: 0 }}>Zbulo bizneset shqiptare në Alpazar</p>
       </div>
 
@@ -98,7 +98,7 @@ export default function BiznestPage() {
       <div style={{ padding: '8px 12px' }}>
         {loadError ? (
           <div style={{ textAlign: 'center', padding: '60px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-            <div style={{ fontSize: 40 }}>⚠️</div>
+            <div style={{ fontSize: 40 }} aria-hidden="true">⚠️</div>
             <div style={{ fontSize: 14, fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
             <button type="button" onClick={() => window.location.reload()} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 8, padding: '9px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
           </div>
@@ -116,7 +116,7 @@ export default function BiznestPage() {
           </div>
         ) : filtered.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '48px 16px', color: '#888' }}>
-            <div style={{ fontSize: 40, marginBottom: 10 }}>🏢</div>
+            <div style={{ fontSize: 40, marginBottom: 10 }} aria-hidden="true">🏢</div>
             <div style={{ fontSize: 14, fontWeight: 600 }}>{search || typeFilter ? 'Asnjë biznes nuk përputhet' : 'Asnjë biznes ende'}</div>
             {(search || typeFilter) && (
               <button type="button" onClick={() => { setSearch(''); setTypeFilter('') }} style={{ marginTop: 12, background: '#F5C842', border: 'none', borderRadius: 10, padding: '8px 20px', fontWeight: 700, fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>
@@ -136,7 +136,7 @@ export default function BiznestPage() {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 3 }}>
                     <span style={{ fontSize: 14, fontWeight: 800, color: '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{b.name}</span>
-                    {b.is_verified && <span style={{ fontSize: 13 }}>✅</span>}
+                    {b.is_verified && <span style={{ fontSize: 13 }} aria-label="Verifikuar">✅</span>}
                   </div>
                   <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
                     {b.type && (
@@ -145,7 +145,7 @@ export default function BiznestPage() {
                       </span>
                     )}
                     {b.city && (
-                      <span style={{ fontSize: 11, color: '#888' }}>📍 {b.city}</span>
+                      <span style={{ fontSize: 11, color: '#888' }}><span aria-hidden="true">📍</span> {b.city}</span>
                     )}
                   </div>
                   {b.description && (

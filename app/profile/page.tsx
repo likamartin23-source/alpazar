@@ -38,7 +38,7 @@ function BizUpsellBanner({ userId }: { userId?: string }) {
       onKeyDown={e => { if (e.key === 'Enter') window.location.href = '/biznese/new' }}
       style={{ background: 'linear-gradient(135deg,#111,#1c1c1c)', borderRadius: 13, padding: '14px 16px', marginBottom: 12, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12 }}
     >
-      <span style={{ fontSize: 28 }}>🏢</span>
+      <span style={{ fontSize: 28 }} aria-hidden="true">🏢</span>
       <div style={{ flex: 1 }}>
         <div style={{ fontSize: 13, fontWeight: 800, color: '#F5C842', marginBottom: 3 }}>Krijo Biznes Online</div>
         <div style={{ fontSize: 11, color: '#aaa', lineHeight: 1.5 }}>Faqe e dedikuar · Shpallje pa limit · Badge ✓ Biznes</div>
@@ -377,7 +377,7 @@ export default function ProfilePage() {
 
   if (loadError) return (
     <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
-      <div style={{ fontSize: 40 }}>⚠️</div>
+      <div style={{ fontSize: 40 }} aria-hidden="true">⚠️</div>
       <div style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
       <button type="button" onClick={() => window.location.reload()} style={{ padding: '10px 24px', background: '#F5C842', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Rifresko</button>
     </div>
@@ -567,17 +567,17 @@ export default function ProfilePage() {
               {profileCopied ? 'Kopjuar!' : 'Ndaj'}
             </button>
           </div>
-          {profile?.city && <div style={{ fontSize: 11, color: '#888', marginBottom: 4 }}>📍 {profile.city}{profile?.created_at ? ` · Anëtar prej ${new Date(profile.created_at).getFullYear()}` : ''}</div>}
+          {profile?.city && <div style={{ fontSize: 11, color: '#888', marginBottom: 4 }}><span aria-hidden="true">📍</span> {profile.city}{profile?.created_at ? ` · Anëtar prej ${new Date(profile.created_at).getFullYear()}` : ''}</div>}
           <div className="email-row" style={{ justifyContent: 'flex-start' }}><i className="ti ti-mail" aria-hidden="true" />{user?.email}</div>
           <div className="badges-row" style={{ justifyContent: 'flex-start', marginTop: 8 }}>
-            {profile?.is_admin && <span className="badge b-admin">🛡 Admin</span>}
+            {profile?.is_admin && <span className="badge b-admin"><span aria-hidden="true">🛡</span> Admin</span>}
             {(user?.email_confirmed_at || user?.phone_confirmed_at) && <span className="badge b-verif">✓ Verifikuar</span>}
-            {profile?.is_premium && <span className="badge b-prem">👑 Premium</span>}
-            {profile?.shop_name && <span className="badge b-shop">🏢 Biznes</span>}
+            {profile?.is_premium && <span className="badge b-prem"><span aria-hidden="true">👑</span> Premium</span>}
+            {profile?.shop_name && <span className="badge b-shop"><span aria-hidden="true">🏢</span> Biznes</span>}
             {(() => { const l = getLevel(profile?.gamification_points || 0); return <span className="badge" style={{ background: l.bg, color: l.color }}>{l.icon} {l.name}</span> })()}
-            {myListings.some(l => l.is_active) && <span className="badge b-seller">📦 Shitës aktiv</span>}
+            {myListings.some(l => l.is_active) && <span className="badge b-seller"><span aria-hidden="true">📦</span> Shitës aktiv</span>}
             {isNewMember(profile?.created_at) && <span className="badge b-new">🆕 Anëtar i ri</span>}
-            {profile?.gamification_points > 0 && <span className="badge b-pts">⚡ {profile.gamification_points} pikë</span>}
+            {profile?.gamification_points > 0 && <span className="badge b-pts"><span aria-hidden="true">⚡</span> {profile.gamification_points} pikë</span>}
           </div>
         </div>
 
@@ -668,7 +668,7 @@ export default function ProfilePage() {
 
               {!profile?.is_premium && (
                 <div className="prem-card">
-                  <h3>👑 Bëhu Premium — 9.99€/muaj</h3>
+                  <h3><span aria-hidden="true">👑</span> Bëhu Premium — 9.99€/muaj</h3>
                   <p>Biznes online · Badge verifikimi · Shpallje të pakufizuara · Statistika të avancuara</p>
                   <button type="button" className="prem-cta" onClick={() => window.location.href = '/premium'}>Shiko planin →</button>
                 </div>
@@ -773,7 +773,7 @@ export default function ProfilePage() {
               {/* ── Ndrysho Email-in ── */}
               <div className="card">
                 <div className="card-hdr">
-                  <span className="card-title">✉️ Ndrysho Email-in</span>
+                  <span className="card-title"><span aria-hidden="true">✉️</span> Ndrysho Email-in</span>
                 </div>
                 {emailMsg && (
                   <div className={`msg-box msg-sm ${emailMsg.split(':')[0]}`} role="alert">{emailMsg.split(/:(.+)/)[1]}</div>
@@ -796,7 +796,7 @@ export default function ProfilePage() {
               {/* ── Ndrysho Fjalëkalimin ── */}
               <div className="card">
                 <div className="card-hdr">
-                  <span className="card-title">🔒 Ndrysho Fjalëkalimin</span>
+                  <span className="card-title"><span aria-hidden="true">🔒</span> Ndrysho Fjalëkalimin</span>
                 </div>
                 {passMsg && (
                   <div className={`msg-box msg-sm ${passMsg.split(':')[0]}`} role="alert">{passMsg.split(/:(.+)/)[1]}</div>
@@ -833,7 +833,7 @@ export default function ProfilePage() {
 
               {/* ── Fshi Llogarinë ── */}
               <div className="danger-zone">
-                <div className="danger-title">⚠️ Zona e Rrezikshme</div>
+                <div className="danger-title"><span aria-hidden="true">⚠️</span> Zona e Rrezikshme</div>
                 <div className="danger-desc">
                   Fshirja e llogarisë është <strong>e pakthyeshme</strong>. Të gjitha shpalljet dhe të dhënat tuaja do të fshihen përgjithmonë.
                 </div>
@@ -883,7 +883,7 @@ export default function ProfilePage() {
               >
                 <i className="ti ti-chart-bar" style={{ fontSize: 20 }} aria-hidden="true" />
                 <div style={{ textAlign: 'left' }}>
-                  <div>📊 Statistikat e Shpalljeve</div>
+                  <div><span aria-hidden="true">📊</span> Statistikat e Shpalljeve</div>
                   <div style={{ fontSize: 10, fontWeight: 500, opacity: 0.85, marginTop: 2 }}>Pamje, kontaktime, CTR — 7 ose 30 ditë</div>
                 </div>
                 <i className="ti ti-chevron-right" style={{ fontSize: 16, marginLeft: 'auto' }} aria-hidden="true" />
@@ -908,7 +908,7 @@ export default function ProfilePage() {
                       <div role="link" tabIndex={0} className="listing-info" onClick={() => window.location.href = `/listing/${l.id}`} onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/listing/${l.id}` }}>
                         <div className="listing-title">{l.title}</div>
                         <div className="listing-price">{fmt(l.price, l.currency)}</div>
-                        <div className="listing-meta">👁 {l.views_count || 0} · 📍 {l.city || 'Shqipëri'}{l.is_premium ? ' · ⭐ Premium' : ''}</div>
+                        <div className="listing-meta"><span aria-hidden="true">👁</span> {l.views_count || 0} · <span aria-hidden="true">📍</span> {l.city || 'Shqipëri'}{l.is_premium ? ' · ⭐ Premium' : ''}</div>
                       </div>
                       {canBump(l.last_bumped_at) ? (
                         <button
@@ -928,7 +928,7 @@ export default function ProfilePage() {
                           <button type="button" onClick={() => setPendingDelete(null)} style={{ background: '#eee', color: '#555', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Jo</button>
                         </div>
                       ) : (
-                        <button type="button" className="del-btn" onClick={() => setPendingDelete(l.id)} aria-label="Fshi shpalljen">🗑</button>
+                        <button type="button" className="del-btn" onClick={() => setPendingDelete(l.id)} aria-label="Fshi shpalljen"><span aria-hidden="true">🗑</span></button>
                       )}
                     </div>
                   ))
@@ -941,7 +941,7 @@ export default function ProfilePage() {
           {activeTab === 'saved' && (
             <div className="card">
               <div className="card-hdr">
-                <span className="card-title">❤️ Shpalljet e ruajtura ({savedListings.length})</span>
+                <span className="card-title"><span aria-hidden="true">❤️</span> Shpalljet e ruajtura ({savedListings.length})</span>
               </div>
               {savedListings.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '24px 0', color: '#aaa', fontSize: 12 }}>
@@ -957,7 +957,7 @@ export default function ProfilePage() {
                     <div className="listing-info">
                       <div className="listing-title">{l.title}</div>
                       <div className="listing-price">{fmt(l.price, l.currency)}</div>
-                      <div className="listing-meta">📍 {l.city || 'Shqipëri'}{l.is_active ? '' : ' · ✅ Shitur'}</div>
+                      <div className="listing-meta"><span aria-hidden="true">📍</span> {l.city || 'Shqipëri'}{l.is_active ? '' : ' · ✅ Shitur'}</div>
                     </div>
                   </div>
                 ))
@@ -969,7 +969,7 @@ export default function ProfilePage() {
           {activeTab === 'saved' && savedSearches.length > 0 && (
             <div className="card" style={{ marginTop: 10 }}>
               <div className="card-hdr">
-                <span className="card-title">🔔 Kërkimet e ruajtura ({savedSearches.length})</span>
+                <span className="card-title"><span aria-hidden="true">🔔</span> Kërkimet e ruajtura ({savedSearches.length})</span>
               </div>
               {savedSearches.map((s: any) => {
                 const parts = [s.query, s.filters?.city, s.filters?.cat, s.filters?.cond === 'i_ri' ? 'I ri' : s.filters?.cond === 'i_perdorur' ? 'I përdorur' : null, s.filters?.priceMin ? `Min: ${s.filters.priceMin}` : null, s.filters?.priceMax ? `Max: ${s.filters.priceMax}` : null].filter(Boolean)
@@ -997,7 +997,7 @@ export default function ProfilePage() {
             <>
               <div className="card">
                 <div className="card-hdr">
-                  <span className="card-title">💬 Bisedat e mia</span>
+                  <span className="card-title"><span aria-hidden="true">💬</span> Bisedat e mia</span>
                   <button type="button" className="edit-btn" onClick={() => window.location.href = '/messages'}>
                     Hap →
                   </button>
@@ -1044,7 +1044,7 @@ export default function ProfilePage() {
                           <div className="conv-body">
                             <div className="conv-name">
                               {name}
-                              {p?.is_premium && <span className="conv-prem">⭐</span>}
+                              {p?.is_premium && <span className="conv-prem" aria-label="Premium">⭐</span>}
                             </div>
                             <div className={`conv-preview ${conv.unread > 0 ? 'unread' : ''}`}>
                               {preview}
@@ -1076,7 +1076,7 @@ export default function ProfilePage() {
 
               {!profile?.is_premium ? (
                 <div className="prem-card">
-                  <h3>🏢 Hap Biznesin Tënd</h3>
+                  <h3><span aria-hidden="true">🏢</span> Hap Biznesin Tënd</h3>
                   <p>Biznesi online është i disponueshëm vetëm për anëtarët Premium. Merr badge ⭐ verifikimi, shpal produkte të pakufizuara dhe menaxho biznesin tënd!</p>
                   <button type="button" className="prem-cta" onClick={() => window.location.href = '/premium'}>👑 Bëhu Premium — 9.99€/muaj</button>
                 </div>
@@ -1097,7 +1097,7 @@ export default function ProfilePage() {
 
                   <div className="card">
                     <div className="card-hdr">
-                      <span className="card-title">🏢 Konfiguro Biznesin</span>
+                      <span className="card-title"><span aria-hidden="true">🏢</span> Konfiguro Biznesin</span>
                     </div>
 
                     <label htmlFor="shop-name">Emri i biznesit *</label>
