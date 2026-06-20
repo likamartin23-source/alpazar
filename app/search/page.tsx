@@ -160,7 +160,7 @@ export default function SearchPage() {
           <button type="button" className="back" aria-label="Kthehu në ballina" onClick={() => window.location.href = '/'}>
             <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
-          <form className="search-wrap" onSubmit={handleSubmit}>
+          <form className="search-wrap" role="search" aria-label="Kërko shpallje" onSubmit={handleSubmit}>
             <i className="ti ti-search" aria-hidden="true" />
             <input
               type="search"

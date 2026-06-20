@@ -472,7 +472,7 @@ const [searchError, setSearchError] = useState(false)
           <button type="button" className="back" aria-label="Kthehu te kërkimi" onClick={() => window.location.href = '/search'}>
             <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
-          <form className="search-wrap" onSubmit={newSearch} style={{ flex: 1 }}>
+          <form className="search-wrap" role="search" aria-label="Kërko shpallje" onSubmit={newSearch} style={{ flex: 1 }}>
             <i className="ti ti-search" aria-hidden="true" />
             <input
               type="search"
