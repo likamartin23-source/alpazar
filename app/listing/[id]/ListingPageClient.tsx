@@ -41,7 +41,7 @@ function BusinessMiniCard({ bizId }: { bizId: string }) {
         {biz.logo_url ? <img src={biz.logo_url} alt={biz.name} loading="lazy" width={36} height={36} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span aria-hidden="true">🏢</span>}
       </div>
       <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 12, fontWeight: 700, color: '#111' }}>{biz.name} {biz.is_verified && <span style={{ color: '#16a34a' }} aria-label="Biznes i verifikuar">✓ Biznes</span>}</div>
+        <div style={{ fontSize: 12, fontWeight: 700, color: '#111' }}>{biz.name} {biz.is_verified && <span style={{ color: '#16a34a' }} aria-label="Biznes i verifikuar"><span aria-hidden="true">✓</span> Biznes</span>}</div>
         <div style={{ fontSize: 10, color: '#888' }}>Shfaq faqen e biznesit →</div>
       </div>
     </div>
@@ -876,7 +876,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                   {isNewMember(seller.created_at) && <span className="schip sch-new"><span aria-hidden="true">🆕</span> Anëtar i ri</span>}
                   {!isOwner && <span className="schip sch-priv"><span aria-hidden="true">🔒</span> Bisedë private</span>}
                   {(seller.trust_score ?? 0) >= 60 && (
-                    <span className="schip" style={{ background: '#dcfce7', color: '#16a34a', fontWeight: 700 }}>✓ I verifikuar</span>
+                    <span className="schip" style={{ background: '#dcfce7', color: '#16a34a', fontWeight: 700 }}><span aria-hidden="true">✓</span> I verifikuar</span>
                   )}
                   {(seller.trust_score ?? 0) >= 75 && (
                     <span className="schip" style={{ background: '#fef9c3', color: '#854d0e', fontWeight: 700 }}><span aria-hidden="true">⚡</span> Përgjigjet shpejt</span>

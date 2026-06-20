@@ -240,7 +240,7 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
           <svg width="14" height="14" viewBox="0 0 24 24" fill="#E63312" style={{ flexShrink: 0 }} aria-hidden="true">
             <path d="M20 12a8 8 0 0 1-8 8 8 8 0 0 1-8-8 8 8 0 0 1 8-8 8 8 0 0 1 8 8m-8-6a6 6 0 0 0-6 6 6 6 0 0 0 6 6 6 6 0 0 0 6-6 6 6 0 0 0-6-6m-1 3h2v2h2v2h-2v2h-2v-2H9v-2h2V9z"/>
           </svg>
-          <span>Me kodin tënd — nëse miku regjistrohet fiton <strong>50 pikë!</strong> 🎁</span>
+          <span>Me kodin tënd — nëse miku regjistrohet fiton <strong>50 pikë!</strong> <span aria-hidden="true">🎁</span></span>
         </div>
       )}
 

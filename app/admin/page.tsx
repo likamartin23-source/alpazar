@@ -183,7 +183,7 @@ function AppConfigTab() {
     <>
       <div className="ph">
         <div className="pt"><span aria-hidden="true">⚙️</span> Konfigurimet Live</div>
-        <div className="live-dot">● Transmetim Real-Time</div>
+        <div className="live-dot"><span aria-hidden="true">●</span> Transmetim Real-Time</div>
       </div>
 
       {isMaint && (
@@ -309,7 +309,7 @@ function ModerationTab() {
     <>
       <div className="ph">
         <div className="pt"><span aria-hidden="true">🛡️</span> Moderimi</div>
-        <div className="live-dot">● Live</div>
+        <div className="live-dot"><span aria-hidden="true">●</span> Live</div>
       </div>
       {adminMsg && (
         <div style={{ background: '#FFF0EE', border: '0.5px solid #F09595', color: '#E63312', fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 8, margin: '8px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -321,7 +321,7 @@ function ModerationTab() {
         <div className="ct">Raporte të hapura ({reports.length})</div>
         {loading ? <p role="status" aria-live="polite" style={{ color: '#aaa', fontSize: 12, padding: '12px 0' }}>Duke ngarkuar...</p> :
           reports.length === 0 ? (
-            <p style={{ color: '#1D9E75', fontSize: 12, padding: '12px 0', fontWeight: 700 }}>✓ Asnjë raport i hapur</p>
+            <p style={{ color: '#1D9E75', fontSize: 12, padding: '12px 0', fontWeight: 700 }}><span aria-hidden="true">✓</span> Asnjë raport i hapur</p>
           ) : (
             <table>
               <thead><tr><th scope="col">Shpallja</th><th scope="col">Raportuar nga</th><th scope="col">Arsyeja</th><th scope="col">Data</th><th scope="col">Veprime</th></tr></thead>
@@ -352,7 +352,7 @@ function ModerationTab() {
                           {deactivating[r.id] ? 'Duke çaktivizuar...' : 'Çaktivizo Shpalljen'}
                         </button>
                       ) : (
-                        <span style={{ fontSize: 10, color: '#E63312', fontWeight: 700, padding: '4px 0' }}>✓ Shpallja tashmë çaktive</span>
+                        <span style={{ fontSize: 10, color: '#E63312', fontWeight: 700, padding: '4px 0' }}><span aria-hidden="true">✓</span> Shpallja tashmë çaktive</span>
                       )}
                     </div>
                   </td>
@@ -394,7 +394,7 @@ function TakedownTab() {
         <div className="ct">Kërkesat ({requests.filter(r => r.status === 'pending').length} të hapura)</div>
         {loading ? <p role="status" aria-live="polite" style={{ color:'#aaa', fontSize:12 }}>Duke ngarkuar...</p> :
           requests.length === 0 ? (
-            <p style={{ color:'#1D9E75', fontSize:12, padding:'12px 0', fontWeight:700 }}>✓ Asnjë kërkesë heqje</p>
+            <p style={{ color:'#1D9E75', fontSize:12, padding:'12px 0', fontWeight:700 }}><span aria-hidden="true">✓</span> Asnjë kërkesë heqje</p>
           ) : (
             <table>
               <thead><tr><th scope="col">Lloji</th><th scope="col">URL</th><th scope="col">Kontakti</th><th scope="col">Përshkrimi</th><th scope="col">Data</th><th scope="col">Statusi</th><th scope="col">Veprime</th></tr></thead>
@@ -716,7 +716,7 @@ export default function Admin() {
                   <div className="ph">
                     <div className="pt"><span aria-hidden="true">📊</span> Dashboard</div>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
-                      <div className="live-dot">● Live</div>
+                      <div className="live-dot"><span aria-hidden="true">●</span> Live</div>
                       <span style={{ fontSize: 9, color: '#aaa' }}>
                         {lastUpdated.toLocaleTimeString('sq-AL')}
                         {liveStats.newListings > 0 && ` · +${liveStats.newListings} listingje`}
@@ -801,9 +801,9 @@ export default function Admin() {
                             <td>
                               {r.status === 'pending' && (
                                 <>
-                                  <button type="button" className="btn btn-green" onClick={() => handlePremiumRequest(r.id, 'approved', r.user_id, r.plan)}>✓ Aprovo</button>
+                                  <button type="button" className="btn btn-green" onClick={() => handlePremiumRequest(r.id, 'approved', r.user_id, r.plan)}><span aria-hidden="true">✓</span> Aprovo</button>
                                   <button type="button" className="btn btn-orange" onClick={() => handlePremiumRequest(r.id, 'gifted', r.user_id, r.plan)}><span aria-hidden="true">🎁</span> Dhuratë</button>
-                                  <button type="button" className="btn btn-red" onClick={() => handlePremiumRequest(r.id, 'rejected', r.user_id, r.plan)}>✕ Refuzo</button>
+                                  <button type="button" className="btn btn-red" onClick={() => handlePremiumRequest(r.id, 'rejected', r.user_id, r.plan)}><span aria-hidden="true">✕</span> Refuzo</button>
                                 </>
                               )}
                             </td>
