@@ -332,7 +332,7 @@ export default function ReferralPage() {
                         <strong style={{ color: done ? '#3B6D11' : '#111' }}>{r.label}</strong>
                         <span>{r.sub}</span>
                       </div>
-                      <div className="reward-done">{done ? '✅' : '🔒'}</div>
+                      <div className="reward-done" aria-hidden="true">{done ? '✅' : '🔒'}</div>
                     </div>
                   )
                 })}
@@ -343,7 +343,7 @@ export default function ReferralPage() {
                 <div className="card-title"><i className="ti ti-users" aria-hidden="true" />Të Ftuar ({referrals.length})</div>
                 {referrals.length === 0 ? (
                   <div className="empty-ref">
-                    <div style={{ fontSize: 36, marginBottom: 8 }}>👥</div>
+                    <div style={{ fontSize: 36, marginBottom: 8 }} aria-hidden="true">👥</div>
                     <div>Ende nuk ke ftuar askënd.<br />Ndaj linkun dhe fillo të fitosh pikë!</div>
                   </div>
                 ) : (

@@ -63,7 +63,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
 
   if (notFound) return (
     <div style={{ minHeight: '100vh', background: '#FFFBEA', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
-      <div style={{ fontSize: 48 }}>👤</div>
+      <div style={{ fontSize: 48 }} aria-hidden="true">👤</div>
       <div style={{ fontSize: 18, fontWeight: 700, color: '#111' }}>Profili nuk u gjet</div>
       <button type="button" onClick={() => window.location.href = '/'} style={{ marginTop: 8, padding: '10px 24px', background: '#F5C842', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>← Kthehu</button>
     </div>
@@ -119,8 +119,8 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
           {/* Name + badges */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
             <h1 style={{ fontSize: 22, fontWeight: 800, color: '#111', margin: 0, lineHeight: 1.2 }}>{name}</h1>
-            {profile.is_premium && <span title="Premium" aria-label="Premium" style={{ fontSize: 16 }}>👑</span>}
-            {profile.is_verified && <span title="Verifikuar" aria-label="Verifikuar" style={{ fontSize: 16 }}>✅</span>}
+            {profile.is_premium && <span title="Premium" role="img" aria-label="Premium" style={{ fontSize: 16 }}>👑</span>}
+            {profile.is_verified && <span title="Verifikuar" role="img" aria-label="Verifikuar" style={{ fontSize: 16 }}>✅</span>}
             {isBusiness && <span style={{ background: '#111', color: '#F5C842', fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 12 }}><span aria-hidden="true">🏢</span> BIZNES</span>}
           </div>
 
@@ -129,7 +129,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
           )}
 
           {profile.city && (
-            <div style={{ color: '#666', fontSize: 13, marginBottom: 6 }}>📍 {profile.city}</div>
+            <div style={{ color: '#666', fontSize: 13, marginBottom: 6 }}><span aria-hidden="true">📍</span> {profile.city}</div>
           )}
 
           {/* Stats row */}
@@ -215,7 +215,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
         <div id="tabpanel-listings" role="tabpanel" aria-labelledby="tab-listings" style={{ padding: '0 2px' }}>
           {listings.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '48px 16px', color: '#888', fontSize: 14 }}>
-              <div style={{ fontSize: 36, marginBottom: 8 }}>📭</div>
+              <div style={{ fontSize: 36, marginBottom: 8 }} aria-hidden="true">📭</div>
               Nuk ka shpallje aktive
             </div>
           ) : (
@@ -243,7 +243,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
                         onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
                       />
                     ) : (
-                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg,#F5C842,#E63312)', color: '#fff', fontSize: 28 }}>📦</div>
+                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg,#F5C842,#E63312)', color: '#fff', fontSize: 28 }} aria-hidden="true">📦</div>
                     )}
                     {/* Price overlay */}
                     <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)', padding: '20px 6px 6px', color: '#fff' }}>
