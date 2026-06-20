@@ -119,9 +119,9 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
           {/* Name + badges */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
             <h1 style={{ fontSize: 22, fontWeight: 800, color: '#111', margin: 0, lineHeight: 1.2 }}>{name}</h1>
-            {profile.is_premium && <span title="Premium" style={{ fontSize: 16 }}>👑</span>}
-            {profile.is_verified && <span title="Verifikuar" style={{ fontSize: 16 }}>✅</span>}
-            {isBusiness && <span style={{ background: '#111', color: '#F5C842', fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 12 }}>🏢 BIZNES</span>}
+            {profile.is_premium && <span title="Premium" aria-label="Premium" style={{ fontSize: 16 }}>👑</span>}
+            {profile.is_verified && <span title="Verifikuar" aria-label="Verifikuar" style={{ fontSize: 16 }}>✅</span>}
+            {isBusiness && <span style={{ background: '#111', color: '#F5C842', fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 12 }}><span aria-hidden="true">🏢</span> BIZNES</span>}
           </div>
 
           {profile.username && (
@@ -146,7 +146,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
             )}
             {profile.seller_rating > 0 && (
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontWeight: 800, fontSize: 17, color: '#111' }}>⭐ {Number(profile.seller_rating).toFixed(1)}</div>
+                <div style={{ fontWeight: 800, fontSize: 17, color: '#111' }}><span aria-hidden="true">⭐</span> {Number(profile.seller_rating).toFixed(1)}</div>
                 <div style={{ fontSize: 11, color: '#888' }}>Vlerësim</div>
               </div>
             )}
@@ -274,15 +274,15 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
             <div style={{ fontWeight: 700, fontSize: 13, color: '#888', textTransform: 'uppercase', letterSpacing: 0.5 }}>Informacion</div>
             {profile.city && (
               <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 14, color: '#333' }}>
-                <span>📍</span><span>{profile.city}</span>
+                <span aria-hidden="true">📍</span><span>{profile.city}</span>
               </div>
             )}
             <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 14, color: '#333' }}>
-              <span>📅</span><span>Anëtar që nga {memberSince}</span>
+              <span aria-hidden="true">📅</span><span>Anëtar që nga {memberSince}</span>
             </div>
             {profile.reviews_count > 0 && (
               <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 14, color: '#333' }}>
-                <span>⭐</span><span>{profile.reviews_count} vlerësime · mesatare {Number(profile.seller_rating).toFixed(1)}</span>
+                <span aria-hidden="true">⭐</span><span>{profile.reviews_count} vlerësime · mesatare {Number(profile.seller_rating).toFixed(1)}</span>
               </div>
             )}
           </div>

@@ -181,7 +181,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
             <h1 style={{ fontSize: 22, fontWeight: 800, color: '#111', lineHeight: 1.2 }}>{biz.name}</h1>
             {biz.is_verified && (
-              <span style={{ fontSize: 18, lineHeight: 1 }}>✅</span>
+              <span style={{ fontSize: 18, lineHeight: 1 }} aria-hidden="true">✅</span>
             )}
           </div>
           {biz.is_verified && (
@@ -251,25 +251,25 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
       <div style={{ background: '#fff', margin: '0 0 8px', padding: '4px 16px' }}>
         {biz.address && (
           <div className="info-row">
-            <span className="info-icon">📍</span>
+            <span className="info-icon" aria-hidden="true">📍</span>
             <span className="info-text">{biz.address}</span>
           </div>
         )}
         {biz.phone && (
           <div className="info-row">
-            <span className="info-icon">📞</span>
+            <span className="info-icon" aria-hidden="true">📞</span>
             <span className="info-text"><a href={`tel:${biz.phone}`}>{biz.phone}</a></span>
           </div>
         )}
         {biz.website && (
           <div className="info-row">
-            <span className="info-icon">🌐</span>
+            <span className="info-icon" aria-hidden="true">🌐</span>
             <span className="info-text"><a href={biz.website} target="_blank" rel="noopener noreferrer">{biz.website.replace(/^https?:\/\//, '')}</a></span>
           </div>
         )}
         {biz.hours?.schedule && (
           <div className="info-row">
-            <span className="info-icon">🕐</span>
+            <span className="info-icon" aria-hidden="true">🕐</span>
             <span className="info-text">{biz.hours.schedule}</span>
           </div>
         )}
@@ -329,54 +329,54 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
       {activeTab === 'info' && (
         <div id="tabpanel-info" role="tabpanel" aria-labelledby="tab-info" style={{ padding: '8px 0' }}>
           <div className="card">
-            <div className="card-title"><i className="ti ti-building-store" style={{ fontSize: 16, color: '#E63312' }} aria-hidden="true" /> Rreth biznesit</div>
+            <h2 className="card-title"><i className="ti ti-building-store" style={{ fontSize: 16, color: '#E63312' }} aria-hidden="true" /> Rreth biznesit</h2>
             {biz.description
               ? <p style={{ fontSize: 13, color: '#444', lineHeight: 1.7, marginBottom: 12 }}>{biz.description}</p>
               : <p style={{ fontSize: 12, color: '#aaa', marginBottom: 12 }}>Nuk ka përshkrim.</p>
             }
             {biz.type && (
               <div className="info-row">
-                <span className="info-icon">🏷️</span>
+                <span className="info-icon" aria-hidden="true">🏷️</span>
                 <span className="info-text" style={{ textTransform: 'capitalize' }}>{biz.type}</span>
               </div>
             )}
           </div>
 
           <div className="card">
-            <div className="card-title"><i className="ti ti-map-pin" style={{ fontSize: 16, color: '#E63312' }} aria-hidden="true" /> Vendndodhja & Kontakti</div>
+            <h2 className="card-title"><i className="ti ti-map-pin" style={{ fontSize: 16, color: '#E63312' }} aria-hidden="true" /> Vendndodhja & Kontakti</h2>
             {biz.address && (
               <div className="info-row">
-                <span className="info-icon">📍</span>
+                <span className="info-icon" aria-hidden="true">📍</span>
                 <span className="info-text">{biz.address}</span>
               </div>
             )}
             {biz.city && (
               <div className="info-row">
-                <span className="info-icon">🏙️</span>
+                <span className="info-icon" aria-hidden="true">🏙️</span>
                 <span className="info-text">{biz.city}</span>
               </div>
             )}
             {biz.phone && (
               <div className="info-row">
-                <span className="info-icon">📞</span>
+                <span className="info-icon" aria-hidden="true">📞</span>
                 <span className="info-text"><a href={`tel:${biz.phone}`}>{biz.phone}</a></span>
               </div>
             )}
             {biz.email && (
               <div className="info-row">
-                <span className="info-icon">✉️</span>
+                <span className="info-icon" aria-hidden="true">✉️</span>
                 <span className="info-text"><a href={`mailto:${biz.email}`}>{biz.email}</a></span>
               </div>
             )}
             {biz.website && (
               <div className="info-row">
-                <span className="info-icon">🌐</span>
+                <span className="info-icon" aria-hidden="true">🌐</span>
                 <span className="info-text"><a href={biz.website} target="_blank" rel="noopener noreferrer">{biz.website.replace(/^https?:\/\//, '')}</a></span>
               </div>
             )}
             {biz.hours?.schedule && (
               <div className="info-row">
-                <span className="info-icon">🕐</span>
+                <span className="info-icon" aria-hidden="true">🕐</span>
                 <span className="info-text">{biz.hours.schedule}</span>
               </div>
             )}
@@ -384,7 +384,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
 
           {subcats.length > 0 && (
             <div className="card">
-              <div className="card-title"><i className="ti ti-tag" style={{ fontSize: 16, color: '#E63312' }} aria-hidden="true" /> Kategoritë</div>
+              <h2 className="card-title"><i className="ti ti-tag" style={{ fontSize: 16, color: '#E63312' }} aria-hidden="true" /> Kategoritë</h2>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                 {subcats.map((s, i) => (
                   <span key={i} style={{ fontSize: 12, background: '#FFF8E1', color: '#7B5000', padding: '5px 12px', borderRadius: 20, fontWeight: 700, border: '1px solid #F5C84244' }}>
@@ -403,16 +403,16 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
 
           {(biz.nipt || biz.withdrawal_days) && (
             <div className="card">
-              <div className="card-title"><i className="ti ti-scale" style={{ fontSize: 16, color: '#E63312' }} aria-hidden="true" /> Informacion ligjor</div>
+              <h2 className="card-title"><i className="ti ti-scale" style={{ fontSize: 16, color: '#E63312' }} aria-hidden="true" /> Informacion ligjor</h2>
               {biz.nipt && (
                 <div className="info-row">
-                  <span className="info-icon">🏛️</span>
+                  <span className="info-icon" aria-hidden="true">🏛️</span>
                   <span className="info-text">NIPT: <strong>{biz.nipt}</strong></span>
                 </div>
               )}
               {(biz.withdrawal_days ?? 0) > 0 && (
                 <div className="info-row">
-                  <span className="info-icon">↩️</span>
+                  <span className="info-icon" aria-hidden="true">↩️</span>
                   <span className="info-text">E drejta e tërheqjes: <strong>{biz.withdrawal_days} ditë</strong> (Direktiva EU 2011/83/EU)</span>
                 </div>
               )}
@@ -428,7 +428,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
       {/* ── Reviews tab ──────────────────────────────────────── */}
       {activeTab === 'reviews' && (
         <div id="tabpanel-reviews" role="tabpanel" aria-labelledby="tab-reviews" style={{ background: '#fff', margin: 8, borderRadius: 16, padding: '40px 16px', textAlign: 'center' }}>
-          <div style={{ fontSize: 44, marginBottom: 14 }}>⭐</div>
+          <div style={{ fontSize: 44, marginBottom: 14 }} aria-hidden="true">⭐</div>
           <div style={{ fontSize: 16, fontWeight: 800, color: '#111', marginBottom: 6 }}>Vlerësimet vijnë së shpejti</div>
           <div style={{ fontSize: 12, color: '#888', lineHeight: 1.6 }}>Klientët do të mund të lënë vlerësime<br />për shërbimin dhe produktet e biznesit.</div>
         </div>
