@@ -103,7 +103,7 @@ export default function BiznestPage() {
             <button type="button" onClick={() => window.location.reload()} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 8, padding: '9px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
           </div>
         ) : loading ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div role="status" aria-label="Duke ngarkuar bizneset..." style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {[1, 2, 3, 4].map(i => (
               <div key={i} style={{ background: '#fff', borderRadius: 14, padding: 14, display: 'flex', gap: 12, alignItems: 'center' }}>
                 <div style={{ width: 52, height: 52, borderRadius: '50%', background: '#eee' }} />

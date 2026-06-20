@@ -182,7 +182,7 @@ export default function NotificationsPage() {
 
       {/* Loading */}
       {loading && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+        <div role="status" aria-label="Duke ngarkuar njoftimet..." style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           {[1,2,3,4,5].map(i => (
             <div key={i} style={{ display: 'flex', gap: 14, padding: '14px 16px', background: '#fff', borderBottom: '1px solid #f0e6b0' }}>
               <div style={{ width: 46, height: 46, borderRadius: '50%', background: '#f0ead0', flexShrink: 0 }} />

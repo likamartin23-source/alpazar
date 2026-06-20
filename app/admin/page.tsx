@@ -104,7 +104,7 @@ function ReferralTab() {
       </div>
       <div className="card">
         <div className="ct">Top Referues</div>
-        {loading ? <p style={{ color: '#aaa', fontSize: 12, padding: '12px 0' }}>Duke ngarkuar...</p> :
+        {loading ? <p role="status" aria-live="polite" style={{ color: '#aaa', fontSize: 12, padding: '12px 0' }}>Duke ngarkuar...</p> :
           <table>
             <thead><tr><th scope="col">#</th><th scope="col">Kodi</th><th scope="col">Të ftuar</th><th scope="col">Pikë</th></tr></thead>
             <tbody>{ranked.map((r: any, i) => (
@@ -319,7 +319,7 @@ function ModerationTab() {
       )}
       <div className="card">
         <div className="ct">Raporte të hapura ({reports.length})</div>
-        {loading ? <p style={{ color: '#aaa', fontSize: 12, padding: '12px 0' }}>Duke ngarkuar...</p> :
+        {loading ? <p role="status" aria-live="polite" style={{ color: '#aaa', fontSize: 12, padding: '12px 0' }}>Duke ngarkuar...</p> :
           reports.length === 0 ? (
             <p style={{ color: '#1D9E75', fontSize: 12, padding: '12px 0', fontWeight: 700 }}>✓ Asnjë raport i hapur</p>
           ) : (
@@ -392,7 +392,7 @@ function TakedownTab() {
       <div className="ph"><div className="pt">⚖️ Heqja e Përmbajtjes (Notice &amp; Takedown)</div></div>
       <div className="card">
         <div className="ct">Kërkesat ({requests.filter(r => r.status === 'pending').length} të hapura)</div>
-        {loading ? <p style={{ color:'#aaa', fontSize:12 }}>Duke ngarkuar...</p> :
+        {loading ? <p role="status" aria-live="polite" style={{ color:'#aaa', fontSize:12 }}>Duke ngarkuar...</p> :
           requests.length === 0 ? (
             <p style={{ color:'#1D9E75', fontSize:12, padding:'12px 0', fontWeight:700 }}>✓ Asnjë kërkesë heqje</p>
           ) : (
@@ -707,7 +707,7 @@ export default function Admin() {
         {/* ── Content ── */}
         <div className="content">
           {loading && tab !== 'config' ? (
-            <div style={{ textAlign: 'center', padding: 60, color: '#aaa', fontSize: 13 }}>Duke ngarkuar...</div>
+            <div role="status" aria-live="polite" style={{ textAlign: 'center', padding: 60, color: '#aaa', fontSize: 13 }}>Duke ngarkuar...</div>
           ) : (
             <>
               {/* DASHBOARD */}
