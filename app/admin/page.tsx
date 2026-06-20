@@ -190,7 +190,7 @@ function AppConfigTab() {
         <div className="maint-banner">
           <i className="ti ti-alert-triangle" aria-hidden="true" />
           <p>Modaliteti i mirëmbajtjes është AKTIV — platforma është bllokuar për përdorues.</p>
-          <button className="btn btn-red" onClick={() => toggleBool('maintenance_mode')}>Çaktivizo</button>
+          <button type="button" className="btn btn-red" onClick={() => toggleBool('maintenance_mode')}>Çaktivizo</button>
         </div>
       )}
 
@@ -314,7 +314,7 @@ function ModerationTab() {
       {adminMsg && (
         <div style={{ background: '#FFF0EE', border: '0.5px solid #F09595', color: '#E63312', fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 8, margin: '8px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ flex: 1 }}>⚠️ {adminMsg}</span>
-          <button onClick={() => setAdminMsg('')} style={{ background: 'none', border: 'none', color: '#E63312', cursor: 'pointer', fontSize: 14 }}>✕</button>
+          <button type="button" aria-label="Mbyll mesazhin" onClick={() => setAdminMsg('')} style={{ background: 'none', border: 'none', color: '#E63312', cursor: 'pointer', fontSize: 14 }}>✕</button>
         </div>
       )}
       <div className="card">
@@ -339,11 +339,12 @@ function ModerationTab() {
                   <td>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                       <div style={{ display: 'flex', gap: 4 }}>
-                        <button className="btn btn-green" onClick={() => resolve(r.id, 'resolved')}>Zgjidh</button>
-                        <button className="btn btn-orange" onClick={() => resolve(r.id, 'dismissed')}>Inoro</button>
+                        <button type="button" className="btn btn-green" onClick={() => resolve(r.id, 'resolved')}>Zgjidh</button>
+                        <button type="button" className="btn btn-orange" onClick={() => resolve(r.id, 'dismissed')}>Inoro</button>
                       </div>
                       {r.listings?.is_active !== false ? (
                         <button
+                          type="button"
                           onClick={() => deactivateListing(r.listings?.id || r.listing_id, r.id, r.listings?.seller_id)}
                           disabled={deactivating[r.id]}
                           style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 7, padding: '6px 12px', fontSize: 11, fontWeight: 700, cursor: deactivating[r.id] ? 'not-allowed' : 'pointer', opacity: deactivating[r.id] ? 0.6 : 1 }}
@@ -413,8 +414,8 @@ function TakedownTab() {
                         <input type="text" className="finput" placeholder="Shënim (opsional)" style={{ fontSize:10, padding:'4px 6px', marginBottom:2 }}
                           value={note[r.id] || ''} onChange={e => setNote(prev => ({ ...prev, [r.id]: e.target.value }))} />
                         <div style={{ display:'flex', gap:4 }}>
-                          <button className="btn btn-red" onClick={() => resolve(r.id, 'resolved')}>Zgjidh</button>
-                          <button className="btn btn-orange" onClick={() => resolve(r.id, 'rejected')}>Refuzo</button>
+                          <button type="button" className="btn btn-red" onClick={() => resolve(r.id, 'resolved')}>Zgjidh</button>
+                          <button type="button" className="btn btn-orange" onClick={() => resolve(r.id, 'rejected')}>Refuzo</button>
                         </div>
                       </div>
                     )}
@@ -618,7 +619,7 @@ export default function Admin() {
       <div style={{ color:'#666', fontSize:12 }}>Fut kodin nga Google Authenticator / Authy</div>
       <input type="text" aria-label="Kodi 2FA (6 shifra)" inputMode="numeric" pattern="[0-9]*" autoComplete="one-time-code" maxLength={6} value={totpCode} onChange={e => setTotpCode(e.target.value.replace(/\D/g,''))} placeholder="000000" onKeyDown={e => e.key === 'Enter' && verifyAdminMfa()} autoFocus />
       {mfaError && <div role="alert" style={{ color:'#E63312', fontSize:12 }}>{mfaError}</div>}
-      <button onClick={verifyAdminMfa} style={{ background:'#F5C842', color:'#111', border:'none', borderRadius:8, padding:'10px 28px', fontWeight:800, fontSize:14, cursor:'pointer' }}>Konfirmo</button>
+      <button type="button" onClick={verifyAdminMfa} style={{ background:'#F5C842', color:'#111', border:'none', borderRadius:8, padding:'10px 28px', fontWeight:800, fontSize:14, cursor:'pointer' }}>Konfirmo</button>
     </div>
   )
 
@@ -648,6 +649,7 @@ export default function Admin() {
           />
           {pinError && <div role="alert" style={{ color: '#E63312', fontSize: 12, marginBottom: 10 }}>{pinError}</div>}
           <button
+            type="button"
             onClick={checkPin}
             style={{ width: '100%', background: '#111', color: '#fff', border: 'none', borderRadius: 10, padding: '13px', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}
           >
@@ -678,7 +680,7 @@ export default function Admin() {
           </div>
 
           {tabs.map(([id, icon, label]) => (
-            <button key={id} className={`nl ${tab === id ? 'on' : ''}`} aria-pressed={tab === id} onClick={() => setTab(id)}>
+            <button type="button" key={id} className={`nl ${tab === id ? 'on' : ''}`} aria-pressed={tab === id} onClick={() => setTab(id)}>
               <i className={`ti ti-${icon}`} aria-hidden="true" />
               <span>{label}</span>
               {id === 'moderation' && stats.reports > 0 && (
@@ -746,9 +748,9 @@ export default function Admin() {
                               <td style={{ fontWeight:700, color:'#1D9E75' }}>{p.amount_eur}€</td>
                               <td><span className={`badge ${p.status==='active'?'ba':p.status==='pending'?'bp':'bd'}`}>{p.status}</span></td>
                               <td>
-                                {p.status !== 'active'   && <button className="btn btn-green"  onClick={() => updateStatus(p.id,'active',p.user_id)}>Aktivizo</button>}
-                                {p.status === 'active'   && <button className="btn btn-orange" onClick={() => updateStatus(p.id,'suspended',p.user_id)}>Pezullo</button>}
-                                <button className="btn btn-red" onClick={() => updateStatus(p.id,'cancelled',p.user_id)}>Anulo</button>
+                                {p.status !== 'active'   && <button type="button" className="btn btn-green"  onClick={() => updateStatus(p.id,'active',p.user_id)}>Aktivizo</button>}
+                                {p.status === 'active'   && <button type="button" className="btn btn-orange" onClick={() => updateStatus(p.id,'suspended',p.user_id)}>Pezullo</button>}
+                                <button type="button" className="btn btn-red" onClick={() => updateStatus(p.id,'cancelled',p.user_id)}>Anulo</button>
                               </td>
                             </tr>
                           ))
@@ -766,7 +768,7 @@ export default function Admin() {
                   {payMsg && (
                     <div style={{ background: '#FFF0EE', border: '0.5px solid #F09595', color: '#E63312', fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 8, margin: '8px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span style={{ flex: 1 }}>⚠️ {payMsg}</span>
-                      <button onClick={() => setPayMsg('')} style={{ background: 'none', border: 'none', color: '#E63312', cursor: 'pointer', fontSize: 14 }}>✕</button>
+                      <button type="button" aria-label="Mbyll mesazhin" onClick={() => setPayMsg('')} style={{ background: 'none', border: 'none', color: '#E63312', cursor: 'pointer', fontSize: 14 }}>✕</button>
                     </div>
                   )}
 
@@ -798,9 +800,9 @@ export default function Admin() {
                             <td>
                               {r.status === 'pending' && (
                                 <>
-                                  <button className="btn btn-green" onClick={() => handlePremiumRequest(r.id, 'approved', r.user_id, r.plan)}>✓ Aprovo</button>
-                                  <button className="btn btn-orange" onClick={() => handlePremiumRequest(r.id, 'gifted', r.user_id, r.plan)}>🎁 Dhuratë</button>
-                                  <button className="btn btn-red" onClick={() => handlePremiumRequest(r.id, 'rejected', r.user_id, r.plan)}>✕ Refuzo</button>
+                                  <button type="button" className="btn btn-green" onClick={() => handlePremiumRequest(r.id, 'approved', r.user_id, r.plan)}>✓ Aprovo</button>
+                                  <button type="button" className="btn btn-orange" onClick={() => handlePremiumRequest(r.id, 'gifted', r.user_id, r.plan)}>🎁 Dhuratë</button>
+                                  <button type="button" className="btn btn-red" onClick={() => handlePremiumRequest(r.id, 'rejected', r.user_id, r.plan)}>✕ Refuzo</button>
                                 </>
                               )}
                             </td>
@@ -825,9 +827,9 @@ export default function Admin() {
                               <td><span className={`badge ${p.status==='active'?'ba':p.status==='pending'?'bp':'bd'}`}>{p.status}</span></td>
                               <td style={{ color:'#888' }}>{new Date(p.created_at).toLocaleDateString('sq-AL')}</td>
                               <td>
-                                {p.status!=='active' && <button className="btn btn-green" onClick={() => updateStatus(p.id,'active',p.user_id)}>✓</button>}
-                                {p.status==='active' && <button className="btn btn-orange" onClick={() => updateStatus(p.id,'suspended',p.user_id)}>⏸</button>}
-                                <button className="btn btn-red" onClick={() => updateStatus(p.id,'cancelled',p.user_id)}>✕</button>
+                                {p.status!=='active' && <button type="button" className="btn btn-green" onClick={() => updateStatus(p.id,'active',p.user_id)}>✓</button>}
+                                {p.status==='active' && <button type="button" className="btn btn-orange" onClick={() => updateStatus(p.id,'suspended',p.user_id)}>⏸</button>}
+                                <button type="button" className="btn btn-red" onClick={() => updateStatus(p.id,'cancelled',p.user_id)}>✕</button>
                               </td>
                             </tr>
                           ))
@@ -854,7 +856,7 @@ export default function Admin() {
                           <span role="switch" aria-checked={m.is_active} tabIndex={0} className={`tgl ${m.is_active ? 'tgl-on' : 'tgl-off'}`} onClick={() => toggleMethod(m.id, m.is_active)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') toggleMethod(m.id, m.is_active) }}>
                             <span className="tdot" />
                           </span>
-                          <button className="btn btn-red" onClick={async () => { const { error } = await supabase.from('payment_methods').delete().eq('id',m.id); if (error) setPayMsg('Gabim: ' + error.message); fetchAll() }}>Fshi</button>
+                          <button type="button" className="btn btn-red" onClick={async () => { const { error } = await supabase.from('payment_methods').delete().eq('id',m.id); if (error) setPayMsg('Gabim: ' + error.message); fetchAll() }}>Fshi</button>
                         </div>
                       </div>
                     ))}

@@ -69,7 +69,7 @@ function AudioPlayer({ url, mine }: { url: string; mine: boolean }) {
 
   return (
     <div style={{ display:'flex', alignItems:'center', gap:10, minWidth:200 }}>
-      <button onClick={toggle} style={{
+      <button type="button" aria-label={playing ? 'Pauzë' : 'Luaj'} onClick={toggle} style={{
         width:40, height:40, borderRadius:'50%', border:'none', cursor:'pointer', flexShrink:0,
         background: mine ? 'rgba(245,200,66,.22)' : 'rgba(230,51,18,.12)',
         display:'flex', alignItems:'center', justifyContent:'center',
@@ -925,7 +925,7 @@ export default function MessagesPage() {
             {!ctxMenu.msg.deleted_at && (
               <div style={{ display:'flex', gap:6, padding:'10px 20px 4px', borderBottom:'0.5px solid #f0f0f0' }}>
                 {EMOJI_QUICK.map(e => (
-                  <button key={e} onClick={() => { sendReaction(ctxMenu.msg.id, e) }}
+                  <button type="button" key={e} aria-label={`Reaksion ${e}`} onClick={() => { sendReaction(ctxMenu.msg.id, e) }}
                     style={{ background:ctxMenu.msg.reaction===e?'#fff3c0':'#f5f5f5', border: ctxMenu.msg.reaction===e?'2px solid #F5C842':'2px solid transparent', borderRadius:50, width:38, height:38, fontSize:20, cursor:'pointer', transition:'transform .1s' }}>
                     {e}
                   </button>
@@ -1033,7 +1033,7 @@ export default function MessagesPage() {
                 onClick={() => setShowWhatsApp(false)}>
                 <i className="ti ti-brand-whatsapp" style={{ marginRight:8 }} aria-hidden="true" />Hap WhatsApp
               </a>
-              <button style={{ width:'100%', padding:'13px', background:'#f5f5f0', border:'none', borderRadius:14, fontWeight:600, fontSize:14, cursor:'pointer', color:'#555', fontFamily:'inherit' }}
+              <button type="button" style={{ width:'100%', padding:'13px', background:'#f5f5f0', border:'none', borderRadius:14, fontWeight:600, fontSize:14, cursor:'pointer', color:'#555', fontFamily:'inherit' }}
                 onClick={() => setShowWhatsApp(false)}>Anulo</button>
             </div>
           </div>
@@ -1056,7 +1056,7 @@ export default function MessagesPage() {
                 onClick={() => setShowViber(false)}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" style={{display:'inline-block',verticalAlign:'middle',marginRight:8}}><path d="M11.5 1C5.7 1.1 1.1 5.7 1 11.5c-.04 2.1.55 4 1.53 5.65L1 23l6.09-1.5c1.57.9 3.4 1.41 5.27 1.45C18.1 23.02 23 18.1 23 12c0-6.07-5.1-11.09-11.5-11zm4.55 15.9c-.31.85-1.5 1.58-2.26 1.6-.77.05-1.51-.16-4.45-1.4C6.08 15.6 3.83 12.17 3.63 11.9c-.2-.28-1.63-2.16-1.63-4.13 0-1.96.85-2.95 1.18-3.37.33-.42.64-.62.9-.64.32 0 .62 0 .9.02.3.02.7-.11.97.74.32.94 1.08 3.26 1.18 3.49.1.24.16.5.03.8-.12.3-.18.48-.36.74-.18.26-.38.57-.55.76-.18.2-.36.42-.16.83.2.4.9 1.48 1.93 2.4 1.33 1.19 2.45 1.56 2.8 1.74.34.18.55.15.75-.08.2-.22.87-1.02 1.1-1.37.23-.34.46-.28.78-.17.33.11 2.07.98 2.43 1.16.35.18.58.27.67.42.09.15.09.85-.22 1.62z"/></svg>Hap Viber
               </a>
-              <button style={{ width:'100%', padding:'13px', background:'#f5f5f0', border:'none', borderRadius:14, fontWeight:600, fontSize:14, cursor:'pointer', color:'#555', fontFamily:'inherit' }}
+              <button type="button" style={{ width:'100%', padding:'13px', background:'#f5f5f0', border:'none', borderRadius:14, fontWeight:600, fontSize:14, cursor:'pointer', color:'#555', fontFamily:'inherit' }}
                 onClick={() => setShowViber(false)}>Anulo</button>
             </div>
           </div>
@@ -1071,8 +1071,8 @@ export default function MessagesPage() {
             <div className="confirm-title">Blloko {displayName(selected.other)}?</div>
             <div className="confirm-desc">Ai/ajo nuk mund t'ju dërgojë mesazhe.</div>
             <div className="confirm-btns">
-              <button className="confirm-btn cancel" onClick={() => setShowBlockConf(false)}>Anulo</button>
-              <button className="confirm-btn danger" onClick={blockUser}>Blloko</button>
+              <button type="button" className="confirm-btn cancel" onClick={() => setShowBlockConf(false)}>Anulo</button>
+              <button type="button" className="confirm-btn danger" onClick={blockUser}>Blloko</button>
             </div>
           </div>
         </div>
@@ -1085,19 +1085,19 @@ export default function MessagesPage() {
           <>
             {selectMode ? (
               <div className="select-bar">
-                <button className="back-btn" aria-label="Anulo zgjedhjen" onClick={() => { setSelectMode(false); setSelectedMsgs(new Set()) }}>
+                <button type="button" className="back-btn" aria-label="Anulo zgjedhjen" onClick={() => { setSelectMode(false); setSelectedMsgs(new Set()) }}>
                   <i className="ti ti-x" aria-hidden="true" />
                 </button>
                 <div className="select-bar-text">{selectedMsgs.size} të zgjedhura</div>
                 {selectedMsgs.size > 0 && (
-                  <button className="sel-delete" onClick={deleteSelected}>
+                  <button type="button" className="sel-delete" onClick={deleteSelected}>
                     <i className="ti ti-trash" style={{ marginRight:6 }} aria-hidden="true" />Fshi
                   </button>
                 )}
               </div>
             ) : (
               <div className="topbar chat">
-                <button className="back-btn" aria-label="Kthehu në biseda" onClick={back}><i className="ti ti-arrow-left" aria-hidden="true" /></button>
+                <button type="button" className="back-btn" aria-label="Kthehu në biseda" onClick={back}><i className="ti ti-arrow-left" aria-hidden="true" /></button>
                 <Avatar profile={selected.other} size={36} online={isOtherOnline} />
                 <div role="button" tabIndex={0} aria-label="Shiko informacionin e bisedës" className="t-meta" style={{ cursor:'pointer' }} onClick={() => setShowInfo(true)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setShowInfo(true) }}>
                   <div className="t-name">{displayName(selected.other)}</div>
@@ -1111,16 +1111,16 @@ export default function MessagesPage() {
                 </div>
                 <div className="t-actions">
                   {waLink && (
-                    <button className="t-action-btn" aria-label="Hap WhatsApp" onClick={() => setShowWhatsApp(true)}>
+                    <button type="button" className="t-action-btn" aria-label="Hap WhatsApp" onClick={() => setShowWhatsApp(true)}>
                       <i className="ti ti-brand-whatsapp" style={{ color:'#25D366' }} aria-hidden="true" />
                     </button>
                   )}
                   {viberLink && (
-                    <button className="t-action-btn" aria-label="Hap Viber" onClick={() => setShowViber(true)}>
+                    <button type="button" className="t-action-btn" aria-label="Hap Viber" onClick={() => setShowViber(true)}>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="#7360F2" style={{display:'block'}} aria-hidden="true"><path d="M11.5 1C5.7 1.1 1.1 5.7 1 11.5c-.04 2.1.55 4 1.53 5.65L1 23l6.09-1.5c1.57.9 3.4 1.41 5.27 1.45C18.1 23.02 23 18.1 23 12c0-6.07-5.1-11.09-11.5-11zm4.55 15.9c-.31.85-1.5 1.58-2.26 1.6-.77.05-1.51-.16-4.45-1.4C6.08 15.6 3.83 12.17 3.63 11.9c-.2-.28-1.63-2.16-1.63-4.13 0-1.96.85-2.95 1.18-3.37.33-.42.64-.62.9-.64.32 0 .62 0 .9.02.3.02.7-.11.97.74.32.94 1.08 3.26 1.18 3.49.1.24.16.5.03.8-.12.3-.18.48-.36.74-.18.26-.38.57-.55.76-.18.2-.36.42-.16.83.2.4.9 1.48 1.93 2.4 1.33 1.19 2.45 1.56 2.8 1.74.34.18.55.15.75-.08.2-.22.87-1.02 1.1-1.37.23-.34.46-.28.78-.17.33.11 2.07.98 2.43 1.16.35.18.58.27.67.42.09.15.09.85-.22 1.62z"/></svg>
                     </button>
                   )}
-                  <button className="t-action-btn" aria-label="Më shumë veprime" onClick={() => setShowInfo(true)}>
+                  <button type="button" className="t-action-btn" aria-label="Më shumë veprime" onClick={() => setShowInfo(true)}>
                     <i className="ti ti-dots-vertical" aria-hidden="true" />
                   </button>
                 </div>
@@ -1260,7 +1260,7 @@ export default function MessagesPage() {
               </div>
 
               {showScrollBtn && (
-                <button className="scroll-btn" aria-label="Shko poshtë" onClick={() => { userScrolledUp.current = false; scrollBottom() }}>
+                <button type="button" className="scroll-btn" aria-label="Shko poshtë" onClick={() => { userScrolledUp.current = false; scrollBottom() }}>
                   <i className="ti ti-chevron-down" aria-hidden="true" />
                 </button>
               )}
@@ -1269,7 +1269,7 @@ export default function MessagesPage() {
               {isBlocked ? (
                 <div className="blocked-bar">
                   <p>Ke bllokuar këtë përdorues.</p>
-                  <button className="unblock-btn" onClick={() => unblockUser(selected.otherId)}>Hiqe bllokimin</button>
+                  <button type="button" className="unblock-btn" onClick={() => unblockUser(selected.otherId)}>Hiqe bllokimin</button>
                 </div>
               ) : (
                 <>
@@ -1290,7 +1290,7 @@ export default function MessagesPage() {
                       {replyTo.type === 'image' && replyTo.attachment_url && (
                         <img className="rs-img" src={replyTo.attachment_url} alt="Imazh i thënë" loading="lazy" width={40} height={40} />
                       )}
-                      <button onClick={() => setReplyTo(null)} style={{ background:'none', border:'none', color:'#bbb', fontSize:20, cursor:'pointer', padding:0, lineHeight:1, flexShrink:0 }}>✕</button>
+                      <button type="button" aria-label="Anulo përgjigjen" onClick={() => setReplyTo(null)} style={{ background:'none', border:'none', color:'#bbb', fontSize:20, cursor:'pointer', padding:0, lineHeight:1, flexShrink:0 }}>✕</button>
                     </div>
                   )}
 
@@ -1298,7 +1298,7 @@ export default function MessagesPage() {
                   {uploadErr && (
                     <div style={{ background:'#FFF0EE', border:'1px solid #f8c0b8', color:'#E63312', fontSize:11, fontWeight:600, padding:'6px 12px', display:'flex', alignItems:'center', gap:8 }}>
                       <span style={{ flex:1 }}>⚠️ {uploadErr}</span>
-                      <button onClick={() => setUploadErr('')} style={{ background:'none', border:'none', color:'#E63312', cursor:'pointer', padding:0, fontSize:14, lineHeight:1 }}>✕</button>
+                      <button type="button" aria-label="Mbyll gabimin" onClick={() => setUploadErr('')} style={{ background:'none', border:'none', color:'#E63312', cursor:'pointer', padding:0, fontSize:14, lineHeight:1 }}>✕</button>
                     </div>
                   )}
 
@@ -1311,7 +1311,7 @@ export default function MessagesPage() {
                         <div style={{ fontSize:11, color:'#888' }}>{imgPreview.file.name}</div>
                       </div>
                       <button aria-label="Anulo foton" type="button" onClick={() => { URL.revokeObjectURL(imgPreview.url); setImgPreview(null) }} style={{ background:'none', border:'none', color:'#bbb', fontSize:20, cursor:'pointer', flexShrink:0 }}>✕</button>
-                      <button onClick={sendImage} disabled={uploading}
+                      <button type="button" onClick={sendImage} disabled={uploading}
                         style={{ background:'linear-gradient(135deg,#E63312,#c42a0e)', border:'none', borderRadius:10, color:'#fff', fontWeight:700, fontSize:13, padding:'9px 16px', cursor:'pointer', flexShrink:0 }}>
                         {uploading ? '...' : 'Dërgo'}
                       </button>
@@ -1322,7 +1322,7 @@ export default function MessagesPage() {
                   {emojiOpen && !imgPreview && (
                     <div className="emoji-panel">
                       {EMOJI_FULL.map(e => (
-                        <button key={e} className="ep-btn"
+                        <button type="button" key={e} className="ep-btn" aria-label={e}
                           onClick={() => { setDraft(d => d + e); inputRef.current?.focus() }}>{e}</button>
                       ))}
                     </div>
@@ -1341,17 +1341,17 @@ export default function MessagesPage() {
                                 <div key={i} style={{ width:2.5, height: h * 1.4 + Math.sin(Date.now()/200+i)*3, borderRadius:3, background:'#E63312', opacity:.7, flexShrink:0 }} />
                               ))}
                             </div>
-                            <button className="rec-cancel" aria-label="Anulo regjistrim" onClick={() => stopRecording(true)}>
+                            <button type="button" className="rec-cancel" aria-label="Anulo regjistrim" onClick={() => stopRecording(true)}>
                               <i className="ti ti-x" aria-hidden="true" />
                             </button>
                           </div>
-                          <button className="mic-btn recording" aria-label="Dërgo mesazhin zanor" onClick={() => stopRecording(false)}>
+                          <button type="button" className="mic-btn recording" aria-label="Dërgo mesazhin zanor" onClick={() => stopRecording(false)}>
                             <i className="ti ti-send" aria-hidden="true" />
                           </button>
                         </>
                       ) : (
                         <>
-                          <button className="emoji-btn" onClick={() => { setEmojiOpen(o => !o); inputRef.current?.focus() }}>
+                          <button type="button" aria-label={emojiOpen ? 'Mbyll emojitë' : 'Emoji'} aria-expanded={emojiOpen} className="emoji-btn" onClick={() => { setEmojiOpen(o => !o); inputRef.current?.focus() }}>
                             {emojiOpen ? '⌨️' : '😊'}
                           </button>
                           <div className="input-wrap">
@@ -1370,17 +1370,17 @@ export default function MessagesPage() {
                               onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() } }}
                               onFocus={() => setEmojiOpen(false)}
                             />
-                            <button className="attach-btn" aria-label="Bashkëngjit foto" onClick={() => fileInputRef.current?.click()}>
+                            <button type="button" className="attach-btn" aria-label="Bashkëngjit foto" onClick={() => fileInputRef.current?.click()}>
                               <i className="ti ti-paperclip" aria-hidden="true" />
                             </button>
                           </div>
                           {draft.trim() ? (
-                            <button className="send-btn" aria-label="Dërgo mesazhin" onClick={send} disabled={!canSend}>
+                            <button type="button" className="send-btn" aria-label="Dërgo mesazhin" onClick={send} disabled={!canSend}>
                               <i className={`ti ti-${sending ? 'loader-2' : 'send'}`} aria-hidden="true"
                                 style={sending ? { animation:'spin .7s linear infinite' } : {}} />
                             </button>
                           ) : (
-                            <button className="mic-btn" aria-label="Regjistro mesazh zanor" onTouchStart={() => startRecording()} onClick={() => startRecording()}>
+                            <button type="button" className="mic-btn" aria-label="Regjistro mesazh zanor" onTouchStart={() => startRecording()} onClick={() => startRecording()}>
                               <i className="ti ti-microphone" aria-hidden="true" />
                             </button>
                           )}
@@ -1396,7 +1396,7 @@ export default function MessagesPage() {
           /* ══════════════ THREAD LIST ══════════════ */
           <>
             <div className="topbar">
-              <button className="back-btn" aria-label="Kthehu në ballina" onClick={() => window.location.href = '/'}>
+              <button type="button" className="back-btn" aria-label="Kthehu në ballina" onClick={() => window.location.href = '/'}>
                 <i className="ti ti-arrow-left" aria-hidden="true" />
               </button>
               <div className="t-meta">
