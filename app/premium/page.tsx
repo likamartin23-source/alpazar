@@ -148,11 +148,11 @@ export default function PremiumPage() {
           <button type="button" className="back" aria-label="Kthehu mbrapa" onClick={() => window.history.back()}>
             <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
-          <span className="topbar-title">👑 Premium</span>
+          <span className="topbar-title"><span aria-hidden="true">👑</span> Premium</span>
         </div>
 
         <div className="hero">
-          <span className="crown">👑</span>
+          <span className="crown" aria-hidden="true">👑</span>
           <h1>Alpazar Premium</h1>
           <p>Shit më shumë, më shpejt.<br />Platforma e plotë profesionale në dorën tënde.</p>
         </div>
@@ -161,7 +161,7 @@ export default function PremiumPage() {
           {profile?.is_premium && (
             <div className="already">
               <i className="ti ti-crown" aria-hidden="true" />
-              <strong>Je tashmë Premium! 👑</strong>
+              <strong>Je tashmë Premium! <span aria-hidden="true">👑</span></strong>
               <span>Gëzon të gjitha privilegjet e anëtarësisë Premium</span>
             </div>
           )}
@@ -183,7 +183,7 @@ export default function PremiumPage() {
           </div>
 
           <div className="features">
-            <div className="feat-title">✅ Çfarë përfshihet</div>
+            <h2 className="feat-title"><span aria-hidden="true">✅</span> Çfarë përfshihet</h2>
             {features.map((f, i) => (
               <div key={i} className="feat-row">
                 <i className={`ti ti-${f.icon}`} aria-hidden="true" />
@@ -220,7 +220,7 @@ export default function PremiumPage() {
           {/* Referral milestone CTA */}
           {user && !profile?.is_premium && (
             <div className="ref-milestone">
-              <div className="ref-m-title">🎁 Merr Premium FALAS!</div>
+              <h2 className="ref-m-title"><span aria-hidden="true">🎁</span> Merr Premium FALAS!</h2>
               <div className="ref-m-sub">Fto {REFERRAL_TARGET} miq dhe fiton 1 muaj Premium pa pagesë.</div>
               <div className="ref-m-bar-bg">
                 <div className="ref-m-bar-fill" style={{
