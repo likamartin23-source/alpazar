@@ -181,7 +181,11 @@ export default function BiznesNewPage() {
               {MAIN_TYPES.map(t => (
                 <div
                   key={t.id}
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={mainType === t.id}
                   onClick={() => setMainType(t.id)}
+                  onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setMainType(t.id) }}
                   style={{ background: mainType === t.id ? '#FFF6F4' : '#fff', border: `2px solid ${mainType === t.id ? '#E63312' : '#eee'}`, borderRadius: 14, padding: '16px 16px', cursor: 'pointer', transition: 'all .15s' }}
                 >
                   <div style={{ fontSize: 26, marginBottom: 6 }}>{t.icon}</div>
@@ -236,7 +240,7 @@ export default function BiznesNewPage() {
             {mainType !== 'sherbime_produkte' && (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
                 {subcats.map(s => (
-                  <div key={s.id} onClick={() => toggleSub(s.id)} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: selSubs.includes(s.id) ? '#F5C842' : '#fff', border: `1.5px solid ${selSubs.includes(s.id) ? '#F5C842' : '#ddd'}`, borderRadius: 20, padding: '7px 13px', fontSize: 12, fontWeight: 600, cursor: 'pointer', transition: 'all .15s' }}>
+                  <div key={s.id} role="button" tabIndex={0} aria-pressed={selSubs.includes(s.id)} onClick={() => toggleSub(s.id)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') toggleSub(s.id) }} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: selSubs.includes(s.id) ? '#F5C842' : '#fff', border: `1.5px solid ${selSubs.includes(s.id) ? '#F5C842' : '#ddd'}`, borderRadius: 20, padding: '7px 13px', fontSize: 12, fontWeight: 600, cursor: 'pointer', transition: 'all .15s' }}>
                     {s.icon} {s.name}
                   </div>
                 ))}

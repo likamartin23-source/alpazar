@@ -411,7 +411,7 @@ function TakedownTab() {
                   <td>
                     {r.status === 'pending' && (
                       <div style={{ display:'flex', flexDirection:'column', gap:4 }}>
-                        <input type="text" className="finput" placeholder="Shënim (opsional)" style={{ fontSize:10, padding:'4px 6px', marginBottom:2 }}
+                        <input type="text" aria-label="Shënim për raport (opsional)" className="finput" placeholder="Shënim (opsional)" style={{ fontSize:10, padding:'4px 6px', marginBottom:2 }}
                           value={note[r.id] || ''} onChange={e => setNote(prev => ({ ...prev, [r.id]: e.target.value }))} />
                         <div style={{ display:'flex', gap:4 }}>
                           <button type="button" className="btn btn-red" onClick={() => resolve(r.id, 'resolved')}>Zgjidh</button>
