@@ -41,7 +41,7 @@ export function CookieBanner() {
         maxWidth: 480, margin: '0 auto',
       }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 12 }}>
-        <span style={{ fontSize: 20, flexShrink: 0 }}>🍪</span>
+        <span style={{ fontSize: 20, flexShrink: 0 }} aria-hidden="true">🍪</span>
         <div>
           <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 4 }}>Alpazar përdor cookies</div>
           <div style={{ fontSize: 11, color: '#bbb', lineHeight: 1.6 }}>
@@ -52,9 +52,9 @@ export function CookieBanner() {
           </div>
           {detail && (
             <div style={{ marginTop: 10, fontSize: 11, color: '#ccc', lineHeight: 1.7 }}>
-              <div style={{ marginBottom: 4 }}>📌 <strong>Thelbësore</strong> — sesioni, autentifikimi, preferencat (gjithmonë aktiv)</div>
-              <div style={{ marginBottom: 4 }}>📊 <strong>Analytics</strong> — Vercel Analytics — të dhëna anonime të trafikut</div>
-              <div>🔒 Nuk shesim të dhëna. Nuk përdorim cookies të palëve të treta për reklama. <a href="/privatesia" style={{ color: '#F5C842' }}>Politika e Privatësisë</a></div>
+              <div style={{ marginBottom: 4 }}><span aria-hidden="true">📌</span> <strong>Thelbësore</strong> — sesioni, autentifikimi, preferencat (gjithmonë aktiv)</div>
+              <div style={{ marginBottom: 4 }}><span aria-hidden="true">📊</span> <strong>Analytics</strong> — Vercel Analytics — të dhëna anonime të trafikut</div>
+              <div><span aria-hidden="true">🔒</span> Nuk shesim të dhëna. Nuk përdorim cookies të palëve të treta për reklama. <a href="/privatesia" style={{ color: '#F5C842' }}>Politika e Privatësisë</a></div>
             </div>
           )}
         </div>

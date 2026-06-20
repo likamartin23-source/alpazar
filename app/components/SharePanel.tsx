@@ -322,7 +322,7 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
               }}
             >
               {isCopying
-                ? <span style={{ fontSize: 18, lineHeight: 1 }}>✅</span>
+                ? <span style={{ fontSize: 18, lineHeight: 1 }} aria-hidden="true">✅</span>
                 : <IconComp />
               }
               <span>{isCopying ? 'Kopjuar!' : p.label}</span>

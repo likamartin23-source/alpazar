@@ -30,7 +30,7 @@ export function AgeGate({ children }: { children: React.ReactNode }) {
           gap: 20, padding: 24,
           fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
         }}>
-        <div style={{ fontSize: 48 }}>🦅</div>
+        <div style={{ fontSize: 48 }} aria-hidden="true">🦅</div>
         <div style={{ fontSize: 24, fontWeight: 900, color: '#F5C842', letterSpacing: 2 }}>ALPAZAR</div>
         <div style={{ fontSize: 14, fontWeight: 700, color: '#fff', textAlign: 'center' }}>
           Para se të vazhdosh, konfirmo moshën tënde

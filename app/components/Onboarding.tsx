@@ -54,7 +54,7 @@ export function Onboarding() {
         {step === 0 && (
           <>
             <div style={{ textAlign: 'center', marginBottom: 16 }}>
-              <span style={{ background: '#111', color: '#F5C842', fontSize: 13, fontWeight: 800, letterSpacing: 2, padding: '4px 12px', borderRadius: 8, display: 'inline-block' }}>🦅 ALPAZAR</span>
+              <span style={{ background: '#111', color: '#F5C842', fontSize: 13, fontWeight: 800, letterSpacing: 2, padding: '4px 12px', borderRadius: 8, display: 'inline-block' }}><span aria-hidden="true">🦅</span> ALPAZAR</span>
             </div>
             <div style={{ fontSize: 22, fontWeight: 800, color: '#111', textAlign: 'center', marginBottom: 8 }}>Mirë se erdhe!</div>
             <div style={{ fontSize: 14, color: '#888', textAlign: 'center', lineHeight: 1.6, marginBottom: 28 }}>Shit, bli dhe bëj pazarin tënd — falas, pa komision.</div>
@@ -72,7 +72,7 @@ export function Onboarding() {
               { icon: '❤️', text: 'Ruaj çfarë të pëlqen' },
             ].map(({ icon, text }) => (
               <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-                <span style={{ fontSize: 22, width: 32, textAlign: 'center' }}>{icon}</span>
+                <span style={{ fontSize: 22, width: 32, textAlign: 'center' }} aria-hidden="true">{icon}</span>
                 <span style={{ fontSize: 14, color: '#333', fontWeight: 500 }}>{text}</span>
               </div>
             ))}
@@ -87,8 +87,8 @@ export function Onboarding() {
           <>
             <div style={{ fontSize: 22, fontWeight: 800, color: '#111', textAlign: 'center', marginBottom: 8 }}>Gati? 🚀</div>
             <div style={{ fontSize: 13, color: '#888', textAlign: 'center', marginBottom: 24 }}>Zgjidh si dëshiron të fillosh</div>
-            <button type="button" onClick={() => { close(); window.location.href = '/listing/new' }} style={{ width: '100%', background: '#E63312', color: '#fff', border: 'none', borderRadius: 12, padding: 14, fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', marginBottom: 10 }}>➕ Shto shpalljen e parë</button>
-            <button type="button" onClick={() => { close(); window.location.href = '/search' }} style={{ width: '100%', background: '#F5C842', color: '#111', border: 'none', borderRadius: 12, padding: 14, fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', marginBottom: 10 }}>🔍 Eksploro</button>
+            <button type="button" onClick={() => { close(); window.location.href = '/listing/new' }} style={{ width: '100%', background: '#E63312', color: '#fff', border: 'none', borderRadius: 12, padding: 14, fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', marginBottom: 10 }}><span aria-hidden="true">➕</span> Shto shpalljen e parë</button>
+            <button type="button" onClick={() => { close(); window.location.href = '/search' }} style={{ width: '100%', background: '#F5C842', color: '#111', border: 'none', borderRadius: 12, padding: 14, fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', marginBottom: 10 }}><span aria-hidden="true">🔍</span> Eksploro</button>
             <button type="button" onClick={() => setStep(1)} style={{ width: '100%', background: 'none', border: 'none', color: '#aaa', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>← Mbrapa</button>
           </>
         )}

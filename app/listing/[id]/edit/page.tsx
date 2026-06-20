@@ -226,14 +226,14 @@ export default function EditListing({ params }: { params: { id: string } }) {
           <button type="button" className="back" aria-label="Kthehu mbrapa" onClick={() => window.history.back()}>
             <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
-          <h1 className="topbar-title" style={{ margin: 0 }}>✏️ Ndrysho Shpalljen</h1>
+          <h1 className="topbar-title" style={{ margin: 0 }}><span aria-hidden="true">✏️</span> Ndrysho Shpalljen</h1>
         </div>
 
         <div className="body">
           {msg && <div className={`msg-box ${mt}`} role="alert">{mm}</div>}
           {uploadProgress && (
             <div style={{ background:'#e8f4fd', border:'1px solid #90caf9', borderRadius:10, padding:'10px 14px', marginBottom:10, fontSize:13, color:'#1565c0', display:'flex', alignItems:'center', gap:8 }}>
-              <span style={{ fontSize:16 }}>⏳</span>
+              <span style={{ fontSize:16 }} aria-hidden="true">⏳</span>
               <div style={{ flex:1 }}>
                 <div style={{ fontWeight:600 }}>Duke ngarkuar foto... {uploadProgress.done}/{uploadProgress.total}</div>
                 {uploadProgress.currentName && <div style={{ color:'#1976d2', marginTop:2 }}>{uploadProgress.currentName}</div>}
@@ -277,9 +277,9 @@ export default function EditListing({ params }: { params: { id: string } }) {
               <label>Gjendja</label>
               <div className="cond-row" aria-label="Gjendja">
                 <button type="button" aria-pressed={form.condition === 'i_ri'} className={`cond-btn ${form.condition === 'i_ri' ? 'active' : ''}`}
-                  onClick={() => set('condition', 'i_ri')}>✨ I ri</button>
+                  onClick={() => set('condition', 'i_ri')}><span aria-hidden="true">✨</span> I ri</button>
                 <button type="button" aria-pressed={form.condition === 'i_perdorur'} className={`cond-btn ${form.condition === 'i_perdorur' ? 'active' : ''}`}
-                  onClick={() => set('condition', 'i_perdorur')}>🔄 I përdorur</button>
+                  onClick={() => set('condition', 'i_perdorur')}><span aria-hidden="true">🔄</span> I përdorur</button>
               </div>
             </div>
           </div>

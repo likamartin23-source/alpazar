@@ -86,7 +86,7 @@ export default function AuthCallback() {
       <style>{`@keyframes spin{to{transform:rotate(360deg);}}`}</style>
       {err ? (
         <>
-          <div style={{ fontSize: 40 }}>⚠️</div>
+          <div style={{ fontSize: 40 }} aria-hidden="true">⚠️</div>
           <p style={{ color: '#E63312', fontSize: 13, fontWeight: 600, maxWidth: 320 }}>{err}</p>
           <p style={{ color: '#aaa', fontSize: 11 }}>Duke të kthyer te hyrja...</p>
         </>

@@ -92,7 +92,7 @@ export function PremiumUpsellModal({
       `}</style>
       <div className="ups-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative' }}>
         <button type="button" className="ups-close" aria-label="Mbyll" onClick={close}>✕</button>
-        <span className="ups-crown">👑</span>
+        <span className="ups-crown" aria-hidden="true">👑</span>
         <div className="ups-h">Bëhu Premium Sot!</div>
         <div className="ups-sub">
           {trigger === 'limit'
@@ -162,7 +162,7 @@ export function SocialProofBar({ viewsCount, listingId }: { viewsCount: number; 
             width: 22, height: 22, borderRadius: '50%', background: `hsl(${i * 40 + 20},70%,60%)`,
             border: '2px solid #FFF8EE', marginLeft: i ? -6 : 0,
             display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10,
-          }}>👤</div>
+          }} aria-hidden="true">👤</div>
         ))}
       </div>
       <div style={{ flex: 1 }}>
@@ -192,7 +192,7 @@ export function SellerPremiumUpsell({ isPremium, price = '9.99' }: { isPremium: 
       marginBottom: 12, display: 'flex', alignItems: 'center', gap: 12,
       border: '1px solid #F5C842',
     }}>
-      <span style={{ fontSize: 28 }}>⚡</span>
+      <span style={{ fontSize: 28 }} aria-hidden="true">⚡</span>
       <div style={{ flex: 1 }}>
         <div style={{ color: '#F5C842', fontSize: 12, fontWeight: 800, marginBottom: 3 }}>
           Shpallja jote shihet 5× më shumë me Premium

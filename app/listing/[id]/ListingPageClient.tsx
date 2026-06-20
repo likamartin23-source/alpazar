@@ -41,7 +41,7 @@ function BusinessMiniCard({ bizId }: { bizId: string }) {
         {biz.logo_url ? <img src={biz.logo_url} alt={biz.name} loading="lazy" width={36} height={36} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : '🏢'}
       </div>
       <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 12, fontWeight: 700, color: '#111' }}>{biz.name} {biz.is_verified && <span style={{ color: '#16a34a' }}>✓ Biznes</span>}</div>
+        <div style={{ fontSize: 12, fontWeight: 700, color: '#111' }}>{biz.name} {biz.is_verified && <span style={{ color: '#16a34a' }} aria-label="Biznes i verifikuar">✓ Biznes</span>}</div>
         <div style={{ fontSize: 10, color: '#888' }}>Shfaq faqen e biznesit →</div>
       </div>
     </div>
@@ -501,7 +501,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
 
   if (loadError) return (
     <div style={{ textAlign: 'center', padding: 60, fontFamily: "'Plus Jakarta Sans',system-ui" }}>
-      <p style={{ fontSize: 40, marginBottom: 12 }}>⚠️</p>
+      <p style={{ fontSize: 40, marginBottom: 12 }} aria-hidden="true">⚠️</p>
       <h2 style={{ color: '#111', marginBottom: 8 }}>Gabim gjatë ngarkimit</h2>
       <button type="button" onClick={() => window.location.reload()} style={{ background: '#F5C842', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Rifresko</button>
     </div>
@@ -516,7 +516,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
 
   if (!listing) return (
     <div style={{ textAlign: 'center', padding: 60, fontFamily: "'Plus Jakarta Sans',system-ui" }}>
-      <p style={{ fontSize: 40, marginBottom: 12 }}>🔍</p>
+      <p style={{ fontSize: 40, marginBottom: 12 }} aria-hidden="true">🔍</p>
       <h2 style={{ color: '#111', marginBottom: 8 }}>Shpallja nuk u gjet</h2>
       <a href="/" style={{ color: '#E63312', fontSize: 13 }}>← Kthehu</a>
     </div>
@@ -751,10 +751,10 @@ export default function ListingPageClient({ params, initialListing }: { params: 
           {/* Status chip */}
           <div className="status-row">
             {listing.is_active
-              ? <span className="status-chip sc-active">🟢 Në shitje</span>
-              : <span className="status-chip sc-sold">✅ Shitur</span>}
+              ? <span className="status-chip sc-active"><span aria-hidden="true">🟢</span> Në shitje</span>
+              : <span className="status-chip sc-sold"><span aria-hidden="true">✅</span> Shitur</span>}
             {listing.is_premium && (
-              <span className="status-chip" style={{ background: '#FFF8E1', color: '#856404', border: '1px solid #FFE082' }}>⭐ Premium</span>
+              <span className="status-chip" style={{ background: '#FFF8E1', color: '#856404', border: '1px solid #FFE082' }}><span aria-hidden="true">⭐</span> Premium</span>
             )}
           </div>
 
@@ -783,10 +783,10 @@ export default function ListingPageClient({ params, initialListing }: { params: 
           {/* Meta row: condition + city + date + category + views */}
           <div className="meta">
             {listing.condition === 'i_ri' && (
-              <div className="meta-item cond-new">✨ I ri</div>
+              <div className="meta-item cond-new"><span aria-hidden="true">✨</span> I ri</div>
             )}
             {listing.condition === 'i_perdorur' && (
-              <div className="meta-item cond-used">🔘 I përdorur</div>
+              <div className="meta-item cond-used"><span aria-hidden="true">🔘</span> I përdorur</div>
             )}
             {listing.city && <div className="meta-item"><i className="ti ti-map-pin" aria-hidden="true" />{listing.city}</div>}
             {listing.created_at && <div className="meta-item"><i className="ti ti-calendar" aria-hidden="true" />{pubDate(listing.created_at)}</div>}
@@ -815,7 +815,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                 />
               ) : (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: 13, color: '#555' }}>📍 {listing.city}</span>
+                  <span style={{ fontSize: 13, color: '#555' }}><span aria-hidden="true">📍</span> {listing.city}</span>
                   <a
                     href={`https://www.google.com/maps/search/${encodeURIComponent(listing.city + ', Shqipëri')}`}
                     target="_blank"
@@ -868,18 +868,18 @@ export default function ListingPageClient({ params, initialListing }: { params: 
 
                 {/* Badges */}
                 <div className="seller-chips">
-                  {seller.is_admin   && <span className="schip sch-admin">🛡 Admin</span>}
-                  {seller.is_premium && <span className="schip sch-prem">👑 Premium</span>}
-                  {seller.shop_name  && <span className="schip sch-shop">🏢 Biznes</span>}
+                  {seller.is_admin   && <span className="schip sch-admin"><span aria-hidden="true">🛡</span> Admin</span>}
+                  {seller.is_premium && <span className="schip sch-prem"><span aria-hidden="true">👑</span> Premium</span>}
+                  {seller.shop_name  && <span className="schip sch-shop"><span aria-hidden="true">🏢</span> Biznes</span>}
                   {(() => { const l = getLevel(seller.gamification_points || 0); return <span className="schip" style={{ background: l.bg, color: l.color }}>{l.icon} {l.name}</span> })()}
-                  {sellerCount > 0 && <span className="schip sch-seller">📦 Shitës aktiv</span>}
-                  {isNewMember(seller.created_at) && <span className="schip sch-new">🆕 Anëtar i ri</span>}
-                  {!isOwner && <span className="schip sch-priv">🔒 Bisedë private</span>}
+                  {sellerCount > 0 && <span className="schip sch-seller"><span aria-hidden="true">📦</span> Shitës aktiv</span>}
+                  {isNewMember(seller.created_at) && <span className="schip sch-new"><span aria-hidden="true">🆕</span> Anëtar i ri</span>}
+                  {!isOwner && <span className="schip sch-priv"><span aria-hidden="true">🔒</span> Bisedë private</span>}
                   {(seller.trust_score ?? 0) >= 60 && (
                     <span className="schip" style={{ background: '#dcfce7', color: '#16a34a', fontWeight: 700 }}>✓ I verifikuar</span>
                   )}
                   {(seller.trust_score ?? 0) >= 75 && (
-                    <span className="schip" style={{ background: '#fef9c3', color: '#854d0e', fontWeight: 700 }}>⚡ Përgjigjet shpejt</span>
+                    <span className="schip" style={{ background: '#fef9c3', color: '#854d0e', fontWeight: 700 }}><span aria-hidden="true">⚡</span> Përgjigjet shpejt</span>
                   )}
                 </div>
 
@@ -926,7 +926,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                 {/* Shop link */}
                 {hasShop && !isOwner && (
                   <a className="shop-link-row" href={`/biznese/${seller.id}`}>
-                    <span style={{ fontSize: 20 }}>🏢</span>
+                    <span style={{ fontSize: 20 }} aria-hidden="true">🏢</span>
                     <div>
                       <span>{seller.shop_name}</span>
                       <small>Shfleto të gjitha shpalljet e biznesit</small>
@@ -979,7 +979,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                   <div style={{ color: '#3B6D11', fontWeight: 700, marginBottom: 4 }}>
                     {'⭐'.repeat(myReview.rating)} Vlerësimi yt u ruajt
                     {myReview.purchase_verified && (
-                      <span style={{ marginLeft: 6, background: '#0E7A35', color: '#fff', fontSize: 9.5, fontWeight: 700, padding: '1px 6px', borderRadius: 6 }}>✅ Blerje e verifikuar</span>
+                      <span style={{ marginLeft: 6, background: '#0E7A35', color: '#fff', fontSize: 9.5, fontWeight: 700, padding: '1px 6px', borderRadius: 6 }}><span aria-hidden="true">✅</span> Blerje e verifikuar</span>
                     )}
                   </div>
                   {myReview.comment && <div style={{ color: '#555' }}>{myReview.comment}</div>}
@@ -1136,13 +1136,13 @@ export default function ListingPageClient({ params, initialListing }: { params: 
             <div className="report-handle" />
             {reportSent ? (
               <div className="report-success">
-                <div style={{ fontSize: 40, marginBottom: 10 }}>✅</div>
+                <div style={{ fontSize: 40, marginBottom: 10 }} aria-hidden="true">✅</div>
                 <div style={{ fontSize: 14, fontWeight: 700, color: '#3B6D11' }}>Raporti u dërgua!</div>
                 <div style={{ fontSize: 12, color: '#888', marginTop: 4 }}>Faleminderit. Ekipi ynë do ta shqyrtojë.</div>
               </div>
             ) : (
               <>
-                <div className="report-title">⚑ Raporto shpalljen</div>
+                <div className="report-title"><span aria-hidden="true">⚑</span> Raporto shpalljen</div>
                 <div className="report-sub">Zgjidh arsyen e raportimit</div>
                 <div role="group" aria-label="Arsyeja e raportimit" className="reason-list">
                   {REPORT_REASONS.map(r => (
@@ -1182,7 +1182,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
               <span className="cs-seller-name">
                 {seller.shop_name || seller.full_name || seller.username || 'Shitës'}
               </span>
-              <span className="cs-priv">🔒 Private</span>
+              <span className="cs-priv"><span aria-hidden="true">🔒</span> Private</span>
               <button type="button" className="cs-close" aria-label="Mbyll bisedën" onClick={() => setChatOpen(false)}>
                 <i className="ti ti-x" aria-hidden="true" />
               </button>
@@ -1191,7 +1191,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
             {/* Listing reference */}
             <div className="cs-ref">
               <i className="ti ti-bookmark" aria-hidden="true" />
-              <span className="cs-ref-text">📌 {listing.title}</span>
+              <span className="cs-ref-text"><span aria-hidden="true">📌</span> {listing.title}</span>
               {listing.price > 0 && (
                 <span className="cs-ref-price">{fmt(listing.price, listing.currency)}</span>
               )}
@@ -1211,7 +1211,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                 <div className="cs-msgs">
                   {chatMsgs.length === 0 && chatReady ? (
                     <div className="empty-chat">
-                      <div className="empty-chat-icon">👋</div>
+                      <div className="empty-chat-icon" aria-hidden="true">👋</div>
                       <div className="empty-chat-txt">
                         Fillo bisedën me shitësin.<br />
                         Mesazhet janë private dhe të sigurta.

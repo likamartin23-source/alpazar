@@ -19,7 +19,7 @@ export function MaintenanceBanner() {
       alignItems: 'center', justifyContent: 'center',
       padding: 24, textAlign: 'center',
     }}>
-      <div style={{ fontSize: 56, marginBottom: 16 }}>🔧</div>
+      <div style={{ fontSize: 56, marginBottom: 16 }} aria-hidden="true">🔧</div>
       <div style={{ fontSize: 22, fontWeight: 800, color: '#F5C842', marginBottom: 10 }}>
         Mirëmbajtje
       </div>

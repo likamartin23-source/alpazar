@@ -1023,7 +1023,7 @@ export default function MessagesPage() {
           <div role="dialog" aria-modal="true" aria-label="Vazhdo në WhatsApp" className="sheet" onClick={e => e.stopPropagation()}>
             <div className="handle" />
             <div style={{ padding:'4px 20px 20px', textAlign:'center' }}>
-              <div style={{ fontSize:52, marginBottom:10 }}>💬</div>
+              <div style={{ fontSize:52, marginBottom:10 }} aria-hidden="true">💬</div>
               <div style={{ fontWeight:700, fontSize:16, color:'#111', marginBottom:8 }}>Vazhdo në WhatsApp</div>
               <div style={{ fontSize:13, color:'#888', lineHeight:1.7, marginBottom:20 }}>
                 Do të hapësh WhatsApp me <strong>{displayName(selected.other)}</strong>.
@@ -1046,7 +1046,7 @@ export default function MessagesPage() {
           <div role="dialog" aria-modal="true" aria-label="Vazhdo në Viber" className="sheet" onClick={e => e.stopPropagation()}>
             <div className="handle" />
             <div style={{ padding:'4px 20px 20px', textAlign:'center' }}>
-              <div style={{ fontSize:52, marginBottom:10 }}>📲</div>
+              <div style={{ fontSize:52, marginBottom:10 }} aria-hidden="true">📲</div>
               <div style={{ fontWeight:700, fontSize:16, color:'#111', marginBottom:8 }}>Vazhdo në Viber</div>
               <div style={{ fontSize:13, color:'#888', lineHeight:1.7, marginBottom:20 }}>
                 Do të hapësh Viber me <strong>{displayName(selected.other)}</strong>.
@@ -1067,7 +1067,7 @@ export default function MessagesPage() {
       {showBlockConf && selected && (
         <div className="overlay-center" onClick={() => setShowBlockConf(false)}>
           <div className="confirm-card" role="dialog" aria-modal="true" aria-label="Konfirmo bllokimin" onClick={e => e.stopPropagation()} onKeyDown={e => { if (e.key === 'Escape') setShowBlockConf(false) }}>
-            <div style={{ fontSize:40, marginBottom:12 }}>🚫</div>
+            <div style={{ fontSize:40, marginBottom:12 }} aria-hidden="true">🚫</div>
             <div className="confirm-title">Blloko {displayName(selected.other)}?</div>
             <div className="confirm-desc">Ai/ajo nuk mund t'ju dërgojë mesazhe.</div>
             <div className="confirm-btns">
@@ -1190,9 +1190,9 @@ export default function MessagesPage() {
                                         {m.reply_msg.sender_id === user?.id ? 'Unë' : displayName(selected.other)}
                                       </div>
                                       {m.reply_msg.type === 'audio' ? (
-                                        <div className="rp-text">🎤 Mesazh zanor</div>
+                                        <div className="rp-text"><span aria-hidden="true">🎤</span> Mesazh zanor</div>
                                       ) : m.reply_msg.type === 'image' ? (
-                                        <div className="rp-text">📷 Foto</div>
+                                        <div className="rp-text"><span aria-hidden="true">📷</span> Foto</div>
                                       ) : (
                                         <div className="rp-text">{m.reply_msg.content?.slice(0,60)}</div>
                                       )}
@@ -1287,9 +1287,9 @@ export default function MessagesPage() {
                       <div className="rs-bar">
                         <div className="rs-name">{replyTo.sender_id === user?.id ? 'Unë' : displayName(selected.other)}</div>
                         {replyTo.type === 'audio' ? (
-                          <div className="rs-text">🎤 Mesazh zanor</div>
+                          <div className="rs-text"><span aria-hidden="true">🎤</span> Mesazh zanor</div>
                         ) : replyTo.type === 'image' ? (
-                          <div className="rs-text">📷 Foto</div>
+                          <div className="rs-text"><span aria-hidden="true">📷</span> Foto</div>
                         ) : (
                           <div className="rs-text">{replyTo.content?.slice(0,70)}</div>
                         )}
@@ -1304,7 +1304,7 @@ export default function MessagesPage() {
                   {/* Upload error toast */}
                   {uploadErr && (
                     <div style={{ background:'#FFF0EE', border:'1px solid #f8c0b8', color:'#E63312', fontSize:11, fontWeight:600, padding:'6px 12px', display:'flex', alignItems:'center', gap:8 }}>
-                      <span style={{ flex:1 }}>⚠️ {uploadErr}</span>
+                      <span style={{ flex:1 }}><span aria-hidden="true">⚠️</span> {uploadErr}</span>
                       <button type="button" aria-label="Mbyll gabimin" onClick={() => setUploadErr('')} style={{ background:'none', border:'none', color:'#E63312', cursor:'pointer', padding:0, fontSize:14, lineHeight:1 }}>✕</button>
                     </div>
                   )}
@@ -1428,7 +1428,7 @@ export default function MessagesPage() {
 
             {loadError ? (
               <div className="spin-center">
-                <div style={{ fontSize: 32 }}>⚠️</div>
+                <div style={{ fontSize: 32 }} aria-hidden="true">⚠️</div>
                 <div style={{ fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
                 <button type="button" onClick={() => window.location.reload()} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
               </div>

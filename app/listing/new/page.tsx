@@ -295,7 +295,7 @@ export default function NewListing() {
           <button type="button" className="back" aria-label="Kthehu mbrapa" onClick={() => window.history.back()}>
             <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
-          <h1 className="topbar-title" style={{ margin: 0 }}>➕ Shto Shpallje</h1>
+          <h1 className="topbar-title" style={{ margin: 0 }}><span aria-hidden="true">➕</span> Shto Shpallje</h1>
         </div>
 
         <div className="body">
@@ -303,14 +303,14 @@ export default function NewListing() {
           <FreeTierBanner listingCount={myListingCount} freeLimit={freeLimit} />
           {draftRestored && (
             <div style={{ background:'#F0FDF4', border:'1px solid #86EFAC', borderRadius:10, padding:'8px 14px', marginBottom:10, fontSize:12, color:'#166534', display:'flex', alignItems:'center', gap:8 }}>
-              <span>💾</span> Draft-i u rikthye automatikisht.
+              <span aria-hidden="true">💾</span> Draft-i u rikthye automatikisht.
               <button type="button" onClick={() => { localStorage.removeItem('alpazar_listing_draft'); setForm({ title:'', description:'', price:'', currency:'ALL', condition:'', category_id:'', city:'', images:[], latitude:null, longitude:null, location_address:'' }); setDraftRestored(false) }} style={{ marginLeft:'auto', background:'none', border:'none', color:'#166534', cursor:'pointer', fontSize:11, textDecoration:'underline', fontFamily:'inherit' }}>Fshi draft-in</button>
             </div>
           )}
           {msg && <div className={`msg-box ${mt}`} role="alert">{mm}</div>}
           {uploadProgress && (
             <div style={{ background:'#e8f4fd', border:'1px solid #90caf9', borderRadius:10, padding:'10px 14px', marginBottom:10, fontSize:13, color:'#1565c0', display:'flex', alignItems:'center', gap:8 }}>
-              <span style={{ fontSize:16 }}>⏳</span>
+              <span style={{ fontSize:16 }} aria-hidden="true">⏳</span>
               <div style={{ flex:1 }}>
                 <div style={{ fontWeight:600 }}>Duke ngarkuar foto... {uploadProgress.done}/{uploadProgress.total}</div>
                 {uploadProgress.currentName && <div style={{ color:'#1976d2', marginTop:2 }}>{uploadProgress.currentName}</div>}
@@ -388,8 +388,8 @@ export default function NewListing() {
             <div className="field">
               <label>Gjendja</label>
               <div className="cond-row" aria-label="Gjendja">
-                <button type="button" aria-pressed={form.condition === 'i_ri'} className={`cond-btn ${form.condition === 'i_ri' ? 'active' : ''}`} onClick={() => set('condition', 'i_ri')}>✨ I ri</button>
-                <button type="button" aria-pressed={form.condition === 'i_perdorur'} className={`cond-btn ${form.condition === 'i_perdorur' ? 'active' : ''}`} onClick={() => set('condition', 'i_perdorur')}>🔄 I përdorur</button>
+                <button type="button" aria-pressed={form.condition === 'i_ri'} className={`cond-btn ${form.condition === 'i_ri' ? 'active' : ''}`} onClick={() => set('condition', 'i_ri')}><span aria-hidden="true">✨</span> I ri</button>
+                <button type="button" aria-pressed={form.condition === 'i_perdorur'} className={`cond-btn ${form.condition === 'i_perdorur' ? 'active' : ''}`} onClick={() => set('condition', 'i_perdorur')}><span aria-hidden="true">🔄</span> I përdorur</button>
               </div>
             </div>
           </div>

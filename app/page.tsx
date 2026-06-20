@@ -182,7 +182,7 @@ function ShareBox({ refCode }: { refCode?: string }) {
                 <button key={p.id} type="button" onClick={() => handlePlatform(p)}
                   style={{ ...BTN_BASE, background: isCopying ? '#EAF3DE' : p.bg, color: isCopying ? '#3B6D11' : '#fff' }}>
                   {isCopying
-                    ? <span style={{ fontSize: 14 }}>✅</span>
+                    ? <span style={{ fontSize: 14 }} aria-hidden="true">✅</span>
                     : <i className={`ti ${p.icon}`} style={{ fontSize: 14 }} />
                   }
                   <span>{p.label}</span>
@@ -642,7 +642,7 @@ export default function Home() {
                     <div key={s.id} className="sug-item" onMouseDown={() => { setShowSuggestions(false); window.location.href = `/listing/${s.id}` }}>
                       {img
                         ? <img src={img} alt="" className="sug-img" loading="lazy" />
-                        : <div className="sug-img" style={{ display:'flex', alignItems:'center', justifyContent:'center', fontSize:18 }}>📦</div>
+                        : <div className="sug-img" style={{ display:'flex', alignItems:'center', justifyContent:'center', fontSize:18 }} aria-hidden="true">📦</div>
                       }
                       <span className="sug-title">{s.title}</span>
                       <span className="sug-price">{price}</span>
@@ -683,7 +683,7 @@ export default function Home() {
           <div className="hero">
             <div>
               <h1 style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', margin: 0 }}>Alpazar — Treg Online Shqipëri</h1>
-              <h2>🦅 {cfg('site_slogan', 'Shit · Bli · Bëj Pazrin Tënd')}</h2>
+              <h2><span aria-hidden="true">🦅</span> {cfg('site_slogan', 'Shit · Bli · Bëj Pazrin Tënd')}</h2>
               <p><span style={{color:'#E63312',fontWeight:800}}>Platforma #1 shqiptare<br />e tregtisë online</span></p>
             </div>
             {(cfg('show_listing_count','true') !== 'false' || cfg('show_user_count','true') !== 'false') && (
@@ -708,7 +708,7 @@ export default function Home() {
           <div className="premium-cta">
             <div className="prem-icon"><i className="ti ti-crown" aria-hidden="true" /></div>
             <div className="prem-text">
-              <strong>👑 Bëhu Anëtar Premium</strong>
+              <strong><span aria-hidden="true">👑</span> Bëhu Anëtar Premium</strong>
               <span>Biznes · Badge · Shpallje ∞ · {cfg('premium_monthly_price','9.99')}€/muaj</span>
             </div>
             <button type="button" className="prem-btn" onClick={() => go('/premium')}>Shiko →</button>
@@ -731,7 +731,7 @@ export default function Home() {
           {shops.length > 0 && (
             <>
               <div className="section-hdr">
-                <h3>🏢 Biznese Online</h3>
+                <h3><span aria-hidden="true">🏢</span> Biznese Online</h3>
                 <a role="button" tabIndex={0} onClick={() => go('/biznese')} onKeyDown={e => { if (e.key === 'Enter') go('/biznese') }} style={{ cursor: 'pointer' }}>Të gjitha →</a>
               </div>
               <div className="shops-grid">
@@ -744,7 +744,7 @@ export default function Home() {
                         <div className="shop-av" style={{ background: 'transparent' }}>
                           <Avatar src={shop.avatar_url} name={shop.shop_name || shop.full_name} type="business" verified={shop.is_premium} size={40} />
                         </div>
-                        <span className="shop-prem">⭐</span>
+                        <span className="shop-prem" aria-label="Premium">⭐</span>
                       </div>
                       <div className="shop-info">
                         <div className="shop-nm">{shop.shop_name || shop.full_name}</div>
@@ -788,7 +788,7 @@ export default function Home() {
           </div>
 
           <div className="section-hdr">
-            <h3>🔥 Shpallje të fundit</h3>
+            <h3><span aria-hidden="true">🔥</span> Shpallje të fundit</h3>
             <a role="button" tabIndex={0} onClick={() => { setActiveCategory('all'); fetchListings('all', 'all') }} onKeyDown={e => { if (e.key === 'Enter') { setActiveCategory('all'); fetchListings('all', 'all') } }} style={{ cursor: 'pointer' }}>Të gjitha →</a>
           </div>
 
@@ -796,7 +796,7 @@ export default function Home() {
           {recentlyViewed.length > 0 && (
             <div style={{ marginBottom: 12 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px', marginBottom: 10 }}>
-                <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: '#111' }}>👁 Rishikimet e fundit</h3>
+                <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: '#111' }}><span aria-hidden="true">👁</span> Rishikimet e fundit</h3>
                 <button type="button" onClick={() => { localStorage.removeItem('_alpazar_rv'); setRecentlyViewed([]) }} style={{ background: 'none', border: 'none', fontSize: 10, color: '#aaa', cursor: 'pointer', fontFamily: 'inherit' }}>Pastro</button>
               </div>
               <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, scrollbarWidth: 'none' }}>
@@ -847,7 +847,7 @@ export default function Home() {
                       }
                       {listing.condition === 'i_ri' && <span className="badge-new">I ri</span>}
                       {listing.condition === 'i_perdorur' && <span className="badge-used">I përdorur</span>}
-                      {listing.is_premium && <span className="badge-premium">⭐</span>}
+                      {listing.is_premium && <span className="badge-premium" aria-label="Premium">⭐</span>}
                     </div>
                     <div className="card-body">
                       <div className="card-title">{listing.title}</div>
