@@ -292,7 +292,7 @@ export default function NewListing() {
 
       <div className="wrap">
         <div className="topbar">
-          <button className="back" aria-label="Kthehu mbrapa" onClick={() => window.history.back()}>
+          <button type="button" className="back" aria-label="Kthehu mbrapa" onClick={() => window.history.back()}>
             <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
           <h1 className="topbar-title" style={{ margin: 0 }}>➕ Shto Shpallje</h1>
@@ -304,7 +304,7 @@ export default function NewListing() {
           {draftRestored && (
             <div style={{ background:'#F0FDF4', border:'1px solid #86EFAC', borderRadius:10, padding:'8px 14px', marginBottom:10, fontSize:12, color:'#166534', display:'flex', alignItems:'center', gap:8 }}>
               <span>💾</span> Draft-i u rikthye automatikisht.
-              <button onClick={() => { localStorage.removeItem('alpazar_listing_draft'); setForm({ title:'', description:'', price:'', currency:'ALL', condition:'', category_id:'', city:'', images:[], latitude:null, longitude:null, location_address:'' }); setDraftRestored(false) }} style={{ marginLeft:'auto', background:'none', border:'none', color:'#166534', cursor:'pointer', fontSize:11, textDecoration:'underline', fontFamily:'inherit' }}>Fshi draft-in</button>
+              <button type="button" onClick={() => { localStorage.removeItem('alpazar_listing_draft'); setForm({ title:'', description:'', price:'', currency:'ALL', condition:'', category_id:'', city:'', images:[], latitude:null, longitude:null, location_address:'' }); setDraftRestored(false) }} style={{ marginLeft:'auto', background:'none', border:'none', color:'#166534', cursor:'pointer', fontSize:11, textDecoration:'underline', fontFamily:'inherit' }}>Fshi draft-in</button>
             </div>
           )}
           {msg && <div className={`msg-box ${mt}`} role="alert">{mm}</div>}
@@ -388,8 +388,8 @@ export default function NewListing() {
             <div className="field">
               <label>Gjendja</label>
               <div className="cond-row" aria-label="Gjendja">
-                <button className={`cond-btn ${form.condition === 'i_ri' ? 'active' : ''}`} onClick={() => set('condition', 'i_ri')}>✨ I ri</button>
-                <button className={`cond-btn ${form.condition === 'i_perdorur' ? 'active' : ''}`} onClick={() => set('condition', 'i_perdorur')}>🔄 I përdorur</button>
+                <button type="button" aria-pressed={form.condition === 'i_ri'} className={`cond-btn ${form.condition === 'i_ri' ? 'active' : ''}`} onClick={() => set('condition', 'i_ri')}>✨ I ri</button>
+                <button type="button" aria-pressed={form.condition === 'i_perdorur'} className={`cond-btn ${form.condition === 'i_perdorur' ? 'active' : ''}`} onClick={() => set('condition', 'i_perdorur')}>🔄 I përdorur</button>
               </div>
             </div>
           </div>
@@ -400,6 +400,8 @@ export default function NewListing() {
               {categories.map(c => (
                 <button
                   key={c.id}
+                  type="button"
+                  aria-pressed={form.category_id === c.id}
                   className={`cat-btn ${form.category_id === c.id ? 'active' : ''}`}
                   onClick={() => set('category_id', c.id)}
                 >
@@ -460,7 +462,7 @@ export default function NewListing() {
             )}
           </div>
 
-          <button className="submit-btn" onClick={submit} disabled={loading}>
+          <button type="submit" className="submit-btn" onClick={submit} disabled={loading}>
             {uploadProgress ? `⏳ Foto ${uploadProgress.done}/${uploadProgress.total}...` : loading ? '⏳ Duke publikuar...' : '🚀 Publiko shpalljen falas'}
           </button>
         </div>

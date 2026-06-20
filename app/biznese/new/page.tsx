@@ -153,7 +153,7 @@ export default function BiznesNewPage() {
 
       {/* Header */}
       <div style={{ background: 'linear-gradient(180deg,#F5C842,#f0bc30)', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10, position: 'sticky', top: 0, zIndex: 10 }}>
-        <button aria-label="Kthehu mbrapa" onClick={() => step > 1 ? setStep(s => s - 1) : window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+        <button type="button" aria-label="Kthehu mbrapa" onClick={() => step > 1 ? setStep(s => s - 1) : window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
           <i className="ti ti-arrow-left" aria-hidden="true" style={{ fontSize: 22, color: '#111' }} />
         </button>
         <h1 style={{ fontSize: 15, fontWeight: 700, color: '#111', flex: 1, margin: 0 }}>🏢 Krijo Biznes Online</h1>
@@ -190,7 +190,7 @@ export default function BiznesNewPage() {
                 </div>
               ))}
             </div>
-            <button className="step-btn" disabled={!mainType} onClick={() => setStep(2)}>Vazhdo →</button>
+            <button type="button" className="step-btn" disabled={!mainType} onClick={() => setStep(2)}>Vazhdo →</button>
           </>
         )}
 
@@ -245,7 +245,7 @@ export default function BiznesNewPage() {
             {selSubs.length > 0 && (
               <div style={{ fontSize: 12, color: '#E63312', fontWeight: 700, marginBottom: 16 }}>✓ {selSubs.length} të zgjedhura</div>
             )}
-            <button className="step-btn" disabled={selSubs.length === 0} onClick={() => setStep(3)}>Vazhdo →</button>
+            <button type="button" className="step-btn" disabled={selSubs.length === 0} onClick={() => setStep(3)}>Vazhdo →</button>
           </>
         )}
 
@@ -331,7 +331,7 @@ export default function BiznesNewPage() {
             </div>
 
             <div style={{ marginTop: 24 }}>
-              <button className="step-btn" disabled={saving || !form.name.trim()} onClick={submit}>
+              <button type="submit" className="step-btn" disabled={saving || !form.name.trim()} onClick={submit}>
                 {saving ? (uploading ? '⏳ Duke ngarkuar...' : '⏳ Duke krijuar...') : '✓ Krijo Biznesin'}
               </button>
             </div>

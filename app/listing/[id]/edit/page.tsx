@@ -223,7 +223,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
 
       <div className="wrap">
         <div className="topbar">
-          <button className="back" aria-label="Kthehu mbrapa" onClick={() => window.history.back()}>
+          <button type="button" className="back" aria-label="Kthehu mbrapa" onClick={() => window.history.back()}>
             <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
           <h1 className="topbar-title" style={{ margin: 0 }}>✏️ Ndrysho Shpalljen</h1>
@@ -276,9 +276,9 @@ export default function EditListing({ params }: { params: { id: string } }) {
             <div className="field">
               <label>Gjendja</label>
               <div className="cond-row" aria-label="Gjendja">
-                <button className={`cond-btn ${form.condition === 'i_ri' ? 'active' : ''}`}
+                <button type="button" aria-pressed={form.condition === 'i_ri'} className={`cond-btn ${form.condition === 'i_ri' ? 'active' : ''}`}
                   onClick={() => set('condition', 'i_ri')}>✨ I ri</button>
-                <button className={`cond-btn ${form.condition === 'i_perdorur' ? 'active' : ''}`}
+                <button type="button" aria-pressed={form.condition === 'i_perdorur'} className={`cond-btn ${form.condition === 'i_perdorur' ? 'active' : ''}`}
                   onClick={() => set('condition', 'i_perdorur')}>🔄 I përdorur</button>
               </div>
             </div>
@@ -289,6 +289,8 @@ export default function EditListing({ params }: { params: { id: string } }) {
             <div className="cat-grid">
               {categories.map(c => (
                 <button key={c.id}
+                  type="button"
+                  aria-pressed={form.category_id === c.id}
                   className={`cat-btn ${form.category_id === c.id ? 'active' : ''}`}
                   onClick={() => set('category_id', c.id)}>
                   <i className={`ti ti-${c.icon}`} aria-hidden="true" />
@@ -372,7 +374,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
             )}
           </div>
 
-          <button className="submit-btn" onClick={submit} disabled={loading}>
+          <button type="submit" className="submit-btn" onClick={submit} disabled={loading}>
             {uploadProgress ? `⏳ Foto ${uploadProgress.done}/${uploadProgress.total}...` : loading ? '⏳ Duke ruajtur...' : '💾 Ruaj Ndryshimet'}
           </button>
         </div>
