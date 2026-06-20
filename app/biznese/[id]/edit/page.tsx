@@ -142,7 +142,7 @@ export default function BiznesEditPage({ params }: { params: { id: string } }) {
 
       {/* Header */}
       <div style={{ background: 'linear-gradient(180deg,#F5C842,#f0bc30)', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10, position: 'sticky', top: 0, zIndex: 10 }}>
-        <button aria-label="Kthehu mbrapa" onClick={() => window.location.href = `/biznese/${params.id}`} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+        <button type="button" aria-label="Kthehu mbrapa" onClick={() => window.location.href = `/biznese/${params.id}`} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
           <i className="ti ti-arrow-left" style={{ fontSize: 22, color: '#111' }} aria-hidden="true" />
         </button>
         <h1 style={{ fontSize: 15, fontWeight: 700, color: '#111', flex: 1, margin: 0 }}>✏️ Edito Biznesin</h1>
@@ -252,7 +252,7 @@ export default function BiznesEditPage({ params }: { params: { id: string } }) {
           </div>
         </div>
 
-        <button className="save-btn" disabled={saving || !form.name.trim()} onClick={save} style={{ marginTop: 8 }}>
+        <button type="submit" className="save-btn" disabled={saving || !form.name.trim()} onClick={save} style={{ marginTop: 8 }}>
           {saving ? (uploading ? '⏳ Duke ngarkuar...' : '⏳ Duke ruajtur...') : '✓ Ruaj Ndryshimet'}
         </button>
       </div>

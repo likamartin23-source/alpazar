@@ -41,6 +41,7 @@ export default function GlobalError({
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               <button
+                type="button"
                 onClick={reset}
                 style={{
                   background: '#E63312', color: '#fff', border: 'none',
