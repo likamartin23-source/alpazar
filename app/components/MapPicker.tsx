@@ -115,7 +115,7 @@ export function MapPicker({ lat, lng, address, onChange, onCityChange }: MapPick
       )}
 
       <div style={{ marginTop: 6, fontSize: 11, color: '#aaa', display: 'flex', alignItems: 'center', gap: 5 }}>
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="#aaa" style={{ flexShrink: 0 }}>
+        <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="#aaa" style={{ flexShrink: 0 }}>
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
         </svg>
         Shkruaj manualisht ose kliko ikonën e GPS për lokacion automatik
@@ -123,7 +123,7 @@ export function MapPicker({ lat, lng, address, onChange, onCityChange }: MapPick
 
       {input && (
         <div style={{ marginTop: 8, background: '#EEF4FF', border: '1px solid #C3DAFB', borderRadius: 9, padding: '8px 12px', fontSize: 12, color: '#185FA5', display: 'flex', alignItems: 'flex-start', gap: 6 }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ flexShrink: 0, marginTop: 1 }}>
+          <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ flexShrink: 0, marginTop: 1 }}>
             <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
           </svg>
           <span>{input}</span>

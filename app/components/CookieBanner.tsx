@@ -46,7 +46,7 @@ export function CookieBanner() {
           <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 4 }}>Alpazar përdor cookies</div>
           <div style={{ fontSize: 11, color: '#bbb', lineHeight: 1.6 }}>
             Përdorim cookies thelbësore për funksionimin e platformës dhe analytics anonime për ta përmirësuar.{' '}
-            <button onClick={() => setDetail(d => !d)} style={{ background: 'none', border: 'none', color: '#F5C842', cursor: 'pointer', fontSize: 11, fontWeight: 700, padding: 0, fontFamily: 'inherit' }}>
+            <button type="button" aria-expanded={detail} onClick={() => setDetail(d => !d)} style={{ background: 'none', border: 'none', color: '#F5C842', cursor: 'pointer', fontSize: 11, fontWeight: 700, padding: 0, fontFamily: 'inherit' }}>
               {detail ? 'Fshih detajet ↑' : 'Shfaq detajet ↓'}
             </button>
           </div>
@@ -61,12 +61,14 @@ export function CookieBanner() {
       </div>
       <div style={{ display: 'flex', gap: 8 }}>
         <button
+          type="button"
           onClick={accept}
           style={{ flex: 1, background: '#F5C842', color: '#111', border: 'none', borderRadius: 10, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
         >
           ✓ Prano të gjitha
         </button>
         <button
+          type="button"
           onClick={decline}
           style={{ flex: 1, background: 'rgba(255,255,255,.1)', color: '#fff', border: '1px solid rgba(255,255,255,.2)', borderRadius: 10, padding: '11px 0', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
         >

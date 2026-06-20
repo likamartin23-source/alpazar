@@ -106,6 +106,8 @@ export function NotificationToast() {
             )}
           </div>
           <button
+            type="button"
+            aria-label="Mbyll njoftimin"
             onClick={e => { e.stopPropagation(); dismiss(t.id) }}
             style={{ background: 'none', border: 'none', color: '#555', fontSize: 16, cursor: 'pointer', padding: 0, lineHeight: 1 }}
           >✕</button>

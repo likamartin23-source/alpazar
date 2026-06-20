@@ -40,6 +40,7 @@ export function AgeGate({ children }: { children: React.ReactNode }) {
         </div>
         <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
           <button
+            type="button"
             onClick={() => { localStorage.setItem(KEY, '1'); setConfirmed(true) }}
             style={{
               background: '#F5C842', color: '#111', border: 'none',
@@ -50,6 +51,7 @@ export function AgeGate({ children }: { children: React.ReactNode }) {
             Po, jam 16+ vjeç
           </button>
           <button
+            type="button"
             onClick={() => { window.location.href = 'https://www.google.com' }}
             style={{
               background: 'none', color: '#666', border: '1px solid #333',
