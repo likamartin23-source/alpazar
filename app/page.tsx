@@ -43,6 +43,8 @@ function InstallBanner() {
   return (
     <div style={{ position: 'fixed', bottom: 226, left: 12, zIndex: 190, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 3 }}>
       <button
+        type="button"
+        aria-label="Instalo aplikacionin"
         onClick={install}
         style={{
           width: 36, height: 44,
@@ -195,6 +197,9 @@ function ShareBox({ refCode }: { refCode?: string }) {
       )}
 
       <button
+        type="button"
+        aria-label={open ? 'Mbyll menynë e ndarjes' : 'Ndaj aplikacionin'}
+        aria-expanded={open}
         onClick={() => setOpen(o => !o)}
         style={{
           width: 36, height: 44,
@@ -656,6 +661,7 @@ export default function Home() {
             {categories.map(cat => (
               <button
                 key={cat.id}
+                type="button"
                 className={`cat-item ${activeCategory === cat.slug ? 'active' : ''}`}
                 aria-pressed={activeCategory === cat.slug}
                 onClick={() => { setActiveCategory(cat.slug); fetchListings(cat.slug, activeFilter) }}
@@ -771,6 +777,7 @@ export default function Home() {
             ].map(f => (
               <button
                 key={f.id}
+                type="button"
                 className={`filter-btn ${activeFilter === f.id ? 'active' : ''}`}
                 aria-pressed={activeFilter === f.id}
                 onClick={() => { setActiveFilter(f.id); fetchListings(activeCategory, f.id) }}
@@ -879,6 +886,7 @@ export default function Home() {
           {listings.length >= 20 && (
             <div style={{ textAlign: 'center', padding: '16px 0 4px' }}>
               <button
+                type="button"
                 onClick={() => go('/search')}
                 style={{ background: '#111', color: '#F5C842', border: 'none', borderRadius: 12, padding: '12px 28px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
               >

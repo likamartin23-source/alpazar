@@ -728,6 +728,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
           <ImageCarousel images={images} alt={listing.title} aspectRatio="4/3" />
           {!isOwner && (
             <button
+              type="button"
               onClick={toggleSave}
               aria-label={liked ? 'Hiq nga të preferuarat' : 'Shto te të preferuarat'}
               style={{
@@ -762,6 +763,8 @@ export default function ListingPageClient({ params, initialListing }: { params: 
             <div className="price">{fmt(listing.price, listing.currency)}</div>
             {user && !isOwner && listing.is_active && (
               <button
+                type="button"
+                aria-label={priceAlert ? 'Ndrysho alarmin e çmimit' : 'Vendos alarm çmimi'}
                 onClick={() => setAlertOpen(true)}
                 style={{
                   display: 'flex', alignItems: 'center', gap: 5,
@@ -771,7 +774,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                   borderRadius: 9, padding: '5px 11px', fontSize: 12,
                   fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
                 }}>
-                <i className={`ti ti-bell${priceAlert ? '-ringing' : ''}`} style={{ fontSize: 14 }} />
+                <i className={`ti ti-bell${priceAlert ? '-ringing' : ''}`} style={{ fontSize: 14 }} aria-hidden="true" />
                 {priceAlert ? `🔔 ${priceAlert.target_price} ALL` : 'Njoftomë'}
               </button>
             )}

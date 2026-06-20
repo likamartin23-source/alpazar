@@ -689,6 +689,7 @@ export default function Auth() {
           {expired ? '0:00' : `${mins}:${fmt2(secs)}`}
         </span>
         <button
+          type="button"
           className="resend-btn"
           onClick={sendOtp}
           disabled={!expired && countdown > 0}
@@ -719,7 +720,7 @@ export default function Auth() {
           background:'#EEF4FF', border:'1px solid #85B7EB', borderRadius:8,
           padding:'8px 12px', marginBottom:10, fontSize:12 }}>
           <span style={{ color:'#185FA5' }}>⏳ Duke verifikuar automatikisht në <strong>{autoSubmitIn.toFixed(1)}s</strong>…</span>
-          <button onClick={cancelAutoSubmit}
+          <button type="button" onClick={cancelAutoSubmit}
             style={{ background:'none', border:'none', color:'#E63312', cursor:'pointer',
               fontWeight:700, fontSize:12, padding:'0 4px' }}>✕ Anulo</button>
         </div>
@@ -997,7 +998,7 @@ export default function Auth() {
                   <button type="button" className="btn" onClick={sendOtpViaEmail} disabled={loading}>
                     {loading ? '⏳ Duke dërguar...' : '📧 Dërgo Kodin në Email'}
                   </button>
-                  <button className="btn-ghost" style={{ marginTop: 6 }}
+                  <button type="button" className="btn-ghost" style={{ marginTop: 6 }}
                     onClick={() => { setSmsFailMode(false); setMsg('') }}>
                     ← Ndrysho numrin e telefonit
                   </button>
@@ -1050,7 +1051,7 @@ export default function Auth() {
                       <p>Nëse e di fjalëkalimin, hyr direkt. Nëse jo, fut emailin për ta rivendosur.</p>
                     </div>
                   </div>
-                  <button className="btn-yellow" style={{ marginBottom: 10 }}
+                  <button type="button" className="btn-yellow" style={{ marginBottom: 10 }}
                     onClick={() => { const ph = contact; switchMode('login'); setTimeout(() => setContact(ph), 0) }}>
                     🔑 Hyr me Numrin + Fjalëkalim
                   </button>
@@ -1068,7 +1069,7 @@ export default function Auth() {
                   <button type="button" className="btn" onClick={sendOtpViaEmail} disabled={loading}>
                     {loading ? '⏳ Duke dërguar...' : '📧 Dërgo Kodin në Email'}
                   </button>
-                  <button className="btn-ghost" style={{ marginTop: 6 }}
+                  <button type="button" className="btn-ghost" style={{ marginTop: 6 }}
                     onClick={() => { setSmsFailMode(false); setMsg('') }}>
                     ← Ndrysho numrin
                   </button>
