@@ -1237,7 +1237,14 @@ export default function MessagesPage() {
 
                             {/* Reaction badge */}
                             {m.reaction && !isDeleted && (
-                              <div className="rxn" onClick={e => { e.stopPropagation(); setReactionMsg(m.id) }}>
+                              <div
+                                className="rxn"
+                                role="button"
+                                tabIndex={0}
+                                aria-label={`Reagim: ${m.reaction}. Kliko për të ndryshuar.`}
+                                onClick={e => { e.stopPropagation(); setReactionMsg(m.id) }}
+                                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); setReactionMsg(m.id) } }}
+                              >
                                 {m.reaction}
                               </div>
                             )}
