@@ -889,9 +889,9 @@ export default function Home() {
 
         </div>
 
-        <nav className="bottom-nav">
-          <button className="nav-item active">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <nav className="bottom-nav" aria-label="Navigimi kryesor">
+          <button className="nav-item active" aria-current="page">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
             </svg>
             <span>Kreu</span>

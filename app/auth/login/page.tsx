@@ -762,6 +762,7 @@ export default function Auth() {
               Konfirmo që je 16 vjeç ose më i madh për të vazhduar.
             </p>
             <button
+              type="button"
               onClick={async () => {
                 // Konfirmo moshën — ruaj birth_year=2009 (max 16 vjeç)
                 await supabase
@@ -780,6 +781,7 @@ export default function Auth() {
               Po, jam 16 vjeç ose më i madh
             </button>
             <button
+              type="button"
               onClick={async () => {
                 await supabase.auth.signOut()
                 setShowAgeGate(false)
@@ -866,7 +868,7 @@ export default function Auth() {
               </div>
 
               {/* Butoni kryesor */}
-              <button className="btn" onClick={login} disabled={loading}>
+              <button className="btn" type="submit" disabled={loading}>
                 {loading ? '⏳ Duke hyrë...' : '🔑 Hyr'}
               </button>
 
