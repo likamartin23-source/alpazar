@@ -698,7 +698,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
             <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
           <span className="topbar-title">Shpallja</span>
-          <button className="share-btn" aria-label={shareOpen ? 'Mbyll ndarjen' : 'Ndaj shpalljen'} aria-expanded={shareOpen} onClick={() => setShareOpen(o => !o)}>
+          <button type="button" className="share-btn" aria-label={shareOpen ? 'Mbyll ndarjen' : 'Ndaj shpalljen'} aria-expanded={shareOpen} onClick={() => setShareOpen(o => !o)}>
             <i className={`ti ti-${shareOpen ? 'x' : 'share'}`} aria-hidden="true" />
           </button>
         </div>
@@ -1062,7 +1062,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
           {/* Report link — only for non-owner visitors */}
           {!isOwner && (
             <div style={{ padding: '0 13px 20px', textAlign: 'center' }}>
-              <button aria-label="Raporto shpalljen" aria-haspopup="dialog" onClick={() => setReportOpen(true)}
+              <button type="button" aria-label="Raporto shpalljen" aria-haspopup="dialog" onClick={() => setReportOpen(true)}
                 style={{ background: 'none', border: 'none', color: '#ccc', fontSize: 11, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                 <i className="ti ti-flag" style={{ fontSize: 12 }} aria-hidden="true" />Raporto këtë shpallje
               </button>
@@ -1107,11 +1107,11 @@ export default function ListingPageClient({ params, initialListing }: { params: 
             />
             <div className="alert-btn-row">
               {priceAlert && (
-                <button className="alert-del" onClick={deleteAlert} disabled={alertSaving} aria-label="Fshi alarmin">
+                <button type="button" className="alert-del" onClick={deleteAlert} disabled={alertSaving} aria-label="Fshi alarmin">
                   <i className="ti ti-trash" aria-hidden="true" />
                 </button>
               )}
-              <button className="alert-save" onClick={saveAlert} disabled={alertSaving || !alertTarget}>
+              <button type="button" className="alert-save" onClick={saveAlert} disabled={alertSaving || !alertTarget}>
                 {alertSaving ? 'Duke ruajtur...' : priceAlert ? 'Përditëso alarmin' : 'Aktivizo alarmin 🔔'}
               </button>
             </div>
@@ -1179,7 +1179,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                 {seller.shop_name || seller.full_name || seller.username || 'Shitës'}
               </span>
               <span className="cs-priv">🔒 Private</span>
-              <button className="cs-close" aria-label="Mbyll bisedën" onClick={() => setChatOpen(false)}>
+              <button type="button" className="cs-close" aria-label="Mbyll bisedën" onClick={() => setChatOpen(false)}>
                 <i className="ti ti-x" aria-hidden="true" />
               </button>
             </div>
@@ -1260,7 +1260,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                       }}
                     />
                   </div>
-                  <button className="cs-send-btn" aria-label="Dërgo mesazhin" onClick={sendMsg} disabled={!draft.trim() || sending}>
+                  <button type="button" className="cs-send-btn" aria-label="Dërgo mesazhin" onClick={sendMsg} disabled={!draft.trim() || sending}>
                     <i className={`ti ti-${sending ? 'loader-2' : 'send'}`} aria-hidden="true"
                       style={sending ? { animation: 'spin .7s linear infinite' } : {}} />
                   </button>

@@ -724,10 +724,10 @@ export default function Auth() {
         </div>
       )}
 
-      <button className="btn" onClick={() => { cancelAutoSubmit(); verifyOtp() }} disabled={loading || expired}>
+      <button type="button" className="btn" onClick={() => { cancelAutoSubmit(); verifyOtp() }} disabled={loading || expired}>
         {loading ? '⏳ Duke verifikuar...' : '✅ Konfirmo Kodin'}
       </button>
-      <button className="btn-ghost" onClick={() => { cancelAutoSubmit(); resetToForm() }}>← Ndrysho adresën</button>
+      <button type="button" className="btn-ghost" onClick={() => { cancelAutoSubmit(); resetToForm() }}>← Ndrysho adresën</button>
     </>
   )
 
@@ -965,7 +965,7 @@ export default function Auth() {
 
               {!smsFailMode ? (
                 <>
-                  <button className="btn" onClick={sendOtp} disabled={loading}>
+                  <button type="button" className="btn" onClick={sendOtp} disabled={loading}>
                     {loading ? '⏳ Duke dërguar kodin...' : '📨 Dërgo Kodin e Konfirmimit'}
                   </button>
                   <div className="sec-row">Ke llogari? &nbsp;<a role="button" tabIndex={0} onClick={() => switchMode('login')} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') switchMode('login') }} style={{ cursor: 'pointer' }}>Hyr →</a></div>
@@ -993,7 +993,7 @@ export default function Auth() {
                       autoComplete="email"
                       autoFocus />
                   </div>
-                  <button className="btn" onClick={sendOtpViaEmail} disabled={loading}>
+                  <button type="button" className="btn" onClick={sendOtpViaEmail} disabled={loading}>
                     {loading ? '⏳ Duke dërguar...' : '📧 Dërgo Kodin në Email'}
                   </button>
                   <button className="btn-ghost" style={{ marginTop: 6 }}
@@ -1035,7 +1035,7 @@ export default function Auth() {
               </div>
 
               {!smsFailMode ? (
-                <button className="btn" onClick={sendOtp} disabled={loading}>
+                <button type="button" className="btn" onClick={sendOtp} disabled={loading}>
                   {loading ? '⏳ Duke dërguar...' : '📨 Dërgo Kodin e Konfirmimit'}
                 </button>
               ) : null}
@@ -1064,7 +1064,7 @@ export default function Auth() {
                       autoFocus />
                     <p className="hint">Duhet të jetë emaili me të cilin u regjistruat.</p>
                   </div>
-                  <button className="btn" onClick={sendOtpViaEmail} disabled={loading}>
+                  <button type="button" className="btn" onClick={sendOtpViaEmail} disabled={loading}>
                     {loading ? '⏳ Duke dërguar...' : '📧 Dërgo Kodin në Email'}
                   </button>
                   <button className="btn-ghost" style={{ marginTop: 6 }}
@@ -1075,7 +1075,7 @@ export default function Auth() {
               )}
 
               {!smsFailMode && (
-                <button className="btn-ghost" onClick={() => switchMode('login')}>← Kthehu te Hyrja</button>
+                <button type="button" className="btn-ghost" onClick={() => switchMode('login')}>← Kthehu te Hyrja</button>
               )}
             </>
           )}
@@ -1099,10 +1099,10 @@ export default function Auth() {
                   style={{ letterSpacing: 4, fontSize: 20, textAlign: 'center', fontWeight: 700 }}
                 />
               </div>
-              <button className="btn" onClick={verifyTotp} disabled={loading || totpCode.length !== 6}>
+              <button type="button" className="btn" onClick={verifyTotp} disabled={loading || totpCode.length !== 6}>
                 {loading ? '⏳ Duke verifikuar...' : '✅ Konfirmo'}
               </button>
-              <button className="btn-ghost" onClick={() => { setStep('form'); setTotpCode(''); setMsg('') }}>
+              <button type="button" className="btn-ghost" onClick={() => { setStep('form'); setTotpCode(''); setMsg('') }}>
                 ← Kthehu
               </button>
             </>
@@ -1137,7 +1137,7 @@ export default function Auth() {
                 </div>
               </div>
 
-              <button className="btn" onClick={setNewPassword} disabled={loading}>
+              <button type="button" className="btn" onClick={setNewPassword} disabled={loading}>
                 {loading ? '⏳ Duke ruajtur...' : '🔒 Ruaj Fjalëkalimin'}
               </button>
             </>

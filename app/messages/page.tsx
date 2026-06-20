@@ -1407,7 +1407,7 @@ export default function MessagesPage() {
                   )}
                 </h1>
               </div>
-              <button className="t-action-btn" aria-label="Njoftimet" onClick={() => window.location.href = '/notifications'}>
+              <button type="button" className="t-action-btn" aria-label="Njoftimet" onClick={() => window.location.href = '/notifications'}>
                 <i className="ti ti-bell" aria-hidden="true" />
               </button>
             </div>
@@ -1423,7 +1423,7 @@ export default function MessagesPage() {
               <div className="spin-center">
                 <div style={{ fontSize: 32 }}>⚠️</div>
                 <div style={{ fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
-                <button onClick={() => window.location.reload()} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
+                <button type="button" onClick={() => window.location.reload()} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
               </div>
             ) : loading ? (
               <div className="spin-center"><span className="spinner" />Duke ngarkuar...</div>
@@ -1432,7 +1432,7 @@ export default function MessagesPage() {
                 <div className="empty-emoji">{search ? '🔍' : '💬'}</div>
                 <h3>{search ? 'Nuk u gjet asnjë bisedë' : 'Nuk ke mesazhe akoma'}</h3>
                 <p>{search ? `Nuk ka bisedë me "${search}"` : 'Kontakto shitësin nga ndonjë shpallje.'}</p>
-                {!search && <button className="empty-cta" onClick={() => window.location.href='/'}>Shfleto shpalljet →</button>}
+                {!search && <button type="button" className="empty-cta" onClick={() => window.location.href='/'}>Shfleto shpalljet →</button>}
               </div>
             ) : (
               <div className="threads-scroll" style={{ position:'relative' }}>
@@ -1463,7 +1463,7 @@ export default function MessagesPage() {
               </div>
             )}
 
-            <button className="fab" onClick={() => window.location.href='/'} aria-label="Bisedë e re">
+            <button type="button" className="fab" onClick={() => window.location.href='/'} aria-label="Bisedë e re">
               <i className="ti ti-edit" aria-hidden="true" />
             </button>
           </>

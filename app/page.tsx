@@ -59,7 +59,7 @@ function InstallBanner() {
         <i className="ti ti-device-mobile-down" style={{ fontSize: 16, color: '#fff' }} aria-hidden="true" />
         <span style={{ fontSize: 7, color: '#fff', fontWeight: 800, letterSpacing: .3, lineHeight: 1 }}>Instalo</span>
       </button>
-      <button aria-label="Mbyll" onClick={() => setDismissed(true)} style={{ background: 'none', border: 'none', color: 'rgba(34,197,94,.7)', cursor: 'pointer', fontSize: 7, padding: 0, lineHeight: 1, alignSelf: 'center' }}>✕</button>
+      <button type="button" aria-label="Mbyll" onClick={() => setDismissed(true)} style={{ background: 'none', border: 'none', color: 'rgba(34,197,94,.7)', cursor: 'pointer', fontSize: 7, padding: 0, lineHeight: 1, alignSelf: 'center' }}>✕</button>
     </div>
   )
 }
@@ -160,7 +160,7 @@ function ShareBox({ refCode }: { refCode?: string }) {
           {/* Mode toggle */}
           <div style={{ display: 'flex', background: '#222', borderRadius: 8, padding: 3, gap: 3, marginBottom: 9 }}>
             {(['feed', 'msg'] as const).map(m => (
-              <button key={m} onClick={() => setMode(m)} style={{
+              <button key={m} type="button" onClick={() => setMode(m)} style={{
                 flex: 1, border: 'none', borderRadius: 6, padding: '5px 2px',
                 fontSize: 8, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
                 background: mode === m ? '#3B82F6' : 'transparent',
@@ -177,7 +177,7 @@ function ShareBox({ refCode }: { refCode?: string }) {
               const isCopying = copied === p.id
               const sub = mode === 'feed' ? p.feedSub : p.msgSub
               return (
-                <button key={p.id} onClick={() => handlePlatform(p)}
+                <button key={p.id} type="button" onClick={() => handlePlatform(p)}
                   style={{ ...BTN_BASE, background: isCopying ? '#EAF3DE' : p.bg, color: isCopying ? '#3B6D11' : '#fff' }}>
                   {isCopying
                     ? <span style={{ fontSize: 14 }}>✅</span>
@@ -211,7 +211,7 @@ function ShareBox({ refCode }: { refCode?: string }) {
         <i className={`ti ti-${open ? 'x' : 'share-2'}`} aria-hidden="true" style={{ fontSize: 16, color: '#fff' }} />
         <span style={{ fontSize: 7, color: '#fff', fontWeight: 800, letterSpacing: .3, lineHeight: 1 }}>Ndaj</span>
       </button>
-      <button aria-label="Mbyll" onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', color: 'rgba(59,130,246,.7)', cursor: 'pointer', fontSize: 8, padding: 0, lineHeight: 1, alignSelf: 'center', display: open ? 'block' : 'none' }}>✕</button>
+      <button type="button" aria-label="Mbyll" onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', color: 'rgba(59,130,246,.7)', cursor: 'pointer', fontSize: 8, padding: 0, lineHeight: 1, alignSelf: 'center', display: open ? 'block' : 'none' }}>✕</button>
     </div>
   )
 }
@@ -573,13 +573,13 @@ export default function Home() {
             </div>
             <div className="nav">
               {user && unreadNotifications > 0 && (
-                <button className="icon-btn" aria-label={`${unreadNotifications} njoftime të palexuara`} onClick={() => go('/notifications')} style={{ position: 'relative' }}>
+                <button type="button" className="icon-btn" aria-label={`${unreadNotifications} njoftime të palexuara`} onClick={() => go('/notifications')} style={{ position: 'relative' }}>
                   <i className="ti ti-bell-ringing" aria-hidden="true" />
                   <span aria-hidden="true" style={{ position: 'absolute', top: 2, right: 2, background: '#E63312', color: '#fff', fontSize: 7, fontWeight: 700, borderRadius: 8, padding: '1px 3px', minWidth: 12, textAlign: 'center', lineHeight: '12px' }}>{unreadNotifications > 9 ? '9+' : unreadNotifications}</span>
                 </button>
               )}
               {user && unreadNotifications === 0 && unreadCount > 0 && (
-                <button className="icon-btn" aria-label={`${unreadCount} mesazhe të palexuara`} onClick={() => go('/messages')} style={{ position: 'relative' }}>
+                <button type="button" className="icon-btn" aria-label={`${unreadCount} mesazhe të palexuara`} onClick={() => go('/messages')} style={{ position: 'relative' }}>
                   <i className="ti ti-bell" aria-hidden="true" />
                   <span aria-hidden="true" style={{ position: 'absolute', top: 2, right: 2, background: '#E63312', color: '#fff', fontSize: 7, fontWeight: 700, borderRadius: 8, padding: '1px 3px', minWidth: 12, textAlign: 'center', lineHeight: '12px' }}>{unreadCount > 9 ? '9+' : unreadCount}</span>
                 </button>
@@ -592,7 +592,7 @@ export default function Home() {
                   const nm = profile?.full_name || profile?.username || 'Profili'
                   const inits = nm.slice(0, 2).toUpperCase()
                   return (
-                    <button className="user-chip" onClick={() => go('/profile')} aria-label="Profili im">
+                    <button type="button" className="user-chip" onClick={() => go('/profile')} aria-label="Profili im">
                       <span className="user-chip-av" style={{ overflow: 'visible' }}>
                         <Avatar src={profile?.avatar_url} name={nm} type={profile?.is_premium ? 'premium' : 'user'} verified={(profile?.trust_score ?? 0) >= 60} size={28} />
                         <span className="user-chip-on" />
@@ -607,7 +607,7 @@ export default function Home() {
                   )
                 })()
               ) : (
-                <button className="login-btn" onClick={() => go('/auth/login')}>Hyr / Regjistrohu</button>
+                <button type="button" className="login-btn" onClick={() => go('/auth/login')}>Hyr / Regjistrohu</button>
               )}
             </div>
           </div>
@@ -649,7 +649,7 @@ export default function Home() {
           </div>
 
           <div className="cat-scroll">
-            <button className={`cat-item ${activeCategory === 'all' ? 'active' : ''}`} aria-pressed={activeCategory === 'all'} onClick={() => { setActiveCategory('all'); fetchListings('all', activeFilter) }}>
+            <button type="button" className={`cat-item ${activeCategory === 'all' ? 'active' : ''}`} aria-pressed={activeCategory === 'all'} onClick={() => { setActiveCategory('all'); fetchListings('all', activeFilter) }}>
               <i className="ti ti-layout-grid" aria-hidden="true" />
               <span>Të gjitha</span>
             </button>
@@ -705,7 +705,7 @@ export default function Home() {
               <strong>👑 Bëhu Anëtar Premium</strong>
               <span>Biznes · Badge · Shpallje ∞ · {cfg('premium_monthly_price','9.99')}€/muaj</span>
             </div>
-            <button className="prem-btn" onClick={() => go('/premium')}>Shiko →</button>
+            <button type="button" className="prem-btn" onClick={() => go('/premium')}>Shiko →</button>
           </div>
 
           {/* 3. Trust row */}
@@ -790,7 +790,7 @@ export default function Home() {
             <div style={{ marginBottom: 12 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px', marginBottom: 10 }}>
                 <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: '#111' }}>👁 Rishikimet e fundit</h3>
-                <button onClick={() => { localStorage.removeItem('_alpazar_rv'); setRecentlyViewed([]) }} style={{ background: 'none', border: 'none', fontSize: 10, color: '#aaa', cursor: 'pointer', fontFamily: 'inherit' }}>Pastro</button>
+                <button type="button" onClick={() => { localStorage.removeItem('_alpazar_rv'); setRecentlyViewed([]) }} style={{ background: 'none', border: 'none', fontSize: 10, color: '#aaa', cursor: 'pointer', fontFamily: 'inherit' }}>Pastro</button>
               </div>
               <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, scrollbarWidth: 'none' }}>
                 {recentlyViewed.map(item => {
@@ -826,7 +826,7 @@ export default function Home() {
                   <i className="ti ti-mood-empty" aria-hidden="true" />
                   <h3>Nuk ka shpallje aktualisht</h3>
                   <p>Bëhu i pari që shton!<br />Regjistrimi është falas.</p>
-                  <button className="empty-cta" onClick={() => go(user ? '/listing/new' : '/auth/login')}>
+                  <button type="button" className="empty-cta" onClick={() => go(user ? '/listing/new' : '/auth/login')}>
                     + Shto shpallje falas
                   </button>
                 </div>
@@ -890,24 +890,24 @@ export default function Home() {
         </div>
 
         <nav className="bottom-nav" aria-label="Navigimi kryesor">
-          <button className="nav-item active" aria-current="page">
+          <button type="button" className="nav-item active" aria-current="page">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
             </svg>
             <span>Kreu</span>
           </button>
-          <button className="nav-item" onClick={() => go('/search')}>
+          <button type="button" className="nav-item" onClick={() => go('/search')}>
             <i className="ti ti-search" aria-hidden="true" /><span>Kërko</span>
           </button>
-          <button className="nav-add" aria-label="Shto shpallje të re" onClick={() => go(user ? '/listing/new' : '/auth/login')}>
+          <button type="button" className="nav-add" aria-label="Shto shpallje të re" onClick={() => go(user ? '/listing/new' : '/auth/login')}>
             <i className="ti ti-plus" aria-hidden="true" />
           </button>
-          <button className="nav-item" onClick={() => go(user ? '/messages' : '/auth/login')} style={{ position: 'relative' }}>
+          <button type="button" className="nav-item" onClick={() => go(user ? '/messages' : '/auth/login')} style={{ position: 'relative' }}>
             <i className="ti ti-message-circle" aria-hidden="true" />
             {unreadCount > 0 && <span className="nav-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>}
             <span>Mesazhe</span>
           </button>
-          <button className="nav-item" onClick={() => go(user ? '/profile' : '/auth/login')} style={{ position: 'relative' }}>
+          <button type="button" className="nav-item" onClick={() => go(user ? '/profile' : '/auth/login')} style={{ position: 'relative' }}>
             <i className="ti ti-user-circle" aria-hidden="true" />
             {authReady && user && (
               <span style={{ position: 'absolute', top: 4, right: 12, width: 8, height: 8, background: '#22C55E', borderRadius: '50%', border: '1.5px solid #111' }} />
