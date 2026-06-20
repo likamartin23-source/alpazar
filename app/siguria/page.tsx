@@ -45,7 +45,7 @@ export default function Siguria() {
         </div>
 
         <div className="hero">
-          <span className="hero-icon">🛡️</span>
+          <span className="hero-icon" aria-hidden="true">🛡️</span>
           <h1>Tregto me Siguri</h1>
           <p>Këshilla dhe paralajmërime<br />për t'u mbrojtur nga mashtrimet</p>
         </div>
@@ -60,7 +60,7 @@ export default function Siguria() {
           </div>
 
           <div className="section">
-            <div className="sec-title"><i className="ti ti-shield-check" aria-hidden="true" />Si të Blini me Siguri</div>
+            <h2 className="sec-title"><i className="ti ti-shield-check" aria-hidden="true" />Si të Blini me Siguri</h2>
             <div className="tip">
               <div className="tip-icon t-green"><i className="ti ti-check" aria-hidden="true" /></div>
               <div className="tip-text"><strong>Takohuni personalisht</strong><span>Gjithmonë takohuni në vende publike për të shikuar produktin para pagesës</span></div>
@@ -84,7 +84,7 @@ export default function Siguria() {
           </div>
 
           <div className="section">
-            <div className="sec-title"><i className="ti ti-tag" aria-hidden="true" />Si të Shisni me Siguri</div>
+            <h2 className="sec-title"><i className="ti ti-tag" aria-hidden="true" />Si të Shisni me Siguri</h2>
             <div className="tip">
               <div className="tip-icon t-green"><i className="ti ti-check" aria-hidden="true" /></div>
               <div className="tip-text"><strong>Fotografitë origjinale</strong><span>Postoni vetëm foto tuajat — fotografitë e interneti-t tregojnë mungesë vullneti të mirë</span></div>
@@ -100,7 +100,7 @@ export default function Siguria() {
           </div>
 
           <div className="section">
-            <div className="sec-title"><i className="ti ti-flag" aria-hidden="true" />Si të Raportoni</div>
+            <h2 className="sec-title"><i className="ti ti-flag" aria-hidden="true" />Si të Raportoni</h2>
             <p style={{ fontSize: 13, color: '#444', lineHeight: 1.7, marginBottom: 12 }}>
               Nëse hasni një shpallje mashtruese ose sjellje abuzive, raportojeni menjëherë. Ekipi ynë shqyrton çdo raportim brenda 24 orësh.
             </p>
@@ -110,7 +110,7 @@ export default function Siguria() {
           </div>
 
           <div className="section">
-            <div className="sec-title"><i className="ti ti-phone" aria-hidden="true" />Numrat e Emergjencës</div>
+            <h2 className="sec-title"><i className="ti ti-phone" aria-hidden="true" />Numrat e Emergjencës</h2>
             <div className="tip">
               <div className="tip-icon t-red"><i className="ti ti-phone" aria-hidden="true" /></div>
               <div className="tip-text"><strong>Policia e Shtetit</strong><span>129 (emergjencë) · 0800 33 33 (pa pagesë)</span></div>

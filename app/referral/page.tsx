@@ -168,11 +168,11 @@ export default function ReferralPage() {
           <button type="button" className="back" aria-label="Kthehu mbrapa" onClick={() => window.history.back()}>
             <i className="ti ti-arrow-left" aria-hidden="true" />
           </button>
-          <span className="topbar-title">🎁 Programi i Referimit</span>
+          <span className="topbar-title"><span aria-hidden="true">🎁</span> Programi i Referimit</span>
         </div>
 
         <div className="hero">
-          <span className="hero-emoji">🎁</span>
+          <span className="hero-emoji" aria-hidden="true">🎁</span>
           <h1>Fto Miqtë, Fito Pikë!</h1>
           <p>Për çdo mik që regjistron në Alpazar<br />përmes linkut tënd, fiton <strong>50 pikë</strong> gamifikimi.<br />Pa kosto. Pa limit.</p>
         </div>

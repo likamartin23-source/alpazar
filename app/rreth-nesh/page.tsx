@@ -49,21 +49,21 @@ export default function RrethNesh() {
         </div>
 
         <div className="hero">
-          <span className="hero-logo">🦅</span>
+          <span className="hero-logo" aria-hidden="true">🦅</span>
           <h1>ALPAZAR</h1>
           <p>Shit · Bli · Bëj Pazrin Tënd<br />Platforma #1 shqiptare e tregtisë online</p>
         </div>
 
         <div className="body">
           <div className="section">
-            <div className="sec-title"><i className="ti ti-bulb" aria-hidden="true" />Historia jonë</div>
+            <h2 className="sec-title"><i className="ti ti-bulb" aria-hidden="true" />Historia jonë</h2>
             <p>Alpazar lindi nga një ide e thjeshtë: shqiptarët meritojnë një platformë tregtie online moderne, pa reklama, dhe falas — një hapësirë ku çdo gjë mund të shitet dhe blihet me besim.</p>
             <p>Emri "Alpazar" kombinon "Al" (Shqipëria) me "pazar" (tregti, shkëmbim) — reflektim i traditës sonë historike të tregtisë dhe komunitetit.</p>
             <p>Ne besojmë se teknologjia duhet t'i shërbejë njerëzve, jo reklamuesve. Kjo është arsyeja pse Alpazar ka zero reklama — gjithmonë.</p>
           </div>
 
           <div className="section">
-            <div className="sec-title"><i className="ti ti-target" aria-hidden="true" />Misioni ynë</div>
+            <h2 className="sec-title"><i className="ti ti-target" aria-hidden="true" />Misioni ynë</h2>
             <p>Të bëhemi platforma #1 e tregtisë online në Shqipëri — e besueshme, e sigurt, dhe e aksesueshme për të gjithë shqiptarët kudo ku janë.</p>
             <div className="values">
               <div className="val">
@@ -90,7 +90,7 @@ export default function RrethNesh() {
           </div>
 
           <div className="section">
-            <div className="sec-title"><i className="ti ti-chart-bar" aria-hidden="true" />Alpazar në numra</div>
+            <h2 className="sec-title"><i className="ti ti-chart-bar" aria-hidden="true" />Alpazar në numra</h2>
             <div className="stats">
               <div className="stat">
                 <div className="stat-n">0€</div>
@@ -108,7 +108,7 @@ export default function RrethNesh() {
           </div>
 
           <div className="section">
-            <div className="sec-title"><i className="ti ti-clock" aria-hidden="true" />Historia</div>
+            <h2 className="sec-title"><i className="ti ti-clock" aria-hidden="true" />Historia</h2>
             <div className="timeline">
               <div className="tl-item">
                 <div className="tl-date">2024 — Fillimi</div>
