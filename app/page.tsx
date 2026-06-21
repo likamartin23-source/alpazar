@@ -289,7 +289,10 @@ export default function Home() {
   useEffect(() => {
     try {
       const rv = JSON.parse(localStorage.getItem('_alpazar_rv') || '[]')
-      if (Array.isArray(rv) && rv.length > 0) setRecentlyViewed(rv)
+      if (Array.isArray(rv) && rv.length > 0) {
+        const unique = rv.filter((x: any, i: number, a: any[]) => a.findIndex((y: any) => y.id === x.id) === i)
+        setRecentlyViewed(unique)
+      }
     } catch { /* ignore */ }
     saveRefFromUrl()
     fetchAll()
