@@ -55,14 +55,14 @@ export default function TakedownPage() {
           ← Kthehu
         </button>
         <div style={{ background: '#fff', border: '1.5px solid #f0e6b0', borderRadius: 16, padding: 28 }}>
-          <h1 style={{ fontSize: 20, fontWeight: 800, color: '#111', marginBottom: 6 }}>⚖️ Kërkesë Heqje Përmbajtjeje / IP</h1>
+          <h1 style={{ fontSize: 20, fontWeight: 800, color: '#111', marginBottom: 6 }}><span aria-hidden="true">⚖️</span> Kërkesë Heqje Përmbajtjeje / IP</h1>
           <p style={{ fontSize: 12, color: '#888', lineHeight: 1.6, marginBottom: 24 }}>
             Nëse besoni se ndonjë përmbajtje në Alpazar shkel të drejtat tuaja të pronësisë intelektuale ose ligjin, plotësoni këtë formular. Mbrojmë të drejtat e markave tregtare sipas Ligjit L.52/2025 nenet 130–133. Do t'ju përgjigjemi brenda 72 orëve.
           </p>
 
           {done ? (
             <div style={{ background: '#EAF3DE', border: '1px solid #97C459', borderRadius: 10, padding: 20, textAlign: 'center' }}>
-              <div style={{ fontSize: 32, marginBottom: 8 }}>✅</div>
+              <div style={{ fontSize: 32, marginBottom: 8 }} aria-hidden="true">✅</div>
               <div style={{ fontWeight: 700, color: '#3B6D11', fontSize: 15 }}>Kërkesa u dërgua!</div>
               <div style={{ color: '#888', fontSize: 12, marginTop: 6 }}>Do t'ju kontaktojmë brenda 72 orëve.</div>
             </div>

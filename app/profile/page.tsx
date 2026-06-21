@@ -525,7 +525,7 @@ export default function ProfilePage() {
               <img src={profile.cover_url} alt="Kopertina" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
             )}
             <label style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,.52)', color: '#fff', borderRadius: 8, padding: '5px 10px', fontSize: 11, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
-              {coverUploading ? '⏳' : '📷'} Kopertina
+              <span aria-hidden="true">{coverUploading ? '⏳' : '📷'}</span> Kopertina
               <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) uploadProfileImage(f, 'cover') }} />
             </label>
           </div>
@@ -541,7 +541,7 @@ export default function ProfilePage() {
                 size={96}
               />
               <label style={{ position: 'absolute', bottom: 0, right: 0, background: '#E63312', color: '#fff', width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, cursor: 'pointer', border: '2px solid #fff', boxShadow: '0 1px 4px rgba(0,0,0,.2)', zIndex: 2 }}>
-                {avatarUploading ? '⏳' : '📷'}
+                <span aria-hidden="true">{avatarUploading ? '⏳' : '📷'}</span>
                 <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) uploadProfileImage(f, 'avatar') }} />
               </label>
             </div>
@@ -680,7 +680,7 @@ export default function ProfilePage() {
                 borderRadius: 13, padding: 16, marginBottom: 12,
               }}>
                 <div style={{ color: '#fff', fontWeight: 700, fontSize: 14, marginBottom: 6 }}>
-                  🎁 Fto miq, fito pikë!
+                  <span aria-hidden="true">🎁</span> Fto miq, fito pikë!
                 </div>
                 <div style={{ color: 'rgba(255,255,255,.8)', fontSize: 11, marginBottom: 12, lineHeight: 1.6 }}>
                   Për çdo mik të regjistruar përmes linkut tënd, fiton <strong>50 pikë</strong> — kumulativisht.
@@ -691,7 +691,7 @@ export default function ProfilePage() {
                   style={{ background: '#fff', color: '#E63312', border: 'none', borderRadius: 9, padding: '9px 18px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
                   onClick={() => window.location.href = '/referral'}
                 >
-                  🔗 Ndaj linkun tënd →
+                  <span aria-hidden="true">🔗</span> Ndaj linkun tënd →
                 </button>
               </div>
 
@@ -728,12 +728,12 @@ export default function ProfilePage() {
                 </label>
                 {profile?.trust_score_visible !== false && (
                   <div style={{ background: '#F0FDF4', border: '1px solid #86EFAC', borderRadius: 8, padding: '8px 12px', fontSize: 11.5, color: '#166534', marginTop: 4 }}>
-                    ✅ Trust Score aktiv — vizitorët mund ta shohin besueshmërinë tuaj
+                    <span aria-hidden="true">✅</span> Trust Score aktiv — vizitorët mund ta shohin besueshmërinë tuaj
                   </div>
                 )}
                 {profile?.trust_score_visible === false && (
                   <div style={{ background: '#FEF9C3', border: '1px solid #FDE047', borderRadius: 8, padding: '8px 12px', fontSize: 11.5, color: '#713F12', marginTop: 4 }}>
-                    ⚠️ Trust Score i fshehur — profili publik nuk e shfaq
+                    <span aria-hidden="true">⚠️</span> Trust Score i fshehur — profili publik nuk e shfaq
                   </div>
                 )}
               </div>
@@ -765,7 +765,7 @@ export default function ProfilePage() {
                 </label>
                 <div style={{ marginTop: 6 }}>
                   <a href="/te-dhenat-mia" style={{ fontSize: 12, color: '#E63312', fontWeight: 600, textDecoration: 'none' }}>
-                    🔒 Menaxho të gjitha të dhënat e mia (GDPR) →
+                    <span aria-hidden="true">🔒</span> Menaxho të gjitha të dhënat e mia (GDPR) →
                   </a>
                 </div>
               </div>
@@ -813,7 +813,7 @@ export default function ProfilePage() {
                     style={{ paddingRight: 36 }}
                   />
                   <button type="button" className="pass-toggle" aria-label={showNewPass ? 'Fshih fjalëkalimin' : 'Shfaq fjalëkalimin'} aria-pressed={showNewPass} onClick={() => setShowNewPass(v => !v)}>
-                    {showNewPass ? '🙈' : '👁️'}
+                    <span aria-hidden="true">{showNewPass ? '🙈' : '👁️'}</span>
                   </button>
                 </div>
                 <label htmlFor="prof-confirm-pass">Konfirmo fjalëkalimin e ri</label>
@@ -827,7 +827,7 @@ export default function ProfilePage() {
                   autoComplete="new-password"
                 />
                 <button type="button" className="sec-btn" onClick={changePassword} disabled={savingPass || !newPass || !newPass2}>
-                  {savingPass ? '⏳ Duke ruajtur...' : '🔒 Ndrysho Fjalëkalimin'}
+                  {savingPass ? <><span aria-hidden="true">⏳</span> Duke ruajtur...</> : <><span aria-hidden="true">🔒</span> Ndrysho Fjalëkalimin</>}
                 </button>
               </div>
 
@@ -842,7 +842,7 @@ export default function ProfilePage() {
                 )}
                 {!deleteConfirm ? (
                   <button type="button" className="delete-btn" onClick={() => setDeleteConfirm(true)}>
-                    🗑 Fshi Llogarinë
+                    <span aria-hidden="true">🗑</span> Fshi Llogarinë
                   </button>
                 ) : (
                   <div className="delete-confirm">
@@ -858,10 +858,10 @@ export default function ProfilePage() {
                     />
                     <div className="delete-confirm-btns">
                       <button type="button" onClick={deleteAccount} disabled={deleting || !deletePassword}>
-                        {deleting ? '⏳ Duke fshirë...' : '✅ Po, fshi llogarinë'}
+                        {deleting ? <><span aria-hidden="true">⏳</span> Duke fshirë...</> : <><span aria-hidden="true">✅</span> Po, fshi llogarinë</>}
                       </button>
                       <button type="button" onClick={() => { setDeleteConfirm(false); setDeleteMsg(''); setDeletePassword('') }}>
-                        ✕ Anulo
+                        <span aria-hidden="true">✕</span> Anulo
                       </button>
                     </div>
                   </div>
@@ -1044,7 +1044,7 @@ export default function ProfilePage() {
                           <div className="conv-body">
                             <div className="conv-name">
                               {name}
-                              {p?.is_premium && <span className="conv-prem" aria-label="Premium">⭐</span>}
+                              {p?.is_premium && <span className="conv-prem" role="img" aria-label="Premium">⭐</span>}
                             </div>
                             <div className={`conv-preview ${conv.unread > 0 ? 'unread' : ''}`}>
                               {preview}
