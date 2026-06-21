@@ -293,7 +293,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
         <div id="tabpanel-grid" role="tabpanel" aria-labelledby="tab-grid">
           {listings.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '48px 16px', color: '#aaa', background: '#fff' }}>
-              <div style={{ fontSize: 48, marginBottom: 12 }}>🛍️</div>
+              <div style={{ fontSize: 48, marginBottom: 12 }} aria-hidden="true">🛍️</div>
               <div style={{ fontSize: 14, fontWeight: 600, color: '#666', marginBottom: 6 }}>Asnjë shpallje ende</div>
               {isOwner && (
                 <button type="button" onClick={() => window.location.href = '/listing/new'} style={{ marginTop: 8, background: '#E63312', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 24px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: 13 }}>+ Shto shpallje</button>

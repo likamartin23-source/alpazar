@@ -185,7 +185,7 @@ export default function ReferralPage() {
               <div className="card-title"><i className="ti ti-lock" aria-hidden="true" />Hyr për të parë referalet</div>
               <p style={{ fontSize: 12, color: '#888', marginBottom: 14 }}>Krijo llogari falas dhe fillo të fitosh pikë duke ftuar miqtë.</p>
               <button type="button" className="login-cta" onClick={() => window.location.href = '/auth/login'}>
-                🔑 Hyr / Regjistrohu
+                <span aria-hidden="true">🔑</span> Hyr / Regjistrohu
               </button>
             </div>
           ) : (
@@ -194,7 +194,7 @@ export default function ReferralPage() {
               <div className="level-card">
                 <div className="level-top">
                   <span className="level-badge" style={{ background: lp.current.bg, color: lp.current.color }}>
-                    {lp.current.icon} {lp.current.name}
+                    <span aria-hidden="true">{lp.current.icon}</span> {lp.current.name}
                   </span>
                   <span className="level-pts">{pts} pikë</span>
                 </div>
@@ -237,10 +237,10 @@ export default function ReferralPage() {
                 <div className="milestone-card">
                   <div className="milestone-title">
                     <i className="ti ti-crown" style={{ fontSize: 14 }} aria-hidden="true" />
-                    🥇 Ke arritur të gjitha milestones!
+                    <span aria-hidden="true">🥇</span> Ke arritur të gjitha milestones!
                   </div>
                   <div style={{ fontSize: 12, color: '#F5C842', textAlign: 'center', padding: '8px 0' }}>
-                    Urime! 50+ referalë & 1 muaj Premium FALAS fituar! 🎉
+                    Urime! 50+ referalë & 1 muaj Premium FALAS fituar! <span aria-hidden="true">🎉</span>
                   </div>
                 </div>
               )}
@@ -327,7 +327,7 @@ export default function ReferralPage() {
                   const done = referrals.length >= r.at
                   return (
                     <div key={r.at} className="reward-item" style={{ opacity: done ? 1 : 0.7 }}>
-                      <div className="reward-badge" style={{ background: done ? '#EAF3DE' : '#FFF0EE' }}>{r.badge}</div>
+                      <div className="reward-badge" style={{ background: done ? '#EAF3DE' : '#FFF0EE' }} aria-hidden="true">{r.badge}</div>
                       <div className="reward-info">
                         <strong style={{ color: done ? '#3B6D11' : '#111' }}>{r.label}</strong>
                         <span>{r.sub}</span>
