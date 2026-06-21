@@ -170,7 +170,7 @@ export function SocialProofBar({ viewsCount, listingId }: { viewsCount: number; 
           {liveViewers} {liveViewers === 1 ? 'person' : 'persona'} po shikojnë tani
         </span>
         <span style={{ fontSize: 10, color: '#888', display: 'block' }}>
-          👁 {viewsCount.toLocaleString()} shikime totale
+          <><span aria-hidden="true">👁</span> {viewsCount.toLocaleString()} shikime totale</>
         </span>
       </div>
       <span style={{
@@ -214,7 +214,7 @@ export function SellerPremiumUpsell({ isPremium, price = '9.99' }: { isPremium: 
         </button>
         <button type="button" aria-label="Mbyll ofertën" onClick={() => setVisible(false)} style={{
           background: 'none', border: 'none', color: '#555', fontSize: 9, cursor: 'pointer',
-        }}>Tani jo ✕</button>
+        }}><><span aria-hidden="true">✕</span> Tani jo</></button>
       </div>
     </div>
   )
@@ -242,7 +242,7 @@ export function FreeTierBanner({
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
         <span style={{ fontSize: 12, fontWeight: 700, color: remaining === 0 ? '#E63312' : '#A05000' }}>
-          {remaining === 0 ? '🚫 Ke arritur kufirin falas' : `⚠️ ${remaining} shpallje të mbetura falas`}
+          {remaining === 0 ? <><span aria-hidden='true'>🚫</span> Ke arritur kufirin falas</> : <><span aria-hidden='true'>⚠️</span> {remaining} shpallje të mbetura falas</>}
         </span>
         <span style={{ fontSize: 10, color: '#888' }}>{listingCount}/{freeLimit}</span>
       </div>

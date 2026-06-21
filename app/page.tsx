@@ -168,7 +168,7 @@ function ShareBox({ refCode }: { refCode?: string }) {
                 background: mode === m ? '#3B82F6' : 'transparent',
                 color: mode === m ? '#fff' : '#888', transition: 'all .15s',
               }}>
-                {m === 'feed' ? '📢 Statusi' : '💬 Mesazh'}
+                {m === 'feed' ? <><span aria-hidden='true'>📢</span> Statusi</> : <><span aria-hidden='true'>💬</span> Mesazh</>}
               </button>
             ))}
           </div>
@@ -608,7 +608,7 @@ export default function Home() {
                       <span className="user-chip-txt">
                         <span className="user-chip-name">{nm}</span>
                         <span className="user-chip-lvl" style={{ color: lvl.color }}>
-                          {profile?.is_premium ? '👑 Premium' : `${lvl.icon} ${lvl.name}`}
+                          {profile?.is_premium ? <><span aria-hidden='true'>👑</span> Premium</> : <><span aria-hidden='true'>{lvl.icon}</span> {lvl.name}</>}
                         </span>
                       </span>
                     </button>
@@ -776,7 +776,7 @@ export default function Home() {
               { id: 'all', label: 'Të gjitha' },
               { id: 'new', label: '🆕 I ri' },
               { id: 'used', label: 'I përdorur' },
-              { id: 'premium', label: '⭐ Premium' },
+              { id: 'premium', label: <><span aria-hidden='true'>⭐</span> Premium</> },
             ].map(f => (
               <button
                 key={f.id}

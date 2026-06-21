@@ -158,7 +158,7 @@ export default function TeDhenatMiaPage() {
             disabled={exporting}
             style={{ width: '100%', background: '#111', color: '#F5C842', border: 'none', borderRadius: 11, padding: '12px 0', fontSize: 13, fontWeight: 700, cursor: exporting ? 'not-allowed' : 'pointer', opacity: exporting ? 0.6 : 1, fontFamily: 'inherit' }}
           >
-            {exporting ? '⏳ Duke eksportuar...' : '📥 Shkarko të dhënat e mia (JSON)'}
+            {exporting ? <><span aria-hidden='true'>⏳</span> Duke eksportuar...</> : <><span aria-hidden='true'>📥</span> Shkarko të dhënat e mia (JSON)</>}
           </button>
         </div>
 
@@ -221,7 +221,7 @@ export default function TeDhenatMiaPage() {
                   disabled={deleting}
                   style={{ flex: 1, background: '#dc2626', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: deleting ? 'not-allowed' : 'pointer', opacity: deleting ? 0.7 : 1, fontFamily: 'inherit' }}
                 >
-                  {deleting ? '⏳ Duke fshirë...' : 'Po, fshi!'}
+                  {deleting ? <><span aria-hidden='true'>⏳</span> Duke fshirë...</> : 'Po, fshi!'}
                 </button>
               </div>
             </div>

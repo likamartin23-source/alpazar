@@ -789,7 +789,7 @@ export default function ProfilePage() {
                   style={{ marginTop: 6 }}
                 />
                 <button type="button" className="sec-btn" onClick={changeEmail} disabled={changingEmail || !newEmail} style={{ marginTop: 8 }}>
-                  {changingEmail ? '⏳ Duke dërguar...' : '✉️ Ndrysho Email-in'}
+                  {changingEmail ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : <><span aria-hidden='true'>✉️</span> Ndrysho Email-in</>}
                 </button>
               </div>
 

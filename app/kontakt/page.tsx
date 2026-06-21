@@ -149,7 +149,7 @@ export default function Kontakt() {
                   onChange={e => setMessage(e.target.value)} maxLength={3000} required />
               </div>
               <button className="send-btn" type="submit" disabled={loading}>
-                {loading ? '⏳ Duke dërguar...' : '📨 Dërgo Mesazhin'}
+                {loading ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : <><span aria-hidden='true'>📨</span> Dërgo Mesazhin</>}
               </button>
             </form>
           </div>

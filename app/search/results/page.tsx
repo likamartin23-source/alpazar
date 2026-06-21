@@ -613,7 +613,7 @@ const [searchError, setSearchError] = useState(false)
                       disabled={loadingMore}
                       style={{ background: '#111', color: '#F5C842', border: 'none', borderRadius: 24, padding: '11px 28px', fontWeight: 700, fontSize: 13, cursor: loadingMore ? 'not-allowed' : 'pointer', fontFamily: 'inherit', opacity: loadingMore ? 0.7 : 1 }}
                     >
-                      {loadingMore ? '⏳ Duke ngarkuar...' : 'Shiko më shumë →'}
+                      {loadingMore ? <><span aria-hidden='true'>⏳</span> Duke ngarkuar...</> : 'Shiko më shumë →'}
                     </button>
                   </div>
                 )}

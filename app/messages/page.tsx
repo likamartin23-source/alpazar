@@ -1453,9 +1453,9 @@ export default function MessagesPage() {
                       <div className="t-info">
                         <div className="t-thread-name">{displayName(t.other)}</div>
                         <div className={`t-preview ${t.unread > 0 ? 'unread' : ''}`}>
-                          {lastIsDeleted ? '🚫 Mesazhi u fshi'
-                            : lastIsAudio   ? '🎤 Mesazh zanor'
-                            : lastIsImage   ? '📷 Foto'
+                          {lastIsDeleted ? <><span aria-hidden='true'>🚫</span> Mesazhi u fshi</>
+                            : lastIsAudio   ? <><span aria-hidden='true'>🎤</span> Mesazh zanor</>
+                            : lastIsImage   ? <><span aria-hidden='true'>📷</span> Foto</>
                             : t.lastMsg?.content?.slice(0,55) || 'Fillo bisedën...'}
                         </div>
                       </div>

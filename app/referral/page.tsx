@@ -228,7 +228,7 @@ export default function ReferralPage() {
                   </div>
                   {prevMilestone && (
                     <div style={{ fontSize: 10, color: '#F5C84299', marginTop: 6, textAlign: 'center' }}>
-                      ✅ Ke arritur: {prevMilestone.label}
+                      <><span aria-hidden="true">✅</span> Ke arritur: {prevMilestone.label}</>
                     </div>
                   )}
                 </div>
@@ -278,7 +278,7 @@ export default function ReferralPage() {
                     onClick={() => { navigator.clipboard.writeText(refUrl); setCopied(true); setTimeout(() => setCopied(false), 2000) }}
                     style={{ flexShrink: 0, background: copied ? '#1D9E75' : '#F5C842', color: copied ? '#fff' : '#111', border: 'none', borderRadius: 10, padding: '8px 14px', fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: 'inherit', transition: 'all .2s', whiteSpace: 'nowrap' }}
                   >
-                    {copied ? '✓ Kopjuar!' : '📋 Kopjo'}
+                    {copied ? <><span aria-hidden='true'>✓</span> Kopjuar!</> : <><span aria-hidden='true'>📋</span> Kopjo</>}
                   </button>
                 </div>
                 <SharePanel

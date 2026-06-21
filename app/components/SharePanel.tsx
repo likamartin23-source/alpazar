@@ -328,7 +328,7 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
               <span>{isCopying ? 'Kopjuar!' : p.label}</span>
               {!isCopying && (
                 <span style={{ fontSize: 8, opacity: 0.75, fontWeight: 400 }}>
-                  {noApi(p) ? '📋 ' + subLabel : subLabel}
+                  {noApi(p) ? <><span aria-hidden='true'>📋</span> {subLabel}</> : subLabel}
                 </span>
               )}
             </button>
@@ -358,7 +358,7 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
             transition: 'background .2s',
           }}
         >
-          {linkCopied ? '✓ Kopjuar' : '🔗 Kopjo'}
+          {linkCopied ? <><span aria-hidden='true'>✓</span> Kopjuar</> : <><span aria-hidden='true'>🔗</span> Kopjo</>}
         </button>
       </div>
 

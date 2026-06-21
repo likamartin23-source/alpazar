@@ -235,7 +235,7 @@ function AppConfigTab() {
                 onKeyDown={e => e.key === 'Enter' && save(s.key)}
               />
               <button type="button" className="save-btn" onClick={() => save(s.key)} style={{ whiteSpace: 'nowrap' }}>
-                {saved[s.key] ? '✓ Ruajtur' : 'Ruaj'}
+                {saved[s.key] ? <><span aria-hidden='true'>✓</span> Ruajtur</> : 'Ruaj'}
               </button>
             </div>
           </div>

@@ -68,7 +68,7 @@ export default function Avatar({
       </div>
       {(type === 'business' || verified) && (
         <div style={{ position: 'absolute', right: -2, bottom: -2, width: badge, height: badge, borderRadius: '50%', background: verified ? '#16a34a' : '#111', border: '2px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: Math.round(badge * 0.55), color: '#fff', lineHeight: 1 }}>
-          {verified ? '✓' : '🏢'}
+          {verified ? <span aria-hidden='true'>✓</span> : <span aria-hidden='true'>🏢</span>}
         </div>
       )}
     </div>

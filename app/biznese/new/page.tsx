@@ -336,7 +336,7 @@ export default function BiznesNewPage() {
 
             <div style={{ marginTop: 24 }}>
               <button type="submit" className="step-btn" disabled={saving || !form.name.trim()} onClick={submit}>
-                {saving ? (uploading ? '⏳ Duke ngarkuar...' : '⏳ Duke krijuar...') : '✓ Krijo Biznesin'}
+                {saving ? <><span aria-hidden='true'>⏳</span> {uploading ? 'Duke ngarkuar...' : 'Duke krijuar...'}</> : <><span aria-hidden='true'>✓</span> Krijo Biznesin</>}
               </button>
             </div>
           </>

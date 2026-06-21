@@ -859,7 +859,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                       {seller.shop_name || seller.full_name || seller.username || 'Shitës'}
                     </div>
                     <div className="seller-sub">
-                      {seller.city && `📍 ${seller.city}`}
+                      {seller.city && <><span aria-hidden='true'>📍</span> {seller.city}</>}
                       {seller.city && seller.created_at && ' · '}
                       {seller.created_at && `Anëtar nga ${memberSince(seller.created_at)}`}
                     </div>
@@ -977,7 +977,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
               {myReview ? (
                 <div style={{ background: '#EAF3DE', border: '0.5px solid #97C459', borderRadius: 10, padding: '10px 13px', fontSize: 12 }}>
                   <div style={{ color: '#3B6D11', fontWeight: 700, marginBottom: 4 }}>
-                    {'⭐'.repeat(myReview.rating)} Vlerësimi yt u ruajt
+                    <><span aria-hidden='true'>{'⭐'.repeat(myReview.rating)}</span> Vlerësimi yt u ruajt</>
                     {myReview.purchase_verified && (
                       <span style={{ marginLeft: 6, background: '#0E7A35', color: '#fff', fontSize: 9.5, fontWeight: 700, padding: '1px 6px', borderRadius: 6 }}><span aria-hidden="true">✅</span> Blerje e verifikuar</span>
                     )}
@@ -1116,7 +1116,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                 </button>
               )}
               <button type="button" className="alert-save" onClick={saveAlert} disabled={alertSaving || !alertTarget}>
-                {alertSaving ? 'Duke ruajtur...' : priceAlert ? 'Përditëso alarmin' : 'Aktivizo alarmin 🔔'}
+                {alertSaving ? 'Duke ruajtur...' : priceAlert ? 'Përditëso alarmin' : <><span aria-hidden='true'>🔔</span> Aktivizo alarmin</>}
               </button>
             </div>
             {alertMsg && (
@@ -1148,13 +1148,13 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                   {REPORT_REASONS.map(r => (
                     <button key={r} type="button" aria-pressed={reportReason === r} className={`reason-btn ${reportReason === r ? 'sel' : ''}`}
                       onClick={() => setReportReason(r)}>
-                      {reportReason === r ? '●' : '○'} {r}
+                      <><span aria-hidden='true'>{reportReason === r ? '●' : '○'}</span> {r}</>
                     </button>
                   ))}
                 </div>
                 <button type="button" className="report-submit" onClick={submitReport}
                   disabled={!reportReason || reportLoading}>
-                  {reportLoading ? '⏳ Duke dërguar...' : 'Dërgo raportin'}
+                  {reportLoading ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : 'Dërgo raportin'}
                 </button>
                 <button type="button" className="report-link" onClick={() => setReportOpen(false)}>Anulo</button>
               </>

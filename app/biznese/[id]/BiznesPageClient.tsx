@@ -320,7 +320,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
             </div>
           )}
           <div style={{ textAlign: 'center', padding: '14px 0', fontSize: 11, color: '#bbb' }}>
-            {listings.length} shpallje aktive ♾️
+            <>{listings.length} shpallje aktive <span aria-hidden="true">♾️</span></>
           </div>
         </div>
       )}

@@ -253,7 +253,7 @@ export default function BiznesEditPage({ params }: { params: { id: string } }) {
         </div>
 
         <button type="button" className="save-btn" disabled={saving || !form.name.trim()} onClick={save} style={{ marginTop: 8 }}>
-          {saving ? (uploading ? '⏳ Duke ngarkuar...' : '⏳ Duke ruajtur...') : '✓ Ruaj Ndryshimet'}
+          {saving ? <><span aria-hidden='true'>⏳</span> {uploading ? 'Duke ngarkuar...' : 'Duke ruajtur...'}</> : <><span aria-hidden='true'>✓</span> Ruaj Ndryshimet</>}
         </button>
       </div>
     </div>
