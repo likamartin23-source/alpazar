@@ -331,7 +331,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
 
             {existingImages.length > 0 && (
               <div style={{ marginBottom: 12 }}>
-                <p style={{ fontSize: 11, color: '#888', marginBottom: 8 }}>Fotot aktuale (kliko ✕ për të hequr):</p>
+                <p style={{ fontSize: 11, color: '#888', marginBottom: 8 }}>Fotot aktuale (kliko <span aria-hidden="true">✕</span> për të hequr):</p>
                 <div className="img-previews">
                   {existingImages.map((url, i) => (
                     <div key={i} className="img-prev-wrap">

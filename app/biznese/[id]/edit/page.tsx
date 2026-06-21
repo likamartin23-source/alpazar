@@ -145,7 +145,7 @@ export default function BiznesEditPage({ params }: { params: { id: string } }) {
         <button type="button" aria-label="Kthehu mbrapa" onClick={() => window.location.href = `/biznese/${params.id}`} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
           <i className="ti ti-arrow-left" style={{ fontSize: 22, color: '#111' }} aria-hidden="true" />
         </button>
-        <h1 style={{ fontSize: 15, fontWeight: 700, color: '#111', flex: 1, margin: 0 }}>✏️ Edito Biznesin</h1>
+        <h1 style={{ fontSize: 15, fontWeight: 700, color: '#111', flex: 1, margin: 0 }}><span aria-hidden="true">✏️</span> Edito Biznesin</h1>
       </div>
 
       <div style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -214,7 +214,7 @@ export default function BiznesEditPage({ params }: { params: { id: string } }) {
           <div className="section-title">Vendndodhja</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <div>
-              <label htmlFor="biz-city" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>🏙️ Qyteti</label>
+              <label htmlFor="biz-city" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}><span aria-hidden="true">🏙️</span> Qyteti</label>
               <input id="biz-city" type="text" className="biz-input" autoComplete="address-level2" value={form.city} onChange={e => setF('city', e.target.value)} placeholder="p.sh. Tiranë" maxLength={80} />
             </div>
             <div>
