@@ -288,7 +288,7 @@ export default function AsistentPage() {
           </button>
           <div className="ai-avatar" aria-hidden="true"><i className="ti ti-robot" /></div>
           <div className="header-info">
-            <div className="header-name">Albi — AI Asistent 🤖</div>
+            <div className="header-name">Albi — AI Asistent <span aria-hidden="true">🤖</span></div>
             <div className="header-status">
               <span className="online-dot" />
               {loading || streamingIdx !== null ? 'Duke shkruar...' : 'Online 24/7 · ALPAZAR'}

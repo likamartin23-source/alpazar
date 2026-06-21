@@ -73,7 +73,7 @@ export default function Kushtet() {
             <li>Çdo material seksual që përfshin të mitur <span className="law">(Kodi Penal, neni 117)</span> raportohet <strong>MENJËHERË</strong> te Policia e Shtetit dhe prokuroria kompetente — dhe hiqet pa paralajmërim.</li>
             <li>Moshat nën 16 vjeç nuk mund të regjistrohen <span className="law">(Ligji 124/2024, neni 8)</span>.</li>
             <li>Nuk lejohet asnjë kontakt privat i rritur–fëmijë brenda platformës.</li>
-            <li>Çdo shpallje ose aktivitet i dyshimtë raportohet me butonin ⚠️ ose nëpërmjet <a href="/takedown" style={{ color: '#E63312' }}>/takedown</a>.</li>
+            <li>Çdo shpallje ose aktivitet i dyshimtë raportohet me butonin <span aria-hidden="true">⚠️</span> ose nëpërmjet <a href="/takedown" style={{ color: '#E63312' }}>/takedown</a>.</li>
           </ul>
           <div className="note">Shkeljet penale raportohen edhe pa kërkesën e viktimës. Platforma bashkëpunon plotësisht me autoritetet hetimore.</div>
 

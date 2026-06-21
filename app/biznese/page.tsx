@@ -136,7 +136,7 @@ export default function BiznestPage() {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 3 }}>
                     <span style={{ fontSize: 14, fontWeight: 800, color: '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{b.name}</span>
-                    {b.is_verified && <span style={{ fontSize: 13 }} aria-label="Verifikuar">✅</span>}
+                    {b.is_verified && <span style={{ fontSize: 13 }} role="img" aria-label="Verifikuar">✅</span>}
                   </div>
                   <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
                     {b.type && (

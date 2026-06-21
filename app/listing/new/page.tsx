@@ -377,7 +377,7 @@ export default function NewListing() {
                   marginTop: 8, background: '#EAF3DE', border: '0.5px solid #97C459',
                   borderRadius: 9, padding: '10px 13px', fontSize: 12, color: '#3B6D11', lineHeight: 1.6,
                 }}>
-                  💡 <strong>Albi sugjeron:</strong> {priceSuggestion}
+                  <span aria-hidden="true">💡</span> <strong>Albi sugjeron:</strong> {priceSuggestion}
                 </div>
               )}
               {priceSuggestion?.startsWith('err:') && (

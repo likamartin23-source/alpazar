@@ -722,7 +722,7 @@ export default function Auth() {
           <span style={{ color:'#185FA5' }}><span aria-hidden="true">⏳</span> Duke verifikuar automatikisht në <strong>{autoSubmitIn.toFixed(1)}s</strong>…</span>
           <button type="button" onClick={cancelAutoSubmit}
             style={{ background:'none', border:'none', color:'#E63312', cursor:'pointer',
-              fontWeight:700, fontSize:12, padding:'0 4px' }}>✕ Anulo</button>
+              fontWeight:700, fontSize:12, padding:'0 4px' }}><span aria-hidden="true">✕</span> Anulo</button>
         </div>
       )}
 

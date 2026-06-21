@@ -1436,7 +1436,7 @@ export default function MessagesPage() {
               <div className="spin-center"><span className="spinner" />Duke ngarkuar...</div>
             ) : filteredThreads.length === 0 ? (
               <div className="empty">
-                <div className="empty-emoji">{search ? '🔍' : '💬'}</div>
+                <div className="empty-emoji" aria-hidden="true">{search ? '🔍' : '💬'}</div>
                 <h3>{search ? 'Nuk u gjet asnjë bisedë' : 'Nuk ke mesazhe akoma'}</h3>
                 <p>{search ? `Nuk ka bisedë me "${search}"` : 'Kontakto shitësin nga ndonjë shpallje.'}</p>
                 {!search && <button type="button" className="empty-cta" onClick={() => window.location.href='/'}>Shfleto shpalljet →</button>}

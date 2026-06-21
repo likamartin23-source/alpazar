@@ -164,7 +164,7 @@ export default function TeDhenatMiaPage() {
 
         {/* Marketing opt-in */}
         <div style={{ background: '#fff', borderRadius: 14, padding: 16, boxShadow: '0 1px 6px rgba(0,0,0,.06)' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>📢 Komunikim marketing</div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}><span aria-hidden="true">📢</span> Komunikim marketing</div>
           <label style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer', padding: '4px 0' }}>
             <input
               type="checkbox"
@@ -182,7 +182,7 @@ export default function TeDhenatMiaPage() {
 
         {/* Account deletion */}
         <div style={{ background: '#FFF0EE', borderRadius: 14, padding: 16, border: '1px solid #fca5a5' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#991b1b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>⚠️ Zona e rrezikshme</div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: '#991b1b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}><span aria-hidden="true">⚠️</span> Zona e rrezikshme</div>
           <div style={{ fontSize: 12, color: '#555', marginBottom: 12, lineHeight: 1.6 }}>
             Fshirja e llogarisë është e pakthyeshme. Do të fshihen të gjitha shpalljet, mesazhet dhe të dhënat personale nga sistemi (GDPR Art.17).
           </div>

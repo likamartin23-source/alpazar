@@ -198,7 +198,7 @@ export default function NotificationsPage() {
       {/* Empty state */}
       {!loading && notifs.length === 0 && (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 24px', gap: 16 }}>
-          <div style={{ fontSize: 56 }}>🔕</div>
+          <div style={{ fontSize: 56 }} aria-hidden="true">🔕</div>
           <div style={{ fontSize: 16, fontWeight: 700, color: '#111', textAlign: 'center' }}>Nuk ke njoftime ende</div>
           <div style={{ fontSize: 13, color: '#888', textAlign: 'center', maxWidth: 260 }}>Kur dikush të dërgojë mesazh ose lë koment, do të shfaqet këtu.</div>
         </div>
