@@ -1140,7 +1140,7 @@ export default function MessagesPage() {
                     <div style={{ background:'rgba(255,255,255,.8)', borderRadius:16, padding:'20px 24px', display:'inline-block', maxWidth:280 }}>
                       <Avatar profile={selected.other} size={60} online={isOtherOnline} />
                       <div style={{ fontWeight:700, fontSize:14, color:'#111', marginTop:10 }}>{displayName(selected.other)}</div>
-                      <div style={{ fontSize:12, color:'#888', marginTop:4 }}>Mesazhet janë private dhe të sigurta 🔒</div>
+                      <div style={{ fontSize:12, color:'#888', marginTop:4 }}>Mesazhet janë private dhe të sigurta <span aria-hidden="true">🔒</span></div>
                     </div>
                   </div>
                 )}

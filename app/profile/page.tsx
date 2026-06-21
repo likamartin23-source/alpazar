@@ -41,7 +41,7 @@ function BizUpsellBanner({ userId }: { userId?: string }) {
       <span style={{ fontSize: 28 }} aria-hidden="true">🏢</span>
       <div style={{ flex: 1 }}>
         <div style={{ fontSize: 13, fontWeight: 800, color: '#F5C842', marginBottom: 3 }}>Krijo Biznes Online</div>
-        <div style={{ fontSize: 11, color: '#aaa', lineHeight: 1.5 }}>Faqe e dedikuar · Shpallje pa limit · Badge ✓ Biznes</div>
+        <div style={{ fontSize: 11, color: '#aaa', lineHeight: 1.5 }}>Faqe e dedikuar · Shpallje pa limit · Badge <span aria-hidden="true">✓</span> Biznes</div>
       </div>
       <i className="ti ti-chevron-right" style={{ color: '#F5C842', fontSize: 18 }} aria-hidden="true" />
     </div>

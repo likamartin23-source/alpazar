@@ -231,13 +231,13 @@ export default function BiznesEditPage({ params }: { params: { id: string } }) {
 
         {/* Hours */}
         <div>
-          <label htmlFor="biz-hours" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>🕐 Orari</label>
+          <label htmlFor="biz-hours" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}><span aria-hidden="true">🕐</span> Orari</label>
           <input id="biz-hours" type="text" className="biz-input" autoComplete="off" value={form.hours} onChange={e => setF('hours', e.target.value)} placeholder="Hënë–Premte 09:00–18:00" />
         </div>
 
         {/* Legal — B2C */}
         <div style={{ background: '#fff', borderRadius: 14, padding: 16, border: '1px solid #e5e5e5' }}>
-          <div className="section-title" style={{ marginBottom: 12 }}>⚖️ Të dhëna ligjore (B2C)</div>
+          <div className="section-title" style={{ marginBottom: 12 }}><span aria-hidden="true">⚖️</span> Të dhëna ligjore (B2C)</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <div>
               <label htmlFor="biz-nipt" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>NIPT / Nr. TVSH</label>
@@ -245,7 +245,7 @@ export default function BiznesEditPage({ params }: { params: { id: string } }) {
               <div style={{ fontSize: 11, color: '#888', marginTop: 4 }}>Numri i Identifikimit të Personit të Tatueshëm — detyrueshëm nëse shet B2C</div>
             </div>
             <div>
-              <label htmlFor="biz-withdrawal" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>📅 E drejta e tërheqjes (ditë)</label>
+              <label htmlFor="biz-withdrawal" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}><span aria-hidden="true">📅</span> E drejta e tërheqjes (ditë)</label>
               <input id="biz-withdrawal" className="biz-input" type="number" min={14} max={30} value={form.withdrawal_days} onChange={e => setF('withdrawal_days', parseInt(e.target.value) || 14)} />
               <div style={{ fontSize: 11, color: '#888', marginTop: 4 }}>Direktiva EU 2011/83/EU — minimum 14 ditë për blerjet B2C online</div>
             </div>
