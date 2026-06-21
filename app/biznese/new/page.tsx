@@ -269,7 +269,7 @@ export default function BiznesNewPage() {
               <div style={{ position: 'absolute', bottom: -28, left: 16 }}>
                 <div style={{ position: 'relative', width: 56, height: 56 }}>
                   <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#fff', border: '3px solid #fff', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, boxShadow: '0 2px 8px rgba(0,0,0,.15)' }}>
-                    {logoPreview ? <img src={logoPreview} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : '🏢'}
+                    {logoPreview ? <img src={logoPreview} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span aria-hidden="true">🏢</span>}
                   </div>
                   <label aria-label="Ndrysho logon" style={{ position: 'absolute', bottom: -2, right: -2, background: '#E63312', width: 20, height: 20, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, cursor: 'pointer', border: '2px solid #fff' }}>
                     <span aria-hidden="true">📷</span>

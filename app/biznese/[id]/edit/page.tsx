@@ -159,16 +159,16 @@ export default function BiznesEditPage({ params }: { params: { id: string } }) {
         <div style={{ position: 'relative', width: '100%', aspectRatio: '16/6', borderRadius: 12, overflow: 'hidden', marginBottom: 28, background: coverPreview ? 'transparent' : 'linear-gradient(135deg,#F5C842,#E63312)', cursor: 'pointer' }}>
           {coverPreview && <img src={coverPreview} alt="Foto kopertinë" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
           <label style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: coverPreview ? 'rgba(0,0,0,.3)' : 'none' }}>
-            <span style={{ background: 'rgba(0,0,0,.5)', color: '#fff', borderRadius: 10, padding: '8px 16px', fontSize: 12, fontWeight: 700 }}>📷 {coverPreview ? 'Ndrysho kopertinën' : 'Shto kopertinën'}</span>
+            <span style={{ background: 'rgba(0,0,0,.5)', color: '#fff', borderRadius: 10, padding: '8px 16px', fontSize: 12, fontWeight: 700 }}><span aria-hidden="true">📷</span> {coverPreview ? 'Ndrysho kopertinën' : 'Shto kopertinën'}</span>
             <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) { setCoverFile(f); setCoverPreview(URL.createObjectURL(f)) } }} />
           </label>
           <div style={{ position: 'absolute', bottom: -24, left: 16 }}>
             <div style={{ position: 'relative', width: 48, height: 48 }}>
               <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#fff', border: '3px solid #fff', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, boxShadow: '0 2px 8px rgba(0,0,0,.15)' }}>
-                {logoPreview ? <img src={logoPreview} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : '🏢'}
+                {logoPreview ? <img src={logoPreview} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span aria-hidden="true">🏢</span>}
               </div>
-              <label style={{ position: 'absolute', bottom: -2, right: -2, background: '#E63312', width: 18, height: 18, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, cursor: 'pointer', border: '2px solid #fff' }}>
-                📷
+              <label aria-label="Ndrysho logon" style={{ position: 'absolute', bottom: -2, right: -2, background: '#E63312', width: 18, height: 18, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, cursor: 'pointer', border: '2px solid #fff' }}>
+                <span aria-hidden="true">📷</span>
                 <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) { setLogoFile(f); setLogoPreview(URL.createObjectURL(f)) } }} />
               </label>
             </div>
@@ -195,15 +195,15 @@ export default function BiznesEditPage({ params }: { params: { id: string } }) {
           <div className="section-title">Kontakti</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <div>
-              <label htmlFor="biz-phone" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>☎ Telefon</label>
+              <label htmlFor="biz-phone" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}><span aria-hidden="true">☎</span> Telefon</label>
               <input id="biz-phone" className="biz-input" type="tel" autoComplete="tel" value={form.phone} onChange={e => setF('phone', e.target.value)} placeholder="+355 6X XXX XXXX" />
             </div>
             <div>
-              <label htmlFor="biz-email" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>✉️ Email</label>
+              <label htmlFor="biz-email" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}><span aria-hidden="true">✉️</span> Email</label>
               <input id="biz-email" className="biz-input" type="email" autoComplete="email" value={form.email} onChange={e => setF('email', e.target.value)} placeholder="info@biznesi.al" />
             </div>
             <div>
-              <label htmlFor="biz-website" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>🌐 Website</label>
+              <label htmlFor="biz-website" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}><span aria-hidden="true">🌐</span> Website</label>
               <input id="biz-website" className="biz-input" type="url" value={form.website} onChange={e => setF('website', e.target.value)} placeholder="https://..." />
             </div>
           </div>
@@ -218,7 +218,7 @@ export default function BiznesEditPage({ params }: { params: { id: string } }) {
               <input id="biz-city" type="text" className="biz-input" autoComplete="address-level2" value={form.city} onChange={e => setF('city', e.target.value)} placeholder="p.sh. Tiranë" maxLength={80} />
             </div>
             <div>
-              <label htmlFor="biz-address" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>📍 Adresa (harta OSM)</label>
+              <label htmlFor="biz-address" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}><span aria-hidden="true">📍</span> Adresa (harta OSM)</label>
               <MapPicker
                 address={form.address}
                 lat={form.latitude}
