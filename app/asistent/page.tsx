@@ -343,11 +343,14 @@ export default function AsistentPage() {
           <div className="quick-section">
             <div className="quick-label">Pyetje të shpejta</div>
             <div className="quick-grid">
-              {QUICK_ACTIONS.map(q => (
-                <button key={q.label} type="button" className="quick-btn" onClick={() => sendMessage(q.msg)}>
-                  {q.label}
-                </button>
-              ))}
+              {QUICK_ACTIONS.map(q => {
+                const m = q.label.match(/^([^ ]+) (.+)/)
+                return (
+                  <button key={q.label} type="button" className="quick-btn" onClick={() => sendMessage(q.msg)}>
+                    {m ? <><span aria-hidden="true">{m[1]}</span> {m[2]}</> : q.label}
+                  </button>
+                )
+              })}
             </div>
           </div>
         )}

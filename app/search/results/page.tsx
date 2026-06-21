@@ -702,10 +702,10 @@ const [searchError, setSearchError] = useState(false)
               <span className="fp-label">Rendit sipas</span>
               <div className="cond-row">
                 {[
-                  { v: 'newest',     label: '🕐 Më të rejat' },
+                  { v: 'newest',     label: <><span aria-hidden="true">🕐</span> Më të rejat</> },
                   { v: 'price_asc',  label: '↑ Çmim' },
                   { v: 'price_desc', label: '↓ Çmim' },
-                  { v: 'views',      label: '👁 Shikimet' },
+                  { v: 'views',      label: <><span aria-hidden="true">👁</span> Shikimet</> },
                 ].map(o => (
                   <button key={o.v}
                     type="button"
