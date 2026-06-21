@@ -84,7 +84,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
 
   if (loadError) return (
     <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-      <div style={{ fontSize: 32, marginBottom: 12 }}>⚠️</div>
+      <div style={{ fontSize: 32, marginBottom: 12 }} aria-hidden="true">⚠️</div>
       <div style={{ fontSize: 14, color: '#E63312', marginBottom: 16, textAlign: 'center' }}>Nuk u ngarkua biznesi. Kontrollo lidhjen dhe provo sërish.</div>
       <button type="button" onClick={() => window.location.reload()} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
     </div>
@@ -102,7 +102,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
 
   if (!biz) return (
     <div style={{ maxWidth: 480, margin: '0 auto', padding: 40, textAlign: 'center', background: '#FFFBEA', minHeight: '100vh' }}>
-      <div style={{ fontSize: 48, marginBottom: 16 }}>🏢</div>
+      <div style={{ fontSize: 48, marginBottom: 16 }} aria-hidden="true">🏢</div>
       <div style={{ fontWeight: 700, color: '#111', marginBottom: 16 }}>Biznesi nuk u gjet</div>
       <button type="button" onClick={() => window.history.back()} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 20px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>← Kthehu</button>
     </div>

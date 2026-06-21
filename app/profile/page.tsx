@@ -571,7 +571,7 @@ export default function ProfilePage() {
           <div className="email-row" style={{ justifyContent: 'flex-start' }}><i className="ti ti-mail" aria-hidden="true" />{user?.email}</div>
           <div className="badges-row" style={{ justifyContent: 'flex-start', marginTop: 8 }}>
             {profile?.is_admin && <span className="badge b-admin"><span aria-hidden="true">🛡</span> Admin</span>}
-            {(user?.email_confirmed_at || user?.phone_confirmed_at) && <span className="badge b-verif">✓ Verifikuar</span>}
+            {(user?.email_confirmed_at || user?.phone_confirmed_at) && <span className="badge b-verif"><span aria-hidden="true">✓</span> Verifikuar</span>}
             {profile?.is_premium && <span className="badge b-prem"><span aria-hidden="true">👑</span> Premium</span>}
             {profile?.shop_name && <span className="badge b-shop"><span aria-hidden="true">🏢</span> Biznes</span>}
             {(() => { const l = getLevel(profile?.gamification_points || 0); return <span className="badge" style={{ background: l.bg, color: l.color }}><span aria-hidden="true">{l.icon}</span> {l.name}</span> })()}
@@ -636,7 +636,7 @@ export default function ProfilePage() {
                 <div className="card-hdr">
                   <span className="card-title">Informacioni personal</span>
                   {editing
-                    ? <button type="button" className="save-btn" onClick={saveProfile} disabled={saving}>{saving ? '⏳' : 'Ruaj'}</button>
+                    ? <button type="button" className="save-btn" onClick={saveProfile} disabled={saving}>{saving ? <><span aria-hidden="true">⏳</span> Duke ruajtur...</> : 'Ruaj'}</button>
                     : <button type="button" className="edit-btn" onClick={() => setEditing(true)}><span aria-hidden="true">✏️</span> Ndrysho</button>
                   }
                 </div>

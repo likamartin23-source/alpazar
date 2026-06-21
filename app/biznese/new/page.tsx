@@ -247,7 +247,7 @@ export default function BiznesNewPage() {
               </div>
             )}
             {selSubs.length > 0 && (
-              <div style={{ fontSize: 12, color: '#E63312', fontWeight: 700, marginBottom: 16 }}>✓ {selSubs.length} të zgjedhura</div>
+              <div style={{ fontSize: 12, color: '#E63312', fontWeight: 700, marginBottom: 16 }}><span aria-hidden="true">✓</span> {selSubs.length} të zgjedhura</div>
             )}
             <button type="button" className="step-btn" disabled={selSubs.length === 0} onClick={() => setStep(3)}>Vazhdo →</button>
           </>
