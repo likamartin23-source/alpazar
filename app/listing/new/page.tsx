@@ -345,7 +345,7 @@ export default function NewListing() {
                   alignItems: 'center', gap: 5, opacity: descLoading ? 0.7 : 1, fontFamily: 'inherit',
                 }}
               >
-                {descLoading ? '⏳' : '🤖'} {descLoading ? 'Duke gjeneruar...' : 'Gjenero përshkrim me Albi'}
+                {descLoading ? <span aria-hidden='true'>⏳</span> : <span aria-hidden='true'>🤖</span>} {descLoading ? 'Duke gjeneruar...' : 'Gjenero përshkrim me Albi'}
               </button>
             </div>
 
@@ -370,7 +370,7 @@ export default function NewListing() {
                   alignItems: 'center', gap: 5, opacity: priceLoading ? 0.7 : 1, fontFamily: 'inherit',
                 }}
               >
-                {priceLoading ? '⏳' : '🤖'} {priceLoading ? 'Duke menduar...' : 'Sugjero çmimin me Albi'}
+                {priceLoading ? <span aria-hidden='true'>⏳</span> : <span aria-hidden='true'>🤖</span>} {priceLoading ? 'Duke menduar...' : 'Sugjero çmimin me Albi'}
               </button>
               {priceSuggestion && !priceSuggestion.startsWith('err:') && (
                 <div style={{
@@ -463,7 +463,7 @@ export default function NewListing() {
           </div>
 
           <button type="submit" className="submit-btn" onClick={submit} disabled={loading}>
-            {uploadProgress ? `⏳ Foto ${uploadProgress.done}/${uploadProgress.total}...` : loading ? '⏳ Duke publikuar...' : '🚀 Publiko shpalljen falas'}
+            {uploadProgress ? <><span aria-hidden='true'>⏳</span> {`Foto ${uploadProgress.done}/${uploadProgress.total}...`}</> : loading ? <><span aria-hidden='true'>⏳</span> Duke publikuar...</> : <><span aria-hidden='true'>🚀</span> Publiko shpalljen falas</>}
           </button>
         </div>
       </div>

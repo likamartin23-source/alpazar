@@ -1014,7 +1014,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                     onClick={submitReview}
                     disabled={reviewStars === 0 || reviewSaving}
                     style={{ marginTop: 8, width: '100%', background: reviewStars ? '#E63312' : '#ccc', color: '#fff', border: 'none', borderRadius: 9, padding: '10px', fontSize: 12, fontWeight: 700, cursor: reviewStars ? 'pointer' : 'not-allowed', fontFamily: 'inherit' }}>
-                    {reviewSaving ? '⏳ Duke ruajtur...' : '⭐ Dërgo vlerësimin'}
+                    {reviewSaving ? <><span aria-hidden='true'>⏳</span> Duke ruajtur...</> : <><span aria-hidden='true'>⭐</span> Dërgo vlerësimin</>}
                   </button>
                 </div>
               )}
@@ -1093,7 +1093,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
               )}
               {priceAlert?.triggered && (
                 <span style={{ color: '#2e7d32', background: '#E8F5E9', border: '1px solid #A5D6A7', borderRadius: 7, padding: '2px 8px', marginLeft: 6, fontSize: 11 }}>
-                  ✅ U aktivizua
+                  <><span aria-hidden="true">✅</span> U aktivizua</>
                 </span>
               )}
             </div>
@@ -1203,7 +1203,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                 <p>Hyr në llogarinë tënde për të biseduar me shitësin</p>
                 <button type="button" className="login-prompt-btn"
                   onClick={() => window.location.href = '/auth/login'}>
-                  🔑 Hyr / Regjistrohu
+                  <><span aria-hidden="true">🔑</span> Hyr / Regjistrohu</>
                 </button>
               </div>
             ) : (
@@ -1284,7 +1284,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
             setTimeout(() => inputRef.current?.focus(), 350)
           }}>
             <i className="ti ti-messages" aria-hidden="true" />
-            {user ? '💬 Fillo bisedën' : '🔑 Hyr për të biseduar'}
+            {user ? <><span aria-hidden='true'>💬</span> Fillo bisedën</> : <><span aria-hidden='true'>🔑</span> Hyr për të biseduar</>}
           </button>
           {seller.phone && (
             <a

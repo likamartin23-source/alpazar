@@ -375,7 +375,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
           </div>
 
           <button type="submit" className="submit-btn" onClick={submit} disabled={loading}>
-            {uploadProgress ? `⏳ Foto ${uploadProgress.done}/${uploadProgress.total}...` : loading ? '⏳ Duke ruajtur...' : '💾 Ruaj Ndryshimet'}
+            {uploadProgress ? <><span aria-hidden='true'>⏳</span> {`Foto ${uploadProgress.done}/${uploadProgress.total}...`}</> : loading ? <><span aria-hidden='true'>⏳</span> Duke ruajtur...</> : <><span aria-hidden='true'>💾</span> Ruaj Ndryshimet</>}
           </button>
         </div>
       </div>

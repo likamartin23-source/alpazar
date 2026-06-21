@@ -251,7 +251,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
                       <div style={{ fontSize: 12, fontWeight: 800, color: '#F5C842' }}>{formatPrice(l.price, l.currency)}</div>
                     </div>
                     {l.is_premium && (
-                      <div style={{ position: 'absolute', top: 4, right: 4, fontSize: 12 }}>⭐</div>
+                      <div style={{ position: 'absolute', top: 4, right: 4, fontSize: 12 }} role="img" aria-label="Premium">⭐</div>
                     )}
                   </div>
                 )
