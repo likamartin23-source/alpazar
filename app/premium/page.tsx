@@ -209,7 +209,7 @@ export default function PremiumPage() {
           )}
 
           <button type="button" className="sub-btn" onClick={subscribe} disabled={submitting || (profile?.is_premium || false)}>
-            {profile?.is_premium ? '✅ Tashmë Premium' : submitting ? '⏳ Duke dërguar...' : `🚀 Abonohem — ${plan === 'monthly' ? '9.99€/muaj' : '95.88€/vit'}`}
+            {profile?.is_premium ? <><span aria-hidden="true">✅</span> Tashmë Premium</> : submitting ? <><span aria-hidden="true">⏳</span> Duke dërguar...</> : <><span aria-hidden="true">🚀</span> Abonohem — {plan === 'monthly' ? '9.99€/muaj' : '95.88€/vit'}</>}
           </button>
 
           <p className="note">
