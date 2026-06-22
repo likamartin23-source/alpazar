@@ -50,7 +50,7 @@ const FAQ: Array<{ keys: string[]; answer: string }> = [
   },
   {
     keys: ['llogari', 'profil', 'regjistrim', 'kyçem', 'hyrje', 'login'],
-    answer: 'Regjistrohu me **numër telefoni** (OTP SMS) ose email. Shko te "Hyr" në krye të faqes dhe ndiq hapat. 📱',
+    answer: 'Regjistrohu me **numër telefoni** (OTP SMS) ose email (magic link). Shko te "Hyr" në krye të faqes dhe ndiq hapat. 📱',
   },
   {
     keys: ['fshij', 'modifikoj', 'ndrysho', 'edito shpallje'],
@@ -142,27 +142,88 @@ function sanitizeConvo(messages: any[]): any[] {
   }, [])
 }
 
-async function tryGroq(convo: any[], systemPrompt: string): Promise<string | null> {
+/* ── Groq streaming (SSE) — provider parësor, falas 100K/ditë ─────── */
+async function tryGroqStream(
+  convo: any[],
+  systemPrompt: string,
+): Promise<Response | null> {
   const groqKey = process.env.GROQ_API_KEY
   if (!groqKey) return null
+
+  let groqRes: globalThis.Response
   try {
-    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${groqKey}` },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${groqKey}`,
+      },
       body: JSON.stringify({
         model: 'llama-3.3-70b-versatile',
         messages: [{ role: 'system', content: systemPrompt }, ...convo],
         max_tokens: 1024,
         temperature: 0.7,
+        stream: true,
       }),
-      signal: AbortSignal.timeout(20000),
+      signal: AbortSignal.timeout(25000),
     })
-    if (!res.ok) return null
-    const data = await res.json()
-    return data.choices?.[0]?.message?.content ?? null
-  } catch {
+  } catch (e) {
+    console.error('Groq fetch error:', e)
     return null
   }
+
+  if (!groqRes.ok) {
+    const errText = await groqRes.text().catch(() => '')
+    console.error('Groq error:', groqRes.status, errText)
+    return null
+  }
+
+  const encoder = new TextEncoder()
+  const body = groqRes.body!
+  const stream = new ReadableStream({
+    async start(controller) {
+      const reader = body.getReader()
+      const decoder = new TextDecoder()
+      let buf = ''
+      try {
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
+          buf += decoder.decode(value, { stream: true })
+          const lines = buf.split('\n')
+          buf = lines.pop() ?? ''
+          for (const line of lines) {
+            if (!line.startsWith('data: ')) continue
+            const raw = line.slice(6).trim()
+            if (raw === '[DONE]') {
+              controller.enqueue(encoder.encode('data: [DONE]\n\n'))
+              return
+            }
+            try {
+              const chunk = JSON.parse(raw)
+              const text = chunk.choices?.[0]?.delta?.content
+              if (text) {
+                controller.enqueue(
+                  encoder.encode(`data: ${JSON.stringify({ t: text })}\n\n`),
+                )
+              }
+            } catch {}
+          }
+        }
+      } finally {
+        reader.cancel().catch(() => {})
+        controller.close()
+      }
+    },
+  })
+
+  return new Response(stream, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      Connection: 'keep-alive',
+    },
+  })
 }
 
 export async function POST(req: NextRequest) {
@@ -171,7 +232,7 @@ export async function POST(req: NextRequest) {
   if (!rl.allowed) {
     return NextResponse.json(
       { error: 'Shumë kërkesa. Provo sërisht pas pak sekondash.' },
-      { status: 429, headers: { 'Retry-After': String(Math.ceil(rl.resetIn / 1000)) } }
+      { status: 429, headers: { 'Retry-After': String(Math.ceil(rl.resetIn / 1000)) } },
     )
   }
 
@@ -200,7 +261,11 @@ export async function POST(req: NextRequest) {
   const liveCtx = await getLiveContext(lastUserMsg)
   const systemPrompt = buildSystemPrompt(liveCtx)
 
-  // 1. Try Anthropic Claude — non-streaming JSON
+  // 1. Groq — streaming SSE, falas (llama-3.3-70b, 100K token/ditë)
+  const groqStream = await tryGroqStream(convo, systemPrompt)
+  if (groqStream) return groqStream
+
+  // 2. Anthropic Claude — fallback non-streaming
   const anthropicKey = process.env.ANTHROPIC_API_KEY
   if (anthropicKey) {
     try {
@@ -218,10 +283,6 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // 2. Try Groq (free tier — llama-3.3-70b, 100K tokens/day)
-  const groqReply = await tryGroq(convo, systemPrompt)
-  if (groqReply) return NextResponse.json({ reply: groqReply })
-
-  // 3. Local FAQ fallback
+  // 3. FAQ fallback
   return NextResponse.json({ reply: localFallback(lastUserMsg) })
 }
