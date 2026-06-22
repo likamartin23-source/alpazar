@@ -18,7 +18,7 @@ export function MaintenanceBanner() {
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center',
       padding: 24, textAlign: 'center',
-    }}>
+    }} role="alert" aria-live="assertive">
       <div style={{ fontSize: 56, marginBottom: 16 }} aria-hidden="true">🔧</div>
       <div style={{ fontSize: 22, fontWeight: 800, color: '#F5C842', marginBottom: 10 }}>
         Mirëmbajtje
