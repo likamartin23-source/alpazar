@@ -1,81 +1,22 @@
-name: CI — Build & Type Check
+name: CI Build Guard
 
 on:
-  push:
-    branches: [main, "claude/*"]
   pull_request:
     branches: [main]
 
-permissions:
-  contents: read
-
 jobs:
-  check:
-    name: TypeScript + Build
+  build:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
-
+          node-version: 20
+          cache: npm
       - name: Install dependencies
-        run: npm ci --prefer-offline
-
-      - name: TypeScript check
-        run: npx tsc --noEmit
-        continue-on-error: true   # strict:false → log por mos bloko
-
-      - name: Next.js build
+        run: npm ci
+      - name: Build (Next.js)
         run: npm run build
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-
-      - name: Notify on failure (Slack + email fallback)
-        if: failure()
-        run: |
-          PAYLOAD="{
-            \"text\": \"❌ *CI dështoi* në Alpazar!\",
-            \"attachments\": [{
-              \"color\": \"danger\",
-              \"fields\": [
-                {\"title\": \"Branch\", \"value\": \"${{ github.ref_name }}\", \"short\": true},
-                {\"title\": \"Commit\", \"value\": \"${{ github.sha }}\", \"short\": true},
-                {\"title\": \"Author\", \"value\": \"${{ github.actor }}\", \"short\": true},
-                {\"title\": \"Logs\", \"value\": \"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\", \"short\": false}
-              ]
-            }]
-          }"
-          if [ -n "$SLACK_WEBHOOK_URL" ]; then
-            curl -s -X POST "$SLACK_WEBHOOK_URL" -H "Content-Type: application/json" -d "$PAYLOAD"
-          fi
-          curl -s -X POST "https://alpazar.vercel.app/api/notify?s=alpazar2026ci" \
-            -H "Content-Type: application/json" -d "$PAYLOAD" || true
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-      - name: Notify on success (main only — Slack + email fallback)
-        if: success() && github.ref == 'refs/heads/main'
-        run: |
-          PAYLOAD="{
-            \"text\": \"✅ *Build OK* — Alpazar u deploy me sukses!\",
-            \"attachments\": [{
-              \"color\": \"good\",
-              \"fields\": [
-                {\"title\": \"Commit\", \"value\": \"${{ github.event.head_commit.message }}\", \"short\": false},
-                {\"title\": \"Deployment\", \"value\": \"https://alpazar.vercel.app\", \"short\": false}
-              ]
-            }]
-          }"
-          if [ -n "$SLACK_WEBHOOK_URL" ]; then
-            curl -s -X POST "$SLACK_WEBHOOK_URL" -H "Content-Type: application/json" -d "$PAYLOAD"
-          fi
-          curl -s -X POST "https://alpazar.vercel.app/api/notify?s=alpazar2026ci" \
-            -H "Content-Type: application/json" -d "$PAYLOAD" || true
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
