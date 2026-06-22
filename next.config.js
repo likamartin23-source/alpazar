@@ -38,7 +38,7 @@ const nextConfig = {
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://va.vercel-scripts.com https://vercel.live",
       "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com",
       "font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https://*.supabase.co https://*.supabase.in https://lh3.googleusercontent.com https://avatars.githubusercontent.com https://nominatim.openstreetmap.org https://*.tile.openstreetmap.org https://images.unsplash.com https://picsum.photos https://fastly.picsum.photos",
+      "img-src 'self' data: blob: https://*.supabase.co https://*.supabase.in https://lh3.googleusercontent.com https://avatars.githubusercontent.com https://nominatim.openstreetmap.org https://*.tile.openstreetmap.org",
       "connect-src 'self' https://*.supabase.co https://*.supabase.in wss://*.supabase.co https://va.vercel-scripts.com https://vitals.vercel-insights.com https://nominatim.openstreetmap.org https://*.sentry.io https://de.sentry.io",
       "frame-src 'self' https://www.openstreetmap.org",
       "object-src 'none'",
