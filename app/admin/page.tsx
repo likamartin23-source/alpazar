@@ -296,12 +296,14 @@ function ModerationTab() {
       await supabase.from('notifications').insert({
         user_id: sellerId,
         type: 'listing_removed',
-        title: 'Shpallja u çaktivizua',
-        body: 'Shpallja juaj u çaktivizua nga admin-i pas një raporti. Kontaktoni support për sqarime.',
+        title: 'Shpallja juaj u çaktivizua',
+        body: 'Shpallja juaj u çaktivizua pas shqyrtimit të një raporti. Kontaktoni support@alpazar.al për informacion.',
         link: `/listing/${listingId}`
       })
     }
+    await supabase.from('reports').update({ status: 'resolved' }).eq('id', reportId)
     setDeactivating(prev => ({ ...prev, [reportId]: false }))
+    setAdminMsg('Shpallja u çaktivizua dhe shitësi u njoftua.')
     fetchReports()
   }
 
@@ -311,12 +313,15 @@ function ModerationTab() {
         <div className="pt"><span aria-hidden="true">🛡️</span> Moderimi</div>
         <div className="live-dot"><span aria-hidden="true">●</span> Live</div>
       </div>
-      {adminMsg && (
-        <div style={{ background: '#FFF0EE', border: '0.5px solid #F09595', color: '#E63312', fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 8, margin: '8px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ flex: 1 }}><span aria-hidden="true">⚠️</span> {adminMsg}</span>
-          <button type="button" aria-label="Mbyll mesazhin" onClick={() => setAdminMsg('')} style={{ background: 'none', border: 'none', color: '#E63312', cursor: 'pointer', fontSize: 14 }}>✕</button>
-        </div>
-      )}
+      {adminMsg && (() => {
+        const isSuccess = adminMsg.startsWith('Shpallja u çaktivizua')
+        return (
+          <div style={{ background: isSuccess ? '#EAF3DE' : '#FFF0EE', border: isSuccess ? '0.5px solid #97C459' : '0.5px solid #F09595', color: isSuccess ? '#3B6D11' : '#E63312', fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 8, margin: '8px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ flex: 1 }}><span aria-hidden="true">{isSuccess ? '✅' : '⚠️'}</span> {adminMsg}</span>
+            <button type="button" aria-label="Mbyll mesazhin" onClick={() => setAdminMsg('')} style={{ background: 'none', border: 'none', color: isSuccess ? '#3B6D11' : '#E63312', cursor: 'pointer', fontSize: 14 }}>✕</button>
+          </div>
+        )
+      })()}
       <div className="card">
         <div className="ct">Raporte të hapura ({reports.length})</div>
         {loading ? <p role="status" aria-live="polite" style={{ color: '#aaa', fontSize: 12, padding: '12px 0' }}>Duke ngarkuar...</p> :
@@ -339,17 +344,17 @@ function ModerationTab() {
                   <td>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                       <div style={{ display: 'flex', gap: 4 }}>
-                        <button type="button" className="btn btn-green" onClick={() => resolve(r.id, 'resolved')}>Zgjidh</button>
-                        <button type="button" className="btn btn-orange" onClick={() => resolve(r.id, 'dismissed')}>Inoro</button>
+                        <button type="button" className="btn btn-green" onClick={() => resolve(r.id, 'resolved')} style={{ fontSize: 11, padding: '4px 10px' }}>✓ Zgjidh</button>
+                        <button type="button" className="btn btn-orange" onClick={() => resolve(r.id, 'dismissed')} style={{ fontSize: 11, padding: '4px 10px' }}>Inoro</button>
                       </div>
                       {r.listings?.is_active !== false ? (
                         <button
                           type="button"
                           onClick={() => deactivateListing(r.listings?.id || r.listing_id, r.id, r.listings?.seller_id)}
                           disabled={deactivating[r.id]}
-                          style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 7, padding: '6px 12px', fontSize: 11, fontWeight: 700, cursor: deactivating[r.id] ? 'not-allowed' : 'pointer', opacity: deactivating[r.id] ? 0.6 : 1 }}
+                          style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 5, padding: '4px 10px', fontSize: 11, fontWeight: 700, cursor: deactivating[r.id] ? 'not-allowed' : 'pointer', opacity: deactivating[r.id] ? 0.6 : 1 }}
                         >
-                          {deactivating[r.id] ? 'Duke çaktivizuar...' : 'Çaktivizo Shpalljen'}
+                          {deactivating[r.id] ? 'Duke çaktivizuar...' : '🚫 Çaktivizo'}
                         </button>
                       ) : (
                         <span style={{ fontSize: 10, color: '#E63312', fontWeight: 700, padding: '4px 0' }}><span aria-hidden="true">✓</span> Shpallja tashmë çaktive</span>
@@ -504,7 +509,7 @@ export default function Admin() {
         .select('*,profiles(full_name,username)').order('created_at', { ascending: false }).limit(50),
       supabase.from('payment_methods').select('*').order('sort_order'),
       supabase.from('premium_requests')
-        .select('*,profiles(full_name,username)').order('created_at', { ascending: false }).limit(100),
+        .select('*,profiles(full_name,username),payment_methods(name,type)').order('created_at', { ascending: false }).limit(100),
     ])
     const rev = (pm || []).filter((p: any) => p.status === 'active')
       .reduce((s: number, p: any) => s + (p.amount_eur || 0), 0)
@@ -530,18 +535,31 @@ export default function Admin() {
     fetchAll()
   }
 
-  async function handlePremiumRequest(id: string, action: 'approved' | 'rejected' | 'gifted', userId: string, plan: string) {
+  async function handlePremiumRequest(id: string, action: 'approved' | 'rejected', userId: string, daysRequested: number) {
     const { error: e1 } = await supabase.from('premium_requests').update({ status: action }).eq('id', id)
     if (e1) { setPayMsg('Gabim: ' + e1.message); return }
-    if (action === 'approved' || action === 'gifted') {
-      const months = plan === 'yearly' ? 12 : 1
+    if (action === 'approved') {
       const expiry = new Date()
-      expiry.setMonth(expiry.getMonth() + months)
+      expiry.setDate(expiry.getDate() + daysRequested)
       const { error: e2 } = await supabase.from('profiles')
         .update({ is_premium: true, premium_expires_at: expiry.toISOString() }).eq('id', userId)
-      if (e2) setPayMsg('Kërkesa u përpunua por profili nuk u përditësua: ' + e2.message)
+      if (e2) setPayMsg('Kërkesa u aprovua por profili nuk u përditësua: ' + e2.message)
     }
     setPremiumRequests(prev => prev.map(r => r.id === id ? { ...r, status: action } : r))
+  }
+
+  async function giftPremium(userId: string) {
+    const input = window.prompt('Dhuro ditë Premium (fut numrin e ditëve):')
+    if (!input) return
+    const days = parseInt(input, 10)
+    if (isNaN(days) || days <= 0) { setPayMsg('Gabim: numër ditësh i pavlefshëm'); return }
+    const expiry = new Date()
+    expiry.setDate(expiry.getDate() + days)
+    const { error } = await supabase.from('profiles')
+      .update({ is_premium: true, premium_expires_at: expiry.toISOString() }).eq('id', userId)
+    if (error) { setPayMsg('Gabim dhurimi: ' + error.message); return }
+    setPayMsg('Sukses: u dhuruan ' + days + ' ditë Premium!')
+    fetchAll()
   }
 
   async function toggleMethod(id: string, cur: boolean) {
@@ -604,7 +622,8 @@ export default function Admin() {
 
   const tabs: [string, string, string][] = [
     ['dash',       'layout-dashboard', 'Dashboard'],
-    ['payments',   'credit-card',      'Pagesat'],
+    ['preq',       'crown',            'Pagesat'],
+    ['payments',   'credit-card',      'Abonimet'],
     ['methods',    'wallet',           'Metodat'],
     ['config',     'settings-2',       'Konfigurime'],
     ['moderation', 'shield-check',     'Moderimi'],
