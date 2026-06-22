@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../../../lib/supabase'
 
 type Mode = 'login' | 'register' | 'forgot'
-type Step = 'form' | 'otp' | 'new-pass' | 'totp'
+type Step = 'form' | 'otp' | 'new-pass' | 'totp' | 'link-sent'
 
 const FN_URL = 'https://sopafwfkrxpcdaljddoh.supabase.co/functions/v1'
 
@@ -140,6 +140,9 @@ export default function Auth() {
   const [mfaFactorId, setMfaFactorId] = useState('')
   const [forgotTokens, setForgotTokens] = useState<{access: string; refresh: string} | null>(null)
 
+  // Reset mode: user arrived via recovery magic link (?reset=1)
+  const [isResetMode, setIsResetMode] = useState(false)
+
   // KOMA 6-b: Age gate 16+ per L.124/2024 n.8
   const [showAgeGate, setShowAgeGate] = useState<boolean | null>(null)
   const [ageGateUserId, setAgeGateUserId] = useState('')
@@ -182,6 +185,20 @@ export default function Auth() {
   const [originalPhone, setOriginalPhone] = useState('')
 
   useEffect(() => {
+    // Recovery magic link: ?reset=1 means user clicked recovery email link
+    const urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.get('reset') === '1') {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session) {
+          setIsResetMode(true)
+          setStep('new-pass')
+          setMode('forgot')
+        } else {
+          window.location.href = '/auth/login'
+        }
+      })
+      return
+    }
     // Kontrollo sesionin ekzistues dhe dëgjo ndryshimet
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) window.location.href = '/'
@@ -335,25 +352,50 @@ export default function Auth() {
     setResolvedId(id)
     setLoading(true); setMsg('')
     try {
-      // Email: Supabase native OTP — bypasses Resend (not configured)
+      // Email: magic link flow (Option A — zero keys, free)
       if (type === 'email') {
         const fullName = [firstName.trim(), lastName.trim()].filter(Boolean).join(' ')
+
+        // Forgot password: use resetPasswordForEmail → recovery magic link
+        if (mode === 'forgot') {
+          const { error: resetErr } = await supabase.auth.resetPasswordForEmail(id, {
+            redirectTo: `${window.location.origin}/auth/callback?recovery=1`,
+          })
+          if (resetErr) {
+            setMsg(`err:${resetErr.message}`)
+          } else {
+            setStep('link-sent')
+            setMsg(`info:Email u dërgua te 📧 ${id} — kontrollo Spam/Junk nëse nuk e gjen`)
+          }
+          setLoading(false)
+          return
+        }
+
+        // Register / login: store pending data in localStorage, send magic link
+        if (mode === 'register') {
+          localStorage.setItem('alpazar_reg_pending', JSON.stringify({
+            full_name: fullName || null,
+            age: parseInt(age) || null,
+            password: regPass || null,
+          }))
+        }
         const { error: otpErr } = await supabase.auth.signInWithOtp({
           email: id,
           options: {
             shouldCreateUser: mode === 'register',
-            ...(fullName && { data: { full_name: fullName } }),
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            ...(fullName && { data: { full_name: fullName, age: parseInt(age) || null } }),
           },
         })
         if (otpErr) {
+          localStorage.removeItem('alpazar_reg_pending')
           const em = otpErr.message.toLowerCase()
           setMsg(`err:${em.includes('not found') || em.includes('not exist') || em.includes('signup')
             ? 'Ky email nuk është i regjistruar. Regjistrohu fillimisht.'
             : otpErr.message}`)
         } else {
-          setStep('otp'); startCountdown(); setOtp(['', '', '', '', '', ''])
-          setMsg(`info:Kodi u dërgua te 📧 ${id} — kontrollo Spam/Junk nëse nuk e gjen`)
-          setTimeout(() => inputRefs.current[0]?.focus(), 150)
+          setStep('link-sent')
+          setMsg(`info:Email u dërgua te 📧 ${id} — kontrollo Spam/Junk nëse nuk e gjen`)
         }
         setLoading(false)
         return
@@ -398,23 +440,43 @@ export default function Auth() {
     setLoading(true); setMsg('')
     setResolvedId(email)
     try {
-      const { error: otpErr } = await supabase.auth.signInWithOtp({
-        email,
-        options: { shouldCreateUser: mode === 'register' },
-      })
-      if (otpErr) {
-        const em = otpErr.message.toLowerCase()
-        const notFound = em.includes('not found') || em.includes('not exist') || em.includes('signup') || em.includes('invalid')
-        if (mode === 'forgot' && notFound) {
-          setMsg('err:Nuk gjetëm llogari me këtë email. Nëse u regjistruat me numër telefoni, hyni direkt me: Numrin tuaj + Fjalëkalimin (nuk kërkohet SMS).')
+      if (mode === 'forgot') {
+        const { error: resetErr } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/auth/callback?recovery=1`,
+        })
+        if (resetErr) {
+          const em = resetErr.message.toLowerCase()
+          if (em.includes('not found') || em.includes('not exist') || em.includes('invalid')) {
+            setMsg('err:Nuk gjetëm llogari me këtë email. Nëse u regjistruat me numër telefoni, hyni direkt me: Numrin tuaj + Fjalëkalimin (nuk kërkohet SMS).')
+          } else {
+            setMsg(`err:${resetErr.message}`)
+          }
         } else {
-          setMsg('err:Gabim gjatë dërgimit të emailit. Kontrolloni adresën dhe provoni sërish.')
+          setSmsFailMode(false)
+          setStep('link-sent')
+          setMsg(`info:Email u dërgua te 📧 ${email} — kontrollo Spam/Junk`)
         }
       } else {
-        setSmsFailMode(false)
-        setStep('otp'); startCountdown(); setOtp(['', '', '', '', '', ''])
-        setMsg(`info:Kodi u dërgua te 📧 ${email} — kontrollo Spam/Junk`)
-        setTimeout(() => inputRefs.current[0]?.focus(), 150)
+        const { error: otpErr } = await supabase.auth.signInWithOtp({
+          email,
+          options: {
+            shouldCreateUser: mode === 'register',
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+          },
+        })
+        if (otpErr) {
+          const em = otpErr.message.toLowerCase()
+          const notFound = em.includes('not found') || em.includes('not exist') || em.includes('signup') || em.includes('invalid')
+          if (mode === 'forgot' && notFound) {
+            setMsg('err:Nuk gjetëm llogari me këtë email. Nëse u regjistruat me numër telefoni, hyni direkt me: Numrin tuaj + Fjalëkalimin (nuk kërkohet SMS).')
+          } else {
+            setMsg('err:Gabim gjatë dërgimit të emailit. Kontrolloni adresën dhe provoni sërish.')
+          }
+        } else {
+          setSmsFailMode(false)
+          setStep('link-sent')
+          setMsg(`info:Email u dërgua te 📧 ${email} — kontrollo Spam/Junk`)
+        }
       }
     } catch (e: unknown) {
       setMsg(`err:${e instanceof Error ? e.message : 'Gabim lidhjeje'}`)
@@ -566,8 +628,22 @@ export default function Auth() {
   async function setNewPassword() {
     if (newPass.length < 8) { setMsg('err:Fjalëkalimi duhet të ketë minimumi 8 karaktere!'); return }
     if (newPass !== newPass2) { setMsg('err:Fjalëkalimet nuk përputhen!'); return }
-    if (!forgotTokens) { setMsg('err:Sesioni ka skaduar. Provo sërish nga fillimi.'); return }
     setLoading(true); setMsg('')
+
+    // Recovery magic link flow: session already set by callback, just update password
+    if (isResetMode) {
+      const { error } = await supabase.auth.updateUser({ password: newPass })
+      if (error) {
+        setMsg(`err:${error.message}`)
+      } else {
+        setMsg('ok:Fjalëkalimi u ndryshua! Duke u ridrejtuar...')
+        setTimeout(() => { window.location.href = '/' }, 700)
+      }
+      setLoading(false)
+      return
+    }
+
+    if (!forgotTokens) { setMsg('err:Sesioni ka skaduar. Provo sërish nga fillimi.'); setLoading(false); return }
     // Vendos sesionin vetëm tani — platforma nuk hapet pa fjalëkalim të ri
     blockAuthRedirectRef.current = true
     const { error: sessErr } = await supabase.auth.setSession({
@@ -1006,6 +1082,30 @@ export default function Auth() {
           )}
 
           {mode === 'register' && step === 'otp' && OtpStep}
+
+          {/* ════════════════════════════════════════
+              MAGIC LINK SENT — link-sent step (register / forgot)
+              ════════════════════════════════════════ */}
+          {(mode === 'register' || mode === 'forgot') && step === 'link-sent' && (
+            <>
+              <h2><span aria-hidden="true">📧</span> Kontrollo Email-in</h2>
+              <p className="sub">
+                Dërguam {mode === 'forgot' ? 'link rivendosjeje' : 'link konfirmimi'} te<br />
+                <strong>{resolvedId}</strong><br />
+                <span style={{ fontSize: 10, color: '#aaa' }}>Kontrollo Spam/Junk nëse nuk e gjen</span>
+              </p>
+              <div style={{ background: '#EAF3DE', border: '0.5px solid #97C459', borderRadius: 10, padding: '14px 16px', marginBottom: 14, textAlign: 'center' }}>
+                <span aria-hidden="true" style={{ fontSize: 28, display: 'block', marginBottom: 6 }}>📬</span>
+                <p style={{ fontSize: 13, color: '#3B6D11', fontWeight: 600, margin: 0 }}>
+                  Kliko linkun në email për {mode === 'forgot' ? 'të ndryshuar fjalëkalimin' : 'të aktivizuar llogarinë'}
+                </p>
+              </div>
+              <button type="button" className="btn" onClick={sendOtp} disabled={loading}>
+                {loading ? <><span aria-hidden="true">⏳</span> Duke ridërguar...</> : <><span aria-hidden="true">🔄</span> Ridërgo linkun</>}
+              </button>
+              <button type="button" className="btn-ghost" onClick={resetToForm}>← Ndrysho adresën</button>
+            </>
+          )}
 
           {/* ════════════════════════════════════════
               3. RIKTHIMI I LLOGARISË — OTP (OPSIONALE)

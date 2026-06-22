@@ -31,6 +31,13 @@ export default function AuthCallback() {
           }
         }
 
+        // Recovery magic link → redirect to password reset UI
+        const isRecovery = url.searchParams.get('recovery')
+        if (isRecovery === '1') {
+          window.location.href = '/auth/login?reset=1'
+          return
+        }
+
         const { data: { session } } = await supabase.auth.getSession()
         if (!session?.user) {
           window.location.href = '/auth/login'
@@ -65,6 +72,20 @@ export default function AuthCallback() {
             age: meta.age ?? null,
             ...(avatarUrl ? { avatar_url: avatarUrl } : {}),
           }).eq('id', u.id)
+        }
+
+        // Apply pending registration data from magic link flow (Option A)
+        const regPendingRaw = localStorage.getItem('alpazar_reg_pending')
+        if (regPendingRaw) {
+          try {
+            const rd = JSON.parse(regPendingRaw)
+            const upd: Record<string, unknown> = {}
+            if (rd.full_name && !existing?.full_name) upd.full_name = rd.full_name
+            if (rd.age) upd.age = rd.age
+            if (Object.keys(upd).length) await supabase.from('profiles').update(upd).eq('id', u.id)
+            if (rd.password) await supabase.auth.updateUser({ password: rd.password })
+            localStorage.removeItem('alpazar_reg_pending')
+          } catch {}
         }
 
         // Clear referral cookie after use
