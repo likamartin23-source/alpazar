@@ -451,6 +451,7 @@ export default function Admin() {
   const [totpCode, setTotpCode] = useState('')
   const [mfaError, setMfaError] = useState('')
   const [payMsg, setPayMsg] = useState('')
+  const [pmForm, setPmForm] = useState<{id?: string; name: string; type: string; is_active: boolean; sort_order: number; details: string} | null>(null)
   const [loading, setLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState(new Date())
   const [liveStats, setLiveStats] = useState({ newListings: 0, newReports: 0 })
@@ -846,23 +847,67 @@ export default function Admin() {
                 <>
                   <div className="ph"><div className="pt"><span aria-hidden="true">💳</span> Metodat e Pagesës</div></div>
                   <div className="card">
-                    <div className="ct">Aktivizo / Çaktivizo</div>
+                    <div className="ct">Aktivizo / Çaktivizo / Redakto</div>
                     {methods.map((m: any) => (
-                      <div key={m.id} className="pm-r">
+                      <div key={m.id} className="pm-r" style={{ cursor: 'pointer' }} onClick={() => setPmForm({ id: m.id, name: m.name, type: m.type, is_active: m.is_active, sort_order: m.sort_order ?? 0, details: m.details ?? '' })}>
                         <div className="pm-inf">
                           <strong>{m.name}</strong>
                           <span>{m.type}</span>
                         </div>
                         <div style={{ display:'flex', gap:8, alignItems:'center' }}>
-                          <span role="switch" aria-checked={m.is_active} tabIndex={0} className={`tgl ${m.is_active ? 'tgl-on' : 'tgl-off'}`} onClick={() => toggleMethod(m.id, m.is_active)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') toggleMethod(m.id, m.is_active) }}>
+                          <span role="switch" aria-checked={m.is_active} tabIndex={0} className={`tgl ${m.is_active ? 'tgl-on' : 'tgl-off'}`} onClick={e => { e.stopPropagation(); toggleMethod(m.id, m.is_active) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') toggleMethod(m.id, m.is_active) }}>
                             <span className="tdot" />
                           </span>
-                          <button type="button" className="btn btn-red" onClick={async () => { const { error } = await supabase.from('payment_methods').delete().eq('id',m.id); if (error) setPayMsg('Gabim: ' + error.message); fetchAll() }}>Fshi</button>
+                          <button type="button" className="btn btn-red" onClick={async e => { e.stopPropagation(); const { error } = await supabase.from('payment_methods').delete().eq('id',m.id); if (error) setPayMsg('Gabim: ' + error.message); fetchAll() }}>Fshi</button>
                         </div>
                       </div>
                     ))}
                     {methods.length === 0 && <p style={{ color:'#aaa', fontSize:12 }}>Nuk ka metoda pagese</p>}
+                    <button type="button" className="btn" style={{ marginTop: 12 }} onClick={() => setPmForm({ name: '', type: 'card', is_active: true, sort_order: methods.length, details: '' })}>
+                      <span aria-hidden="true">+</span> Shto metodë
+                    </button>
                   </div>
+
+                  {pmForm !== null && (
+                    <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,.45)', zIndex:999, display:'flex', alignItems:'center', justifyContent:'center', padding:16 }} role="dialog" aria-modal="true" aria-label="Forma metodës së pagesës" onClick={e => { if (e.target === e.currentTarget) setPmForm(null) }}>
+                      <div style={{ background:'#fff', borderRadius:16, padding:24, width:'100%', maxWidth:360 }}>
+                        <div style={{ fontWeight:700, marginBottom:16 }}>{pmForm.id ? 'Redakto metodën' : 'Shto metodë të re'}</div>
+                        {(['name','details'] as const).map(field => (
+                          <div key={field} style={{ marginBottom:10 }}>
+                            <label style={{ fontSize:11, fontWeight:600, color:'#555', display:'block', marginBottom:4 }}>{field === 'name' ? 'Emri' : 'Detaje (IBAN / numër)'}</label>
+                            <input type="text" value={(pmForm as any)[field]} onChange={e => setPmForm(f => f && ({ ...f, [field]: e.target.value }))} style={{ width:'100%', border:'1.5px solid #ddd', borderRadius:8, padding:'8px 10px', fontSize:13, boxSizing:'border-box' }} />
+                          </div>
+                        ))}
+                        <div style={{ marginBottom:10 }}>
+                          <label style={{ fontSize:11, fontWeight:600, color:'#555', display:'block', marginBottom:4 }}>Tipi</label>
+                          <select value={pmForm.type} onChange={e => setPmForm(f => f && ({ ...f, type: e.target.value }))} style={{ width:'100%', border:'1.5px solid #ddd', borderRadius:8, padding:'8px 10px', fontSize:13 }}>
+                            {['card','paypal','bank','mobile','wallet'].map(t => <option key={t} value={t}>{t}</option>)}
+                          </select>
+                        </div>
+                        <div style={{ marginBottom:10 }}>
+                          <label style={{ fontSize:11, fontWeight:600, color:'#555', display:'block', marginBottom:4 }}>Rend ({pmForm.sort_order})</label>
+                          <input type="number" value={pmForm.sort_order} onChange={e => setPmForm(f => f && ({ ...f, sort_order: Number(e.target.value) }))} style={{ width:'100%', border:'1.5px solid #ddd', borderRadius:8, padding:'8px 10px', fontSize:13 }} />
+                        </div>
+                        <label style={{ display:'flex', alignItems:'center', gap:8, marginBottom:16, cursor:'pointer' }}>
+                          <input type="checkbox" checked={pmForm.is_active} onChange={e => setPmForm(f => f && ({ ...f, is_active: e.target.checked }))} />
+                          <span style={{ fontSize:13 }}>Aktiv</span>
+                        </label>
+                        <div style={{ display:'flex', gap:8 }}>
+                          <button type="button" className="btn" style={{ flex:1 }} onClick={async () => {
+                            if (!pmForm.name.trim()) { setPayMsg('err:Emri është i detyrueshëm'); return }
+                            const payload = { name: pmForm.name.trim(), type: pmForm.type, is_active: pmForm.is_active, sort_order: pmForm.sort_order, details: pmForm.details.trim() }
+                            const { error } = pmForm.id
+                              ? await supabase.from('payment_methods').update(payload).eq('id', pmForm.id)
+                              : await supabase.from('payment_methods').insert(payload)
+                            if (error) setPayMsg('Gabim: ' + error.message)
+                            else { setPayMsg('✅ Ruajtur!'); setPmForm(null); fetchAll() }
+                          }}>Ruaj</button>
+                          <button type="button" className="btn" style={{ flex:1, background:'#f5f5f5', color:'#111' }} onClick={() => setPmForm(null)}>Anulo</button>
+                        </div>
+                        {payMsg && <div style={{ marginTop:8, fontSize:12, color: payMsg.startsWith('err') ? '#E63312' : '#1D9E75' }}>{payMsg.replace(/^(err:|✅ )/, '')}</div>}
+                      </div>
+                    </div>
+                  )}
                 </>
               )}
 

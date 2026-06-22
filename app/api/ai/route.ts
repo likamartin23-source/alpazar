@@ -120,7 +120,7 @@ function buildSystemPrompt(liveCtx: string): string {
 
 **Rregulla absolute:**
 - Fol GJITHMONË shqip, me ton miqësor dhe profesional
-- Jep përgjigje të sakta, praktike dhe të shkurtra (3-6 fjali)
+- Jep përgjigje të sakta dhe praktike — aq të gjata sa duhet (jo të shkurtuara artificialisht)
 - Mos shpik fakte — nëse s'di, thuaj "Kontakto support@alpazar.al"
 - Kur pyesin produkt specifik, sugjero kategori + këshilla blerje të sigurtë
 - Mos diskuto tema jashtë ALPAZAR/tregtisë/konsumatorizmit
@@ -200,43 +200,19 @@ export async function POST(req: NextRequest) {
   const liveCtx = await getLiveContext(lastUserMsg)
   const systemPrompt = buildSystemPrompt(liveCtx)
 
-  // 1. Try Anthropic Claude — streaming SSE
+  // 1. Try Anthropic Claude — non-streaming JSON
   const anthropicKey = process.env.ANTHROPIC_API_KEY
   if (anthropicKey) {
     try {
       const client = new Anthropic({ apiKey: anthropicKey, timeout: 25000 })
-      const enc = new TextEncoder()
-      const stream = new ReadableStream({
-        async start(ctrl) {
-          try {
-            const anthropicStream = client.messages.stream({
-              model: 'claude-haiku-4-5-20251001',
-              max_tokens: 1024,
-              system: systemPrompt,
-              messages: convo,
-            })
-            for await (const chunk of anthropicStream) {
-              if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
-                ctrl.enqueue(enc.encode(`data: ${JSON.stringify({ t: chunk.delta.text })}\n\n`))
-              }
-            }
-          } catch (err: any) {
-            console.error('Anthropic stream error:', err?.status, err?.message ?? err)
-            // Emit fallback reply so the client sees something
-            const fallback = await tryGroq(convo, systemPrompt) ?? localFallback(lastUserMsg)
-            ctrl.enqueue(enc.encode(`data: ${JSON.stringify({ t: fallback })}\n\n`))
-          }
-          ctrl.enqueue(enc.encode('data: [DONE]\n\n'))
-          ctrl.close()
-        },
+      const response = await client.messages.create({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 2048,
+        system: systemPrompt,
+        messages: convo,
       })
-      return new Response(stream, {
-        headers: {
-          'Content-Type': 'text/event-stream',
-          'Cache-Control': 'no-cache',
-          'X-Accel-Buffering': 'no',
-        },
-      })
+      const reply = response.content[0]?.type === 'text' ? response.content[0].text : null
+      if (reply) return NextResponse.json({ reply })
     } catch (err: any) {
       console.error('Anthropic error:', err?.status, err?.message ?? err)
     }

@@ -104,18 +104,20 @@ export default function AsistentPage() {
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const msgsRef = useRef<HTMLDivElement>(null)
+  const prevMsgCountRef = useRef(0)
 
   useEffect(() => {
     setIsPWA(window.matchMedia('(display-mode: standalone)').matches)
   }, [])
 
   useEffect(() => {
-    const el = msgsRef.current
-    const nearBottom = !el || (el.scrollHeight - el.scrollTop - el.clientHeight < 150)
-    if (nearBottom) {
-      bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    const count = messages.length
+    if (count > prevMsgCountRef.current) {
+      prevMsgCountRef.current = count
+      const el = msgsRef.current
+      if (el) el.scrollTop = el.scrollHeight
     }
-  }, [messages, loading])
+  }, [messages.length])
 
   const sendMessage = useCallback(async (text?: string) => {
     const content = (text || input).trim()
