@@ -67,10 +67,10 @@ export default function BiznestPage() {
         />
         <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 2 }}>
           {[
-            { key: '', label: 'Të gjithë' },
-            { key: 'sherbime', label: '🛠️ Shërbime' },
-            { key: 'produkte', label: '📦 Produkte' },
-            { key: 'sherbime_produkte', label: '🔁 Të dyja' },
+            { key: '', icon: '', label: 'Të gjithë' },
+            { key: 'sherbime', icon: '🛠️', label: 'Shërbime' },
+            { key: 'produkte', icon: '📦', label: 'Produkte' },
+            { key: 'sherbime_produkte', icon: '🔁', label: 'Të dyja' },
           ].map(f => (
             <button
               key={f.key}
@@ -79,7 +79,7 @@ export default function BiznestPage() {
               onClick={() => setTypeFilter(f.key)}
               style={{ flexShrink: 0, padding: '6px 14px', background: typeFilter === f.key ? '#111' : '#f0f0f0', color: typeFilter === f.key ? '#F5C842' : '#555', border: 'none', borderRadius: 20, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}
             >
-              {f.label}
+              {f.icon && <><span aria-hidden="true">{f.icon}</span>{' '}</>}{f.label}
             </button>
           ))}
         </div>

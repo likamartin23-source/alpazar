@@ -775,7 +775,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                   fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
                 }}>
                 <i className={`ti ti-bell${priceAlert ? '-ringing' : ''}`} style={{ fontSize: 14 }} aria-hidden="true" />
-                {priceAlert ? `🔔 ${priceAlert.target_price} ALL` : 'Njoftomë'}
+                {priceAlert ? <><span aria-hidden="true">🔔</span> {priceAlert.target_price} ALL</> : 'Njoftomë'}
               </button>
             )}
           </div>

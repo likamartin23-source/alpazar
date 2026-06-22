@@ -91,7 +91,7 @@ export function PremiumUpsellModal({
         .ups-skip{width:100%;background:none;border:none;color:#aaa;font-size:12px;cursor:pointer;font-family:inherit;padding:4px;}
       `}</style>
       <div className="ups-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative' }}>
-        <button type="button" className="ups-close" aria-label="Mbyll" onClick={close}>✕</button>
+        <button type="button" className="ups-close" aria-label="Mbyll" onClick={close}><span aria-hidden="true">✕</span></button>
         <span className="ups-crown" aria-hidden="true">👑</span>
         <div className="ups-h">Bëhu Premium Sot!</div>
         <div className="ups-sub">

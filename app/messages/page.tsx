@@ -1359,7 +1359,7 @@ export default function MessagesPage() {
                       ) : (
                         <>
                           <button type="button" aria-label={emojiOpen ? 'Mbyll emojitë' : 'Emoji'} aria-expanded={emojiOpen} className="emoji-btn" onClick={() => { setEmojiOpen(o => !o); inputRef.current?.focus() }}>
-                            {emojiOpen ? '⌨️' : '😊'}
+                            <span aria-hidden="true">{emojiOpen ? '⌨️' : '😊'}</span>
                           </button>
                           <div className="input-wrap">
                             <textarea

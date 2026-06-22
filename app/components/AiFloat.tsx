@@ -32,8 +32,8 @@ export default function AiFloat() {
       <div className="ai-float-wrap">
         {showTip && (
           <div className="ai-bubble">
-            💬 Keni nevojë për ndihmë?
-            <button type="button" className="ai-close-btn" aria-label="Mbyll sugjerimin" onClick={() => setShowTip(false)}>✕</button>
+            <span aria-hidden="true">💬</span> Keni nevojë për ndihmë?
+            <button type="button" className="ai-close-btn" aria-label="Mbyll sugjerimin" onClick={() => setShowTip(false)}><span aria-hidden="true">✕</span></button>
           </div>
         )}
         <button

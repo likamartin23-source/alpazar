@@ -860,7 +860,7 @@ export default function Auth() {
                     style={{ paddingRight: 36 }}
                   />
                   <button type="button" className="pass-toggle" aria-label={showPass ? 'Fshih fjalëkalimin' : 'Shfaq fjalëkalimin'} aria-pressed={showPass} onClick={() => setShowPass(v => !v)}>
-                    {showPass ? '🙈' : '👁️'}
+                    <span aria-hidden="true">{showPass ? '🙈' : '👁️'}</span>
                   </button>
                 </div>
                 {/* 3. Rikthimi — tertiar, nën fjalëkalim */}
@@ -941,7 +941,7 @@ export default function Auth() {
                     value={regPass} onChange={e => setRegPass(e.target.value)}
                     autoComplete="new-password" style={{ paddingRight: 36 }} />
                   <button type="button" className="pass-toggle" aria-label={showRegPass ? 'Fshih fjalëkalimin' : 'Shfaq fjalëkalimin'} aria-pressed={showRegPass} onClick={() => setShowRegPass(v => !v)}>
-                    {showRegPass ? '🙈' : '👁️'}
+                    <span aria-hidden="true">{showRegPass ? '🙈' : '👁️'}</span>
                   </button>
                 </div>
                 {regPass.length > 0 && regPass.length < 8 && (
@@ -957,7 +957,7 @@ export default function Auth() {
                     onKeyDown={e => e.key === 'Enter' && sendOtp()}
                     autoComplete="new-password" />
                   <button type="button" className="pass-toggle" aria-label={showRegPass2 ? 'Fshih fjalëkalimin' : 'Shfaq fjalëkalimin'} aria-pressed={showRegPass2} onClick={() => setShowRegPass2(v => !v)}>
-                    {showRegPass2 ? '🙈' : '👁️'}
+                    <span aria-hidden="true">{showRegPass2 ? '🙈' : '👁️'}</span>
                   </button>
                 </div>
                 {regPass2.length > 0 && regPass !== regPass2 && (
@@ -1122,7 +1122,7 @@ export default function Auth() {
                     onChange={e => setNewPass(e.target.value)} autoComplete="new-password"
                     style={{ paddingRight: 36 }} />
                   <button type="button" className="pass-toggle" aria-label={showNewPass ? 'Fshih fjalëkalimin' : 'Shfaq fjalëkalimin'} aria-pressed={showNewPass} onClick={() => setShowNewPass(v => !v)}>
-                    {showNewPass ? '🙈' : '👁️'}
+                    <span aria-hidden="true">{showNewPass ? '🙈' : '👁️'}</span>
                   </button>
                 </div>
               </div>
@@ -1134,7 +1134,7 @@ export default function Auth() {
                     onKeyDown={e => e.key === 'Enter' && setNewPassword()}
                     autoComplete="new-password" />
                   <button type="button" className="pass-toggle" aria-label={showNewPass2 ? 'Fshih fjalëkalimin' : 'Shfaq fjalëkalimin'} aria-pressed={showNewPass2} onClick={() => setShowNewPass2(v => !v)}>
-                    {showNewPass2 ? '🙈' : '👁️'}
+                    <span aria-hidden="true">{showNewPass2 ? '🙈' : '👁️'}</span>
                   </button>
                 </div>
               </div>
