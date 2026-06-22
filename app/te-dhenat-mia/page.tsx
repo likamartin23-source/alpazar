@@ -192,7 +192,7 @@ export default function TeDhenatMiaPage() {
               onClick={() => setConfirmDelete(true)}
               style={{ width: '100%', background: 'transparent', color: '#dc2626', border: '1.5px solid #dc2626', borderRadius: 11, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
             >
-              🗑️ Fshi llogarinë time
+              <><span aria-hidden="true">🗑️</span> Fshi llogarinë time</>
             </button>
           ) : (
             <div>

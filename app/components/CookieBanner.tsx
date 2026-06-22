@@ -65,7 +65,7 @@ export function CookieBanner() {
           onClick={accept}
           style={{ flex: 1, background: '#F5C842', color: '#111', border: 'none', borderRadius: 10, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
         >
-          ✓ Prano të gjitha
+          <><span aria-hidden="true">✓</span> Prano të gjitha</>
         </button>
         <button
           type="button"

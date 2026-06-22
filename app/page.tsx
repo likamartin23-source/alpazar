@@ -893,7 +893,7 @@ export default function Home() {
                 onClick={() => go('/search')}
                 style={{ background: '#111', color: '#F5C842', border: 'none', borderRadius: 12, padding: '12px 28px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
               >
-                🔍 Eksploro të gjitha shpalljet →
+                <><span aria-hidden="true">🔍</span> Eksploro të gjitha shpalljet →</>
               </button>
             </div>
           )}

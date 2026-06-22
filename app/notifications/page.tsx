@@ -175,7 +175,7 @@ export default function NotificationsPage() {
             onClick={markAllRead}
             style={{ background: 'none', border: '1px solid #333', borderRadius: 8, color: '#aaa', fontSize: 11, fontWeight: 600, padding: '5px 10px', cursor: 'pointer', whiteSpace: 'nowrap' }}
           >
-            ✓ Gjitha lexuar
+            <><span aria-hidden="true">✓</span> Gjitha lexuar</>
           </button>
         )}
       </div>
@@ -260,7 +260,7 @@ function NotifRow({ n, onClick, onDismiss, isLast }: { n: Notif; onClick: (n: No
             background: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 22, border: '2px solid #f0e6b0',
           }}>
-            {icon}
+            <span aria-hidden="true">{icon}</span>
           </div>
         )}
         {n.image_url && (

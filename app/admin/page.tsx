@@ -675,7 +675,7 @@ export default function Admin() {
             <div className="r">Admin Panel</div>
             {isMaint && (
               <div style={{ marginTop: 8, background: '#E63312', color: '#fff', borderRadius: 4, padding: '2px 6px', fontSize: 9, fontWeight: 700 }}>
-                🔧 MIRËMBAJTJE
+                <><span aria-hidden="true">🔧</span> MIRËMBAJTJE</>
               </div>
             )}
           </div>
@@ -776,7 +776,7 @@ export default function Admin() {
                   {/* Premium Requests (FAZA 4-c) */}
                   <div className="card" style={{ marginBottom: 16 }}>
                     <div className="ct">
-                      🎁 Kërkesat Premium
+                      <><span aria-hidden="true">🎁</span> Kërkesat Premium</>
                       {premiumRequests.filter(r => r.status === 'pending').length > 0 && (
                         <span style={{ background: '#E63312', color: '#fff', borderRadius: 10, fontSize: 9, fontWeight: 800, padding: '1px 7px' }}>
                           {premiumRequests.filter(r => r.status === 'pending').length} të reja
@@ -794,7 +794,7 @@ export default function Admin() {
                             <td>{r.plan === 'yearly' ? 'Vjetor' : 'Mujor'}</td>
                             <td>
                               <span className={`badge ${r.status === 'approved' || r.status === 'gifted' ? 'ba' : r.status === 'pending' ? 'bp' : 'bd'}`}>
-                                {r.status === 'approved' ? 'Aprovuar' : r.status === 'rejected' ? 'Refuzuar' : r.status === 'gifted' ? '🎁 Dhuruar' : 'Në pritje'}
+                                {r.status === 'approved' ? 'Aprovuar' : r.status === 'rejected' ? 'Refuzuar' : r.status === 'gifted' ? <><span aria-hidden='true'>🎁</span> Dhuruar</> : 'Në pritje'}
                               </span>
                             </td>
                             <td style={{ color: '#888' }}>{new Date(r.created_at).toLocaleDateString('sq-AL')}</td>

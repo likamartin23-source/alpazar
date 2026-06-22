@@ -105,7 +105,7 @@ export default function Siguria() {
               Nëse hasni një shpallje mashtruese ose sjellje abuzive, raportojeni menjëherë. Ekipi ynë shqyrton çdo raportim brenda 24 orësh.
             </p>
             <a href="mailto:likamartin23@gmail.com" className="red-btn">
-              🚨 Raporto tani — likamartin23@gmail.com
+              <><span aria-hidden="true">🚨</span> Raporto tani — likamartin23@gmail.com</>
             </a>
           </div>
 

@@ -281,7 +281,7 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
             transition: 'all .15s',
           }}
         >
-          📢 Statusi / Feed
+          <><span aria-hidden="true">📢</span> Statusi / Feed</>
         </button>
         <button
           type="button"
@@ -295,7 +295,7 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
             transition: 'all .15s',
           }}
         >
-          💬 Mesazh privat
+          <><span aria-hidden="true">💬</span> Mesazh privat</>
         </button>
       </div>
 
@@ -365,7 +365,7 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
       {/* Hint for copy-based platforms */}
       {PLATFORMS.some(p => noApi(p)) && (
         <div style={{ fontSize: 9.5, color: '#aaa', textAlign: 'center', lineHeight: 1.5 }}>
-          📋 Instagram &amp; TikTok: linku kopjohet automatikisht, pastaj hapet aplikacioni
+          <><span aria-hidden="true">📋</span> Instagram &amp; TikTok: linku kopjohet automatikisht, pastaj hapet aplikacioni</>
         </div>
       )}
     </div>

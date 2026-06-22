@@ -885,7 +885,7 @@ export default function Auth() {
               {/* 2. Regjistrimi — sekondare */}
               <div className="divider">ose</div>
               <button className="btn-yellow" type="button" onClick={() => switchMode('register')}>
-                📝 Regjistrohu Falas
+                <><span aria-hidden="true">📝</span> Regjistrohu Falas</>
               </button>
             </form>
           )}
@@ -1053,7 +1053,7 @@ export default function Auth() {
                   </div>
                   <button type="button" className="btn-yellow" style={{ marginBottom: 10 }}
                     onClick={() => { const ph = contact; switchMode('login'); setTimeout(() => setContact(ph), 0) }}>
-                    🔑 Hyr me Numrin + Fjalëkalim
+                    <><span aria-hidden="true">🔑</span> Hyr me Numrin + Fjalëkalim</>
                   </button>
                   <div className="divider">ose rivendos fjalëkalimin me email</div>
                   <div className="field" style={{ marginBottom: 10 }}>

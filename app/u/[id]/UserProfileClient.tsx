@@ -167,7 +167,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
                 }}
                 style={{ flex: 1, minWidth: 120, padding: '10px 16px', background: '#E63312', color: '#fff', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
               >
-                💬 Dërgo Mesazh
+                <><span aria-hidden="true">💬</span> Dërgo Mesazh</>
               </button>
             )}
             {isOwnProfile && (
@@ -176,7 +176,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
                 onClick={() => window.location.href = '/profile'}
                 style={{ flex: 1, minWidth: 120, padding: '10px 16px', background: '#F5C842', color: '#111', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}
               >
-                ✏️ Edito Profilin
+                <><span aria-hidden="true">✏️</span> Edito Profilin</>
               </button>
             )}
             {isBusiness && (
@@ -185,7 +185,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
                 onClick={() => window.location.href = `/biznese/${profile.id}`}
                 style={{ padding: '10px 16px', background: '#111', color: '#F5C842', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}
               >
-                🏢 Shiko Biznesin
+                <><span aria-hidden="true">🏢</span> Shiko Biznesin</>
               </button>
             )}
           </div>

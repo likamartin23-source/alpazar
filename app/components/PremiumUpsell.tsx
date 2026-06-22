@@ -126,7 +126,7 @@ export function PremiumUpsellModal({
           )}
         </div>
         <button type="button" className="ups-cta" onClick={() => { window.location.href = '/premium'; close() }}>
-          👑 Aktivizo Premium Tani
+          <><span aria-hidden="true">👑</span> Aktivizo Premium Tani</>
         </button>
         <button type="button" className="ups-skip" onClick={close}>Tani jo, ndoshta më vonë</button>
       </div>

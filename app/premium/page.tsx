@@ -232,7 +232,7 @@ export default function PremiumPage() {
                 <span>{Math.max(0, REFERRAL_TARGET - referralCount)} mbetur</span>
               </div>
               <a href="/referral" className="ref-m-cta">
-                🔗 Fto miq tani →
+                <><span aria-hidden="true">🔗</span> Fto miq tani →</>
               </a>
             </div>
           )}

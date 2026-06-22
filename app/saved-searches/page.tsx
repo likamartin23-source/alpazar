@@ -83,7 +83,7 @@ export default function SavedSearchesPage() {
               onClick={() => { window.location.href = '/search' }}
               style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 24px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
             >
-              🔍 Fillo një kërkim
+              <><span aria-hidden="true">🔍</span> Fillo një kërkim</>
             </button>
           </div>
         ) : (
@@ -110,7 +110,7 @@ export default function SavedSearchesPage() {
                         onClick={() => runSearch(s)}
                         style={{ background: 'none', border: 'none', color: '#E63312', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', padding: 0 }}
                       >
-                        🔍 Kërko tani →
+                        <><span aria-hidden="true">🔍</span> Kërko tani →</>
                       </button>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

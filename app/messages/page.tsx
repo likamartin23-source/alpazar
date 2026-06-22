@@ -1131,7 +1131,7 @@ export default function MessagesPage() {
               <div className="msgs-area" ref={attachScrollListener}>
                 {isBlocked && (
                   <div style={{ background:'rgba(230,51,18,.08)', borderRadius:12, padding:'10px 14px', margin:'8px 0', textAlign:'center', fontSize:12, color:'#E63312', border:'1px solid rgba(230,51,18,.15)' }}>
-                    🚫 Ke bllokuar këtë përdorues
+                    <><span aria-hidden="true">🚫</span> Ke bllokuar këtë përdorues</>
                   </div>
                 )}
 

@@ -990,8 +990,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                   <div role="group" aria-label="Vlerëso me yje" style={{ display: 'flex', gap: 5, marginBottom: 10 }}>
                     {[1, 2, 3, 4, 5].map(s => (
                       <button key={s} type="button" aria-label={`${s} yll${s > 1 ? 'e' : ''}`} aria-pressed={s <= reviewStars} onClick={() => setReviewStars(s)}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, padding: 0, opacity: s <= reviewStars ? 1 : 0.3 }}>
-                        ⭐
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, padding: 0, opacity: s <= reviewStars ? 1 : 0.3 }}><span aria-hidden="true">⭐</span>
                       </button>
                     ))}
                   </div>
