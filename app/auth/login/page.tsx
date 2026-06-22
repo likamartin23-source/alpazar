@@ -436,7 +436,7 @@ export default function Auth() {
         const { data: vd, error: vErr } = await supabase.auth.verifyOtp({
           email: resolvedId,
           token: code,
-          type: 'email',
+          type: mode === 'register' ? 'signup' : 'email',
         })
         if (vErr || !vd.session) {
           blockAuthRedirectRef.current = false

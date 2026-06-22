@@ -200,19 +200,43 @@ export async function POST(req: NextRequest) {
   const liveCtx = await getLiveContext(lastUserMsg)
   const systemPrompt = buildSystemPrompt(liveCtx)
 
-  // 1. Try Anthropic Claude (paid, best quality)
+  // 1. Try Anthropic Claude — streaming SSE
   const anthropicKey = process.env.ANTHROPIC_API_KEY
   if (anthropicKey) {
     try {
       const client = new Anthropic({ apiKey: anthropicKey, timeout: 25000 })
-      const response = await client.messages.create({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1024,
-        system: systemPrompt,
-        messages: convo,
+      const enc = new TextEncoder()
+      const stream = new ReadableStream({
+        async start(ctrl) {
+          try {
+            const anthropicStream = client.messages.stream({
+              model: 'claude-haiku-4-5-20251001',
+              max_tokens: 1024,
+              system: systemPrompt,
+              messages: convo,
+            })
+            for await (const chunk of anthropicStream) {
+              if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
+                ctrl.enqueue(enc.encode(`data: ${JSON.stringify({ t: chunk.delta.text })}\n\n`))
+              }
+            }
+          } catch (err: any) {
+            console.error('Anthropic stream error:', err?.status, err?.message ?? err)
+            // Emit fallback reply so the client sees something
+            const fallback = await tryGroq(convo, systemPrompt) ?? localFallback(lastUserMsg)
+            ctrl.enqueue(enc.encode(`data: ${JSON.stringify({ t: fallback })}\n\n`))
+          }
+          ctrl.enqueue(enc.encode('data: [DONE]\n\n'))
+          ctrl.close()
+        },
       })
-      const reply = response.content[0]?.type === 'text' ? response.content[0].text : null
-      if (reply) return NextResponse.json({ reply })
+      return new Response(stream, {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'X-Accel-Buffering': 'no',
+        },
+      })
     } catch (err: any) {
       console.error('Anthropic error:', err?.status, err?.message ?? err)
     }
