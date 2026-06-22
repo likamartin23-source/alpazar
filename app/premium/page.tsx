@@ -6,6 +6,10 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 
 const REFERRAL_TARGET = 50
+const AMOUNT_MONTHLY = 500
+const AMOUNT_YEARLY = 5000
+const DAYS_MONTHLY = 30
+const DAYS_YEARLY = 365
 
 export default function PremiumPage() {
   const [user, setUser] = useState<any>(null)
@@ -16,6 +20,7 @@ export default function PremiumPage() {
   const [submitting, setSubmitting] = useState(false)
   const [msg, setMsg] = useState('')
   const [referralCount, setReferralCount] = useState(0)
+  const [hasPending, setHasPending] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -30,6 +35,11 @@ export default function PremiumPage() {
               .then(({ count }) => setReferralCount(count || 0))
           }
         })
+        supabase.from('premium_requests')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', session.user.id)
+          .eq('status', 'pending')
+          .then(({ count }) => setHasPending((count || 0) > 0))
       }
     })
     supabase.from('payment_methods').select('*').eq('is_active', true).then(({ data }) => {
@@ -37,40 +47,26 @@ export default function PremiumPage() {
     })
   }, [])
 
-  async function onPaymentSuccess(userId: string) {
-    const { error } = await supabase.from('profiles').update({ is_premium: true }).eq('id', userId)
-    if (error) {
-      setMsg('err:Gabim gjatë aktivizimit. Kontakto support.')
-      return
-    }
-    await supabase.auth.refreshSession()
-    window.location.href = '/?premium=activated'
-  }
-
   async function subscribe() {
     if (!user) { window.location.href = '/auth/login'; return }
     if (!payMethod) { setMsg('err:Zgjidh metodën e pagesës!'); return }
+    if (hasPending) { setMsg('err:Keni tashmë një kërkesë në pritje.'); return }
     setSubmitting(true); setMsg('')
-    const amount = plan === 'monthly' ? 9.99 : 7.99
-    const endDate = new Date()
-    endDate.setMonth(endDate.getMonth() + (plan === 'monthly' ? 1 : 12))
 
-    const [{ error }, { error: reqErr }] = await Promise.all([
-      supabase.from('premium_subscriptions').insert({
-        user_id: user.id,
-        plan,
-        amount_eur: amount,
-        period: plan === 'monthly' ? 1 : 12,
-        end_date: endDate.toISOString(),
-        payment_method: payMethod,
-        status: 'pending',
-      }),
-      supabase.from('premium_requests').insert(
-        { user_id: user.id, plan, status: 'pending' }
-      ),
-    ])
+    const amount = plan === 'monthly' ? AMOUNT_MONTHLY : AMOUNT_YEARLY
+    const days_requested = plan === 'monthly' ? DAYS_MONTHLY : DAYS_YEARLY
+
+    const { error } = await supabase.from('premium_requests').insert({
+      user_id: user.id,
+      plan,
+      payment_method_id: payMethod,
+      amount,
+      days_requested,
+      status: 'pending',
+    })
+
     if (error) { setMsg(`err:${error.message}`); setSubmitting(false); return }
-    await supabase.auth.refreshSession()
+    setHasPending(true)
     setMsg('ok:Kërkesa u dërgua! Admini do ta konfirmojë brenda 24 orësh.')
     setSubmitting(false)
   }
@@ -126,7 +122,6 @@ export default function PremiumPage() {
         .pm-opt i{font-size:20px;color:#888;}
         .pm-opt.active i{color:#E63312;}
         .pm-opt span{font-size:13px;color:#111;font-weight:500;}
-        .pm-icon-map{font-size:20px;}
         .sub-btn{width:100%;background:#E63312;color:#fff;border:none;border-radius:12px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s;}
         .sub-btn:disabled{opacity:.6;cursor:not-allowed;}
         .note{font-size:11px;color:#aaa;text-align:center;margin-top:10px;line-height:1.6;}
@@ -134,6 +129,9 @@ export default function PremiumPage() {
         .already i{font-size:36px;color:#1D9E75;display:block;margin-bottom:8px;}
         .already strong{font-size:15px;font-weight:700;color:#1D9E75;display:block;margin-bottom:4px;}
         .already span{font-size:12px;color:#555;}
+        .pending-box{background:#FAEEDA;border:0.5px solid #F5C842;border-radius:12px;padding:16px;text-align:center;margin-bottom:16px;}
+        .pending-box strong{font-size:14px;font-weight:700;color:#BA7517;display:block;margin-bottom:4px;}
+        .pending-box span{font-size:12px;color:#7a5a1a;}
         .ref-milestone{background:linear-gradient(135deg,#1a0a00,#2d1400);border:1px solid #F5C84255;border-radius:12px;padding:16px;margin-bottom:14px;}
         .ref-m-title{color:#F5C842;font-size:13px;font-weight:700;margin-bottom:4px;}
         .ref-m-sub{color:#888;font-size:11px;margin-bottom:10px;}
@@ -166,19 +164,26 @@ export default function PremiumPage() {
             </div>
           )}
 
+          {hasPending && !profile?.is_premium && (
+            <div className="pending-box">
+              <strong><span aria-hidden="true">⏳</span> Kërkesa juaj është në pritje</strong>
+              <span>Admini do ta konfirmojë brenda 24 orësh. Do të njoftoheni kur llogaria aktivizohet.</span>
+            </div>
+          )}
+
           {msg && <div className={`msg-box ${mt}`} role="alert">{mm}</div>}
 
           <div role="radiogroup" aria-label="Zgjidhni planin" className="plan-row">
             <div role="radio" aria-checked={plan === 'monthly'} tabIndex={0} className={`plan-card ${plan === 'monthly' ? 'active' : ''}`} onClick={() => setPlan('monthly')} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setPlan('monthly') }}>
               <div className="plan-label">MUJOR</div>
-              <div className="plan-price">9.99€</div>
-              <div className="plan-sub">/ muaj</div>
+              <div className="plan-price">{AMOUNT_MONTHLY} ALL</div>
+              <div className="plan-sub">/ muaj · {DAYS_MONTHLY} ditë</div>
             </div>
             <div role="radio" aria-checked={plan === 'yearly'} tabIndex={0} className={`plan-card ${plan === 'yearly' ? 'active' : ''}`} onClick={() => setPlan('yearly')} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setPlan('yearly') }}>
               <div className="plan-label">VJETOR</div>
-              <div className="plan-price">7.99€</div>
-              <div className="plan-sub">/ muaj · 95.88€/vit</div>
-              <div className="plan-badge">Kurseni 20%</div>
+              <div className="plan-price">{AMOUNT_YEARLY} ALL</div>
+              <div className="plan-sub">/ vit · {DAYS_YEARLY} ditë</div>
+              <div className="plan-badge">Kurseni 17%</div>
             </div>
           </div>
 
@@ -192,34 +197,44 @@ export default function PremiumPage() {
             ))}
           </div>
 
-          {payMethods.length > 0 && (
-            <div role="radiogroup" aria-labelledby="pm-label" className="payment-card">
-              <div className="payment-title" id="pm-label">Metoda e pagesës</div>
-              {payMethods.map(m => {
-                const icons: Record<string, string> = { card: 'ti ti-credit-card', paypal: 'ti ti-brand-paypal', bank: 'ti ti-building-bank', mobile: 'ti ti-device-mobile' }
-                return (
-                  <div key={m.id} role="radio" aria-checked={payMethod === m.id} tabIndex={0} className={`pm-opt ${payMethod === m.id ? 'active' : ''}`} onClick={() => setPayMethod(m.id)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setPayMethod(m.id) }}>
-                    <i className={icons[m.type] || 'ti ti-wallet'} aria-hidden="true" />
-                    <span>{m.name}</span>
-                    {payMethod === m.id && <i className="ti ti-circle-check" style={{ marginLeft: 'auto', color: '#E63312' }} aria-hidden="true" />}
-                  </div>
-                )
-              })}
-            </div>
+          {!profile?.is_premium && !hasPending && (
+            <>
+              {payMethods.length > 0 && (
+                <div role="radiogroup" aria-labelledby="pm-label" className="payment-card">
+                  <div className="payment-title" id="pm-label">Metoda e pagesës</div>
+                  {payMethods.map(m => {
+                    const icons: Record<string, string> = { card: 'ti ti-credit-card', paypal: 'ti ti-brand-paypal', bank: 'ti ti-building-bank', mobile: 'ti ti-device-mobile' }
+                    return (
+                      <div key={m.id} role="radio" aria-checked={payMethod === m.id} tabIndex={0} className={`pm-opt ${payMethod === m.id ? 'active' : ''}`} onClick={() => setPayMethod(m.id)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setPayMethod(m.id) }}>
+                        <i className={icons[m.type] || 'ti ti-wallet'} aria-hidden="true" />
+                        <span>{m.name}</span>
+                        {payMethod === m.id && <i className="ti ti-circle-check" style={{ marginLeft: 'auto', color: '#E63312' }} aria-hidden="true" />}
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+
+              <button type="button" className="sub-btn" onClick={subscribe} disabled={submitting}>
+                {submitting ? <><span aria-hidden="true">⏳</span> Duke dërguar...</> : <><span aria-hidden="true">🚀</span> Kërko Premium — {plan === 'monthly' ? `${AMOUNT_MONTHLY} ALL/muaj` : `${AMOUNT_YEARLY} ALL/vit`}</>}
+              </button>
+
+              <p className="note">
+                Pagesa procesohet manualisht nga admini brenda 24 orësh.<br />
+                Do të njoftoheni sapo llogaria juaj aktivizohet.
+              </p>
+            </>
           )}
 
-          <button type="button" className="sub-btn" onClick={subscribe} disabled={submitting || (profile?.is_premium || false)}>
-            {profile?.is_premium ? <><span aria-hidden="true">✅</span> Tashmë Premium</> : submitting ? <><span aria-hidden="true">⏳</span> Duke dërguar...</> : <><span aria-hidden="true">🚀</span> Abonohem — {plan === 'monthly' ? '9.99€/muaj' : '95.88€/vit'}</>}
-          </button>
-
-          <p className="note">
-            Pagesa procesohet manualisht nga admini brenda 24 orësh.<br />
-            Do të njoftoheni sapo llogaria juaj aktivizohet.
-          </p>
+          {profile?.is_premium && (
+            <button type="button" className="sub-btn" disabled style={{ opacity: 0.6 }}>
+              <span aria-hidden="true">✅</span> Tashmë Premium
+            </button>
+          )}
 
           {/* Referral milestone CTA */}
           {user && !profile?.is_premium && (
-            <div className="ref-milestone">
+            <div className="ref-milestone" style={{ marginTop: 16 }}>
               <h2 className="ref-m-title"><span aria-hidden="true">🎁</span> Merr Premium FALAS!</h2>
               <div className="ref-m-sub">Fto {REFERRAL_TARGET} miq dhe fiton 1 muaj Premium pa pagesë.</div>
               <div className="ref-m-bar-bg">

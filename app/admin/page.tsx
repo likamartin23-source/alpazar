@@ -709,7 +709,7 @@ export default function Admin() {
                   {stats.reports}
                 </span>
               )}
-              {id === 'payments' && premiumRequests.filter(r => r.status === 'pending').length > 0 && (
+              {id === 'preq' && premiumRequests.filter(r => r.status === 'pending').length > 0 && (
                 <span style={{ marginLeft: 'auto', background: '#BA7517', color: '#fff', borderRadius: 10, fontSize: 9, fontWeight: 800, padding: '1px 5px' }}>
                   {premiumRequests.filter(r => r.status === 'pending').length}
                 </span>
@@ -782,10 +782,82 @@ export default function Admin() {
                 </>
               )}
 
-              {/* PAYMENTS */}
+              {/* PREMIUM REQUESTS (KOMA 4-c) */}
+              {tab === 'preq' && (
+                <>
+                  <div className="ph">
+                    <div className="pt"><span aria-hidden="true">💳</span> Pagesat Premium</div>
+                    {premiumRequests.filter(r => r.status === 'pending').length > 0 && (
+                      <span style={{ background: '#E63312', color: '#fff', borderRadius: 10, fontSize: 10, fontWeight: 800, padding: '3px 9px' }}>
+                        {premiumRequests.filter(r => r.status === 'pending').length} të reja
+                      </span>
+                    )}
+                  </div>
+                  {payMsg && (
+                    <div style={{ background: payMsg.startsWith('Sukses') ? '#EAF3DE' : '#FFF0EE', border: payMsg.startsWith('Sukses') ? '0.5px solid #97C459' : '0.5px solid #F09595', color: payMsg.startsWith('Sukses') ? '#3B6D11' : '#E63312', fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 8, margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ flex: 1 }}>{payMsg}</span>
+                      <button type="button" aria-label="Mbyll mesazhin" onClick={() => setPayMsg('')} style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', fontSize: 14 }}>✕</button>
+                    </div>
+                  )}
+                  <div className="card">
+                    {premiumRequests.length === 0 ? (
+                      <p style={{ color: '#aaa', fontSize: 12, padding: '12px 0' }}>Asnjë kërkesë premium</p>
+                    ) : (
+                      <table>
+                        <thead>
+                          <tr>
+                            <th scope="col">Përdoruesi</th>
+                            <th scope="col">Plan</th>
+                            <th scope="col">Shuma</th>
+                            <th scope="col">Metoda e Pagesës</th>
+                            <th scope="col">Data</th>
+                            <th scope="col">Statusi</th>
+                            <th scope="col">Veprime</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {premiumRequests.map((r: any) => (
+                            <tr key={r.id}>
+                              <td style={{ fontWeight: 700 }}>{r.profiles?.full_name || r.profiles?.username || '—'}</td>
+                              <td>{r.plan === 'yearly' ? 'Vjetor' : 'Mujor'}</td>
+                              <td style={{ fontWeight: 700, color: '#1D9E75' }}>{r.amount} ALL</td>
+                              <td>{r.payment_methods?.name || '—'}</td>
+                              <td style={{ color: '#888' }}>{new Date(r.created_at).toLocaleDateString('sq-AL')}</td>
+                              <td>
+                                <span className={`badge ${r.status === 'approved' ? 'ba' : r.status === 'pending' ? 'bp' : 'bd'}`}>
+                                  {r.status === 'approved' ? 'Aprovuar' : r.status === 'rejected' ? 'Refuzuar' : 'Në pritje'}
+                                </span>
+                              </td>
+                              <td>
+                                <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                                  {r.status === 'pending' && (
+                                    <>
+                                      <button type="button" className="btn btn-green" onClick={() => handlePremiumRequest(r.id, 'approved', r.user_id, r.days_requested || 30)}>
+                                        <span aria-hidden="true">✅</span> Aprovo
+                                      </button>
+                                      <button type="button" className="btn btn-red" onClick={() => handlePremiumRequest(r.id, 'rejected', r.user_id, r.days_requested || 30)}>
+                                        <span aria-hidden="true">❌</span> Refuzo
+                                      </button>
+                                    </>
+                                  )}
+                                  <button type="button" className="btn btn-orange" onClick={() => giftPremium(r.user_id)}>
+                                    <span aria-hidden="true">🎁</span> Dhuratë
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {/* PAYMENTS (legacy subscriptions) */}
               {tab === 'payments' && (
                 <>
-                  <div className="ph"><div className="pt"><span aria-hidden="true">💳</span> Pagesat</div></div>
+                  <div className="ph"><div className="pt"><span aria-hidden="true">💳</span> Abonimet</div></div>
                   {payMsg && (
                     <div style={{ background: '#FFF0EE', border: '0.5px solid #F09595', color: '#E63312', fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 8, margin: '8px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span style={{ flex: 1 }}><span aria-hidden="true">⚠️</span> {payMsg}</span>
@@ -821,9 +893,9 @@ export default function Admin() {
                             <td>
                               {r.status === 'pending' && (
                                 <>
-                                  <button type="button" className="btn btn-green" onClick={() => handlePremiumRequest(r.id, 'approved', r.user_id, r.plan)}><span aria-hidden="true">✓</span> Aprovo</button>
-                                  <button type="button" className="btn btn-orange" onClick={() => handlePremiumRequest(r.id, 'gifted', r.user_id, r.plan)}><span aria-hidden="true">🎁</span> Dhuratë</button>
-                                  <button type="button" className="btn btn-red" onClick={() => handlePremiumRequest(r.id, 'rejected', r.user_id, r.plan)}><span aria-hidden="true">✕</span> Refuzo</button>
+                                  <button type="button" className="btn btn-green" onClick={() => handlePremiumRequest(r.id, 'approved', r.user_id, r.days_requested || 30)}><span aria-hidden="true">✓</span> Aprovo</button>
+                                  <button type="button" className="btn btn-orange" onClick={() => giftPremium(r.user_id)}><span aria-hidden="true">🎁</span> Dhuratë</button>
+                                  <button type="button" className="btn btn-red" onClick={() => handlePremiumRequest(r.id, 'rejected', r.user_id, r.days_requested || 30)}><span aria-hidden="true">✕</span> Refuzo</button>
                                 </>
                               )}
                             </td>
