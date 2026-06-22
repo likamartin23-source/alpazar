@@ -467,7 +467,7 @@ export default function Auth() {
         if (otpErr) {
           const em = otpErr.message.toLowerCase()
           const notFound = em.includes('not found') || em.includes('not exist') || em.includes('signup') || em.includes('invalid')
-          if (mode === 'forgot' && notFound) {
+          if (notFound && mode === 'login') {
             setMsg('err:Nuk gjetëm llogari me këtë email. Nëse u regjistruat me numër telefoni, hyni direkt me: Numrin tuaj + Fjalëkalimin (nuk kërkohet SMS).')
           } else {
             setMsg('err:Gabim gjatë dërgimit të emailit. Kontrolloni adresën dhe provoni sërish.')
