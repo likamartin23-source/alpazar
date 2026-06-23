@@ -721,7 +721,7 @@ export default function Auth() {
 
   const contactHint = contact.length > 2
     ? cType === 'email'
-      ? <p className="hint ok"><span aria-hidden="true">📧</span> Kodi konfirmimit dërgohet me <strong>email</strong></p>
+      ? <p className="hint ok"><span aria-hidden="true">📧</span> Lidhja e konfirmimit dërgohet me <strong>email</strong></p>
       : cType === 'phone'
         ? smsFailMode
           ? <p className="hint ok"><span aria-hidden="true">📧</span> Numri ruhet — kodi dërgohet me <strong>email</strong></p>
@@ -970,7 +970,7 @@ export default function Auth() {
           {mode === 'register' && step === 'form' && (
             <>
               <h2><span aria-hidden="true">📝</span> Regjistrohu Falas</h2>
-              <p className="sub">Krijo llogarinë tënde — konfirmo me kod</p>
+              <p className="sub">Krijo llogarinë tënde — konfirmo me email ose SMS</p>
 
               <div className="row-2">
                 <div className="field">
@@ -1042,7 +1042,7 @@ export default function Auth() {
               {!smsFailMode ? (
                 <>
                   <button type="button" className="btn" onClick={sendOtp} disabled={loading}>
-                    {loading ? <><span aria-hidden='true'>⏳</span> Duke dërguar kodin...</> : <><span aria-hidden='true'>📨</span> Dërgo Kodin e Konfirmimit</>}
+                    {loading ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : cType === 'email' ? <><span aria-hidden='true'>📨</span> Dërgo Linkun e Konfirmimit</> : <><span aria-hidden='true'>📨</span> Dërgo Kodin e Konfirmimit</>}
                   </button>
                   <div className="sec-row">Ke llogari? &nbsp;<a role="button" tabIndex={0} onClick={() => switchMode('login')} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') switchMode('login') }} style={{ cursor: 'pointer' }}>Hyr →</a></div>
                   <p className="terms">
@@ -1070,7 +1070,7 @@ export default function Auth() {
                       autoFocus />
                   </div>
                   <button type="button" className="btn" onClick={sendOtpViaEmail} disabled={loading}>
-                    {loading ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : <><span aria-hidden='true'>📧</span> Dërgo Kodin në Email</>}
+                    {loading ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : <><span aria-hidden='true'>📧</span> Dërgo Linkun në Email</>}
                   </button>
                   <button type="button" className="btn-ghost" style={{ marginTop: 6 }}
                     onClick={() => { setSmsFailMode(false); setMsg('') }}>
@@ -1136,7 +1136,7 @@ export default function Auth() {
 
               {!smsFailMode ? (
                 <button type="button" className="btn" onClick={sendOtp} disabled={loading}>
-                  {loading ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : <><span aria-hidden='true'>📨</span> Dërgo Kodin e Konfirmimit</>}
+                  {loading ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : cType === 'email' ? <><span aria-hidden='true'>📨</span> Dërgo Linkun e Rivendosjes</> : <><span aria-hidden='true'>📨</span> Dërgo Kodin e Konfirmimit</>}
                 </button>
               ) : null}
 
@@ -1165,7 +1165,7 @@ export default function Auth() {
                     <p className="hint">Duhet të jetë emaili me të cilin u regjistruat.</p>
                   </div>
                   <button type="button" className="btn" onClick={sendOtpViaEmail} disabled={loading}>
-                    {loading ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : <><span aria-hidden='true'>📧</span> Dërgo Kodin në Email</>}
+                    {loading ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : <><span aria-hidden='true'>📧</span> Dërgo Linkun Rivendosjes</>}
                   </button>
                   <button type="button" className="btn-ghost" style={{ marginTop: 6 }}
                     onClick={() => { setSmsFailMode(false); setMsg('') }}>
