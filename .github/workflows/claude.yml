@@ -11,9 +11,6 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
-  # Push direkt në branch → Claude kontrollon dhe rregullon
-  push:
-    branches: ["claude/*"]
 
 permissions:
   contents: write
