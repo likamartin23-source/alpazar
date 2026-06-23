@@ -41,6 +41,7 @@ jobs:
       - uses: anthropics/claude-code-action@beta
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.ALPAZAR_CLAUD_SECRET || secrets.GITHUB_TOKEN }}
 
           # Prompt automatik për push-et (pa trigger phrase)
           direct_prompt: |
