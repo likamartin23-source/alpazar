@@ -119,6 +119,14 @@ export default function AsistentPage() {
     }
   }, [messages.length])
 
+  // Auto-scroll during streaming as content grows
+  useEffect(() => {
+    if (streamingIdx !== null) {
+      const el = msgsRef.current
+      if (el) el.scrollTop = el.scrollHeight
+    }
+  }, [messages, streamingIdx])
+
   const sendMessage = useCallback(async (text?: string) => {
     const content = (text || input).trim()
     if (!content || loading) return
@@ -129,8 +137,11 @@ export default function AsistentPage() {
     setMessages(updated)
     setLoading(true)
     setStreamingIdx(null)
-    // Force scroll to bottom when user sends
-    setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 30)
+    // Scroll only the msgs container, not the whole page
+    setTimeout(() => {
+      const el = msgsRef.current
+      if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
+    }, 30)
 
     // Timeout covers entire operation (32s, server maxDuration is 30s)
     const controller = new AbortController()
