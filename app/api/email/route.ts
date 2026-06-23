@@ -4,6 +4,7 @@ import { createClient } from '@supabase/supabase-js'
 import { rateLimit, getClientIp } from '../../../lib/rateLimit'
 import { SITE_URL } from '../../../lib/siteConfig'
 import { SUPABASE_URL, SUPABASE_ANON_KEY as SUPABASE_ANON } from '../../../lib/supabase'
+import { getSupabaseAdmin } from '../../../lib/supabase-admin'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,13 +25,13 @@ async function getResend(): Promise<{ client: Resend; from: string } | null> {
   if (!apiKey) {
     try {
       // Use service role so anon key cannot reach admin_settings
-      const db = createClient(SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY!)
+      const db = getSupabaseAdmin()
       const { data } = await db
         .from('admin_settings')
         .select('key, value')
         .in('key', ['resend_api_key', 'resend_from_email'])
       if (data) {
-        for (const row of data) {
+        for (const row of data as { key: string; value: string }[]) {
           if (row.key === 'resend_api_key')    apiKey    = row.value
           if (row.key === 'resend_from_email') fromEmail = row.value
         }
