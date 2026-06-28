@@ -30,6 +30,12 @@ END $$;
 GRANT EXECUTE ON FUNCTION public.increment_listing_views(p_listing_id uuid, p_viewer_id uuid, p_ip_hash text) TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.get_unread_count(p_user_id uuid) TO authenticated;
 
+-- 2b. is_admin() is referenced inside RLS policies (notifications, premium_requests, …).
+--     RLS expressions run with the querying role's privileges, so anon/authenticated
+--     MUST keep EXECUTE or those tables deny all access. Safe: SECURITY DEFINER helper
+--     that only returns whether the caller is admin (no escalation).
+GRANT EXECUTE ON FUNCTION public.is_admin() TO anon, authenticated;
+
 -- 3. Pin mutable search_path on the flagged functions.
 ALTER FUNCTION public.set_businesses_updated_at()          SET search_path = public, pg_temp;
 ALTER FUNCTION public.update_premium_requests_updated_at() SET search_path = public, pg_temp;
