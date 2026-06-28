@@ -1,0 +1,114 @@
+name: Setup Vercel Env + Redeploy
+
+# Atomik: lexon çelësat nga GitHub Secrets dhe i vendos në Vercel
+# (production + preview + development) me upsert, pastaj bën redeploy në prod.
+#
+# Kërkon GitHub Secret: VERCEL_TOKEN
+# Lexon (nëse ekzistojnë): GROQ_API_KEY, ANTHROPIC_API_KEY,
+#   NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY,
+#   SUPABASE_SERVICE_ROLE_KEY, ADMIN_PIN
+#
+# Përdorim: Actions → "Setup Vercel Env + Redeploy" → Run workflow
+# (ose triggerohet nga Claude Code përmes GitHub MCP)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  VC_PROJECT: prj_KNCEtuUDGNCA6ulHomdKniNAZEuX
+  VC_TEAM: team_Kkg5W4qnF2t5CQZj64ZS8xbz
+
+jobs:
+  setup:
+    name: Push env vars to Vercel
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Validate VERCEL_TOKEN
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "::error::VERCEL_TOKEN GitHub Secret mungon. Shtoje te Settings → Secrets → Actions."
+            exit 1
+          fi
+          echo "VERCEL_TOKEN present ✓"
+
+      - name: Upsert env vars to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          ADMIN_PIN: ${{ secrets.ADMIN_PIN }}
+        run: |
+          set -euo pipefail
+
+          upsert() {
+            local KEY="$1"
+            local VAL="$2"
+            if [ -z "$VAL" ]; then
+              echo "  ⏭  $KEY (secret bosh — kapërcyer)"
+              return 0
+            fi
+            # upsert=true: krijon ose përditëson pa konflikt
+            local CODE
+            CODE=$(curl -s -o /tmp/resp.json -w "%{http_code}" \
+              -X POST "https://api.vercel.com/v10/projects/${VC_PROJECT}/env?teamId=${VC_TEAM}&upsert=true" \
+              -H "Authorization: Bearer ${VERCEL_TOKEN}" \
+              -H "Content-Type: application/json" \
+              -d "$(jq -n --arg k "$KEY" --arg v "$VAL" \
+                    '{key:$k, value:$v, type:"encrypted", target:["production","preview","development"]}')")
+            if [ "$CODE" = "200" ] || [ "$CODE" = "201" ]; then
+              echo "  ✅ $KEY"
+            else
+              echo "  ❌ $KEY (HTTP $CODE): $(cat /tmp/resp.json)"
+            fi
+          }
+
+          echo "── Vercel Env Vars ─────────────────────────"
+          upsert NEXT_PUBLIC_SUPABASE_URL       "$NEXT_PUBLIC_SUPABASE_URL"
+          upsert NEXT_PUBLIC_SUPABASE_ANON_KEY  "$NEXT_PUBLIC_SUPABASE_ANON_KEY"
+          upsert GROQ_API_KEY                   "$GROQ_API_KEY"
+          upsert ANTHROPIC_API_KEY              "$ANTHROPIC_API_KEY"
+          upsert SUPABASE_SERVICE_ROLE_KEY      "$SUPABASE_SERVICE_ROLE_KEY"
+          upsert ADMIN_PIN                      "$ADMIN_PIN"
+
+      - name: List configured env keys (names only)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          echo "── Env keys aktualë në Vercel ──────────────"
+          curl -s "https://api.vercel.com/v10/projects/${VC_PROJECT}/env?teamId=${VC_TEAM}" \
+            -H "Authorization: Bearer ${VERCEL_TOKEN}" \
+            | jq -r '.envs[] | "  • \(.key)  [\(.target | join(","))]"' | sort -u
+
+      - name: Trigger production redeploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          echo "── Redeploy prod (main) ────────────────────"
+          CODE=$(curl -s -o /tmp/dep.json -w "%{http_code}" \
+            -X POST "https://api.vercel.com/v13/deployments?teamId=${VC_TEAM}" \
+            -H "Authorization: Bearer ${VERCEL_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n --arg p "$VC_PROJECT" '{
+              name:"alpazar",
+              project:$p,
+              target:"production",
+              gitSource:{type:"github", org:"likamartin23-source", repo:"alpazar", ref:"main"}
+            }')")
+          if [ "$CODE" = "200" ] || [ "$CODE" = "201" ]; then
+            echo "  ✅ Redeploy nisur: $(jq -r '.url // .id' /tmp/dep.json)"
+          else
+            echo "  ⚠ Redeploy HTTP $CODE: $(cat /tmp/dep.json)"
+            echo "  (Env vars u vendosën; bëj një push në main për të rifreskuar deploy-n.)"
+          fi
