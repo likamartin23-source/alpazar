@@ -13,6 +13,9 @@ name: Setup Vercel Env + Redeploy
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/setup-vercel-env.yml']
 
 permissions:
   contents: read
