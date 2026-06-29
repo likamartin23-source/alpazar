@@ -287,13 +287,23 @@ export default function Home() {
   )
 
   useEffect(() => {
-    try {
-      const rv = JSON.parse(localStorage.getItem('_alpazar_rv') || '[]')
-      if (Array.isArray(rv) && rv.length > 0) {
-        const unique = rv.filter((x: any, i: number, a: any[]) => a.findIndex((y: any) => y.id === x.id) === i)
-        setRecentlyViewed(unique)
-      }
-    } catch { /* ignore */ }
+    ;(async () => {
+      let rv: any[] = []
+      try { rv = JSON.parse(localStorage.getItem('_alpazar_rv') || '[]') } catch { rv = [] }
+      if (!Array.isArray(rv) || rv.length === 0) return
+      // de-dup by id
+      const seen = new Set<string>()
+      rv = rv.filter((x: any) => x && x.id && !seen.has(x.id) && (seen.add(x.id), true))
+      // drop entries whose listing was deleted / deactivated, so "fshira" disappear
+      try {
+        const ids = rv.map((x: any) => x.id)
+        const { data } = await supabase.from('listings').select('id').in('id', ids).eq('is_active', true)
+        const active = new Set((data || []).map((r: any) => r.id))
+        rv = rv.filter((x: any) => active.has(x.id))
+        localStorage.setItem('_alpazar_rv', JSON.stringify(rv.slice(0, 8)))
+      } catch { /* if validation fails, keep the de-duped cache */ }
+      setRecentlyViewed(rv)
+    })()
     saveRefFromUrl()
     fetchAll()
 
@@ -421,6 +431,14 @@ export default function Home() {
   const go = (path: string) => { window.location.href = path }
 
   const SHOP_COLORS = ['#3B82F6', '#EF4444', '#10B981', '#8B5CF6', '#F59E0B', '#06B6D4']
+
+  // "Rishikimet e fundit" must not repeat listings already shown in the main
+  // grid below (no "postime 2 fishta"), and never show the same id twice.
+  const recentUnique = recentlyViewed.filter(
+    (item, i, a) =>
+      a.findIndex(x => x.id === item.id) === i &&
+      !listings.some(l => l.id === item.id),
+  )
 
   return (
     <>
@@ -796,14 +814,14 @@ export default function Home() {
           </div>
 
           {/* Recently viewed listings */}
-          {recentlyViewed.length > 0 && (
+          {recentUnique.length > 0 && (
             <div style={{ marginBottom: 12 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px', marginBottom: 10 }}>
                 <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: '#111' }}><span aria-hidden="true">👁</span> Rishikimet e fundit</h3>
                 <button type="button" onClick={() => { localStorage.removeItem('_alpazar_rv'); setRecentlyViewed([]) }} style={{ background: 'none', border: 'none', fontSize: 10, color: '#aaa', cursor: 'pointer', fontFamily: 'inherit' }}>Pastro</button>
               </div>
               <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, scrollbarWidth: 'none' }}>
-                {recentlyViewed.map(item => {
+                {recentUnique.map(item => {
                   const price = item.currency === 'EUR'
                     ? `€${Number(item.price).toLocaleString('sq-AL')}`
                     : `${Number(item.price).toLocaleString('sq-AL')} L`

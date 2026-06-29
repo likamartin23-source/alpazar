@@ -88,6 +88,7 @@ export default function ProfilePage() {
 
   // Listing deletion inline confirm
   const [pendingDelete, setPendingDelete] = useState<string | null>(null)
+  const [listErr, setListErr] = useState('')
 
   // Cover + Avatar upload
   const [coverUploading, setCoverUploading] = useState(false)
@@ -341,8 +342,22 @@ export default function ProfilePage() {
   }
 
   async function deleteListing(id: string) {
-    const { error } = await supabase.from('listings').update({ is_active: false }).eq('id', id)
-    if (!error) { setMyListings(ls => ls.filter(l => l.id !== id)); setPendingDelete(null) }
+    setListErr('')
+    // .select() returns the affected rows — empty means RLS blocked the update
+    // (otherwise the button would silently do nothing).
+    const { data, error } = await supabase
+      .from('listings').update({ is_active: false }).eq('id', id).select('id')
+    if (error || !data || data.length === 0) {
+      setListErr(error?.message || 'Nuk u fshi dot shpallja. Provo sërish ose kontakto support@alpazar.al.')
+      return
+    }
+    setMyListings(ls => ls.filter(l => l.id !== id))
+    setPendingDelete(null)
+    // Drop it from the "Rishikimet e fundit" cache so it disappears from the homepage too.
+    try {
+      const rv = JSON.parse(localStorage.getItem('_alpazar_rv') || '[]')
+      localStorage.setItem('_alpazar_rv', JSON.stringify(rv.filter((x: any) => x.id !== id)))
+    } catch { /* ignore */ }
   }
 
   function canBump(lastBumped: string | null): boolean {
@@ -894,6 +909,9 @@ export default function ProfilePage() {
                   <span className="card-title">Shpalljet e mia ({myListings.filter(l => l.is_active).length})</span>
                   <button type="button" className="edit-btn" onClick={() => window.location.href = '/listing/new'}>+ Shto</button>
                 </div>
+                {listErr && (
+                  <div role="alert" style={{ background: '#FEECEC', color: '#B42318', border: '1px solid #F5C2C2', borderRadius: 8, padding: '8px 10px', fontSize: 12, marginBottom: 10 }}>{listErr}</div>
+                )}
                 {myListings.filter(l => l.is_active).length === 0 ? (
                   <div style={{ textAlign: 'center', padding: '24px 0', color: '#aaa', fontSize: 12 }}>
                     <i className="ti ti-package" style={{ fontSize: 36, display: 'block', marginBottom: 10, color: '#F5C842' }} aria-hidden="true" />
