@@ -265,9 +265,13 @@ export async function POST(req: NextRequest) {
   const groqStream = await tryGroqStream(convo, systemPrompt)
   if (groqStream) return groqStream
 
-  // 2. Anthropic Claude — fallback non-streaming
+  // 2. Anthropic Claude — fallback non-streaming.
+  //    Disabled by default: the Anthropic account has no credit, so calling it
+  //    only adds latency and pollutes runtime error tracking with 400 "credit
+  //    balance too low" entries. Re-enable instantly by setting the env var
+  //    ANTHROPIC_FALLBACK_ENABLED=true once credits are added.
   const anthropicKey = process.env.ANTHROPIC_API_KEY
-  if (anthropicKey) {
+  if (anthropicKey && process.env.ANTHROPIC_FALLBACK_ENABLED === 'true') {
     try {
       const client = new Anthropic({ apiKey: anthropicKey, timeout: 25000 })
       const response = await client.messages.create({
@@ -279,7 +283,13 @@ export async function POST(req: NextRequest) {
       const reply = response.content[0]?.type === 'text' ? response.content[0].text : null
       if (reply) return NextResponse.json({ reply })
     } catch (err: any) {
-      console.error('Anthropic error:', err?.status, err?.message ?? err)
+      const msg = err?.message ?? String(err)
+      // Known/expected when the account is out of credit — keep it out of error tracking.
+      if (err?.status === 400 && /credit balance/i.test(msg)) {
+        console.warn('Anthropic fallback skipped (no credit) — serving FAQ')
+      } else {
+        console.error('Anthropic error:', err?.status, msg)
+      }
     }
   }
 
