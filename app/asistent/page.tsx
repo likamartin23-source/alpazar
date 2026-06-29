@@ -105,6 +105,15 @@ export default function AsistentPage() {
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const msgsRef = useRef<HTMLDivElement>(null)
   const prevMsgCountRef = useRef(0)
+  // True when the user is already near the bottom. Only then do we auto-scroll,
+  // so streaming tokens never yank the viewport while the user reads history.
+  const atBottomRef = useRef(true)
+
+  const onMsgsScroll = useCallback(() => {
+    const el = msgsRef.current
+    if (!el) return
+    atBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80
+  }, [])
 
   useEffect(() => {
     setIsPWA(window.matchMedia('(display-mode: standalone)').matches)
@@ -114,14 +123,16 @@ export default function AsistentPage() {
     const count = messages.length
     if (count > prevMsgCountRef.current) {
       prevMsgCountRef.current = count
+      if (!atBottomRef.current) return
       const el = msgsRef.current
       if (el) el.scrollTop = el.scrollHeight
     }
   }, [messages.length])
 
-  // Auto-scroll during streaming as content grows
+  // Auto-scroll during streaming as content grows — but only if the user is
+  // already at the bottom, so they can freely scroll up to read earlier messages.
   useEffect(() => {
-    if (streamingIdx !== null) {
+    if (streamingIdx !== null && atBottomRef.current) {
       const el = msgsRef.current
       if (el) el.scrollTop = el.scrollHeight
     }
@@ -137,6 +148,8 @@ export default function AsistentPage() {
     setMessages(updated)
     setLoading(true)
     setStreamingIdx(null)
+    // The user just sent a message — they want to follow the reply.
+    atBottomRef.current = true
     // Scroll only the msgs container, not the whole page
     setTimeout(() => {
       const el = msgsRef.current
@@ -310,7 +323,7 @@ export default function AsistentPage() {
           <button type="button" className="clear-btn" aria-label="Pastro bisedën" onClick={clearChat}>🗑 Pastro</button>
         </div>
 
-        <div className="msgs" ref={msgsRef}>
+        <div className="msgs" ref={msgsRef} onScroll={onMsgsScroll}>
           {!isPWA && messages.length <= 2 && (
             <div className="web-banner">
               <div className="wb-icon" aria-hidden="true"><i className="ti ti-device-mobile" /></div>
