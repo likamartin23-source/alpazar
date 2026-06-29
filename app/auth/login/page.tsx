@@ -3,30 +3,12 @@
 export const dynamic = 'force-dynamic'
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../../../lib/supabase'
+import { detectType, toE164 } from '../../../lib/authHelpers'
 
 type Mode = 'login' | 'register' | 'forgot'
 type Step = 'form' | 'otp' | 'new-pass' | 'totp' | 'link-sent'
 
 const FN_URL = 'https://sopafwfkrxpcdaljddoh.supabase.co/functions/v1'
-
-function detectType(val: string): 'email' | 'phone' | 'unknown' {
-  if (val.includes('@')) return 'email'
-  const clean = val.replace(/[\s\-().]/g, '')
-  if (/^\+\d{7,15}$/.test(clean)) return 'phone'
-  if (/^00\d{9,14}$/.test(clean)) return 'phone'
-  if (/^0[67]\d{7,}$/.test(clean)) return 'phone'
-  if (/^[67]\d{7,}$/.test(clean)) return 'phone'
-  return 'unknown'
-}
-
-function toE164(phone: string): string {
-  const clean = phone.replace(/[\s\-().]/g, '')
-  if (clean.startsWith('+')) return clean
-  if (clean.startsWith('00')) return '+' + clean.slice(2)
-  if (/^0[67]\d{7,}$/.test(clean)) return '+355' + clean.slice(1)
-  if (/^[67]\d{7,}$/.test(clean)) return '+355' + clean
-  return '+' + clean
-}
 
 function fmt2(n: number) { return String(n).padStart(2, '0') }
 

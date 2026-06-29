@@ -21,3 +21,7 @@ skills-lock.json
 .claude/skills/
 .playwright-mcp/
 alpazar-playwright.png
+
+# Test artifacts (generated)
+test-results/
+playwright-report/
