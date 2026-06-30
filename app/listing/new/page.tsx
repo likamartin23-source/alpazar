@@ -109,7 +109,7 @@ export default function NewListing() {
       const res = await fetch('/api/ai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [{ role: 'user', content: userMsg }] }),
+        body: JSON.stringify({ messages: [{ role: 'user', content: userMsg }], stream: false }),
       })
       if (!res.ok) throw new Error('api_error')
       const json = await res.json()
@@ -136,7 +136,7 @@ export default function NewListing() {
       const res = await fetch('/api/ai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [{ role: 'user', content: userMsg }] }),
+        body: JSON.stringify({ messages: [{ role: 'user', content: userMsg }], stream: false }),
       })
       if (!res.ok) throw new Error('api_error')
       const json = await res.json()

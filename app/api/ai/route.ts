@@ -256,6 +256,34 @@ async function tryGroqStream(
   })
 }
 
+/* ── Groq non-streaming (JSON) — for callers that want a single {reply} ──
+   (e.g. the "suggest price" / "generate description" helpers on the new-listing
+   form, which read res.json() and cannot consume an SSE stream). ─────────── */
+async function tryGroqJSON(convo: any[], systemPrompt: string): Promise<string | null> {
+  const groqKey = process.env.GROQ_API_KEY
+  if (!groqKey) return null
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${groqKey}` },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [{ role: 'system', content: systemPrompt }, ...convo],
+        max_tokens: 1500,
+        temperature: 0.7,
+        stream: false,
+      }),
+      signal: AbortSignal.timeout(25000),
+    })
+    if (!res.ok) { console.error('Groq JSON error:', res.status); return null }
+    const data = await res.json()
+    return data.choices?.[0]?.message?.content?.trim() || null
+  } catch (e) {
+    console.error('Groq JSON fetch error:', e)
+    return null
+  }
+}
+
 export async function POST(req: NextRequest) {
   const ip = getClientIp(req)
   const rl = rateLimit(`ai:${ip}`, { limit: 20, windowMs: 60_000 })
@@ -284,6 +312,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Mesazhi është shumë i gjatë (max 2000 karaktere)' }, { status: 400 })
   }
 
+  // Callers can opt out of SSE streaming (stream:false) to get a single JSON
+  // { reply } — used by the new-listing AI helpers (price / description).
+  const wantStream = body?.stream !== false
+
   const lastUserMsg: string = [...messages].reverse().find((m: any) => m.role === 'user')?.content ?? ''
   const convo = sanitizeConvo(messages)
   if (convo.length === 0) return NextResponse.json({ reply: localFallback(lastUserMsg) })
@@ -291,9 +323,14 @@ export async function POST(req: NextRequest) {
   const liveCtx = await getLiveContext(lastUserMsg)
   const systemPrompt = buildSystemPrompt(liveCtx)
 
-  // 1. Groq — streaming SSE, falas (llama-3.3-70b, 100K token/ditë)
-  const groqStream = await tryGroqStream(convo, systemPrompt)
-  if (groqStream) return groqStream
+  // 1. Groq — falas (llama-3.3-70b, 100K token/ditë)
+  if (wantStream) {
+    const groqStream = await tryGroqStream(convo, systemPrompt)
+    if (groqStream) return groqStream
+  } else {
+    const groqReply = await tryGroqJSON(convo, systemPrompt)
+    if (groqReply) return NextResponse.json({ reply: groqReply })
+  }
 
   // 2. Anthropic Claude — fallback non-streaming.
   //    Disabled by default: the Anthropic account has no credit, so calling it

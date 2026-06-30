@@ -4,43 +4,88 @@ import { supabase } from './supabase'
 
 export interface UploadProgress { done: number; total: number; currentName?: string }
 
-async function compress(file: File): Promise<Blob> {
-  if (file.size < 250 * 1024 || file.type === 'image/gif') return file
+const MAX_DIM = 1600
+
+function canvasToJpeg(canvas: HTMLCanvasElement, q: number): Promise<Blob | null> {
+  return new Promise(r => canvas.toBlob(b => r(b), 'image/jpeg', q))
+}
+
+// Classic <img> decode path (fallback when createImageBitmap is unavailable).
+function compressViaImage(file: File): Promise<Blob> {
   return new Promise(resolve => {
     const img = new Image()
     const objUrl = URL.createObjectURL(file)
-    img.onload = () => {
+    img.onload = async () => {
       URL.revokeObjectURL(objUrl)
-      const MAX = 1920
-      const scale = Math.min(1, MAX / Math.max(img.naturalWidth, img.naturalHeight))
+      const scale = Math.min(1, MAX_DIM / Math.max(img.naturalWidth, img.naturalHeight))
       const w = Math.round(img.naturalWidth * scale)
       const h = Math.round(img.naturalHeight * scale)
       const canvas = document.createElement('canvas')
       canvas.width = w; canvas.height = h
-      canvas.getContext('2d')!.drawImage(img, 0, 0, w, h)
-      canvas.toBlob(b => resolve(b ?? file), 'image/jpeg', 0.82)
+      const ctx = canvas.getContext('2d')
+      if (!ctx) { resolve(file); return }
+      ctx.drawImage(img, 0, 0, w, h)
+      const blob = await canvasToJpeg(canvas, 0.78)
+      resolve(blob && blob.size < file.size ? blob : file)
     }
     img.onerror = () => { URL.revokeObjectURL(objUrl); resolve(file) }
     img.src = objUrl
   })
 }
 
-async function uploadWithRetry(path: string, blob: Blob, attempts = 3): Promise<string | null> {
+// Shrink + recompress so payloads are small enough to survive weak mobile links.
+// Prefers createImageBitmap (correct EXIF orientation, lower memory on phones).
+async function compress(file: File): Promise<Blob> {
+  if (file.type === 'image/gif') return file
+  if (file.size < 150 * 1024) return file
+  try {
+    let bmp: ImageBitmap
+    try { bmp = await createImageBitmap(file, { imageOrientation: 'from-image' } as any) }
+    catch { bmp = await createImageBitmap(file) }
+    const scale = Math.min(1, MAX_DIM / Math.max(bmp.width, bmp.height))
+    const w = Math.round(bmp.width * scale)
+    const h = Math.round(bmp.height * scale)
+    const canvas = document.createElement('canvas')
+    canvas.width = w; canvas.height = h
+    const ctx = canvas.getContext('2d')
+    if (!ctx) { bmp.close?.(); return file }
+    ctx.drawImage(bmp, 0, 0, w, h)
+    bmp.close?.()
+    let blob = await canvasToJpeg(canvas, 0.78)
+    // second, harder pass if still heavy (keeps mobile uploads reliable)
+    if (blob && blob.size > 1.5 * 1024 * 1024) {
+      const smaller = await canvasToJpeg(canvas, 0.6)
+      if (smaller && smaller.size < blob.size) blob = smaller
+    }
+    return blob && blob.size < file.size ? blob : file
+  } catch {
+    return compressViaImage(file)
+  }
+}
+
+function friendlyUploadError(msg: string): string {
+  if (/failed to fetch|network|timed? ?out|load failed|connection/i.test(msg))
+    return 'Rrjeti u ndërpre gjatë ngarkimit. Provo me Wi-Fi ose provo sërish.'
+  return msg
+}
+
+async function uploadWithRetry(path: string, blob: Blob, attempts = 4): Promise<string | null> {
   for (let i = 0; i < attempts; i++) {
     try {
       const uploadPromise = supabase.storage
         .from('listing-images')
         .upload(path, blob, { contentType: blob.type || 'image/jpeg', upsert: true })
       const timeoutPromise = new Promise<{ error: Error }>(resolve =>
-        setTimeout(() => resolve({ error: new Error('Upload timed out (30s). Provo sërisht.') }), 30000)
+        setTimeout(() => resolve({ error: new Error('Upload timed out') }), 45000)
       )
       const result = await Promise.race([uploadPromise, timeoutPromise]) as any
       if (!result.error) return null
-      if (i === attempts - 1) return result.error.message
+      if (i === attempts - 1) return friendlyUploadError(String(result.error.message || ''))
     } catch (e: any) {
-      if (i === attempts - 1) return e?.message ?? 'Lidhje dështoi'
+      if (i === attempts - 1) return friendlyUploadError(String(e?.message ?? 'Lidhje dështoi'))
     }
-    if (i < attempts - 1) await new Promise(r => setTimeout(r, 1200 * (i + 1)))
+    // exponential-ish backoff: 1.5s, 3s, 4.5s
+    if (i < attempts - 1) await new Promise(r => setTimeout(r, 1500 * (i + 1)))
   }
   return 'Tejkaloi numrin maksimal të tentativave'
 }
