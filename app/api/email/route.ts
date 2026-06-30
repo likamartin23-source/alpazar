@@ -211,6 +211,81 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, id: data?.id })
     }
 
+    // ── otp: 6-digit email code for register/login (generated server-side) ──
+    // We generate the code via Supabase admin generateLink (properties.email_otp)
+    // and deliver it ourselves via Resend — no dependency on the Supabase email
+    // template. The client then verifies it with supabase.auth.verifyOtp(magiclink).
+    if (type === 'otp') {
+      const email = String(body.email ?? '').trim().toLowerCase()
+      const mode = body.mode === 'register' ? 'register' : 'login'
+      const password = typeof body.password === 'string' ? body.password : ''
+      const fullName = String(body.full_name ?? '').trim().slice(0, 120)
+      const age = body.age != null && body.age !== '' ? parseInt(String(body.age)) : null
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return NextResponse.json({ error: 'Email i pavlefshëm' }, { status: 400 })
+      }
+      // throttle: 1 code / 45s per email, 6 / min per IP
+      const rlEmail = rateLimit(`email:otp:${email}`, { limit: 1, windowMs: 45_000 })
+      if (!rlEmail.allowed) {
+        return NextResponse.json(
+          { error: `Prit ${Math.ceil(rlEmail.resetIn / 1000)}s para se të kërkosh kod tjetër.` },
+          { status: 429, headers: { 'Retry-After': String(Math.ceil(rlEmail.resetIn / 1000)) } },
+        )
+      }
+      const rlIp = rateLimit(`email:otp:ip:${ip}`, { limit: 6, windowMs: 60_000 })
+      if (!rlIp.allowed) return NextResponse.json({ error: 'Shumë kërkesa.' }, { status: 429 })
+
+      const admin = getSupabaseAdmin()
+
+      if (mode === 'register') {
+        if (!password || password.length < 6) {
+          return NextResponse.json({ error: 'Fjalëkalimi duhet të paktën 6 karaktere.' }, { status: 400 })
+        }
+        // Create the (unconfirmed) user so a magic-link OTP can be issued.
+        // Ignore "already registered" — generateLink below still works for them.
+        await admin.auth.admin.createUser({
+          email,
+          password,
+          email_confirm: false,
+          user_metadata: { ...(fullName ? { full_name: fullName } : {}), ...(age ? { age } : {}) },
+        }).catch(() => {})
+      }
+
+      const { data: linkData, error: linkErr } =
+        await admin.auth.admin.generateLink({ type: 'magiclink', email })
+      const code = (linkData as any)?.properties?.email_otp
+      if (linkErr || !code) {
+        const em = (linkErr?.message ?? '').toLowerCase()
+        if (mode === 'login' && (em.includes('not') || em.includes('exist') || em.includes('found'))) {
+          return NextResponse.json({ error: 'Nuk gjetëm llogari me këtë email. Regjistrohu fillimisht.' }, { status: 400 })
+        }
+        return NextResponse.json({ error: 'Nuk u gjenerua dot kodi. Provo sërish.' }, { status: 500 })
+      }
+
+      const r = await getResend()
+      if (!r) return NextResponse.json({ error: 'email_not_configured' }, { status: 503 })
+
+      const { error: sendErr } = await r.client.emails.send({
+        from: r.from,
+        to: email,
+        subject: `${code} — Kodi yt i konfirmimit Alpazar`,
+        html: `
+          <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;">
+            <div style="background:#111;padding:20px;border-radius:12px 12px 0 0;text-align:center;">
+              <h1 style="color:#F5C842;font-size:24px;letter-spacing:3px;margin:0;">ALPAZAR</h1>
+            </div>
+            <div style="background:#fff;border:1px solid #eee;border-top:none;padding:28px;border-radius:0 0 12px 12px;text-align:center;">
+              <p style="color:#666;font-size:14px;margin:0 0 16px;">Kodi yt i konfirmimit:</p>
+              <div style="font-size:34px;font-weight:800;letter-spacing:10px;color:#111;background:#FFFBEA;border:1px dashed #F5C842;border-radius:10px;padding:14px 0;">${esc(code)}</div>
+              <p style="color:#aaa;font-size:12px;margin:18px 0 0;">Skadon për pak minuta. Nëse nuk e kërkove ti, injoroje këtë email.</p>
+            </div>
+          </div>`,
+      })
+      if (sendErr) return NextResponse.json({ error: sendErr.message }, { status: 500 })
+      return NextResponse.json({ success: true })
+    }
+
     return NextResponse.json({ error: 'Tip i panjohur emaili' }, { status: 400 })
 
   } catch (err: any) {

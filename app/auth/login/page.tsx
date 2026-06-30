@@ -353,7 +353,7 @@ export default function Auth() {
           return
         }
 
-        // Register / login: store pending data in localStorage, send magic link
+        // Register / login: send a 6-digit CODE via our server (Resend).
         if (mode === 'register') {
           localStorage.setItem('alpazar_reg_pending', JSON.stringify({
             full_name: fullName || null,
@@ -361,6 +361,31 @@ export default function Auth() {
             password: regPass || null,
           }))
         }
+        const otpRes = await fetch('/api/email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'otp', email: id, mode,
+            password: mode === 'register' ? regPass : undefined,
+            full_name: fullName || undefined,
+            age: parseInt(age) || undefined,
+          }),
+        })
+        const otpJson = await otpRes.json().catch(() => ({}))
+        if (otpRes.ok && otpJson.success) {
+          setStep('otp'); startCountdown(); setOtp(['', '', '', '', '', ''])
+          setMsg(`info:Kodi u dërgua te 📧 ${id} — kontrollo Spam/Junk nëse nuk e gjen`)
+          setTimeout(() => inputRefs.current[0]?.focus(), 150)
+          setLoading(false)
+          return
+        }
+        if (otpRes.status !== 503) {
+          if (mode === 'register') localStorage.removeItem('alpazar_reg_pending')
+          setMsg(`err:${otpJson.error || 'Gabim gjatë dërgimit të kodit. Provo sërish.'}`)
+          setLoading(false)
+          return
+        }
+        // 503 = email service not configured → fall back to magic-link flow (still works)
         const { error: otpErr } = await supabase.auth.signInWithOtp({
           email: id,
           options: {
@@ -480,7 +505,9 @@ export default function Auth() {
         const { data: vd, error: vErr } = await supabase.auth.verifyOtp({
           email: resolvedId,
           token: code,
-          type: mode === 'register' ? 'signup' : 'email',
+          // Codes are issued via admin generateLink(magiclink) and relayed by our
+          // server, so they verify as 'magiclink' for both register and login.
+          type: 'magiclink',
         })
         if (vErr || !vd.session) {
           blockAuthRedirectRef.current = false
