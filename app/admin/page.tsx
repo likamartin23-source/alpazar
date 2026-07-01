@@ -442,6 +442,67 @@ function TakedownTab() {
   )
 }
 
+/* ─── AI Health: gabime prodhimi + diagnozë AI (Groq) ─────────── */
+function AIHealthTab() {
+  const [events, setEvents] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [err, setErr] = useState('')
+
+  const load = useCallback(async () => {
+    setLoading(true); setErr('')
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const token = session?.access_token
+      if (!token) { setErr('Sesioni ka skaduar.'); setLoading(false); return }
+      const res = await fetch('/api/monitor', { headers: { Authorization: `Bearer ${token}` } })
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) { setErr(json.error || 'Gabim gjatë ngarkimit.'); setEvents([]) }
+      else setEvents(json.events || [])
+    } catch { setErr('Gabim lidhjeje.') }
+    setLoading(false)
+  }, [])
+
+  useEffect(() => { load() }, [load])
+
+  const sevColor = (s: string) =>
+    s === 'critical' ? '#B42318' : s === 'high' ? '#E63312' : s === 'medium' ? '#A05000' : '#1D9E75'
+
+  return (
+    <>
+      <div className="ph">
+        <div className="pt"><span aria-hidden="true">🩺</span> AI Health — Monitorim në kohë reale</div>
+        <button type="button" className="edit-btn" onClick={load} disabled={loading}>
+          {loading ? 'Duke ngarkuar…' : '↻ Rifresko'}
+        </button>
+      </div>
+      {err && <div role="alert" style={{ background: '#FEECEC', color: '#B42318', border: '1px solid #F5C2C2', borderRadius: 8, padding: '8px 10px', fontSize: 12, marginBottom: 10 }}>{err}</div>}
+      {!loading && events.length === 0 && !err && (
+        <div style={{ textAlign: 'center', padding: '28px 0', color: '#1D9E75', fontSize: 13 }}>
+          <div style={{ fontSize: 34, marginBottom: 8 }} aria-hidden="true">✅</div>
+          Asnjë gabim i kapur. Platforma është e shëndetshme.
+        </div>
+      )}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {events.map(ev => (
+          <div key={ev.id} className="card" style={{ padding: 12, borderLeft: `4px solid ${sevColor(ev.severity)}` }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
+              <span style={{ background: sevColor(ev.severity), color: '#fff', fontSize: 10, fontWeight: 800, padding: '2px 8px', borderRadius: 6, textTransform: 'uppercase' }}>{ev.severity || 'new'}</span>
+              {ev.category && <span style={{ fontSize: 11, color: '#555', fontWeight: 600 }}>{ev.category}</span>}
+              <span style={{ fontSize: 10, color: '#aaa' }}>×{ev.count} · {ev.source}</span>
+              {ev.is_actionable && <span style={{ fontSize: 10, color: '#1D9E75', fontWeight: 700 }}>● e rregullueshme</span>}
+              <span style={{ marginLeft: 'auto', fontSize: 10, color: '#bbb' }}>{ev.last_seen_at ? new Date(ev.last_seen_at).toLocaleString('sq-AL') : ''}</span>
+            </div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: '#111', wordBreak: 'break-word' }}>{ev.message}</div>
+            {ev.url && <div style={{ fontSize: 10, color: '#888', marginTop: 2 }}>{ev.url}</div>}
+            {ev.likely_cause && <div style={{ fontSize: 11, color: '#555', marginTop: 6 }}><strong>Shkaku:</strong> {ev.likely_cause}</div>}
+            {ev.suggested_fix && <div style={{ fontSize: 11, color: '#166534', marginTop: 4, background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 6, padding: '6px 8px' }}><strong>Rregullim i propozuar (AI):</strong> {ev.suggested_fix}</div>}
+          </div>
+        ))}
+      </div>
+    </>
+  )
+}
+
 /* ─── Main Admin Page ────────────────────────────────────────── */
 export default function Admin() {
   const { config } = useAlpazar()
@@ -627,6 +688,7 @@ export default function Admin() {
     ['methods',    'wallet',           'Metodat'],
     ['config',     'settings-2',       'Konfigurime'],
     ['moderation', 'shield-check',     'Moderimi'],
+    ['health',     'activity-heartbeat', 'AI Health'],
     ['referrals',  'gift',             'Referalet'],
     ['takedown',   'gavel',            'Heqja'],
   ]
@@ -1007,6 +1069,9 @@ export default function Admin() {
 
               {/* MODERATION */}
               {tab === 'moderation' && <ModerationTab />}
+
+              {/* AI HEALTH */}
+              {tab === 'health' && <AIHealthTab />}
 
               {/* REFERRALS */}
               {tab === 'referrals' && <ReferralTab />}
