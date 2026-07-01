@@ -10,6 +10,17 @@ function canvasToJpeg(canvas: HTMLCanvasElement, q: number): Promise<Blob | null
   return new Promise(r => canvas.toBlob(b => r(b), 'image/jpeg', q))
 }
 
+// Never let a hung decode/encode freeze the upload UI at "0/1": if `p` doesn't
+// settle within `ms`, resolve with `fallback` and move on.
+function withTimeout<T>(p: Promise<T>, ms: number, fallback: T): Promise<T> {
+  return new Promise(resolve => {
+    let settled = false
+    const finish = (v: T) => { if (!settled) { settled = true; clearTimeout(timer); resolve(v) } }
+    const timer = setTimeout(() => finish(fallback), ms)
+    p.then(finish, () => finish(fallback))
+  })
+}
+
 // Classic <img> decode path (fallback when createImageBitmap is unavailable).
 function compressViaImage(file: File): Promise<Blob> {
   return new Promise(resolve => {
@@ -132,8 +143,18 @@ export async function uploadImages(
 
     onProgress?.({ done, total: files.length, currentName: file.name })
 
-    let blob: Blob = file
-    try { blob = await compress(file) } catch { /* use original */ }
+    // Compress with a hard 12s cap — some Android images hang createImageBitmap/
+    // toBlob forever, which used to freeze the progress at "0/1".
+    let blob: Blob = await withTimeout(compress(file).catch(() => file), 12_000, file)
+
+    // If it's still over the bucket limit (compress timed out / couldn't shrink),
+    // fail clearly instead of attempting a doomed upload that stalls.
+    if (blob.size > MAX_FILE_SIZE) {
+      errors.push(`${file.name}: Foto është tepër e madhe edhe pas kompresimit. Provo një foto më të vogël.`)
+      done++
+      onProgress?.({ done, total: files.length })
+      continue
+    }
 
     const ext = blob.type === 'image/gif' ? 'gif' : 'jpg'
     const path = `${uid}/${crypto.randomUUID()}.${ext}`

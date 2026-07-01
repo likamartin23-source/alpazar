@@ -96,7 +96,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
   function set(k: string, v: string) { setForm(f => ({ ...f, [k]: v })); setIsDirty(true) }
 
   function handleImages(e: React.ChangeEvent<HTMLInputElement>) {
-    const MAX_MB = 25
+    const MAX_MB = 10
     const all = Array.from(e.target.files || [])
     const oversized = all.filter(f => f.size > MAX_MB * 1024 * 1024)
     if (oversized.length > 0) {
@@ -352,7 +352,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
               <input id="img-input" type="file" accept="image/*" multiple onChange={handleImages} />
               <i className="ti ti-cloud-upload" aria-hidden="true" />
               <p>Kliko për të shtuar foto të reja</p>
-              <p style={{ fontSize: 10, marginTop: 4, color: '#bbb' }}>JPG, PNG, WebP · max 5MB secila</p>
+              <p style={{ fontSize: 10, marginTop: 4, color: '#bbb' }}>JPG, PNG, WebP · max 10MB secila</p>
             </label>
 
             {imagePreviews.length > 0 && (
