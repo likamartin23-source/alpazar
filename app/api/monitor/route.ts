@@ -25,10 +25,14 @@ async function diagnose(ev: {
 }> {
   const key = process.env.GROQ_API_KEY
   if (!key) return null
+  // json_object mode (supported by all Groq models incl. llama-3.3-70b);
+  // json_schema mode is limited to specific models, so we prompt the shape.
   const sys =
     'Ti je inxhinier senior që diagnostikon gabime prodhimi për ALPAZAR ' +
-    '(Next.js 14 App Router + Supabase + Vercel, TypeScript). Analizo gabimin ' +
-    'dhe kthe VETËM JSON sipas skemës. Ji konkret dhe teknik. Shqip te fushat tekst.'
+    '(Next.js 14 App Router + Supabase + Vercel, TypeScript). Analizo gabimin dhe ' +
+    'kthe VETËM një objekt JSON me këto çelësa: severity (një nga: "critical","high",' +
+    '"medium","low"), category (string i shkurtër), likely_cause (string, shqip), ' +
+    'suggested_fix (string, shqip, konkret), is_actionable (boolean). Pa tekst tjetër.'
   const user = `Gabim (${ev.source || 'client'}) te ${ev.url || 'n/a'}:
 message: ${ev.message}
 stack:
@@ -42,24 +46,7 @@ ${(ev.stack || '').slice(0, 1500)}`
         temperature: 0.2,
         max_tokens: 700,
         messages: [{ role: 'system', content: sys }, { role: 'user', content: user }],
-        response_format: {
-          type: 'json_schema',
-          json_schema: {
-            name: 'diagnosis',
-            schema: {
-              type: 'object',
-              properties: {
-                severity: { type: 'string', enum: ['critical', 'high', 'medium', 'low'] },
-                category: { type: 'string' },
-                likely_cause: { type: 'string' },
-                suggested_fix: { type: 'string' },
-                is_actionable: { type: 'boolean' },
-              },
-              required: ['severity', 'category', 'likely_cause', 'suggested_fix', 'is_actionable'],
-              additionalProperties: false,
-            },
-          },
-        },
+        response_format: { type: 'json_object' },
       }),
       signal: AbortSignal.timeout(20000),
     })
