@@ -1,5 +1,23 @@
 # CLAUDE.md — Alpazar Project Instructions
 
+## 🧩 CLAUDE CODE SKILLS (të aktivizuara në `.claude/settings.json`)
+
+Këto plugins ngarkohen automatikisht në çdo sesion Claude Code mbi Alpazar
+(nga marketplace-e të verifikuar, reputabël):
+
+| Skill | Burimi | Çfarë bën |
+|---|---|---|
+| **Superpowers** | `obra/superpowers-marketplace` | Planifikim + vetë-kontroll para çdo ndryshimi, + mjet **skills-search** ("Find Skills") për të gjetur/instaluar skills të tjera |
+| **claude-mem** | `thedotmack/claude-mem` (Apache-2.0) | **Memorje mes sesioneve** — mban kontekstin e projektit/skedarëve, s'ke nevojë ta rishpjegosh çdo herë |
+
+> "Impeccable" (dizajn frontend) dhe "Task Observer" nga video **NUK** u instaluan:
+> s'kishin burim publik të verifikueshëm → shmangur rreziku supply-chain. Për
+> dizajn/skills të tjera, përdor `skills-search` të Superpowers.
+>
+> Instalim manual (nëse duhet, brenda një sesioni Claude Code):
+> `/plugin marketplace add obra/superpowers-marketplace` → `/plugin install superpowers@superpowers-marketplace`
+> `/plugin marketplace add thedotmack/claude-mem` → `/plugin install claude-mem`
+
 ## ⚡ HAPI I PARË I ÇDO SESIONI
 
 <!-- Azhurnim i fundit: 2 Qershor 2026 — automatizim i plotë, migrime DB, optimizim indeksesh, sigurim API -->

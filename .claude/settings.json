@@ -8,7 +8,20 @@
     "allow": [
       "Bash(agent-browser *)",
       "Bash(codegraph *)",
-      "Bash(sleep *)"
+      "Bash(sleep *)",
+      "Bash(npx claude-mem *)"
     ]
+  },
+  "extraKnownMarketplaces": {
+    "superpowers-marketplace": {
+      "source": { "source": "github", "repo": "obra/superpowers-marketplace" }
+    },
+    "thedotmack": {
+      "source": { "source": "github", "repo": "thedotmack/claude-mem" }
+    }
+  },
+  "enabledPlugins": {
+    "superpowers@superpowers-marketplace": true,
+    "claude-mem@thedotmack": true
   }
 }
