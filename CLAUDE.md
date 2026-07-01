@@ -32,6 +32,8 @@ Bazuar në stack-un e rekomanduar (CLAUDE.md · Skills · MCP · Routines · Gui
 
 > `/remote-control` (sync me telefon) = pikërisht ajo që bën Cowork/claude.ai/code — tashmë e disponueshme.
 
+📄 **Kërkimi shkencor & teknik i plotë** (skills/apps/APIs për Alpazar, i prioritizuar me burime): shih **`docs/RESEARCH_ALPAZAR.md`**.
+
 ## ⚡ HAPI I PARË I ÇDO SESIONI
 
 <!-- Azhurnim i fundit: 2 Qershor 2026 — automatizim i plotë, migrime DB, optimizim indeksesh, sigurim API -->
