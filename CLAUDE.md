@@ -18,6 +18,20 @@ Këto plugins ngarkohen automatikisht në çdo sesion Claude Code mbi Alpazar
 > `/plugin marketplace add obra/superpowers-marketplace` → `/plugin install superpowers@superpowers-marketplace`
 > `/plugin marketplace add thedotmack/claude-mem` → `/plugin install claude-mem`
 
+## 🔌 CLAUDE POWER-STACK (5 shtyllat — mapim me gjendjen e Alpazar-it)
+
+Bazuar në stack-un e rekomanduar (CLAUDE.md · Skills · MCP · Routines · Guides):
+
+| Shtylla | Statusi te Alpazar |
+|---|---|
+| **1. CLAUDE.md (memorje)** | ✅ Ky skedar — konteksti i plotë, i lexuar në çdo sesion |
+| **2. Skills** | ✅ Superpowers + skills-search ("Find Skills") + claude-mem (shih sipër) |
+| **3. MCP connectors** | ✅ Aktive në sesion: GitHub, Supabase (`sopafwfkrxpcdaljddoh`), Vercel (`prj_KNCEtuUDGNCA6ulHomdKniNAZEuX`), Notion, PostHog. **Për Cowork (web):** autorizoji te claude.ai → Settings → Connectors (vetëm pronari, OAuth) |
+| **4. Routines (24/7)** | ✅ GitHub Actions: `ci.yml` (build+tsc+teste), `claude.yml` (@claude auto-fix në PR), + Vercel crons (`/api/expire-premium`, `/api/indexnow`) |
+| **5. Guides/avancuar** | Referencë: Claude Code Ultimate Guide (FlorianBruniaux). **RooFlow s'u aktivizua** — multi-agent i rëndë, rrezik/kosto; hape vetëm me kërkesë të qartë |
+
+> `/remote-control` (sync me telefon) = pikërisht ajo që bën Cowork/claude.ai/code — tashmë e disponueshme.
+
 ## ⚡ HAPI I PARË I ÇDO SESIONI
 
 <!-- Azhurnim i fundit: 2 Qershor 2026 — automatizim i plotë, migrime DB, optimizim indeksesh, sigurim API -->
