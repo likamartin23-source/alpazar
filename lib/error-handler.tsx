@@ -2,6 +2,7 @@
 
 import { Component, ReactNode } from 'react'
 import { supabase } from './supabase'
+import { reportError, installGlobalErrorMonitor } from './monitor'
 
 // Auth state sinkronizim global
 export function initAuthSync() {
@@ -40,6 +41,16 @@ export class GlobalErrorBoundary extends Component<
 
   static getDerivedStateFromError(error: Error) {
     return { hasError: true, error }
+  }
+
+  componentDidMount() {
+    // Start capturing uncaught errors + unhandled promise rejections app-wide.
+    installGlobalErrorMonitor()
+  }
+
+  componentDidCatch(error: Error) {
+    // React render error → send to AI monitor for diagnosis.
+    reportError(error, 'boundary')
   }
 
   render() {
