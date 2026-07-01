@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { rateLimit, getClientIp } from '../../../lib/rateLimit'
 import { SUPABASE_URL, SUPABASE_ANON_KEY as SUPABASE_ANON } from '../../../lib/supabase'
-import { getSupabaseAdmin } from '../../../lib/supabase-admin'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -124,36 +123,29 @@ export async function POST(req: NextRequest) {
   const fp = fingerprint(ev.message, ev.stack || undefined)
 
   try {
-    const admin = getSupabaseAdmin()
-    const { data: existing } = await admin
-      .from('health_events').select('id, count').eq('fingerprint', fp).maybeSingle()
+    // Insert-or-bump via SECURITY DEFINER RPC — works without a service-role key.
+    const db = createClient(SUPABASE_URL, SUPABASE_ANON)
+    const { data: newId, error } = await db.rpc('log_health_event', {
+      p_message: ev.message, p_stack: ev.stack, p_url: ev.url,
+      p_source: ev.source, p_level: ev.level, p_user_agent: ev.user_agent,
+      p_fingerprint: fp,
+    })
+    if (error) { console.error('[monitor] log_health_event:', error.message); return NextResponse.json({ ok: true, stored: false }) }
 
-    if (existing) {
-      // Known error → just bump the counter (no repeat AI cost / alert spam).
-      await admin.from('health_events')
-        .update({ count: (existing as any).count + 1, last_seen_at: new Date().toISOString() } as never)
-        .eq('id', (existing as any).id)
-      return NextResponse.json({ ok: true, deduped: true })
-    }
-
-    // New error → store, then diagnose with AI and alert if serious.
-    const { data: inserted } = await admin
-      .from('health_events')
-      .insert({ ...ev, fingerprint: fp } as never)
-      .select('id').single()
-
-    const id = (inserted as any)?.id
+    // newId null → already known (deduped); otherwise a new event to diagnose.
+    const id = newId as number | null
     if (id && ev.level === 'error') {
       const d = await diagnose(ev)
       if (d) {
-        await admin.from('health_events').update({
-          severity: d.severity, category: d.category, likely_cause: d.likely_cause,
-          suggested_fix: d.suggested_fix, is_actionable: d.is_actionable, status: 'triaged',
-        } as never).eq('id', id)
+        await db.rpc('set_health_diagnosis', {
+          p_id: id, p_severity: d.severity, p_category: d.category,
+          p_likely_cause: d.likely_cause, p_suggested_fix: d.suggested_fix,
+          p_is_actionable: d.is_actionable,
+        })
         if (d.severity === 'critical' || d.severity === 'high') await alertSlack(ev, d)
       }
     }
-    return NextResponse.json({ ok: true })
+    return NextResponse.json({ ok: true, deduped: id === null })
   } catch {
     // Monitoring must never surface its own failure to the app.
     return NextResponse.json({ ok: true, stored: false })
@@ -166,15 +158,17 @@ export async function GET(req: NextRequest) {
   const token = auth?.startsWith('Bearer ') ? auth.slice(7) : null
   if (!token) return NextResponse.json({ error: 'Jo i autorizuar' }, { status: 401 })
   try {
-    const anon = createClient(SUPABASE_URL, SUPABASE_ANON)
-    const { data: { user } } = await anon.auth.getUser(token)
+    // Use the caller's token so RLS (health_events_admin_select → is_admin())
+    // enforces admin-only access — no service-role key required.
+    const db = createClient(SUPABASE_URL, SUPABASE_ANON, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+    })
+    const { data: { user } } = await db.auth.getUser(token)
     if (!user) return NextResponse.json({ error: 'Jo i autorizuar' }, { status: 401 })
-    const { data: profile } = await anon.from('profiles').select('is_admin').eq('id', user.id).single()
-    if (!profile?.is_admin) return NextResponse.json({ error: 'Jo i autorizuar' }, { status: 403 })
 
-    const admin = getSupabaseAdmin()
-    const { data } = await admin.from('health_events')
+    const { data, error } = await db.from('health_events')
       .select('*').order('last_seen_at', { ascending: false }).limit(100)
+    if (error) return NextResponse.json({ error: 'Jo i autorizuar' }, { status: 403 })
     return NextResponse.json({ events: data ?? [] })
   } catch {
     return NextResponse.json({ error: 'Gabim' }, { status: 500 })
