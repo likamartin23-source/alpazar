@@ -22,6 +22,7 @@
   },
   "enabledPlugins": {
     "superpowers@superpowers-marketplace": true,
+    "superpowers-chrome@superpowers-marketplace": true,
     "claude-mem@thedotmack": true
   }
 }

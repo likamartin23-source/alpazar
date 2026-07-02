@@ -9,6 +9,7 @@ Këto plugins ngarkohen automatikisht në çdo sesion Claude Code mbi Alpazar
 |---|---|---|
 | **Superpowers** | `obra/superpowers-marketplace` | Planifikim + vetë-kontroll para çdo ndryshimi, + mjet **skills-search** ("Find Skills") për të gjetur/instaluar skills të tjera |
 | **claude-mem** | `thedotmack/claude-mem` (Apache-2.0) | **Memorje mes sesioneve** — mban kontekstin e projektit/skedarëve, s'ke nevojë ta rishpjegosh çdo herë |
+| **superpowers-chrome** | `obra/superpowers-marketplace` | **Browser access** për Claude (Chrome DevTools, skill `browsing`) — inspekton/teston `alpazar.vercel.app` live, debug UI. Ekuivalenti i verifikuar i "Chrome MCP / website cloner" nga videot. |
 
 > "Impeccable" (dizajn frontend) dhe "Task Observer" nga video **NUK** u instaluan:
 > s'kishin burim publik të verifikueshëm → shmangur rreziku supply-chain. Për
