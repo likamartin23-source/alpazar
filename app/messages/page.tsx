@@ -177,6 +177,7 @@ export default function MessagesPage() {
   const userRef        = useRef<any>(null)
   const selectedRef    = useRef<any>(null)
   const inboxRef       = useRef<any>(null)
+  const inboxSeq       = useRef(0)
   const longPressTimer = useRef<any>(null)
   const userScrolledUp = useRef(false)
   const prevMsgCount   = useRef(0)
@@ -202,7 +203,18 @@ export default function MessagesPage() {
       const withId = new URLSearchParams(window.location.search).get('with')
       if (withId) openThreadById(withId, myId)
 
-      const inbox = supabase.channel(`inbox-${myId}`)
+      // The effect re-runs when ctxUser resolves (undefined → user). Reusing the
+      // same channel topic before the previous channel finishes unsubscribing makes
+      // supabase.channel() return the stale, already-subscribed instance, so the
+      // .on() below throws "cannot add postgres_changes callbacks after subscribe()".
+      // Remove any lingering inbox channels for this user, then use a unique topic
+      // per subscription so channel() always returns a fresh, unsubscribed channel.
+      supabase.getChannels()
+        .filter(c => c.topic.startsWith(`realtime:inbox-${myId}`))
+        .forEach(c => { supabase.removeChannel(c) })
+      if (inboxRef.current) { supabase.removeChannel(inboxRef.current); inboxRef.current = null }
+
+      const inbox = supabase.channel(`inbox-${myId}-${(inboxSeq.current += 1)}`)
         .on('postgres_changes', { event:'INSERT', schema:'public', table:'messages', filter:`receiver_id=eq.${myId}` }, payload => {
           const m = payload.new as any
           setThreads(prev => {
@@ -346,8 +358,15 @@ export default function MessagesPage() {
 
   // ── Realtime ──────────────────────────────────────────────────────────────
   function subscribeToThread(otherId: string, myId: string) {
-    if (channelRef.current) supabase.removeChannel(channelRef.current)
-    const ch = supabase.channel(`chat-${[myId,otherId].sort().join('-')}`)
+    const topic = `chat-${[myId,otherId].sort().join('-')}`
+    // This topic is shared by both participants (presence/typing/broadcast need it),
+    // so it can't be made unique. Reopening the SAME thread would recreate the same
+    // topic and throw "cannot add postgres_changes callbacks after subscribe()".
+    // Reuse the live channel if already on this conversation; else drop stale ones.
+    if (channelRef.current?.topic === `realtime:${topic}`) return
+    if (channelRef.current) { supabase.removeChannel(channelRef.current); channelRef.current = null }
+    supabase.getChannels().filter(c => c.topic === `realtime:${topic}`).forEach(c => supabase.removeChannel(c))
+    const ch = supabase.channel(topic)
       .on('postgres_changes', { event:'INSERT', schema:'public', table:'messages', filter:`receiver_id=eq.${myId}` }, p => {
         const m = p.new as any
         if (m.sender_id !== selectedRef.current?.otherId) return
