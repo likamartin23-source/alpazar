@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseAdmin } from '../../../lib/supabase-admin'
+import { createClient } from '@supabase/supabase-js'
+import { SUPABASE_URL, SUPABASE_ANON_KEY as SUPABASE_ANON } from '../../../lib/supabase'
 
 export const dynamic = 'force-dynamic'
 
@@ -8,12 +9,8 @@ export async function GET(req: NextRequest) {
   if (secret !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
-  const admin = getSupabaseAdmin()
-  const { data, error } = await admin
-    .from('profiles')
-    .update({ is_premium: false, premium_expires_at: null } as never)
-    .lt('premium_expires_at', new Date().toISOString())
-    .eq('is_premium', true)
-    .select('id')
-  return NextResponse.json({ expired: data?.length ?? 0, error: error?.message })
+  // Uses a SECURITY DEFINER RPC so the cron works without SUPABASE_SERVICE_ROLE_KEY.
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON)
+  const { data, error } = await db.rpc('expire_premium_run')
+  return NextResponse.json({ expired: (data as number) ?? 0, error: error?.message })
 }
