@@ -35,6 +35,13 @@ Bazuar në stack-un e rekomanduar (CLAUDE.md · Skills · MCP · Routines · Gui
 
 📄 **Kërkimi shkencor & teknik i plotë** (skills/apps/APIs për Alpazar, i prioritizuar me burime): shih **`docs/RESEARCH_ALPAZAR.md`**.
 
+### 🛠️ Mjete shtesë (nga videot — të aktivizuara/konfirmuara)
+| Mjet | Statusi | Përdorim për Alpazar |
+|---|---|---|
+| **Graphify / codegraph** | ✅ leje `Bash(codegraph *)` + `Bash(graphify *)` te settings.json; `.codegraph/`, `.graphify/` në gitignore | Kërkim mbi graf-in e kodit — gjej shpejt përkufizime/referenca/impakt ndryshimesh (on-device) |
+| **Firecrawl** | ✅ aktiv si MCP në sesion | Scraping/kërkim web — analizë konkurrentësh, çmime tregu, verifikim faqesh live |
+| **Google NotebookLM** | Mjet i jashtëm (web) | Kërkim/përmbledhje dokumentesh — jo integrim kodi; `notebooklm.google.com` |
+
 ## ⚡ HAPI I PARË I ÇDO SESIONI
 
 <!-- Azhurnim i fundit: 2 Qershor 2026 — automatizim i plotë, migrime DB, optimizim indeksesh, sigurim API -->
