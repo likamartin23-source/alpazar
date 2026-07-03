@@ -90,16 +90,17 @@ export default function PremiumPage() {
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA;}
         .wrap{max-width:480px;margin:0 auto;background:#FFFBEA;min-height:100vh;padding-bottom:40px;}
-        .topbar{background:#F5C842;padding:10px 14px;display:flex;align-items:center;gap:10px;}
+        .topbar{background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%);padding:10px 12px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 16px -8px rgba(190,130,0,.4);}
         .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .back i{font-size:18px;color:#111;}
         .topbar-title{font-size:15px;font-weight:700;color:#111;}
-        .hero{background:#111;padding:28px 20px;text-align:center;}
-        .crown{font-size:52px;display:block;margin-bottom:10px;}
-        .hero h1{color:#F5C842;font-size:22px;font-weight:700;margin-bottom:6px;}
+        .hero{background:linear-gradient(135deg,#151515 0%,#1c1c1c 60%,#231a0a 100%);padding:28px 20px;text-align:center;position:relative;overflow:hidden;}
+        .hero::before{content:'';position:absolute;top:-30%;left:50%;transform:translateX(-50%);width:240px;height:240px;background:radial-gradient(circle,rgba(245,200,66,.18),transparent 68%);pointer-events:none;}
+        .crown{font-size:52px;display:block;margin-bottom:10px;position:relative;}
+        .hero h1{color:#F5C842;font-size:22px;font-weight:800;margin-bottom:6px;position:relative;}
         .hero p{color:#888;font-size:13px;line-height:1.6;}
         .body{padding:16px 12px;}
-        .msg-box{border-radius:9px;padding:10px 14px;margin-bottom:14px;font-size:12px;font-weight:600;}
+        .msg-box{border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:12px;font-weight:600;}
         .ok{background:#EAF3DE;color:#3B6D11;border:0.5px solid #97C459;}
         .err{background:#FFF0EE;color:#E63312;border:0.5px solid #F09595;}
         .plan-row{display:flex;gap:10px;margin-bottom:16px;}
@@ -108,22 +109,23 @@ export default function PremiumPage() {
         .plan-label{font-size:11px;font-weight:700;color:#888;margin-bottom:4px;}
         .plan-price{font-size:24px;font-weight:700;color:#111;}
         .plan-sub{font-size:10px;color:#aaa;margin-top:2px;}
-        .plan-badge{background:#E63312;color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;display:inline-block;margin-top:5px;}
-        .features{background:#fff;border-radius:12px;padding:16px;margin-bottom:14px;border:0.5px solid #eee;}
+        .plan-badge{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;font-size:9px;font-weight:700;padding:3px 8px;border-radius:6px;display:inline-block;margin-top:5px;box-shadow:0 1px 4px rgba(230,51,18,.4);}
+        .features{background:#fff;border-radius:12px;padding:16px;margin-bottom:14px;border:0.5px solid #ececec;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 16px -10px rgba(0,0,0,.12);}
         .feat-title{font-size:13px;font-weight:700;color:#111;margin-bottom:12px;}
         .feat-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:0.5px solid #f5f5f5;}
         .feat-row:last-child{border:none;}
         .feat-row i{font-size:16px;color:#E63312;width:20px;}
         .feat-row span{font-size:12px;color:#333;}
-        .payment-card{background:#fff;border-radius:12px;padding:16px;margin-bottom:14px;border:0.5px solid #eee;}
+        .payment-card{background:#fff;border-radius:12px;padding:16px;margin-bottom:14px;border:0.5px solid #ececec;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 16px -10px rgba(0,0,0,.12);}
         .payment-title{font-size:13px;font-weight:700;color:#111;margin-bottom:12px;}
-        .pm-opt{display:flex;align-items:center;gap:10px;padding:10px;border:1.5px solid #ddd;border-radius:9px;cursor:pointer;margin-bottom:8px;}
+        .pm-opt{display:flex;align-items:center;gap:10px;padding:11px;border:1.5px solid #e0e0e0;border-radius:12px;cursor:pointer;margin-bottom:8px;transition:border-color .15s ease,background .15s ease;}
         .pm-opt.active{border-color:#F5C842;background:#FFFBEA;}
         .pm-opt i{font-size:20px;color:#888;}
         .pm-opt.active i{color:#E63312;}
         .pm-opt span{font-size:13px;color:#111;font-weight:500;}
-        .sub-btn{width:100%;background:#E63312;color:#fff;border:none;border-radius:12px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s;}
-        .sub-btn:disabled{opacity:.6;cursor:not-allowed;}
+        .sub-btn{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px -3px rgba(230,51,18,.45);transition:transform .15s ease,box-shadow .15s ease;}
+        .sub-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 7px 20px -4px rgba(230,51,18,.55);}
+        .sub-btn:disabled{opacity:.6;cursor:not-allowed;box-shadow:none;}
         .note{font-size:11px;color:#aaa;text-align:center;margin-top:10px;line-height:1.6;}
         .already{background:#EAF3DE;border:0.5px solid #97C459;border-radius:12px;padding:20px;text-align:center;margin-bottom:16px;}
         .already i{font-size:36px;color:#1D9E75;display:block;margin-bottom:8px;}
@@ -138,7 +140,7 @@ export default function PremiumPage() {
         .ref-m-bar-bg{background:#333;border-radius:6px;height:8px;overflow:hidden;margin-bottom:6px;}
         .ref-m-bar-fill{height:100%;background:linear-gradient(90deg,#F5C842,#E63312);border-radius:6px;transition:width .5s;}
         .ref-m-meta{display:flex;justify-content:space-between;font-size:10px;color:#888;}
-        .ref-m-cta{display:block;background:#F5C842;color:#111;border:none;border-radius:9px;padding:10px;font-size:12px;font-weight:700;cursor:pointer;width:100%;margin-top:10px;text-align:center;text-decoration:none;font-family:inherit;}
+        .ref-m-cta{display:block;background:linear-gradient(135deg,#F8D24E,#F5C842);color:#111;border:none;border-radius:12px;padding:11px;font-size:12px;font-weight:700;cursor:pointer;width:100%;margin-top:10px;text-align:center;text-decoration:none;font-family:inherit;box-shadow:0 2px 8px -2px rgba(245,200,66,.5);}
       `}</style>
 
       <div className="wrap">
