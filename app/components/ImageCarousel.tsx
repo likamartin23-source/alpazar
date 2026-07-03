@@ -5,10 +5,11 @@ import { useState, useRef, useEffect } from 'react'
 interface Props {
   images: string[]
   alt?: string
-  aspectRatio?: '4/3' | '1/1'
+  aspectRatio?: '4/3' | '1/1' | '4/5'
+  rounded?: boolean
 }
 
-export function ImageCarousel({ images, alt = '', aspectRatio = '4/3' }: Props) {
+export function ImageCarousel({ images, alt = '', aspectRatio = '4/3', rounded = true }: Props) {
   const [current, setCurrent] = useState(0)
   const [lightbox, setLightbox] = useState(false)
   const trackRef = useRef<HTMLDivElement>(null)
@@ -28,8 +29,8 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3' }: Props) 
 
   const count = images.length
   if (count === 0) return (
-    <div style={{ width: '100%', aspectRatio, background: '#F6F6F6', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <i className="ti ti-photo" style={{ fontSize: 36, color: '#ccc' }} aria-hidden="true" />
+    <div style={{ width: '100%', aspectRatio, background: 'linear-gradient(135deg,#FBF7E8,#F2EAD0)', borderRadius: rounded ? 16 : 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <i className="ti ti-photo" style={{ fontSize: 44, color: '#d8cfa8' }} aria-hidden="true" />
     </div>
   )
 
@@ -81,7 +82,7 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3' }: Props) 
 
   return (
     <>
-      <div style={{ position: 'relative', borderRadius: 16, overflow: 'hidden' }}>
+      <div style={{ position: 'relative', borderRadius: rounded ? 16 : 0, overflow: 'hidden', background: '#0e0e0e' }}>
         <div
           ref={trackRef}
           onScroll={onScroll}
@@ -104,12 +105,21 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3' }: Props) 
           className="carousel-track"
         >
           {images.map((src, i) => (
-            <div key={i} style={{ flex: '0 0 100%', scrollSnapAlign: 'start', aspectRatio, background: '#F6F6F6', position: 'relative', overflow: 'hidden' }}>
+            <div key={i} style={{ flex: '0 0 100%', scrollSnapAlign: 'start', aspectRatio, background: '#0e0e0e', position: 'relative', overflow: 'hidden' }}>
+              {/* Blurred fill of the same photo — fills the letterbox so nothing is cropped or empty (Instagram/Temu style) */}
+              <img
+                src={src}
+                alt=""
+                aria-hidden="true"
+                loading={i === 0 ? 'eager' : 'lazy'}
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'blur(28px) brightness(.6) saturate(1.2)', transform: 'scale(1.25)', pointerEvents: 'none' }}
+                draggable={false}
+              />
               <img
                 src={src}
                 alt={`${alt} ${i + 1}`}
                 loading={i === 0 ? 'eager' : 'lazy'}
-                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', pointerEvents: 'none', userSelect: 'none' }}
+                style={{ position: 'relative', width: '100%', height: '100%', objectFit: 'contain', display: 'block', pointerEvents: 'none', userSelect: 'none' }}
                 draggable={false}
                 onError={e => {
                   const img = e.currentTarget

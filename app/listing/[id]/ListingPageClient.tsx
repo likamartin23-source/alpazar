@@ -556,13 +556,13 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         /* Info */
         .info{padding:12px 12px 0;}
         .status-row{display:flex;align-items:center;gap:6px;margin-bottom:7px;}
-        .status-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;}
+        .status-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:4px 11px;border-radius:999px;}
         .sc-active{background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7;}
         .sc-sold{background:#F3F3F3;color:#555;border:1px solid #ccc;}
-        h1{font-size:16px;font-weight:800;color:#1a1a1a;margin-bottom:5px;line-height:1.35;}
-        .price{font-size:21px;font-weight:800;color:#E63312;margin-bottom:9px;}
-        .meta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px;}
-        .meta-item{display:flex;align-items:center;gap:3px;font-size:11px;color:#666;background:#f5f3eb;padding:3px 8px;border-radius:10px;}
+        h1{font-size:18px;font-weight:800;color:#1a1a1a;margin-bottom:6px;line-height:1.3;letter-spacing:-.2px;}
+        .price{font-size:25px;font-weight:800;color:#E63312;margin-bottom:12px;letter-spacing:-.5px;}
+        .meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+        .meta-item{display:flex;align-items:center;gap:4px;font-size:11px;color:#555;background:#f5f3eb;padding:5px 10px;border-radius:999px;font-weight:600;}
         .meta-item i{font-size:12px;color:#999;}
         .cond-new{background:#FFF0EE;color:#E63312;font-weight:700;}
         .cond-used{background:#F0F0F0;color:#555;font-weight:700;}
@@ -726,9 +726,9 @@ export default function ListingPageClient({ params, initialListing }: { params: 
           )
         })()}
 
-        {/* Gallery */}
-        <div style={{ padding: '0 13px', marginBottom: 4, position: 'relative' }}>
-          <ImageCarousel images={images} alt={listing.title} aspectRatio="4/3" />
+        {/* Gallery — full-bleed square hero */}
+        <div style={{ padding: 0, marginBottom: 12, position: 'relative' }}>
+          <ImageCarousel images={images} alt={listing.title} aspectRatio="1/1" rounded={false} />
           {!isOwner && (
             <button
               type="button"
