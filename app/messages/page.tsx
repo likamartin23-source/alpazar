@@ -678,7 +678,7 @@ export default function MessagesPage() {
         .page{position:fixed;inset:0;max-width:480px;margin:0 auto;display:flex;flex-direction:column;background:#FFFBEA;overflow:hidden;z-index:50;}
 
         /* Topbar */
-        .topbar{background:#111;padding:0 10px;display:flex;align-items:center;gap:9px;height:58px;flex-shrink:0;border-bottom:1px solid #222;z-index:10;}
+        .topbar{background:linear-gradient(135deg,#151515,#1c1c1c);padding:0 12px;display:flex;align-items:center;gap:9px;height:58px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.06);z-index:10;}
         .topbar.chat{background:linear-gradient(135deg,#1a1a1a 0%,#222 100%);}
         .back-btn{width:36px;height:36px;background:rgba(255,255,255,.06);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#F5C842;font-size:19px;}
         .t-meta{flex:1;min-width:0;}

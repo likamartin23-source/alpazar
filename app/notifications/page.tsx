@@ -148,10 +148,10 @@ export default function NotificationsPage() {
       {/* Topbar */}
       <div style={{
         position: 'sticky', top: 0, zIndex: 100,
-        background: '#111', padding: '0 16px',
+        background: 'linear-gradient(135deg,#151515,#1c1c1c)', padding: '0 12px',
         display: 'flex', alignItems: 'center', gap: 10,
         height: 56,
-        borderBottom: '1px solid #222',
+        borderBottom: '1px solid rgba(255,255,255,.06)',
       }}>
         <button
           type="button"

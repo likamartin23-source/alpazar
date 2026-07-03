@@ -48,7 +48,7 @@ export default function BiznestPage() {
   return (
     <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh', paddingBottom: 80, fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
       {/* Header */}
-      <div style={{ background: 'linear-gradient(180deg,#F5C842,#f0bc30)', padding: '14px 16px 16px' }}>
+      <div style={{ background: 'linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%)', padding: '14px 16px 16px', boxShadow: '0 4px 16px -8px rgba(190,130,0,.4)' }}>
         <button type="button" aria-label="Kthehu mbrapa" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', marginBottom: 10, padding: 0 }}>
           <i className="ti ti-arrow-left" aria-hidden="true" style={{ fontSize: 22, color: '#111' }} />
         </button>
@@ -77,7 +77,7 @@ export default function BiznestPage() {
               type="button"
               aria-pressed={typeFilter === f.key}
               onClick={() => setTypeFilter(f.key)}
-              style={{ flexShrink: 0, padding: '6px 14px', background: typeFilter === f.key ? '#111' : '#f0f0f0', color: typeFilter === f.key ? '#F5C842' : '#555', border: 'none', borderRadius: 20, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}
+              style={{ flexShrink: 0, padding: '6px 14px', background: typeFilter === f.key ? 'linear-gradient(135deg,#1a1a1a,#000)' : '#f0f0f0', color: typeFilter === f.key ? '#F5C842' : '#555', border: 'none', borderRadius: 999, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', transition: 'background .15s ease,color .15s ease' }}
             >
               {f.icon && <><span aria-hidden="true">{f.icon}</span>{' '}</>}{f.label}
             </button>
@@ -86,7 +86,7 @@ export default function BiznestPage() {
       </div>
 
       {/* Create business CTA */}
-      <div role="link" tabIndex={0} style={{ margin: '12px 16px 4px', background: 'linear-gradient(135deg,#111,#333)', borderRadius: 14, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }} onClick={() => window.location.href = '/biznese/new'} onKeyDown={e => { if (e.key === 'Enter') window.location.href = '/biznese/new' }}>
+      <div role="link" tabIndex={0} style={{ margin: '12px 16px 4px', background: 'linear-gradient(135deg,#151515,#1c1c1c 60%,#231a0a)', borderRadius: 12, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', boxShadow: '0 6px 18px -8px rgba(0,0,0,.4)' }} onClick={() => window.location.href = '/biznese/new'} onKeyDown={e => { if (e.key === 'Enter') window.location.href = '/biznese/new' }}>
         <div>
           <div style={{ color: '#F5C842', fontWeight: 800, fontSize: 14, marginBottom: 2 }}>+ Krijo Biznesin Tënd</div>
           <div style={{ color: '#aaa', fontSize: 11 }}>Falas · Prezencë profesionale online</div>
@@ -105,7 +105,7 @@ export default function BiznestPage() {
         ) : loading ? (
           <div role="status" aria-label="Duke ngarkuar bizneset..." style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {[1, 2, 3, 4].map(i => (
-              <div key={i} style={{ background: '#fff', borderRadius: 14, padding: 14, display: 'flex', gap: 12, alignItems: 'center' }}>
+              <div key={i} style={{ background: '#fff', borderRadius: 12, padding: 14, display: 'flex', gap: 12, alignItems: 'center' }}>
                 <div style={{ width: 52, height: 52, borderRadius: '50%', background: '#eee' }} />
                 <div style={{ flex: 1 }}>
                   <div style={{ height: 14, background: '#eee', borderRadius: 6, width: '60%', marginBottom: 7 }} />
@@ -119,7 +119,7 @@ export default function BiznestPage() {
             <div style={{ fontSize: 40, marginBottom: 10 }} aria-hidden="true">🏢</div>
             <div style={{ fontSize: 14, fontWeight: 600 }}>{search || typeFilter ? 'Asnjë biznes nuk përputhet' : 'Asnjë biznes ende'}</div>
             {(search || typeFilter) && (
-              <button type="button" onClick={() => { setSearch(''); setTypeFilter('') }} style={{ marginTop: 12, background: '#F5C842', border: 'none', borderRadius: 10, padding: '8px 20px', fontWeight: 700, fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>
+              <button type="button" onClick={() => { setSearch(''); setTypeFilter('') }} style={{ marginTop: 12, background: 'linear-gradient(135deg,#F8D24E,#F5C842)', color: '#111', border: 'none', borderRadius: 12, padding: '8px 20px', fontWeight: 700, fontSize: 13, cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 2px 8px -2px rgba(245,200,66,.5)' }}>
                 Pastro filtrat
               </button>
             )}
@@ -130,7 +130,7 @@ export default function BiznestPage() {
               <div
                 key={b.id}
                 onClick={() => window.location.href = `/biznese/${b.id}`}
-                style={{ background: '#fff', borderRadius: 14, padding: 14, display: 'flex', gap: 12, alignItems: 'center', cursor: 'pointer', boxShadow: '0 1px 4px rgba(0,0,0,.06)', transition: 'transform .1s' }}
+                style={{ background: '#fff', border: '0.5px solid #ececec', borderRadius: 12, padding: 14, display: 'flex', gap: 12, alignItems: 'center', cursor: 'pointer', boxShadow: '0 1px 2px rgba(0,0,0,.04),0 6px 16px -10px rgba(0,0,0,.14)', transition: 'transform .1s' }}
               >
                 <Avatar src={b.logo_url} name={b.name} type="business" verified={b.is_verified} size={52} />
                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -140,7 +140,7 @@ export default function BiznestPage() {
                   </div>
                   <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
                     {b.type && (
-                      <span style={{ fontSize: 10, background: '#FFF8E1', color: '#7B5000', padding: '2px 8px', borderRadius: 10, fontWeight: 700 }}>
+                      <span style={{ fontSize: 10, background: '#FFF8E1', color: '#7B5000', padding: '2px 8px', borderRadius: 6, fontWeight: 700 }}>
                         {TYPE_LABELS[b.type] || b.type}
                       </span>
                     )}
