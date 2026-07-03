@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Bizneset & Dyqanet — ALPAZAR',
   description: 'Zbuloni bizneset dhe dyqanet shqiptare online. Blini direkt nga pronarët lokalë në platformën #1 të tregtisë elektronike shqiptare.',
+  alternates: { canonical: '/biznese' },
   openGraph: {
     type: 'website',
     siteName: 'ALPAZAR',
