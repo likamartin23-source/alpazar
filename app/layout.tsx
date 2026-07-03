@@ -144,6 +144,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <a href="https://x.com/alpazaral" aria-label="X / Twitter" target="_blank" rel="noopener noreferrer" style={{ color: '#555', fontSize: 19, textDecoration: 'none' }}><i className="ti ti-brand-x" aria-hidden="true" /></a>
               </div>
               <nav aria-label="Lidhje të faqes" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '6px 14px', marginBottom: 14 }}>
+                <a href="/kategori" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Kategoritë</a>
                 <a href="/biznese" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Bizneset</a>
                 <a href="/search" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Kërko</a>
                 <a href="/kushtet" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Kushtet e Përdorimit</a>
