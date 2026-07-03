@@ -536,7 +536,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA;}
         .wrap{max-width:480px;margin:0 auto;background:#fff;min-height:100vh;padding-bottom:${chatPanelOpen ? '300px' : '70px'};}
-        .topbar{background:#F5C842;padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
+        .topbar{background:#F5C842;padding:10px 12px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
         .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .back i{font-size:18px;color:#111;}
         .topbar-title{font-size:15px;font-weight:700;color:#111;flex:1;}
@@ -544,7 +544,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         .share-btn i{font-size:16px;color:#111;}
 
         /* Gallery */
-        .img-wrap{width:100%;height:230px;background:#f9f5e0;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+        .img-wrap{width:100%;height:230px;background:linear-gradient(135deg,#FBF7E8,#F2EAD0);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
         .img-wrap img{width:100%;height:100%;object-fit:cover;}
         .img-dots{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:5px;}
         .img-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.5);cursor:pointer;}
@@ -554,12 +554,12 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         .like-btn{position:absolute;top:10px;right:10px;width:34px;height:34px;background:#fff;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.15);}
 
         /* Info */
-        .info{padding:11px 13px 0;}
+        .info{padding:12px 12px 0;}
         .status-row{display:flex;align-items:center;gap:6px;margin-bottom:7px;}
         .status-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;}
         .sc-active{background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7;}
         .sc-sold{background:#F3F3F3;color:#555;border:1px solid #ccc;}
-        h1{font-size:16px;font-weight:700;color:#111;margin-bottom:5px;line-height:1.35;}
+        h1{font-size:16px;font-weight:800;color:#1a1a1a;margin-bottom:5px;line-height:1.35;}
         .price{font-size:21px;font-weight:800;color:#E63312;margin-bottom:9px;}
         .meta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px;}
         .meta-item{display:flex;align-items:center;gap:3px;font-size:11px;color:#666;background:#f5f3eb;padding:3px 8px;border-radius:10px;}
@@ -571,26 +571,28 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         .desc{font-size:13px;color:#555;line-height:1.7;}
 
         /* Seller section — free-flowing */
-        .seller-section{padding:0 13px;}
+        .seller-section{padding:0 12px;}
         .seller-av-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
         .seller-av{width:44px;height:44px;border-radius:50%;background:#F5C842;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#111;flex-shrink:0;overflow:hidden;border:2.5px solid #F5C842;}
         .seller-av img{width:100%;height:100%;object-fit:cover;}
         .seller-name{font-size:14px;font-weight:700;color:#111;}
         .seller-sub{font-size:11px;color:#888;margin-top:2px;}
         .seller-chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px;}
-        .schip{font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:8px;}
-        .sch-prem{background:#F5C842;color:#111;}
-        .sch-shop{background:#10B981;color:#fff;}
-        .sch-admin{background:#7C3AED;color:#fff;}
+        .schip{font-size:9.5px;font-weight:700;padding:3px 8px;border-radius:6px;}
+        .sch-prem{background:linear-gradient(135deg,#F8D24E,#F5C842);color:#111;box-shadow:0 1px 4px rgba(245,200,66,.45);}
+        .sch-shop{background:linear-gradient(135deg,#12c98a,#10B981);color:#fff;box-shadow:0 1px 4px rgba(16,185,129,.35);}
+        .sch-admin{background:linear-gradient(135deg,#8b4bf0,#7C3AED);color:#fff;}
         .sch-priv{background:#EEF4FF;color:#185FA5;border:1px solid #C3DAFB;}
         .sch-seller{background:#EEF4FF;color:#185FA5;}
         .sch-new{background:#FFF4E5;color:#B45309;}
         .seller-stats{display:flex;gap:6px;margin-bottom:7px;flex-wrap:wrap;}
-        .stat-chip{display:flex;align-items:center;gap:4px;background:#f8f6f0;border:0.5px solid #eee;border-radius:9px;padding:4px 9px;font-size:11px;color:#555;}
+        .stat-chip{display:flex;align-items:center;gap:4px;background:#f8f6f0;border:0.5px solid #ececec;border-radius:10px;padding:5px 10px;font-size:11px;color:#555;}
         .stat-chip i{font-size:11px;color:#999;}
         .seller-bio{font-size:12px;color:#666;line-height:1.65;margin-bottom:8px;}
-        .view-profile-btn{display:flex;align-items:center;justify-content:center;gap:6px;background:#111;color:#F5C842;border:none;border-radius:10px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;}
-        .shop-link-row{display:flex;align-items:center;gap:9px;background:#f8f6f0;border-radius:10px;padding:8px 11px;margin-top:7px;cursor:pointer;text-decoration:none;}
+        .view-profile-btn{display:flex;align-items:center;justify-content:center;gap:6px;background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;border:none;border-radius:12px;padding:10px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;box-shadow:0 2px 8px -2px rgba(0,0,0,.35);transition:transform .15s ease,box-shadow .15s ease;}
+        .view-profile-btn:hover{transform:translateY(-1px);box-shadow:0 5px 14px -3px rgba(0,0,0,.45);}
+        .shop-link-row{display:flex;align-items:center;gap:9px;background:#f8f6f0;border:0.5px solid #ececec;border-radius:12px;padding:9px 12px;margin-top:8px;cursor:pointer;text-decoration:none;transition:background .15s ease;}
+        .shop-link-row:hover{background:#f2efe6;}
         .shop-link-row span{font-size:12px;font-weight:700;color:#111;}
         .shop-link-row small{font-size:10px;color:#aaa;display:block;margin-top:1px;}
 
@@ -644,10 +646,11 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         .cs-send-btn i{color:#fff;font-size:18px;}
         .login-prompt{background:#FFF0EE;padding:18px;text-align:center;}
         .login-prompt p{font-size:13px;color:#555;margin-bottom:10px;font-weight:600;}
-        .login-prompt-btn{background:#E63312;color:#fff;border:none;border-radius:10px;padding:10px 22px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .login-prompt-btn{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:10px 22px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(230,51,18,.4);transition:transform .15s ease,box-shadow .15s ease;}
+        .login-prompt-btn:hover{transform:translateY(-1px);box-shadow:0 5px 14px -3px rgba(230,51,18,.5);}
 
         /* Bottom bar */
-        .bottom-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:1px solid #eee;padding:9px 13px;display:flex;gap:8px;z-index:100;}
+        .bottom-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid #eee;padding:10px 12px;display:flex;gap:8px;z-index:100;box-shadow:0 -6px 20px rgba(0,0,0,.06);}
         .main-chat-btn{flex:1;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 12px rgba(230,51,18,.3);}
         .main-chat-btn i{font-size:16px;}
         .wa-btn{width:48px;height:48px;background:#25D366;border:none;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(37,211,102,.3);text-decoration:none;}
