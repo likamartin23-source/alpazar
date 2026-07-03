@@ -30,7 +30,8 @@ const CSS = `
   .hint{font-size:10px;color:#aaa;margin-top:4px;line-height:1.5;}
   .hint.ok{color:#3B6D11;}
   .hint.warn{color:#A05000;}
-  .btn{width:100%;background:#E63312;color:#fff;border:none;border-radius:9px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px;transition:opacity .15s;}
+  .btn{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px;box-shadow:0 4px 14px -3px rgba(230,51,18,.45);transition:transform .15s ease,box-shadow .15s ease;}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 7px 20px -4px rgba(230,51,18,.55);}
   .btn:disabled{opacity:.6;cursor:not-allowed;}
   .btn-ghost{width:100%;background:none;color:#555;border:1.5px solid #ddd;border-radius:9px;padding:12px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:8px;transition:border .15s;}
   .btn-ghost:hover{border-color:#bbb;}
@@ -46,7 +47,8 @@ const CSS = `
   .back{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:14px;color:#888;font-size:12px;cursor:pointer;}
   .back:hover{color:#E63312;}
   .otp-row{display:flex;gap:8px;justify-content:center;margin-bottom:16px;}
-  .otp-input{width:46px;height:54px;border:2px solid #ddd;border-radius:10px;font-size:22px;font-weight:700;text-align:center;color:#111;outline:none;transition:border .15s;background:#fff;}
+  .otp-input{width:46px;height:54px;border:2px solid #e0e0e0;border-radius:12px;font-size:22px;font-weight:700;text-align:center;color:#111;outline:none;transition:border-color .15s ease,box-shadow .15s ease;background:#fff;}
+  .otp-input:focus{border-color:#111;box-shadow:0 4px 16px -4px rgba(0,0,0,.2);}
   .otp-input:focus{border-color:#F5C842;background:#FFFBEA;}
   .otp-input.filled{border-color:#E63312;color:#E63312;}
   .otp-input:disabled{background:#f9f9f9;color:#bbb;border-color:#eee;}
@@ -836,9 +838,9 @@ export default function Auth() {
           fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
         }}>
           <div role="dialog" aria-modal="true" aria-label="Konfirmimi i moshës" style={{
-            background: '#fff', borderRadius: 18, padding: '36px 28px',
+            background: '#fff', borderRadius: 16, padding: '36px 28px',
             maxWidth: 340, width: '90%', textAlign: 'center',
-            boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
+            boxShadow: '0 20px 60px -12px rgba(0,0,0,0.28)',
           }}>
             <div aria-hidden="true" style={{ fontSize: 52, marginBottom: 10 }}>🔞</div>
             <h2 style={{ fontSize: 18, fontWeight: 800, color: '#111', marginBottom: 8, margin: '0 0 8px' }}>
@@ -856,10 +858,10 @@ export default function Auth() {
                 window.location.href = '/'
               }}
               style={{
-                width: '100%', background: '#F5C842', color: '#111',
-                border: 'none', borderRadius: 10, padding: '13px',
+                width: '100%', background: 'linear-gradient(135deg,#F8D24E,#F5C842)', color: '#111',
+                border: 'none', borderRadius: 12, padding: '13px',
                 fontSize: 14, fontWeight: 700, cursor: 'pointer',
-                marginBottom: 10, fontFamily: 'inherit',
+                marginBottom: 10, fontFamily: 'inherit', boxShadow: '0 2px 8px -2px rgba(245,200,66,.5)',
               }}
             >
               ✅ Po, jam 16 vjeç ose më shumë
@@ -875,10 +877,10 @@ export default function Auth() {
                 setStep('form')
               }}
               style={{
-                width: '100%', background: '#E63312', color: '#fff',
-                border: 'none', borderRadius: 10, padding: '13px',
+                width: '100%', background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff',
+                border: 'none', borderRadius: 12, padding: '13px',
                 fontSize: 14, fontWeight: 700, cursor: 'pointer',
-                fontFamily: 'inherit',
+                fontFamily: 'inherit', boxShadow: '0 4px 14px -3px rgba(230,51,18,.45)',
               }}
             >
               ❌ Jo, jam nën 16 vjeç

@@ -86,7 +86,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
     <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
       <div style={{ fontSize: 32, marginBottom: 12 }} aria-hidden="true">⚠️</div>
       <div style={{ fontSize: 14, color: '#E63312', marginBottom: 16, textAlign: 'center' }}>Nuk u ngarkua biznesi. Kontrollo lidhjen dhe provo sërish.</div>
-      <button type="button" onClick={() => window.location.reload()} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
+      <button type="button" onClick={() => window.location.reload()} style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
     </div>
   )
 
@@ -104,7 +104,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
     <div style={{ maxWidth: 480, margin: '0 auto', padding: 40, textAlign: 'center', background: '#FFFBEA', minHeight: '100vh' }}>
       <div style={{ fontSize: 48, marginBottom: 16 }} aria-hidden="true">🏢</div>
       <div style={{ fontWeight: 700, color: '#111', marginBottom: 16 }}>Biznesi nuk u gjet</div>
-      <button type="button" onClick={() => window.history.back()} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 20px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>← Kthehu</button>
+      <button type="button" onClick={() => window.history.back()} style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 20px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>← Kthehu</button>
     </div>
   )
 
@@ -124,7 +124,8 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
         .ig-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.55) 0%,transparent 50%);opacity:0;transition:opacity .2s;}
         .ig-cell:active .ig-overlay{opacity:1;}
         .ig-price{position:absolute;bottom:5px;left:0;right:0;text-align:center;color:#fff;font-size:10px;font-weight:800;text-shadow:0 1px 3px rgba(0,0,0,.8);padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-        .action-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 0;border-radius:11px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;border:none;transition:opacity .15s;}
+        .action-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 0;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;border:none;box-shadow:0 2px 8px -2px rgba(0,0,0,.25);transition:transform .15s ease,box-shadow .15s ease;}
+        .action-btn:hover{transform:translateY(-1px);}
         .action-btn:active{opacity:.8;}
         .info-row{display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid #f0f0f0;}
         .info-row:last-child{border:none;}
@@ -220,12 +221,12 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
           {/* Action buttons */}
           <div style={{ display: 'flex', gap: 8 }}>
             {biz.phone && (
-              <a href={`tel:${biz.phone}`} className="action-btn" style={{ background: '#E63312', color: '#fff' }}>
+              <a href={`tel:${biz.phone}`} className="action-btn" style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff' }}>
                 <i className="ti ti-phone" style={{ fontSize: 15 }} aria-hidden="true" /> Telefono
               </a>
             )}
             <button type="button" aria-label="Dërgo mesazh" onClick={() => { if (!userId) { window.location.href = '/auth/login'; return } window.location.href = `/messages?biz=${biz.id}` }}
-              className="action-btn" style={{ background: '#111', color: '#F5C842' }}>
+              className="action-btn" style={{ background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842' }}>
               <i className="ti ti-message" style={{ fontSize: 15 }} aria-hidden="true" /> Mesazh
             </button>
             <button type="button" aria-label="Ndaj" onClick={share} className="action-btn" style={{ background: '#f0f0f0', color: '#333', flex: '0 0 48px' }}>
@@ -296,7 +297,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
               <div style={{ fontSize: 48, marginBottom: 12 }} aria-hidden="true">🛍️</div>
               <div style={{ fontSize: 14, fontWeight: 600, color: '#666', marginBottom: 6 }}>Asnjë shpallje ende</div>
               {isOwner && (
-                <button type="button" onClick={() => window.location.href = '/listing/new'} style={{ marginTop: 8, background: '#E63312', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 24px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: 13 }}>+ Shto shpallje</button>
+                <button type="button" onClick={() => window.location.href = '/listing/new'} style={{ marginTop: 8, background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 24px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: 13 }}>+ Shto shpallje</button>
               )}
             </div>
           ) : (

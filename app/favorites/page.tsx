@@ -44,7 +44,7 @@ export default function FavoritesPage() {
         <div style={{ textAlign: 'center', padding: '40px 24px' }}>
           <div style={{ fontSize: 32, marginBottom: 12 }} aria-hidden="true">⚠️</div>
           <div style={{ fontSize: 14, color: '#E63312', marginBottom: 16 }}>Nuk u ngarkuan të dhënat. Kontrollo lidhjen dhe provo sërish.</div>
-          <button type="button" onClick={() => window.location.reload()} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
+          <button type="button" onClick={() => window.location.reload()} style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
         </div>
       ) : loading ? (
         <div style={{ padding: '16px' }}><SkeletonGrid count={4} /></div>
@@ -56,7 +56,7 @@ export default function FavoritesPage() {
           <button
             type="button"
             onClick={() => { window.location.href = '/search' }}
-            style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 24px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+            style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 24px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
           >
             <span aria-hidden="true">🔍</span> Eksploro shpalljet
           </button>
@@ -76,7 +76,7 @@ export default function FavoritesPage() {
                 aria-label={`${l.title} — ${price}`}
                 onClick={() => { window.location.href = `/listing/${l.id}` }}
                 onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/listing/${l.id}` }}
-                style={{ borderRadius: 14, overflow: 'hidden', background: '#fff', border: '1px solid #F0F0F0', boxShadow: '0 1px 8px rgba(0,0,0,.06)', cursor: 'pointer', position: 'relative' }}
+                style={{ borderRadius: 12, overflow: 'hidden', background: '#fff', border: '0.5px solid #ececec', boxShadow: '0 1px 2px rgba(0,0,0,.04),0 6px 16px -10px rgba(0,0,0,.14)', cursor: 'pointer', position: 'relative' }}
               >
                 <div style={{ width: '100%', aspectRatio: '4/3', background: '#F6F6F6', position: 'relative', overflow: 'hidden' }}>
                   {img

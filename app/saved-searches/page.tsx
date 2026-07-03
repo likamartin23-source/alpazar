@@ -69,7 +69,7 @@ export default function SavedSearchesPage() {
           <div style={{ textAlign: 'center', padding: '40px 24px' }}>
             <div style={{ fontSize: 32, marginBottom: 12 }} aria-hidden="true">⚠️</div>
             <div style={{ fontSize: 14, color: '#E63312', marginBottom: 16 }}>Nuk u ngarkuan të dhënat. Kontrollo lidhjen dhe provo sërish.</div>
-            <button type="button" onClick={() => { setLoadError(false); setLoading(true); window.location.reload() }} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
+            <button type="button" onClick={() => { setLoadError(false); setLoading(true); window.location.reload() }} style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
           </div>
         ) : loading ? (
           <div style={{ color: '#888', textAlign: 'center', padding: 40 }}>Duke ngarkuar...</div>
@@ -81,7 +81,7 @@ export default function SavedSearchesPage() {
             <button
               type="button"
               onClick={() => { window.location.href = '/search' }}
-              style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 24px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+              style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 24px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
             >
               <><span aria-hidden="true">🔍</span> Fillo një kërkim</>
             </button>
@@ -97,7 +97,7 @@ export default function SavedSearchesPage() {
                 filters.priceMax && `max ${filters.priceMax}L`,
               ].filter(Boolean)
               return (
-                <div key={s.id} style={{ background: '#fff', border: '1px solid #eee', borderRadius: 14, padding: '14px 14px 12px', boxShadow: '0 1px 6px rgba(0,0,0,.04)' }}>
+                <div key={s.id} style={{ background: '#fff', border: '0.5px solid #ececec', borderRadius: 12, padding: '14px 14px 12px', boxShadow: '0 1px 2px rgba(0,0,0,.04),0 6px 16px -10px rgba(0,0,0,.14)' }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginBottom: 8 }}>
