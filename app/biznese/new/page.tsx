@@ -146,7 +146,7 @@ export default function BiznesNewPage() {
         .sub-chip.sel{background:#F5C842;border-color:#F5C842;color:#111;}
         .biz-input{width:100%;border:1px solid #e5e5e5;borderRadius:10px;padding:11px 13px;fontSize:13px;fontFamily:inherit;background:#fff;outline:none;boxSizing:border-box;}
         .biz-input:focus{border-color:#E63312;}
-        .step-btn{width:100%;background:#E63312;color:#fff;border:none;borderRadius:13px;padding:15px;fontSize:15px;fontWeight:700;cursor:pointer;fontFamily:inherit;}
+        .step-btn{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;borderRadius:13px;padding:15px;fontSize:15px;fontWeight:700;cursor:pointer;fontFamily:inherit;}
         .step-btn:disabled{opacity:.5;cursor:not-allowed;}
         .back-btn{background:none;border:none;cursor:pointer;color:#111;display:flex;alignItems:center;gap:6px;fontSize:13px;fontWeight:600;fontFamily:inherit;padding:0;}
       `}</style>

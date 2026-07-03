@@ -671,7 +671,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         .alert-input{width:100%;border:1.5px solid #ddd;border-radius:11px;padding:12px 14px;font-size:15px;font-weight:700;color:#111;box-sizing:border-box;font-family:inherit;outline:none;}
         .alert-input:focus{border-color:#E63312;}
         .alert-btn-row{display:flex;gap:8px;margin-top:14px;}
-        .alert-save{flex:1;background:#E63312;color:#fff;border:none;border-radius:11px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .alert-save{flex:1;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:11px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
         .alert-save:disabled{opacity:.5;cursor:not-allowed;}
         .alert-del{width:48px;background:#FFF0EE;color:#E63312;border:1.5px solid #FFCDD2;border-radius:11px;padding:13px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .alert-msg{font-size:12px;text-align:center;margin-top:8px;font-weight:600;}
@@ -687,7 +687,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         .reason-list{display:flex;flex-direction:column;gap:7px;margin-bottom:16px;}
         .reason-btn{display:flex;align-items:center;gap:10px;border:1.5px solid #eee;border-radius:10px;padding:11px 13px;background:#fff;font-family:inherit;font-size:13px;color:#333;cursor:pointer;text-align:left;}
         .reason-btn.sel{border-color:#E63312;background:#FFF0EE;color:#E63312;font-weight:600;}
-        .report-submit{width:100%;background:#E63312;color:#fff;border:none;border-radius:11px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .report-submit{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:11px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
         .report-submit:disabled{opacity:.5;cursor:not-allowed;}
         .report-success{text-align:center;padding:18px 0;}
         .report-link{display:block;text-align:center;font-size:11px;color:#bbb;margin-top:14px;cursor:pointer;}

@@ -564,7 +564,7 @@ export default function Home() {
         .empty-state i{font-size:40px;color:#F5C842;display:block;margin-bottom:10px;}
         .empty-state h3{font-size:14px;font-weight:700;color:#555;margin-bottom:6px;}
         .empty-state p{font-size:11px;color:#aaa;line-height:1.6;margin-bottom:14px;}
-        .empty-cta{background:#E63312;color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .empty-cta{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
         /* Premium CTA */
         .premium-cta{margin:0 0 16px;background:linear-gradient(135deg,#FFFBEA,#fff8d9);border:1.5px solid #F5C842;border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 3px 12px rgba(245,200,66,.15);}
         .prem-icon{width:30px;height:30px;background:#F5C842;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}

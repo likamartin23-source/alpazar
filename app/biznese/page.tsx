@@ -100,7 +100,7 @@ export default function BiznestPage() {
           <div style={{ textAlign: 'center', padding: '60px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
             <div style={{ fontSize: 40 }} aria-hidden="true">⚠️</div>
             <div style={{ fontSize: 14, fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
-            <button type="button" onClick={() => window.location.reload()} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 8, padding: '9px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
+            <button type="button" onClick={() => window.location.reload()} style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 8, padding: '9px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
           </div>
         ) : loading ? (
           <div role="status" aria-label="Duke ngarkuar bizneset..." style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>

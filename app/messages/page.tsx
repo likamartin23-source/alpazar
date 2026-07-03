@@ -1449,7 +1449,7 @@ export default function MessagesPage() {
               <div className="spin-center">
                 <div style={{ fontSize: 32 }} aria-hidden="true">⚠️</div>
                 <div style={{ fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
-                <button type="button" onClick={() => window.location.reload()} style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
+                <button type="button" onClick={() => window.location.reload()} style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
               </div>
             ) : loading ? (
               <div className="spin-center"><span className="spinner" />Duke ngarkuar...</div>

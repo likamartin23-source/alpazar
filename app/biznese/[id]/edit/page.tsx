@@ -136,7 +136,7 @@ export default function BiznesEditPage({ params }: { params: { id: string } }) {
         .biz-input{width:100%;border:1px solid #e5e5e5;border-radius:10px;padding:11px 13px;font-size:13px;font-family:inherit;background:#fff;outline:none;box-sizing:border-box;}
         .biz-input:focus{border-color:#E63312;}
         .section-title{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:10px;margin-top:4px;}
-        .save-btn{width:100%;background:#E63312;color:#fff;border:none;border-radius:13px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .save-btn{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:13px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;}
         .save-btn:disabled{opacity:.5;cursor:not-allowed;}
       `}</style>
 

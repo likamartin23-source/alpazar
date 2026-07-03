@@ -462,7 +462,7 @@ const [searchError, setSearchError] = useState(false)
         .cond-btn{flex:1;min-width:70px;border:1.5px solid #ddd;border-radius:9px;padding:8px 6px;font-size:11px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;white-space:nowrap;}
         .cond-btn.active{border-color:#E63312;background:#FFF0EE;color:#E63312;}
         .fp-actions{display:flex;gap:8px;margin-top:6px;}
-        .fp-apply{flex:1;background:#E63312;color:#fff;border:none;border-radius:11px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .fp-apply{flex:1;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:11px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
         .fp-clear{background:#f5f5f5;color:#555;border:none;border-radius:11px;padding:13px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
 
         @keyframes ai-fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}

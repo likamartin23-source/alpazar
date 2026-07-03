@@ -78,7 +78,7 @@ export default function Kontakt() {
     .form-field input,.form-field textarea{width:100%;border:1.5px solid #ddd;border-radius:10px;padding:11px 13px;font-size:13px;font-family:inherit;outline:none;background:#fff;color:#111;transition:border .15s;}
     .form-field input:focus,.form-field textarea:focus{border-color:#F5C842;}
     .form-field textarea{min-height:110px;resize:vertical;}
-    .send-btn{width:100%;background:#E63312;color:#fff;border:none;border-radius:11px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s;}
+    .send-btn{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:11px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s;}
     .send-btn:disabled{opacity:.6;cursor:not-allowed;}
     .msg-box{border-radius:9px;padding:10px 14px;margin-bottom:14px;font-size:12px;font-weight:600;}
     .ok{background:#EAF3DE;color:#3B6D11;border:0.5px solid #97C459;}

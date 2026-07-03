@@ -352,7 +352,7 @@ function ModerationTab() {
                           type="button"
                           onClick={() => deactivateListing(r.listings?.id || r.listing_id, r.id, r.listings?.seller_id)}
                           disabled={deactivating[r.id]}
-                          style={{ background: '#E63312', color: '#fff', border: 'none', borderRadius: 5, padding: '4px 10px', fontSize: 11, fontWeight: 700, cursor: deactivating[r.id] ? 'not-allowed' : 'pointer', opacity: deactivating[r.id] ? 0.6 : 1 }}
+                          style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 5, padding: '4px 10px', fontSize: 11, fontWeight: 700, cursor: deactivating[r.id] ? 'not-allowed' : 'pointer', opacity: deactivating[r.id] ? 0.6 : 1 }}
                         >
                           {deactivating[r.id] ? 'Duke çaktivizuar...' : '🚫 Çaktivizo'}
                         </button>

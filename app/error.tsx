@@ -45,7 +45,7 @@ export default function GlobalError({
                 type="button"
                 onClick={reset}
                 style={{
-                  background: '#E63312', color: '#fff', border: 'none',
+                  background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none',
                   borderRadius: 10, padding: '13px 0', fontSize: 14,
                   fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
                 }}
