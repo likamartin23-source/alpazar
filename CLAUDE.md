@@ -10,14 +10,20 @@ Këto plugins ngarkohen automatikisht në çdo sesion Claude Code mbi Alpazar
 | **Superpowers** | `obra/superpowers-marketplace` | Planifikim + vetë-kontroll para çdo ndryshimi, + mjet **skills-search** ("Find Skills") për të gjetur/instaluar skills të tjera |
 | **claude-mem** | `thedotmack/claude-mem` (Apache-2.0) | **Memorje mes sesioneve** — mban kontekstin e projektit/skedarëve, s'ke nevojë ta rishpjegosh çdo herë |
 | **superpowers-chrome** | `obra/superpowers-marketplace` | **Browser access** për Claude (Chrome DevTools, skill `browsing`) — inspekton/teston `alpazar.vercel.app` live, debug UI. Ekuivalenti i verifikuar i "Chrome MCP / website cloner" nga videot. |
+| **frontend-design** | `anthropics/claude-code` (zyrtar) | **Dizajn frontend production-grade** — kod i lëmuar që shmang estetikën gjenerike të AI-së. Ky ËSHTË ekuivalenti zyrtar & i verifikuar i "Impeccable" nga videot. |
+| **code-review** | `anthropics/claude-code` (zyrtar) | **Code review me AI** — agjentë të specializuar + filtrim me besueshmëri për PR-të (redukton false-positives). |
+| **security-guidance** | `anthropics/claude-code` (zyrtar) | **Hook sigurie** — paralajmërime pattern-based për command injection / XSS / sekrete gjatë editimit të skedarëve, + review i diff-it. Përputhet me shtyllën e sigurisë të Alpazar-it. |
 
-> "Impeccable" (dizajn frontend) dhe "Task Observer" nga video **NUK** u instaluan:
-> s'kishin burim publik të verifikueshëm → shmangur rreziku supply-chain. Për
-> dizajn/skills të tjera, përdor `skills-search` të Superpowers.
+> Të tre plugin-et e fundit janë **first-party nga Anthropic** (`anthropics/claude-code`,
+> marketplace `claude-code-plugins`) — burim i verifikuar, zero rrezik supply-chain.
+> Aktivizuar më 3 Korrik 2026 pas rekomandimeve në video (frontend design / code review /
+> security guidance). "Impeccable" tani mbulohet nga `frontend-design` zyrtar.
+> "Task Observer" mbetet i pa-instaluar (s'ka burim publik të verifikueshëm).
 >
 > Instalim manual (nëse duhet, brenda një sesioni Claude Code):
 > `/plugin marketplace add obra/superpowers-marketplace` → `/plugin install superpowers@superpowers-marketplace`
 > `/plugin marketplace add thedotmack/claude-mem` → `/plugin install claude-mem`
+> `/plugin marketplace add anthropics/claude-code` → `/plugin install frontend-design@claude-code-plugins` (+ `code-review`, `security-guidance`)
 
 ## 🔌 CLAUDE POWER-STACK (5 shtyllat — mapim me gjendjen e Alpazar-it)
 
@@ -26,7 +32,7 @@ Bazuar në stack-un e rekomanduar (CLAUDE.md · Skills · MCP · Routines · Gui
 | Shtylla | Statusi te Alpazar |
 |---|---|
 | **1. CLAUDE.md (memorje)** | ✅ Ky skedar — konteksti i plotë, i lexuar në çdo sesion |
-| **2. Skills** | ✅ Superpowers + skills-search ("Find Skills") + claude-mem (shih sipër) |
+| **2. Skills** | ✅ Superpowers + skills-search ("Find Skills") + claude-mem + **plugin-et zyrtare Anthropic** (frontend-design, code-review, security-guidance) — shih sipër |
 | **3. MCP connectors** | ✅ Aktive në sesion: GitHub, Supabase (`sopafwfkrxpcdaljddoh`), Vercel (`prj_KNCEtuUDGNCA6ulHomdKniNAZEuX`), Notion, PostHog. **Për Cowork (web):** autorizoji te claude.ai → Settings → Connectors (vetëm pronari, OAuth) |
 | **4. Routines (24/7)** | ✅ GitHub Actions: `ci.yml` (build+tsc+teste), `claude.yml` (@claude auto-fix në PR), + Vercel crons (`/api/expire-premium`, `/api/indexnow`) |
 | **5. Guides/avancuar** | Referencë: Claude Code Ultimate Guide (FlorianBruniaux). **RooFlow s'u aktivizua** — multi-agent i rëndë, rrezik/kosto; hape vetëm me kërkesë të qartë |
