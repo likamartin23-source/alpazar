@@ -31,6 +31,12 @@
         "source": "github",
         "repo": "anthropics/claude-code"
       }
+    },
+    "impeccable": {
+      "source": {
+        "source": "github",
+        "repo": "pbakaus/impeccable"
+      }
     }
   },
   "enabledPlugins": {
@@ -39,6 +45,7 @@
     "claude-mem@thedotmack": true,
     "frontend-design@claude-code-plugins": true,
     "code-review@claude-code-plugins": true,
-    "security-guidance@claude-code-plugins": true
+    "security-guidance@claude-code-plugins": true,
+    "impeccable@impeccable": true
   }
 }

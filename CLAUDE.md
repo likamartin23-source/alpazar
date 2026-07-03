@@ -55,7 +55,7 @@ Të gjitha burimet u **verifikuan** para dokumentimit (npm + GitHub). Bërthama 
 |---|---|---|
 | **DESIGN.md i Alpazar** | ky repo → `DESIGN.md` | ✅ **Krijuar** — sistemi real i dizajnit (paleta #E63312/#F5C842/cream, Plus Jakarta Sans, karta/CTA/chip, anti-pattern-e). Thuaj agjentit *"ndiq DESIGN.md"* kur ndërton UI. |
 | **Magic MCP (21st.dev)** | npm `@21st-dev/magic` · `github.com/21st-dev/magic-mcp` | ✅ te `.mcp.json` (paketa e saktë + `API_KEY` via env `MAGIC_API_KEY`). Në Cowork është konektor tashmë aktiv. **Ti:** merr çelësin te 21st.dev → vendos `MAGIC_API_KEY`. |
-| **Impeccable** | npm `impeccable` (Apache-2.0, *pbakaus*) · `impeccable.style` | ⏳ Instalim lokal: `npx impeccable@latest install` (shkruan skill + PRODUCT.md/DESIGN.md). **S'instalohet dot nga sandbox-i** — download-i i skill-eve bllokohet (403). Ekuivalenti zyrtar `frontend-design` është tashmë aktiv. |
+| **Impeccable** | plugin `pbakaus/impeccable` (marketplace `impeccable`, v3.9.1, Apache-2.0) | ✅ **Aktivizuar** te `settings.json` (`impeccable@impeccable`). Instaluar përmes **plugin-marketplace nga GitHub** (git), jo CDN-ja `impeccable.style` që bllokohet nga sandbox-i (403). Jep `/impeccable polish|audit|critique …` (1 skill, 23 komanda, detektim anti-pattern-esh). |
 | **Awesome DESIGN.md** | npm `awesome-design-md` · `github.com/VoltAgent/awesome-design-md` | 📚 Referencë — koleksion DESIGN.md-sh. `npx awesome-design-md` për të zgjedhur një. Ne kemi tonin (sipër), të përshtatur me kufizimet e Alpazar. |
 | **Taste Skill** | npm `taste-skill` · `github.com/taste-skill/taste-skill` (MIT) | ℹ️ "Anti-slop" për *Hermes Agent* (jo Claude-native) → përshtatje e ulët; s'u aktivizua. |
 
