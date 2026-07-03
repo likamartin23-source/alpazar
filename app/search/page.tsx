@@ -132,7 +132,7 @@ export default function SearchPage() {
         .wrap{max-width:480px;margin:0 auto;background:#FFFBEA;min-height:100vh;padding-bottom:80px;}
 
         /* ── Topbar ── */
-        .topbar{background:#F5C842;padding:10px 12px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:50;}
+        .topbar{background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%);padding:10px 12px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:50;}
         .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
         .back i{font-size:18px;color:#111;}
         .search-wrap{flex:1;background:#fff;border-radius:12px;display:flex;align-items:center;padding:0 11px;gap:8px;border:0.5px solid #e0b030;transition:border-color .15s ease,box-shadow .15s ease;}
