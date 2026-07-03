@@ -22,7 +22,10 @@
     },
     "magic": {
       "command": "npx",
-      "args": ["-y", "@21st-dev/magic-mcp@latest"]
+      "args": ["-y", "@21st-dev/magic@latest"],
+      "env": {
+        "API_KEY": "${MAGIC_API_KEY}"
+      }
     },
     "fetch": {
       "command": "npx",
