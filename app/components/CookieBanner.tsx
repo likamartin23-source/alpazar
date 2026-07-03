@@ -63,14 +63,14 @@ export function CookieBanner() {
         <button
           type="button"
           onClick={accept}
-          style={{ flex: 1, background: '#F5C842', color: '#111', border: 'none', borderRadius: 10, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+          style={{ flex: 1, background: 'linear-gradient(135deg,#F8D24E,#F5C842)', color: '#111', border: 'none', borderRadius: 12, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
         >
           <><span aria-hidden="true">✓</span> Prano të gjitha</>
         </button>
         <button
           type="button"
           onClick={decline}
-          style={{ flex: 1, background: 'rgba(255,255,255,.1)', color: '#fff', border: '1px solid rgba(255,255,255,.2)', borderRadius: 10, padding: '11px 0', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
+          style={{ flex: 1, background: 'rgba(255,255,255,.1)', color: '#fff', border: '1px solid rgba(255,255,255,.2)', borderRadius: 12, padding: '11px 0', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
         >
           Vetëm thelbësoret
         </button>

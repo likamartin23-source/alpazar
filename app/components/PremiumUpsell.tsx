@@ -174,7 +174,7 @@ export function SocialProofBar({ viewsCount, listingId }: { viewsCount: number; 
         </span>
       </div>
       <span style={{
-        background: '#E63312', color: '#fff', fontSize: 9, fontWeight: 700,
+        background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', fontSize: 9, fontWeight: 700,
         padding: '3px 8px', borderRadius: 6, animation: 'pulse-dot 2s infinite',
       }}>LIVE</span>
       <style>{`@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.6}}`}</style>
@@ -206,7 +206,7 @@ export function SellerPremiumUpsell({ isPremium, price = '9.99' }: { isPremium: 
           type="button"
           onClick={() => window.location.href = '/premium'}
           style={{
-            background: '#F5C842', color: '#111', border: 'none', borderRadius: 8,
+            background: 'linear-gradient(135deg,#F8D24E,#F5C842)', color: '#111', border: 'none', borderRadius: 12,
             padding: '7px 12px', fontSize: 11, fontWeight: 800, cursor: 'pointer', whiteSpace: 'nowrap',
           }}
         >
@@ -260,7 +260,7 @@ export function FreeTierBanner({
           type="button"
           onClick={() => window.location.href = '/premium'}
           style={{
-            background: '#E63312', color: '#fff', border: 'none', borderRadius: 8,
+            background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 8,
             padding: '7px 12px', fontSize: 11, fontWeight: 700, cursor: 'pointer', flexShrink: 0, marginLeft: 10,
           }}
         >

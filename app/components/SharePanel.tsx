@@ -254,7 +254,7 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
               .catch(() => {})
           }}
           style={{
-            width: '100%', background: '#111', color: '#F5C842', border: 'none',
+            width: '100%', background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842', border: 'none',
             borderRadius: 10, padding: '11px 16px', fontWeight: 700, fontSize: 13,
             cursor: 'pointer', fontFamily: 'inherit', display: 'flex',
             alignItems: 'center', justifyContent: 'center', gap: 8,

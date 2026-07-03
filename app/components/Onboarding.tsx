@@ -36,7 +36,7 @@ export function Onboarding() {
         @keyframes ob-up   { from { transform:translateY(16px);opacity:0 } to { transform:none;opacity:1 } }
       `}</style>
       <div style={{
-        background: '#fff', borderRadius: 20, maxWidth: 380, width: '100%',
+        background: '#fff', borderRadius: 16, maxWidth: 380, width: '100%',
         padding: '28px 24px 24px', boxShadow: '0 8px 40px rgba(0,0,0,.18)',
         animation: 'ob-up .2s ease',
       }}>
@@ -58,7 +58,7 @@ export function Onboarding() {
             </div>
             <div style={{ fontSize: 22, fontWeight: 800, color: '#111', textAlign: 'center', marginBottom: 8 }}>Mirë se erdhe!</div>
             <div style={{ fontSize: 14, color: '#888', textAlign: 'center', lineHeight: 1.6, marginBottom: 28 }}>Shit, bli dhe bëj pazarin tënd — falas, pa komision.</div>
-            <button type="button" onClick={() => setStep(1)} style={{ width: '100%', background: '#E63312', color: '#fff', border: 'none', borderRadius: 12, padding: 14, fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', marginBottom: 10 }}>Vazhdo →</button>
+            <button type="button" onClick={() => setStep(1)} style={{ width: '100%', background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 12, padding: 14, fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', marginBottom: 10 }}>Vazhdo →</button>
             <button type="button" onClick={close} style={{ width: '100%', background: 'none', border: 'none', color: '#aaa', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>Anashkalo</button>
           </>
         )}
@@ -78,7 +78,7 @@ export function Onboarding() {
             ))}
             <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
               <button type="button" onClick={() => setStep(0)} style={{ flex: 1, background: '#fff', color: '#111', border: '1.5px solid #ddd', borderRadius: 12, padding: 13, fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>← Mbrapa</button>
-              <button type="button" onClick={() => setStep(2)} style={{ flex: 1, background: '#E63312', color: '#fff', border: 'none', borderRadius: 12, padding: 13, fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Vazhdo →</button>
+              <button type="button" onClick={() => setStep(2)} style={{ flex: 1, background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 12, padding: 13, fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Vazhdo →</button>
             </div>
           </>
         )}
@@ -87,8 +87,8 @@ export function Onboarding() {
           <>
             <div style={{ fontSize: 22, fontWeight: 800, color: '#111', textAlign: 'center', marginBottom: 8 }}>Gati? <span aria-hidden="true">🚀</span></div>
             <div style={{ fontSize: 13, color: '#888', textAlign: 'center', marginBottom: 24 }}>Zgjidh si dëshiron të fillosh</div>
-            <button type="button" onClick={() => { close(); window.location.href = '/listing/new' }} style={{ width: '100%', background: '#E63312', color: '#fff', border: 'none', borderRadius: 12, padding: 14, fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', marginBottom: 10 }}><span aria-hidden="true">➕</span> Shto shpalljen e parë</button>
-            <button type="button" onClick={() => { close(); window.location.href = '/search' }} style={{ width: '100%', background: '#F5C842', color: '#111', border: 'none', borderRadius: 12, padding: 14, fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', marginBottom: 10 }}><span aria-hidden="true">🔍</span> Eksploro</button>
+            <button type="button" onClick={() => { close(); window.location.href = '/listing/new' }} style={{ width: '100%', background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 12, padding: 14, fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', marginBottom: 10 }}><span aria-hidden="true">➕</span> Shto shpalljen e parë</button>
+            <button type="button" onClick={() => { close(); window.location.href = '/search' }} style={{ width: '100%', background: 'linear-gradient(135deg,#F8D24E,#F5C842)', color: '#111', border: 'none', borderRadius: 12, padding: 14, fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', marginBottom: 10 }}><span aria-hidden="true">🔍</span> Eksploro</button>
             <button type="button" onClick={() => setStep(1)} style={{ width: '100%', background: 'none', border: 'none', color: '#aaa', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>← Mbrapa</button>
           </>
         )}

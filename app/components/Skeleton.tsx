@@ -30,8 +30,8 @@ export function SkeletonCard() {
           <div className="sk" style={{ height: 13, width: '55%', marginBottom: 8 }} />
           <div className="sk" style={{ height: 16, width: '45%', marginBottom: 6 }} />
           <div style={{ display: 'flex', gap: 5 }}>
-            <div className="sk" style={{ height: 20, width: 52, borderRadius: 10 }} />
-            <div className="sk" style={{ height: 20, width: 60, borderRadius: 10 }} />
+            <div className="sk" style={{ height: 20, width: 52, borderRadius: 12 }} />
+            <div className="sk" style={{ height: 20, width: 60, borderRadius: 12 }} />
           </div>
         </div>
       </div>
@@ -67,7 +67,7 @@ export function SkeletonRow() {
           <div className="sk" style={{ height: 13, width: '65%', marginBottom: 6 }} />
           <div className="sk" style={{ height: 11, width: '40%' }} />
         </div>
-        <div className="sk" style={{ height: 11, width: 36, borderRadius: 8 }} />
+        <div className="sk" style={{ height: 11, width: 36, borderRadius: 10 }} />
       </div>
     </>
   )
@@ -124,7 +124,7 @@ export function SkeletonProfile() {
         </div>
         <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
           {[50, 70, 55].map((w, i) => (
-            <div key={i} className="sk" style={{ height: 24, width: w, borderRadius: 10 }} />
+            <div key={i} className="sk" style={{ height: 24, width: w, borderRadius: 12 }} />
           ))}
         </div>
         <SkeletonText lines={2} />
