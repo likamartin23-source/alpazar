@@ -671,7 +671,7 @@ export default function MessagesPage() {
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <>
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
         /* Fixed overlay — qëndron brenda viewport pavarësisht nga prindërit */
@@ -897,7 +897,7 @@ export default function MessagesPage() {
         @keyframes fadeIn{from{opacity:0}to{opacity:1}}
         @keyframes popIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-      `}</style>
+      ` }} />
 
       {/* Hidden file input */}
       <input

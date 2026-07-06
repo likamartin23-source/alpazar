@@ -104,7 +104,7 @@ export default function AuthCallback() {
       minHeight: '100vh', flexDirection: 'column', gap: 14,
       fontFamily: "'Plus Jakarta Sans', system-ui", background: '#FFFBEA', padding: 20, textAlign: 'center'
     }}>
-      <style>{`@keyframes spin{to{transform:rotate(360deg);}}`}</style>
+      <style dangerouslySetInnerHTML={{ __html: `@keyframes spin{to{transform:rotate(360deg);}}` }} />
       {err ? (
         <>
           <div style={{ fontSize: 40 }} aria-hidden="true">⚠️</div>

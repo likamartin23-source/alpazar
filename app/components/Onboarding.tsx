@@ -31,10 +31,10 @@ export function Onboarding() {
         animation: 'ob-fade .2s ease',
       }}
     >
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         @keyframes ob-fade { from { opacity:0 } to { opacity:1 } }
         @keyframes ob-up   { from { transform:translateY(16px);opacity:0 } to { transform:none;opacity:1 } }
-      `}</style>
+      ` }} />
       <div style={{
         background: '#fff', borderRadius: 16, maxWidth: 380, width: '100%',
         padding: '28px 24px 24px', boxShadow: '0 8px 40px rgba(0,0,0,.18)',

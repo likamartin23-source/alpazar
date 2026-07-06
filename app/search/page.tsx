@@ -126,7 +126,7 @@ export default function SearchPage() {
 
   return (
     <>
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA;}
         .wrap{max-width:480px;margin:0 auto;background:#FFFBEA;min-height:100vh;padding-bottom:80px;}
@@ -207,7 +207,7 @@ export default function SearchPage() {
         .initial i{font-size:50px;color:#e0b030;display:block;margin-bottom:14px;}
         .initial h1{font-size:15px;font-weight:700;color:#1a1a1a;margin-bottom:6px;}
         .initial p{font-size:12px;color:#888;}
-      `}</style>
+      ` }} />
 
       <div className="wrap">
         {/* ── Topbar ── */}

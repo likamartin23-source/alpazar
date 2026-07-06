@@ -509,7 +509,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
 
   if (loading) return (
     <div style={{ textAlign: 'center', padding: 60 }}>
-      <style>{`@keyframes spin{to{transform:rotate(360deg);}}`}</style>
+      <style dangerouslySetInnerHTML={{ __html: `@keyframes spin{to{transform:rotate(360deg);}}` }} />
       <div style={{ width: 28, height: 28, border: '3px solid #F5C842', borderTopColor: '#E63312', borderRadius: '50%', animation: 'spin .7s linear infinite', margin: '0 auto 10px' }} />
     </div>
   )
@@ -532,7 +532,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
 
   return (
     <>
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA;}
         .wrap{max-width:480px;margin:0 auto;background:#fff;min-height:100vh;padding-bottom:${chatPanelOpen ? '300px' : '70px'};}
@@ -696,7 +696,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         .report-link{display:block;text-align:center;font-size:11px;color:#bbb;margin-top:14px;cursor:pointer;}
         .report-link:hover{color:#E63312;}
         @keyframes ai-fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
-      `}</style>
+      ` }} />
 
       <div className="wrap">
         <div className="topbar">

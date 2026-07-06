@@ -111,7 +111,7 @@ const [loadError, setLoadError] = useState(false)
   if (!user || loading) return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: 12 }}>
       <div style={{ width: 36, height: 36, border: '3px solid #E63312', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+      <style dangerouslySetInnerHTML={{ __html: `@keyframes spin{to{transform:rotate(360deg)}}` }} />
       <span style={{ fontSize: 13, color: '#888' }}>Duke ngarkuar analytics...</span>
     </div>
   )
@@ -120,7 +120,7 @@ const [loadError, setLoadError] = useState(false)
 
   return (
     <div style={{ maxWidth: 480, margin: '0 auto', padding: '0 0 80px', fontFamily: "'Segoe UI',sans-serif", background: '#f8f8f8', minHeight: '100vh' }}>
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         .an-card{background:#fff;border-radius:14px;padding:16px;margin:10px 12px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
         .an-title{font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;}
         .stat-row{display:flex;gap:10px;}
@@ -140,7 +140,7 @@ const [loadError, setLoadError] = useState(false)
         .empty-state{text-align:center;padding:40px 20px;color:#888;}
         .topbar{display:flex;align-items:center;gap:10px;padding:14px 12px 10px;background:#fff;position:sticky;top:0;z-index:10;border-bottom:1px solid #f0f0f0;}
         .back-btn{width:34px;height:34px;border:none;background:#f5f5f5;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-      `}</style>
+      ` }} />
 
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
 

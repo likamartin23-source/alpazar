@@ -250,7 +250,7 @@ export default function AsistentPage() {
 
   return (
     <>
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#0e0e0e;overflow:hidden;}
         .page{max-width:480px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;background:#0e0e0e;position:relative;}
@@ -305,7 +305,7 @@ export default function AsistentPage() {
         .wb-text strong{color:#F5C842;font-size:11px;font-weight:700;display:block;}
         .wb-text span{color:#666;font-size:9.5px;}
         .wb-btn{background:#F5C842;color:#111;border:none;border-radius:8px;padding:7px 12px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;}
-      `}</style>
+      ` }} />
 
       <div className="page">
         <div className="header">

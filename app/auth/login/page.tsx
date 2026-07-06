@@ -823,7 +823,7 @@ export default function Auth() {
 
   return (
     <>
-      <style>{CSS}</style>
+      <style dangerouslySetInnerHTML={{ __html: CSS }} />
 
       {/* ════════════════════════════════════════
           KOMA 6-b: Age gate modal — L.124/2024, neni 8

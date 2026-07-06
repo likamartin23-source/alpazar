@@ -139,7 +139,7 @@ export default function BiznesNewPage() {
 
   return (
     <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh', paddingBottom: 80 }}>
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         .biz-card{background:#fff;border:1.5px solid #eee;borderRadius:14px;padding:18px 16px;marginBottom:10px;cursor:pointer;transition:border .15s,background .15s;}
         .biz-card.sel{border-color:#E63312;background:#FFF6F4;}
         .sub-chip{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1.5px solid #e0e0e0;borderRadius:20px;padding:7px 13px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
@@ -149,7 +149,7 @@ export default function BiznesNewPage() {
         .step-btn{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;borderRadius:13px;padding:15px;fontSize:15px;fontWeight:700;cursor:pointer;fontFamily:inherit;}
         .step-btn:disabled{opacity:.5;cursor:not-allowed;}
         .back-btn{background:none;border:none;cursor:pointer;color:#111;display:flex;alignItems:center;gap:6px;fontSize:13px;fontWeight:600;fontFamily:inherit;padding:0;}
-      `}</style>
+      ` }} />
 
       {/* Header */}
       <div style={{ background: 'linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%)', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10, position: 'sticky', top: 0, zIndex: 10 }}>

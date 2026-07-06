@@ -367,7 +367,7 @@ const [searchError, setSearchError] = useState(false)
 
   return (
     <>
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA;}
         .wrap{max-width:480px;margin:0 auto;background:#FFFBEA;min-height:100vh;padding-bottom:80px;}
@@ -467,7 +467,7 @@ const [searchError, setSearchError] = useState(false)
 
         @keyframes ai-fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
         .section{animation:ai-fade .25s ease;}
-      `}</style>
+      ` }} />
 
       <div className="wrap">
         {/* ── TOP BAR ── */}

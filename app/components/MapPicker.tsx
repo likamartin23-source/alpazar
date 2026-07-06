@@ -70,7 +70,7 @@ export function MapPicker({ lat, lng, address, onChange, onCityChange }: MapPick
 
   return (
     <div>
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+      <style dangerouslySetInnerHTML={{ __html: `@keyframes spin{to{transform:rotate(360deg)}}` }} />
 
       <div style={{ display: 'flex', gap: 7, alignItems: 'center' }}>
         <input

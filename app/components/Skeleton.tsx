@@ -17,7 +17,7 @@ const shimmer = `
 export function SkeletonCard() {
   return (
     <>
-      <style>{shimmer}</style>
+      <style dangerouslySetInnerHTML={{ __html: shimmer }} />
       <div role="status" aria-busy="true" aria-label="Duke ngarkuar..." style={{
         background: '#fff', borderRadius: 12, overflow: 'hidden',
         border: '0.5px solid #eee', flexShrink: 0,
@@ -43,7 +43,7 @@ export function SkeletonCard() {
 export function SkeletonGrid({ count = 6 }: { count?: number }) {
   return (
     <>
-      <style>{shimmer}</style>
+      <style dangerouslySetInnerHTML={{ __html: shimmer }} />
       <div role="status" aria-busy="true" aria-label="Duke ngarkuar..." style={{
         display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)',
         gap: 10, padding: '0 13px',
@@ -60,7 +60,7 @@ export function SkeletonGrid({ count = 6 }: { count?: number }) {
 export function SkeletonRow() {
   return (
     <>
-      <style>{shimmer}</style>
+      <style dangerouslySetInnerHTML={{ __html: shimmer }} />
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px' }}>
         <div className="sk" style={{ width: 44, height: 44, borderRadius: '50%', flexShrink: 0 }} />
         <div style={{ flex: 1 }}>
@@ -77,7 +77,7 @@ export function SkeletonRow() {
 export function SkeletonList({ count = 5 }: { count?: number }) {
   return (
     <>
-      <style>{shimmer}</style>
+      <style dangerouslySetInnerHTML={{ __html: shimmer }} />
       <div role="status" aria-busy="true" aria-label="Duke ngarkuar...">
         {Array.from({ length: count }).map((_, i) => (
           <div key={i}>
@@ -95,7 +95,7 @@ export function SkeletonText({ lines = 3 }: { lines?: number }) {
   const widths = ['100%', '85%', '70%', '90%', '60%']
   return (
     <>
-      <style>{shimmer}</style>
+      <style dangerouslySetInnerHTML={{ __html: shimmer }} />
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         {Array.from({ length: lines }).map((_, i) => (
           <div
@@ -113,7 +113,7 @@ export function SkeletonText({ lines = 3 }: { lines?: number }) {
 export function SkeletonProfile() {
   return (
     <>
-      <style>{shimmer}</style>
+      <style dangerouslySetInnerHTML={{ __html: shimmer }} />
       <div style={{ padding: '14px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
           <div className="sk" style={{ width: 64, height: 64, borderRadius: '50%', flexShrink: 0 }} />

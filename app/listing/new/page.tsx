@@ -244,7 +244,7 @@ export default function NewListing() {
 
   return (
     <>
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA;}
         .wrap{max-width:480px;margin:0 auto;background:#FFFBEA;min-height:100vh;padding-bottom:100px;}
@@ -284,7 +284,7 @@ export default function NewListing() {
         .cat-btn.active i{color:#E63312;}
         .submit-btn{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px -3px rgba(230,51,18,.45);transition:transform .15s ease,box-shadow .15s ease;} .submit-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 7px 20px -4px rgba(230,51,18,.55);}
         .submit-btn:disabled{opacity:.6;cursor:not-allowed;}
-      `}</style>
+      ` }} />
 
       {/* Marketing: upsell kur arrin kufirin falas (5 shpallje) */}
       {myListingCount >= freeLimit && <PremiumUpsellModal trigger="limit" />}

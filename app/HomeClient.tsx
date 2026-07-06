@@ -450,7 +450,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
   return (
     <>
       <Onboarding />
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
         .wrap{max-width:480px;margin:0 auto;background:#FFFBEA;padding-bottom:80px;}
@@ -600,7 +600,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .new-listing-toast{background:#EAF3DE;border:1px solid #97C459;border-radius:8px;padding:6px 12px;display:flex;align-items:center;gap:7px;margin-bottom:7px;animation:toast-in .3s ease;}
         @keyframes toast-in{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
         .new-listing-toast span{font-size:11px;font-weight:700;color:#3B6D11;}
-      `}</style>
+      ` }} />
 
       <div className="wrap">
         <div className="header">

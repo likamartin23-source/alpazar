@@ -69,7 +69,7 @@ export function PremiumUpsellModal({
       }}
       onClick={close}
     >
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         @keyframes fadeIn{from{opacity:0}to{opacity:1}}
         @keyframes slideUp{from{transform:translateY(100%)}to{transform:none}}
         .ups-sheet{background:#FFFBEA;border-radius:24px 24px 0 0;padding:28px 20px 36px;width:100%;max-width:480px;animation:slideUp .25s ease;}
@@ -89,7 +89,7 @@ export function PremiumUpsellModal({
         .ups-timer-l{color:rgba(255,255,255,.7);font-size:9px;}
         .ups-cta{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:15px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:10px;box-shadow:0 4px 16px rgba(230,51,18,.4);}
         .ups-skip{width:100%;background:none;border:none;color:#aaa;font-size:12px;cursor:pointer;font-family:inherit;padding:4px;}
-      `}</style>
+      ` }} />
       <div className="ups-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative' }}>
         <button type="button" className="ups-close" aria-label="Mbyll" onClick={close}><span aria-hidden="true">✕</span></button>
         <span className="ups-crown" aria-hidden="true">👑</span>
@@ -177,7 +177,7 @@ export function SocialProofBar({ viewsCount, listingId }: { viewsCount: number; 
         background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', fontSize: 9, fontWeight: 700,
         padding: '3px 8px', borderRadius: 6, animation: 'pulse-dot 2s infinite',
       }}>LIVE</span>
-      <style>{`@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.6}}`}</style>
+      <style dangerouslySetInnerHTML={{ __html: `@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.6}}` }} />
     </div>
   )
 }

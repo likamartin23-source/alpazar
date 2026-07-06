@@ -113,7 +113,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
 
   return (
     <div style={{ maxWidth: 480, margin: '0 auto', background: '#f2f2f2', minHeight: '100vh', paddingBottom: 60 }}>
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
         .biz-tab{flex:1;padding:13px 0;font-size:13px;font-weight:700;border:none;background:none;cursor:pointer;border-bottom:2.5px solid transparent;color:#888;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:4px;}
@@ -137,7 +137,7 @@ export default function BiznesPageClient({ params }: { params: { id: string } })
         .stat-l{font-size:10px;color:#888;font-weight:500;margin-top:1px;}
         .card{background:#fff;border-radius:16px;margin:8px 12px 0;padding:16px;}
         .card-title{font-size:13px;font-weight:800;color:#111;margin-bottom:14px;display:flex;align-items:center;gap:6px;}
-      `}</style>
+      ` }} />
 
       {/* ── Cover photo ────────────────────────────────────── */}
       <div style={{ position: 'relative' }}>

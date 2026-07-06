@@ -184,7 +184,7 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3', rounded =
             animation: 'lb-fade .15s ease',
           }}
         >
-          <style>{`@keyframes lb-fade{from{opacity:0}to{opacity:1}} .carousel-track::-webkit-scrollbar{display:none}`}</style>
+          <style dangerouslySetInnerHTML={{ __html: `@keyframes lb-fade{from{opacity:0}to{opacity:1}} .carousel-track::-webkit-scrollbar{display:none}` }} />
           <button type="button" aria-label="Mbyll" onClick={() => setLightbox(false)} style={{ position: 'absolute', top: 16, right: 16, background: 'rgba(255,255,255,.15)', border: 'none', color: '#fff', borderRadius: '50%', width: 36, height: 36, fontSize: 18, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
           {current > 0 && (
             <button type="button" onClick={e => { e.stopPropagation(); goTo(current - 1) }} aria-label="Foto e mëparshme" style={{ position: 'absolute', left: 12, background: 'rgba(255,255,255,.15)', border: 'none', color: '#fff', borderRadius: '50%', width: 40, height: 40, fontSize: 20, cursor: 'pointer' }}>‹</button>

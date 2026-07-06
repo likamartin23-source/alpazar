@@ -164,7 +164,7 @@ export default function ReferralPage() {
 
   return (
     <>
-      <style>{CSS}</style>
+      <style dangerouslySetInnerHTML={{ __html: CSS }} />
       <div className="wrap">
         <div className="topbar">
           <button type="button" className="back" aria-label="Kthehu mbrapa" onClick={() => window.history.back()}>

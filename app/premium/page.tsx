@@ -86,7 +86,7 @@ export default function PremiumPage() {
 
   return (
     <>
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA;}
         .wrap{max-width:480px;margin:0 auto;background:#FFFBEA;min-height:100vh;padding-bottom:40px;}
@@ -141,7 +141,7 @@ export default function PremiumPage() {
         .ref-m-bar-fill{height:100%;background:linear-gradient(90deg,#F5C842,#E63312);border-radius:6px;transition:width .5s;}
         .ref-m-meta{display:flex;justify-content:space-between;font-size:10px;color:#888;}
         .ref-m-cta{display:block;background:linear-gradient(135deg,#F8D24E,#F5C842);color:#111;border:none;border-radius:12px;padding:11px;font-size:12px;font-weight:700;cursor:pointer;width:100%;margin-top:10px;text-align:center;text-decoration:none;font-family:inherit;box-shadow:0 2px 8px -2px rgba(245,200,66,.5);}
-      `}</style>
+      ` }} />
 
       <div className="wrap">
         <div className="topbar">
