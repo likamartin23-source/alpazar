@@ -263,4 +263,8 @@ PR i ri:
 
 - [ ] **MAR-5:** Price Alerts System — cron job për detektim çmimesh
 - [ ] **MAR-6:** Seller Analytics Dashboard
-- [ ] **MAR-7:** Semantic Search (pgvector/Meilisearch)
+- [x] **MAR-7:** Semantic Search me pgvector — **KOD I MBARUAR** (3 Korrik 2026)
+  - `supabase/migrations/20260703_semantic_search_pgvector.sql` — pgvector + kolona `embedding vector(384)` + indeks ivfflat + RPC `match_listings` / `set_listing_embedding` / `listings_without_embedding`
+  - `supabase/functions/embed/index.ts` — Edge Function me `gte-small` (falas, 384-dim, pa çelës)
+  - `app/api/semantic-search/route.ts` — POST `{q}` → embedding → `match_listings`; degradim i butë (`semantic:false`) nëse s'është deploy-uar
+  - **Ti duhet të aplikosh (nga sandbox s'i bëj dot):** 1) apliko migrimin në Supabase SQL Editor; 2) `supabase functions deploy embed` + vendos `EMBED_ADMIN_SECRET`; 3) backfill: thirr `embed` me `{mode:'backfill', secret}` derisa `processed=0`. Pastaj `/api/semantic-search` kthen rezultate reale.
