@@ -571,7 +571,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         .desc{font-size:13px;color:#555;line-height:1.7;}
 
         /* Seller section — free-flowing */
-        .seller-section{padding:0 12px;}
+        .seller-section{background:#fff;border:0.5px solid #ececec;border-radius:14px;padding:14px;margin:0 12px 12px;box-shadow:0 1px 2px rgba(0,0,0,.04),0 8px 20px -12px rgba(0,0,0,.16);}
         .seller-av-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
         .seller-av{width:44px;height:44px;border-radius:50%;background:#F5C842;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#111;flex-shrink:0;overflow:hidden;border:2.5px solid #F5C842;}
         .seller-av img{width:100%;height:100%;object-fit:cover;}
@@ -650,7 +650,10 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         .login-prompt-btn:hover{transform:translateY(-1px);box-shadow:0 5px 14px -3px rgba(230,51,18,.5);}
 
         /* Bottom bar */
-        .bottom-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid #eee;padding:10px 12px;display:flex;gap:8px;z-index:100;box-shadow:0 -6px 20px rgba(0,0,0,.06);}
+        .bottom-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid #eee;padding:10px 12px;display:flex;gap:8px;align-items:center;z-index:100;box-shadow:0 -6px 20px rgba(0,0,0,.06);}
+        .bb-price{display:flex;flex-direction:column;justify-content:center;flex-shrink:0;max-width:112px;padding-right:2px;}
+        .bb-price-l{font-size:9px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:.3px;line-height:1;}
+        .bb-price-n{font-size:16px;font-weight:800;color:#E63312;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.3px;line-height:1.2;}
         .main-chat-btn{flex:1;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 12px rgba(230,51,18,.3);}
         .main-chat-btn i{font-size:16px;}
         .wa-btn{width:48px;height:48px;background:#25D366;border:none;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(37,211,102,.3);text-decoration:none;}
@@ -844,9 +847,8 @@ export default function ListingPageClient({ params, initialListing }: { params: 
           {/* ── PROFILI I SHITËSIT — free-flowing ── */}
           {seller && (
             <>
-              <div className="divider" />
               <div className="seller-section">
-                <div className="sec-label">Shitësi</div>
+                <div className="sec-label" style={{ marginTop: 0 }}>Shitësi</div>
 
                 {/* Avatar row */}
                 <div role="link" tabIndex={0} className="seller-av-row" onClick={() => window.location.href = hasShop ? `/biznese/${seller.id}` : `/u/${seller.id}`} onKeyDown={e => { if (e.key === 'Enter') window.location.href = hasShop ? `/biznese/${seller.id}` : `/u/${seller.id}` }} style={{ cursor: 'pointer' }}>
@@ -1280,6 +1282,10 @@ export default function ListingPageClient({ params, initialListing }: { params: 
       {/* Bottom bar — visible when chat sheet is closed */}
       {!isOwner && !chatPanelOpen && seller && (
         <div className="bottom-bar">
+          <div className="bb-price">
+            <span className="bb-price-l">Çmimi</span>
+            <span className="bb-price-n">{listing.price ? fmt(listing.price, listing.currency) : 'Marrëveshje'}</span>
+          </div>
           <button type="button" className="main-chat-btn" onClick={() => {
             if (!user) { window.location.href = '/auth/login'; return }
             setChatOpen(true)
