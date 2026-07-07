@@ -211,16 +211,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, id: data?.id })
     }
 
-    // ── otp: 6-digit email code for register/login (generated server-side) ──
-    // We generate the code via Supabase admin generateLink (properties.email_otp)
-    // and deliver it ourselves via Resend — no dependency on the Supabase email
-    // template. The client then verifies it with supabase.auth.verifyOtp(magiclink).
+    // ── otp: 6-digit email code for register/login ──────────────────────
+    // Delegohet te Supabase Edge Function `email-otp`, e cila ka
+    // SERVICE_ROLE_KEY të injektuar automatikisht (s'varet nga Vercel env)
+    // dhe dërgon me Brevo (këdo) → Resend (fallback). Rate limits këtu
+    // mbeten si mburojë e parë; funksioni ka edhe throttle 45s/email në DB.
     if (type === 'otp') {
       const email = String(body.email ?? '').trim().toLowerCase()
-      const mode = body.mode === 'register' ? 'register' : 'login'
-      const password = typeof body.password === 'string' ? body.password : ''
-      const fullName = String(body.full_name ?? '').trim().slice(0, 120)
-      const age = body.age != null && body.age !== '' ? parseInt(String(body.age)) : null
 
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         return NextResponse.json({ error: 'Email i pavlefshëm' }, { status: 400 })
@@ -236,54 +233,23 @@ export async function POST(req: NextRequest) {
       const rlIp = rateLimit(`email:otp:ip:${ip}`, { limit: 6, windowMs: 60_000 })
       if (!rlIp.allowed) return NextResponse.json({ error: 'Shumë kërkesa.' }, { status: 429 })
 
-      const admin = getSupabaseAdmin()
-
-      if (mode === 'register') {
-        if (!password || password.length < 6) {
-          return NextResponse.json({ error: 'Fjalëkalimi duhet të paktën 6 karaktere.' }, { status: 400 })
-        }
-        // Create the (unconfirmed) user so a magic-link OTP can be issued.
-        // Ignore "already registered" — generateLink below still works for them.
-        await admin.auth.admin.createUser({
+      const fnRes = await fetch(`${SUPABASE_URL}/functions/v1/email-otp`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${SUPABASE_ANON}`,
+          apikey: SUPABASE_ANON,
+        },
+        body: JSON.stringify({
           email,
-          password,
-          email_confirm: false,
-          user_metadata: { ...(fullName ? { full_name: fullName } : {}), ...(age ? { age } : {}) },
-        }).catch(() => {})
-      }
-
-      const { data: linkData, error: linkErr } =
-        await admin.auth.admin.generateLink({ type: 'magiclink', email })
-      const code = (linkData as any)?.properties?.email_otp
-      if (linkErr || !code) {
-        const em = (linkErr?.message ?? '').toLowerCase()
-        if (mode === 'login' && (em.includes('not') || em.includes('exist') || em.includes('found'))) {
-          return NextResponse.json({ error: 'Nuk gjetëm llogari me këtë email. Regjistrohu fillimisht.' }, { status: 400 })
-        }
-        return NextResponse.json({ error: 'Nuk u gjenerua dot kodi. Provo sërish.' }, { status: 500 })
-      }
-
-      const r = await getResend()
-      if (!r) return NextResponse.json({ error: 'email_not_configured' }, { status: 503 })
-
-      const { error: sendErr } = await r.client.emails.send({
-        from: r.from,
-        to: email,
-        subject: `${code} — Kodi yt i konfirmimit Alpazar`,
-        html: `
-          <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;">
-            <div style="background:#111;padding:20px;border-radius:12px 12px 0 0;text-align:center;">
-              <h1 style="color:#F5C842;font-size:24px;letter-spacing:3px;margin:0;">ALPAZAR</h1>
-            </div>
-            <div style="background:#fff;border:1px solid #eee;border-top:none;padding:28px;border-radius:0 0 12px 12px;text-align:center;">
-              <p style="color:#666;font-size:14px;margin:0 0 16px;">Kodi yt i konfirmimit:</p>
-              <div style="font-size:34px;font-weight:800;letter-spacing:10px;color:#111;background:#FFFBEA;border:1px dashed #F5C842;border-radius:10px;padding:14px 0;">${esc(code)}</div>
-              <p style="color:#aaa;font-size:12px;margin:18px 0 0;">Skadon për pak minuta. Nëse nuk e kërkove ti, injoroje këtë email.</p>
-            </div>
-          </div>`,
+          mode: body.mode === 'register' ? 'register' : 'login',
+          password: typeof body.password === 'string' ? body.password : '',
+          full_name: String(body.full_name ?? '').trim().slice(0, 120),
+          age: body.age ?? null,
+        }),
       })
-      if (sendErr) return NextResponse.json({ error: sendErr.message }, { status: 500 })
-      return NextResponse.json({ success: true })
+      const fnJson = await fnRes.json().catch(() => ({}))
+      return NextResponse.json(fnJson, { status: fnRes.status })
     }
 
     return NextResponse.json({ error: 'Tip i panjohur emaili' }, { status: 400 })
