@@ -263,8 +263,13 @@ PR i ri:
 
 - [ ] **MAR-5:** Price Alerts System — cron job për detektim çmimesh
 - [ ] **MAR-6:** Seller Analytics Dashboard
-- [x] **MAR-7:** Semantic Search me pgvector — **KOD I MBARUAR** (3 Korrik 2026)
-  - `supabase/migrations/20260703_semantic_search_pgvector.sql` — pgvector + kolona `embedding vector(384)` + indeks ivfflat + RPC `match_listings` / `set_listing_embedding` / `listings_without_embedding`
-  - `supabase/functions/embed/index.ts` — Edge Function me `gte-small` (falas, 384-dim, pa çelës)
-  - `app/api/semantic-search/route.ts` — POST `{q}` → embedding → `match_listings`; degradim i butë (`semantic:false`) nëse s'është deploy-uar
-  - **Ti duhet të aplikosh (nga sandbox s'i bëj dot):** 1) apliko migrimin në Supabase SQL Editor; 2) `supabase functions deploy embed` + vendos `EMBED_ADMIN_SECRET`; 3) backfill: thirr `embed` me `{mode:'backfill', secret}` derisa `processed=0`. Pastaj `/api/semantic-search` kthen rezultate reale.
+- [x] **MAR-7:** Semantic Search me pgvector — **LIVE NË PRODHIM** (7 Korrik 2026, aplikuar me Supabase MCP)
+  - Migrimi i aplikuar në projektin live: extension `vector`, `listings.embedding vector(384)`, indeks ivfflat cosine, RPC `match_listings` (anon/auth) + `listings_without_embedding`/`set_listing_embedding` (service_role). KUJDES: `images` është `text[]` (JO `jsonb`).
+  - Edge Function `embed` v2 ACTIVE (gte-small falas): mode `query` publik; `backfill` pranon service_role key OSE `EMBED_ADMIN_SECRET` — thirret automatikisht, pa sekret manual.
+  - Backfill: 0 shpallje aktive kur u aplikua — ekzekutohet kur të ketë shpallje (thirr `embed` me service_role derisa `processed=0`).
+
+### 📧 EMAIL-OTP (LIVE, 7 Korrik 2026) — arkitektura e email-it
+- `/api/email` (type `otp`) **delegon te Edge Function `email-otp`** (service_role i injektuar automatikisht — MOS e kthe te getSupabaseAdmin në Vercel: s'ka SERVICE_ROLE_KEY atje dhe jep 500).
+- `email-otp` (ACTIVE v1, testuar `{success:true}` live): createUser + generateLink(email_otp) + throttle 45s/email (`otp_email_throttle`, RLS pa policies) + dërgim: **Brevo** (nëse `admin_settings.brevo_api_key` vendoset — dërgon te KUSHDO, 300/ditë falas) → fallback **Resend** (`resend_api_key` ekziston por PA domain të verifikuar = sandbox → dërgon VETËM te email-i i pronarit — ky ishte shkaku i humbjes ~50% të signup-eve).
+- **Aktivizim Brevo pa deploy:** `update admin_settings set value='xkeysib-...' where key='brevo_api_key';` (+ `brevo_from_email` = dërgues i verifikuar në Brevo).
+- Google OAuth: Client ID ekziston (`admin_settings.google_oauth_client_id`, projekti GCP `alpazar`); mungon Client Secret + toggle i provider-it në Supabase (verifikuar OFF live më 7/7 me `authorize?provider=google` → "provider is not enabled"). Flag UI: `app_config.google_login_enabled`.
