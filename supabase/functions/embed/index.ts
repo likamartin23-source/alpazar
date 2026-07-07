@@ -40,11 +40,18 @@ Deno.serve(async (req: Request) => {
     }
 
     if (mode === 'backfill') {
+      // Autorizim: pranon EMBED_ADMIN_SECRET (nëse vendoset) OSE service_role key
+      // (Authorization/apikey) — kështu backfill-i thirret automatikisht me
+      // service_role, pa pasur nevojë të vendoset manualisht një sekret shtesë.
+      const svc = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
       const secret = Deno.env.get('EMBED_ADMIN_SECRET')
-      if (!secret || body.secret !== secret) return json({ error: 'unauthorized' }, 401)
+      const auth = (req.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '')
+      const apikey = req.headers.get('apikey') || ''
+      const ok = (!!secret && body.secret === secret) || auth === svc || apikey === svc
+      if (!ok) return json({ error: 'unauthorized' }, 401)
       const db = createClient(
         Deno.env.get('SUPABASE_URL')!,
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+        svc,
       )
       const batch = Math.min(Math.max(Number(body.batch) || 40, 1), 100)
       const { data: rows, error } = await db.rpc('listings_without_embedding', { batch })

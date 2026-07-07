@@ -33,7 +33,7 @@ returns table (
   condition text,
   city text,
   is_premium boolean,
-  images jsonb,
+  images text[],
   category_id uuid,
   created_at timestamptz,
   user_id uuid,
