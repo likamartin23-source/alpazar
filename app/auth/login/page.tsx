@@ -121,6 +121,8 @@ export default function Auth() {
   // Google login shfaqet vetëm kur admini e ndez flamurin (pas konfigurimit të
   // provider-it në Supabase). Default: fshehur, që të mos dështojë butoni.
   const [googleOn, setGoogleOn] = useState(false)
+  const [googleClientId, setGoogleClientId] = useState('')
+  const gsiRef = useRef<HTMLDivElement | null>(null)
 
   // 2FA (TOTP) state
   const [totpCode, setTotpCode] = useState('')
@@ -171,14 +173,60 @@ export default function Auth() {
   const [smsFailEmail, setSmsFailEmail] = useState('')
   const [originalPhone, setOriginalPhone] = useState('')
 
-  // A është ndezur Google login? (app_config.google_login_enabled)
+  // A është ndezur Google login? (app_config.google_login_enabled) + Client ID
+  // (app_config.google_client_id) — të dyja ndërrohen me SQL, pa redeploy.
   useEffect(() => {
-    supabase.from('app_config').select('value').eq('key', 'google_login_enabled').maybeSingle()
+    supabase.from('app_config').select('key, value').in('key', ['google_login_enabled', 'google_client_id'])
       .then(({ data }) => {
-        const v = (data?.value ?? '').toString().toLowerCase()
-        setGoogleOn(v === 'true' || v === '1' || v === 'yes')
+        const map: Record<string, string> = {}
+        for (const row of (data ?? []) as { key: string; value: string }[]) map[row.key] = row.value ?? ''
+        const v = (map.google_login_enabled ?? '').toLowerCase()
+        setGoogleClientId(map.google_client_id ?? '')
+        setGoogleOn((v === 'true' || v === '1' || v === 'yes') && !!map.google_client_id)
       })
   }, [])
+
+  // GIS (Google Identity Services): rrjedha me ID-token — s'kërkon client secret
+  // as redirect URI. Google-i jep një credential (JWT) → signInWithIdToken.
+  useEffect(() => {
+    if (!googleOn || !googleClientId || !gsiRef.current) return
+    let cancelled = false
+    const load = () => new Promise<void>((resolve, reject) => {
+      if ((window as any).google?.accounts?.id) return resolve()
+      const s = document.createElement('script')
+      s.src = 'https://accounts.google.com/gsi/client'
+      s.async = true
+      s.defer = true
+      s.onload = () => resolve()
+      s.onerror = () => reject(new Error('gis_load'))
+      document.head.appendChild(s)
+    })
+    load().then(() => {
+      if (cancelled || !gsiRef.current) return
+      const gid = (window as any).google?.accounts?.id
+      if (!gid) return
+      gid.initialize({
+        client_id: googleClientId,
+        callback: async (resp: any) => {
+          if (!resp?.credential) { setMsg('err:Hyrja me Google dështoi. Provo sërish.'); return }
+          setLoading(true); setMsg('')
+          const { error } = await supabase.auth.signInWithIdToken({ provider: 'google', token: resp.credential })
+          if (error) {
+            setMsg(`err:${error.message}`)
+            setLoading(false)
+            return
+          }
+          // onAuthStateChange bën redirect; ky është rezervë.
+          window.location.href = '/'
+        },
+      })
+      gsiRef.current.innerHTML = ''
+      gid.renderButton(gsiRef.current, {
+        theme: 'outline', size: 'large', text: 'signin_with', shape: 'pill', locale: 'sq', width: 300,
+      })
+    }).catch(() => setGoogleOn(false))
+    return () => { cancelled = true }
+  }, [googleOn, googleClientId])
 
   useEffect(() => {
     // Recovery magic link: ?reset=1 means user clicked recovery email link
@@ -240,31 +288,10 @@ export default function Auth() {
     if (timerRef.current) clearInterval(timerRef.current)
   }
 
-  // ── Module 1: Google OAuth ──────────────────────────────────────
-  async function loginWithGoogle() {
-    setLoading(true); setMsg('')
-    const ref = document.cookie.match(/alpazar_ref=([^;]+)/)?.[1]
-    // Uses custom OIDC provider 'google-oidc' stored in auth.custom_oauth_providers
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google-oidc' as 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback${ref ? `?ref=${ref}` : ''}`,
-        queryParams: { access_type: 'offline', prompt: 'consent' },
-        skipBrowserRedirect: false,
-      },
-    })
-    if (error) {
-      const m = (error.message || '').toLowerCase()
-      if (m.includes('not enabled') || m.includes('provider') || m.includes('unsupported')) {
-        // Provider s'është konfiguruar ende → fshihe butonin dhe mos e ngec përdoruesin.
-        setGoogleOn(false)
-        setMsg('err:Hyrja me Google nuk është aktive për momentin. Përdor email ose telefon.')
-      } else {
-        setMsg(`err:${error.message}`)
-      }
-    }
-    setLoading(false)
-  }
+  // ── Module 1: Google login ──────────────────────────────────────
+  // Rrjedha me GIS ID-token (shih useEffect-in më lart): butoni zyrtar i
+  // Google-it renderohet te gsiRef dhe credential-i verifikohet nga Supabase
+  // me signInWithIdToken — pa client secret, pa redirect URI.
 
   // ── Module 1: 2FA TOTP verify ────────────────────────────────────
   async function verifyTotp() {
@@ -990,11 +1017,9 @@ export default function Auth() {
               {googleOn && (
                 <>
                   <div className="divider">ose vazhdo me</div>
-                  <button className="btn-ghost" type="button" onClick={loginWithGoogle} disabled={loading}
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                    <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2v6h7.8c4.5-4.2 7.1-10.3 7.1-17.2z"/><path fill="#34A853" d="M24 47c6.5 0 11.9-2.1 15.9-5.8l-7.8-6c-2.1 1.4-4.8 2.3-8.1 2.3-6.2 0-11.5-4.2-13.4-9.9H2.6v6.2C6.5 41.7 14.7 47 24 47z"/><path fill="#FBBC04" d="M10.6 27.6c-.5-1.4-.8-2.9-.8-4.6s.3-3.2.8-4.6v-6.2H2.6C1 15.6 0 19.7 0 24s1 8.4 2.6 11.8l8-6.2z"/><path fill="#E94235" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.5l6.8-6.8C35.9 2.4 30.5 0 24 0 14.7 0 6.5 5.3 2.6 13.2l8 6.2C12.5 13.7 17.8 9.5 24 9.5z"/></svg>
-                    Hyr me Google
-                  </button>
+                  {/* Butoni zyrtar i Google-it (GIS) renderohet këtu nga useEffect-i.
+                      Credential (ID-token) → supabase.auth.signInWithIdToken. */}
+                  <div ref={gsiRef} style={{ display: 'flex', justifyContent: 'center', minHeight: 44 }} />
                 </>
               )}
 
