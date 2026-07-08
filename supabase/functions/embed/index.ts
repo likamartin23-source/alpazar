@@ -40,19 +40,17 @@ Deno.serve(async (req: Request) => {
     }
 
     if (mode === 'backfill') {
-      // Autorizim: pranon EMBED_ADMIN_SECRET (nëse vendoset) OSE service_role key
-      // (Authorization/apikey) — kështu backfill-i thirret automatikisht me
-      // service_role, pa pasur nevojë të vendoset manualisht një sekret shtesë.
       const svc = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-      const secret = Deno.env.get('EMBED_ADMIN_SECRET')
+      const db = createClient(Deno.env.get('SUPABASE_URL')!, svc)
+      // Autorizim: service_role OSE EMBED_ADMIN_SECRET OSE admin_settings.embed_cron_secret
+      // (trigger/cron nga DB — pa ekspozuar service_role).
+      const envSecret = Deno.env.get('EMBED_ADMIN_SECRET')
       const auth = (req.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '')
       const apikey = req.headers.get('apikey') || ''
-      const ok = (!!secret && body.secret === secret) || auth === svc || apikey === svc
+      let dbSecret = ''
+      try { const { data } = await db.from('admin_settings').select('value').eq('key','embed_cron_secret').maybeSingle(); dbSecret = data?.value || '' } catch {}
+      const ok = auth === svc || apikey === svc || (!!envSecret && body.secret === envSecret) || (!!dbSecret && body.secret === dbSecret)
       if (!ok) return json({ error: 'unauthorized' }, 401)
-      const db = createClient(
-        Deno.env.get('SUPABASE_URL')!,
-        svc,
-      )
       const batch = Math.min(Math.max(Number(body.batch) || 40, 1), 100)
       const { data: rows, error } = await db.rpc('listings_without_embedding', { batch })
       if (error) return json({ error: error.message }, 500)
