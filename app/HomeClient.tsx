@@ -564,9 +564,6 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .card-meta{display:flex;align-items:center;justify-content:space-between;}
         .card-loc{font-size:6.5px;color:#aaa;display:flex;align-items:center;gap:1px;}
         .card-loc i{font-size:6.5px;}
-        .card-like{width:13px;height:13px;border:0.5px solid #eee;border-radius:50%;display:flex;align-items:center;justify-content:center;background:none;cursor:pointer;transition:border-color .15s;}
-        .card-like:hover{border-color:#E63312;}
-        .card-like i{font-size:7px;color:#ddd;}
         .empty-state{grid-column:1/-1;text-align:center;padding:36px 16px;background:linear-gradient(135deg,#f9f5e0,#f5f0d5);border:0.5px solid #eee;border-radius:13px;}
         .empty-state i{font-size:40px;color:#F5C842;display:block;margin-bottom:10px;}
         .empty-state h3{font-size:14px;font-weight:700;color:#555;margin-bottom:6px;}
@@ -581,7 +578,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .prem-btn{background:#111;color:#F5C842;border:none;border-radius:8px;padding:8px 13px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;margin-left:auto;}
         /* Bottom nav */
         .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(15,15,15,.9);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);padding:8px 6px 16px;display:flex;justify-content:space-around;align-items:center;z-index:100;box-shadow:0 -6px 26px rgba(0,0,0,.32);border-top:1px solid rgba(255,255,255,.06);}
-        .nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;color:#556;border:none;background:none;font-family:inherit;cursor:pointer;transition:color .2s;padding:4px 10px;border-radius:12px;position:relative;}
+        .nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;color:#8a8a99;border:none;background:none;font-family:inherit;cursor:pointer;transition:color .2s;padding:4px 10px;border-radius:12px;position:relative;}
         .nav-item.active{color:#F5C842;}
         .nav-item.active::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(245,200,66,.1);border-radius:12px;}
         .nav-item i{font-size:22px;transition:transform .2s;}

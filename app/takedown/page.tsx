@@ -113,7 +113,7 @@ export default function TakedownPage() {
           )}
         </div>
         <p style={{ fontSize: 10, color: '#aaa', textAlign: 'center', marginTop: 16, lineHeight: 1.6 }}>
-          Alpazar respekton të drejtat e pronësisë intelektuale dhe ligjet e zbatueshme, përfshirë L.52/2025. Shih <a href="/terms" style={{ color: '#888' }}>Kushtet e Shërbimit</a>.
+          Alpazar respekton të drejtat e pronësisë intelektuale dhe ligjet e zbatueshme, përfshirë L.52/2025. Shih <a href="/kushtet" style={{ color: '#888' }}>Kushtet e Shërbimit</a>.
         </p>
       </div>
     </div>

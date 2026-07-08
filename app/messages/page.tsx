@@ -832,6 +832,7 @@ export default function MessagesPage() {
         .emoji-btn{width:30px;height:30px;border:none;background:none;cursor:pointer;font-size:21px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-bottom:8px;}
         .attach-btn{width:32px;height:32px;background:rgba(0,0,0,.06);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#555;font-size:17px;}
         .send-btn{width:46px;height:46px;background:linear-gradient(135deg,#E63312,#c42a0e);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 14px rgba(230,51,18,.4);}
+        .send-btn:disabled{opacity:.45;cursor:default;box-shadow:none;}
         .send-btn:disabled{opacity:.4;box-shadow:none;}
         .send-btn i{color:#fff;font-size:20px;}
         .mic-btn{width:46px;height:46px;background:linear-gradient(135deg,#E63312,#c42a0e);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 14px rgba(230,51,18,.35);}

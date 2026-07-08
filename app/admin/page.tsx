@@ -9,13 +9,13 @@ import { useRealtimeTable } from '../../hooks/useRealtimeTable'
 
 /* ─── Styles ───────────────────────────────────────────────── */
 const CSS = `
-*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
 .wrap{display:flex;min-height:100vh;background:#f5f5f5;}
 .sb{width:190px;background:#111;display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;}
 .sb-logo{padding:16px 14px;border-bottom:1px solid #1e1e1e;}
 .sb-logo .n{font-size:14px;font-weight:800;color:#F5C842;letter-spacing:.5px;}
 .sb-logo .r{font-size:10px;color:#555;margin-top:3px;}
-.nl{padding:10px 14px;display:flex;align-items:center;gap:9px;color:#666;border-left:3px solid transparent;cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:inherit;transition:background .15s;}
+.nl{padding:10px 14px;display:flex;align-items:center;gap:9px;color:#9a9aa5;border-left:3px solid transparent;cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:inherit;transition:background .15s;}
 .nl:hover{background:#1a1a1a;}
 .nl.on{background:#1a1a1a;border-left-color:#F5C842;color:#F5C842;}
 .nl i{font-size:16px;}
@@ -37,15 +37,16 @@ table{width:100%;border-collapse:collapse;font-size:11px;}
 th{background:#f8f8f8;color:#999;font-weight:700;padding:8px 10px;text-align:left;border-bottom:1px solid #eee;font-size:10px;text-transform:uppercase;letter-spacing:.5px;}
 td{padding:9px 10px;border-bottom:1px solid #f5f5f5;color:#333;vertical-align:middle;}
 tr:last-child td{border:none;}
-.badge{border-radius:5px;padding:2px 7px;font-size:10px;font-weight:700;display:inline-block;}
+.badge{border-radius:999px;padding:3px 10px;font-size:10px;font-weight:700;display:inline-block;}
 .ba{background:#EAF3DE;color:#1D9E75;}
 .bp{background:#FAEEDA;color:#BA7517;}
 .bd{background:#FFF0EE;color:#E63312;}
-.btn{border:none;border-radius:5px;padding:5px 10px;font-size:10px;font-weight:700;cursor:pointer;margin-right:4px;font-family:inherit;transition:opacity .15s;}
-.btn:hover{opacity:.8;}
-.btn-green{background:#EAF3DE;color:#1D9E75;}
-.btn-orange{background:#FAEEDA;color:#BA7517;}
-.btn-red{background:#FFF0EE;color:#E63312;}
+.btn{border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;margin-right:6px;font-family:inherit;transition:opacity .15s,transform .1s;}
+.btn:hover{opacity:.88;transform:translateY(-1px);}
+.btn:disabled{opacity:.5;cursor:default;transform:none;}
+.btn-green{background:#1D9E75;color:#fff;}
+.btn-orange{background:#F5C842;color:#111;}
+.btn-red{background:#E63312;color:#fff;}
 .tgl{width:30px;height:16px;border-radius:10px;position:relative;cursor:pointer;display:inline-block;flex-shrink:0;transition:background .2s;}
 .tgl-on{background:#1D9E75;}
 .tgl-off{background:#ccc;}
@@ -60,6 +61,9 @@ tr:last-child td{border:none;}
 .finput{border:1px solid #e5e5e5;border-radius:7px;padding:7px 10px;font-size:12px;width:100%;font-family:inherit;outline:none;background:#fafafa;transition:border .15s;}
 .finput:focus{border-color:#F5C842;background:#fff;}
 .section-label{font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.8px;margin:18px 0 10px;}
+.edit-btn{border:1px solid #eee;background:#fff;color:#111;border-radius:10px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s,border .15s;}
+.edit-btn:hover{background:#FDE9E4;border-color:#E63312;color:#E63312;}
+.edit-btn:disabled{opacity:.5;cursor:default;}
 .save-row{display:flex;gap:8px;align-items:center;margin-top:6px;}
 .save-btn{background:#111;color:#fff;border:none;border-radius:7px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;}
 .save-btn:hover{background:#222;}
@@ -210,7 +214,12 @@ function AppConfigTab() {
                 </span>
                 <span
                   className={`tgl ${val ? 'tgl-on' : 'tgl-off'}`}
+                  role="switch"
+                  aria-checked={val}
+                  aria-label={s.label}
+                  tabIndex={0}
                   onClick={() => toggleBool(s.key)}
+                  onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleBool(s.key) } }}
                 ><span className="tdot" /></span>
               </div>
             </div>
