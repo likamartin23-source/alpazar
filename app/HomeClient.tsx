@@ -549,7 +549,9 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .filter-btn.active{background:#111;border-color:#111;color:#F5C842;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.15);}
         /* Listings grid — raporti 70% foto / 30% të dhëna — 3 kolona (-40%) */
         .listings-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;}
-        .listing-card{background:#fff;border:0.5px solid #ececec;border-radius:12px;overflow:hidden;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 16px -10px rgba(0,0,0,.14);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;aspect-ratio:3/4;}
+        .listing-card{background:#fff;border:0.5px solid #ececec;border-radius:12px;overflow:hidden;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 16px -10px rgba(0,0,0,.14);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;aspect-ratio:3/4;animation:card-in .45s cubic-bezier(.2,.8,.2,1) both;}
+        @keyframes card-in{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+        @media (prefers-reduced-motion: reduce){.listing-card{animation:none;}}
         .listing-card:hover{transform:translateY(-3px);box-shadow:0 10px 24px -8px rgba(0,0,0,.2);}
         .listing-card:active{transform:scale(.97);}
         .card-img{flex:0 0 70%;position:relative;background:linear-gradient(135deg,#FBF7E8,#F2EAD0);overflow:hidden;display:flex;align-items:center;justify-content:center;}
@@ -868,8 +870,8 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                   </button>
                 </div>
               ) : (
-                listings.map(listing => (
-                  <div key={listing.id} className="listing-card" role="link" tabIndex={0} onClick={() => go(`/listing/${listing.id}`)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') go(`/listing/${listing.id}`) }}>
+                listings.map((listing, idx) => (
+                  <div key={listing.id} className="listing-card" style={{ animationDelay: `${Math.min(idx * 45, 360)}ms` }} role="link" tabIndex={0} onClick={() => go(`/listing/${listing.id}`)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') go(`/listing/${listing.id}`) }}>
                     <div className="card-img">
                       {listing.images?.[0]
                         ? <img src={listing.images[0]} alt={listing.title} loading="lazy" width={400} height={300} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />

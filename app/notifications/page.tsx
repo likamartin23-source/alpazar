@@ -201,6 +201,13 @@ export default function NotificationsPage() {
           <div style={{ fontSize: 56 }} aria-hidden="true">🔕</div>
           <div style={{ fontSize: 16, fontWeight: 700, color: '#111', textAlign: 'center' }}>Nuk ke njoftime ende</div>
           <div style={{ fontSize: 13, color: '#888', textAlign: 'center', maxWidth: 260 }}>Kur dikush të dërgojë mesazh ose lë koment, do të shfaqet këtu.</div>
+          <button
+            type="button"
+            onClick={() => { window.location.href = '/' }}
+            style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 24px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', marginTop: 4 }}
+          >
+            Shfleto shpalljet →
+          </button>
         </div>
       )}
 
