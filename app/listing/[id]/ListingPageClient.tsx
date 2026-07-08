@@ -89,6 +89,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
   const [reportReason, setReportReason] = useState('')
   const [reportSent, setReportSent]   = useState(false)
   const [reportLoading, setReportLoading] = useState(false)
+  const [reportErr, setReportErr]     = useState('')
 
   const REPORT_REASONS = [
     'Shpallje mashtruese / e rreme',
@@ -133,7 +134,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
 
   async function submitReport() {
     if (!reportReason) return
-    setReportLoading(true)
+    setReportLoading(true); setReportErr('')
     const { error } = await supabase.from('reports').insert({
       listing_id: params.id,
       reporter_id: user?.id || null,
@@ -144,6 +145,10 @@ export default function ListingPageClient({ params, initialListing }: { params: 
     if (!error) {
       setReportSent(true)
       setTimeout(() => setReportOpen(false), 1800)
+    } else {
+      setReportErr(/row-level security|permission|denied/i.test(error.message)
+        ? 'Duhet të kyçesh për të raportuar. Hyr dhe provo sërish.'
+        : 'Raporti nuk u dërgua. Provo sërish.')
     }
   }
 
@@ -183,7 +188,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
           .then(({ data: p }) => {
             if (p) setMyRefCode(p.referral_code || p.username || null)
           })
-        supabase.from('saved_listings')
+        supabase.from('favorites')
           .select('id', { count: 'exact', head: true })
           .eq('user_id', session.user.id)
           .eq('listing_id', params.id)
@@ -380,10 +385,10 @@ export default function ListingPageClient({ params, initialListing }: { params: 
     const prev = liked
     setLiked(!prev)
     if (prev) {
-      const { error } = await supabase.from('saved_listings').delete().eq('user_id', user.id).eq('listing_id', params.id)
+      const { error } = await supabase.from('favorites').delete().eq('user_id', user.id).eq('listing_id', params.id)
       if (error) setLiked(prev)
     } else {
-      const { error } = await supabase.from('saved_listings').insert({ user_id: user.id, listing_id: params.id })
+      const { error } = await supabase.from('favorites').insert({ user_id: user.id, listing_id: params.id })
       if (error) setLiked(prev)
     }
   }
@@ -422,9 +427,14 @@ export default function ListingPageClient({ params, initialListing }: { params: 
       .eq('receiver_id', myId).eq('sender_id', otherId).eq('read', false)
       .then()
 
+    const topic = `listing-chat-${[myId, otherId].sort().join('-')}`
+    // Topik i përbashkët/deterministik — nëse jemi tashmë në të, mos e rikrijo
+    // (përndryshe rihapja e chat-it hedh 'cannot add postgres_changes after subscribe()').
+    if (channelRef.current?.topic === `realtime:${topic}`) return
     if (channelRef.current) supabase.removeChannel(channelRef.current)
+    supabase.getChannels().filter(c => c.topic === `realtime:${topic}`).forEach(c => supabase.removeChannel(c))
     const ch = supabase
-      .channel(`listing-chat-${[myId, otherId].sort().join('-')}`)
+      .channel(topic)
       .on('postgres_changes', {
         event: 'INSERT', schema: 'public', table: 'messages',
         filter: `receiver_id=eq.${myId}`,
@@ -1156,6 +1166,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                     </button>
                   ))}
                 </div>
+                {reportErr && <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', color: '#E63312', borderRadius: 10, padding: '9px 12px', margin: '0 0 10px', fontSize: 12, fontWeight: 600 }}>{reportErr}</div>}
                 <button type="button" className="report-submit" onClick={submitReport}
                   disabled={!reportReason || reportLoading}>
                   {reportLoading ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : 'Dërgo raportin'}

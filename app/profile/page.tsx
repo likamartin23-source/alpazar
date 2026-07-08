@@ -202,7 +202,7 @@ export default function ProfilePage() {
 
   async function fetchSavedListings(uid: string) {
     const { data } = await supabase
-      .from('saved_listings')
+      .from('favorites')
       .select('listing_id, listings(*)')
       .eq('user_id', uid)
       .order('created_at', { ascending: false })

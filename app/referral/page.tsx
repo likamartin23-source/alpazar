@@ -104,13 +104,16 @@ export default function ReferralPage() {
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
+    let ch: ReturnType<typeof supabase.channel> | null = null
+    let cancelled = false
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) { setLoading(false); return }
+      if (cancelled || !session) { if (!cancelled) setLoading(false); return }
       setUser(session.user)
       fetchData(session.user.id)
 
-      // Realtime: shares table
-      const ch = supabase.channel('ref-shares-rt')
+      // Realtime: shares table — kanal unik për user që të mos përplaset në remount
+      supabase.getChannels().filter(c => c.topic === 'realtime:ref-shares-rt').forEach(c => supabase.removeChannel(c))
+      ch = supabase.channel('ref-shares-rt')
         .on('postgres_changes', {
           event: 'INSERT', schema: 'public', table: 'shares',
           filter: `user_id=eq.${session.user.id}`,
@@ -118,8 +121,9 @@ export default function ReferralPage() {
           setShareCount(c => c + 1)
         })
         .subscribe()
-      return () => { supabase.removeChannel(ch) }
     })
+    // Cleanup i regjistruar te useEffect (jo brenda .then) — çregjistron gjithmonë
+    return () => { cancelled = true; if (ch) supabase.removeChannel(ch) }
   }, [])
 
   async function fetchData(uid: string) {

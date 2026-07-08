@@ -26,7 +26,8 @@ export default function PremiumPage() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
       if (session?.user) {
-        supabase.from('profiles').select('*').eq('id', session.user.id).single().then(({ data: p }) => {
+        supabase.from('profiles').select('*').eq('id', session.user.id).maybeSingle().then(({ data: p }) => {
+          if (!p) return
           setProfile(p)
           const codes = [...new Set([p.referral_code, p.username].filter(Boolean))] as string[]
           if (codes.length) {

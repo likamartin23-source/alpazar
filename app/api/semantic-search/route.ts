@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { SUPABASE_URL, SUPABASE_ANON_KEY as SUPABASE_ANON } from '../../../lib/supabase'
+import { rateLimit, getClientIp } from '../../../lib/rateLimit'
 
 export const runtime = 'edge'
 export const dynamic = 'force-dynamic'
@@ -12,6 +13,10 @@ export const dynamic = 'force-dynamic'
 // Degradim i butë: nëse Edge Function `embed` s'është deploy-uar ende ose
 // dështon, kthen { semantic: false } që klienti të bjere te kërkimi normal.
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(`semantic:${getClientIp(req)}`, { limit: 20, windowMs: 60_000 })
+  if (!rl.allowed) {
+    return NextResponse.json({ semantic: false, results: [] }, { status: 429 })
+  }
   const { q } = await req.json().catch(() => ({ q: '' }))
   const query = (q ?? '').toString().trim()
   if (!query || query.length < 2) {
