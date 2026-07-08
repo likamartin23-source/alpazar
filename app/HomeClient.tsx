@@ -126,7 +126,7 @@ function ShareBox({ refCode }: { refCode?: string }) {
       feedUrl: `viber://forward?text=${enc(text + '\n' + url)}`,
       msgUrl:  `viber://forward?text=${enc(text + '\n' + url)}`,
       feedSub: 'Forward', msgSub: 'Mesazh',
-      icon: 'ti-brand-viber',
+      icon: 'ti-phone',
     },
   ]
 

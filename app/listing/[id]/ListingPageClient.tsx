@@ -1311,7 +1311,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
               rel="noopener noreferrer"
               className="viber-btn"
               aria-label="Kontakto me Viber">
-              <i className="ti ti-brand-viber" aria-hidden="true" />
+              <i className="ti ti-phone" aria-hidden="true" />
             </a>
           )}
         </div>
