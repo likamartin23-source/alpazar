@@ -436,8 +436,10 @@ export default function MessagesPage() {
     const { data: urlData } = supabase.storage.from('message-attachments').getPublicUrl(path)
 
     const opt: any = {
+      // Përdor URL-në reale publike (foto tashmë e ngarkuar) — jo blob URL që
+      // revokohet menjëherë e lë flluskën me imazh të thyer.
       id: `tmp-${Date.now()}`, sender_id: userRef.current?.id, receiver_id: selected.otherId,
-      content: '', type: 'image', attachment_url: imgPreview.url,
+      content: '', type: 'image', attachment_url: urlData.publicUrl,
       created_at: new Date().toISOString(), read: false,
       reply_msg: rep, reply_to_id: rep?.id ?? null,
     }
@@ -445,11 +447,14 @@ export default function MessagesPage() {
     URL.revokeObjectURL(imgPreview.url)
     setImgPreview(null); setReplyTo(null)
 
-    await supabase.from('messages').insert({
+    const { data, error: insErr } = await supabase.from('messages').insert({
       sender_id: userRef.current?.id, receiver_id: selected.otherId,
       content: '', type: 'image', attachment_url: urlData.publicUrl,
       ...(rep ? { reply_to_id: rep.id } : {}),
-    })
+    }).select('*,reply_msg:reply_to_id(id,content,sender_id,type,attachment_url)').single()
+    // Zëvendëso optimisten me rreshtin real; nëse dështon, hiqe dhe njofto.
+    if (data) setMessages(prev => prev.map(m => m.id === opt.id ? data : m))
+    else if (insErr) { setMessages(prev => prev.filter(m => m.id !== opt.id)); setUploadErr('Foto nuk u dërgua. Provo sërish.') }
     setUploading(false)
     fetchThreads(userRef.current?.id)
   }
@@ -505,11 +510,13 @@ export default function MessagesPage() {
     setMessages(prev => [...prev, opt])
     setReplyTo(null)
 
-    await supabase.from('messages').insert({
+    const { data, error: insErr } = await supabase.from('messages').insert({
       sender_id: userRef.current?.id, receiver_id: selected.otherId,
       content: '', type: 'audio', attachment_url: urlData.publicUrl,
       ...(rep ? { reply_to_id: rep.id } : {}),
-    })
+    }).select('*,reply_msg:reply_to_id(id,content,sender_id,type,attachment_url)').single()
+    if (data) setMessages(prev => prev.map(m => m.id === opt.id ? data : m))
+    else if (insErr) { setMessages(prev => prev.filter(m => m.id !== opt.id)); setUploadErr('Audio nuk u dërgua. Provo sërish.') }
     fetchThreads(userRef.current?.id)
   }
 
