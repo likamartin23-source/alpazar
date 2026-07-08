@@ -155,6 +155,22 @@ const SECRETS_SCHEMA: { key: string; label: string; desc: string; secret?: boole
   { key: 'admin_pin',        label: 'Ndrysho Admin PIN',    desc: '6 shifra — ndryshon PIN-in e këtij paneli', secret: true },
 ]
 
+// Veprimet e panelit kalojnë përmes /api/admin/action (Edge Function service_role)
+// — kalojnë RLS-në is_admin() që bllokonte shkrimet kur admini hyn me PIN.
+async function callAdminAction(action: string, params: Record<string, unknown>): Promise<{ ok: boolean; error?: string }> {
+  const pin = (() => { try { return sessionStorage.getItem('alpazar_admin_pin') || '' } catch { return '' } })()
+  try {
+    const res = await fetch('/api/admin/action', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pin, action, params }),
+    })
+    return await res.json().catch(() => ({ ok: false, error: 'Përgjigje e pavlefshme' }))
+  } catch {
+    return { ok: false, error: 'Gabim rrjeti' }
+  }
+}
+
 function AppConfigTab() {
   const { config } = useAlpazar()
   const [localVals, setLocalVals] = useState<Record<string, string>>({})
@@ -369,27 +385,17 @@ function ModerationTab() {
   }, [])
 
   const resolve = async (id: string, action: 'resolved' | 'dismissed') => {
-    const { error } = await supabase.from('reports').update({ status: action }).eq('id', id)
-    if (error) { setAdminMsg('Gabim: ' + error.message); return }
-    setReports(prev => prev.filter(r => r.id !== id))
+    const r = await callAdminAction('resolve_report', { report_id: id, status: action })
+    if (!r.ok) { setAdminMsg('Gabim: ' + (r.error || 'shkrimi dështoi')); return }
+    setReports(prev => prev.filter(x => x.id !== id))
   }
 
   const deactivateListing = async (listingId: string, reportId: string, sellerId: string) => {
     if (!listingId) { setAdminMsg('ID e shpalljes mungon.'); return }
     setDeactivating(prev => ({ ...prev, [reportId]: true }))
-    const { error: e1 } = await supabase.from('listings').update({ is_active: false }).eq('id', listingId)
-    if (e1) { setAdminMsg('Gabim çaktivizimi: ' + e1.message); setDeactivating(prev => ({ ...prev, [reportId]: false })); return }
-    if (sellerId) {
-      await supabase.from('notifications').insert({
-        user_id: sellerId,
-        type: 'listing_removed',
-        title: 'Shpallja juaj u çaktivizua',
-        body: 'Shpallja juaj u çaktivizua pas shqyrtimit të një raporti. Kontaktoni support@alpazar.al për informacion.',
-        link: `/listing/${listingId}`
-      })
-    }
-    await supabase.from('reports').update({ status: 'resolved' }).eq('id', reportId)
+    const r = await callAdminAction('remove_listing', { listing_id: listingId, report_id: reportId, seller_id: sellerId })
     setDeactivating(prev => ({ ...prev, [reportId]: false }))
+    if (!r.ok) { setAdminMsg('Gabim çaktivizimi: ' + (r.error || 'dështoi')); return }
     setAdminMsg('Shpallja u çaktivizua dhe shitësi u njoftua.')
     fetchReports()
   }
@@ -669,31 +675,16 @@ export default function Admin() {
   }, [])
 
   async function updateStatus(id: string, status: string, userId?: string) {
-    const { error: e1 } = await supabase.from('premium_subscriptions').update({ status }).eq('id', id)
-    if (e1) { setPayMsg('Gabim ndryshim abonimi: ' + e1.message); return }
-    if (status === 'active' && userId) {
-      const sub = payments.find(p => p.id === id)
-      const { error: e2 } = await supabase.from('profiles').update({ is_premium: true, premium_expires_at: sub?.end_date }).eq('id', userId)
-      if (e2) setPayMsg('Abonimi u ndryshua por profili nuk u përditësua: ' + e2.message)
-    }
-    if ((status === 'cancelled' || status === 'suspended') && userId) {
-      const { error: e2 } = await supabase.from('profiles').update({ is_premium: false }).eq('id', userId)
-      if (e2) setPayMsg('Abonimi u ndryshua por profili nuk u përditësua: ' + e2.message)
-    }
+    const sub = payments.find(p => p.id === id)
+    const r = await callAdminAction('sub_status', { id, status, user_id: userId, end_date: sub?.end_date })
+    if (!r.ok) { setPayMsg('Gabim ndryshim abonimi: ' + (r.error || 'dështoi')); return }
     fetchAll()
   }
 
   async function handlePremiumRequest(id: string, action: 'approved' | 'rejected', userId: string, daysRequested: number) {
-    const { error: e1 } = await supabase.from('premium_requests').update({ status: action }).eq('id', id)
-    if (e1) { setPayMsg('Gabim: ' + e1.message); return }
-    if (action === 'approved') {
-      const expiry = new Date()
-      expiry.setDate(expiry.getDate() + daysRequested)
-      const { error: e2 } = await supabase.from('profiles')
-        .update({ is_premium: true, premium_expires_at: expiry.toISOString() }).eq('id', userId)
-      if (e2) setPayMsg('Kërkesa u aprovua por profili nuk u përditësua: ' + e2.message)
-    }
-    setPremiumRequests(prev => prev.map(r => r.id === id ? { ...r, status: action } : r))
+    const r = await callAdminAction('premium_request', { id, action, user_id: userId, days: daysRequested })
+    if (!r.ok) { setPayMsg('Gabim: ' + (r.error || 'dështoi')); return }
+    setPremiumRequests(prev => prev.map(x => x.id === id ? { ...x, status: action } : x))
   }
 
   async function giftPremium(userId: string) {
@@ -701,18 +692,15 @@ export default function Admin() {
     if (!input) return
     const days = parseInt(input, 10)
     if (isNaN(days) || days <= 0) { setPayMsg('Gabim: numër ditësh i pavlefshëm'); return }
-    const expiry = new Date()
-    expiry.setDate(expiry.getDate() + days)
-    const { error } = await supabase.from('profiles')
-      .update({ is_premium: true, premium_expires_at: expiry.toISOString() }).eq('id', userId)
-    if (error) { setPayMsg('Gabim dhurimi: ' + error.message); return }
+    const r = await callAdminAction('gift_premium', { user_id: userId, days })
+    if (!r.ok) { setPayMsg('Gabim dhurimi: ' + (r.error || 'dështoi')); return }
     setPayMsg('Sukses: u dhuruan ' + days + ' ditë Premium!')
     fetchAll()
   }
 
   async function toggleMethod(id: string, cur: boolean) {
-    const { error } = await supabase.from('payment_methods').update({ is_active: !cur }).eq('id', id)
-    if (error) setPayMsg('Gabim: ' + error.message)
+    const r = await callAdminAction('toggle_method', { id, active: !cur })
+    if (!r.ok) setPayMsg('Gabim: ' + (r.error || 'dështoi'))
     fetchAll()
   }
 
