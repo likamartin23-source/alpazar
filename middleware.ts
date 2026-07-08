@@ -1,12 +1,11 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
-
-  // Mos ekzekuto middleware per assets statike
   const { pathname } = req.nextUrl
+
+  // Assets statike / API — dil menjëherë (matcher i mbulon, kjo është rrjetë sigurie).
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
@@ -15,7 +14,7 @@ export async function middleware(req: NextRequest) {
     return res
   }
 
-  // Module 7: Referral — ruaj cookie kur dikush hap ?ref=CODE
+  // Module 7: Referral — ruaj cookie kur dikush hap ?ref=CODE (i lehtë, pa Supabase).
   const refParam = req.nextUrl.searchParams.get('ref')
   if (refParam && /^[a-zA-Z0-9_-]{3,30}$/.test(refParam)) {
     res.cookies.set('alpazar_ref', refParam, {
@@ -26,12 +25,16 @@ export async function middleware(req: NextRequest) {
     })
   }
 
-  try {
-    const supabase = createMiddlewareClient({ req, res })
-    // Refresh session — keeps cookies in sync
-    const { data: { session } } = await supabase.auth.getSession()
-
-    if (pathname.startsWith('/admin')) {
+  // Supabase (i rëndë) ekzekutohet VETËM për /admin — pjesa tjetër e faqeve
+  // s'ka nevojë për sesion server-side (janë 'use client', menaxhojnë vetë auth-in).
+  // Kjo heq një thirrje getSession()+instancim klienti nga çdo ngarkim faqeje.
+  if (pathname.startsWith('/admin')) {
+    try {
+      // Dynamic import — kodi i rëndë Supabase ngarkohet vetëm kur vizitohet /admin,
+      // jo për çdo kërkesë të faqes (ul madhësinë e ekzekutuar në edge).
+      const { createMiddlewareClient } = await import('@supabase/auth-helpers-nextjs')
+      const supabase = createMiddlewareClient({ req, res })
+      const { data: { session } } = await supabase.auth.getSession()
       if (!session) {
         return NextResponse.redirect(new URL('/auth/login', req.url))
       }
@@ -43,13 +46,10 @@ export async function middleware(req: NextRequest) {
       if (!profile?.is_admin) {
         return NextResponse.redirect(new URL('/', req.url))
       }
-    }
-  } catch {
-    // Fail closed: nëse supabase dështon për rrugët admin, dërgo në login
-    if (pathname.startsWith('/admin')) {
+    } catch {
+      // Fail closed për rrugët admin.
       return NextResponse.redirect(new URL('/auth/login', req.url))
     }
-    return res
   }
 
   return res
