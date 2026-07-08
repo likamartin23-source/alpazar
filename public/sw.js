@@ -1,4 +1,4 @@
-const CACHE_NAME = 'alpazar-v9'
+const CACHE_NAME = 'alpazar-v10'
 
 self.addEventListener('install', () => self.skipWaiting())
 
@@ -52,6 +52,9 @@ self.addEventListener('push', (event) => {
       vibrate: [200, 100, 200],
       tag: 'alpazar-notification',
       renotify: true,
+      // Ruaj destinacionin që notificationclick ta hapë objektin e saktë
+      // (shpallje/mesazh/profil), jo gjithmonë /messages.
+      data: { url: data.url || data.link || '/notifications' },
     })
   )
 })
