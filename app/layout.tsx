@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import dynamic from 'next/dynamic'
 import { Analytics } from '@vercel/analytics/next'
 import './tabler-icons-subset.css'
+import './fonts.css'
 import { SITE_URL } from '../lib/siteConfig'
 
 const AiFloat               = dynamic(() => import('./components/AiFloat'),            { ssr: false })
@@ -78,14 +79,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="sq">
       <head>
         {/* Module 2: Performance — DNS prefetch for external origins */}
-        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
         <link rel="dns-prefetch" href="https://sopafwfkrxpcdaljddoh.supabase.co" />
         <link rel="preconnect" href="https://sopafwfkrxpcdaljddoh.supabase.co" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* Ikonat: font i subset-uar self-hosted (14KB vs 650KB) — preload për render të shpejtë */}
+        {/* Fontet self-hosted (pa kërkesë të jashtme render-blocking te Google) —
+            preload i peshës kryesore + ikonave për paint të shpejtë. */}
+        <link rel="preload" href="/fonts/pjs-400-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/fonts/pjs-700-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preload" href="/fonts/tabler-subset.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
         {/* Module 6: Vercel Web Analytics — 100% falas, GDPR-compliant, zero konfigurim */}
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
