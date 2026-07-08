@@ -141,6 +141,18 @@ const CONFIG_SCHEMA: { key: string; label: string; desc: string; type: 'text' | 
   { key: 'premium_monthly_price', label: 'Çmimi Premium Mujor (€)',     desc: 'Shfaqet në hero dhe faqen premium',        type: 'float' },
   { key: 'show_listing_count',    label: 'Shfaq Nr. Shpalljeve',        desc: 'Hero stats — numri i shpalljeve',          type: 'bool'  },
   { key: 'show_user_count',       label: 'Shfaq Nr. Përdoruesve',       desc: 'Hero stats — numri i përdoruesve',         type: 'bool'  },
+  { key: 'google_login_enabled',  label: 'Hyrja me Google',             desc: 'Shfaq butonin "Google" te faqja e hyrjes', type: 'bool'  },
+]
+
+// Çelësa sekretë/integrimesh (tabela admin_settings) — vetëm-shkrim nga paneli.
+// Vlerat aktuale s'shfaqen (sekrete); shkruaj një vlerë të re për ta përditësuar.
+const SECRETS_SCHEMA: { key: string; label: string; desc: string; secret?: boolean }[] = [
+  { key: 'brevo_api_key',    label: 'Brevo API Key',        desc: 'Dërgim email për KËDO (300/ditë falas)', secret: true },
+  { key: 'brevo_from_email', label: 'Brevo — Email Dërguesi', desc: 'Adresë e verifikuar në Brevo' },
+  { key: 'google_client_id', label: 'Google Client ID',     desc: 'Për hyrjen me Google (GIS)' },
+  { key: 'site_name',        label: 'Emri i Faqes',         desc: 'Emri i shfaqur i platformës' },
+  { key: 'primary_color',    label: 'Ngjyra Primare',       desc: 'Hex, p.sh. #E63312' },
+  { key: 'admin_pin',        label: 'Ndrysho Admin PIN',    desc: '6 shifra — ndryshon PIN-in e këtij paneli', secret: true },
 ]
 
 function AppConfigTab() {
@@ -153,29 +165,60 @@ function AppConfigTab() {
     setLocalVals(prev => ({ ...config, ...prev }))
   }, [config])
 
+  const [saveErr, setSaveErr] = useState('')
+  const [secretVals, setSecretVals] = useState<Record<string, string>>({})
+
+  const saveSecret = async (key: string) => {
+    setSaveErr('')
+    const val = (secretVals[key] ?? '').trim()
+    if (!val) { setSaveErr(`Shkruaj një vlerë për "${key}".`); return }
+    const ok = await writeConfig(key, val, 'admin_settings')
+    if (ok) {
+      setSaved(prev => ({ ...prev, [key]: true }))
+      setSecretVals(prev => ({ ...prev, [key]: '' }))
+      setTimeout(() => setSaved(prev => ({ ...prev, [key]: false })), 2000)
+      // Nëse ndryshohet PIN-i, përditëso sesionin që shkrimet e mëtejshme të vazhdojnë
+      if (key === 'admin_pin') { try { sessionStorage.setItem('alpazar_admin_pin', val) } catch {} }
+    } else {
+      setSaveErr(`Nuk u ruajt "${key}". Kontrollo PIN-in ose provo sërish.`)
+    }
+  }
+
+  // Shkrimi shkon përmes /api/admin/config (Edge Function service_role) — kalon
+  // RLS-në is_admin() që bllokonte shkrimet kur admini hyn vetëm me PIN.
+  async function writeConfig(key: string, value: string, table: 'app_config' | 'admin_settings' = 'app_config') {
+    const pin = (() => { try { return sessionStorage.getItem('alpazar_admin_pin') || '' } catch { return '' } })()
+    const res = await fetch('/api/admin/config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pin, key, value, table }),
+    })
+    const j = await res.json().catch(() => ({ ok: false }))
+    return !!j.ok
+  }
+
   const save = async (key: string) => {
+    setSaveErr('')
     const val = localVals[key] ?? ''
-    const { error } = await supabase.from('app_config').upsert(
-      { key, value: val, type: CONFIG_SCHEMA.find(s => s.key === key)?.type ?? 'string' },
-      { onConflict: 'key' }
-    )
-    if (!error) {
+    const ok = await writeConfig(key, val)
+    if (ok) {
       setSaved(prev => ({ ...prev, [key]: true }))
       setTimeout(() => setSaved(prev => ({ ...prev, [key]: false })), 2000)
+    } else {
+      setSaveErr(`Nuk u ruajt "${key}". Kontrollo PIN-in ose provo sërish.`)
     }
   }
 
   const toggleBool = async (key: string) => {
+    setSaveErr('')
     const cur = (localVals[key] ?? config[key] ?? 'false') === 'true'
     const next = cur ? 'false' : 'true'
     setLocalVals(prev => ({ ...prev, [key]: next }))
-    const { error } = await supabase.from('app_config').upsert(
-      { key, value: next, type: 'bool' },
-      { onConflict: 'key' }
-    )
-    if (error) {
-      // Rollback — DB write failed, restore previous value
+    const ok = await writeConfig(key, next)
+    if (!ok) {
+      // Rollback — shkrimi dështoi, ktheje vlerën e mëparshme
       setLocalVals(prev => ({ ...prev, [key]: cur ? 'true' : 'false' }))
+      setSaveErr(`Nuk u ndryshua "${key}". Kontrollo PIN-in ose provo sërish.`)
     }
   }
 
@@ -195,6 +238,12 @@ function AppConfigTab() {
           <i className="ti ti-alert-triangle" aria-hidden="true" />
           <p>Modaliteti i mirëmbajtjes është AKTIV — platforma është bllokuar për përdorues.</p>
           <button type="button" className="btn btn-red" onClick={() => toggleBool('maintenance_mode')}>Çaktivizo</button>
+        </div>
+      )}
+
+      {saveErr && (
+        <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', color: '#E63312', borderRadius: 10, padding: '10px 14px', marginBottom: 14, fontSize: 12, fontWeight: 600 }}>
+          {saveErr}
         </div>
       )}
 
@@ -244,6 +293,35 @@ function AppConfigTab() {
                 onKeyDown={e => e.key === 'Enter' && save(s.key)}
               />
               <button type="button" className="save-btn" onClick={() => save(s.key)} style={{ whiteSpace: 'nowrap' }}>
+                {saved[s.key] ? <><span aria-hidden='true'>✓</span> Ruajtur</> : 'Ruaj'}
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="card">
+        <div className="ct"><span aria-hidden="true">🔌</span> Integrime & Sekrete</div>
+        <p style={{ fontSize: 10, color: '#aaa', marginBottom: 12, lineHeight: 1.6 }}>
+          Ruhen te <code style={{ background: '#eee', padding: '1px 4px', borderRadius: 3 }}>admin_settings</code>. Vlerat aktuale nuk shfaqen për siguri — shkruaj një vlerë të re për ta përditësuar.
+        </p>
+        {SECRETS_SCHEMA.map(s => (
+          <div key={s.key} style={{ marginBottom: 14 }}>
+            <label htmlFor={`sec-${s.key}`} style={{ fontSize: 10, color: '#888', display: 'block', marginBottom: 2 }}>
+              {s.label} <span style={{ color: '#ccc' }}>— {s.desc}</span>
+            </label>
+            <div className="save-row">
+              <input
+                id={`sec-${s.key}`}
+                className="finput"
+                type={s.secret ? 'password' : 'text'}
+                autoComplete="off"
+                placeholder={s.secret ? '•••••• (i vendosur)' : 'Vlerë e re…'}
+                value={secretVals[s.key] ?? ''}
+                onChange={e => setSecretVals(prev => ({ ...prev, [s.key]: e.target.value }))}
+                onKeyDown={e => e.key === 'Enter' && saveSecret(s.key)}
+              />
+              <button type="button" className="save-btn" onClick={() => saveSecret(s.key)} style={{ whiteSpace: 'nowrap' }}>
                 {saved[s.key] ? <><span aria-hidden='true'>✓</span> Ruajtur</> : 'Ruaj'}
               </button>
             </div>
@@ -677,6 +755,9 @@ export default function Admin() {
         body: JSON.stringify({ pin: pinInput }),
       })
       if (res.ok) {
+        // Ruaj PIN-in për sesionin — nevojitet nga shkrimet e konfigurimit
+        // (/api/admin/config → Edge Function service_role). Pastrohet kur mbyllet tab-i.
+        try { sessionStorage.setItem('alpazar_admin_pin', pinInput) } catch {}
         setAdminUnlocked(true)
         setPinError('')
       } else {
