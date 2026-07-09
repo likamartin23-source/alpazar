@@ -56,7 +56,8 @@ export async function POST(req: NextRequest) {
   }
 
   const { listing_id, target_price } = body
-  if (!listing_id || typeof target_price !== 'number' || target_price <= 0 || target_price > 100_000_000) {
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+  if (!listing_id || !UUID_RE.test(String(listing_id)) || typeof target_price !== 'number' || target_price <= 0 || target_price > 100_000_000) {
     return NextResponse.json({ error: 'Të dhëna të pavlefshme' }, { status: 400 })
   }
 

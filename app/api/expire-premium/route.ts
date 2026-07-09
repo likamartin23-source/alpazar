@@ -6,7 +6,9 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(req: NextRequest) {
   const secret = req.headers.get('authorization')
-  if (secret !== `Bearer ${process.env.CRON_SECRET}`) {
+  const cronSecret = process.env.CRON_SECRET
+  // Fail-closed: nëse CRON_SECRET mungon, mos prano 'Bearer undefined'.
+  if (!cronSecret || secret !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   // Uses a SECURITY DEFINER RPC so the cron works without SUPABASE_SERVICE_ROLE_KEY.

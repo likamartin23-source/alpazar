@@ -63,6 +63,12 @@ Deno.serve(async (req: Request) => {
           if (p.report_id) await db.from('reports').update({ status: 'resolved' }).eq('id', p.report_id)
           return { ok: true }
         }
+        case 'resolve_takedown': {
+          const { error } = await db.from('takedown_requests').update({
+            status: p.status, resolver_note: p.note ?? '', resolved_at: new Date().toISOString(),
+          }).eq('id', p.id)
+          return { ok: !error, error: error?.message }
+        }
         case 'sub_status': {
           const { error: e1 } = await db.from('premium_subscriptions').update({ status: p.status }).eq('id', p.id)
           if (e1) return { ok: false, error: e1.message }

@@ -469,6 +469,7 @@ function TakedownTab() {
   const [requests, setRequests] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [note, setNote] = useState<Record<string, string>>({})
+  const [tdErr, setTdErr] = useState('')
 
   useEffect(() => {
     supabase.from('takedown_requests').select('*').order('created_at', { ascending: false }).limit(50)
@@ -476,10 +477,11 @@ function TakedownTab() {
   }, [])
 
   const resolve = async (id: string, status: 'resolved' | 'rejected') => {
-    await supabase.from('takedown_requests').update({
-      status, resolver_note: note[id] || '', resolved_at: new Date().toISOString()
-    }).eq('id', id)
-    setRequests(prev => prev.map(r => r.id === id ? { ...r, status } : r))
+    setTdErr('')
+    // Përmes service_role (kalon RLS is_admin() që s'plotësohet me PIN-login)
+    const r = await callAdminAction('resolve_takedown', { id, status, note: note[id] || '' })
+    if (!r.ok) { setTdErr('Nuk u ruajt: ' + (r.error || 'provo sërish')); return }
+    setRequests(prev => prev.map(x => x.id === id ? { ...x, status } : x))
   }
 
   const statusBadge: Record<string, string> = { pending: 'bp', resolved: 'ba', rejected: 'bd' }
@@ -488,6 +490,7 @@ function TakedownTab() {
   return (
     <>
       <div className="ph"><div className="pt"><span aria-hidden="true">⚖️</span> Heqja e Përmbajtjes (Notice &amp; Takedown)</div></div>
+      {tdErr && <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', color: '#E63312', borderRadius: 10, padding: '10px 14px', marginBottom: 14, fontSize: 12, fontWeight: 600 }}>{tdErr}</div>}
       <div className="card">
         <div className="ct">Kërkesat ({requests.filter(r => r.status === 'pending').length} të hapura)</div>
         {loading ? <p role="status" aria-live="polite" style={{ color:'#aaa', fontSize:12 }}>Duke ngarkuar...</p> :

@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { rateLimit, getClientIp } from '../../../lib/rateLimit'
@@ -24,8 +25,13 @@ export async function POST(req: NextRequest) {
   if (!NOTIFY_SECRET) {
     return NextResponse.json({ error: 'Not configured' }, { status: 500 })
   }
-  const secret = req.nextUrl.searchParams.get('s')
-  if (!secret || secret !== NOTIFY_SECRET) {
+  // Sekreti preferohet nga header 'x-notify-secret' (s'shfaqet në access-logs si
+  // query-param); query '?s=' mbahet për pajtueshmëri me thirrësit ekzistues.
+  // Krahasim timing-safe.
+  const secret = req.headers.get('x-notify-secret') || req.nextUrl.searchParams.get('s') || ''
+  const a = Buffer.from(secret)
+  const b = Buffer.from(NOTIFY_SECRET)
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

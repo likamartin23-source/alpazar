@@ -340,6 +340,9 @@ export default function MessagesPage() {
       supabase.from('profiles').select('phone').eq('id', thread.otherId).single(),
     ])
 
+    // Guard kundër race: nëse përdoruesi ndërroi bisedë gjatë await-it, mos shfaq
+    // mesazhet e bisedës së gabuar.
+    if (selectedRef.current?.otherId !== thread.otherId) return
     if (msgs) { setMessages(msgs); prevMsgCount.current = msgs.length; setTimeout(() => scrollBottom(false), 50) }
     if (pData?.phone) setOtherPhone(pData.phone)
     const now = new Date().toISOString()

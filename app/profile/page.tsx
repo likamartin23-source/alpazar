@@ -98,8 +98,10 @@ export default function ProfilePage() {
   const pollRef       = useRef<any>(null)
 
   useEffect(() => {
+    let cancelled = false
     // Kontrollo sesionin dhe dëgjo ndryshimet (p.sh. skadim sesioni)
     supabase.auth.getSession().then(({ data: { session } }) => {
+      if (cancelled) return // unmount para se sesioni të zgjidhej — mos krijo interval/kanal jetim
       if (!session) { window.location.href = '/auth/login'; return }
       setUser(session.user)
       fetchProfile(session.user.id)
@@ -133,6 +135,7 @@ export default function ProfilePage() {
     const params = new URLSearchParams(window.location.search)
     if (params.get('tab') === 'shop') setActiveTab('shop')
     return () => {
+      cancelled = true
       subscription.unsubscribe()
       if (listingsChRef.current) supabase.removeChannel(listingsChRef.current)
       clearInterval(pollRef.current)
@@ -996,8 +999,8 @@ export default function ProfilePage() {
                 if (s.filters?.city) urlParams.set('city', s.filters.city)
                 if (s.filters?.cat) urlParams.set('cat', s.filters.cat)
                 if (s.filters?.cond) urlParams.set('cond', s.filters.cond)
-                if (s.filters?.priceMin) urlParams.set('priceMin', s.filters.priceMin)
-                if (s.filters?.priceMax) urlParams.set('priceMax', s.filters.priceMax)
+                if (s.filters?.priceMin) urlParams.set('pmin', s.filters.priceMin)
+                if (s.filters?.priceMax) urlParams.set('pmax', s.filters.priceMax)
                 return (
                   <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0', borderBottom: '1px solid #F6F6F6' }}>
                     <div role="link" tabIndex={0} style={{ flex: 1, fontSize: 12, color: '#111', cursor: 'pointer', fontWeight: 600 }} onClick={() => { window.location.href = `/search/results?${urlParams.toString()}` }} onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/search/results?${urlParams.toString()}` }}>

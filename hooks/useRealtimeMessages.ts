@@ -51,7 +51,7 @@ export function useRealtimeMessages(conversationId: string | null, userId: strin
         // Auto-mark as read if we're the recipient
         const msg = payload.new as Message
         if (msg.recipient_id === userId || msg.receiver_id === userId) {
-          supabase.from('messages').update({ read: true, read_at: new Date().toISOString() }).eq('id', msg.id)
+          supabase.from('messages').update({ read: true, read_at: new Date().toISOString() }).eq('id', msg.id).then(() => {})
         }
       })
       .on('postgres_changes', {

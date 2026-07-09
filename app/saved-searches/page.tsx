@@ -50,8 +50,8 @@ export default function SavedSearchesPage() {
     if (filters.cat)      p.set('cat', filters.cat)
     if (filters.city)     p.set('city', filters.city)
     if (filters.cond)     p.set('cond', filters.cond)
-    if (filters.priceMin) p.set('priceMin', filters.priceMin)
-    if (filters.priceMax) p.set('priceMax', filters.priceMax)
+    if (filters.priceMin) p.set('pmin', filters.priceMin)
+    if (filters.priceMax) p.set('pmax', filters.priceMax)
     window.location.href = `/search/results?${p.toString()}`
   }
 
