@@ -45,6 +45,8 @@ Deno.serve(async (req: Request) => {
 
     async function run(): Promise<{ ok: boolean; error?: string }> {
       switch (action) {
+        case 'verify_pin':
+          return { ok: true }
         case 'resolve_report': {
           const { error } = await db.from('reports').update({ status: p.status }).eq('id', p.report_id)
           return { ok: !error, error: error?.message }
