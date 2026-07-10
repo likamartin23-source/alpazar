@@ -1,0 +1,69 @@
+name: Deploy → Vercel Production
+
+# Vercel është i lidhur direkt me GitHub (native integration).
+# Çdo push në main → deploy automatik PA këtë file.
+#
+# Ky workflow VETËM ekziston si fallback nëse integracioni natyv çaktivizohet,
+# ose për deploy manual (workflow_dispatch).
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'production'
+        type: choice
+        options: [production, preview]
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  deploy:
+    name: Manual Deploy
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm install -g vercel@latest
+
+      - name: Deploy via hook
+        if: env.VERCEL_DEPLOY_HOOK != ''
+        run: |
+          echo "Triggering Vercel deploy hook for ${{ inputs.environment }}..."
+          RESPONSE=$(curl -s -X POST "$VERCEL_DEPLOY_HOOK")
+          echo "$RESPONSE"
+          JOB_ID=$(echo "$RESPONSE" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('job',{}).get('id',''))" 2>/dev/null)
+          echo "Deploy triggered. Job: $JOB_ID"
+          echo "Track at: https://vercel.com/personal-accaunt-s-projects/alpazar"
+        env:
+          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+
+      - name: Deploy via CLI
+        if: env.VERCEL_TOKEN != '' && env.VERCEL_DEPLOY_HOOK == ''
+        run: |
+          vercel pull --yes --environment=${{ inputs.environment }} --token=$VERCEL_TOKEN
+          vercel build ${{ inputs.environment == 'production' && '--prod' || '' }} --token=$VERCEL_TOKEN
+          vercel deploy --prebuilt ${{ inputs.environment == 'production' && '--prod' || '' }} --token=$VERCEL_TOKEN
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: team_Kkg5W4qnF2t5CQZj64ZS8xbz
+          VERCEL_PROJECT_ID: prj_KNCEtuUDGNCA6ulHomdKniNAZEuX
+
+      - name: No secrets configured
+        if: env.VERCEL_TOKEN == '' && env.VERCEL_DEPLOY_HOOK == ''
+        run: |
+          echo "ℹ️  Deploy manual nuk nevojitet — Vercel është i lidhur direkt me GitHub."
+          echo "   Çdo push në main deploy-on automatikisht."
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}

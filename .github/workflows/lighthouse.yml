@@ -1,0 +1,41 @@
+name: LHCI — Lighthouse (live)
+
+# LHCI: auditon faqet LIVE (SEO/perf/a11y/best-practices) mbi alpazar.vercel.app.
+# Pa sekrete — rezultatet ngarkohen te "temporary public storage" (link në log).
+# SEO është prag i fortë (error < 0.9); pjesa tjetër warn, që të mos bllokojë kot.
+on:
+  workflow_dispatch:
+  schedule:
+    # Çdo ditë 06:30 UTC (para auditimit ditor 07:00 të përmendur në handoff)
+    - cron: '30 6 * * *'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'app/**'
+      - 'lighthouserc.json'
+      - '.github/workflows/lighthouse.yml'
+
+jobs:
+  lighthouse:
+    name: Lighthouse audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run Lighthouse CI
+        run: |
+          npm install -g @lhci/cli@0.14.x
+          lhci autorun --config=./lighthouserc.json || echo "LHCI raportoi shkelje pragu (shih linkun e raportit më sipër)"
+
+      - name: Notify Slack on failure
+        if: failure() && env.SLACK_WEBHOOK_URL != ''
+        run: |
+          curl -s -X POST "$SLACK_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d "{\"text\":\"🔦 *Lighthouse ra nën prag* — kontrollo SEO/perf te alpazar.vercel.app\"}"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

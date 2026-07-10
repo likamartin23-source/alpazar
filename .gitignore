@@ -1,0 +1,27 @@
+# Kredencialet - MOS ngarko!
+.env
+.env.local
+.env.*.local
+.next/
+out/
+node_modules/
+.DS_Store
+Thumbs.db
+.vercel
+tsconfig.tsbuildinfo
+
+# Claude Code tooling — konfigurim i veglës, jo produkt
+.mcp.json
+.agents/
+skills-lock.json
+
+# Code intelligence indexes (generated)
+.codegraph/
+.graphify/
+.claude/skills/
+.playwright-mcp/
+alpazar-playwright.png
+
+# Test artifacts (generated)
+test-results/
+playwright-report/

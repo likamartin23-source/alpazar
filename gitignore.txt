@@ -1,0 +1,16 @@
+# Kredencialet - MOS i ngarko ne GitHub!
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build
+.next/
+out/
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+*.log

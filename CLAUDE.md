@@ -1,0 +1,285 @@
+# CLAUDE.md — Alpazar Project Instructions
+
+## 🧩 CLAUDE CODE SKILLS (të aktivizuara në `.claude/settings.json`)
+
+Këto plugins ngarkohen automatikisht në çdo sesion Claude Code mbi Alpazar
+(nga marketplace-e të verifikuar, reputabël):
+
+| Skill | Burimi | Çfarë bën |
+|---|---|---|
+| **Superpowers** | `obra/superpowers-marketplace` | Planifikim + vetë-kontroll para çdo ndryshimi, + mjet **skills-search** ("Find Skills") për të gjetur/instaluar skills të tjera |
+| **claude-mem** | `thedotmack/claude-mem` (Apache-2.0) | **Memorje mes sesioneve** — mban kontekstin e projektit/skedarëve, s'ke nevojë ta rishpjegosh çdo herë |
+| **superpowers-chrome** | `obra/superpowers-marketplace` | **Browser access** për Claude (Chrome DevTools, skill `browsing`) — inspekton/teston `alpazar.vercel.app` live, debug UI. Ekuivalenti i verifikuar i "Chrome MCP / website cloner" nga videot. |
+| **frontend-design** | `anthropics/claude-code` (zyrtar) | **Dizajn frontend production-grade** — kod i lëmuar që shmang estetikën gjenerike të AI-së. Ky ËSHTË ekuivalenti zyrtar & i verifikuar i "Impeccable" nga videot. |
+| **code-review** | `anthropics/claude-code` (zyrtar) | **Code review me AI** — agjentë të specializuar + filtrim me besueshmëri për PR-të (redukton false-positives). |
+| **security-guidance** | `anthropics/claude-code` (zyrtar) | **Hook sigurie** — paralajmërime pattern-based për command injection / XSS / sekrete gjatë editimit të skedarëve, + review i diff-it. Përputhet me shtyllën e sigurisë të Alpazar-it. |
+
+> Të tre plugin-et e fundit janë **first-party nga Anthropic** (`anthropics/claude-code`,
+> marketplace `claude-code-plugins`) — burim i verifikuar, zero rrezik supply-chain.
+> Aktivizuar më 3 Korrik 2026 pas rekomandimeve në video (frontend design / code review /
+> security guidance). "Impeccable" tani mbulohet nga `frontend-design` zyrtar.
+> "Task Observer" mbetet i pa-instaluar (s'ka burim publik të verifikueshëm).
+>
+> Instalim manual (nëse duhet, brenda një sesioni Claude Code):
+> `/plugin marketplace add obra/superpowers-marketplace` → `/plugin install superpowers@superpowers-marketplace`
+> `/plugin marketplace add thedotmack/claude-mem` → `/plugin install claude-mem`
+> `/plugin marketplace add anthropics/claude-code` → `/plugin install frontend-design@claude-code-plugins` (+ `code-review`, `security-guidance`)
+
+## 🔌 CLAUDE POWER-STACK (5 shtyllat — mapim me gjendjen e Alpazar-it)
+
+Bazuar në stack-un e rekomanduar (CLAUDE.md · Skills · MCP · Routines · Guides):
+
+| Shtylla | Statusi te Alpazar |
+|---|---|
+| **1. CLAUDE.md (memorje)** | ✅ Ky skedar — konteksti i plotë, i lexuar në çdo sesion |
+| **2. Skills** | ✅ Superpowers + skills-search ("Find Skills") + claude-mem + **plugin-et zyrtare Anthropic** (frontend-design, code-review, security-guidance) — shih sipër |
+| **3. MCP connectors** | ✅ Aktive në sesion: GitHub, Supabase (`sopafwfkrxpcdaljddoh`), Vercel (`prj_KNCEtuUDGNCA6ulHomdKniNAZEuX`), Notion, PostHog. **Për Cowork (web):** autorizoji te claude.ai → Settings → Connectors (vetëm pronari, OAuth) |
+| **4. Routines (24/7)** | ✅ GitHub Actions: `ci.yml` (build+tsc+teste), `claude.yml` (@claude auto-fix në PR), + Vercel crons (`/api/expire-premium`, `/api/indexnow`) |
+| **5. Guides/avancuar** | Referencë: Claude Code Ultimate Guide (FlorianBruniaux). **RooFlow s'u aktivizua** — multi-agent i rëndë, rrezik/kosto; hape vetëm me kërkesë të qartë |
+
+> `/remote-control` (sync me telefon) = pikërisht ajo që bën Cowork/claude.ai/code — tashmë e disponueshme.
+
+📄 **Kërkimi shkencor & teknik i plotë** (skills/apps/APIs për Alpazar, i prioritizuar me burime): shih **`docs/RESEARCH_ALPAZAR.md`**.
+
+### 🛠️ Mjete shtesë (nga videot — të aktivizuara/konfirmuara)
+| Mjet | Statusi | Përdorim për Alpazar |
+|---|---|---|
+| **Graphify / codegraph** | ✅ leje `Bash(codegraph *)` + `Bash(graphify *)` te settings.json; `.codegraph/`, `.graphify/` në gitignore | Kërkim mbi graf-in e kodit — gjej shpejt përkufizime/referenca/impakt ndryshimesh (on-device) |
+| **Firecrawl** | ✅ aktiv si MCP në sesion | Scraping/kërkim web — analizë konkurrentësh, çmime tregu, verifikim faqesh live |
+| **Google NotebookLM** | Mjet i jashtëm (web) | Kërkim/përmbledhje dokumentesh — jo integrim kodi; `notebooklm.google.com` |
+
+### 🎨 Dizajn frontend — mjete "anti-slop" (nga reel-i @helgacacani, 3 Korrik 2026)
+Të gjitha burimet u **verifikuan** para dokumentimit (npm + GitHub). Bërthama e rekomandimit: *jepi agjentit një DESIGN.md real që të mos prodhojë "slop" gjenerik.*
+
+| Mjet | Burimi (i verifikuar) | Statusi te Alpazar |
+|---|---|---|
+| **DESIGN.md i Alpazar** | ky repo → `DESIGN.md` | ✅ **Krijuar** — sistemi real i dizajnit (paleta #E63312/#F5C842/cream, Plus Jakarta Sans, karta/CTA/chip, anti-pattern-e). Thuaj agjentit *"ndiq DESIGN.md"* kur ndërton UI. |
+| **Magic MCP (21st.dev)** | npm `@21st-dev/magic` · `github.com/21st-dev/magic-mcp` | ✅ te `.mcp.json` (paketa e saktë + `API_KEY` via env `MAGIC_API_KEY`). Në Cowork është konektor tashmë aktiv. **Ti:** merr çelësin te 21st.dev → vendos `MAGIC_API_KEY`. |
+| **Impeccable** | plugin `pbakaus/impeccable` (marketplace `impeccable`, v3.9.1, Apache-2.0) | ✅ **Aktivizuar** te `settings.json` (`impeccable@impeccable`). Instaluar përmes **plugin-marketplace nga GitHub** (git), jo CDN-ja `impeccable.style` që bllokohet nga sandbox-i (403). Jep `/impeccable polish|audit|critique …` (1 skill, 23 komanda, detektim anti-pattern-esh). |
+| **Awesome DESIGN.md** | npm `awesome-design-md` · `github.com/VoltAgent/awesome-design-md` | 📚 Referencë — koleksion DESIGN.md-sh. `npx awesome-design-md` për të zgjedhur një. Ne kemi tonin (sipër), të përshtatur me kufizimet e Alpazar. |
+| **Taste Skill** | npm `taste-skill` · `github.com/taste-skill/taste-skill` (MIT) | ℹ️ "Anti-slop" për *Hermes Agent* (jo Claude-native) → përshtatje e ulët; s'u aktivizua. |
+
+## ⚡ HAPI I PARË I ÇDO SESIONI
+
+<!-- Azhurnim i fundit: 2 Qershor 2026 — automatizim i plotë, migrime DB, optimizim indeksesh, sigurim API -->
+
+**Kryej të gjitha këto njëkohësisht:**
+
+```bash
+# 1. Kontrollo statusin e deployment-it të fundit
+# (Vercel MCP → list_deployments → prj_KNCEtuUDGNCA6ulHomdKniNAZEuX)
+
+# 2. Kontrollo komandat e Notion
+# URL: https://www.notion.so/3703ee6af10981229176f8b4ede4df03
+# Filter: Statusi = "⏳ Pret"
+
+# 3. Kontrollo TypeScript errors
+cd /home/user/alpazar && npx tsc --noEmit 2>&1 | head -30
+```
+
+**Procedure Notion:**
+1. Lexo të gjitha komandat me status `⏳ Pret`
+2. Ndrysho statusin → `🔄 Duke u ekzekutuar`
+3. Ekzekuto komandën plotësisht
+4. Ndrysho statusin → `✅ Bërë` dhe shkruaj rezultatin në fushën `Rezultati`
+5. Nëse dështon → `❌ Dështoi` me mesazhin e gabimit
+
+---
+
+## 🤖 ZGJEDHJA AUTOMATIKE E AGJENTËVE
+
+Alpazar ka agjentë të specializuar në `.claude/agents/`. Zgjidhja është automatike:
+
+| Tipi i detyrës | Agjenti | Model |
+|----------------|---------|-------|
+| UI, `app/**/*.tsx`, komponente | `frontend` | Sonnet |
+| API, `app/api/**`, DB, Supabase | `backend` | Sonnet |
+| Chat Albi, `app/asistent/`, `app/api/ai/` | `ai-assistant` | Sonnet |
+| Commit, push, merge, git ops | `git-workflow` | Haiku |
+| Kërkim, grep, strukturë kodi | `explorer` | Haiku |
+| Security review, RLS, API keys | `security` | Opus |
+
+**Spawn paralel kur detyrat janë të pavarura:**
+```python
+Agent({ name: "ui",  subagent_type: "frontend", prompt: "..." })
+Agent({ name: "api", subagent_type: "backend",  prompt: "..." })
+```
+
+---
+
+## 🔒 RREGULLA ABSOLUTE (MOS NDRYSHO KURRË)
+
+| Parametër | Vlera |
+|---|---|
+| `OTP_SECONDS` | `120` — NDRYSHO KURRË |
+| SMS username | `ONL3QR` (shkronjë O, JO zero 0) |
+| SMS password | shih `.env.local` |
+| SMS fallback IP | shih `.env.local` |
+| Git remote | `github` (JO `origin`) |
+| Branch aktive | `claude/loving-wright-kBMgT` |
+| Import paths | Vetëm relative — JO `@/` alias |
+| CSS | Vetëm inline — JO Tailwind |
+| Navigimi | `window.location.href` — JO `useRouter()` |
+| TypeScript | `strict: false`, `ignoreBuildErrors: true` |
+
+---
+
+## 🏗️ STACK TEKNIK
+
+- **Framework:** Next.js 14 App Router, `'use client'` directive
+- **DB/Auth:** Supabase JS v2 — singleton nga `lib/supabase.ts`
+- **Supabase queries:** gjithmonë `await` ose `.then()` — lazy PromiseLike!
+- **Upload foto:** `lib/uploadImages.ts` → direkt tek Supabase Storage (RLS, pa presign)
+- **Deployment:** Vercel — `prj_KNCEtuUDGNCA6ulHomdKniNAZEuX`
+- **Team:** `team_Kkg5W4qnF2t5CQZj64ZS8xbz`
+- **Supabase project:** `sopafwfkrxpcdaljddoh` (eu-west-1)
+- **Maps:** OpenStreetMap Nominatim (GPS) + iframe embed (pa API key)
+
+---
+
+## 📁 SKEDARËT KYÇË
+
+```
+app/
+  page.tsx              — Homepage me SkeletonGrid
+  search/page.tsx       — Kërkim me filtra
+  profile/page.tsx      — Profil me SkeletonProfile/List
+  listing/
+    [id]/page.tsx       — View: MapDisplay, TrustBadge, Reviews
+    new/page.tsx        — Krijim: MapPicker
+    [id]/edit/page.tsx  — Editim: MapPicker
+  messages/page.tsx     — Mesazhe realtime
+  admin/page.tsx        — Panel admin
+  error.tsx             — Global crash page
+  not-found.tsx         — 404 page
+  components/
+    Skeleton.tsx        — SkeletonCard, Grid, Row, List, Text, Profile
+    TrustBadge.tsx      — Trust score 0-100, SVG ring
+    MapPicker.tsx       — GPS + Nominatim, pa API key
+    MapDisplay.tsx      — OpenStreetMap iframe embed
+lib/
+  supabase.ts           — Singleton client (anon key hardcoded si fallback)
+  supabase-admin.ts     — Lazy singleton me Proxy (nuk crash-on pa service_role)
+  uploadImages.ts       — compress + supabase.storage.upload direkt (pa presign)
+  context.tsx           — AlpazarProvider: auth, unread, app_config realtime
+public/
+  sw.js                 — Service Worker v6
+  manifest.json         — PWA manifest
+next.config.js          — CSP headers, ignoreBuildErrors
+.github/workflows/
+  ci.yml                — TypeScript + build check + Slack notify
+  claude.yml            — Claude auto-fix + @claude trigger
+  deploy.yml            — Manual deploy (fallback, Vercel integrim natyv aktiv)
+supabase/migrations/    — SQL migrations
+```
+
+---
+
+## 🔗 LIDHJET E PLATFORMAVE
+
+| Platformë | URL/ID | Statusi |
+|---|---|---|
+| Notion Handoff | https://www.notion.so/3703ee6af10981229176f8b4ede4df03 | ✅ Aktiv |
+| Notion Biseda | https://www.notion.so/3703ee6af10981e8832fc0e2080319cc | ✅ Aktiv |
+| GitHub | https://github.com/likamartin23-source/alpazar | ✅ Aktiv |
+| Vercel | https://alpazar.vercel.app | ✅ Auto-deploy nga main |
+| Linear | https://linear.app/martinel/project/alpazar-platform-0305ace5dc9b | ✅ Manual |
+| Slack | #all-alpazar — C0B6MEETXKJ | ⚙️ Webhook needed |
+| Supabase | sopafwfkrxpcdaljddoh.supabase.co | ✅ Aktiv |
+
+---
+
+## 🤖 AUTOMATIZIMI — GitHub Secrets të nevojshme
+
+Shto këto sekrete në: **github.com/likamartin23-source/alpazar/settings/secrets/actions**
+
+| Secret | Vlera | Efekti |
+|---|---|---|
+| `ANTHROPIC_API_KEY` | Claude API key nga console.anthropic.com | Claude auto-fix aktivizohet |
+| `SLACK_WEBHOOK_URL` | Webhook nga Slack → Apps → Incoming Webhooks | Njoftime push/deploy/gabim |
+| `NEXT_PUBLIC_SUPABASE_URL` | `https://sopafwfkrxpcdaljddoh.supabase.co` | Build CI ka variablat |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Anon key nga Supabase | Build CI ka variablat |
+
+**Si aktivizohet @claude tek PR-et:**
+1. Shto `ANTHROPIC_API_KEY` tek GitHub Secrets
+2. Hap çdo PR dhe shkruaj: `@claude fix TypeScript errors` ose `@claude rregulloji këto probleme`
+3. Claude Code ekzekutohet dhe bën commit direkt
+
+**Slack Webhook URL (si e merr):**
+1. slack.com → Apps → Incoming Webhooks → Add to Slack
+2. Zgjidh #all-alpazar
+3. Kopjo Webhook URL → Shto si `SLACK_WEBHOOK_URL` në GitHub Secrets
+
+---
+
+## 🔄 GIT WORKFLOW
+
+```bash
+# Çdo herë: bëj punën në branch → merge → push main
+git checkout claude/loving-wright-kBMgT
+# ... bëj ndryshimet ...
+git add <files>
+git commit -m "feat/fix/security: përshkrim i shkurtër"
+git checkout main && git merge claude/loving-wright-kBMgT
+git push github main
+git checkout claude/loving-wright-kBMgT
+git push github claude/loving-wright-kBMgT
+```
+
+---
+
+## 🔁 FLUX AUTOMATIK (pas konfigurimeve)
+
+```
+Push → GitHub
+  ├── CI (ci.yml): TypeScript check + build → Slack notify
+  ├── Claude (claude.yml): auto-review ndryshimet → fix nëse ka gabime
+  └── Vercel: auto-deploy në production (integrim natyv)
+
+PR i ri:
+  ├── Claude bën review automatik
+  └── @claude <komandë> → Claude ekzekuton dhe commituon fix
+
+Çdo sesion Claude Code:
+  ├── Kontroll deployment Vercel (MCP)
+  ├── Kontroll komanda Notion
+  └── Kontroll TypeScript errors
+```
+
+---
+
+## ⚠️ VEPRIME MANUALE TË NEVOJSHME
+
+1. **GitHub Secrets** (shih seksionin AUTOMATIZIMI sipër)
+
+2. **Supabase SQL Migrations** (ekzekuto në SQL Editor):
+   - `supabase/migrations/20250530_listings_location.sql`
+   - `supabase/migrations/20250530_profiles_trust_score.sql`
+   - `supabase/migrations/20250530_reviews_purchase_verified.sql`
+
+---
+
+## 📋 TASKS TË ARDHSHME (Javë 2)
+
+- [ ] **MAR-5:** Price Alerts System — cron job për detektim çmimesh
+- [ ] **MAR-6:** Seller Analytics Dashboard
+- [x] **MAR-7:** Semantic Search me pgvector — **LIVE NË PRODHIM** (7 Korrik 2026, aplikuar me Supabase MCP)
+  - Migrimi i aplikuar në projektin live: extension `vector`, `listings.embedding vector(384)`, indeks ivfflat cosine, RPC `match_listings` (anon/auth) + `listings_without_embedding`/`set_listing_embedding` (service_role). KUJDES: `images` është `text[]` (JO `jsonb`).
+  - Edge Function `embed` v2 ACTIVE (gte-small falas): mode `query` publik; `backfill` pranon service_role key OSE `EMBED_ADMIN_SECRET` — thirret automatikisht, pa sekret manual.
+  - Backfill: 0 shpallje aktive kur u aplikua — ekzekutohet kur të ketë shpallje (thirr `embed` me service_role derisa `processed=0`).
+
+### 📧 EMAIL-OTP (LIVE, 7 Korrik 2026) — arkitektura e email-it
+- `/api/email` (type `otp`) **delegon te Edge Function `email-otp`** (service_role i injektuar automatikisht — MOS e kthe te getSupabaseAdmin në Vercel: s'ka SERVICE_ROLE_KEY atje dhe jep 500).
+- `email-otp` (ACTIVE v1, testuar `{success:true}` live): createUser + generateLink(email_otp) + throttle 45s/email (`otp_email_throttle`, RLS pa policies) + dërgim: **Brevo** (nëse `admin_settings.brevo_api_key` vendoset — dërgon te KUSHDO, 300/ditë falas) → fallback **Resend** (`resend_api_key` ekziston por PA domain të verifikuar = sandbox → dërgon VETËM te email-i i pronarit — ky ishte shkaku i humbjes ~50% të signup-eve).
+- **Aktivizim Brevo pa deploy:** `update admin_settings set value='xkeysib-...' where key='brevo_api_key';` (+ `brevo_from_email` = dërgues i verifikuar në Brevo).
+- **Google login: LIVE (7 Korrik 2026)** — provider `google` ENABLED në Supabase (u ndez me Management API + PAT nga Postgres ext. `http`); 2 Client ID web + `skip_nonce_check=true`. **Rrjedha: GIS ID-token** (`signInWithIdToken`) — S'KA NEVOJË për Client Secret as Redirect URI; butoni zyrtar GIS renderohet te `gsiRef` në login page. Client ID lexohet nga `app_config.google_client_id` (ndërrohet me SQL pa redeploy; kandidatë alternativë te `admin_settings.google_oauth_client_id_alt2`). Flag UI: `app_config.google_login_enabled` = `true`. CSP përfshin `accounts.google.com`. KUJDES: `authorize?provider=google` kthen "missing OAuth secret" — NORMALE, rruga me redirect s'përdoret.
+- **BONUS fix kritik (7/7):** `site_url` i Supabase Auth ishte `http://localhost:3000` → u rregullua në `https://alpazar.vercel.app` + `uri_allow_list` — magic links s'çojnë më te localhost.
+- **Auditim ditor automatik:** trigger `trig_013WjoFEsHKHffmLVqo5Mv4d` (Claude Code Remote, cron `0 5 * * *` UTC = 07:00 Tiranë) — kontrollon faqet live, Vercel, advisors, email-otp, Google config, statistika DB; njoftim push+email te pronari.
+
+### 🎛️ PANELI ADMIN (arkitektura — 7 Korrik 2026, i rregulluar)
+- **Hyrja:** PIN te `admin_settings.admin_pin` (default `000000`) → `/api/admin/verify` → RPC `verify_admin_pin` (SECURITY DEFINER, **granted to anon** — pa këtë çdo PIN dilte gabim). Rate-limit 5/15min.
+- **Shkrimet e config-ut:** paneli hyn me PIN, JO me sesion Supabase, ndaj RLS `is_admin()` te `app_config` bllokonte çdo `upsert` HESHTAZI. Zgjidhja: `save`/`toggleBool`/`saveSecret` → `/api/admin/config` → Edge Function **`admin-config`** (service_role, kalon RLS, PIN-gated, throttle 20/10min për IP via `admin_action_throttle`). PIN-i ruhet në `sessionStorage.alpazar_admin_pin` pas hyrjes.
+- **Veprimet e panelit (moderim/premium/metoda):** të njëjtin problem RLS kishin resolve_report, remove_listing, sub_status, premium_request, gift_premium, toggle_method — të gjitha shkruanin me anon → dështonin heshtazi. Zgjidhja: `callAdminAction()` → `/api/admin/action` → Edge Function **`admin-action`** (service_role, 6 veprime të whitelist-uara, PIN + throttle 30/10min). Verifikuar live (200/401).
+- **Realtime:** `app_config` u shtua te publikimi `supabase_realtime` → ndryshimet propagohen <1s te `AlpazarProvider` (lib/context.tsx dëgjon postgres_changes). `admin_settings` NUK është realtime as public-SELECT (sekret).
+- **Config i ekspozuar në UI (pa SQL):** `CONFIG_SCHEMA` (app_config) + `SECRETS_SCHEMA` (admin_settings: brevo_api_key, brevo_from_email, google_client_id, site_name, primary_color, admin_pin — vetëm-shkrim, të maskuara). Whitelist `ALLOWED_SETTINGS` në edge function.
+- KUJDES: 4 çelësa mbeten "të vdekur" (s'i lexon platforma): `premium_boost_days`, `otp_resend_cooldown_s` (throttle-i është hardcode 45s), `min_listing_price`, `referral_reward_all` (hardcode *50 te ReferralTab). Wiring i tyre = TODO.

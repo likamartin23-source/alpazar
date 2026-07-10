@@ -4,17 +4,32 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test": "vitest run",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.98.0",
+    "@react-google-maps/api": "^2.20.8",
+    "@sentry/nextjs": "^10.57.0",
+    "@supabase/auth-helpers-nextjs": "^0.10.0",
+    "@supabase/supabase-js": "2",
+    "@tabler/icons-webfont": "^3.44.0",
+    "@vercel/analytics": "^2.0.1",
     "next": "14",
     "react": "18",
     "react-dom": "18",
-    "@supabase/supabase-js": "2"
+    "resend": "^6.12.4"
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
+    "@playwright/test": "^1.50.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@types/node": "^20.0.0",
     "@types/react": "^18.0.0",
-    "@types/node": "^20.0.0"
+    "jsdom": "^25.0.1",
+    "sharp": "^0.34.5",
+    "typescript": "^5.0.0",
+    "vitest": "^2.1.8"
   }
 }

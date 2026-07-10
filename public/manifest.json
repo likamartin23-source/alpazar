@@ -1,0 +1,92 @@
+{
+  "name": "ALPAZAR — Shit · Bli · Bëj Pazrin",
+  "short_name": "ALPAZAR",
+  "description": "Platforma #1 shqiptare e tregtisë online. Shit, bli dhe bëj pazarin tënd me lehtësi. Zero reklama.",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui", "browser"],
+  "orientation": "portrait-primary",
+  "background_color": "#111111",
+  "theme_color": "#E63312",
+  "lang": "sq",
+  "dir": "ltr",
+  "categories": ["shopping", "lifestyle", "business"],
+  "id": "al.alpazar.app",
+  "iarc_rating_id": "",
+  "icons": [
+    { "src": "/icons/icon-72.png",   "sizes": "72x72",   "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-96.png",   "sizes": "96x96",   "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-128.png",  "sizes": "128x128", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-144.png",  "sizes": "144x144", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-152.png",  "sizes": "152x152", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-192.png",  "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-384.png",  "sizes": "384x384", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png",  "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-192.png",  "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/icon-512.png",  "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "screenshots": [
+    {
+      "src": "/icons/screenshot-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "ALPAZAR — Faqja kryesore"
+    },
+    {
+      "src": "/icons/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "ALPAZAR — Desktop"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Albi — AI Asistent",
+      "short_name": "Albi AI",
+      "description": "Chat me asistentin virtual 24/7",
+      "url": "/asistent?source=shortcut",
+      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96", "type": "image/png" }]
+    },
+    {
+      "name": "Shto Shpallje",
+      "short_name": "Shto",
+      "description": "Shto shpallje të re falas",
+      "url": "/listing/new?source=shortcut",
+      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96", "type": "image/png" }]
+    },
+    {
+      "name": "Dyqane Premium",
+      "short_name": "Dyqane",
+      "description": "Shfleto dyqanet online",
+      "url": "/dyqane?source=shortcut",
+      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96", "type": "image/png" }]
+    },
+    {
+      "name": "Mesazhet",
+      "short_name": "Mesazhe",
+      "description": "Chat me shitësit",
+      "url": "/messages?source=shortcut",
+      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96", "type": "image/png" }]
+    }
+  ],
+  "share_target": {
+    "action": "/search",
+    "method": "GET",
+    "params": {
+      "title": "q",
+      "text": "q",
+      "url": "q"
+    }
+  },
+  "prefer_related_applications": false,
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=al.alpazar.app",
+      "id": "al.alpazar.app"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+User-agent: *
+Allow: /
+
+# Bloko panelin admin dhe faqet e privatësia
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api/
+Disallow: /auth/
+Disallow: /te-dhenat-mia
+Disallow: /messages
+Disallow: /notifications
+
+# Faqet publike
+Allow: /listing/
+Allow: /search/
+Allow: /biznese/
+Allow: /u/
+Allow: /premium
+Allow: /rreth-nesh
+Allow: /kontakt
+Allow: /kushtet
+Allow: /privatesia
+Allow: /cookies
+Allow: /takedown
+Allow: /asistent
+
+Sitemap: https://alpazar.vercel.app/sitemap.xml

@@ -1,0 +1,10 @@
+export type Category = { id:string; name:string; slug:string; icon:string; is_active:boolean; sort_order:number }
+export type PetCategory = { id:string; name:string; slug:string; emoji:string; type:'home'|'farm'; listing_count:number; is_active:boolean }
+export type Listing = { id:string; user_id:string; category_id:string; title:string; description:string; price:number; currency:'ALL'|'EUR'; condition:'i_ri'|'i_perdorur'|null; city:string; is_premium:boolean; is_active:boolean; images:string[]; views_count:number; created_at:string; profiles?:Profile }
+export type Profile = { id:string; username:string; full_name:string; avatar_url:string; city:string; bio?:string; phone?:string; is_premium:boolean; is_admin:boolean; is_verified?:boolean; last_seen?:string; seller_rating?:number; reviews_count?:number; gamification_points:number; gamification_level:string; shop_name?:string; shop_description?:string; shop_category?:string; shop_banner_url?:string; created_at?:string; referral_code?:string }
+export type Shop = { id:string; owner_id:string; shop_name:string; shop_description:string; shop_category:string; shop_banner_url?:string; city:string; avatar_url?:string; listing_count:number; is_premium:boolean; created_at:string; username:string; full_name:string }
+export type PaymentMethod = { id:string; name:string; type:string; is_active:boolean; config_json:Record<string,string> }
+export type AdminSetting = { id:string; key:string; value:string }
+export type PremiumSubscription = { id:string; user_id:string; plan:string; amount_eur:number; start_date:string; end_date:string; payment_method:string; status:string; profiles?:{full_name:string;username:string} }
+export type Report = { id:string; reporter_id:string; listing_id:string; reason:string; status:string; admin_note:string; created_at:string }
+export type ChatMessage = { role:'user'|'assistant'; content:string }

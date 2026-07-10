@@ -1,0 +1,28 @@
+{
+  "ci": {
+    "collect": {
+      "url": [
+        "https://alpazar.vercel.app/",
+        "https://alpazar.vercel.app/search",
+        "https://alpazar.vercel.app/kategori",
+        "https://alpazar.vercel.app/auth/login"
+      ],
+      "numberOfRuns": 2,
+      "settings": {
+        "preset": "desktop",
+        "onlyCategories": ["performance", "accessibility", "best-practices", "seo"]
+      }
+    },
+    "assert": {
+      "assertions": {
+        "categories:seo": ["error", { "minScore": 0.9 }],
+        "categories:accessibility": ["warn", { "minScore": 0.9 }],
+        "categories:best-practices": ["warn", { "minScore": 0.9 }],
+        "categories:performance": ["warn", { "minScore": 0.6 }]
+      }
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}

@@ -1,0 +1,45 @@
+name: Slack Notify (Manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: 'Mesazhi për Slack #all-alpazar'
+        required: true
+        default: 'Status update nga Claude Code'
+      emoji:
+        description: 'Emoji prefix'
+        required: false
+        default: '🤖'
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    name: Send Slack Message
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - name: Send to Slack
+        if: env.SLACK_WEBHOOK_URL != ''
+        run: |
+          curl -s -X POST "$SLACK_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"text\": \"${{ github.event.inputs.emoji }} *${{ github.event.inputs.message }}*\",
+              \"attachments\": [{
+                \"color\": \"#F5C842\",
+                \"fields\": [
+                  {\"title\": \"Dërguar nga\", \"value\": \"Claude Code · CoWork\", \"short\": true},
+                  {\"title\": \"Data\", \"value\": \"$(date '+%d %b %Y %H:%M UTC')\", \"short\": true},
+                  {\"title\": \"Alpazar\", \"value\": \"https://alpazar.vercel.app\", \"short\": false}
+                ]
+              }]
+            }"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Confirm
+        run: echo "OK - message sent to Slack"

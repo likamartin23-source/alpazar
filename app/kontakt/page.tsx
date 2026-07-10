@@ -1,0 +1,213 @@
+'use client'
+
+export const dynamic = 'force-dynamic'
+
+import { useState } from 'react'
+
+const LS = { color: '#666' as const, fontSize: 11, textDecoration: 'none' as const }
+
+export default function Kontakt() {
+  const [name, setName]       = useState('')
+  const [email, setEmail]     = useState('')
+  const [subject, setSubject] = useState('')
+  const [message, setMessage] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [msg, setMsg]         = useState('')
+
+  async function sendForm(e: React.FormEvent) {
+    e.preventDefault()
+    if (!name.trim() || !email.trim() || !message.trim()) {
+      setMsg('err:Plotëso fushat e detyrueshme (emri, email, mesazhi)!')
+      return
+    }
+    setLoading(true); setMsg('')
+    try {
+      const res = await fetch('/api/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'contact', name, email, subject, message }),
+      })
+      const data = await res.json()
+      if (!res.ok || data.error) {
+        setMsg(`err:${data.error ?? 'Gabim gjatë dërgimit. Provo sërish.'}`)
+      } else {
+        setMsg('ok:Mesazhi u dërgua! Do t\'ju përgjigjemi brenda 24 orësh.')
+        setName(''); setEmail(''); setSubject(''); setMessage('')
+      }
+    } catch {
+      setMsg('err:Gabim lidhjeje. Kontrollo internetin dhe provo sërish.')
+    }
+    setLoading(false)
+  }
+
+  const [mt, mm] = msg.split(/:(.+)/)
+
+  const css = `
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA;}
+    .wrap{max-width:640px;margin:0 auto;background:#FFFBEA;min-height:100vh;}
+    .topbar{background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
+    .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0;}
+    .back i{font-size:18px;color:#111;}
+    .topbar-title{font-size:15px;font-weight:700;color:#111;}
+    .hero{background:#111;padding:32px 20px;text-align:center;}
+    .hero-icon{font-size:52px;display:block;margin-bottom:12px;}
+    .hero h1{color:#F5C842;font-size:22px;font-weight:700;margin-bottom:8px;}
+    .hero p{color:#888;font-size:13px;line-height:1.6;}
+    .body{padding:20px 16px 40px;}
+    .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+    .ccard{background:#fff;border-radius:12px;padding:18px;border:0.5px solid #eee;text-align:center;text-decoration:none;}
+    .ccard i{font-size:28px;color:#E63312;display:block;margin-bottom:10px;}
+    .ccard strong{font-size:13px;font-weight:700;color:#111;display:block;margin-bottom:4px;}
+    .ccard span{font-size:11px;color:#888;}
+    .section{background:#fff;border-radius:12px;padding:18px;border:0.5px solid #eee;margin-bottom:14px;}
+    .sec-title{font-size:13px;font-weight:700;color:#111;margin-bottom:14px;display:flex;align-items:center;gap:7px;}
+    .sec-title i{font-size:16px;color:#E63312;}
+    .faq-item{padding:10px 0;border-bottom:0.5px solid #f0f0f0;}
+    .faq-item:last-child{border:none;}
+    .faq-q{font-size:13px;font-weight:600;color:#111;margin-bottom:5px;}
+    .faq-a{font-size:12px;color:#666;line-height:1.7;}
+    .hours{display:flex;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid #f0f0f0;font-size:12px;}
+    .hours:last-child{border:none;}
+    .hours span:first-child{color:#555;}
+    .hours span:last-child{color:#111;font-weight:600;}
+    .ftr{display:flex;flex-wrap:wrap;gap:8px 16px;padding:20px;background:#f9f9f9;border-top:1px solid #eee;}
+    .ftr a{color:#888;font-size:11px;text-decoration:none;}
+    .form-field{margin-bottom:12px;}
+    .form-field label{font-size:11px;font-weight:600;color:#555;display:block;margin-bottom:4px;}
+    .form-field input,.form-field textarea{width:100%;border:1.5px solid #ddd;border-radius:10px;padding:11px 13px;font-size:13px;font-family:inherit;outline:none;background:#fff;color:#111;transition:border .15s;}
+    .form-field input:focus,.form-field textarea:focus{border-color:#F5C842;}
+    .form-field textarea{min-height:110px;resize:vertical;}
+    .send-btn{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:11px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s;}
+    .send-btn:disabled{opacity:.6;cursor:not-allowed;}
+    .msg-box{border-radius:9px;padding:10px 14px;margin-bottom:14px;font-size:12px;font-weight:600;}
+    .ok{background:#EAF3DE;color:#3B6D11;border:0.5px solid #97C459;}
+    .err{background:#FFF0EE;color:#E63312;border:0.5px solid #F09595;}
+  `
+  return (
+    <>
+      <style dangerouslySetInnerHTML={{ __html: css }} />
+      <div className="wrap">
+        <div className="topbar">
+          <a href="/" className="back" aria-label="Kthehu mbrapa"><i className="ti ti-arrow-left" aria-hidden="true" /></a>
+          <span className="topbar-title">Kontaktoni</span>
+        </div>
+
+        <div className="hero">
+          <span className="hero-icon" aria-hidden="true">📬</span>
+          <h1>Si mund t'ju ndihmojmë?</h1>
+          <p>Ekipi ynë është gjithmonë gati<br />t'ju ndihmojë me çdo pyetje</p>
+        </div>
+
+        <div className="body">
+          <div className="cards">
+            <a href="mailto:likamartin23@gmail.com" className="ccard">
+              <i className="ti ti-mail" aria-hidden="true" />
+              <strong>Email</strong>
+              <span>likamartin23@gmail.com</span>
+            </a>
+            <a href="mailto:likamartin23@gmail.com" className="ccard">
+              <i className="ti ti-headset" aria-hidden="true" />
+              <strong>Mbështetje</strong>
+              <span>likamartin23@gmail.com</span>
+            </a>
+            <a href="mailto:likamartin23@gmail.com" className="ccard">
+              <i className="ti ti-scale" aria-hidden="true" />
+              <strong>Çështje Ligjore</strong>
+              <span>likamartin23@gmail.com</span>
+            </a>
+            <a href="mailto:likamartin23@gmail.com" className="ccard">
+              <i className="ti ti-alert-triangle" aria-hidden="true" />
+              <strong>Raporto Abuzim</strong>
+              <span>likamartin23@gmail.com</span>
+            </a>
+          </div>
+
+          {/* ── FORMA E KONTAKTIT ── */}
+          <div className="section">
+            <div className="sec-title"><i className="ti ti-send" aria-hidden="true" />Dërgo Mesazh</div>
+            {msg && <div className={`msg-box ${mt}`} role="alert">{mm}</div>}
+            <form onSubmit={sendForm}>
+              <div className="form-field">
+                <label htmlFor="kontakt-name">Emri juaj *</label>
+                <input id="kontakt-name" type="text" placeholder="Arta Hoxha" value={name} autoComplete="name"
+                  onChange={e => setName(e.target.value)} maxLength={100} required />
+              </div>
+              <div className="form-field">
+                <label htmlFor="kontakt-email">Email-i juaj *</label>
+                <input id="kontakt-email" type="email" placeholder="arta@email.com" value={email} autoComplete="email"
+                  onChange={e => setEmail(e.target.value)} maxLength={200} required />
+              </div>
+              <div className="form-field">
+                <label htmlFor="kontakt-subject">Subjekti</label>
+                <input id="kontakt-subject" type="text" placeholder="p.sh. Pyetje rreth Premium..." value={subject}
+                  autoComplete="off" onChange={e => setSubject(e.target.value)} maxLength={200} />
+              </div>
+              <div className="form-field">
+                <label htmlFor="kontakt-message">Mesazhi *</label>
+                <textarea id="kontakt-message" placeholder="Shkruaj mesazhin tënd këtu..." value={message}
+                  onChange={e => setMessage(e.target.value)} maxLength={3000} required />
+              </div>
+              <button className="send-btn" type="submit" disabled={loading}>
+                {loading ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : <><span aria-hidden='true'>📨</span> Dërgo Mesazhin</>}
+              </button>
+            </form>
+          </div>
+
+          <div className="section">
+            <div className="sec-title"><i className="ti ti-clock" aria-hidden="true" />Oraret e Mbështetjes</div>
+            <div className="hours"><span>E Hënë — E Premte</span><span>09:00 — 18:00</span></div>
+            <div className="hours"><span>E Shtunë</span><span>10:00 — 14:00</span></div>
+            <div className="hours"><span>E Dielë</span><span>Mbyllur</span></div>
+            <div className="hours"><span>Përgjigje me email</span><span>Brenda 24 orësh</span></div>
+          </div>
+
+          <div className="section">
+            <div className="sec-title"><i className="ti ti-help-circle" aria-hidden="true" />Pyetjet e Shpeshta</div>
+            <div className="faq-item">
+              <div className="faq-q">Si ta fshij llogarinë time?</div>
+              <div className="faq-a">Dërgoni email në likamartin23@gmail.com me subjektin "Fshirja e llogarisë". Procesojmë brenda 30 ditësh si kërkon ligji.</div>
+            </div>
+            <div className="faq-item">
+              <div className="faq-q">Si ta raportoj një shpallje mashtruese?</div>
+              <div className="faq-a">Klikoni butonin "Raporto" direkt në faqen e shpalljes ose dërgoni email me ID-në e shpalljes.</div>
+            </div>
+            <div className="faq-item">
+              <div className="faq-q">Si funksionon pagesa Premium?</div>
+              <div className="faq-a">Zgjidhni planin, dërgoni kërkesën, dhe admini konfirmon pagesën manualisht brenda 24 orësh.</div>
+            </div>
+            <div className="faq-item">
+              <div className="faq-q">Ku janë serverët tuaj?</div>
+              <div className="faq-a">Serverët janë të hostuar në Bashkimin Europian (Supabase/Vercel) me mbrojtje të plotë GDPR.</div>
+            </div>
+          </div>
+
+          <div className="section">
+            <div className="sec-title"><i className="ti ti-map-pin" aria-hidden="true" />Adresa</div>
+            <p style={{ fontSize: 13, color: '#444', lineHeight: 1.7 }}>
+              Alpazar<br />
+              Tiranë, Shqipëri<br />
+              <span style={{ fontSize: 11, color: '#888' }}>NIPT/QKB: (në regjistrim)</span>
+            </p>
+            <a
+              href="https://www.google.com/maps/search/Tiranë,+Shqipëri"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 10, background: '#EEF4FF', color: '#185FA5', borderRadius: 8, padding: '7px 13px', fontSize: 12, fontWeight: 600, textDecoration: 'none', border: '1px solid #C3DAFB' }}>
+              <i className="ti ti-map" style={{ fontSize: 14 }} aria-hidden="true" />Hap në Google Maps
+            </a>
+          </div>
+        </div>
+
+        <div className="ftr">
+          <a href="/kushtet" style={LS}>Kushtet</a>
+          <a href="/privatesia" style={LS}>Privatësia</a>
+          <a href="/cookies" style={LS}>Cookie-t</a>
+          <a href="/rreth-nesh" style={LS}>Rreth Nesh</a>
+          <a href="/siguria" style={LS}>Siguria</a>
+          <a href="/" style={LS}>← Kreu</a>
+        </div>
+      </div>
+    </>
+  )
+}
