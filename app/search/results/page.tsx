@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { SkeletonGrid } from '../../components/Skeleton'
 
@@ -92,6 +92,8 @@ const [searchError, setSearchError] = useState(false)
   const [categories, setCategories] = useState<any[]>([])
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [savedOk, setSavedOk]         = useState(false)
+  const [saveErr, setSaveErr]         = useState(false)
+  const searchReqId = useRef(0)
   const [userId, setUserId]           = useState<string | null>(null)
   const [sortBy, setSortBy]           = useState('newest')
 
@@ -130,6 +132,9 @@ const [searchError, setSearchError] = useState(false)
     if (!error) {
       setSavedOk(true)
       setTimeout(() => setSavedOk(false), 3000)
+    } else {
+      setSaveErr(true)
+      setTimeout(() => setSaveErr(false), 3000)
     }
   }
 
@@ -211,6 +216,7 @@ const [searchError, setSearchError] = useState(false)
     premOnly = premiumOnly,
     sort     = sortBy,
   ) {
+    const reqId = ++searchReqId.current // guard kundër race të kërkimeve paralele
     setLoading(true)
     setSearchError(false)
     try {
@@ -244,6 +250,7 @@ const [searchError, setSearchError] = useState(false)
         shopResults = profiles.map(p => ({ ...p, listing_count: countMap[p.id] || 0 }))
       }
     }
+    if (reqId !== searchReqId.current) return // erdhi një kërkim më i ri
     setShops(shopResults)
 
     // ── 2 + 3) LISTINGS — FTS GIN ───────────────────────────
@@ -274,6 +281,7 @@ const [searchError, setSearchError] = useState(false)
     const PAGE = 40
     if (premOnly) {
       const premRes = await buildQb(true)
+      if (reqId !== searchReqId.current) return
       setPremium(premRes.data || [])
       setRegular([])
       setHasMore(false)
@@ -282,6 +290,7 @@ const [searchError, setSearchError] = useState(false)
         buildQb(true),
         buildQb(false),
       ])
+      if (reqId !== searchReqId.current) return
       setPremium(premRes.data || [])
       setRegular(regRes.data || [])
       setHasMore((regRes.data?.length ?? 0) >= PAGE)
@@ -559,7 +568,7 @@ const [searchError, setSearchError] = useState(false)
                     }}
                   >
                     <i className={`ti ti-bell${savedOk ? '-ringing' : ''}`} aria-hidden="true" style={{ fontSize: 11 }} />
-                    {savedOk ? '✓ Ruajtur!' : 'Ruaj'}
+                    {savedOk ? '✓ Ruajtur!' : saveErr ? '✕ Provo sërish' : 'Ruaj'}
                   </button>
                 )}
               </div>

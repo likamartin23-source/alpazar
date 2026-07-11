@@ -257,6 +257,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
   // SSR'd content stays visible (no skeleton flicker). Filter/poll/visibility
   // fetches still run normally.
   const skipMountFetch = useRef(initialListings.length > 0)
+  const listingsReqId = useRef(0)
   const [listingCount, setListingCount] = useState(0)
   const [userCount, setUserCount] = useState(0)
   // settings now from app_config via context (cfg helper)
@@ -314,15 +315,15 @@ export default function HomeClient({ initialListings = [], initialCategories = [
     // Rilexo kur tab bëhet aktiv sërish
     const onVisible = () => {
       if (document.visibilityState === 'visible') {
-        fetchListings()
+        fetchListings(activeCategory, activeFilter, { silent: true })
         fetchCounts()
       }
     }
     document.addEventListener('visibilitychange', onVisible)
 
-    // Poll shpallje çdo 10 sekonda
+    // Poll shpallje çdo 10 sekonda — silent (pa skeleton flicker)
     const listingsPoll = setInterval(() => {
-      fetchListings()
+      fetchListings(activeCategory, activeFilter, { silent: true })
       fetchCounts()
     }, 10000)
 
@@ -358,8 +359,9 @@ export default function HomeClient({ initialListings = [], initialCategories = [
     if (data) setShops(data)
   }
 
-  async function fetchListings(catSlug = activeCategory, filter = activeFilter) {
-    setLoading(true)
+  async function fetchListings(catSlug = activeCategory, filter = activeFilter, opts?: { silent?: boolean }) {
+    const reqId = ++listingsReqId.current
+    if (!opts?.silent) setLoading(true) // poll/visibility: mos rifut skeleton-in
     let query = supabase
       .from('listings')
       .select('id,title,price,currency,condition,city,is_premium,images,category_id,created_at,user_id,author:user_id(id,full_name,username,avatar_url,is_premium,trust_score)')
@@ -377,8 +379,10 @@ export default function HomeClient({ initialListings = [], initialCategories = [
     if (filter === 'premium') query = query.eq('is_premium', true)
 
     const { data } = await query
+    // Guard kundër race: apliko vetëm nëse ky është kërkimi më i fundit.
+    if (reqId !== listingsReqId.current) return
     if (data) setListings(data as unknown as Listing[])
-    setLoading(false)
+    if (!opts?.silent) setLoading(false)
   }
 
   async function fetchCounts() {

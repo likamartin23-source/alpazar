@@ -73,9 +73,10 @@ export default function TeDhenatMiaPage() {
   async function toggleMarketing(checked: boolean) {
     if (!userId) return
     setSavingOpt(true)
-    await supabase.from('profiles').update({ marketing_opt_in: checked }).eq('id', userId)
-    setMarketingOpt(checked)
+    const { error } = await supabase.from('profiles').update({ marketing_opt_in: checked }).eq('id', userId)
     setSavingOpt(false)
+    if (error) { setMsg('err:Nuk u ruajt preferenca. Provo sërish.'); setTimeout(() => setMsg(''), 3000); return }
+    setMarketingOpt(checked)
     setMsg(`ok:Preferencat e marketingut u ${checked ? 'aktivizuan' : 'çaktivizuan'}.`)
     setTimeout(() => setMsg(''), 3000)
   }

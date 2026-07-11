@@ -102,7 +102,8 @@ export default function NotificationsPage() {
       .subscribe()
 
     return () => { supabase.removeChannel(ch) }
-  }, [user])
+    // user?.id (jo objektin) — refresh token-i s'ri-abonon të njëjtin topic.
+  }, [user?.id])
 
   const dismiss = useCallback(async (id: string) => {
     const { error } = await supabase.from('notifications').delete().eq('id', id)

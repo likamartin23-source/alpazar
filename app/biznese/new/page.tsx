@@ -123,15 +123,24 @@ export default function BiznesNewPage() {
 
     if (error) { setMsg(`err:${error.message}`); setSaving(false); return }
 
+    let partial = false
     if (biz && selSubs.length > 0) {
-      await supabase.from('business_subcategory_map').insert(
+      const { error: subErr } = await supabase.from('business_subcategory_map').insert(
         selSubs.map(sid => ({ business_id: biz.id, subcategory_id: sid }))
       )
+      if (subErr) partial = true
     }
 
     // Sync shop_name on profile so business badge appears in profile page
-    await supabase.from('profiles').update({ shop_name: form.name.trim() }).eq('id', userId)
+    const { error: profErr } = await supabase.from('profiles').update({ shop_name: form.name.trim() }).eq('id', userId)
+    if (profErr) partial = true
 
+    if (partial) {
+      // Biznesi u krijua, por disa të dhëna dytësore s'u ruajtën — njofto, mos e fsheh.
+      setMsg('warn:Biznesi u krijua, por disa detaje s\'u ruajtën plotësisht. Mund t\'i ndreqësh te Edito.')
+      setTimeout(() => { window.location.href = `/biznese/${biz!.id}` }, 1600)
+      return
+    }
     window.location.href = `/biznese/${biz!.id}`
   }
 

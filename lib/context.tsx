@@ -177,7 +177,10 @@ export function AlpazarProvider({ children }: { children: ReactNode }) {
       .subscribe()
 
     return () => { supabase.removeChannel(ch) }
-  }, [user, loadUnread])
+    // Deps me user?.id (jo objektin user) — refresh-i i token-it s'ri-abonon
+    // kanalin me të njëjtin topic (shmang 'cannot add postgres_changes after
+    // subscribe' + badge-in që ngec). loadUnread është useCallback stabil.
+  }, [user?.id, loadUnread])
 
   const refreshUnread = useCallback(async (uid?: string) => {
     const id = uid ?? user?.id

@@ -770,7 +770,9 @@ export default function ProfilePage() {
                     checked={profile?.marketing_opt_in === true}
                     onChange={async e => {
                       const opted = e.target.checked
-                      await supabase.from('profiles').update({ marketing_opt_in: opted }).eq('id', user?.id)
+                      if (!user?.id) { setMsg('err:Duhet të kyçesh.'); return }
+                      const { error } = await supabase.from('profiles').update({ marketing_opt_in: opted }).eq('id', user.id)
+                      if (error) { setMsg('err:Nuk u ruajt preferenca. Provo sërish.'); setTimeout(() => setMsg(''), 3000); return }
                       setProfile((prev: any) => ({ ...prev, marketing_opt_in: opted }))
                       setMsg(`ok:Preferencat e marketingut u ${opted ? 'aktivizuan' : 'çaktivizuan'}.`)
                       setTimeout(() => setMsg(''), 3000)
