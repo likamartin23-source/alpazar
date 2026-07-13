@@ -4,6 +4,8 @@ import { Analytics } from '@vercel/analytics/next'
 import './tabler-icons-subset.css'
 import './fonts.css'
 import { SITE_URL } from '../lib/siteConfig'
+import { LanguageProvider } from '../lib/i18n'
+import { SiteFooter } from './components/SiteFooter'
 
 const AiFloat               = dynamic(() => import('./components/AiFloat'),            { ssr: false })
 const AlpazarProviderDyn    = dynamic(() => import('../lib/context').then(m => ({ default: m.AlpazarProvider })))
@@ -127,6 +129,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body style={{ margin: 0, background: '#FFFBEA', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
         <a href="#main-content" className="skip-link">Kalo tek përmbajtja kryesore</a>
+        <LanguageProvider>
         <AlpazarProviderDyn>
           <GlobalErrorBoundaryDyn>
           <MaintenanceBanner />
@@ -135,36 +138,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <AiFloat />
           <CookieBannerDyn />
           <Analytics />
-          <footer style={{ background: '#111', padding: '22px 16px 28px', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
-            <div style={{ maxWidth: 480, margin: '0 auto', textAlign: 'center' }}>
-              <div style={{ color: '#F5C842', fontWeight: 700, fontSize: 13, letterSpacing: 1, marginBottom: 14 }}><span aria-hidden="true">🦅</span> ALPAZAR</div>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: 18, marginBottom: 14 }}>
-                <a href="https://facebook.com/alpazaral" aria-label="Facebook" target="_blank" rel="noopener noreferrer" style={{ color: '#555', fontSize: 19, textDecoration: 'none' }}><i className="ti ti-brand-facebook" aria-hidden="true" /></a>
-                <a href="https://instagram.com/alpazaral" aria-label="Instagram" target="_blank" rel="noopener noreferrer" style={{ color: '#555', fontSize: 19, textDecoration: 'none' }}><i className="ti ti-brand-instagram" aria-hidden="true" /></a>
-                <a href="https://tiktok.com/@alpazaral" aria-label="TikTok" target="_blank" rel="noopener noreferrer" style={{ color: '#555', fontSize: 19, textDecoration: 'none' }}><i className="ti ti-brand-tiktok" aria-hidden="true" /></a>
-                <a href="https://t.me/alpazaral" aria-label="Telegram" target="_blank" rel="noopener noreferrer" style={{ color: '#555', fontSize: 19, textDecoration: 'none' }}><i className="ti ti-brand-telegram" aria-hidden="true" /></a>
-                <a href="https://linkedin.com/company/alpazar" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer" style={{ color: '#555', fontSize: 19, textDecoration: 'none' }}><i className="ti ti-brand-linkedin" aria-hidden="true" /></a>
-                <a href="https://x.com/alpazaral" aria-label="X / Twitter" target="_blank" rel="noopener noreferrer" style={{ color: '#555', fontSize: 19, textDecoration: 'none' }}><i className="ti ti-brand-x" aria-hidden="true" /></a>
-              </div>
-              <nav aria-label="Lidhje të faqes" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '6px 14px', marginBottom: 14 }}>
-                <a href="/kategori" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Kategoritë</a>
-                <a href="/biznese" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Bizneset</a>
-                <a href="/search" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Kërko</a>
-                <a href="/kushtet" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Kushtet e Përdorimit</a>
-                <a href="/privatesia" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Privatësia</a>
-                <a href="/cookies" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Cookie-t</a>
-                <a href="/rreth-nesh" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Rreth Nesh</a>
-                <a href="/kontakt" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Kontakt</a>
-                <a href="/siguria" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Siguria</a>
-                <a href="/te-dhenat-mia" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>Të dhënat e mia</a>
-                <a href="/takedown" style={{ color: '#666', fontSize: 11, textDecoration: 'none' }}>IP / Takedown</a>
-                <a href="/referral" style={{ color: '#F5C842', fontSize: 11, textDecoration: 'none', fontWeight: 600 }}><span aria-hidden="true">🎁</span> Referral</a>
-              </nav>
-              <div style={{ fontSize: 10, color: '#444' }}>© 2026 Alpazar · NIPT/QKB: (në regjistrim) · Tiranë, Shqipëri · Të gjitha të drejtat e rezervuara</div>
-            </div>
-          </footer>
+          <SiteFooter />
           </GlobalErrorBoundaryDyn>
         </AlpazarProviderDyn>
+        </LanguageProvider>
       </body>
     </html>
   )
