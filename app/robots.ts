@@ -18,7 +18,6 @@ export default function robots(): MetadataRoute.Robots {
           '/saved-searches',
           '/profile',
           '/te-dhenat-mia',
-          '/referral',
           '/listing/new',
           '/listing/*/edit',
           '/biznese/new',
