@@ -32,6 +32,14 @@ const nextConfig = {
     ]
   },
 
+  async rewrites() {
+    return [
+      { source: '/favicon.ico', destination: '/favicon.png' },
+      { source: '/apple-touch-icon.png', destination: '/icons/apple-touch-icon.png' },
+      { source: '/apple-touch-icon-precomposed.png', destination: '/icons/apple-touch-icon.png' },
+    ]
+  },
+
   async headers() {
     const csp = [
       "default-src 'self'",
