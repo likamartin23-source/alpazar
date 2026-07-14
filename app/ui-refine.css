@@ -1,5 +1,25 @@
-/* ui-refine.css — Rregullime lexueshmërie & prekshmërie (Cowork, bazuar në matje live të DOM-it).
+/* ui-refine.css — Rregullime lexueshmërie, prekshmërie & identitet (Cowork, matje live).
    Prek VETËM homepage-n (klasat ekzistojnë vetëm te HomeClient). Override mbi <style> inline. */
-.cat-item{padding:9px 14px !important;}          /* chip 28px -> ~40px, i prekshëm me gisht */
+
+/* — Lexueshmëri & prekshmëri (matje live: chip 28px, fonte 8–11px) — */
+.cat-item{padding:9px 14px !important;}          /* chip ~40px, i prekshëm me gisht */
 .cat-item span{font-size:12px !important;}       /* etiketa kategorie 11 -> 12px */
-.stat-l{font-size:11px !important;}              /* statistika 8 -> 11px (mbi pragun e lexueshmërisë) */
+.stat-l{font-size:11px !important;}              /* statistika 8 -> 11px */
+
+/* — Zvogëlim i banner-it "Shit·Bli" (hero) ~60% footprint: padding & lartësi më kompakte,
+     pa cenuar lexueshmërinë e tekstit — kursen hapësirë sipas kërkesës. — */
+.hero{padding:9px 13px !important;border-radius:14px !important;margin:0 0 8px !important;}
+.hero h2{font-size:13px !important;margin-bottom:2px !important;}
+.hero p{font-size:10px !important;line-height:1.4 !important;}
+.hero .stat-n{font-size:15px !important;}
+.hero .stat-l{font-size:9px !important;}
+
+/* — Zbukurim i emrit "ALPAZAR" (wordmark): gradient identiteti shqiptar e zezë -> e kuqe,
+     mbi header-in e artë. Sinkron ngjyrash me paletën (#111 + #E63312). — */
+.brand{
+  background:linear-gradient(135deg,#111 0%,#1a1a1a 42%,#E63312 100%) !important;
+  -webkit-background-clip:text !important; background-clip:text !important;
+  -webkit-text-fill-color:transparent !important; color:transparent !important;
+  letter-spacing:2.5px !important; font-weight:800 !important;
+  text-shadow:none !important;
+}
