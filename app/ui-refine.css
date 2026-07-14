@@ -1,0 +1,5 @@
+/* ui-refine.css — Rregullime lexueshmërie & prekshmërie (Cowork, bazuar në matje live të DOM-it).
+   Prek VETËM homepage-n (klasat ekzistojnë vetëm te HomeClient). Override mbi <style> inline. */
+.cat-item{padding:9px 14px !important;}          /* chip 28px -> ~40px, i prekshëm me gisht */
+.cat-item span{font-size:12px !important;}       /* etiketa kategorie 11 -> 12px */
+.stat-l{font-size:11px !important;}              /* statistika 8 -> 11px (mbi pragun e lexueshmërisë) */
