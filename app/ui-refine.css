@@ -1,4 +1,4 @@
-/* ui-refine.css — Rregullime lexueshmërie, prekshmërie & identitet (Cowork, matje live).
+/* ui-refine.css — Rregullime lexueshmërie, prekshmërie & identitet kombëtar (Cowork, matje live).
    Prek VETËM homepage-n (klasat ekzistojnë vetëm te HomeClient). Override mbi <style> inline. */
 
 /* — Lexueshmëri & prekshmëri (matje live: chip 28px, fonte 8–11px) — */
@@ -6,25 +6,14 @@
 .cat-item span{font-size:12px !important;}
 .stat-l{font-size:11px !important;}
 
-/* — Zvogëlim i banner-it "Shit·Bli" (hero) ~60% footprint: padding & lartësi më kompakte,
-     pa cenuar lexueshmërinë e tekstit — kursen hapësirë sipas kërkesës. — */
+/* — Zvogëlim i banner-it "Shit·Bli" (hero) ~60% footprint — */
 .hero{padding:9px 13px !important;border-radius:14px !important;margin:0 0 8px !important;}
 .hero h2{font-size:13px !important;margin-bottom:2px !important;}
 .hero p{font-size:10px !important;line-height:1.4 !important;}
 .hero .stat-n{font-size:15px !important;}
 .hero .stat-l{font-size:9px !important;}
 
-/* — Zbukurim i emrit "ALPAZAR" (wordmark): gradient identiteti shqiptar e zezë -> e kuqe. — */
-.brand{
-  background:linear-gradient(135deg,#111 0%,#1a1a1a 42%,#E63312 100%) !important;
-  -webkit-background-clip:text !important; background-clip:text !important;
-  -webkit-text-fill-color:transparent !important; color:transparent !important;
-  letter-spacing:2.5px !important; font-weight:800 !important;
-  text-shadow:none !important;
-}
-
-/* — Sinkronizim ngjyrash: heq "ndotjen" e gri-ve të tintuara (kafe/blu) dhe i unifikon
-     në një ramp neutral 2-nivelesh. Ruaj gjendjet aktive (ari). Matje live. — */
+/* — Sinkronizim ngjyrash: heq gri-të e tintuara (kafe/blu) -> ramp neutral 2-nivelesh. Ruaj aktivet (ari). — */
 .cat-item i{color:#757575 !important;}
 .cat-item.active i{color:#F5C842 !important;}
 .nav-item{color:#757575 !important;}
@@ -33,7 +22,22 @@
 .filter-btn.active{color:#F5C842 !important;}
 .stat-l{color:#757575 !important;}
 
-/* — Elemente kombëtare shqiptare: shirit i kuq i flamurit në krye + kornizë e ngrohtë hero-s.
-     Kontrast me sfondin, sinkron me paletën (#E63312 / #F5C842 / #1a1a1a). — */
+/* — HEADER: ndal rrjedhjen e verdhë. Sfond i bardhë i pastër + hije neutrale (heq box-shadow-n amber
+     rgba(190,130,0,.5) që rridhte mbi shqiponjën e zezë). Paletë e flamurit: kuqe+zi+ari+bardhë. — */
+.header{background:#FFFFFF !important;box-shadow:0 2px 12px -7px rgba(0,0,0,.18) !important;border-bottom:2px solid #F5C842 !important;}
 .topbar{border-top:3px solid #E63312 !important;}
+
+/* — Kutia e kërkimit: dukshme mbi header të bardhë (mbushje gri e lehtë + kornizë) — */
+.search-wrap{background:#F4F4F5 !important;border:1.5px solid #E4E4E7 !important;}
+.search-wrap i{color:#999 !important;}
+
+/* — Wordmark "ALPAZAR": i KUQ solid mbi të bardhë (heq gradientin errët->kuqe që dukej i llumtë mbi të verdhë). — */
+.brand{
+  background:none !important;
+  -webkit-text-fill-color:#E63312 !important; color:#E63312 !important;
+  letter-spacing:2.5px !important; font-weight:800 !important;
+  text-shadow:none !important;
+}
+
+/* — Kornizë e kuqe e butë te hero (kuqe+ari+krem sinkron me flamurin) — */
 .hero{border:1px solid rgba(230,51,18,.18) !important;}
