@@ -2,9 +2,9 @@
    Prek VETËM homepage-n (klasat ekzistojnë vetëm te HomeClient). Override mbi <style> inline. */
 
 /* — Lexueshmëri & prekshmëri (matje live: chip 28px, fonte 8–11px) — */
-.cat-item{padding:9px 14px !important;}          /* chip ~40px, i prekshëm me gisht */
-.cat-item span{font-size:12px !important;}       /* etiketa kategorie 11 -> 12px */
-.stat-l{font-size:11px !important;}              /* statistika 8 -> 11px */
+.cat-item{padding:9px 14px !important;}
+.cat-item span{font-size:12px !important;}
+.stat-l{font-size:11px !important;}
 
 /* — Zvogëlim i banner-it "Shit·Bli" (hero) ~60% footprint: padding & lartësi më kompakte,
      pa cenuar lexueshmërinë e tekstit — kursen hapësirë sipas kërkesës. — */
@@ -14,8 +14,7 @@
 .hero .stat-n{font-size:15px !important;}
 .hero .stat-l{font-size:9px !important;}
 
-/* — Zbukurim i emrit "ALPAZAR" (wordmark): gradient identiteti shqiptar e zezë -> e kuqe,
-     mbi header-in e artë. Sinkron ngjyrash me paletën (#111 + #E63312). — */
+/* — Zbukurim i emrit "ALPAZAR" (wordmark): gradient identiteti shqiptar e zezë -> e kuqe. — */
 .brand{
   background:linear-gradient(135deg,#111 0%,#1a1a1a 42%,#E63312 100%) !important;
   -webkit-background-clip:text !important; background-clip:text !important;
@@ -23,3 +22,18 @@
   letter-spacing:2.5px !important; font-weight:800 !important;
   text-shadow:none !important;
 }
+
+/* — Sinkronizim ngjyrash: heq "ndotjen" e gri-ve të tintuara (kafe/blu) dhe i unifikon
+     në një ramp neutral 2-nivelesh. Ruaj gjendjet aktive (ari). Matje live. — */
+.cat-item i{color:#757575 !important;}
+.cat-item.active i{color:#F5C842 !important;}
+.nav-item{color:#757575 !important;}
+.nav-item.active{color:#F5C842 !important;}
+.filter-btn{color:#555555 !important;}
+.filter-btn.active{color:#F5C842 !important;}
+.stat-l{color:#757575 !important;}
+
+/* — Elemente kombëtare shqiptare: shirit i kuq i flamurit në krye + kornizë e ngrohtë hero-s.
+     Kontrast me sfondin, sinkron me paletën (#E63312 / #F5C842 / #1a1a1a). — */
+.topbar{border-top:3px solid #E63312 !important;}
+.hero{border:1px solid rgba(230,51,18,.18) !important;}
