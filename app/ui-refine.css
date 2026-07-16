@@ -26,8 +26,7 @@
 .stat-l{color:#757575 !important;}
 
 /* — HEADER: RUAJ të verdhën primare (identiteti). Ndal rrjedhjen: heq box-shadow-n ambër
-     rgba(190,130,0,.5) që "rridhte" poshtë mbi të zezën; e zëvendëson me hije të prerë neutrale
-     + vijë përkufizimi të qartë. — */
+     rgba(190,130,0,.5) që "rridhte" poshtë mbi të zezën; e zëvendëson me hije të prerë neutrale. — */
 .header{
   background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%) !important;
   box-shadow:0 2px 10px -6px rgba(0,0,0,.25) !important;
@@ -45,3 +44,19 @@
 
 /* — Kornizë e kuqe e butë te hero (accent flamuri, e prerë — jo rrjedhje) — */
 .hero{border:1px solid rgba(230,51,18,.18) !important;}
+
+/* — SINKRONIZIM 100%: kartat "trust" nga blu/jeshile pastel -> 3 ngjyrat e brendit (ari/zezë/kuqe).
+     3 karta të dallueshme, brenda identitetit. Kontrast i mjaftueshëm në 8px. — */
+.tc-green{background:#FFF8E1 !important;border:.5px solid #E8C878 !important;}
+.tc-green i,.tc-green span{color:#8A6D00 !important;}
+.tc-blue{background:#F5F4F2 !important;border:.5px solid #DAD5C9 !important;}
+.tc-blue i,.tc-blue span{color:#1a1a1a !important;}
+.tc-red{background:#FFF0EE !important;border:.5px solid #EEA99E !important;}
+.tc-red i,.tc-red span{color:#C42305 !important;}
+
+/* — Badge "Pa reklama": jeshile -> ari (feature pozitive = ari) — */
+.no-ads{background:#FFF8E1 !important;border:.5px solid #E8C878 !important;}
+.no-ads i,.no-ads span{color:#8A6D00 !important;}
+
+/* — Ndal rrjedhjen BLU (jashtë palete): butoni "Ndaj aplikacionin" kishte shkëlqim #3b82f6 -> hije neutrale e prerë — */
+button[aria-label="Ndaj aplikacionin"]{box-shadow:0 4px 13px -5px rgba(0,0,0,.22) !important;}
