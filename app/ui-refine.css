@@ -1,8 +1,34 @@
-/* ui-refine.css — Rregullime lexueshmërie, prekshmërie & identitet kombëtar (Cowork, matje live).
-   Prek VETËM homepage-n (klasat ekzistojnë vetëm te HomeClient). Override mbi <style> inline.
+/* ui-refine.css — Sistem dizajni ALPAZAR (Cowork, matje live).
+   NGARKOHET NGA layout.tsx NË ÇDO FAQE. Seksioni GLOBAL prek të gjitha faqet;
+   seksionet homepage prekin vetëm klasat që ekzistojnë te HomeClient. */
 
-   IDENTITETI ALPAZAR: E VERDHA #F5C842 = ngjyra PRIMARE (tërheq syrin) · E KUQE #E63312 &
-   E ZEZË #111 = identiteti shqiptar. E verdha mbetet dominante; kuqja+zeza janë accent/kontrast. */
+/* ═══ 0) SISTEMI GLOBAL I DIZAJNIT (prek ÇDO faqe) ═══
+   Identiteti ALPAZAR: E VERDHA #F5C842 = PRIMARE (tërheq syrin) · E KUQE #E63312 &
+   E ZEZË #111 = identiteti shqiptar. Burim i vetëm i së vërtetës. */
+:root{
+  --az-yellow:#F5C842; --az-yellow-hi:#F8D24E; --az-yellow-lo:#EEB828;
+  --az-red:#E63312; --az-red-deep:#C42305;
+  --az-black:#111111; --az-ink:#1a1a1a;
+  --az-cream:#FFFBEA; --az-white:#FFFFFF;
+  --az-gray-1:#555555; --az-gray-2:#757575; --az-line:rgba(0,0,0,.14);
+  --az-shadow-sm:0 1px 3px rgba(0,0,0,.08);
+  --az-shadow-md:0 2px 10px -6px rgba(0,0,0,.22);
+  --az-shadow-lg:0 10px 34px -14px rgba(0,0,0,.30);
+  --az-radius:14px;
+}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
+body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;}
+::selection{background:var(--az-yellow);color:var(--az-black);}
+::-moz-selection{background:var(--az-yellow);color:var(--az-black);}
+*{-webkit-tap-highlight-color:rgba(230,51,18,.16);}
+*{scrollbar-width:thin;scrollbar-color:var(--az-yellow-lo) transparent;}
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--az-yellow-lo);border-radius:8px;border:2px solid transparent;background-clip:content-box;}
+::-webkit-scrollbar-thumb:hover{background:var(--az-red);}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto;}}
+
+/* ═══ HOMEPAGE ═══ */
 
 /* — Lexueshmëri & prekshmëri (matje live: chip 28px, fonte 8–11px) — */
 .cat-item{padding:9px 14px !important;}
@@ -16,7 +42,7 @@
 .hero .stat-n{font-size:15px !important;}
 .hero .stat-l{font-size:9px !important;}
 
-/* — Sinkronizim ngjyrash: heq gri-të e tintuara (kafe/blu) -> ramp neutral 2-nivelesh. Ruaj aktivet (ari). — */
+/* — Sinkronizim ngjyrash: gri-të e tintuara -> ramp neutral. Ruaj aktivet (ari). — */
 .cat-item i{color:#757575 !important;}
 .cat-item.active i{color:#F5C842 !important;}
 .nav-item{color:#757575 !important;}
@@ -25,8 +51,7 @@
 .filter-btn.active{color:#F5C842 !important;}
 .stat-l{color:#757575 !important;}
 
-/* — HEADER: RUAJ të verdhën primare (identiteti). Ndal rrjedhjen: heq box-shadow-n ambër
-     rgba(190,130,0,.5) që "rridhte" poshtë mbi të zezën; e zëvendëson me hije të prerë neutrale. — */
+/* — HEADER: e verdha primare + hije e prerë (ndal rrjedhjen ambër) — */
 .header{
   background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%) !important;
   box-shadow:0 2px 10px -6px rgba(0,0,0,.25) !important;
@@ -34,7 +59,7 @@
 }
 .topbar{border-top:3px solid #E63312 !important;}
 
-/* — Wordmark "ALPAZAR": E ZEZË solide (#111) mbi të verdhë — kontrast maksimal, identitet shqiptar. — */
+/* — Wordmark "ALPAZAR": e zezë solide mbi të verdhë — */
 .brand{
   background:none !important;
   -webkit-text-fill-color:#111 !important; color:#111 !important;
@@ -42,21 +67,18 @@
   text-shadow:0 1px 0 rgba(255,255,255,.35) !important;
 }
 
-/* — Kornizë e kuqe e butë te hero (accent flamuri, e prerë — jo rrjedhje) — */
+/* — Kornizë e kuqe e butë te hero — */
 .hero{border:1px solid rgba(230,51,18,.18) !important;}
 
-/* — SINKRONIZIM 100%: kartat "trust" nga blu/jeshile pastel -> 3 ngjyrat e brendit (ari/zezë/kuqe).
-     3 karta të dallueshme, brenda identitetit. Kontrast i mjaftueshëm në 8px. — */
+/* — Sinkronizim 100%: trust cards -> ari/zezë/kuqe; no-ads -> ari — */
 .tc-green{background:#FFF8E1 !important;border:.5px solid #E8C878 !important;}
 .tc-green i,.tc-green span{color:#8A6D00 !important;}
 .tc-blue{background:#F5F4F2 !important;border:.5px solid #DAD5C9 !important;}
 .tc-blue i,.tc-blue span{color:#1a1a1a !important;}
 .tc-red{background:#FFF0EE !important;border:.5px solid #EEA99E !important;}
 .tc-red i,.tc-red span{color:#C42305 !important;}
-
-/* — Badge "Pa reklama": jeshile -> ari (feature pozitive = ari) — */
 .no-ads{background:#FFF8E1 !important;border:.5px solid #E8C878 !important;}
 .no-ads i,.no-ads span{color:#8A6D00 !important;}
 
-/* — Ndal rrjedhjen BLU (jashtë palete): butoni "Ndaj aplikacionin" kishte shkëlqim #3b82f6 -> hije neutrale e prerë — */
+/* — Ndal rrjedhjen BLU te butoni "Ndaj aplikacionin" — */
 button[aria-label="Ndaj aplikacionin"]{box-shadow:0 4px 13px -5px rgba(0,0,0,.22) !important;}
