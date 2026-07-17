@@ -424,7 +424,7 @@ export default function ProfilePage() {
         .hero{background:linear-gradient(180deg,#111,#1c1c1c);padding:24px 16px;text-align:center;}
         .avatar{width:76px;height:76px;border-radius:50%;background:#F5C842;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 12px;border:3px solid #F5C842;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.3);}
         .avatar img{width:100%;height:100%;object-fit:cover;}
-        .name{font-size:19px;font-weight:700;color:#fff;}
+        .name{font-size:19px;font-weight:800;color:#1a1a1a;}
         .handle{font-size:12px;color:#888;margin-top:4px;}
         .email-row{font-size:11px;color:#666;display:flex;align-items:center;gap:6px;margin-top:4px;justify-content:center;}
         .badges-row{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap;}
