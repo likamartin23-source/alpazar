@@ -6,11 +6,12 @@ const shimmer = `
     100% { background-position: 400px 0; }
   }
   .sk {
-    background: linear-gradient(90deg, #f0ede0 25%, #e8e4d0 50%, #f0ede0 75%);
+    background: linear-gradient(90deg, #efeadb 0%, #efeadb 20%, #faf7ee 50%, #efeadb 80%, #efeadb 100%);
     background-size: 800px 100%;
-    animation: shimmer 1.4s infinite linear;
+    animation: shimmer 1.6s cubic-bezier(.4,0,.6,1) infinite;
     border-radius: 6px;
   }
+  @media (prefers-reduced-motion: reduce){ .sk{ animation: none; } }
 `
 
 /* ─── Skeleton një kartë shpalljeje (listing card) ───────────────────── */
