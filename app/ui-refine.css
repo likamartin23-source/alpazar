@@ -2,9 +2,7 @@
    NGARKOHET NGA layout.tsx NË ÇDO FAQE. Seksioni GLOBAL prek të gjitha faqet;
    seksionet homepage prekin vetëm klasat që ekzistojnë te HomeClient. */
 
-/* ═══ 0) SISTEMI GLOBAL I DIZAJNIT (prek ÇDO faqe) ═══
-   Identiteti ALPAZAR: E VERDHA #F5C842 = PRIMARE (tërheq syrin) · E KUQE #E63312 &
-   E ZEZË #111 = identiteti shqiptar. Burim i vetëm i së vërtetës. */
+/* ═══ 0) SISTEMI GLOBAL I DIZAJNIT (prek ÇDO faqe) ═══ */
 :root{
   --az-yellow:#F5C842; --az-yellow-hi:#F8D24E; --az-yellow-lo:#EEB828;
   --az-red:#E63312; --az-red-deep:#C42305;
@@ -26,23 +24,34 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--az-yellow-lo);border-radius:8px;border:2px solid transparent;background-clip:content-box;}
 ::-webkit-scrollbar-thumb:hover{background:var(--az-red);}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto;}}
+
+/* — Mikro-ndërveprime globale: prekje taktile + tranzicione (premium) — */
+a,button{transition:color .15s ease,background-color .15s ease,box-shadow .15s ease,transform .1s ease;}
+button:active{transform:scale(.97);}
+
+/* — Animacione hyrëse (premium, të buta) — */
+@keyframes az-fade-up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes az-fade-in{from{opacity:0}to{opacity:1}}
+@keyframes az-pulse{0%,100%{box-shadow:0 4px 16px rgba(230,51,18,.45)}50%{box-shadow:0 6px 22px rgba(230,51,18,.62)}}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  a,button{transition:none;} button:active{transform:none;}
+  *{animation:none !important;}
+}
 
 /* ═══ HOMEPAGE ═══ */
 
-/* — Lexueshmëri & prekshmëri (matje live: chip 28px, fonte 8–11px) — */
 .cat-item{padding:9px 14px !important;}
 .cat-item span{font-size:12px !important;}
 .stat-l{font-size:11px !important;}
 
-/* — Zvogëlim i banner-it "Shit·Bli" (hero) ~60% footprint — */
 .hero{padding:9px 13px !important;border-radius:14px !important;margin:0 0 8px !important;}
 .hero h2{font-size:13px !important;margin-bottom:2px !important;}
 .hero p{font-size:10px !important;line-height:1.4 !important;}
 .hero .stat-n{font-size:15px !important;}
 .hero .stat-l{font-size:9px !important;}
 
-/* — Sinkronizim ngjyrash: gri-të e tintuara -> ramp neutral. Ruaj aktivet (ari). — */
 .cat-item i{color:#757575 !important;}
 .cat-item.active i{color:#F5C842 !important;}
 .nav-item{color:#757575 !important;}
@@ -51,15 +60,14 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .filter-btn.active{color:#F5C842 !important;}
 .stat-l{color:#757575 !important;}
 
-/* — HEADER: e verdha primare + hije e prerë (ndal rrjedhjen ambër) — */
 .header{
   background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%) !important;
   box-shadow:0 2px 10px -6px rgba(0,0,0,.25) !important;
   border-bottom:1px solid rgba(0,0,0,.14) !important;
+  animation:az-fade-in .4s ease both;
 }
 .topbar{border-top:3px solid #E63312 !important;}
 
-/* — Wordmark "ALPAZAR": e zezë solide mbi të verdhë — */
 .brand{
   background:none !important;
   -webkit-text-fill-color:#111 !important; color:#111 !important;
@@ -67,10 +75,8 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
   text-shadow:0 1px 0 rgba(255,255,255,.35) !important;
 }
 
-/* — Kornizë e kuqe e butë te hero — */
-.hero{border:1px solid rgba(230,51,18,.18) !important;}
+.hero{border:1px solid rgba(230,51,18,.18) !important; animation:az-fade-up .5s cubic-bezier(.22,1,.36,1) both;}
 
-/* — Sinkronizim 100%: trust cards -> ari/zezë/kuqe; no-ads -> ari — */
 .tc-green{background:#FFF8E1 !important;border:.5px solid #E8C878 !important;}
 .tc-green i,.tc-green span{color:#8A6D00 !important;}
 .tc-blue{background:#F5F4F2 !important;border:.5px solid #DAD5C9 !important;}
@@ -80,5 +86,15 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .no-ads{background:#FFF8E1 !important;border:.5px solid #E8C878 !important;}
 .no-ads i,.no-ads span{color:#8A6D00 !important;}
 
-/* — Ndal rrjedhjen BLU te butoni "Ndaj aplikacionin" — */
 button[aria-label="Ndaj aplikacionin"]{box-shadow:0 4px 13px -5px rgba(0,0,0,.22) !important;}
+
+/* — Hover premium (desktop) + hyrje e trust-row — */
+.trust-row{animation:az-fade-up .6s cubic-bezier(.22,1,.36,1) both;}
+.cat-item{transition:transform .14s ease, box-shadow .14s ease;}
+.cat-item:hover{transform:translateY(-2px);}
+.trust-card{transition:transform .14s ease, box-shadow .14s ease;}
+.trust-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px -10px rgba(0,0,0,.28);}
+.filter-btn{transition:transform .12s ease, box-shadow .12s ease, background .15s ease, color .15s ease;}
+.filter-btn:hover{transform:translateY(-1px);}
+.nav-add{transition:transform .16s ease, box-shadow .16s ease;}
+.nav-add:hover{transform:translateY(-2px) scale(1.04);}
