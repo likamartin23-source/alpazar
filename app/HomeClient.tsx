@@ -514,8 +514,8 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .no-ads i{font-size:13px;color:#3B6D11;}
         .no-ads span{font-size:9px;color:#3B6D11;font-weight:700;}
         /* Hero — premium (CSS-only, performant) */
-        .hero{background:linear-gradient(150deg,#0f0f10 0%,#17140e 55%,#1c1810 100%);border-radius:18px;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;margin:0 0 12px;position:relative;overflow:hidden;box-shadow:0 10px 30px -10px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.05);}
-        .hero::before{content:'';position:absolute;top:-60%;right:-18%;width:200px;height:200px;background:radial-gradient(circle,rgba(245,200,66,.12),transparent 60%);pointer-events:none;}
+        .hero{background:linear-gradient(155deg,#151517 0%,#101012 100%);border-radius:18px;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;margin:0 0 12px;position:relative;overflow:hidden;box-shadow:0 10px 30px -10px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.04);}
+        .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(120px 90px at 92% 40%,rgba(245,200,66,.05),transparent 70%);pointer-events:none;}
         .hero::after{content:'';position:absolute;top:0;left:-60%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.06),transparent);transform:skewX(-18deg);animation:hero-sheen 7s ease-in-out infinite;pointer-events:none;}
         @keyframes hero-sheen{0%,74%{left:-60%}90%,100%{left:135%}}
         @keyframes hero-in{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
