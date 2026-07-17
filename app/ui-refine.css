@@ -28,6 +28,11 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 ::-webkit-scrollbar-thumb:hover{background:var(--az-red);}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto;}}
 
+/* — Mikro-ndërveprime globale: prekje taktile + tranzicione të buta (premium, botëror) — */
+a,button{transition:color .15s ease,background-color .15s ease,box-shadow .15s ease,transform .1s ease;}
+button:active{transform:scale(.97);}
+@media (prefers-reduced-motion:reduce){a,button{transition:none;} button:active{transform:none;}}
+
 /* ═══ HOMEPAGE ═══ */
 
 /* — Lexueshmëri & prekshmëri (matje live: chip 28px, fonte 8–11px) — */
