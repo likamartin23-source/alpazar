@@ -514,11 +514,12 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .no-ads i{font-size:13px;color:#3B6D11;}
         .no-ads span{font-size:9px;color:#3B6D11;font-weight:700;}
         /* Hero — premium (CSS-only, performant) */
-        .hero{background:linear-gradient(150deg,#0f0f10 0%,#1a1712 55%,#2a1d08 100%);border-radius:18px;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;margin:0 0 12px;position:relative;overflow:hidden;box-shadow:0 10px 30px -10px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.06);}
-        .hero::before{content:'';position:absolute;top:-55%;right:-14%;width:220px;height:220px;background:radial-gradient(circle,rgba(245,200,66,.28),transparent 66%);pointer-events:none;}
-        .hero::after{content:'';position:absolute;top:0;left:-60%;width:55%;height:100%;background:linear-gradient(100deg,transparent,rgba(245,200,66,.10),transparent);transform:skewX(-18deg);animation:hero-sheen 6.5s ease-in-out infinite;pointer-events:none;}
-        @keyframes hero-sheen{0%,72%{left:-60%}88%,100%{left:130%}}
-        .hero>div{position:relative;z-index:1;}
+        .hero{background:linear-gradient(150deg,#0f0f10 0%,#17140e 55%,#1c1810 100%);border-radius:18px;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;margin:0 0 12px;position:relative;overflow:hidden;box-shadow:0 10px 30px -10px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.05);}
+        .hero::before{content:'';position:absolute;top:-60%;right:-18%;width:200px;height:200px;background:radial-gradient(circle,rgba(245,200,66,.12),transparent 60%);pointer-events:none;}
+        .hero::after{content:'';position:absolute;top:0;left:-60%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.06),transparent);transform:skewX(-18deg);animation:hero-sheen 7s ease-in-out infinite;pointer-events:none;}
+        @keyframes hero-sheen{0%,74%{left:-60%}90%,100%{left:135%}}
+        @keyframes hero-in{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+        .hero>div{position:relative;z-index:1;animation:hero-in .55s cubic-bezier(.2,.8,.2,1) both;}
         .hero h2{color:#F5C842;font-size:17px;font-weight:800;margin-bottom:5px;letter-spacing:-.2px;text-shadow:0 1px 2px rgba(0,0,0,.35);}
         .hero p{color:#9a9488;font-size:11px;line-height:1.55;}
         .hero-stats{display:flex;gap:0;flex-shrink:0;position:relative;z-index:1;}
@@ -526,7 +527,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .stat+.stat{border-left:1px solid rgba(245,200,66,.18);}
         .stat-n{color:#F5C842;font-size:20px;font-weight:800;line-height:1;letter-spacing:-.5px;}
         .stat-l{color:#8a8375;font-size:8px;margin-top:3px;text-transform:uppercase;letter-spacing:.6px;}
-        @media (prefers-reduced-motion: reduce){.hero::after{animation:none;}}
+        @media (prefers-reduced-motion: reduce){.hero::after,.hero>div{animation:none;}}
         /* Trust row */
         .trust-row{display:flex;gap:8px;margin-bottom:16px;}
         .trust-card{flex:1;border-radius:9px;padding:7px 8px;display:flex;align-items:center;gap:5px;}
