@@ -459,7 +459,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
         .wrap{max-width:480px;margin:0 auto;background:#FFFBEA;padding-bottom:80px;}
         /* Header */
-        .header{background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%);position:sticky;top:0;z-index:50;box-shadow:0 6px 22px -8px rgba(190,130,0,.5);border-bottom:1px solid rgba(255,255,255,.25);}
+        .header{background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%);position:sticky;top:0;z-index:50;box-shadow:0 6px 22px -8px rgba(190,130,0,.5),inset 0 1px 0 rgba(255,255,255,.4);border-bottom:1px solid rgba(255,255,255,.25);}
         .topbar{padding:10px 14px;display:flex;align-items:center;justify-content:space-between;}
         .logo{display:flex;align-items:center;gap:8px;cursor:pointer;}
         .brand{font-size:20px;font-weight:800;color:#111;letter-spacing:2px;text-shadow:0 1px 0 rgba(255,255,255,.3);}
@@ -483,7 +483,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         /* Search */
         .searchbar{padding:0 12px 12px;display:flex;gap:8px;}
         .search-wrap{flex:1;background:#fff;border-radius:12px;display:flex;align-items:center;padding:0 12px;gap:8px;border:1.5px solid rgba(0,0,0,.07);box-shadow:0 1px 4px rgba(0,0,0,.05);transition:border-color .2s ease,box-shadow .2s ease;}
-        .search-wrap:focus-within{border-color:#111;box-shadow:0 4px 16px -4px rgba(0,0,0,.2);}
+        .search-wrap:focus-within{border-color:#E63312;box-shadow:0 6px 20px -6px rgba(230,51,18,.22);transform:translateY(-1px);}
         .search-wrap:focus-within i{color:#E63312;}
         .search-wrap i{font-size:15px;color:#bbb;}
         .search-wrap input{border:none;background:transparent;font-size:13px;color:#111;outline:none;flex:1;padding:10px 0;font-family:inherit;}
@@ -501,8 +501,9 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .cat-scroll{display:flex;gap:8px;padding:0 12px 12px;overflow-x:auto;scroll-snap-type:x mandatory;}
         .cat-scroll::-webkit-scrollbar{display:none;}
         .cat-item{background:#fff;border-radius:20px;padding:6px 12px;display:flex;align-items:center;gap:5px;cursor:pointer;border:1.5px solid transparent;font-family:inherit;transition:all .15s;box-shadow:0 1px 4px rgba(0,0,0,.06);white-space:nowrap;flex-shrink:0;scroll-snap-align:start;}
+        .cat-item:hover{border-color:#F5C84288;background:#FFFDF5;}
         .cat-item:active{transform:scale(.95);}
-        .cat-item.active{background:linear-gradient(135deg,#1a1a1a,#000);border-color:#111;box-shadow:0 4px 12px -2px rgba(0,0,0,.3);}
+        .cat-item.active{background:linear-gradient(135deg,#1a1a1a,#000);border-color:#111;box-shadow:0 6px 16px -4px rgba(0,0,0,.35);transform:translateY(-1px);}
         .cat-item i{font-size:14px;color:#777;}
         .cat-item.active i{color:#F5C842;}
         .cat-item span{font-size:11px;color:#555;font-weight:600;}
@@ -555,6 +556,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .filter-row{display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;}
         .filter-row::-webkit-scrollbar{display:none;}
         .filter-btn{background:#fff;border:0.5px solid #ddd;border-radius:20px;padding:6px 13px;font-size:10px;color:#666;white-space:nowrap;flex-shrink:0;cursor:pointer;font-family:inherit;transition:all .12s;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+        .filter-btn:hover{border-color:#F5C842;color:#E63312;}
         .filter-btn.active{background:#111;border-color:#111;color:#F5C842;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.15);}
         /* Listings grid — raporti 70% foto / 30% të dhëna — 3 kolona (-40%) */
         .listings-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;}
