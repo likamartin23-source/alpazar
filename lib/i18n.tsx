@@ -1,9 +1,8 @@
 'use client'
 /**
- * Alpazar i18n — motor i lehtë me React Context + përkthyes runtime i UI-së.
- * Gjuha ruhet në localStorage + cookie `alpazar_lang`; zbulohet nga navigator.
- * Përkthyesi runtime: kur lang != 'sq', tekstet e dukshme (UI_KEYS) zëvendësohen
- * nga fjalori UI — pa prekur komponentët ekzistues. Fallback gjithmonë 'sq'.
+ * Alpazar i18n — 3 shtresa: (1) katalogu t() për komponentët e rinj, (2) fjalori UI për
+ * tekstet e gozhduara të homepage, (3) auto-përkthim AI për ÇDO tekst tjetër (shpalljet,
+ * faqet dytësore) permes edge function 'translate' + cache në localStorage. Fallback 'sq'.
  */
 import { createContext, useContext, useEffect, useRef, useState, useCallback, ReactNode } from 'react'
 
@@ -65,7 +64,6 @@ export const MESSAGES: Record<string, Dict> = {
   lang_label:    { sq:'Gjuha', en:'Language', it:'Lingua', de:'Sprache', fr:'Langue', es:'Idioma', el:'Γλώσσα', tr:'Dil', sr:'Језик', hr:'Jezik', bs:'Jezik', mk:'Јазик', bg:'Език', ro:'Limbă', sl:'Jezik', pl:'Język', cs:'Jazyk', sk:'Jazyk', hu:'Nyelv', nl:'Taal', pt:'Idioma', uk:'Мова', ru:'Язык', sv:'Språk', da:'Sprog', fi:'Kieli', no:'Språk', et:'Keel', lv:'Valoda', lt:'Kalba' },
 }
 
-/* ── Përkthyesi runtime i UI-së: tekstet e gozhduara të homepage (rendi FIKS) ── */
 const UI_KEYS = [
   'Shit · Bli · Bëj Pazrin Tënd', 'Platforma #1 shqiptare', 'e tregtisë online',
   'Përdorues', 'Shpallje', 'Shitës', 'Të gjitha', 'Hyr / Regjistrohu',
@@ -106,6 +104,10 @@ const UI: Partial<Record<Lang, string[]>> = {
   lt:['Parduok · Pirk · Sudaryk sandorį','Albanijos platforma nr. 1','internetinei prekybai','Vartotojai','Skelbimai','Pardavėjai','Visi','Prisijungti / Registruotis','Pradžia','Ieškoti','Žinutės','Profilis','Patvirtinti pardavėjai','Įvertinimai ⭐','Be reklamų — visada nemokama visiems','Ieškok bet ko Albanijoje...','Naujas','Naudotas','Nemokamai','Žiūrėti visus','Šiuo metu skelbimų nėra','Būk pirmas, kuris pridės!','Įdiegti','Dalintis'],
 }
 
+const TR_URL = 'https://sopafwfkrxpcdaljddoh.supabase.co/functions/v1/translate'
+const SKIP_TAGS = new Set(['SCRIPT','STYLE','NOSCRIPT','TEXTAREA','CODE','PRE'])
+const hasLetters = (s: string) => /[A-Za-zÀ-ɏͰ-ϿЀ-ӿ]/.test(s)
+
 interface I18nCtx { lang: Lang; setLang: (l: Lang) => void; t: (key: string) => string }
 const Ctx = createContext<I18nCtx>({ lang: 'sq', setLang: () => {}, t: (k) => k })
 
@@ -140,28 +142,48 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     return row[lang] ?? row.sq ?? key
   }, [lang])
 
-  /* Përkthyesi runtime: zëvendëson tekstet e UI_KEYS në DOM kur lang != 'sq';
-     rikthen origjinalet kur kthehesh në 'sq'. Nuk prek komponentët ekzistues. */
+  /* Shtresa 2+3: fjalor UI + auto-përkthim AI i teksteve të panjohura (me cache). */
   useEffect(() => {
     if (typeof document === 'undefined') return
     const idx = new Map(UI_KEYS.map((k, i) => [k, i] as const))
     const tr = UI[lang]
-    const handleText = (n: Text) => {
+    let cache: Record<string, string> = {}
+    const cacheKey = `az_tr_${lang}`
+    if (tr) { try { cache = JSON.parse(localStorage.getItem(cacheKey) || '{}') } catch {} }
+    const pendingSet = new Set<string>()
+    let queue = new Set<string>()
+    let timer: ReturnType<typeof setTimeout> | null = null
+    let dead = false
+
+    const applyText = (n: Text) => {
+      const p = n.parentElement
+      if (p && (SKIP_TAGS.has(p.tagName) || p.closest('[data-no-translate]'))) return
       const orig = store.current.get(n) ?? (n.nodeValue || '')
       const t0 = orig.trim()
       if (!t0) return
       const i = idx.get(t0)
-      if (i === undefined) return
-      if (!store.current.has(n)) store.current.set(n, n.nodeValue || '')
-      const base = store.current.get(n) || ''
-      n.nodeValue = tr ? base.replace(t0, tr[i]) : base
+      if (i !== undefined) {
+        if (!store.current.has(n)) store.current.set(n, n.nodeValue || '')
+        const base = store.current.get(n) || ''
+        n.nodeValue = tr ? base.replace(t0, tr[i]) : base
+        return
+      }
+      if (!tr) { if (store.current.has(n)) n.nodeValue = store.current.get(n) || ''; return }
+      if (t0.length < 2 || t0.length > 160 || !hasLetters(t0)) return
+      if (cache[t0] !== undefined) {
+        if (!store.current.has(n)) store.current.set(n, n.nodeValue || '')
+        const base = store.current.get(n) || ''
+        n.nodeValue = base.replace(t0, cache[t0])
+        return
+      }
+      if (!pendingSet.has(t0)) { pendingSet.add(t0); queue.add(t0) }
     }
     const applyNode = (root: Node) => {
-      if (root.nodeType === 3) { handleText(root as Text); return }
+      if (root.nodeType === 3) { applyText(root as Text); return }
       if (root.nodeType !== 1 && root.nodeType !== 9) return
       const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
       let n: Node | null
-      while ((n = w.nextNode())) handleText(n as Text)
+      while ((n = w.nextNode())) applyText(n as Text)
       document.querySelectorAll('input[placeholder]').forEach((el) => {
         const e = el as HTMLInputElement
         const orig = e.getAttribute('data-i18n-ph') ?? e.getAttribute('placeholder') ?? ''
@@ -171,13 +193,32 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         e.setAttribute('placeholder', tr ? tr[i] : orig)
       })
     }
+    const flush = () => {
+      if (dead || !tr || queue.size === 0) return
+      const batch = Array.from(queue).slice(0, 50)
+      queue = new Set(Array.from(queue).slice(50))
+      fetch(TR_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ texts: batch, target: lang }) })
+        .then(r => r.ok ? r.json() : null)
+        .then(d => {
+          if (dead || !d || !Array.isArray(d.translations)) return
+          batch.forEach((src, i) => { if (typeof d.translations[i] === 'string') cache[src] = d.translations[i] })
+          try { localStorage.setItem(cacheKey, JSON.stringify(cache)) } catch {}
+          applyNode(document.body)
+          if (queue.size > 0) { timer = setTimeout(flush, 600) }
+        })
+        .catch(() => {})
+    }
+    const schedule = () => { if (timer) clearTimeout(timer); timer = setTimeout(flush, 400) }
+
     applyNode(document.body)
+    schedule()
     if (!tr) return
     const mo = new MutationObserver((muts) => {
       muts.forEach(m => m.addedNodes.forEach(nd => applyNode(nd)))
+      schedule()
     })
     mo.observe(document.body, { childList: true, subtree: true })
-    return () => mo.disconnect()
+    return () => { dead = true; if (timer) clearTimeout(timer); mo.disconnect() }
   }, [lang])
 
   return <Ctx.Provider value={{ lang, setLang, t }}>{children}</Ctx.Provider>
