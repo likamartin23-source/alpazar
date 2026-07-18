@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   keywords: 'marketplace shqiperi, shpallje online, shit bli shqiperi, alpazar, tregti online, bazar shqip, shpallje falas',
   authors: [{ name: 'ALPAZAR', url: SITE_URL }],
   applicationName: 'ALPAZAR',
-  manifest: '/manifest.json',
+  manifest: '/manifest.json?v=3',
   metadataBase: new URL(SITE_URL),
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
   appleWebApp: {
@@ -32,12 +32,12 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/favicon.png', type: 'image/png' },
-      { url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
-      { url: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+      { url: '/favicon.png?v=3', type: 'image/png' },
+      { url: '/icons/icon-192.png?v=3', sizes: '192x192', type: 'image/png' },
+      { url: '/icons/icon-512.png?v=3', sizes: '512x512', type: 'image/png' },
     ],
     apple: [
-      { url: '/icons/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+      { url: '/icons/apple-touch-icon.png?v=3', sizes: '180x180', type: 'image/png' },
     ],
   },
   openGraph: {
@@ -47,13 +47,13 @@ export const metadata: Metadata = {
     siteName: 'ALPAZAR',
     title: 'ALPAZAR — Platforma #1 Shqiptare e Tregtisë Online',
     description: 'Shit, bli dhe bëj pazarin tënd falas. Zero reklama. Zero komision.',
-    images: [{ url: `${SITE_URL}/icons/icon-512.png`, width: 512, height: 512, alt: 'ALPAZAR — Marketplace Shqiptar' }],
+    images: [{ url: `${SITE_URL}/icons/icon-512.png?v=3`, width: 512, height: 512, alt: 'ALPAZAR — Marketplace Shqiptar' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'ALPAZAR — Platforma #1 Shqiptare e Tregtisë Online',
     description: 'Shit, bli dhe bëj pazarin tënd falas. Zero reklama.',
-    images: [`${SITE_URL}/icons/icon-512.png`],
+    images: [`${SITE_URL}/icons/icon-512.png?v=3`],
   },
   other: {
     'mobile-web-app-capable': 'yes',
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     'apple-mobile-web-app-status-bar-style': 'black-translucent',
     'apple-mobile-web-app-title': 'ALPAZAR',
     'msapplication-TileColor': '#111111',
-    'msapplication-TileImage': '/icons/icon-144.png',
+    'msapplication-TileImage': '/icons/icon-144.png?v=3',
     'google-site-verification': ['VRnlK16BTSvB9jRZifv-un8DY_a2jp5X67XEXokK5xY', 'wNtd2B-Xmy2aTSr0e0eAXJ3RV4MIJyqIDSr'],
   },
 }
@@ -90,8 +90,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preload" href="/fonts/pjs-700-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preload" href="/fonts/tabler-subset.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         {/* Module 6: Vercel Web Analytics — 100% falas, GDPR-compliant, zero konfigurim */}
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+        <link rel="manifest" href="/manifest.json?v=3" />
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=3" />
         <style dangerouslySetInnerHTML={{__html:`[role="button"]:focus-visible,[role="link"]:focus-visible,[role="radio"]:focus-visible,[role="switch"]:focus-visible{outline:2px solid #F5C842;outline-offset:2px;border-radius:4px;}.skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:9999;background:#F5C842;color:#111;padding:8px 16px;font-weight:700;border-radius:4px;text-decoration:none;}.skip-link:focus{left:16px;top:16px;width:auto;height:auto;overflow:visible;}`}} />
         {/* JSON-LD — Google e kupton si marketplace */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{__html: JSON.stringify({
@@ -109,14 +109,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             "@type": "Organization",
             "name": "ALPAZAR",
             "url": "https://alpazar.vercel.app",
-            "logo": { "@type": "ImageObject", "url": "https://alpazar.vercel.app/icons/icon-512.png" }
+            "logo": { "@type": "ImageObject", "url": "https://alpazar.vercel.app/icons/icon-512.png?v=3" }
           }
         })}} />
         {/* Service Worker — regjistrim me flag kundër loop-it të pafund */}
         <script dangerouslySetInnerHTML={{__html: `
           if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-              navigator.serviceWorker.register('/sw.js', { scope: '/' }).then(function(reg) {
+              navigator.serviceWorker.register('/sw.js', { scope: '/', updateViaCache: 'none' }).then(function(reg) {
                 var reloading = false;
                 navigator.serviceWorker.addEventListener('controllerchange', function() {
                   if (reloading) return;
