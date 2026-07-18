@@ -1,10 +1,11 @@
 'use client'
 /**
- * Alpazar i18n — motor i lehtë me React Context (pa router, pa varësi).
+ * Alpazar i18n — motor i lehtë me React Context + përkthyes runtime i UI-së.
  * Gjuha ruhet në localStorage + cookie `alpazar_lang`; zbulohet nga navigator.
- * Zgjerimi: shto gjuhë te LANGS + çelësa te MESSAGES. Fallback gjithmonë 'sq'.
+ * Përkthyesi runtime: kur lang != 'sq', tekstet e dukshme (UI_KEYS) zëvendësohen
+ * nga fjalori UI — pa prekur komponentët ekzistues. Fallback gjithmonë 'sq'.
  */
-import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react'
+import { createContext, useContext, useEffect, useRef, useState, useCallback, ReactNode } from 'react'
 
 export type Lang =
   | 'sq' | 'en' | 'it' | 'de' | 'fr' | 'es' | 'el' | 'tr'
@@ -64,6 +65,47 @@ export const MESSAGES: Record<string, Dict> = {
   lang_label:    { sq:'Gjuha', en:'Language', it:'Lingua', de:'Sprache', fr:'Langue', es:'Idioma', el:'Γλώσσα', tr:'Dil', sr:'Језик', hr:'Jezik', bs:'Jezik', mk:'Јазик', bg:'Език', ro:'Limbă', sl:'Jezik', pl:'Język', cs:'Jazyk', sk:'Jazyk', hu:'Nyelv', nl:'Taal', pt:'Idioma', uk:'Мова', ru:'Язык', sv:'Språk', da:'Sprog', fi:'Kieli', no:'Språk', et:'Keel', lv:'Valoda', lt:'Kalba' },
 }
 
+/* ── Përkthyesi runtime i UI-së: tekstet e gozhduara të homepage (rendi FIKS) ── */
+const UI_KEYS = [
+  'Shit · Bli · Bëj Pazrin Tënd', 'Platforma #1 shqiptare', 'e tregtisë online',
+  'Përdorues', 'Shpallje', 'Shitës', 'Të gjitha', 'Hyr / Regjistrohu',
+  'Kreu', 'Kërko', 'Mesazhe', 'Profili', 'Shitës të verifikuar', 'Vlerësime ⭐',
+  'Pa reklama — për të gjithë gjithmonë falas', 'Kërko çdo gjë në Shqipëri...',
+  'I ri', 'I përdorur', 'Falas', 'Shiko të gjitha', 'Nuk ka shpallje aktualisht',
+  'Bëhu i pari që shton!', 'Instalo', 'Ndaj',
+]
+const UI: Partial<Record<Lang, string[]>> = {
+  en:['Sell · Buy · Make Your Deal','The #1 Albanian platform','for online commerce','Users','Listings','Sellers','All','Log in / Sign up','Home','Search','Messages','Profile','Verified sellers','Ratings ⭐','No ads — free for everyone, always','Search anything in Albania...','New','Used','Free','View all','No listings at the moment','Be the first to add one!','Install','Share'],
+  it:['Vendi · Compra · Fai l’affare','La piattaforma albanese n.1','del commercio online','Utenti','Annunci','Venditori','Tutti','Accedi / Registrati','Home','Cerca','Messaggi','Profilo','Venditori verificati','Recensioni ⭐','Niente pubblicità — gratis per tutti, sempre','Cerca qualsiasi cosa in Albania...','Nuovo','Usato','Gratis','Vedi tutti','Nessun annuncio al momento','Sii il primo ad aggiungerne uno!','Installa','Condividi'],
+  de:['Verkaufen · Kaufen · Mach dein Geschäft','Die #1 albanische Plattform','für Online-Handel','Nutzer','Anzeigen','Verkäufer','Alle','Anmelden / Registrieren','Start','Suche','Nachrichten','Profil','Verifizierte Verkäufer','Bewertungen ⭐','Keine Werbung — für alle, immer kostenlos','Suche alles in Albanien...','Neu','Gebraucht','Gratis','Alle ansehen','Derzeit keine Anzeigen','Sei der Erste, der eine hinzufügt!','Installieren','Teilen'],
+  fr:['Vendez · Achetez · Faites votre affaire','La plateforme albanaise n°1','du commerce en ligne','Utilisateurs','Annonces','Vendeurs','Tout','Connexion / Inscription','Accueil','Recherche','Messages','Profil','Vendeurs vérifiés','Avis ⭐','Sans publicité — gratuit pour tous, toujours','Cherchez tout en Albanie...','Neuf','Occasion','Gratuit','Voir tout','Aucune annonce pour le moment','Soyez le premier à en ajouter !','Installer','Partager'],
+  es:['Vende · Compra · Haz tu trato','La plataforma albanesa n.º 1','del comercio online','Usuarios','Anuncios','Vendedores','Todos','Entrar / Registrarse','Inicio','Buscar','Mensajes','Perfil','Vendedores verificados','Valoraciones ⭐','Sin anuncios — gratis para todos, siempre','Busca cualquier cosa en Albania...','Nuevo','Usado','Gratis','Ver todo','No hay anuncios por ahora','¡Sé el primero en añadir uno!','Instalar','Compartir'],
+  el:['Πούλα · Αγόρασε · Κλείσε τη συμφωνία','Η #1 αλβανική πλατφόρμα','ηλεκτρονικού εμπορίου','Χρήστες','Αγγελίες','Πωλητές','Όλα','Σύνδεση / Εγγραφή','Αρχική','Αναζήτηση','Μηνύματα','Προφίλ','Επαληθευμένοι πωλητές','Αξιολογήσεις ⭐','Χωρίς διαφημίσεις — δωρεάν για όλους, πάντα','Αναζήτησε τα πάντα στην Αλβανία...','Καινούριο','Μεταχειρισμένο','Δωρεάν','Δες όλα','Δεν υπάρχουν αγγελίες αυτή τη στιγμή','Γίνε ο πρώτος που θα προσθέσει!','Εγκατάσταση','Κοινοποίηση'],
+  tr:['Sat · Al · Pazarlığını Yap','1 numaralı Arnavut platformu','online ticaretin','Kullanıcılar','İlanlar','Satıcılar','Tümü','Giriş / Kayıt','Ana sayfa','Ara','Mesajlar','Profil','Doğrulanmış satıcılar','Değerlendirmeler ⭐','Reklamsız — herkes için her zaman ücretsiz','Arnavutluk’ta her şeyi ara...','Yeni','İkinci el','Ücretsiz','Tümünü gör','Şu anda ilan yok','İlk ekleyen sen ol!','Yükle','Paylaş'],
+  sr:['Продај · Купи · Направи пазар','Албанска платформа #1','за онлајн трговину','Корисници','Огласи','Продавци','Све','Пријава / Регистрација','Почетна','Претрага','Поруке','Профил','Верификовани продавци','Оцене ⭐','Без реклама — бесплатно за све, увек','Претражи све у Албанији...','Ново','Половно','Бесплатно','Погледај све','Тренутно нема огласа','Буди први који ће додати!','Инсталирај','Подели'],
+  hr:['Prodaj · Kupi · Sklopi posao','Albanska platforma #1','za online trgovinu','Korisnici','Oglasi','Prodavači','Sve','Prijava / Registracija','Početna','Pretraži','Poruke','Profil','Verificirani prodavači','Ocjene ⭐','Bez reklama — besplatno za sve, uvijek','Pretraži sve u Albaniji...','Novo','Rabljeno','Besplatno','Pogledaj sve','Trenutno nema oglasa','Budi prvi koji će dodati!','Instaliraj','Podijeli'],
+  bs:['Prodaj · Kupi · Napravi pazar','Albanska platforma #1','za online trgovinu','Korisnici','Oglasi','Prodavci','Sve','Prijava / Registracija','Početna','Pretraga','Poruke','Profil','Verifikovani prodavci','Ocjene ⭐','Bez reklama — besplatno za sve, uvijek','Pretraži sve u Albaniji...','Novo','Korišteno','Besplatno','Pogledaj sve','Trenutno nema oglasa','Budi prvi koji dodaje!','Instaliraj','Podijeli'],
+  mk:['Продај · Купи · Направи пазар','Албанска платформа #1','за онлајн трговија','Корисници','Огласи','Продавачи','Сите','Најава / Регистрација','Почетна','Пребарај','Пораки','Профил','Верификувани продавачи','Оценки ⭐','Без реклами — бесплатно за сите, секогаш','Пребарај сё во Албанија...','Ново','Половно','Бесплатно','Види ги сите','Моментално нема огласи','Биди прв што ќе додаде!','Инсталирај','Сподели'],
+  bg:['Продай · Купи · Направи пазарлък','Албанската платформа #1','за онлайн търговия','Потребители','Обяви','Продавачи','Всички','Вход / Регистрация','Начало','Търсене','Съобщения','Профил','Верифицирани продавачи','Оценки ⭐','Без реклами — безплатно за всички, винаги','Търси всичко в Албания...','Ново','Употребявано','Безплатно','Виж всички','В момента няма обяви','Бъди първият, който добавя!','Инсталирай','Сподели'],
+  ro:['Vinde · Cumpără · Fă-ți târgul','Platforma albaneză #1','a comerțului online','Utilizatori','Anunțuri','Vânzători','Toate','Autentificare / Înregistrare','Acasă','Caută','Mesaje','Profil','Vânzători verificați','Recenzii ⭐','Fără reclame — gratuit pentru toți, mereu','Caută orice în Albania...','Nou','Folosit','Gratuit','Vezi toate','Momentan nu există anunțuri','Fii primul care adaugă!','Instalează','Distribuie'],
+  sl:['Prodaj · Kupi · Skleni posel','Albanska platforma št. 1','za spletno trgovino','Uporabniki','Oglasi','Prodajalci','Vse','Prijava / Registracija','Domov','Iskanje','Sporočila','Profil','Preverjeni prodajalci','Ocene ⭐','Brez oglasov — brezplačno za vse, vedno','Išči karkoli v Albaniji...','Novo','Rabljeno','Brezplačno','Poglej vse','Trenutno ni oglasov','Bodi prvi, ki doda!','Namesti','Deli'],
+  pl:['Sprzedaj · Kup · Ubij interes','Albańska platforma nr 1','handlu online','Użytkownicy','Ogłoszenia','Sprzedawcy','Wszystkie','Zaloguj / Zarejestruj się','Start','Szukaj','Wiadomości','Profil','Zweryfikowani sprzedawcy','Oceny ⭐','Bez reklam — za darmo dla wszystkich, zawsze','Szukaj czegokolwiek w Albanii...','Nowe','Używane','Za darmo','Zobacz wszystkie','Obecnie brak ogłoszeń','Bądź pierwszy, który doda!','Zainstaluj','Udostępnij'],
+  cs:['Prodej · Kup · Uzavři obchod','Albánská platforma č. 1','online obchodu','Uživatelé','Inzeráty','Prodejci','Vše','Přihlásit / Registrovat','Domů','Hledat','Zprávy','Profil','Ověření prodejci','Hodnocení ⭐','Bez reklam — zdarma pro všechny, navždy','Hledej cokoliv v Albánii...','Nové','Použité','Zdarma','Zobrazit vše','Momentálně žádné inzeráty','Buď první, kdo přidá!','Instalovat','Sdílet'],
+  sk:['Predaj · Kúp · Uzavri obchod','Albánska platforma č. 1','online obchodu','Používatelia','Inzeráty','Predajcovia','Všetko','Prihlásiť / Registrovať','Domov','Hľadať','Správy','Profil','Overení predajcovia','Hodnotenia ⭐','Bez reklám — zadarmo pre všetkých, navždy','Hľadaj čokoľvek v Albánsku...','Nové','Použité','Zadarmo','Zobraziť všetko','Momentálne žiadne inzeráty','Buď prvý, kto pridá!','Inštalovať','Zdieľať'],
+  hu:['Adj el · Vásárolj · Kösd meg az üzletet','Az #1 albán platform','az online kereskedelemben','Felhasználók','Hirdetések','Eladók','Összes','Belépés / Regisztráció','Kezdőlap','Keresés','Üzenetek','Profil','Ellenőrzött eladók','Értékelések ⭐','Reklámmentes — mindenkinek, mindig ingyen','Keress bármit Albániában...','Új','Használt','Ingyenes','Összes megtekintése','Jelenleg nincs hirdetés','Légy az első, aki hozzáad!','Telepítés','Megosztás'],
+  nl:['Verkoop · Koop · Sluit je deal','Het #1 Albanese platform','voor online handel','Gebruikers','Advertenties','Verkopers','Alles','Inloggen / Registreren','Home','Zoeken','Berichten','Profiel','Geverifieerde verkopers','Beoordelingen ⭐','Geen advertenties — altijd gratis voor iedereen','Zoek alles in Albanië...','Nieuw','Gebruikt','Gratis','Bekijk alles','Momenteel geen advertenties','Wees de eerste die er een toevoegt!','Installeren','Delen'],
+  pt:['Venda · Compre · Feche negócio','A plataforma albanesa n.º 1','do comércio online','Utilizadores','Anúncios','Vendedores','Todos','Entrar / Registar','Início','Pesquisar','Mensagens','Perfil','Vendedores verificados','Avaliações ⭐','Sem anúncios — grátis para todos, sempre','Pesquise qualquer coisa na Albânia...','Novo','Usado','Grátis','Ver tudo','Sem anúncios de momento','Seja o primeiro a adicionar!','Instalar','Partilhar'],
+  uk:['Продавай · Купуй · Уклади угоду','Албанська платформа №1','онлайн-торгівлі','Користувачі','Оголошення','Продавці','Усі','Вхід / Реєстрація','Головна','Пошук','Повідомлення','Профіль','Перевірені продавці','Відгуки ⭐','Без реклами — безкоштовно для всіх, завжди','Шукай будь-що в Албанії...','Нове','Вживане','Безкоштовно','Переглянути всі','Наразі немає оголошень','Будь першим, хто додасть!','Встановити','Поділитися'],
+  ru:['Продай · Купи · Заключи сделку','Албанская платформа №1','онлайн-торговли','Пользователи','Объявления','Продавцы','Все','Вход / Регистрация','Главная','Поиск','Сообщения','Профиль','Проверенные продавцы','Отзывы ⭐','Без рекламы — бесплатно для всех, всегда','Ищи что угодно в Албании...','Новое','Б/у','Бесплатно','Смотреть все','Пока нет объявлений','Будь первым, кто добавит!','Установить','Поделиться'],
+  sv:['Sälj · Köp · Gör din affär','Albaniens plattform nr 1','för e-handel','Användare','Annonser','Säljare','Alla','Logga in / Registrera','Hem','Sök','Meddelanden','Profil','Verifierade säljare','Omdömen ⭐','Inga annonser — gratis för alla, alltid','Sök vad som helst i Albanien...','Ny','Begagnad','Gratis','Visa alla','Inga annonser just nu','Bli först med att lägga till!','Installera','Dela'],
+  da:['Sælg · Køb · Gør din handel','Den albanske platform nr. 1','for onlinehandel','Brugere','Annoncer','Sælgere','Alle','Log ind / Tilmeld','Hjem','Søg','Beskeder','Profil','Verificerede sælgere','Anmeldelser ⭐','Ingen reklamer — gratis for alle, altid','Søg alt i Albanien...','Ny','Brugt','Gratis','Se alle','Ingen annoncer lige nu','Vær den første til at tilføje!','Installer','Del'],
+  fi:['Myy · Osta · Tee kaupat','Albanian ykkösalusta','verkkokaupalle','Käyttäjät','Ilmoitukset','Myyjät','Kaikki','Kirjaudu / Rekisteröidy','Koti','Haku','Viestit','Profiili','Varmennetut myyjät','Arvostelut ⭐','Ei mainoksia — aina ilmainen kaikille','Etsi mitä tahansa Albaniasta...','Uusi','Käytetty','Ilmainen','Näytä kaikki','Ei ilmoituksia juuri nyt','Ole ensimmäinen, joka lisää!','Asenna','Jaa'],
+  no:['Selg · Kjøp · Gjør din handel','Albanias plattform nr. 1','for netthandel','Brukere','Annonser','Selgere','Alle','Logg inn / Registrer','Hjem','Søk','Meldinger','Profil','Verifiserte selgere','Vurderinger ⭐','Ingen reklame — gratis for alle, alltid','Søk etter hva som helst i Albania...','Ny','Brukt','Gratis','Se alle','Ingen annonser akkurat nå','Bli den første som legger til!','Installer','Del'],
+  et:['Müü · Osta · Tee tehing','Albaania platvorm nr 1','veebikaubanduses','Kasutajad','Kuulutused','Müüjad','Kõik','Logi sisse / Registreeru','Avaleht','Otsi','Sõnumid','Profiil','Kinnitatud müüjad','Hinnangud ⭐','Reklaamivaba — alati kõigile tasuta','Otsi Albaanias ükskõik mida...','Uus','Kasutatud','Tasuta','Vaata kõiki','Praegu kuulutusi pole','Ole esimene, kes lisab!','Paigalda','Jaga'],
+  lv:['Pārdod · Pērc · Noslēdz darījumu','Albānijas platforma nr. 1','tiešsaistes tirdzniecībai','Lietotāji','Sludinājumi','Pārdevēji','Visi','Ieiet / Reģistrēties','Sākums','Meklēt','Ziņas','Profils','Verificēti pārdevēji','Atsauksmes ⭐','Bez reklāmām — vienmēr bez maksas visiem','Meklē jebko Albānijā...','Jauns','Lietots','Bez maksas','Skatīt visus','Šobrīd sludinājumu nav','Esi pirmais, kas pievieno!','Instalēt','Dalīties'],
+  lt:['Parduok · Pirk · Sudaryk sandorį','Albanijos platforma nr. 1','internetinei prekybai','Vartotojai','Skelbimai','Pardavėjai','Visi','Prisijungti / Registruotis','Pradžia','Ieškoti','Žinutės','Profilis','Patvirtinti pardavėjai','Įvertinimai ⭐','Be reklamų — visada nemokama visiems','Ieškok bet ko Albanijoje...','Naujas','Naudotas','Nemokamai','Žiūrėti visus','Šiuo metu skelbimų nėra','Būk pirmas, kuris pridės!','Įdiegti','Dalintis'],
+}
+
 interface I18nCtx { lang: Lang; setLang: (l: Lang) => void; t: (key: string) => string }
 const Ctx = createContext<I18nCtx>({ lang: 'sq', setLang: () => {}, t: (k) => k })
 
@@ -78,6 +120,7 @@ function detect(): Lang {
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>('sq')
+  const store = useRef<Map<Text, string>>(new Map())
   useEffect(() => {
     const d = detect()
     setLangState(d)
@@ -96,6 +139,47 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     if (!row) return key
     return row[lang] ?? row.sq ?? key
   }, [lang])
+
+  /* Përkthyesi runtime: zëvendëson tekstet e UI_KEYS në DOM kur lang != 'sq';
+     rikthen origjinalet kur kthehesh në 'sq'. Nuk prek komponentët ekzistues. */
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+    const idx = new Map(UI_KEYS.map((k, i) => [k, i] as const))
+    const tr = UI[lang]
+    const handleText = (n: Text) => {
+      const orig = store.current.get(n) ?? (n.nodeValue || '')
+      const t0 = orig.trim()
+      if (!t0) return
+      const i = idx.get(t0)
+      if (i === undefined) return
+      if (!store.current.has(n)) store.current.set(n, n.nodeValue || '')
+      const base = store.current.get(n) || ''
+      n.nodeValue = tr ? base.replace(t0, tr[i]) : base
+    }
+    const applyNode = (root: Node) => {
+      if (root.nodeType === 3) { handleText(root as Text); return }
+      if (root.nodeType !== 1 && root.nodeType !== 9) return
+      const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
+      let n: Node | null
+      while ((n = w.nextNode())) handleText(n as Text)
+      document.querySelectorAll('input[placeholder]').forEach((el) => {
+        const e = el as HTMLInputElement
+        const orig = e.getAttribute('data-i18n-ph') ?? e.getAttribute('placeholder') ?? ''
+        const i = idx.get(orig)
+        if (i === undefined) return
+        if (!e.getAttribute('data-i18n-ph')) e.setAttribute('data-i18n-ph', orig)
+        e.setAttribute('placeholder', tr ? tr[i] : orig)
+      })
+    }
+    applyNode(document.body)
+    if (!tr) return
+    const mo = new MutationObserver((muts) => {
+      muts.forEach(m => m.addedNodes.forEach(nd => applyNode(nd)))
+    })
+    mo.observe(document.body, { childList: true, subtree: true })
+    return () => mo.disconnect()
+  }, [lang])
+
   return <Ctx.Provider value={{ lang, setLang, t }}>{children}</Ctx.Provider>
 }
 
