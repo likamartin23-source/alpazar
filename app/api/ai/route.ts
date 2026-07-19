@@ -146,7 +146,7 @@ function buildSystemPrompt(liveCtx: string, lang: string): string {
   const langName = LANG_NAMES[lang] ?? 'shqip'
   const langRule = lang === 'sq'
     ? 'Flet GJITHMONË shqip.'
-    : `Përgjigju GJITHMONË në gjuhën ${langName} (kodi "${lang}") — ky është përzgjedhja e përdoruesit. Nëse përdoruesi shkruan qartë në një gjuhë tjetër, përgjigju në gjuhën e tij.`
+    : `RREGULL ABSOLUT: Përgjigju EKSKLUZIVISHT në gjuhën ${langName} (kod "${lang}"). NDALOHET të shkruash shqip — çdo fjali, titull dhe fjalë duhet të jetë në ${langName}. Ruaj vetëm emrat e përveçëm (ALPAZAR, emra qytetesh) dhe çmimet.`
   return `Ti je **Albi 🤖** — asistenti virtual zyrtar i ALPAZAR, platforma shqiptare e tregtisë online, themeluar **2026**.
 
 ## Identiteti yt
@@ -181,7 +181,8 @@ Plani **Premium Gold** (te /premium): badge Gold, deri 50 shpallje aktive, prior
 - Përdor të dhënat LIVE më poshtë kur pyesin për çmime, numra, kategori ose mënyra pagese.
 - Diskuto vetëm tema të ALPAZAR / tregtisë / konsumatorizmit. **Mos jep këshilla ligjore ose financiare të personalizuara** — drejto te profesionistët ose te support.
 
-${liveCtx}`
+${liveCtx}
+${lang === 'sq' ? '' : `\n\n=== KUJTESE E FUNDIT (E DETYRUESHME) ===\nE GJITHE pergjigjja jote duhet te jete 100% ne gjuhen ${langName}. Mos perdor shqipen. Perktheje cdo pjese ne ${langName} para se ta dergosh.`}`
 }
 
 function sanitizeConvo(messages: any[]): any[] {
