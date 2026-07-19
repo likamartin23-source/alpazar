@@ -3,6 +3,27 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { rateLimit, getClientIp } from '../../../lib/rateLimit'
 
+const LANG_NAMES: Record<string, string> = {
+  sq:'shqip', en:'English', it:'italiano', de:'Deutsch', fr:'français', es:'español', el:'Ελληνικά', tr:'Türkçe',
+  sr:'српски', hr:'hrvatski', bs:'bosanski', mk:'македонски', bg:'български', ro:'română', sl:'slovenščina',
+  pl:'polski', cs:'čeština', sk:'slovenčina', hu:'magyar', nl:'Nederlands', pt:'português', uk:'українська', ru:'русский',
+  sv:'svenska', da:'dansk', fi:'suomi', no:'norsk', et:'eesti', lv:'latviešu', lt:'lietuvių',
+}
+
+// Perkthim pa celes per lokalizimin e pergjigjeve FAQ (kur LLM bie).
+async function gtranslate(text: string, target: string): Promise<string> {
+  if (target === 'sq' || !text) return text
+  try {
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=sq&tl=${encodeURIComponent(target)}&dt=t&q=${encodeURIComponent(text)}`
+    const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' }, signal: AbortSignal.timeout(8000) })
+    if (!res.ok) return text
+    const data = await res.json()
+    if (!Array.isArray(data) || !Array.isArray(data[0])) return text
+    const out = data[0].map((seg: any) => (Array.isArray(seg) ? seg[0] : '')).join('')
+    return (typeof out === 'string' && out.trim().length > 0) ? out : text
+  } catch { return text }
+}
+
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 export const maxDuration = 30
@@ -121,11 +142,15 @@ async function getLiveContext(query: string): Promise<string> {
   }
 }
 
-function buildSystemPrompt(liveCtx: string): string {
+function buildSystemPrompt(liveCtx: string, lang: string): string {
+  const langName = LANG_NAMES[lang] ?? 'shqip'
+  const langRule = lang === 'sq'
+    ? 'Flet GJITHMONË shqip.'
+    : `Përgjigju GJITHMONË në gjuhën ${langName} (kodi "${lang}") — ky është përzgjedhja e përdoruesit. Nëse përdoruesi shkruan qartë në një gjuhë tjetër, përgjigju në gjuhën e tij.`
   return `Ti je **Albi 🤖** — asistenti virtual zyrtar i ALPAZAR, platforma shqiptare e tregtisë online, themeluar **2026**.
 
 ## Identiteti yt
-Je ngrohtë, profesional dhe empatik. Flet GJITHMONË shqip. Je krenar që ndihmon komunitetin shqiptar të blejë e shesë me lehtësi dhe siguri.
+Je ngrohtë, profesional dhe empatik. ${langRule} Je krenar që ndihmon komunitetin shqiptar të blejë e shesë me lehtësi dhe siguri.
 
 ## Çfarë është ALPAZAR
 Treg online + rrjet social për shqiptarët: blej, shit dhe ndiq shitës. **Pa komision** mbi shitjet dhe **pa reklama**. Shpalljet bazë janë falas.
@@ -299,6 +324,7 @@ export async function POST(req: NextRequest) {
   catch { return NextResponse.json({ error: 'Kërkesë e pavlefshme.' }, { status: 400 }) }
 
   const { messages } = body
+  const lang = (typeof body?.lang === 'string' && /^[a-z]{2}$/.test(body.lang) && LANG_NAMES[body.lang]) ? body.lang : 'sq'
   if (!messages || !Array.isArray(messages) || messages.length === 0)
     return NextResponse.json({ error: 'Mesazhe të pavlefshme' }, { status: 400 })
   if (messages.length > 50)
@@ -318,10 +344,10 @@ export async function POST(req: NextRequest) {
 
   const lastUserMsg: string = [...messages].reverse().find((m: any) => m.role === 'user')?.content ?? ''
   const convo = sanitizeConvo(messages)
-  if (convo.length === 0) return NextResponse.json({ reply: localFallback(lastUserMsg) })
+  if (convo.length === 0) return NextResponse.json({ reply: await gtranslate(localFallback(lastUserMsg), lang) })
 
   const liveCtx = await getLiveContext(lastUserMsg)
-  const systemPrompt = buildSystemPrompt(liveCtx)
+  const systemPrompt = buildSystemPrompt(liveCtx, lang)
 
   // 1. Groq — falas (llama-3.3-70b, 100K token/ditë)
   if (wantStream) {
@@ -360,6 +386,6 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // 3. FAQ fallback
-  return NextResponse.json({ reply: localFallback(lastUserMsg) })
+  // 3. FAQ fallback (lokalizuar ne gjuhen e perdoruesit)
+  return NextResponse.json({ reply: await gtranslate(localFallback(lastUserMsg), lang) })
 }
