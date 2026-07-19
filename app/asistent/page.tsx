@@ -164,7 +164,7 @@ export default function AsistentPage() {
       const res = await fetch('/api/ai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: updated }),
+        body: JSON.stringify({ messages: updated, lang: (document.cookie.match(/(?:^|; )alpazar_lang=([a-z]{2})/)?.[1]) || 'sq' }),
         signal: controller.signal,
       })
 
