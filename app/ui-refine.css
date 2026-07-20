@@ -98,3 +98,13 @@ button[aria-label="Ndaj aplikacionin"]{box-shadow:0 4px 13px -5px rgba(0,0,0,.22
 .filter-btn:hover{transform:translateY(-1px);}
 .nav-add{transition:transform .16s ease, box-shadow .16s ease;}
 .nav-add:hover{transform:translateY(-2px) scale(1.04);}
+
+/* ── Shqiponja zyrtare e flamurit ne hero (ne vend te emoji-t 🦅) ────────── */
+.hero h2 > span[aria-hidden="true"]:first-child{
+  font-size:0 !important; display:inline-block; width:19px; height:16px;
+  vertical-align:-2px; margin-right:3px;
+}
+.hero h2 > span[aria-hidden="true"]:first-child::before{
+  content:""; display:block; width:100%; height:100%;
+  background:url(/icons/eagle.svg) center/contain no-repeat;
+}

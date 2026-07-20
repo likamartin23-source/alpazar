@@ -18,7 +18,7 @@ export function SiteFooter() {
   return (
     <footer style={{ background: '#111', padding: '22px 16px 28px', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
       <div style={{ maxWidth: 480, margin: '0 auto', textAlign: 'center' }}>
-        <div style={{ color: '#F5C842', fontWeight: 700, fontSize: 13, letterSpacing: 1, marginBottom: 14 }}><span aria-hidden="true">🦅</span> ALPAZAR</div>
+        <div style={{ color: '#F5C842', fontWeight: 700, fontSize: 13, letterSpacing: 1, marginBottom: 14 }}><img src="/icons/eagle.svg" alt="" aria-hidden="true" style={{ height: '0.9em', verticalAlign: '-0.12em', display: 'inline-block' }} /> ALPAZAR</div>
         <div style={{ display: 'flex', justifyContent: 'center', gap: 18, marginBottom: 14 }}>
           {soc.map(s => (
             <a key={s.label} href={s.href} aria-label={s.label} target="_blank" rel="noopener noreferrer" style={{ color: '#555', fontSize: 19, textDecoration: 'none' }}><i className={`ti ${s.icon}`} aria-hidden="true" /></a>

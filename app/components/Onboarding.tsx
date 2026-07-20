@@ -54,7 +54,7 @@ export function Onboarding() {
         {step === 0 && (
           <>
             <div style={{ textAlign: 'center', marginBottom: 16 }}>
-              <span style={{ background: '#111', color: '#F5C842', fontSize: 13, fontWeight: 800, letterSpacing: 2, padding: '4px 12px', borderRadius: 8, display: 'inline-block' }}><span aria-hidden="true">🦅</span> ALPAZAR</span>
+              <span style={{ background: '#111', color: '#F5C842', fontSize: 13, fontWeight: 800, letterSpacing: 2, padding: '4px 12px', borderRadius: 8, display: 'inline-block' }}><img src="/icons/eagle.svg" alt="" aria-hidden="true" style={{ height: '0.9em', verticalAlign: '-0.12em', display: 'inline-block' }} /> ALPAZAR</span>
             </div>
             <div style={{ fontSize: 22, fontWeight: 800, color: '#111', textAlign: 'center', marginBottom: 8 }}>Mirë se erdhe!</div>
             <div style={{ fontSize: 14, color: '#888', textAlign: 'center', lineHeight: 1.6, marginBottom: 28 }}>Shit, bli dhe bëj pazarin tënd — falas, pa komision.</div>
