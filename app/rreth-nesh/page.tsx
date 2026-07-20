@@ -49,7 +49,7 @@ export default function RrethNesh() {
         </div>
 
         <div className="hero">
-          <span className="hero-logo" aria-hidden="true">🦅</span>
+          <img src="/icons/eagle.svg" alt="" className="hero-logo" aria-hidden="true" />
           <h1>ALPAZAR</h1>
           <p>Shit · Bli · Bëj Pazrin Tënd<br />Platforma #1 shqiptare e tregtisë online</p>
         </div>
@@ -58,7 +58,7 @@ export default function RrethNesh() {
           <div className="section">
             <h2 className="sec-title"><i className="ti ti-bulb" aria-hidden="true" />Historia jonë</h2>
             <p>Alpazar lindi nga një ide e thjeshtë: shqiptarët meritojnë një platformë tregtie online moderne, pa reklama, dhe falas — një hapësirë ku çdo gjë mund të shitet dhe blihet me besim.</p>
-            <p>Emri "Alpazar" kombinon "Al" (Shqipëria) me "pazar" (tregti, shkëmbim) — reflektim i traditës sonë historike të tregtisë dhe komunitetit.</p>
+            <p>Emri "Alpazar" kombinon "Al" (Shqipëria) me "pazar" (tregti, shkëmbim) — reflektim i traditës sonë historikë të tregtisë dhe komunitetit.</p>
             <p>Ne besojmë se teknologjia duhet t'i shërbejë njerëzve, jo reklamuesve. Kjo është arsyeja pse Alpazar ka zero reklama — gjithmonë.</p>
           </div>
 
