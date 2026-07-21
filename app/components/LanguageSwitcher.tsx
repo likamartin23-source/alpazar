@@ -12,8 +12,19 @@ export function LanguageSwitcher() {
       <select
         aria-label={t('lang_label')}
         value={lang}
-        onChange={(e) => setLang(e.target.value as([žJ_BˆÝ[O^ÞÂˆ˜XÚÙÜ›Ý[™ˆ	ÈÌXLXLXIËÛÛÜŽˆ	ÈÑPÎ‰Ë›Ü™\Žˆ	Ì\ÛÛYÌÌÌÉËˆ›Ü™\”˜Y]\ÎˆY[™Îˆ	Í	Ë›ÛÚ^™NˆLK›ÛÙZYÚˆŒˆ›Û˜[Z[Nˆ‰Ô\È˜ZØ\HØ[œÉËÞ\Ý[K]ZKØ[œË\Ù\šYˆ‹Ý\œÛÜŽˆ	ÜÚ[\‰Ëˆ_Bˆ‚ˆÓS‘ÔË›X\
-Oˆ
-ˆÜ[ÛˆÙ^O^Û˜ÛÙ_H˜[YO^Û˜ÛÙ_HÝ[O^ÞÈ˜XÚÙÜ›Ý[™ˆ	ÈÙ™™‰ËÛÛÜŽˆ	ÈÌLLIÈ_O‚ˆÛ™›YßHÛ›X™[BˆÛÜ[Û‚ˆ
-J_BˆÜÙ[XÝ‚ˆÛX™[‚ˆ
-BŸB
+        onChange={(e) => setLang(e.target.value as any)}
+        style={{
+          background: '#1a1a1a', color: '#F5C842', border: '1px solid #333',
+          borderRadius: 8, padding: '4px 8px', fontSize: 11, fontWeight: 600,
+          fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", cursor: 'pointer',
+        }}
+      >
+        {LANGS.map(l => (
+          <option key={l.code} value={l.code} style={{ background: '#fff', color: '#111' }}>
+            {l.flag} {l.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  )
+}
