@@ -47,10 +47,29 @@ export function ListingMid(p: any) {
           <div className="card">
             <div className="card-title"><i className="ti ti-map-pin" aria-hidden="true" />Vendndodhja *</div>
             <div className="field">
-              <label html›ÜH›\Ý[™ËXÚ]H”^]]H
-ÛX™[‚ˆ[œ]ˆYH›\Ý[™ËXÚ]H‚ˆ\OH^‚ˆXÙZÛ\HœœÚˆ\˜[°êË\œ°êÜË›Ü°êË‹‹ˆ‚ˆ]]ÐÛÛ\]OH˜Y™\ÜË[]™[ˆ‚ˆ˜[YO^Ù›Ü›K˜Ú]_BˆÛÚ[™ÙO^ÙHOˆÙ]
-	ØÚ]IËK\™Ù]˜[YJ_Bˆ™\]Z\™YˆÏ‚ˆÙ]‚ˆ]ˆÛ\ÜÓ˜[YOH™šY[‚ˆX™[Y™\ØHHØZÝ0êÈÜ[ˆÝ[O^ÞÈ›ÛÙZYÚˆÛÛÜŽˆ	ÈØXXIÈ_OŠÜÚ[Û˜[8 %][™0êÈ™[™ÜÙ]YHÔÊOÜÜ[ÛX™[‚ˆX\XÚÙ\‚ˆ]^Ù›Ü›K›]]Y_Bˆ™Ï^Ù›Ü›K›Û™Ú]Y_BˆY™\ÜÏ^Ù›Ü›K›ØØ][Û—ØY™\ÜßBˆÛÚ[™ÙO^Ê]™ËY™\ÜÊHOˆÙ]›Ü›JˆOˆ
-È‹‹™‹]]YNˆ]Û™Ú]YNˆ™ËØØ][Û—ØY™\ÜÎˆY™\ÜÈJJ_BˆÛÚ]PÚ[™ÙO^ØÚ]HOˆÈYˆ
-Y›Ü›K˜Ú]JHÙ]›Ü›JˆOˆ
-È‹‹™‹Ú]HJJH_BˆÏ‚ˆÙ]‚ˆÙ]‚‚ˆÏ‚ˆ
-BŸB
+              <label htmlFor="listing-city">Qyteti *</label>
+              <input
+                id="listing-city"
+                type="text"
+                placeholder="p.sh. TiranÃ«, DurrÃ«s, VlorÃ«..."
+                autoComplete="address-level2"
+                value={form.city}
+                onChange={e => set('city', e.target.value)}
+                required
+              />
+            </div>
+            <div className="field">
+              <label>Adresa e saktÃ« <span style={{ fontWeight: 400, color: '#aaa' }}>(opsional â€” mund tÃ« vendoset me GPS)</span></label>
+              <MapPicker
+                lat={form.latitude}
+                lng={form.longitude}
+                address={form.location_address}
+                onChange={(lat, lng, address) => setForm(f => ({ ...f, latitude: lat, longitude: lng, location_address: address }))}
+                onCityChange={city => { if (!form.city) setForm(f => ({ ...f, city })) }}
+              />
+            </div>
+          </div>
+
+    </>
+  )
+}
