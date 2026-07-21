@@ -1,13 +1,16 @@
 'use client'
 
-import { supabase } from './supabase'
+import { supabase, SUPABASE_URL, SUPABASE_ANON_KEY } from './supabase'
 
 export interface UploadProgress { done: number; total: number; currentName?: string }
 
-const MAX_DIM = 1600
+// Optimizim (jo kufi): fotot shume te medha zvogelohen per shpejtesi, por ASNJE
+// skedar nuk refuzohet per madhesi. Kufijte e bucket-eve jane hequr (universal).
+const MAX_DIM = 2560
 const IMG_CONCURRENCY = 3
+const RESUMABLE_THRESHOLD = 20 * 1024 * 1024 // >20MB -> ngarkim me copeza (TUS)
+const CHUNK = 6 * 1024 * 1024
 
-// ── Detektim WebP: dalje me e vogel (~25-35%) me te njejten cilesi ────────────
 let _webp: boolean | null = null
 function supportsWebp(): boolean {
   if (_webp !== null) return _webp
@@ -22,7 +25,6 @@ function canvasToBlob(canvas: HTMLCanvasElement, type: string, q: number): Promi
   return new Promise(r => canvas.toBlob(b => r(b), type, q))
 }
 
-// Nese `p` nuk zgjidhet brenda `ms`, kthe `fallback` (mos ngri UI-n ne "0/1").
 function withTimeout<T>(p: Promise<T>, ms: number, fallback: T): Promise<T> {
   return new Promise(resolve => {
     let settled = false
@@ -47,7 +49,7 @@ function compressViaImage(file: File): Promise<Blob> {
       if (!ctx) { resolve(file); return }
       ctx.drawImage(img, 0, 0, w, h)
       const webp = supportsWebp()
-      const blob = await canvasToBlob(canvas, webp ? 'image/webp' : 'image/jpeg', webp ? 0.82 : 0.78)
+      const blob = await canvasToBlob(canvas, webp ? 'image/webp' : 'image/jpeg', webp ? 0.85 : 0.82)
       resolve(blob && blob.size < file.size ? blob : file)
     }
     img.onerror = () => { URL.revokeObjectURL(objUrl); resolve(file) }
@@ -55,9 +57,10 @@ function compressViaImage(file: File): Promise<Blob> {
   })
 }
 
-// Zvogelim + rikompresim. Prefereron createImageBitmap (EXIF korrekt, memorie e ulet ne telefon).
+// Optimizim (kurre bllokim): nese s'mund ta perpunoje, kthen skedarin origjinal.
 async function compress(file: File): Promise<Blob> {
   if (file.type === 'image/gif') return file
+  if (!file.type.startsWith('image/')) return file
   if (file.size < 150 * 1024) return file
   try {
     let bmp: ImageBitmap
@@ -74,9 +77,9 @@ async function compress(file: File): Promise<Blob> {
     bmp.close?.()
     const webp = supportsWebp()
     const type = webp ? 'image/webp' : 'image/jpeg'
-    let blob = await canvasToBlob(canvas, type, webp ? 0.82 : 0.78)
-    if (blob && blob.size > 1.5 * 1024 * 1024) {
-      const smaller = await canvasToBlob(canvas, type, webp ? 0.62 : 0.6)
+    let blob = await canvasToBlob(canvas, type, webp ? 0.85 : 0.82)
+    if (blob && blob.size > 2 * 1024 * 1024) {
+      const smaller = await canvasToBlob(canvas, type, webp ? 0.7 : 0.68)
       if (smaller && smaller.size < blob.size) blob = smaller
     }
     return blob && blob.size < file.size ? blob : file
@@ -91,14 +94,72 @@ function friendlyUploadError(msg: string): string {
   return msg
 }
 
-async function uploadWithRetry(bucket: string, path: string, blob: Blob, timeoutMs = 45000, attempts = 4): Promise<string | null> {
+async function requireUid(): Promise<string> {
+  let { data: { session } } = await supabase.auth.getSession()
+  if (!session) {
+    await supabase.auth.refreshSession()
+    session = (await supabase.auth.getSession()).data.session
+  }
+  if (!session) throw new Error('Sesioni ka skaduar. Hyr serisht.')
+  return session.user.id
+}
+
+function b64(s: string): string { return btoa(unescape(encodeURIComponent(s))) }
+
+// Ngarkim RESUMABLE (TUS 1.0) — per skedare te medhenj, ne copeza 6MB, i vazhdueshem.
+async function resumableUpload(bucket: string, path: string, data: Blob, onFrac?: (f: number) => void): Promise<string | null> {
+  try {
+    const { data: { session } } = await supabase.auth.getSession()
+    const token = session?.access_token || SUPABASE_ANON_KEY
+    const contentType = data.type || 'application/octet-stream'
+    const createRes = await fetch(`${SUPABASE_URL}/storage/v1/upload/resumable`, {
+      method: 'POST',
+      headers: {
+        'Tus-Resumable': '1.0.0',
+        'Upload-Length': String(data.size),
+        'Upload-Metadata': `bucketName ${b64(bucket)},objectName ${b64(path)},contentType ${b64(contentType)},cacheControl ${b64('3600')}`,
+        Authorization: `Bearer ${token}`,
+        apikey: SUPABASE_ANON_KEY,
+        'x-upsert': 'true',
+      },
+    })
+    if (createRes.status !== 201) return 'resumable_create_' + createRes.status
+    let location = createRes.headers.get('Location') || createRes.headers.get('location')
+    if (!location) return 'resumable_no_location'
+    if (location.startsWith('/')) location = `${SUPABASE_URL}${location}`
+    let offset = 0
+    while (offset < data.size) {
+      const end = Math.min(offset + CHUNK, data.size)
+      const chunk = data.slice(offset, end)
+      const patchRes = await fetch(location, {
+        method: 'PATCH',
+        headers: {
+          'Tus-Resumable': '1.0.0',
+          'Upload-Offset': String(offset),
+          'Content-Type': 'application/offset+octet-stream',
+          Authorization: `Bearer ${token}`,
+          apikey: SUPABASE_ANON_KEY,
+        },
+        body: chunk,
+      })
+      if (patchRes.status !== 204) return 'resumable_patch_' + patchRes.status
+      const no = parseInt(patchRes.headers.get('Upload-Offset') || String(end), 10)
+      offset = Number.isNaN(no) ? end : no
+      onFrac?.(offset / data.size)
+    }
+    return null
+  } catch (e: any) {
+    return 'resumable_' + String(e?.message ?? 'error')
+  }
+}
+
+async function standardUpload(bucket: string, path: string, blob: Blob, timeoutMs: number, attempts = 4): Promise<string | null> {
   for (let i = 0; i < attempts; i++) {
     try {
       const uploadPromise = supabase.storage.from(bucket)
         .upload(path, blob, { contentType: blob.type || 'application/octet-stream', upsert: true })
       const timeoutPromise = new Promise<{ error: Error }>(resolve =>
-        setTimeout(() => resolve({ error: new Error('Upload timed out') }), timeoutMs)
-      )
+        setTimeout(() => resolve({ error: new Error('Upload timed out') }), timeoutMs))
       const result = await Promise.race([uploadPromise, timeoutPromise]) as any
       if (!result.error) return null
       if (i === attempts - 1) return friendlyUploadError(String(result.error.message || ''))
@@ -110,20 +171,17 @@ async function uploadWithRetry(bucket: string, path: string, blob: Blob, timeout
   return 'Tejkaloi numrin maksimal te tentativave'
 }
 
-async function requireUid(): Promise<string> {
-  let { data: { session } } = await supabase.auth.getSession()
-  if (!session) {
-    await supabase.auth.refreshSession()
-    session = (await supabase.auth.getSession()).data.session
+// Zgjedh strategji: skedare te medhenj -> resumable (fallback ne standard); te vegjel -> standard.
+async function putObject(bucket: string, path: string, blob: Blob, timeoutMs: number, onFrac?: (f: number) => void): Promise<string | null> {
+  if (blob.size > RESUMABLE_THRESHOLD) {
+    const rerr = await resumableUpload(bucket, path, blob, onFrac)
+    if (!rerr) return null
+    // fallback: provo standard nese resumable s'punon ne kete mjedis
   }
-  if (!session) throw new Error('Sesioni ka skaduar. Hyr serisht.')
-  return session.user.id
+  return standardUpload(bucket, path, blob, timeoutMs)
 }
 
-const ALLOWED_IMG = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'image/avif', 'image/heic', 'image/heif']
-const MAX_IMG = 10 * 1024 * 1024
-
-// ── Ngarkim fotosh NE PARALEL (rendi ruhet: [0] = kryesorja) ─────────────────
+// ── Ngarkim fotosh NE PARALEL (pa kufi madhesie; rendi ruhet: [0]=kryesorja) ──
 export async function uploadImages(
   files: File[],
   onProgress?: (p: UploadProgress) => void,
@@ -142,23 +200,15 @@ export async function uploadImages(
       const idx = cursor++
       if (idx >= files.length) return
       const file = files[idx]
-      if (!ALLOWED_IMG.includes(file.type)) {
-        errors.push(`${file.name}: Lloji i skedarit nuk lejohet. Provo JPG, PNG, WebP ose HEIC.`)
-        done++; onProgress?.({ done, total: files.length }); continue
-      }
-      if (file.size > MAX_IMG) {
-        errors.push(`${file.name}: Skedari eshte shume i madh (max 10MB).`)
+      if (!file.type.startsWith('image/')) {
+        errors.push(`${file.name}: Nuk eshte imazh.`)
         done++; onProgress?.({ done, total: files.length }); continue
       }
       onProgress?.({ done, total: files.length, currentName: file.name })
-      const blob: Blob = await withTimeout(compress(file).catch(() => file), 12_000, file)
-      if (blob.size > MAX_IMG) {
-        errors.push(`${file.name}: Foto teper e madhe edhe pas kompresimit. Provo nje me te vogel.`)
-        done++; onProgress?.({ done, total: files.length }); continue
-      }
-      const ext = blob.type === 'image/gif' ? 'gif' : blob.type === 'image/webp' ? 'webp' : 'jpg'
+      const blob: Blob = await withTimeout(compress(file).catch(() => file), 20_000, file)
+      const ext = blob.type === 'image/gif' ? 'gif' : blob.type === 'image/webp' ? 'webp' : blob.type === 'image/png' ? 'png' : 'jpg'
       const path = `${uid}/${crypto.randomUUID()}.${ext}`
-      const err = await uploadWithRetry('listing-images', path, blob)
+      const err = await putObject('listing-images', path, blob, 120000)
       done++; onProgress?.({ done, total: files.length })
       if (err) errors.push(`${file.name}: ${err}`)
       else results[idx] = supabase.storage.from('listing-images').getPublicUrl(path).data.publicUrl
@@ -169,27 +219,24 @@ export async function uploadImages(
   return { urls: results.filter((u): u is string => !!u), errors }
 }
 
-// ── VIDEO ─────────────────────────────────────────────────────────────────────
-export const ALLOWED_VIDEO = ['video/mp4', 'video/webm', 'video/quicktime', 'video/ogg']
-export const MAX_VIDEO = 50 * 1024 * 1024
-
+// ── VIDEO (pa kufi madhesie; resumable per skedare te medhenj) ────────────────
 export async function uploadVideo(
   file: File,
   onProgress?: (p: UploadProgress) => void,
 ): Promise<{ url?: string; error?: string }> {
-  if (!ALLOWED_VIDEO.includes(file.type)) return { error: 'Format i papranuar. Provo MP4, WebM ose MOV.' }
-  if (file.size > MAX_VIDEO) return { error: 'Videoja eshte shume e madhe (max 50MB).' }
-  onProgress?.({ done: 0, total: 1, currentName: file.name })
+  if (!file.type.startsWith('video/')) return { error: 'Skedari nuk eshte video.' }
+  onProgress?.({ done: 0, total: 100, currentName: file.name })
   const uid = await requireUid()
-  const ext = file.type === 'video/webm' ? 'webm' : file.type === 'video/ogg' ? 'ogv' : file.type === 'video/quicktime' ? 'mov' : 'mp4'
+  const map: Record<string, string> = { 'video/webm': 'webm', 'video/ogg': 'ogv', 'video/quicktime': 'mov', 'video/mp4': 'mp4' }
+  const ext = map[file.type] || (file.name.split('.').pop() || 'mp4')
   const path = `${uid}/${crypto.randomUUID()}.${ext}`
-  const err = await uploadWithRetry('listing-videos', path, file, 120000, 3)
-  onProgress?.({ done: 1, total: 1 })
-  if (err) return { error: err }
+  const err = await putObject('listing-videos', path, file, 600000, f => onProgress?.({ done: Math.round(f * 100), total: 100, currentName: file.name }))
+  onProgress?.({ done: 100, total: 100 })
+  if (err) return { error: friendlyUploadError(err) }
   return { url: supabase.storage.from('listing-videos').getPublicUrl(path).data.publicUrl }
 }
 
-// Kap nje kuader nga videoja si poster (File jpeg) — perdoret si kapak nese s'ka foto.
+// Kap nje kuader nga videoja si poster (File jpeg).
 export function generateVideoPoster(file: File): Promise<File | null> {
   return new Promise(resolve => {
     try {
@@ -205,7 +252,7 @@ export function generateVideoPoster(file: File): Promise<File | null> {
           canvas.width = Math.round(v.videoWidth * scale); canvas.height = Math.round(v.videoHeight * scale)
           const ctx = canvas.getContext('2d'); if (!ctx) return done(null)
           ctx.drawImage(v, 0, 0, canvas.width, canvas.height)
-          const blob = await canvasToBlob(canvas, 'image/jpeg', 0.8)
+          const blob = await canvasToBlob(canvas, 'image/jpeg', 0.82)
           done(blob ? new File([blob], 'poster.jpg', { type: 'image/jpeg' }) : null)
         } catch { done(null) }
       }
