@@ -1,0 +1,172 @@
+'use client'
+
+export const dynamic = 'force-dynamic'
+
+import { useEffect, useState, useCallback } from 'react'
+import { supabase } from '../../lib/supabase'
+import { useAlpazar } from '../../lib/context'
+import { BILLING_CSS, EVENT_LABELS, StatusBadge } from './ui'
+
+export default function BillingPage() {
+  const { user, authReady } = useAlpazar()
+  const [data, setData] = useState<any>(null)
+  const [busy, setBusy] = useState('')
+  const [msg, setMsg] = useState('')
+  const [confirmCancel, setConfirmCancel] = useState(false)
+
+  const load = useCallback(async () => {
+    const { data: d, error } = await supabase.rpc('get_my_billing')
+    if (!error) setData(d)
+  }, [])
+
+  useEffect(() => {
+    if (!authReady) return
+    if (!user) { window.location.href = '/auth/login'; return }
+    load()
+    const ch = supabase.channel('billing-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'subscriptions', filter: `user_id=eq.${user.id}` }, () => load())
+      .subscribe()
+    return () => { supabase.removeChannel(ch) }
+  }, [authReady, user, load])
+
+  async function act(fn: string, args?: any) {
+    setBusy(fn); setMsg('')
+    const { data: r, error } = await supabase.rpc(fn, args)
+    setBusy('')
+    if (error || r?.error) { setMsg(`err:${error?.message || r?.error}`); return }
+    setMsg('ok:Veprimi u krye me sukses.')
+    setConfirmCancel(false)
+    load()
+  }
+
+  const sub = data?.subscription
+  const plan = sub?.plan
+  const plans: any[] = data?.plans || []
+  const methods: any[] = data?.payment_methods || []
+  const events: any[] = data?.events || []
+  const bank = sub?.payment_method?.config_json || null
+  const [mt, mm] = msg.split(/:(.+)/)
+
+  const totalDays = plan?.duration_days || 30
+  const daysLeft = sub?.days_left ?? null
+  const pct = daysLeft != null ? Math.max(0, Math.min(100, Math.round((daysLeft / totalDays) * 100))) : 0
+
+  return (
+    <>
+      <style dangerouslySetInnerHTML={{ __html: BILLING_CSS }} />
+      <div className="wrap">
+        <div className="topbar">
+          <button type="button" className="back" aria-label="Kthehu" onClick={() => window.history.back()}><i className="ti ti-arrow-left" aria-hidden="true" /></button>
+          <h1 className="tt">Plani im</h1>
+        </div>
+        <div className="body">
+          {msg && <div className={`msg ${mt}`} role="alert">{mm}</div>}
+
+          {!data && <div className="card center muted">Duke ngarkuar…</div>}
+
+          {data && sub && (
+            <div className="card">
+              <div className="row">
+                <div>
+                  <div className="plan-name">{plan?.name}</div>
+                  <div className="muted">{Number(sub.price_paid ?? plan?.price_eur)}€ / {plan?.duration_days} ditë</div>
+                </div>
+                <StatusBadge status={sub.status} cape={sub.cancel_at_period_end} />
+              </div>
+
+              {sub.status === 'active' && (
+                <>
+                  <div className="muted" style={{ marginTop: 10 }}>
+                    {sub.cancel_at_period_end
+                      ? <>Aktiv deri më <b>{new Date(sub.current_period_end).toLocaleDateString('sq-AL')}</b> — nuk rinovohet.</>
+                      : <>Periudha mbaron më <b>{new Date(sub.current_period_end).toLocaleDateString('sq-AL')}</b> ({daysLeft} ditë të mbetura).</>}
+                  </div>
+                  <div className="bar"><div className="fill" style={{ width: `${pct}%` }} /></div>
+                  {sub.pending_plan && (
+                    <div className="note">Në rinovim kalon te plani <b>{sub.pending_plan.name}</b>.</div>
+                  )}
+                  <div className="btns">
+                    {sub.cancel_at_period_end
+                      ? <button type="button" className="btn primary" disabled={!!busy} onClick={() => act('resume_my_subscription')}>Rikthe rinovimin</button>
+                      : confirmCancel
+                        ? <>
+                            <button type="button" className="btn danger" disabled={!!busy} onClick={() => act('cancel_my_subscription')}>Po, anulo</button>
+                            <button type="button" className="btn" onClick={() => setConfirmCancel(false)}>Jo</button>
+                          </>
+                        : <button type="button" className="btn" disabled={!!busy} onClick={() => setConfirmCancel(true)}>Anulo abonimin</button>}
+                  </div>
+                  {confirmCancel && <div className="note warn">Mban aksesin deri më {new Date(sub.current_period_end).toLocaleDateString('sq-AL')}. Asnjë pagesë tjetër nuk kërkohet.</div>}
+                </>
+              )}
+
+              {sub.status === 'pending' && (
+                <>
+                  <div className="note">Kërkesa jote është <b>në pritje të konfirmimit</b>. Pasi të kryhet pagesa dhe të verifikohet, plani aktivizohet automatikisht.</div>
+                  {bank && (
+                    <div className="bank">
+                      <div className="bank-t">Të dhënat e pagesës — {sub.payment_method?.name}</div>
+                      {bank.bank_name && <div><span>Banka:</span> {bank.bank_name}</div>}
+                      {bank.account_holder && <div><span>Përfituesi:</span> {bank.account_holder}</div>}
+                      {bank.iban && <div><span>IBAN:</span> <code>{bank.iban}</code></div>}
+                      {bank.swift && <div><span>SWIFT:</span> {bank.swift}</div>}
+                      {bank.instructions && <div className="muted" style={{ marginTop: 6 }}>{bank.instructions}</div>}
+                    </div>
+                  )}
+                  <div className="btns">
+                    <button type="button" className="btn" disabled={!!busy} onClick={() => act('cancel_my_subscription')}>Anulo kërkesën</button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {data && (
+            <div className="card">
+              <div className="sec-t">{sub ? 'Ndrysho planin' : 'Zgjidh një plan'}</div>
+              <div className="grid">
+                {plans.map(p => (
+                  <div key={p.id} className={`pcard ${plan?.id === p.id ? 'cur' : ''}`}>
+                    <div className="pname">{p.name}</div>
+                    <div className="pprice">{p.price_eur}€ <span className="muted">/ {p.duration_days} ditë</span></div>
+                    <div className="muted" style={{ fontSize: 11 }}>{p.max_listings === -1 ? 'Shpallje pa limit' : `${p.max_listings} shpallje`} · {p.boost_credits} boost</div>
+                    {plan?.id === p.id
+                      ? <div className="cur-tag">Plani yt</div>
+                      : sub
+                        ? <button type="button" className="btn small" disabled={!!busy} onClick={() => act('change_my_plan', { p_plan_id: p.id })}>Kalo këtu</button>
+                        : <PlanBuy plan={p} methods={methods} busy={!!busy} onBuy={(mid) => act('request_subscription', { p_plan_id: p.id, p_payment_method_id: mid })} />}
+                  </div>
+                ))}
+              </div>
+              {sub?.status === 'active' && <div className="muted" style={{ fontSize: 11, marginTop: 8 }}>Ndryshimi i planit hyn në fuqi në rinovimin e ardhshëm — transparencë e plotë, pa pagesa të fshehura.</div>}
+            </div>
+          )}
+
+          {data && events.length > 0 && (
+            <div className="card">
+              <div className="sec-t">Historia</div>
+              {events.map((e: any) => (
+                <div key={e.id} className="ev">
+                  <span>{EVENT_LABELS[e.type] || e.type}</span>
+                  <span className="muted">{new Date(e.created_at).toLocaleDateString('sq-AL')}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </>
+  )
+}
+
+function PlanBuy({ plan, methods, busy, onBuy }: any) {
+  const [mid, setMid] = useState('')
+  return (
+    <div style={{ marginTop: 8 }}>
+      <select value={mid} onChange={e => setMid(e.target.value)} aria-label="Metoda e pagesës">
+        <option value="">Metoda e pagesës…</option>
+        {methods.map((m: any) => <option key={m.id} value={m.id}>{m.name}</option>)}
+      </select>
+      <button type="button" className="btn primary small" disabled={busy || !mid} onClick={() => onBuy(mid)} style={{ marginTop: 6 }}>Abonohu</button>
+    </div>
+  )
+}
