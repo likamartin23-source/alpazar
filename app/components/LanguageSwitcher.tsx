@@ -6,7 +6,7 @@ export function LanguageSwitcher() {
   const { lang, setLang, t } = useT()
   const cur = LANGS.find(l => l.code === lang) ?? LANGS[0]
   return (
-    <label style={{ display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
+    <label data-no-translate style={{ display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
       <span aria-hidden="true" style={{ fontSize: 14 }}>{cur.flag}</span>
       <span style={{ position: 'absolute', left: -9999 }}>{t('lang_label')}</span>
       <select
