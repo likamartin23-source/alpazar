@@ -1,4 +1,4 @@
-const CACHE_NAME = 'alpazar-v12'
+const CACHE_NAME = 'alpazar-v13'
 
 self.addEventListener('install', () => self.skipWaiting())
 
@@ -36,13 +36,38 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Asetet e tjera statike (ikona, favicon, fonte, manifest, imazhe) -> stale-while-revalidate
-  // Shpejt nga cache, POR rifreskohet gjithmone ne sfond -> ndryshimet pasqyrohen, kurre s'ngec.
-  if (/\.(js|css|png|jpg|jpeg|webp|svg|gif|woff2?|ico|json)$/.test(url.pathname)) {
+  // BRANDING/KONFIGURIM (logo, ikona, favicon, manifest, cdo SVG) -> NETWORK-FIRST me cache:'reload'.
+  // Anashkalon HTTP cache-in e browser-it (max-age=86400 te Vercel), keshtu ndryshimet e
+  // logos/ikonave pasqyrohen GJITHMONE menjehere; kur je offline bie ne cache.
+  const sameOrigin = url.origin === self.location.origin
+  const isBranding = sameOrigin && (
+    url.pathname.startsWith('/icons/') ||
+    url.pathname.startsWith('/manifest') ||
+    url.pathname.endsWith('.svg') ||
+    url.pathname.endsWith('.webmanifest') ||
+    url.pathname === '/favicon.png' ||
+    url.pathname === '/favicon.ico'
+  )
+  if (isBranding) {
+    event.respondWith(
+      fetch(req, { cache: 'reload' })
+        .then(res => {
+          const copy = res.clone()
+          caches.open(CACHE_NAME).then(ca => ca.put(req, copy))
+          return res
+        })
+        .catch(() => caches.match(req))
+    )
+    return
+  }
+
+  // Media tjeter statike (imazhe perdoruesish, fonte, css/js jo-Next) -> stale-while-revalidate
+  // me revalidim REAL (cache:'reload') qe te mos ngece ne HTTP cache te vjeter.
+  if (/\.(js|css|png|jpg|jpeg|webp|gif|woff2?|ico|json)$/.test(url.pathname)) {
     event.respondWith(
       caches.open(CACHE_NAME).then(cache =>
         cache.match(req).then(cached => {
-          const network = fetch(req).then(res => {
+          const network = fetch(req, { cache: 'reload' }).then(res => {
             cache.put(req, res.clone())
             return res
           }).catch(() => cached)
