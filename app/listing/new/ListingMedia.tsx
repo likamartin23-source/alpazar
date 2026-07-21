@@ -31,10 +31,24 @@ export function ListingMedia(p: any) {
           <div className="card">
             <div className="card-title"><i className="ti ti-video" aria-hidden="true" />Video <span style={{ fontWeight: 400, color: '#888', fontSize: 12 }}>(opsionale ¬∑ pa kufi madhesie)</span></div>
             {!videoPreview ? (
-              <label classX[YOHö[YÀ^õ€ôHà€ê€X⁄œ^ 
-HOàÿ›[Y[ùôŸ][[Y[ùûRY
-	›öYZ[ú]	 OÀò€X⁄ 
-_OÇà[ú]YHùöYZ[ú]à\OHôö[HàXÿŸ\HùöY[À àà€ê⁄[ôŸO^⁄[ôUöY[ﬂHœÇàH€\‹”ò[YOHùHK]öY[»à\öXKZY[èHùùYHàœÇàî⁄»öôHöY[»HõŸZ›]‹Çà›[O^ﬁ»õ€ù⁄^ôNàLX\ô⁄[ï‹à€€‹éà	»ÿòòâ»_OêŸ»õ‹õX]öY[»0≠»H›YöH0≠»⁄[ôHYH⁄][àYH⁄Zù‹Çà€Xô[Çà
-Hà
-à]à›[O^ﬁ»‹⁄][€éà	‹ô[]]ôI»_OÇàöY[»‹òœ^›öY[‘ô]öY]ﬂH€€ùõ€»^\“[õ[ôH›[O^ﬁ»⁄Yà	ÃL	IÀX^ZY⁄àçåõ‹ô\îòY]\ŒàLãòX⁄Ÿ‹õ›[ôà	»Ã	À\‹^Nà	ÿõÿ⁄…»_HœÇàù]€à\OHòù]€àà€ê€X⁄œ^‹ô[[›ôUöY[ﬂH\öXK[Xô[Hí\HöY[€àà›[O^ﬁ»‹⁄][€éà	ÿXú€€]IÀ‹àöY⁄àòX⁄Ÿ‹õ›[ôà	‹ôÿòJçäIÀ€€‹éà	»ŸôôâÀõ‹ô\éà	€õ€ôIÀõ‹ô\îòY]\ŒàNNK⁄YàÃZY⁄àÃ›\ú€‹éà	‹⁄[ù\âÀõ€ù⁄^ôNàMã[ôRZY⁄àH_O∞Âœÿù]€èÇà›öY[’\ÿY[ô»	âà]à›[O^ﬁ»‹⁄][€éà	ÿXú€€]IÀõ›€NàYùàöY⁄àòX⁄Ÿ‹õ›[ôà	‹ôÿòJçäIÀ€€‹éà	»ŸôôâÀõ€ù⁄^ôNàLKY[ôŒà	Õ	Àõ‹ô\îòY]\Œà_OëZŸHôÿ\ö›X\àöY[€ãããà›öY[‘›IOŸ]èüBàŸ]èÇà
-_BàŸ]èÇÇàù]€à\OHú›XõZ]à€\‹÷÷S“'7V&÷óB÷'F‚"ˆ‰6∆ñ6≥◊∑7V&÷óG“Fó6&∆VC◊∂∆ˆFñÊw”‡¢∑fñFVıW∆ˆFñÊrÚ√„«7‚&ñ÷ÜñFFV„“wG'VRsÓ(˚3¬˜7„‚∂fñFVÚG∑fñFVı7G“R‚‚Ê”¬Û‚¢W∆ˆE&ˆw&W72Ú√„«7‚&ñ÷ÜñFFV„“wG'VRsÓ(˚3¬˜7„‚∂f˜FÚG∑W∆ˆE&ˆw&W72ÊFˆÊW“ÚG∑W∆ˆE&ˆw&W72ÁF˜F«“‚‚Ê”¬Û‚¢∆ˆFñÊrÚ√„«7‚&ñ÷ÜñFFV„“wG'VRsÓ(˚3¬˜7„‚GV∂RV&∆ñ∑V"‚‚„¬Û‚¢√„«7‚&ñ÷ÜñFFV„“wG'VRsÔ	˘®¬˜7„‚V&∆ñ∂Ú6á∆∆¶V‚f∆3¬ÛÁ–¢¬ˆ'WGFˆ„‡¢¬Û‡¢êß–
+              <label className="img-zone" onClick={() => document.getElementById('vid-input')?.click()}>
+                <input id="vid-input" type="file" accept="video/*" onChange={handleVideo} />
+                <i className="ti ti-video" aria-hidden="true" />
+                <p>Shto nje video te produktit</p>
+                <p style={{ fontSize: 10, marginTop: 4, color: '#bbb' }}>Cdo format video ¬∑ pa kufi ¬∑ shpallje qe shiten me shpejt</p>
+              </label>
+            ) : (
+              <div style={{ position: 'relative' }}>
+                <video src={videoPreview} controls playsInline style={{ width: '100%', maxHeight: 260, borderRadius: 12, background: '#000', display: 'block' }} />
+                <button type="button" onClick={removeVideo} aria-label="Hiq videon" style={{ position: 'absolute', top: 8, right: 8, background: 'rgba(0,0,0,.6)', color: '#fff', border: 'none', borderRadius: 999, width: 30, height: 30, cursor: 'pointer', fontSize: 16, lineHeight: 1 }}>√ó</button>
+                {videoUploading && <div style={{ position: 'absolute', bottom: 8, left: 8, right: 8, background: 'rgba(0,0,0,.6)', color: '#fff', fontSize: 11, padding: '4px 8px', borderRadius: 8 }}>Duke ngarkuar videon... {videoPct}%</div>}
+              </div>
+            )}
+          </div>
+
+          <button type="submit" className="submit-btn" onClick={submit} disabled={loading}>
+            {videoUploading ? <><span aria-hidden='true'>‚è≥</span> {`Video ${videoPct}%...`}</> : uploadProgress ? <><span aria-hidden='true'>‚è≥</span> {`Foto ${uploadProgress.done}/${uploadProgress.total}...`}</> : loading ? <><span aria-hidden='true'>‚è≥</span> Duke publikuar...</> : <><span aria-hidden='true'>üöÄ</span> Publiko shpalljen falas</>}
+          </button>
+    </>
+  )
+}
