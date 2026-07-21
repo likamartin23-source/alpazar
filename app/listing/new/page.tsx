@@ -3,14 +3,13 @@
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
-import nextDynamic from 'next/dynamic'
 import { supabase } from '../../../lib/supabase'
 import { useAlpazar } from '../../../lib/context'
-import { uploadImages, UploadProgress } from '../../../lib/uploadImages'
+import { uploadImages, uploadVideo, generateVideoPoster, UploadProgress } from '../../../lib/uploadImages'
+import { useListingAI } from './useListingAI'
+import { NewListingView } from './NewListingView'
 import { SITE_URL } from '../../../lib/siteConfig'
-import { FreeTierBanner, PremiumUpsellModal, SellerPremiumUpsell } from '../../components/PremiumUpsell'
 
-const MapPicker = nextDynamic(() => import('../../components/MapPicker').then(m => ({ default: m.MapPicker })), { ssr: false })
 
 
 export default function NewListing() {
@@ -38,12 +37,12 @@ export default function NewListing() {
   const [imageFiles, setImageFiles] = useState<File[]>([])
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
   const [myListingCount, setMyListingCount] = useState(0)
-  const [priceSuggestion, setPriceSuggestion] = useState('')
-  const [priceLoading, setPriceLoading] = useState(false)
-  const [descLoading, setDescLoading] = useState(false)
-  const [catLoading, setCatLoading] = useState(false)
-  const [catSuggested, setCatSuggested] = useState('')
   const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null)
+  const { descLoading, catLoading, catSuggested, priceLoading, priceSuggestion, generateDescription, suggestPrice, suggestCategory } = useListingAI(form, categories, set, setMsg)
+  const [videoFile, setVideoFile] = useState<File | null>(null)
+  const [videoPreview, setVideoPreview] = useState<string>('')
+  const [videoPct, setVideoPct] = useState(0)
+  const [videoUploading, setVideoUploading] = useState(false)
   const [showUpsell, setShowUpsell] = useState(false)
   const [draftRestored, setDraftRestored] = useState(false)
   const [isDirty, setIsDirty] = useState(false)
@@ -102,86 +101,20 @@ export default function NewListing() {
 
   function set(k: string, v: string) { setIsDirty(true); setForm(f => ({ ...f, [k]: v })) }
 
-  async function generateDescription() {
-    if (!form.title.trim()) { setMsg('err:Shkruaj titullin para se të gjenerosh përshkrimin.'); return }
-    setDescLoading(true)
-    const catName = categories.find(c => c.id === form.category_id)?.name || ''
-    const userMsg = `Shkruaj një përshkrim të shkurtër (max 150 fjalë) për një shpallje me titull: "${form.title}"${catName ? ` në kategorinë "${catName}"` : ''}${form.condition === 'i_ri' ? ', gjendje: i ri' : form.condition === 'i_perdorur' ? ', gjendje: i përdorur' : ''}. Shkruaj në gjuhën shqipe. Trego veçoritë kryesore dhe arsyet pse dikush duhet ta blejë. Vetëm teksti i përshkrimit, pa titull e pa shpjegime shtesë.`
-    try {
-      const res = await fetch('/api/ai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [{ role: 'user', content: userMsg }], stream: false }),
-      })
-      if (!res.ok) throw new Error('api_error')
-      const json = await res.json()
-      if (json.reply) {
-        set('description', json.reply.trim())
-      } else {
-        const catLabel = catName || 'produkt'
-        const condLabel = form.condition === 'i_ri' ? 'i ri, kurrë i përdorur' : form.condition === 'i_perdorur' ? 'i përdorur, në gjendje të mirë' : ''
-        set('description', `${form.title} — ${catLabel} ${condLabel ? `${condLabel}, ` : ''}në gjendje të shkëlqyer. Çmim i arsyeshëm dhe i negociueshëm. Kontaktoni për më shumë informacion.`.trim())
-      }
-    } catch {
-      const catLabel = catName || 'produkt'
-      set('description', `${form.title} — ${catLabel} në gjendje të mirë. Çmim i negociueshëm. Kontaktoni për detaje.`)
-    }
-    setDescLoading(false)
+  function handleVideo(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0]
+    if (!f) return
+    if (!f.type.startsWith('video/')) { setMsg('err:Skedari nuk eshte video.'); e.target.value = ''; return }
+    if (videoPreview) URL.revokeObjectURL(videoPreview)
+    setVideoFile(f); setVideoPreview(URL.createObjectURL(f)); setIsDirty(true); setMsg('')
   }
-
-  async function suggestPrice() {
-    if (!form.title.trim()) { setPriceSuggestion('err:Shkruaj titullin para se të sugjerosh çmimin.'); return }
-    setPriceLoading(true); setPriceSuggestion('')
-    const catName = categories.find(c => c.id === form.category_id)?.name || ''
-    const userMsg = `Duhet të vendos çmim për shpalljen time: "${form.title}"${catName ? ` (kategoria: ${catName})` : ''}${form.description ? `. Përshkrimi: ${form.description.slice(0, 200)}` : ''}. Cili është çmimi real i tregut shqiptar? Jep vetëm një range konkrete çmimi (p.sh. "15,000–25,000 L" ose "150–200 €").`
-    try {
-      const res = await fetch('/api/ai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [{ role: 'user', content: userMsg }], stream: false }),
-      })
-      if (!res.ok) throw new Error('api_error')
-      const json = await res.json()
-      setPriceSuggestion(json.reply || 'err:Nuk mund të sugjeroj çmim tani.')
-    } catch {
-      setPriceSuggestion('err:Gabim në lidhje. Provo sërisht.')
-    }
-    setPriceLoading(false)
-  }
-
-  async function suggestCategory() {
-    if (!form.title.trim()) { setMsg('err:Shkruaj titullin para se te sugjerosh kategorine.'); return }
-    if (categories.length === 0) return
-    setCatLoading(true); setCatSuggested('')
-    const names = categories.map((c: any) => c.name).join(', ')
-    const userMsg = `Kam nje shpallje me titull: "${form.title}"${form.description ? `. Pershkrimi: ${form.description.slice(0, 200)}` : ''}. Zgjidh SAKTESISHT nje kategori nga kjo liste qe i pershtatet me se miri: ${names}. Kthe VETEM emrin e sakte te kategorise nga lista, asgje tjeter.`
-    try {
-      const res = await fetch('/api/ai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [{ role: 'user', content: userMsg }], stream: false }),
-      })
-      if (!res.ok) throw new Error('api_error')
-      const json = await res.json()
-      const reply = String(json.reply || '').toLowerCase().trim()
-      const match = categories.find((c: any) => reply.includes(c.name.toLowerCase())) || categories.find((c: any) => c.name.toLowerCase().includes(reply))
-      if (match && reply) { set('category_id', match.id); setCatSuggested(match.name); setMsg('') }
-      else { setMsg('err:Nuk munda ta gjej kategorine automatikisht — zgjidhe manualisht.') }
-    } catch {
-      setMsg('err:Gabim ne lidhje. Zgjidh kategorine manualisht.')
-    }
-    setCatLoading(false)
+  function removeVideo() {
+    if (videoPreview) URL.revokeObjectURL(videoPreview)
+    setVideoFile(null); setVideoPreview(''); setVideoPct(0)
   }
 
   function handleImages(e: React.ChangeEvent<HTMLInputElement>) {
-    const MAX_MB = 10
     const all = Array.from(e.target.files || [])
-    const oversized = all.filter(f => f.size > MAX_MB * 1024 * 1024)
-    if (oversized.length > 0) {
-      setMsg(`err:Fotot duhet të jenë max ${MAX_MB}MB secila. (${oversized.map(f => f.name).join(', ')})`)
-      e.target.value = ''
-      return
-    }
     const files = all.slice(0, maxImages)
     setImageFiles(files); setIsDirty(true)
     if (all.length > maxImages) {
@@ -222,6 +155,18 @@ export default function NewListing() {
         }
       }
       setUploadProgress(null)
+      let videoUrl: string | null = null
+      if (videoFile) {
+        setVideoUploading(true)
+        const vres = await uploadVideo(videoFile, p => setVideoPct(Math.round((p.done / p.total) * 100)))
+        setVideoUploading(false)
+        if (vres.error) { setMsg(`err:Video: ${vres.error}`); setLoading(false); return }
+        videoUrl = vres.url || null
+        if (uploadedUrls.length === 0) {
+          const poster = await generateVideoPoster(videoFile)
+          if (poster) { const pr = await uploadImages([poster]); if (pr.urls[0]) uploadedUrls = [pr.urls[0]] }
+        }
+      }
       const { data, error } = await supabase.from('listings').insert({
         user_id: user.id,
         title: form.title.trim(),
@@ -232,6 +177,7 @@ export default function NewListing() {
         category_id: form.category_id,
         city: form.city,
         images: uploadedUrls,
+        video_url: videoUrl,
         is_active: true,
         latitude: form.latitude,
         longitude: form.longitude,
@@ -268,249 +214,5 @@ export default function NewListing() {
 
   const [mt, mm] = msg.split(/:(.+)/)
 
-  return (
-    <>
-      <style dangerouslySetInnerHTML={{ __html: `
-        *{box-sizing:border-box;margin:0;padding:0;}
-        body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA;}
-        .wrap{max-width:480px;margin:0 auto;background:#FFFBEA;min-height:100vh;padding-bottom:100px;}
-        .topbar{background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%);padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
-        .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-        .back i{font-size:18px;color:#111;}
-        .topbar-title{font-size:15px;font-weight:700;color:#111;}
-        .body{padding:14px;}
-        .msg-box{border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:12px;font-weight:600;}
-        .ok{background:#EAF3DE;color:#3B6D11;border:0.5px solid #97C459;}
-        .err{background:#FFF0EE;color:#E63312;border:0.5px solid #F09595;}
-        .warn{background:#FFF8E1;color:#E65100;border:0.5px solid #FFB74D;}
-        .card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;border:0.5px solid #eee;}
-        .card-title{font-size:13px;font-weight:700;color:#111;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
-        .card-title i{font-size:16px;color:#E63312;}
-        label{font-size:11px;font-weight:600;color:#555;display:block;margin-bottom:4px;}
-        .field{margin-bottom:12px;}
-        input[type=text],input[type=number],textarea,select{width:100%;border:1.5px solid #e0e0e0;border-radius:12px;padding:10px 13px;font-size:13px;font-family:inherit;outline:none;transition:border .15s;background:#fff;color:#111;}
-        input:focus,textarea:focus,select:focus{border-color:#111;box-shadow:0 4px 16px -4px rgba(0,0,0,.2);}
-        textarea{min-height:90px;resize:vertical;}
-        .price-row{display:flex;gap:8px;}
-        .price-row input{flex:1;}
-        .price-row select{width:90px;flex-shrink:0;}
-        .cond-row{display:flex;gap:8px;}
-        .cond-btn{flex:1;border:1.5px solid #e0e0e0;border-radius:12px;padding:9px;font-size:12px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;}
-        .cond-btn.active{border-color:#E63312;background:#FFF0EE;color:#E63312;}
-        .img-zone{border:2px dashed #e0b030;border-radius:10px;padding:20px;text-align:center;cursor:pointer;background:#FFFBEA;}
-        .img-zone input{display:none;}
-        .img-zone i{font-size:32px;color:#e0b030;display:block;margin-bottom:8px;}
-        .img-zone p{font-size:12px;color:#888;}
-        .img-previews{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
-        .img-prev{width:70px;height:70px;border-radius:8px;object-fit:cover;border:2px solid #F5C842;}
-        .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
-        .cat-btn{border:1.5px solid #e0e0e0;border-radius:12px;padding:8px 4px;font-size:10px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;}
-        .cat-btn i{font-size:18px;color:#aaa;}
-        .cat-btn.active{border-color:#F5C842;background:#FFFBEA;color:#111;}
-        .cat-btn.active i{color:#E63312;}
-        .submit-btn{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px -3px rgba(230,51,18,.45);transition:transform .15s ease,box-shadow .15s ease;} .submit-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 7px 20px -4px rgba(230,51,18,.55);}
-        .submit-btn:disabled{opacity:.6;cursor:not-allowed;}
-      ` }} />
-
-      {/* Marketing: upsell kur arrin kufirin falas (5 shpallje) */}
-      {myListingCount >= freeLimit && <PremiumUpsellModal trigger="limit" />}
-      {showUpsell && <PremiumUpsellModal trigger="scroll" />}
-
-      <div className="wrap">
-        <div className="topbar">
-          <button type="button" className="back" aria-label="Kthehu mbrapa" onClick={() => window.history.back()}>
-            <i className="ti ti-arrow-left" aria-hidden="true" />
-          </button>
-          <h1 className="topbar-title" style={{ margin: 0 }}><span aria-hidden="true">➕</span> Shto Shpallje</h1>
-        </div>
-
-        <div className="body">
-          {/* Marketing: banner kufiri falas */}
-          <FreeTierBanner listingCount={myListingCount} freeLimit={freeLimit} />
-          {draftRestored && (
-            <div style={{ background:'#F0FDF4', border:'1px solid #86EFAC', borderRadius:10, padding:'8px 14px', marginBottom:10, fontSize:12, color:'#166534', display:'flex', alignItems:'center', gap:8 }}>
-              <span aria-hidden="true">💾</span> Draft-i u rikthye automatikisht.
-              <button type="button" onClick={() => { localStorage.removeItem('alpazar_listing_draft'); setForm({ title:'', description:'', price:'', currency:'ALL', condition:'', category_id:'', city:'', images:[], latitude:null, longitude:null, location_address:'' }); setDraftRestored(false) }} style={{ marginLeft:'auto', background:'none', border:'none', color:'#166534', cursor:'pointer', fontSize:11, textDecoration:'underline', fontFamily:'inherit' }}>Fshi draft-in</button>
-            </div>
-          )}
-          {msg && <div className={`msg-box ${mt}`} role="alert">{mm}</div>}
-          {uploadProgress && (
-            <div style={{ background:'#e8f4fd', border:'1px solid #90caf9', borderRadius:10, padding:'10px 14px', marginBottom:10, fontSize:13, color:'#1565c0', display:'flex', alignItems:'center', gap:8 }}>
-              <span style={{ fontSize:16 }} aria-hidden="true">⏳</span>
-              <div style={{ flex:1 }}>
-                <div style={{ fontWeight:600 }}>Duke ngarkuar foto... {uploadProgress.done}/{uploadProgress.total}</div>
-                {uploadProgress.currentName && <div style={{ color:'#1976d2', marginTop:2 }}>{uploadProgress.currentName}</div>}
-                <div style={{ background:'#bbdefb', borderRadius:4, height:6, marginTop:6, overflow:'hidden' }}>
-                  <div style={{ background:'#1976d2', height:'100%', width:`${Math.round(uploadProgress.done / uploadProgress.total * 100)}%`, transition:'width .3s' }} />
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="card">
-            <div className="card-title"><i className="ti ti-info-circle" aria-hidden="true" />Informacioni bazë</div>
-
-            <div className="field">
-              <label htmlFor="listing-title">Titulli *</label>
-              <input id="listing-title" type="text" placeholder="p.sh. iPhone 13 Pro Max 256GB..." value={form.title} onChange={e => set('title', e.target.value)} maxLength={100} required />
-              <div style={{ textAlign: 'right', fontSize: 10, color: form.title.length > 85 ? '#E63312' : '#aaa', marginTop: 2 }}>{form.title.length}/100</div>
-            </div>
-
-            <div className="field">
-              <label htmlFor="listing-description">Përshkrimi</label>
-              <textarea id="listing-description" placeholder="Përshkruaj artikullin — gjendje, veçori, arsye shitjeje..." value={form.description} onChange={e => set('description', e.target.value)} maxLength={2000} />
-              <div style={{ textAlign: 'right', fontSize: 10, color: form.description.length > 1800 ? '#E63312' : '#aaa', marginTop: 2 }}>{form.description.length}/2000</div>
-              <button
-                type="button"
-                onClick={generateDescription}
-                disabled={descLoading}
-                style={{
-                  marginTop: 6, background: '#111', color: '#F5C842', border: 'none',
-                  borderRadius: 8, padding: '7px 12px', fontSize: 11, fontWeight: 700,
-                  cursor: descLoading ? 'not-allowed' : 'pointer', display: 'flex',
-                  alignItems: 'center', gap: 5, opacity: descLoading ? 0.7 : 1, fontFamily: 'inherit',
-                }}
-              >
-                {descLoading ? <span aria-hidden='true'>⏳</span> : <span aria-hidden='true'>🤖</span>} {descLoading ? 'Duke gjeneruar...' : 'Gjenero përshkrim me Albi'}
-              </button>
-            </div>
-
-            <div className="field">
-              <label htmlFor="listing-price">Çmimi</label>
-              <div className="price-row">
-                <input id="listing-price" type="number" placeholder="0" value={form.price} onChange={e => set('price', e.target.value)} min="0" />
-                <select aria-label="Monedha" value={form.currency} onChange={e => set('currency', e.target.value)}>
-                  <option value="ALL">L (Lekë)</option>
-                  <option value="EUR">€ (Euro)</option>
-                </select>
-              </div>
-              <p style={{ fontSize: 10, color: '#aaa', marginTop: 4 }}>Lër bosh për "Çmim me marrëveshje"</p>
-              <button
-                type="button"
-                onClick={suggestPrice}
-                disabled={priceLoading}
-                style={{
-                  marginTop: 8, background: '#111', color: '#F5C842', border: 'none',
-                  borderRadius: 8, padding: '7px 12px', fontSize: 11, fontWeight: 700,
-                  cursor: priceLoading ? 'not-allowed' : 'pointer', display: 'flex',
-                  alignItems: 'center', gap: 5, opacity: priceLoading ? 0.7 : 1, fontFamily: 'inherit',
-                }}
-              >
-                {priceLoading ? <span aria-hidden='true'>⏳</span> : <span aria-hidden='true'>🤖</span>} {priceLoading ? 'Duke menduar...' : 'Sugjero çmimin me Albi'}
-              </button>
-              {priceSuggestion && !priceSuggestion.startsWith('err:') && (
-                <div style={{
-                  marginTop: 8, background: '#EAF3DE', border: '0.5px solid #97C459',
-                  borderRadius: 9, padding: '10px 13px', fontSize: 12, color: '#3B6D11', lineHeight: 1.6,
-                }}>
-                  <span aria-hidden="true">💡</span> <strong>Albi sugjeron:</strong> {priceSuggestion}
-                </div>
-              )}
-              {priceSuggestion?.startsWith('err:') && (
-                <div style={{ marginTop: 6, fontSize: 11, color: '#E63312' }}>{priceSuggestion.slice(4)}</div>
-              )}
-            </div>
-
-            <div className="field">
-              <label>Gjendja</label>
-              <div className="cond-row" aria-label="Gjendja">
-                <button type="button" aria-pressed={form.condition === 'i_ri'} className={`cond-btn ${form.condition === 'i_ri' ? 'active' : ''}`} onClick={() => set('condition', 'i_ri')}><span aria-hidden="true">✨</span> I ri</button>
-                <button type="button" aria-pressed={form.condition === 'i_perdorur'} className={`cond-btn ${form.condition === 'i_perdorur' ? 'active' : ''}`} onClick={() => set('condition', 'i_perdorur')}><span aria-hidden="true">🔄</span> I përdorur</button>
-              </div>
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="card-title"><i className="ti ti-category" aria-hidden="true" />Kategoria *</div>
-            <button
-              type="button"
-              onClick={suggestCategory}
-              disabled={catLoading}
-              style={{
-                margin: '0 0 10px', background: '#111', color: '#F5C842', border: 'none',
-                borderRadius: 8, padding: '7px 12px', fontSize: 11, fontWeight: 700,
-                cursor: catLoading ? 'not-allowed' : 'pointer', display: 'flex',
-                alignItems: 'center', gap: 5, opacity: catLoading ? 0.7 : 1, fontFamily: 'inherit',
-              }}
-            >
-              {catLoading ? <span aria-hidden='true'>⏳</span> : <span aria-hidden='true'>🤖</span>} {catLoading ? 'Duke menduar...' : 'Sugjero kategorine me Albi'}
-            </button>
-            {catSuggested && (
-              <div style={{ margin: '0 0 10px', fontSize: 11, color: '#166534', background: '#F0FDF4', border: '.5px solid #BBF7D0', borderRadius: 8, padding: '6px 10px' }}>
-                <span aria-hidden="true">💡</span> <strong>Albi zgjodhi:</strong> {catSuggested}
-              </div>
-            )}
-            <div className="cat-grid">
-              {categories.map(c => (
-                <button
-                  key={c.id}
-                  type="button"
-                  aria-pressed={form.category_id === c.id}
-                  className={`cat-btn ${form.category_id === c.id ? 'active' : ''}`}
-                  onClick={() => set('category_id', c.id)}
-                >
-                  <i className={`ti ti-${c.icon}`} aria-hidden="true" />
-                  {c.name}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="card-title"><i className="ti ti-map-pin" aria-hidden="true" />Vendndodhja *</div>
-            <div className="field">
-              <label htmlFor="listing-city">Qyteti *</label>
-              <input
-                id="listing-city"
-                type="text"
-                placeholder="p.sh. Tiranë, Durrës, Vlorë..."
-                autoComplete="address-level2"
-                value={form.city}
-                onChange={e => set('city', e.target.value)}
-                required
-              />
-            </div>
-            <div className="field">
-              <label>Adresa e saktë <span style={{ fontWeight: 400, color: '#aaa' }}>(opsional — mund të vendoset me GPS)</span></label>
-              <MapPicker
-                lat={form.latitude}
-                lng={form.longitude}
-                address={form.location_address}
-                onChange={(lat, lng, address) => setForm(f => ({ ...f, latitude: lat, longitude: lng, location_address: address }))}
-                onCityChange={city => { if (!form.city) setForm(f => ({ ...f, city })) }}
-              />
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="card-title"><i className="ti ti-photo" aria-hidden="true" />Fotot <span style={{ fontWeight: 400, color: imagePreviews.length >= maxImages ? '#E63312' : '#888', fontSize: 12 }}>({imagePreviews.length}/{maxImages})</span></div>
-            <label className="img-zone" onClick={() => document.getElementById('img-input')?.click()}>
-              <input id="img-input" type="file" accept="image/*" multiple onChange={handleImages} />
-              <i className="ti ti-cloud-upload" aria-hidden="true" />
-              <p>Kliko për të ngarkuar fotot</p>
-              <p style={{ fontSize: 10, marginTop: 4, color: '#bbb' }}>JPG, PNG, WebP · max 10MB secila</p>
-            </label>
-            {imagePreviews.length > 0 && (
-              <div className="img-previews">
-                {imagePreviews.map((src, i) => (
-                  <div key={i} style={{ position: 'relative', display: 'inline-block' }}>
-                    <img src={src} className="img-prev" alt={`Foto ${i + 1}`} loading="lazy" />
-                    {i === 0 && (
-                      <span style={{ position: 'absolute', top: 4, left: 4, background: '#F5C842', color: '#111', fontSize: 8, fontWeight: 800, padding: '2px 5px', borderRadius: 4, lineHeight: 1.4, pointerEvents: 'none' }}>
-                        Kryesore
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <button type="submit" className="submit-btn" onClick={submit} disabled={loading}>
-            {uploadProgress ? <><span aria-hidden='true'>⏳</span> {`Foto ${uploadProgress.done}/${uploadProgress.total}...`}</> : loading ? <><span aria-hidden='true'>⏳</span> Duke publikuar...</> : <><span aria-hidden='true'>🚀</span> Publiko shpalljen falas</>}
-          </button>
-        </div>
-      </div>
-    </>
-  )
+  return <NewListingView p={{ form, set, setForm, msg, mt, mm, uploadProgress, videoPreview, videoUploading, videoPct, handleVideo, removeVideo, handleImages, imagePreviews, maxImages, categories, catLoading, catSuggested, suggestCategory, priceLoading, priceSuggestion, suggestPrice, descLoading, generateDescription, loading, submit, draftRestored, setDraftRestored, myListingCount, freeLimit, showUpsell }} />
 }
