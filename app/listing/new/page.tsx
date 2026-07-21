@@ -41,6 +41,8 @@ export default function NewListing() {
   const [priceSuggestion, setPriceSuggestion] = useState('')
   const [priceLoading, setPriceLoading] = useState(false)
   const [descLoading, setDescLoading] = useState(false)
+  const [catLoading, setCatLoading] = useState(false)
+  const [catSuggested, setCatSuggested] = useState('')
   const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null)
   const [showUpsell, setShowUpsell] = useState(false)
   const [draftRestored, setDraftRestored] = useState(false)
@@ -145,6 +147,30 @@ export default function NewListing() {
       setPriceSuggestion('err:Gabim në lidhje. Provo sërisht.')
     }
     setPriceLoading(false)
+  }
+
+  async function suggestCategory() {
+    if (!form.title.trim()) { setMsg('err:Shkruaj titullin para se te sugjerosh kategorine.'); return }
+    if (categories.length === 0) return
+    setCatLoading(true); setCatSuggested('')
+    const names = categories.map((c: any) => c.name).join(', ')
+    const userMsg = `Kam nje shpallje me titull: "${form.title}"${form.description ? `. Pershkrimi: ${form.description.slice(0, 200)}` : ''}. Zgjidh SAKTESISHT nje kategori nga kjo liste qe i pershtatet me se miri: ${names}. Kthe VETEM emrin e sakte te kategorise nga lista, asgje tjeter.`
+    try {
+      const res = await fetch('/api/ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [{ role: 'user', content: userMsg }], stream: false }),
+      })
+      if (!res.ok) throw new Error('api_error')
+      const json = await res.json()
+      const reply = String(json.reply || '').toLowerCase().trim()
+      const match = categories.find((c: any) => reply.includes(c.name.toLowerCase())) || categories.find((c: any) => c.name.toLowerCase().includes(reply))
+      if (match && reply) { set('category_id', match.id); setCatSuggested(match.name); setMsg('') }
+      else { setMsg('err:Nuk munda ta gjej kategorine automatikisht — zgjidhe manualisht.') }
+    } catch {
+      setMsg('err:Gabim ne lidhje. Zgjidh kategorine manualisht.')
+    }
+    setCatLoading(false)
   }
 
   function handleImages(e: React.ChangeEvent<HTMLInputElement>) {
@@ -396,6 +422,24 @@ export default function NewListing() {
 
           <div className="card">
             <div className="card-title"><i className="ti ti-category" aria-hidden="true" />Kategoria *</div>
+            <button
+              type="button"
+              onClick={suggestCategory}
+              disabled={catLoading}
+              style={{
+                margin: '0 0 10px', background: '#111', color: '#F5C842', border: 'none',
+                borderRadius: 8, padding: '7px 12px', fontSize: 11, fontWeight: 700,
+                cursor: catLoading ? 'not-allowed' : 'pointer', display: 'flex',
+                alignItems: 'center', gap: 5, opacity: catLoading ? 0.7 : 1, fontFamily: 'inherit',
+              }}
+            >
+              {catLoading ? <span aria-hidden='true'>⏳</span> : <span aria-hidden='true'>🤖</span>} {catLoading ? 'Duke menduar...' : 'Sugjero kategorine me Albi'}
+            </button>
+            {catSuggested && (
+              <div style={{ margin: '0 0 10px', fontSize: 11, color: '#166534', background: '#F0FDF4', border: '.5px solid #BBF7D0', borderRadius: 8, padding: '6px 10px' }}>
+                <span aria-hidden="true">💡</span> <strong>Albi zgjodhi:</strong> {catSuggested}
+              </div>
+            )}
             <div className="cat-grid">
               {categories.map(c => (
                 <button
