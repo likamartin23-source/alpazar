@@ -2,7 +2,7 @@
 
 import { FreeTierBanner } from '../../components/PremiumUpsell'
 
-export function ListingTop(p: any) {
+export function ListingTop({ p }: any) {
   const { form, set, setForm, msg, mt, mm, uploadProgress, videoPreview, videoUploading, videoPct, handleVideo, removeVideo, handleImages, imagePreviews, maxImages, categories, catLoading, catSuggested, suggestCategory, priceLoading, priceSuggestion, suggestPrice, descLoading, generateDescription, loading, submit, draftRestored, setDraftRestored, myListingCount, freeLimit, showUpsell } = p
   return (
     <>

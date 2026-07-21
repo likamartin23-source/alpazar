@@ -6,7 +6,7 @@ import { ListingTop } from './ListingTop'
 import { ListingMid } from './ListingMid'
 import { ListingMedia } from './ListingMedia'
 
-export function NewListingView(p: any) {
+export function NewListingView({ p }: any) {
   const { myListingCount, freeLimit, showUpsell } = p
   return (
     <>
