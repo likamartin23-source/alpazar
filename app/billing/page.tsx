@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAlpazar } from '../../lib/context'
-import { BILLING_CSS, EVENT_LABELS, StatusBadge } from './ui'
+import { BILLING_CSS, EVENT_LABELS, StatusBadge, PlanBuy, Invoices } from './ui'
 
 export default function BillingPage() {
   const { user, authReady } = useAlpazar()
@@ -47,7 +47,7 @@ export default function BillingPage() {
   const bank = sub?.payment_method?.config_json || null
   const [mt, mm] = msg.split(/:(.+)/)
 
-  const totalDays = plan?.duration_days || 30
+  const totalDays = sub?.period === 'yearly' ? 365 : (plan?.duration_days || 30)
   const daysLeft = sub?.days_left ?? null
   const pct = daysLeft != null ? Math.max(0, Math.min(100, Math.round((daysLeft / totalDays) * 100))) : 0
 
@@ -68,8 +68,8 @@ export default function BillingPage() {
             <div className="card">
               <div className="row">
                 <div>
-                  <div className="plan-name">{plan?.name}</div>
-                  <div className="muted">{Number(sub.price_paid ?? plan?.price_eur)}€ / {plan?.duration_days} ditë</div>
+                  <div className="plan-name">{plan?.name} {sub.period === 'yearly' ? '(vjetor)' : ''}</div>
+                  <div className="muted">{Number(sub.price_paid ?? plan?.price_eur)}€ / {sub.period === 'yearly' ? '365' : plan?.duration_days} ditë</div>
                 </div>
                 <StatusBadge status={sub.status} cape={sub.cancel_at_period_end} />
               </div>
@@ -127,13 +127,13 @@ export default function BillingPage() {
                 {plans.map(p => (
                   <div key={p.id} className={`pcard ${plan?.id === p.id ? 'cur' : ''}`}>
                     <div className="pname">{p.name}</div>
-                    <div className="pprice">{p.price_eur}€ <span className="muted">/ {p.duration_days} ditë</span></div>
-                    <div className="muted" style={{ fontSize: 11 }}>{p.max_listings === -1 ? 'Shpallje pa limit' : `${p.max_listings} shpallje`} · {p.boost_credits} boost</div>
+                    <div className="pprice">{p.price_eur}€ <span className="muted">/muaj</span></div>
+                    <div className="muted" style={{ fontSize: 11 }}>{p.price_eur_year ?? Math.round(p.price_eur * 10 * 100) / 100}€/vit · {p.max_listings === -1 ? 'pa limit' : `${p.max_listings} shpallje`} · {p.boost_credits} boost</div>
                     {plan?.id === p.id
                       ? <div className="cur-tag">Plani yt</div>
                       : sub
                         ? <button type="button" className="btn small" disabled={!!busy} onClick={() => act('change_my_plan', { p_plan_id: p.id })}>Kalo këtu</button>
-                        : <PlanBuy plan={p} methods={methods} busy={!!busy} onBuy={(mid) => act('request_subscription', { p_plan_id: p.id, p_payment_method_id: mid })} />}
+                        : <PlanBuy plan={p} methods={methods} busy={!!busy} onBuy={(mid: string, per: string) => act('request_subscription', { p_plan_id: p.id, p_payment_method_id: mid, p_period: per })} />}
                   </div>
                 ))}
               </div>
@@ -152,21 +152,9 @@ export default function BillingPage() {
               ))}
             </div>
           )}
+          <Invoices invoices={data?.invoices || []} />
         </div>
       </div>
     </>
-  )
-}
-
-function PlanBuy({ plan, methods, busy, onBuy }: any) {
-  const [mid, setMid] = useState('')
-  return (
-    <div style={{ marginTop: 8 }}>
-      <select value={mid} onChange={e => setMid(e.target.value)} aria-label="Metoda e pagesës">
-        <option value="">Metoda e pagesës…</option>
-        {methods.map((m: any) => <option key={m.id} value={m.id}>{m.name}</option>)}
-      </select>
-      <button type="button" className="btn primary small" disabled={busy || !mid} onClick={() => onBuy(mid)} style={{ marginTop: 6 }}>Abonohu</button>
-    </div>
   )
 }

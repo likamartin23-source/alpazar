@@ -24,6 +24,43 @@ export function StatusBadge({ status, cape }: { status: string; cape?: boolean }
   return <span className="badge" style={{ color, borderColor: color }}>{label}</span>
 }
 
+
+import { useState } from 'react'
+
+export function PlanBuy({ plan, methods, busy, onBuy }: any) {
+  const [mid, setMid] = useState('')
+  const [per, setPer] = useState<'monthly' | 'yearly'>('monthly')
+  const yearly = plan.price_eur_year ?? Math.round(plan.price_eur * 10 * 100) / 100
+  return (
+    <div style={{ marginTop: 8 }}>
+      <div className="per-row" role="radiogroup" aria-label="Periudha">
+        <button type="button" className={`per ${per === 'monthly' ? 'on' : ''}`} onClick={() => setPer('monthly')}>{plan.price_eur}€/muaj</button>
+        <button type="button" className={`per ${per === 'yearly' ? 'on' : ''}`} onClick={() => setPer('yearly')}>{yearly}€/vit</button>
+      </div>
+      <select value={mid} onChange={e => setMid(e.target.value)} aria-label="Metoda e pagesës">
+        <option value="">Metoda e pagesës…</option>
+        {methods.map((m: any) => <option key={m.id} value={m.id}>{m.name}</option>)}
+      </select>
+      <button type="button" className="btn primary small" disabled={busy || !mid} onClick={() => onBuy(mid, per)} style={{ marginTop: 6 }}>Abonohu</button>
+    </div>
+  )
+}
+
+export function Invoices({ invoices }: { invoices: any[] }) {
+  if (!invoices?.length) return null
+  return (
+    <div className="card">
+      <div className="sec-t">Faturat elektronike</div>
+      {invoices.map((i: any) => (
+        <div key={i.id} className="ev">
+          <span><b>{i.number}</b> · {i.plan_name} ({i.period === 'yearly' ? 'vjetor' : 'mujor'})</span>
+          <span className="muted">{i.status === 'gifted' ? 'Dhuratë' : `${i.amount}€`} · {new Date(i.issued_at).toLocaleDateString('sq-AL')}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export const BILLING_CSS = `
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA}
@@ -64,4 +101,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA}
 .msg.ok{background:#EAF3DE;color:#3B6D11;border:.5px solid #97C459}
 .msg.err{background:#FFF0EE;color:#E63312;border:.5px solid #F09595}
 select{width:100%;border:1.5px solid #e0e0e0;border-radius:8px;padding:7px;font-size:11px;font-family:inherit;background:#fff}
+.per-row{display:flex;gap:5px;margin-bottom:6px}
+.per{flex:1;border:1.5px solid #e0e0e0;background:#fff;border-radius:8px;padding:6px 4px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;color:#555}
+.per.on{border-color:#E63312;color:#E63312;background:#FFF0EE}
 `
