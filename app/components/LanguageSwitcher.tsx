@@ -6,25 +6,14 @@ export function LanguageSwitcher() {
   const { lang, setLang, t } = useT()
   const cur = LANGS.find(l => l.code === lang) ?? LANGS[0]
   return (
-    <label style={{ display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
+    <label data-no-translate style={{ display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
       <span aria-hidden="true" style={{ fontSize: 14 }}>{cur.flag}</span>
       <span style={{ position: 'absolute', left: -9999 }}>{t('lang_label')}</span>
       <select
         aria-label={t('lang_label')}
         value={lang}
-        onChange={(e) => setLang(e.target.value as any)}
-        style={{
-          background: '#1a1a1a', color: '#F5C842', border: '1px solid #333',
-          borderRadius: 8, padding: '4px 8px', fontSize: 11, fontWeight: 600,
-          fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", cursor: 'pointer',
-        }}
-      >
-        {LANGS.map(l => (
-          <option key={l.code} value={l.code} style={{ background: '#fff', color: '#111' }}>
-            {l.flag} {l.label}
-          </option>
-        ))}
-      </select>
-    </label>
-  )
-}
+        onChange={(e) => setLang(e.target.value as([J_Bˆİ[O^ŞÂˆ˜XÚÙÜ›İ[™ˆ	ÈÌXLXLXIËÛÛÜˆ	ÈÑPÎ‰Ë›Ü™\ˆ	Ì\ÛÛYÌÌÌÉËˆ›Ü™\”˜Y]\ÎˆY[™Îˆ	Í	Ë›ÛÚ^™NˆLK›ÛÙZYÚˆŒˆ›Û˜[Z[Nˆ‰Ô\È˜ZØ\HØ[œÉËŞ\İ[K]ZKØ[œË\Ù\šYˆ‹İ\œÛÜˆ	ÜÚ[\‰Ëˆ_Bˆ‚ˆÓS‘ÔË›X\
+Oˆ
+ˆÜ[ÛˆÙ^O^Û˜ÛÙ_H˜[YO^Û˜ÛÙ_Hİ[O^ŞÈ˜XÚÙÜ›İ[™ˆ	ÈÙ™™‰ËÛÛÜˆ	ÈÌLLIÈ_O‚ˆÛ™›YßHÛ›X™[BˆÛÜ[Û‚ˆ
+J_BˆÜÙ[Xİ‚ˆÛX™[‚ˆ
+BŸB
