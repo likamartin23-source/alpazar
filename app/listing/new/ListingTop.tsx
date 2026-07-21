@@ -11,13 +11,96 @@ export function ListingTop(p: any) {
           {draftRestored && (
             <div style={{ background:'#F0FDF4', border:'1px solid #86EFAC', borderRadius:10, padding:'8px 14px', marginBottom:10, fontSize:12, color:'#166534', display:'flex', alignItems:'center', gap:8 }}>
               <span aria-hidden="true">ðŸ’¾</span> Draft-i u rikthye automatikisht.
-              <button type="button" onClick={() => { localStorage.removeItem('alpazar_listing_draft'); setForm({ title:'', descripz[ÛŽ‰ÉËšXÙN‰ÉËÝ\œ™[˜ÞN‰ÐS	ËÛÛ™][ÛŽ‰ÉËØ]YÛÜžWÚY‰ÉËÚ]N‰ÉË[XYÙ\Î–×K]]YN›[Û™Ú]YN›[ØØ][Û—ØY™\ÜÎ‰ÉÈJNÈÙ]˜Y™\ÝÜ™Y
-˜[ÙJH_HÝ[O^ÞÈX\™Ú[“Y‰Ø]]ÉË˜XÚÙÜ›Ý[™‰Û›Û™IË›Ü™\Ž‰Û›Û™IËÛÛÜŽ‰ÈÌMLÍ	ËÝ\œÛÜŽ‰ÜÚ[\‰Ë›ÛÚ^™NŒLK^XÛÜ˜][ÛŽ‰Ý[™\›[™IË›Û˜[Z[N‰Ú[š\š]	È_O‘œÚH˜YZ[Ø]Û‚ˆÙ]‚ˆ
-_BˆÛ\ÙÈ	‰ˆ]ˆÛ\ÜÓ˜[YO^Ø\ÙËX›Þ	Û]XH›ÛOH˜[\žÛ[_OÙ]ŸBˆÝ\ØY›ÙÜ™\ÜÈ	‰ˆ
-ˆ]ˆÝ[O^ÞÈ˜XÚÙÜ›Ý[™‰ÈÙN™	Ë›Ü™\Ž‰Ì\ÛÛYÎLØYŽIË›Ü™\”˜Y]\ÎŒLY[™Î‰ÌLM	ËX\™Ú[›ÝÛNŒL›ÛÚ^™NŒLËÛÛÜŽ‰ÈÌMMXÌ	Ë\Ü^N‰Ù›^	Ë[YÛ’][\Î‰ØÙ[\‰ËØ\Ž_O‚ˆÜ[ˆÝ[O^ÞÈ›ÛÚ^™NŒMˆ_H\šXKZY[HYH¸£ìÏÜÜ[‚ˆ]ˆÝ[O^ÞÈ›^ŒH_O‚ˆ]ˆÝ[O^ÞÈ›ÛÙZYÚŒ_O‘ZÙH™Ø\šÝX\ˆ›ÝË‹‹ˆÝ\ØY›ÙÜ™\ÜË™Û™_KÞÝ\ØY›ÙÜ™\ÜËÝ[OÙ]‚ˆÝ\ØY›ÙÜ™\ÜË˜Ý\œ™[˜[YH	‰ˆ]ˆÝ[O^ÞÈÛÛÜŽ‰ÈÌNMÍ™‰ËX\™Ú[•ÜŒˆ_OžÝ\ØY›ÙÜ™\ÜË˜Ý\œ™[˜[Y_OÙ]ŸBˆ]ˆÝ[O^ÞÈ˜XÚÙÜ›Ý[™‰ÈØ˜™Y˜‰Ë›Ü™\”˜Y]\ÎZYÚ‹X\™Ú[•Ü‹Ý™\™›ÝÎ‰ÚY[‰È_O‚ˆ]ˆÝ[O^ÞÈ˜XÚÙÜ›Ý[™‰ÈÌNMÍ™‰ËZYÚ‰ÌL	IËÚY˜	ÓX]œ›Ý[™
-\ØY›ÙÜ™\ÜË™Û™HÈ\ØY›ÙÜ™\ÜËÝ[
-ˆL
-_IX˜[œÚ][ÛŽ‰ÝÚYŒÜÉÈ_HÏ‚ˆÙ]‚ˆÙ]‚ˆÙ]‚ˆ
-_B‚ˆ]ˆÛ\ÜÓ˜[YOH˜Ø\™‚ˆ]ˆÛ\ÜÓ˜[YOH˜Ø\™]]HHÛ\ÜÓ˜[YOHHKZ[™›ËXÚ\˜ÛHˆ\šXKZY[HYHˆÏ’[™›Ü›XXÚ[ÛšH˜^°êÏÙ]‚‚ˆ]ˆÛ\ÜÓ˜[YOH™šY[‚ˆX™[[›ÜH›\Ý[™Ë]]H•][H
-ÛX™[‚ˆ[œ]YH›\Ý[™Ë]]Hˆ\OH^ˆXÙZÛ\HœœÚˆTÛ™HLÈ›ÈX^M‘Ð‹‹‹ˆˆ˜[YO^Ù›Ü›K]_HÛÚ[™ÙO^ÙHOˆÙ]
-	Ý]IËK\™Ù]˜[YJ_HX^[™Ý^ÌLH™\]Z\™YÏ‚ˆ]ˆÝ[O^ÞÈ^[YÛŽˆ	ÜšYÚ	Ë›ÛÚ^™NˆLÛÛÜŽˆ›Ü›K]K›[™ÝˆHÈ	ÈÑMŒÌÌL‰Èˆ	ÈØXXIËX\™Ú[•Üˆˆ_OžÙ›Ü›K]K›[™ÝKÌLÙ]‚ˆÙ]‚‚ˆ]ˆÛ\ÜÓ˜[YOH™šY[‚ˆX™[[&÷#Ò&Æ—7F–ærÖFW67&—F–öâ#å:·'6†·&–Ö“ÂöÆ&VÃà¢ÇFW‡F&V–CÒ&Æ—7F–ærÖFW67&—F–öâ"Æ6V†öÆFW#Ò%:·'6†·'V¢'F–·VÆÆ–â(	Bv¦VæF¦RÂf\:v÷&’Â'7–R6†—F¦V¦Râââ"fÇVS×¶f÷&ÒæFW67&—F–öçÒöä6†ævS×¶RÓâ6WB‚vFW67&—F–öârÂRçF&vWBçfÇVR—ÒÖ„ÆVæwFƒ×³#Òóà¢ÆF—b7G–ÆS×·²FW‡DÆ–vã¢w&–v‡BrÂföçE6—¦S¢Â6öÆ÷#¢f÷&ÒæFW67&—F–öâæÆVæwF‚âƒòr4Sc33"r¢r6rÂÖ&v–åF÷¢"×Óç¶f÷&ÒæFW67&—F–öâæÆVæwF‡Òó#ÂöF—cà¢Æ'WGFöà¢G—SÒ&'WGFöâ ¢öä6Æ–6³×¶vVæW&FTFW67&—F–öçÐ¢F—6&ÆVC×¶FW64ÆöF–æwÐ¢7G–ÆS×·°¢Ö&v–åF÷¢bÂ&6¶w&÷VæC¢r3rÂ6öÆ÷#¢r4cT3ƒC"rÂ&÷&FW#¢væöæRrÀ¢&÷&FW%&F—W3¢‚ÂFF–æs¢sw‚'‚rÂföçE6—¦S¢ÂföçEvV–v‡C¢sÀ¢7W'6÷#¢FW64ÆöF–æròvæ÷BÖÆÆ÷vVBr¢wö–çFW"rÂF—7Æ“¢vfÆW‚rÀ¢Æ–vä—FV×3¢v6VçFW"rÂv¢RÂ÷6—G“¢FW64ÆöF–æròãr¢ÂföçDfÖ–Ç“¢v–æ†W&—BrÀ¢×Ð¢à¢¶FW64ÆöF–æròÇ7â&–Ö†–FFVãÒwG'VRsî(û3Â÷7ãâ¢Ç7â&–Ö†–FFVãÒwG'VRsï	úIcÂ÷7ãçÒ¶FW64ÆöF–æròtGV¶Rv¦VæW'V"âââr¢tv¦VæW&ò:·'6†·&–ÒÖRÆ&’wÐ¢Âö'WGFöãà¢ÂöF—cà ¢ÆF—b6Æ74æÖSÒ&f–VÆB#à¢ÆÆ&VÂ‡FÖÄf÷#Ò&Æ—7F–ær×&–6R#ì8vÖ–Ö“ÂöÆ&VÃà¢ÆF—b6Æ74æÖSÒ'&–6R×&÷r#à¢Æ–çWB–CÒ&Æ—7F–ær×&–6R"G—SÒ&çVÖ&W""Æ6V†öÆFW#Ò#"fÇVS×¶f÷&Òç&–6WÒöä6†ævS×¶RÓâ6WB‚w&–6RrÂRçF&vWBçfÇVR—ÒÖ–ãÒ#"óà¢Ç6VÆV7B&–ÖÆ&VÃÒ$ÖöæVF†"fÇVS×¶f÷&Òæ7W'&Væ7—Òöä6†ævS×¶RÓâ6WB‚v7W'&Væ7’rÂRçF&vWBçfÇVR—Óà¢Æ÷F–öâfÇVSÒ$ÄÂ#äÂ„ÆV¼:²“Âö÷F–öãà¢Æ÷F–öâfÇVSÒ$UU"#î(*Â„WW&ò“Âö÷F–öãà¢Â÷6VÆV7Cà¢ÂöF—cà¢Ç7G–ÆS×·²föçE6—¦S¢Â6öÆ÷#¢r6rÂÖ&v–åF÷¢B×ÓäÌ:·"&÷6‚:·",8vÖ–ÒÖRÖ',:·fW6†¦R#Â÷à¢Æ'WGFöà¢G—SÒ&'WGFöâ ¢öä6Æ–6³×·7VvvW7E&–6WÐ¢F—6&ÆVC×·&–6TÆöF–æwÐ¢7G–ÆS×·°¢Ö&v–åF÷¢‚Â&6¶w&÷VæC¢r3rÂ6öÆ÷#¢r4cT3ƒC"rÂ&÷&FW#¢væöæRrÀ¢&÷&FW%&F—W3¢‚ÂFF–æs¢sw‚'‚rÂföçE6—¦S¢ÂföçEvV–v‡C¢sÀ¢7W'6÷#¢&–6TÆöF–æròvæ÷BÖÆÆ÷vVBr¢wö–çFW"rÂF—7Æ“¢vfÆW‚rÀ¢Æ–vä—FV×3¢v6VçFW"rÂv¢RÂ÷6—G“¢&–6TÆöF–æròãr¢ÂföçDfÖ–Ç“¢v–æ†W&—BrÀ¢×Ð¢à¢·&–6TÆöF–æròÇ7â&–Ö†–FFVãÒwG'VRsî(û3Â÷7ãâ¢Ç7â&–Ö†–FFVãÒwG'VRsï	úIcÂ÷7ãçÒ·&–6TÆöF–æròtGV¶RÖVæGV"âââr¢u7Vv¦W&ò:vÖ–Ö–âÖRÆ&’wÐ¢Âö'WGFöãà¢·&–6U7VvvW7F–öâbb&–6U7VvvW7F–öâç7F'G5v—F‚‚vW'#¢r’bb€¢ÆF—b7G–ÆS×·°¢Ö&v–åF÷¢‚Â&6¶w&÷VæC¢r4Tc4DRrÂ&÷&FW#¢sãW‚6öÆ–B3“t3CS’rÀ¢&÷&FW%&F—W3¢’ÂFF–æs¢s‚7‚rÂföçE6—¦S¢"Â6öÆ÷#¢r34#dCrÂÆ–æT†V–v‡C¢ãbÀ¢×Óà¢Ç7â&–Ö†–FFVãÒ'G'VR#ï	ù*Â÷7ãâÇ7G&öæsäÆ&’7Vv¦W&öã£Â÷7G&öæsâ·&–6U7VvvW7F–öçÐ¢ÂöF—cà¢—Ð¢·&–6U7VvvW7F–öãòç7F'G5v—F‚‚vW'#¢r’bb€¢ÆF—b7G–ÆS×·²Ö&v–åF÷¢bÂföçE6—¦S¢Â6öÆ÷#¢r4Sc33"r×Óç·&–6U7VvvW7F–öâç6Æ–6RƒB—ÓÂöF—cà¢—Ð¢ÂöF—cà ¢ÆF—b6Æ74æÖSÒ&f–VÆB#à¢ÆÆ&VÃäv¦VæF¦ÂöÆ&VÃà¢ÆF—b6Æ74æÖSÒ&6öæB×&÷r"&–ÖÆ&VÃÒ$v¦VæF¦#à¢Æ'WGFöâG—SÒ&'WGFöâ"&–×&W76VC×¶f÷&Òæ6öæF—F–öâÓÓÒv•÷&’wÒ6Æ74æÖS×¶6öæBÖ'FâG¶f÷&Òæ6öæF—F–öâÓÓÒv•÷&’ròv7F—fRr¢rwÖÒöä6Æ–6³×²‚’Óâ6WB‚v6öæF—F–öârÂv•÷&’r—ÓãÇ7â&–Ö†–FFVãÒ'G'VR#î)ÊƒÂ÷7ãâ’&“Âö'WGFöãà¢Æ'WGFöâG—SÒ&'WGFöâ"&–×&W76VC×¶f÷&Òæ6öæF—F–öâÓÓÒv•÷W&F÷'W"wÒ6Æ74æÖS×¶6öæBÖ'FâG¶f÷&Òæ6öæF—F–öâÓÓÒv•÷W&F÷'W"ròv7F—fRr¢rwÖÒöä6Æ–6³×²‚’Óâ6WB‚v6öæF—F–öârÂv•÷W&F÷'W"r—ÓãÇ7â&–Ö†–FFVãÒ'G'VR#ï	ùHCÂ÷7ãâ’:·&F÷'W#Âö'WGFöãà¢ÂöF—cà¢ÂöF—cà¢ÂöF—cà ¢Âóà¢§Ð 
+              <button type="button" onClick={() => { localStorage.removeItem('alpazar_listing_draft'); setForm({ title:'', description:'', price:'', currency:'ALL', condition:'', category_id:'', city:'', images:[], latitude:null, longitude:null, location_address:'' }); setDraftRestored(false) }} style={{ marginLeft:'auto', background:'none', border:'none', color:'#166534', cursor:'pointer', fontSize:11, textDecoration:'underline', fontFamily:'inherit' }}>Fshi draft-in</button>
+            </div>
+          )}
+          {msg && <div className={`msg-box ${mt}`} role="alert">{mm}</div>}
+          {uploadProgress && (
+            <div style={{ background:'#e8f4fd', border:'1px solid #90caf9', borderRadius:10, padding:'10px 14px', marginBottom:10, fontSize:13, color:'#1565c0', display:'flex', alignItems:'center', gap:8 }}>
+              <span style={{ fontSize:16 }} aria-hidden="true">â³</span>
+              <div style={{ flex:1 }}>
+                <div style={{ fontWeight:600 }}>Duke ngarkuar foto... {uploadProgress.done}/{uploadProgress.total}</div>
+                {uploadProgress.currentName && <div style={{ color:'#1976d2', marginTop:2 }}>{uploadProgress.currentName}</div>}
+                <div style={{ background:'#bbdefb', borderRadius:4, height:6, marginTop:6, overflow:'hidden' }}>
+                  <div style={{ background:'#1976d2', height:'100%', width:`${Math.round(uploadProgress.done / uploadProgress.total * 100)}%`, transition:'width .3s' }} />
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="card">
+            <div className="card-title"><i className="ti ti-info-circle" aria-hidden="true" />Informacioni bazÃ«</div>
+
+            <div className="field">
+              <label htmlFor="listing-title">Titulli *</label>
+              <input id="listing-title" type="text" placeholder="p.sh. iPhone 13 Pro Max 256GB..." value={form.title} onChange={e => set('title', e.target.value)} maxLength={100} required />
+              <div style={{ textAlign: 'right', fontSize: 10, color: form.title.length > 85 ? '#E63312' : '#aaa', marginTop: 2 }}>{form.title.length}/100</div>
+            </div>
+
+            <div className="field">
+              <label htmlFor="listing-description">PÃ«rshkrimi</label>
+              <textarea id="listing-description" placeholder="PÃ«rshkruaj artikullin â€” gjendje, veÃ§ori, arsye shitjeje..." value={form.description} onChange={e => set('description', e.target.value)} maxLength={2000} />
+              <div style={{ textAlign: 'right', fontSize: 10, color: form.description.length > 1800 ? '#E63312' : '#aaa', marginTop: 2 }}>{form.description.length}/2000</div>
+              <button
+                type="button"
+                onClick={generateDescription}
+                disabled={descLoading}
+                style={{
+                  marginTop: 6, background: '#111', color: '#F5C842', border: 'none',
+                  borderRadius: 8, padding: '7px 12px', fontSize: 11, fontWeight: 700,
+                  cursor: descLoading ? 'not-allowed' : 'pointer', display: 'flex',
+                  alignItems: 'center', gap: 5, opacity: descLoading ? 0.7 : 1, fontFamily: 'inherit',
+                }}
+              >
+                {descLoading ? <span aria-hidden='true'>â³</span> : <span aria-hidden='true'>ðŸ¤–</span>} {descLoading ? 'Duke gjeneruar...' : 'Gjenero pÃ«rshkrim me Albi'}
+              </button>
+            </div>
+
+            <div className="field">
+              <label htmlFor="listing-price">Ã‡mimi</label>
+              <div className="price-row">
+                <input id="listing-price" type="number" placeholder="0" value={form.price} onChange={e => set('price', e.target.value)} min="0" />
+                <select aria-label="Monedha" value={form.currency} onChange={e => set('currency', e.target.value)}>
+                  <option value="ALL">L (LekÃ«)</option>
+                  <option value="EUR">â‚¬ (Euro)</option>
+                </select>
+              </div>
+              <p style={{ fontSize: 10, color: '#aaa', marginTop: 4 }}>LÃ«r bosh pÃ«r "Ã‡mim me marrÃ«veshje"</p>
+              <button
+                type="button"
+                onClick={suggestPrice}
+                disabled={priceLoading}
+                style={{
+                  marginTop: 8, background: '#111', color: '#F5C842', border: 'none',
+                  borderRadius: 8, padding: '7px 12px', fontSize: 11, fontWeight: 700,
+                  cursor: priceLoading ? 'not-allowed' : 'pointer', display: 'flex',
+                  alignItems: 'center', gap: 5, opacity: priceLoading ? 0.7 : 1, fontFamily: 'inherit',
+                }}
+              >
+                {priceLoading ? <span aria-hidden='true'>â³</span> : <span aria-hidden='true'>ðŸ¤–</span>} {priceLoading ? 'Duke menduar...' : 'Sugjero Ã§mimin me Albi'}
+              </button>
+              {priceSuggestion && !priceSuggestion.startsWith('err:') && (
+                <div style={{
+                  marginTop: 8, background: '#EAF3DE', border: '0.5px solid #97C459',
+                  borderRadius: 9, padding: '10px 13px', fontSize: 12, color: '#3B6D11', lineHeight: 1.6,
+                }}>
+                  <span aria-hidden="true">ðŸ’¡</span> <strong>Albi sugjeron:</strong> {priceSuggestion}
+                </div>
+              )}
+              {priceSuggestion?.startsWith('err:') && (
+                <div style={{ marginTop: 6, fontSize: 11, color: '#E63312' }}>{priceSuggestion.slice(4)}</div>
+              )}
+            </div>
+
+            <div className="field">
+              <label>Gjendja</label>
+              <div className="cond-row" aria-label="Gjendja">
+                <button type="button" aria-pressed={form.condition === 'i_ri'} className={`cond-btn ${form.condition === 'i_ri' ? 'active' : ''}`} onClick={() => set('condition', 'i_ri')}><span aria-hidden="true">âœ¨</span> I ri</button>
+                <button type="button" aria-pressed={form.condition === 'i_perdorur'} className={`cond-btn ${form.condition === 'i_perdorur' ? 'active' : ''}`} onClick={() => set('condition', 'i_perdorur')}><span aria-hidden="true">ðŸ”„</span> I pÃ«rdorur</button>
+              </div>
+            </div>
+          </div>
+
+    </>
+  )
+}
