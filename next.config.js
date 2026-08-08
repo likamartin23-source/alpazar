@@ -58,8 +58,25 @@ const nextConfig = {
 
     return [
       {
-        // Faqet dinamike — kurrë mos i cache në CDN
-        source: '/((?!_next/static|_next/image|icons|favicon).*)',
+        // Faqet publike ISR — lejo edge-cache. Autentikimi behet 100% ne klient
+        // (AlpazarProvider), ndaj HTML-ja e serverit eshte e njejte per te gjithe.
+        // Me pare 'no-store' anulonte ISR-in: cdo vizite thirrte funksionin.
+        source: '/',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' },
+          { key: 'Vercel-CDN-Cache-Control', value: 's-maxage=60, stale-while-revalidate=300' },
+        ],
+      },
+      {
+        source: '/listing/:id',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' },
+          { key: 'Vercel-CDN-Cache-Control', value: 's-maxage=120, stale-while-revalidate=600' },
+        ],
+      },
+      {
+        // Pjesa tjeter (llogari, mesazhe, admin, API) — kurre ne CDN
+        source: '/((?!_next/static|_next/image|icons|favicon|listing/).*)',
         headers: [
           { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' },
           { key: 'CDN-Cache-Control', value: 'no-store' },

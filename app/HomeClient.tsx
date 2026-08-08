@@ -549,16 +549,16 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .section-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
         .section-hdr h3{font-size:13px;font-weight:700;color:#111;}
         .section-hdr a{color:#E63312;font-size:11px;text-decoration:none;cursor:pointer;font-weight:600;}
-        .shops-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;}
-        .shop-mini{background:#fff;border-radius:12px;overflow:hidden;cursor:pointer;border:0.5px solid #ececec;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 16px -10px rgba(0,0,0,.14);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;aspect-ratio:3/4;}
+        .shops-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:16px;}
+        .shop-mini{background:#fff;border-radius:14px;overflow:hidden;cursor:pointer;border:1px solid #eee;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 18px -12px rgba(0,0,0,.14);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;}
         .shop-mini:hover{transform:translateY(-3px);box-shadow:0 10px 24px -8px rgba(0,0,0,.2);}
         .shop-mini:active{transform:scale(.96);}
-        .shop-top{flex:0 0 70%;display:flex;align-items:flex-end;padding:5px;position:relative;}
-        .shop-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;border:1.5px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25);}
-        .shop-prem{position:absolute;top:3px;right:3px;font-size:6px;background:#F5C842;color:#111;padding:1px 4px;border-radius:6px;font-weight:700;}
-        .shop-info{flex:0 0 30%;padding:4px 5px;display:flex;flex-direction:column;justify-content:center;}
-        .shop-nm{font-size:7.5px;font-weight:700;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-        .shop-ct{font-size:6.5px;color:#aaa;margin-top:1px;}
+        .shop-top{flex:none;width:100%;aspect-ratio:4/3;display:flex;align-items:flex-end;padding:8px;position:relative;}
+        .shop-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;border:1.5px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25);}
+        .shop-prem{position:absolute;top:6px;right:6px;font-size:9px;background:#F5C842;color:#111;padding:3px 7px;border-radius:999px;font-weight:700;}
+        .shop-info{flex:1 1 auto;padding:9px 10px 10px;display:flex;flex-direction:column;gap:3px;}
+        .shop-nm{font-size:13px;font-weight:700;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .shop-ct{font-size:11px;color:#6B6B6B;}
         /* Filter row */
         .filter-row{display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;}
         .filter-row::-webkit-scrollbar{display:none;}
@@ -566,26 +566,26 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .filter-btn:hover{border-color:#F5C842;color:#E63312;}
         .filter-btn.active{background:#111;border-color:#111;color:#F5C842;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.15);}
         /* Listings grid — raporti 70% foto / 30% të dhëna — 3 kolona (-40%) */
-        .listings-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;}
-        .listing-card{background:#fff;border:0.5px solid #ececec;border-radius:12px;overflow:hidden;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 16px -10px rgba(0,0,0,.14);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;aspect-ratio:3/4;animation:card-in .45s cubic-bezier(.2,.8,.2,1) both;}
+        .listings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:16px;}
+        .listing-card{background:#fff;border:1px solid #eee;border-radius:14px;overflow:hidden;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 18px -12px rgba(0,0,0,.14);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;animation:card-in .45s cubic-bezier(.2,.8,.2,1) both;}
         @keyframes card-in{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
         @media (prefers-reduced-motion: reduce){.listing-card{animation:none;}.card-img img{transition:none;}.listing-card:hover .card-img img{transform:none;}}
         .listing-card:hover{transform:translateY(-3px);box-shadow:0 12px 28px -8px rgba(0,0,0,.22);border-color:#f2ded7;}
         .listing-card:hover .card-img img{transform:scale(1.05);}
         .listing-card:focus-visible{outline:2px solid #E63312;outline-offset:2px;}
         .listing-card:active{transform:scale(.97);}
-        .card-img{flex:0 0 70%;position:relative;background:linear-gradient(135deg,#FBF7E8,#F2EAD0);overflow:hidden;display:flex;align-items:center;justify-content:center;}
+        .card-img{flex:none;width:100%;aspect-ratio:4/3;position:relative;background:linear-gradient(135deg,#FBF7E8,#F2EAD0);overflow:hidden;display:flex;align-items:center;justify-content:center;}
         .card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;transition:transform .35s cubic-bezier(.2,.8,.2,1);}
-        .card-img i{font-size:20px;color:#d0c9a0;}
-        .badge-new{position:absolute;top:4px;left:4px;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;font-size:6px;padding:2px 5px;border-radius:6px;font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(230,51,18,.4);letter-spacing:.2px;}
-        .badge-used{position:absolute;top:4px;left:4px;background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;font-size:6px;padding:2px 5px;border-radius:6px;font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(0,0,0,.3);letter-spacing:.2px;}
-        .badge-premium{position:absolute;top:4px;right:4px;background:linear-gradient(135deg,#F8D24E,#F5C842);color:#111;font-size:6px;padding:2px 5px;border-radius:6px;font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(245,200,66,.5);}
-        .card-body{flex:0 0 30%;padding:4px 5px;display:flex;flex-direction:column;justify-content:space-between;min-height:0;}
-        .card-title{font-size:7.5px;font-weight:700;color:#222;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
-        .card-price{font-size:8px;font-weight:800;color:#E63312;}
+        .card-img i{font-size:28px;color:#d0c9a0;}
+        .badge-new{position:absolute;top:6px;left:6px;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;font-size:9px;padding:3px 7px;border-radius:999px;font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(230,51,18,.4);letter-spacing:.2px;}
+        .badge-used{position:absolute;top:6px;left:6px;background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;font-size:9px;padding:3px 7px;border-radius:999px;font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(0,0,0,.3);letter-spacing:.2px;}
+        .badge-premium{position:absolute;top:6px;right:6px;background:linear-gradient(135deg,#F8D24E,#F5C842);color:#111;font-size:9px;padding:3px 7px;border-radius:999px;font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(245,200,66,.5);}
+        .card-body{flex:1 1 auto;padding:9px 10px 10px;display:flex;flex-direction:column;gap:4px;min-height:0;}
+        .card-title{font-size:13px;line-height:1.3;font-weight:700;color:#222;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;min-height:2.6em;}
+        .card-price{font-size:14px;font-weight:800;color:#E63312;}
         .card-meta{display:flex;align-items:center;justify-content:space-between;}
-        .card-loc{font-size:6.5px;color:#aaa;display:flex;align-items:center;gap:1px;}
-        .card-loc i{font-size:6.5px;}
+        .card-loc{font-size:11px;color:#6B6B6B;display:flex;align-items:center;gap:3px;}
+        .card-loc i{font-size:11px;}
         .empty-state{grid-column:1/-1;text-align:center;padding:36px 16px;background:linear-gradient(135deg,#f9f5e0,#f5f0d5);border:0.5px solid #eee;border-radius:13px;}
         .empty-state i{font-size:40px;color:#F5C842;display:block;margin-bottom:10px;}
         .empty-state h3{font-size:14px;font-weight:700;color:#555;margin-bottom:6px;}
@@ -909,7 +909,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                           <i className="ti ti-map-pin" aria-hidden="true" />
                           {listing.city || 'Shqipëri'}
                         </span>
-                        <span style={{ fontSize: 6, color: '#ccc', flexShrink: 0 }}>{mounted ? timeAgo(listing.created_at) : ''}</span>
+                        <span style={{ fontSize: 11, color: '#6B6B6B', flexShrink: 0 }}>{mounted ? timeAgo(listing.created_at) : ''}</span>
                       </div>
                       {(listing as any).author && (
                         <div
