@@ -18,7 +18,6 @@ export function PremiumUpsellModal({
 }) {
   const [show, setShow] = useState(false)
   const [dismissed, setDismissed] = useState(false)
-  const [countdown, setCountdown] = useState(15 * 60) // 15 min offer countdown
 
   useEffect(() => {
     if (dismissed) return
@@ -44,18 +43,14 @@ export function PremiumUpsellModal({
   useEffect(() => {
     if (!show) return
     localStorage.setItem(`alpazar_upsell_${trigger}`, String(Date.now()))
-    const t = setInterval(() => setCountdown(c => c > 0 ? c - 1 : 0), 1000)
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close() }
     document.addEventListener('keydown', onKey)
-    return () => { clearInterval(t); document.removeEventListener('keydown', onKey) }
+    return () => { document.removeEventListener('keydown', onKey) }
   }, [show])
 
   function close() { setShow(false); setDismissed(true); onClose?.() }
 
   if (!show) return null
-
-  const mins = Math.floor(countdown / 60).toString().padStart(2, '0')
-  const secs = (countdown % 60).toString().padStart(2, '0')
 
   return (
     <div
@@ -118,12 +113,6 @@ export function PremiumUpsellModal({
           <div className="ups-price">
             {price}€<span>/ muaj · Anulo kurdo</span>
           </div>
-          {countdown > 0 && (
-            <div className="ups-timer">
-              <div className="ups-timer-n">{mins}:{secs}</div>
-              <div className="ups-timer-l">Oferta skadon</div>
-            </div>
-          )}
         </div>
         <button type="button" className="ups-cta" onClick={() => { window.location.href = '/premium'; close() }}>
           <><span aria-hidden="true">👑</span> Aktivizo Premium Tani</>
@@ -135,49 +124,30 @@ export function PremiumUpsellModal({
 }
 
 // ── Social Proof Bar ─────────────────────────────────────────────────
-// Rreshti i vogël "X njerëz po shikojnë këtë shpallje tani"
-export function SocialProofBar({ viewsCount, listingId }: { viewsCount: number; listingId: string }) {
-  const [liveViewers, setLiveViewers] = useState(Math.floor(Math.random() * 4) + 1)
-
-  useEffect(() => {
-    // Simulate live viewers fluctuation every 15-40s
-    const randomInterval = () => Math.floor(Math.random() * 25000) + 15000
-    let t: ReturnType<typeof setTimeout>
-    function tick() {
-      setLiveViewers(v => Math.max(1, v + (Math.random() > 0.5 ? 1 : -1)))
-      t = setTimeout(tick, randomInterval())
-    }
-    t = setTimeout(tick, randomInterval())
-    return () => clearTimeout(t)
-  }, [listingId])
-
+// Rreshti i vogël me interesin REAL të shpalljes.
+// KUJDES: më parë kjo shfaqte "X persona po shikojnë tani" të prodhuar me
+// Math.random() (jo prezencë reale) — praktikë mashtruese që dëmton besimin
+// dhe bie ndesh me DESIGN.md ("gjithmonë përmbajtje reale"). U hoq.
+// Nëse duhet prezencë e vërtetë, lidhe me Supabase Realtime presence.
+export function SocialProofBar({ viewsCount }: { viewsCount: number; listingId?: string }) {
+  if (!viewsCount || viewsCount < 1) return null
   return (
     <div style={{
       background: '#FFF8EE', border: '0.5px solid #F5C842', borderRadius: 10,
       padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10,
     }}>
-      <div style={{ display: 'flex', gap: 2 }}>
-        {Array.from({ length: Math.min(liveViewers, 4) }).map((_, i) => (
-          <div key={i} style={{
-            width: 22, height: 22, borderRadius: '50%', background: `hsl(${i * 40 + 20},70%,60%)`,
-            border: '2px solid #FFF8EE', marginLeft: i ? -6 : 0,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10,
-          }} aria-hidden="true">👤</div>
-        ))}
-      </div>
+      <div style={{
+        width: 26, height: 26, borderRadius: '50%', background: '#F5C842', flexShrink: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13,
+      }} aria-hidden="true">👁</div>
       <div style={{ flex: 1 }}>
-        <span style={{ fontSize: 11, fontWeight: 700, color: '#111' }}>
-          {liveViewers} {liveViewers === 1 ? 'person' : 'persona'} po shikojnë tani
+        <span style={{ fontSize: 11, fontWeight: 700, color: '#111', display: 'block' }}>
+          {viewsCount.toLocaleString('sq-AL')} {viewsCount === 1 ? 'shikim' : 'shikime'}
         </span>
-        <span style={{ fontSize: 10, color: '#888', display: 'block' }}>
-          <><span aria-hidden="true">👁</span> {viewsCount.toLocaleString()} shikime totale</>
+        <span style={{ fontSize: 10, color: '#6B6B6B', display: 'block' }}>
+          Interes real për këtë shpallje
         </span>
       </div>
-      <span style={{
-        background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', fontSize: 9, fontWeight: 700,
-        padding: '3px 8px', borderRadius: 6, animation: 'pulse-dot 2s infinite',
-      }}>LIVE</span>
-      <style dangerouslySetInnerHTML={{ __html: `@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.6}}` }} />
     </div>
   )
 }

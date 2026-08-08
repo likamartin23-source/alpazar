@@ -25,6 +25,9 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     title,
     description: desc,
     alternates: { canonical: url },
+    // Faqja renderohet ne klient (HTML server bosh) -> permbajtje e holle.
+    // Deri sa te behet SSR, mos e indekso por ndiq linqet drejt shpalljeve.
+    robots: { index: false, follow: true },
     openGraph: {
       type: 'website',
       url,

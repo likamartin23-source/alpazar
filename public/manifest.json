@@ -61,7 +61,7 @@
       "name": "Dyqane Premium",
       "short_name": "Dyqane",
       "description": "Shfleto dyqanet online",
-      "url": "/dyqane?source=shortcut",
+      "url": "/biznese?source=shortcut",
       "icons": [{ "src": "/icons/icon-96.png?v=3", "sizes": "96x96", "type": "image/png" }]
     },
     {

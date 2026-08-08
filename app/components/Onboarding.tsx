@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 export function Onboarding() {
   const [visible, setVisible] = useState(false)
+  const dialogRef = useRef<HTMLDivElement>(null)
   const [step, setStep] = useState(0)
 
   useEffect(() => {
@@ -16,10 +17,22 @@ export function Onboarding() {
     setVisible(false)
   }
 
+  // A11y (WCAG 2.1.1 / 2.4.3): Escape mbyll + fokusi hyn brenda dialogut.
+  useEffect(() => {
+    if (!visible) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close() }
+    document.addEventListener('keydown', onKey)
+    const t = setTimeout(() => {
+      dialogRef.current?.querySelector<HTMLElement>('button')?.focus()
+    }, 50)
+    return () => { document.removeEventListener('keydown', onKey); clearTimeout(t) }
+  }, [visible])
+
   if (!visible) return null
 
   return (
     <div
+      ref={dialogRef}
       role="dialog"
       aria-modal="true"
       aria-label="Mirë se erdhe në Alpazar"

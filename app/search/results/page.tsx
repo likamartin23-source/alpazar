@@ -693,7 +693,12 @@ const [searchError, setSearchError] = useState(false)
 
             {/* Premium only */}
             <div className="fp-row"
+              role="switch"
+              aria-checked={premiumOnly}
+              aria-label="Vetëm Premium"
+              tabIndex={0}
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: premiumOnly ? '#FFF8EE' : '#f9f9f7', border: `1.5px solid ${premiumOnly ? '#e0b030' : '#eee'}`, borderRadius: 12, padding: '12px 14px', cursor: 'pointer' }}
+              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setPremiumOnly(v => !v) } }}
               onClick={() => setPremiumOnly(v => !v)}>
               <div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: '#111' }}>Vetëm Premium</div>

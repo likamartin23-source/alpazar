@@ -6,7 +6,7 @@ export interface UploadProgress { done: number; total: number; currentName?: str
 
 // Optimizim (jo kufi): fotot shume te medha zvogelohen per shpejtesi, por ASNJE
 // skedar nuk refuzohet per madhesi. Kufijte e bucket-eve jane hequr (universal).
-const MAX_DIM = 2560
+const MAX_DIM = 1600
 const IMG_CONCURRENCY = 3
 const RESUMABLE_THRESHOLD = 20 * 1024 * 1024 // >20MB -> ngarkim me copeza (TUS)
 const CHUNK = 6 * 1024 * 1024
@@ -49,7 +49,7 @@ function compressViaImage(file: File): Promise<Blob> {
       if (!ctx) { resolve(file); return }
       ctx.drawImage(img, 0, 0, w, h)
       const webp = supportsWebp()
-      const blob = await canvasToBlob(canvas, webp ? 'image/webp' : 'image/jpeg', webp ? 0.85 : 0.82)
+      const blob = await canvasToBlob(canvas, webp ? 'image/webp' : 'image/jpeg', webp ? 0.80 : 0.78)
       resolve(blob && blob.size < file.size ? blob : file)
     }
     img.onerror = () => { URL.revokeObjectURL(objUrl); resolve(file) }
@@ -77,7 +77,7 @@ async function compress(file: File): Promise<Blob> {
     bmp.close?.()
     const webp = supportsWebp()
     const type = webp ? 'image/webp' : 'image/jpeg'
-    let blob = await canvasToBlob(canvas, type, webp ? 0.85 : 0.82)
+    let blob = await canvasToBlob(canvas, type, webp ? 0.80 : 0.78)
     if (blob && blob.size > 2 * 1024 * 1024) {
       const smaller = await canvasToBlob(canvas, type, webp ? 0.7 : 0.68)
       if (smaller && smaller.size < blob.size) blob = smaller

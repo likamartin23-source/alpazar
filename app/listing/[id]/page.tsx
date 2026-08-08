@@ -4,7 +4,9 @@ import ListingPageClient from './ListingPageClient'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../lib/supabase'
 import { SITE_URL } from '../../../lib/siteConfig'
 
-export const dynamic = 'force-dynamic'
+// ISR: permbajtja e shpalljes ndryshon rralle; klienti rifreskon live ne mount.
+// Zevendeson force-dynamic -> TTFB me i shpejte + kursen crawl budget.
+export const revalidate = 120
 
 async function fetchListingData(id: string) {
   const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
@@ -57,17 +59,30 @@ export default async function ListingPage({ params }: { params: { id: string } }
         '@type': 'Product',
         name: listing.title,
         description: listing.description || listing.title,
-        image: listing.images || [],
+        image: (listing.images && listing.images.length)
+          ? listing.images
+          : [`${SITE_URL}/icons/icon-512.png`],
         url: `${SITE_URL}/listing/${params.id}`,
-        offers: {
-          '@type': 'Offer',
-          price: listing.price || 0,
-          priceCurrency: listing.currency === 'EUR' ? 'EUR' : 'ALL',
-          availability: listing.is_active
-            ? 'https://schema.org/InStock'
-            : 'https://schema.org/OutOfStock',
-          url: `${SITE_URL}/listing/${params.id}`,
-        },
+        ...(listing.condition === 'i_ri' || listing.condition === 'i_perdorur'
+          ? { itemCondition: listing.condition === 'i_ri'
+              ? 'https://schema.org/NewCondition'
+              : 'https://schema.org/UsedCondition' }
+          : {}),
+        // Offer vetem kur ka cmim real — price:"0" e bente Offer-in invalid
+        // (shpalljet "me marreveshje" humbisnin te gjithe rich-result-in).
+        ...(Number(listing.price) > 0
+          ? {
+              offers: {
+                '@type': 'Offer',
+                price: listing.price,
+                priceCurrency: listing.currency === 'EUR' ? 'EUR' : 'ALL',
+                availability: listing.is_active
+                  ? 'https://schema.org/InStock'
+                  : 'https://schema.org/OutOfStock',
+                url: `${SITE_URL}/listing/${params.id}`,
+              },
+            }
+          : {}),
       }).replace(/</g, '\\u003c').replace(/>/g, '\\u003e')
     : null
 

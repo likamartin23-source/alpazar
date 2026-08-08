@@ -894,7 +894,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                   <div key={listing.id} className="listing-card" style={{ animationDelay: `${Math.min(idx * 45, 360)}ms` }} role="link" tabIndex={0} onClick={() => go(`/listing/${listing.id}`)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') go(`/listing/${listing.id}`) }}>
                     <div className="card-img">
                       {listing.images?.[0]
-                        ? <img src={listing.images[0]} alt={listing.title} loading="lazy" width={400} height={300} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
+                        ? <img src={listing.images[0]} alt={listing.title} loading={idx < 3 ? 'eager' : 'lazy'} fetchPriority={idx < 3 ? 'high' : 'auto'} decoding="async" width={400} height={300} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
                         : <i className="ti ti-photo" style={{ fontSize: 26, color: '#ccc' }} aria-hidden="true" />
                       }
                       {listing.condition === 'i_ri' && <span className="badge-new">I ri</span>}
@@ -913,7 +913,11 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                       </div>
                       {(listing as any).author && (
                         <div
+                          role="link"
+                          tabIndex={0}
+                          aria-label={`Profili i ${(listing as any).author.full_name || (listing as any).author.username || 'shitësit'}`}
                           style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6, paddingTop: 6, borderTop: '1px solid #f0f0f0' }}
+                          onKeyDown={e => { if (e.key === 'Enter') { e.stopPropagation(); go(`/u/${(listing as any).author.id}`) } }}
                           onClick={e => { e.stopPropagation(); go(`/u/${(listing as any).author.id}`) }}
                         >
                           <Avatar
