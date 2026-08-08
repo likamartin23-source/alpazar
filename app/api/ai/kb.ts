@@ -75,7 +75,7 @@ export function localFallback(userMessage: string): string {
   for (const faq of FAQ) {
     if (faq.keys.some(k => msg.includes(k))) return faq.answer
   }
-  return 'Përshëndetje! Unë jam **Albi 🤖*, asistenti i Alpazar. Mund të të ndihmoj me shpallje, çmime, kategori dhe sigurinë e blerjeve. Çfarë dëshiron të dish? 😊'
+  return 'Përshëndetje! Unë jam Albi 🤖, asistenti i Alpazar. Mund të të ndihmoj me shpallje, çmime, kategori dhe sigurinë e blerjeve. Çfarë dëshiron të dish? 😊'
 }
 
 export function buildSystemPrompt(liveCtx: string, lang: string): string {
