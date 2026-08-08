@@ -264,6 +264,10 @@ export default function HomeClient({ initialListings = [], initialCategories = [
   const settings: Record<string, string> = {}
   const [newListingBadge, setNewListingBadge] = useState(false)
   const [recentlyViewed, setRecentlyViewed] = useState<any[]>([])
+  // Hidratimi: koha relative (timeAgo) varet nga Date.now() → ndryshon mes
+  // serverit dhe klientit. Renderohet vetëm pas mount-it që SSR-i dhe render-i
+  // i parë në klient të jenë identikë (pa React #418/#425).
+  const [mounted, setMounted] = useState(false)
 
   // Realtime listings via hook
   useRealtimeTable<Listing>(
@@ -426,6 +430,8 @@ export default function HomeClient({ initialListings = [], initialCategories = [
     return () => document.removeEventListener('mousedown', handleOutside)
   }, [])
 
+  useEffect(() => { setMounted(true) }, [])
+
   const fmt = (price: number, cur: string) =>
     !price ? 'Çmim me marrëveshje' :
     cur === 'EUR' ? `${price.toLocaleString('sq-AL')} €` : `${price.toLocaleString('sq-AL')} L`
@@ -563,9 +569,10 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .listings-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;}
         .listing-card{background:#fff;border:0.5px solid #ececec;border-radius:12px;overflow:hidden;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 16px -10px rgba(0,0,0,.14);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;aspect-ratio:3/4;animation:card-in .45s cubic-bezier(.2,.8,.2,1) both;}
         @keyframes card-in{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
-        @media (prefers-reduced-motion: reduce){.listing-card{animation:none;}}
+        @media (prefers-reduced-motion: reduce){.listing-card{animation:none;}.card-img img{transition:none;}.listing-card:hover .card-img img{transform:none;}}
         .listing-card:hover{transform:translateY(-3px);box-shadow:0 12px 28px -8px rgba(0,0,0,.22);border-color:#f2ded7;}
         .listing-card:hover .card-img img{transform:scale(1.05);}
+        .listing-card:focus-visible{outline:2px solid #E63312;outline-offset:2px;}
         .listing-card:active{transform:scale(.97);}
         .card-img{flex:0 0 70%;position:relative;background:linear-gradient(135deg,#FBF7E8,#F2EAD0);overflow:hidden;display:flex;align-items:center;justify-content:center;}
         .card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;transition:transform .35s cubic-bezier(.2,.8,.2,1);}
@@ -902,7 +909,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                           <i className="ti ti-map-pin" aria-hidden="true" />
                           {listing.city || 'Shqipëri'}
                         </span>
-                        <span style={{ fontSize: 6, color: '#ccc', flexShrink: 0 }}>{timeAgo(listing.created_at)}</span>
+                        <span style={{ fontSize: 6, color: '#ccc', flexShrink: 0 }}>{mounted ? timeAgo(listing.created_at) : ''}</span>
                       </div>
                       {(listing as any).author && (
                         <div

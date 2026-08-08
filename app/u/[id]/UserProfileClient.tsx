@@ -15,8 +15,8 @@ function timeAgo(dateStr: string) {
   return `${Math.floor(m / 12)} vite më parë`
 }
 
-function formatPrice(price: number, currency: string) {
-  if (price === 0) return 'Falas'
+function formatPrice(price: number | null | undefined, currency: string) {
+  if (!price) return 'Me marrëveshje'
   return `${price.toLocaleString('sq-AL')} ${currency || 'L'}`
 }
 
