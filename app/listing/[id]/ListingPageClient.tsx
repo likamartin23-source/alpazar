@@ -292,6 +292,15 @@ export default function ListingPageClient({ params, initialListing }: { params: 
   }
 
   async function fetchSimilarListings(categoryId: string, currentId: string, city?: string, price?: number) {
+    // Semantike së pari (pgvector /api/similar): shpallje të ngjashme sipas KUPTIMIT.
+    // Bie te përputhja sipas kategori/qytet/çmim si fallback nëse s'ka mjaftueshëm.
+    try {
+      const r = await fetch(`/api/similar?id=${currentId}`)
+      if (r.ok) {
+        const j = await r.json()
+        if (Array.isArray(j.results) && j.results.length >= 3) { setSimilar(j.results); return }
+      }
+    } catch { /* fallback më poshtë */ }
     let q = supabase
       .from('listings')
       .select('id,title,price,currency,images,condition,city,is_premium,views_count')
