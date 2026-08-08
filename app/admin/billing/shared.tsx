@@ -40,4 +40,18 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA}
 .msg{border-radius:10px;padding:9px 13px;font-size:12px;font-weight:600;margin-bottom:10px}
 .msg.ok{background:#EAF3DE;color:#3B6D11;border:.5px solid #97C459}
 .msg.err{background:#FFF0EE;color:#E63312;border:.5px solid #F09595}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+.st{background:#fff;border:.5px solid #eee;border-radius:10px;padding:9px 6px;text-align:center}
+.st b{display:block;font-size:16px;font-weight:800;color:#111}
+.st span{font-size:9px;color:#888}
+.search{width:100%;border:1.5px solid #e0e0e0;border-radius:10px;padding:10px 12px;font-size:13px;font-family:inherit;background:#fff;margin-bottom:4px}
+.pill{font-size:8px;font-weight:800;padding:2px 6px;border-radius:5px;margin-left:5px;vertical-align:middle}
+.pill.admin{background:#111;color:#F5C842}
+.pill.prem{background:#FFF3C4;color:#8a6d00}
+.pill.susp{background:#FFF0EE;color:#E63312}
+.pill.ver{background:#EAF3DE;color:#3B6D11}
+.panel{border-top:.5px solid #eee;margin-top:10px;padding-top:10px}
+.sub-t{font-size:11px;font-weight:700;color:#666;margin:10px 0 6px}
+.btn.danger{background:#fff;border-color:#E63312;color:#E63312}
+.btns{flex-wrap:wrap}
 `
