@@ -674,7 +674,22 @@ export default function Admin() {
     const subsList = ((pm as any)?.subs || [])
     const rev = subsList.filter((p: any) => p.status === 'active')
       .reduce((s: number, p: any) => s + Number(p.amount_eur || 0), 0)
-    setStats({ users: u||0, premium: pr||0, revenue: rev, listings: l||0, messages: msgs||0, reports: reps||0 })
+
+    // Burimi zyrtar i statistikave — nje RPC e vetme, e njejta e vertete si kudo.
+    const { data: st } = await supabase.rpc('admin_stats')
+    if (st && !(st as any).error) {
+      const s: any = st
+      setStats({
+        users: s.users_total ?? u ?? 0,
+        premium: s.users_premium ?? pr ?? 0,
+        revenue: Number(s.mrr_eur ?? rev) || 0,
+        listings: s.listings_active ?? l ?? 0,
+        messages: s.messages_total ?? msgs ?? 0,
+        reports: s.reports_pending ?? reps ?? 0,
+      })
+    } else {
+      setStats({ users: u||0, premium: pr||0, revenue: rev, listings: l||0, messages: msgs||0, reports: reps||0 })
+    }
     setPayments(subsList)
     setMethods(mt || [])
     setPremiumRequests(preq || [])

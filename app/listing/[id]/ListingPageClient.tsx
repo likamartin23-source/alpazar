@@ -311,6 +311,13 @@ export default function ListingPageClient({ params, initialListing }: { params: 
     if (price && price > 0) {
       q = q.gte('price', price * 0.7).lte('price', price * 1.3)
     }
+    // Fillimisht rekomandimi semantik (pgvector). Nese s'ka embedding ende,
+    // biem butesisht te logjika e meparshme sipas kategorise dhe shikimeve.
+    try {
+      const { data: sim } = await supabase.rpc('recommend_similar', { p_listing_id: currentId, p_k: 4 })
+      if (Array.isArray(sim) && sim.length > 0) { setSimilar(sim as any); return }
+    } catch { /* pa embedding — vazhdo me rezerven */ }
+
     const { data } = await q.order('views_count', { ascending: false }).limit(4)
     if (data && data.length > 0) {
       setSimilar(data)
