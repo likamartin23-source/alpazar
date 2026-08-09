@@ -2,10 +2,14 @@
 
 const d = (x: any) => (x ? new Date(x).toLocaleDateString('sq-AL') : '')
 
-export function UserRow({ u, plans, pick, setPick, busy, confirmDel, setConfirmDel, call }: any) {
+export function UserRow({ u, plans, pick, setPick, busy, confirmDel, setConfirmDel, call, selected, onToggle }: any) {
   const subs = u.subscriptions || []
   return (
-    <tr>
+    <tr style={selected ? { background: '#FFFDF3' } : undefined}>
+      <td style={{ width: 28 }}>
+        <input type="checkbox" checked={!!selected} onChange={() => onToggle(u.id)}
+          aria-label={`Zgjidh ${u.full_name || u.username || 'perdoruesin'}`} />
+      </td>
       <td>
         <strong style={{ fontSize: 11.5 }}>{u.full_name || u.username || '—'}</strong>
         <div style={{ color: '#999', fontSize: 10 }}>
