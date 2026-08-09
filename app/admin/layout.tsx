@@ -6,6 +6,7 @@ const LINKS = [
   ['/admin', 'layout-dashboard', 'Paneli'],
   ['/admin/users', 'users', 'Përdoruesit'],
   ['/admin/billing', 'credit-card', 'Billing'],
+  ['/admin/invoices', 'file-invoice', 'Faturat'],
 ] as const
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
