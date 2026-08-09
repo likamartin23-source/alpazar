@@ -6,18 +6,13 @@ import { useEffect, useState } from 'react'
 import nextDynamic from 'next/dynamic'
 import { supabase } from '../../../../lib/supabase'
 import { uploadImages, UploadProgress } from '../../../../lib/uploadImages'
+import { useVideos } from '../../new/useVideos'
 
 const MapPicker = nextDynamic(() => import('../../../components/MapPicker').then(m => ({ default: m.MapPicker })), { ssr: false })
 
 
 export default function EditListing({ params }: { params: { id: string } }) {
-  const [ent, setEnt] = useState<any>(null)
-  const maxImages: number = ent?.max_images ?? 10
-
-  // I njejti burim si te krijimi i shpalljes — kurre dy kufij te ndryshem.
-  useEffect(() => {
-    supabase.rpc('get_my_entitlements').then(({ data }) => setEnt(data), () => {})
-  }, [])
+  const [existingVideos, setExistingVideos] = useState<any[]>([])
   const [user, setUser]       = useState<any>(null)
   const [categories, setCategories] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
@@ -35,6 +30,8 @@ export default function EditListing({ params }: { params: { id: string } }) {
   const [existingImages, setExistingImages] = useState<string[]>([])
   const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null)
   const [isDirty, setIsDirty] = useState(false)
+  const vid = useVideos(setMsg, setIsDirty, existingVideos.length)
+  const maxImages: number = vid.maxImages
 
   useEffect(() => {
     return () => { imagePreviews.forEach(url => URL.revokeObjectURL(url)) }
@@ -71,6 +68,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
 
       if (cats) setCategories(cats)
       setExistingImages(listing.images || [])
+    setExistingVideos(Array.isArray(listing.videos) ? listing.videos : [])
       setForm({
         title: listing.title || '',
         description: listing.description || '',
@@ -119,6 +117,11 @@ export default function EditListing({ params }: { params: { id: string } }) {
     setExistingImages(imgs => imgs.filter(i => i !== url))
   }
 
+  function removeExistingVideo(i: number) {
+    setExistingVideos(v => v.filter((_, idx) => idx !== i))
+    setIsDirty(true)
+  }
+
   async function submit() {
     if (!form.title.trim()) { setMsg('err:Titulli është i detyrueshëm!'); return }
     if (!form.category_id)  { setMsg('err:Zgjidh kategorinë!'); return }
@@ -146,6 +149,13 @@ export default function EditListing({ params }: { params: { id: string } }) {
       setUploadProgress(null)
       const allImages = [...existingImages, ...newUrls]
 
+      let allVideos: any[] = existingVideos
+      if (vid.count > 0) {
+        const rv = await vid.uploadAll()
+        if (rv.error) { setMsg(`err:Video: ${rv.error}`); setLoading(false); return }
+        allVideos = [...existingVideos, ...rv.videos]
+      }
+
       const { error } = await supabase.from('listings').update({
         title: form.title.trim(),
         description: form.description.trim() || null,
@@ -155,6 +165,8 @@ export default function EditListing({ params }: { params: { id: string } }) {
         category_id: form.category_id,
         city: form.city,
         images: allImages,
+        videos: allVideos,
+        video_poster: allImages[0] || null,
         latitude: form.latitude,
         longitude: form.longitude,
         location_address: form.location_address || null,
@@ -375,6 +387,62 @@ export default function EditListing({ params }: { params: { id: string } }) {
                   )
                 })}
               </div>
+            )}
+          </div>
+
+          <div className="card">
+            <div className="card-title">
+              <i className="ti ti-video" aria-hidden="true" />
+              Videot ({existingVideos.length + vid.count}/{vid.maxVideos < 0 ? '∞' : vid.maxVideos})
+            </div>
+
+            {existingVideos.length > 0 && (
+              <div style={{ display: 'grid', gap: 8, marginBottom: 10 }}>
+                {existingVideos.map((v: any, i: number) => (
+                  <div key={i} style={{ position: 'relative' }}>
+                    <video src={v?.url || v} controls playsInline preload="metadata"
+                      style={{ width: '100%', maxHeight: 200, borderRadius: 12, background: '#000', display: 'block' }} />
+                    <button type="button" aria-label={`Hiq videon ${i + 1}`} onClick={() => removeExistingVideo(i)}
+                      style={{ position: 'absolute', top: 8, right: 8, background: 'rgba(0,0,0,.62)', color: '#fff', border: 'none', borderRadius: 999, width: 30, height: 30, cursor: 'pointer', fontSize: 16, lineHeight: 1 }}>
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {(vid.maxVideos < 0 || existingVideos.length + vid.count < vid.maxVideos) ? (
+              <label className="img-zone" onClick={() => document.getElementById('vid-input')?.click()}>
+                <input id="vid-input" type="file" accept="video/*" multiple onChange={vid.add} />
+                <i className="ti ti-video" aria-hidden="true" />
+                <p>Kliko për të shtuar video</p>
+                <p style={{ fontSize: 10, marginTop: 4, color: '#bbb' }}>
+                  Deri në {vid.maxMin} minuta secila · max {vid.maxVideos < 0 ? '∞' : vid.maxVideos} video
+                </p>
+              </label>
+            ) : (
+              <div style={{ background: '#FFF8E1', border: '1px solid #FFE082', borderRadius: 10, padding: '10px 12px', fontSize: 11.5, color: '#856404' }}>
+                Ke arritur kufirin prej {vid.maxVideos} videosh.
+              </div>
+            )}
+
+            {vid.count > 0 && (
+              <div style={{ display: 'grid', gap: 8, marginTop: 10 }}>
+                {vid.items.map((it: any, i: number) => (
+                  <div key={i} style={{ position: 'relative' }}>
+                    <video src={it.preview} controls playsInline preload="metadata"
+                      style={{ width: '100%', maxHeight: 200, borderRadius: 12, background: '#000', display: 'block' }} />
+                    <button type="button" aria-label={`Hiq videon e re ${i + 1}`} onClick={() => vid.remove(i)}
+                      style={{ position: 'absolute', top: 8, right: 8, background: 'rgba(0,0,0,.62)', color: '#fff', border: 'none', borderRadius: 999, width: 30, height: 30, cursor: 'pointer', fontSize: 16, lineHeight: 1 }}>
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {vid.uploading && (
+              <div style={{ marginTop: 10, fontSize: 12, color: '#1565c0' }}>Duke ngarkuar videot… {vid.pct}%</div>
             )}
           </div>
 
