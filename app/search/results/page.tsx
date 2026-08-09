@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic'
 import { useEffect, useState, useRef } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { SkeletonGrid } from '../../components/Skeleton'
+import { nf } from '../../../lib/format'
 
 const CITIES = ['Tiranë', 'Durrës', 'Vlorë', 'Shkodër', 'Elbasan', 'Fier', 'Korçë', 'Berat', 'Lushnjë', 'Kavajë', 'Gjirokastër', 'Sarandë', 'Lezhë', 'Kukës', 'Pogradec', 'Peshkopi', 'Tropojë', 'Përmet', 'Tepelenë', 'Tjetër']
 
@@ -21,7 +22,7 @@ const SHOP_CATEGORIES = [
 
 function fmt(price: number, cur: string) {
   if (!price) return 'Me marrëveshje'
-  return cur === 'EUR' ? `${price.toLocaleString()} €` : `${price.toLocaleString()} L`
+  return cur === 'EUR' ? `${nf(price)} €` : `${nf(price)} L`
 }
 
 function ShopCard({ shop }: { shop: any }) {

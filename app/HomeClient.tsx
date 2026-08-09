@@ -12,6 +12,7 @@ import { Onboarding } from './components/Onboarding'
 import { useAlpazar } from '../lib/context'
 import { saveRefFromUrl } from '../lib/referral'
 import { SITE_URL } from '../lib/siteConfig'
+import { nf } from '../lib/format'
 
 // Banner shkarkim — buton i vogël katrore pulsues (fixed, vetem faqja kryesore)
 function InstallBanner() {
@@ -439,7 +440,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
 
   const fmt = (price: number, cur: string) =>
     !price ? 'Çmim me marrëveshje' :
-    cur === 'EUR' ? `${price.toLocaleString('sq-AL')} €` : `${price.toLocaleString('sq-AL')} L`
+    cur === 'EUR' ? `${nf(price)} €` : `${nf(price)} L`
 
   function timeAgo(iso: string): string {
     const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000)
@@ -694,7 +695,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
               <div className="search-suggestions">
                 {suggestions.map(s => {
                   const img = Array.isArray(s.images) && s.images.length ? s.images[0] : null
-                  const price = !s.price ? 'Falas' : s.currency === 'EUR' ? `${s.price.toLocaleString('sq-AL')} €` : `${s.price.toLocaleString('sq-AL')} L`
+                  const price = !s.price ? 'Falas' : s.currency === 'EUR' ? `${nf(s.price)} €` : `${nf(s.price)} L`
                   return (
                     <div key={s.id} className="sug-item" onMouseDown={() => { setShowSuggestions(false); window.location.href = `/listing/${s.id}` }}>
                       {img
@@ -747,13 +748,13 @@ export default function HomeClient({ initialListings = [], initialCategories = [
               <div className="hero-stats">
                 {cfg('show_listing_count','true') !== 'false' && (
                   <div className="stat">
-                    <div className="stat-n">{listingCount.toLocaleString('sq-AL')}</div>
+                    <div className="stat-n">{nf(listingCount)}</div>
                     <div className="stat-l">Shpallje</div>
                   </div>
                 )}
                 {cfg('show_user_count','true') !== 'false' && (
                   <div className="stat">
-                    <div className="stat-n">{userCount.toLocaleString('sq-AL')}</div>
+                    <div className="stat-n">{nf(userCount)}</div>
                     <div className="stat-l">Përdorues</div>
                   </div>
                 )}
@@ -859,8 +860,8 @@ export default function HomeClient({ initialListings = [], initialCategories = [
               <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, scrollbarWidth: 'none' }}>
                 {recentUnique.map(item => {
                   const price = item.currency === 'EUR'
-                    ? `€${Number(item.price).toLocaleString('sq-AL')}`
-                    : `${Number(item.price).toLocaleString('sq-AL')} L`
+                    ? `€${nf(item.price)}`
+                    : `${nf(item.price)} L`
                   return (
                     <div key={item.id} role="link" tabIndex={0} onClick={() => { window.location.href = `/listing/${item.id}` }} onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/listing/${item.id}` }} style={{ flex: '0 0 120px', borderRadius: 10, overflow: 'hidden', background: '#fff', border: '1px solid #F0F0F0', boxShadow: '0 1px 4px rgba(0,0,0,.06)', cursor: 'pointer' }}>
                       <div style={{ width: '100%', aspectRatio: '4/3', background: '#F6F6F6', overflow: 'hidden' }}>

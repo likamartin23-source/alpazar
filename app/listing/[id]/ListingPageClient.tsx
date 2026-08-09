@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import { supabase } from '../../../lib/supabase'
+import { nf, dateShort, dayMonth, monthYear, clockTime } from '../../../lib/format'
 import { getLevel, isNewMember } from '../../components/Badges'
 import { SocialProofBar, SellerPremiumUpsell } from '../../components/PremiumUpsell'
 import { saveRefFromUrl, buildShareUrl } from '../../../lib/referral'
@@ -20,14 +21,14 @@ const CATEGORY_LABELS: Record<string, string> = {
 }
 
 function fullTime(d: string) {
-  return new Date(d).toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit' })
+  return clockTime(d)
 }
 function dayLabel(d: string) {
   const dt = new Date(d), now = new Date()
   if (dt.toDateString() === now.toDateString()) return 'Sot'
   const yes = new Date(); yes.setDate(now.getDate() - 1)
   if (dt.toDateString() === yes.toDateString()) return 'Dje'
-  return dt.toLocaleDateString('sq-AL', { day: '2-digit', month: 'long' })
+  return dayMonth(d)
 }
 function BusinessMiniCard({ bizId }: { bizId: string }) {
   const [biz, setBiz] = useState<any>(null)
@@ -49,8 +50,7 @@ function BusinessMiniCard({ bizId }: { bizId: string }) {
 }
 
 function pubDate(d: string) {
-  if (!d) return ''
-  return new Date(d).toLocaleDateString('sq-AL', { day: '2-digit', month: 'short', year: 'numeric' })
+  return dateShort(d)
 }
 
 export default function ListingPageClient({ params, initialListing }: { params: { id: string }; initialListing?: any }) {
@@ -428,7 +428,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
     setChatReady(true)
 
     if (!data || data.length === 0) {
-      const fmt = (p: number, c: string) => !p ? '' : c === 'EUR' ? ` — ${p.toLocaleString('sq-AL')} €` : ` — ${p.toLocaleString('sq-AL')} L`
+      const fmt = (p: number, c: string) => !p ? '' : c === 'EUR' ? ` — ${nf(p)} €` : ` — ${nf(p)} L`
       setDraft(`Përshëndetje! Jam i interesuar/e për: "${lst.title}"${fmt(lst.price, lst.currency)}. A është ende në shitje?`)
     }
 
@@ -498,10 +498,9 @@ export default function ListingPageClient({ params, initialListing }: { params: 
 
   const fmt = (price: number, cur: string) =>
     !price ? 'Çmim me marrëveshje' :
-    cur === 'EUR' ? `${price.toLocaleString('sq-AL')} €` : `${price.toLocaleString('sq-AL')} L`
+    cur === 'EUR' ? `${nf(price)} €` : `${nf(price)} L`
 
-  const memberSince = (d: string) =>
-    d ? new Date(d).toLocaleDateString('sq-AL', { month: 'long', year: 'numeric' }) : ''
+  const memberSince = (d: string) => monthYear(d)
 
   function buildGroups(msgs: any[]) {
     const groups: Array<{ date: string; items: any[] }> = []
@@ -1054,8 +1053,8 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                 {similar.map(s => {
                   const img = Array.isArray(s.images) && s.images.length ? s.images[0] : null
                   const priceStr = s.currency === 'EUR'
-                    ? `€${Number(s.price).toLocaleString('sq-AL')}`
-                    : `${Number(s.price).toLocaleString('sq-AL')} L`
+                    ? `€${nf(s.price)}`
+                    : `${nf(s.price)} L`
                   return (
                     <div
                       key={s.id}
