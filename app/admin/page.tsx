@@ -6,6 +6,10 @@ import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAlpazar } from '../../lib/context'
 import { useRealtimeTable } from '../../hooks/useRealtimeTable'
+import { UsersTab } from './tabs/UsersTab'
+import { PlansTab } from './tabs/PlansTab'
+import { LimitsTab } from './tabs/LimitsTab'
+import { InvoicesTab } from './tabs/InvoicesTab'
 
 /* ─── Styles ───────────────────────────────────────────────── */
 const CSS = `
@@ -764,9 +768,13 @@ export default function Admin() {
 
   const tabs: [string, string, string][] = [
     ['dash',       'layout-dashboard', 'Dashboard'],
+    ['users',      'users',            'Përdoruesit'],
     ['preq',       'crown',            'Pagesat'],
     ['payments',   'credit-card',      'Abonimet'],
+    ['invoices',   'file-invoice',     'Faturat'],
     ['methods',    'wallet',           'Metodat'],
+    ['plans',      'diamond',          'Planet'],
+    ['limits',     'adjustments',      'Kufijtë'],
     ['config',     'settings-2',       'Konfigurime'],
     ['moderation', 'shield-check',     'Moderimi'],
     ['health',     'activity-heartbeat', 'AI Health'],
@@ -1159,6 +1167,11 @@ export default function Admin() {
 
               {/* TAKEDOWN */}
               {tab === 'takedown' && <TakedownTab />}
+
+              {tab === 'users' && <UsersTab />}
+              {tab === 'plans' && <PlansTab />}
+              {tab === 'limits' && <LimitsTab />}
+              {tab === 'invoices' && <InvoicesTab />}
             </>
           )}
         </div>
