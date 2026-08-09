@@ -61,7 +61,7 @@ export default function NewListing() {
   }
 
   async function submit() {
-    if (!form.title.trim()) { setMsg('err:Titulli është i detyrbueshem!'.replace('detyrbueshem','detyrueshëm')); return }
+    if (!form.title.trim()) { setMsg('err:Titulli është i detyrueshëm!'); return }
     if (!form.category_id) { setMsg('err:Zgjidh kategorinë!'); return }
     if (!form.city) { setMsg('err:Shkruaj qytetin!'); return }
     const priceNum = parseFloat(form.price)
