@@ -30,6 +30,15 @@ export default function PremiumPage() {
 
   useEffect(() => { if (authReady) load() }, [authReady, load])
 
+  // Cdo ndryshim ne planet ose ne konfigurim reflektohet MENJEHERE, pa rifreskim.
+  useEffect(() => {
+    const ch = supabase.channel('pricing-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'premium_plans' }, () => load())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'app_config' }, () => load())
+      .subscribe()
+    return () => { supabase.removeChannel(ch) }
+  }, [load])
+
   const all: any[] = pricing?.plans || []
   const plans = all.filter((p: any) => p.tier === tier && p.billing_period === period)
   const methods: any[] = pricing?.payment_methods || []

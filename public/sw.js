@@ -1,10 +1,21 @@
-const CACHE_NAME = 'alpazar-v13'
+// Versioni merret AUTOMATIKISht nga URL-ja e regjistrimit: /sw.js?v=<BUILD_ID>
+// Keshtu skedari ndryshon ne cdo deploy -> browser-i e detekton gjithmone perditesimin.
+// Asnje version nuk shkruhet me me dore.
+const VERSION = new URL(self.location.href).searchParams.get('v') || 'dev'
+const CACHE_NAME = 'alpazar-' + VERSION
 
-self.addEventListener('install', () => self.skipWaiting())
+// NUK bejme skipWaiting automatikisht: perdoruesi vendos kur te kaloje,
+// ose kalimi behet ne heshtje kur faqja del nga pamja (shih UpdatePrompt).
+self.addEventListener('install', () => { /* prit */ })
+
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting()
+})
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
+      // fshi CDO cache tjeter, perfshi ato legacy 'alpazar-vNN' qe kishin ngecur
       .then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   )
@@ -24,7 +35,7 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Asetet immutable te Next (content-hashed) -> cache-first (s'ndryshojne kurre ne te njejtin URL)
+  // Asetet immutable te Next (content-hashed) -> cache-first
   if (url.pathname.startsWith('/_next/static/')) {
     event.respondWith(
       caches.match(req).then(cached => cached || fetch(req).then(res => {
@@ -36,9 +47,7 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // BRANDING/KONFIGURIM (logo, ikona, favicon, manifest, cdo SVG) -> NETWORK-FIRST me cache:'reload'.
-  // Anashkalon HTTP cache-in e browser-it (max-age=86400 te Vercel), keshtu ndryshimet e
-  // logos/ikonave pasqyrohen GJITHMONE menjehere; kur je offline bie ne cache.
+  // Branding/konfigurim -> network-first me cache:'reload'
   const sameOrigin = url.origin === self.location.origin
   const isBranding = sameOrigin && (
     url.pathname.startsWith('/icons/') ||
@@ -61,8 +70,7 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Media tjeter statike (imazhe perdoruesish, fonte, css/js jo-Next) -> stale-while-revalidate
-  // me revalidim REAL (cache:'reload') qe te mos ngece ne HTTP cache te vjeter.
+  // Media tjeter statike -> stale-while-revalidate me revalidim REAL
   if (/\.(js|css|png|jpg|jpeg|webp|gif|woff2?|ico|json)$/.test(url.pathname)) {
     event.respondWith(
       caches.open(CACHE_NAME).then(cache =>
@@ -78,7 +86,6 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Tjetra -> network-first
   event.respondWith(fetch(req).catch(() => caches.match(req)))
 })
 
