@@ -56,7 +56,7 @@ export async function getLiveContext(query: string): Promise<string> {
         .in('key', ['video_max_seconds', 'free_videos_limit', 'max_videos_premium',
                     'free_listings_limit', 'max_images_free', 'max_images_premium']),
       sb.from('listings')
-        .select('title,price,currency,city,category')
+        .select('title,price,currency,city,category_id')
         .eq('is_active', true)
         .ilike('title', `%${query.slice(0, 50).replace(/[%_\\]/g, '\\$&')}%`)
         .limit(5),
