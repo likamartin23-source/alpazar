@@ -270,7 +270,7 @@ const [searchError, setSearchError] = useState(false)
         .order(sortOrder.col, { ascending: sortOrder.asc })
         .limit(40)
 
-      if (query.trim()) qb = (qb as any).textSearch('search_tsv', query.trim(), { type: 'websearch', config: 'simple' })
+      if (query.trim()) qb = (qb as any).textSearch('fts', query.trim(), { type: 'websearch', config: 'simple' })
       if (cat)         qb = qb.eq('category_id', cat)
       if (cond)        qb = qb.eq('condition', cond)
       if (city.trim()) qb = (qb as any).ilike('city', `%${city.trim()}%`)
@@ -322,7 +322,7 @@ const [searchError, setSearchError] = useState(false)
                                 { col: 'created_at',  asc: false }
     qb = qb.order(sortOrder.col, { ascending: sortOrder.asc })
 
-    if (q.trim())         qb = (qb as any).textSearch('search_tsv', q.trim(), { type: 'websearch', config: 'simple' })
+    if (q.trim())         qb = (qb as any).textSearch('fts', q.trim(), { type: 'websearch', config: 'simple' })
     if (catFilter)        qb = qb.eq('category_id', catFilter)
     if (condFilter)       qb = qb.eq('condition', condFilter)
     if (cityFilter.trim()) qb = (qb as any).ilike('city', `%${cityFilter.trim()}%`)
