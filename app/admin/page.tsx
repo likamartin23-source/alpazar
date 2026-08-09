@@ -666,25 +666,29 @@ export default function Admin() {
       supabase.from('listings').select('*', { count: 'exact', head: true }).eq('is_active', true),
       supabase.from('messages').select('*', { count: 'exact', head: true }).is('deleted_at', null),
       supabase.from('reports').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-      supabase.from('premium_subscriptions')
-        .select('*,profiles(full_name,username)').order('created_at', { ascending: false }).limit(50),
+      supabase.rpc('admin_list_subscriptions', { p_limit: 200 }),
       supabase.from('payment_methods').select('*').order('sort_order'),
       supabase.from('premium_requests')
         .select('*,profiles(full_name,username),payment_methods(name,type)').order('created_at', { ascending: false }).limit(100),
     ])
-    const rev = (pm || []).filter((p: any) => p.status === 'active')
-      .reduce((s: number, p: any) => s + (p.amount_eur || 0), 0)
+    const subsList = ((pm as any)?.subs || [])
+    const rev = subsList.filter((p: any) => p.status === 'active')
+      .reduce((s: number, p: any) => s + Number(p.amount_eur || 0), 0)
     setStats({ users: u||0, premium: pr||0, revenue: rev, listings: l||0, messages: msgs||0, reports: reps||0 })
-    setPayments(pm || [])
+    setPayments(subsList)
     setMethods(mt || [])
     setPremiumRequests(preq || [])
     setLoading(false)
   }, [])
 
-  async function updateStatus(id: string, status: string, userId?: string) {
-    const sub = payments.find(p => p.id === id)
-    const r = await callAdminAction('sub_status', { id, status, user_id: userId, end_date: sub?.end_date })
-    if (!r.ok) { setPayMsg('Gabim ndryshim abonimi: ' + (r.error || 'dështoi')); return }
+  async function updateStatus(id: string, status: string, _userId?: string) {
+    const { data, error } = await supabase.rpc('admin_set_subscription_status', {
+      p_sub_id: id, p_status: status,
+    })
+    if (error || (data as any)?.error) {
+      setPayMsg('Gabim ndryshim abonimi: ' + (error?.message || (data as any)?.error))
+      return
+    }
     fetchAll()
   }
 
