@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     openGraph: {
       type: 'website', url, siteName: 'ALPAZAR', locale: 'sq_AL',
       title, description: desc,
-      images: [{ url: `${SITE_URL}/icons/icon-512.png`, width: 512, height: 512, alt: cat.name }],
+      images: [{ url: `${SITE_URL}/api/og`, width: 1200, height: 630, alt: cat.name }],
     },
   }
 }

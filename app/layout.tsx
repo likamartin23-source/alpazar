@@ -47,13 +47,13 @@ export const metadata: Metadata = {
     siteName: 'ALPAZAR',
     title: 'ALPAZAR — Platforma #1 Shqiptare e Tregtisë Online',
     description: 'Shit, bli dhe bëj pazarin tënd falas. Zero reklama. Zero komision.',
-    images: [{ url: `${SITE_URL}/icons/icon-512.png?v=3`, width: 512, height: 512, alt: 'ALPAZAR — Marketplace Shqiptar' }],
+    images: [{ url: `${SITE_URL}/api/og`, width: 1200, height: 630, alt: 'ALPAZAR — Marketplace Shqiptar' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'ALPAZAR — Platforma #1 Shqiptare e Tregtisë Online',
     description: 'Shit, bli dhe bëj pazarin tënd falas. Zero reklama.',
-    images: [`${SITE_URL}/icons/icon-512.png?v=3`],
+    images: [`${SITE_URL}/api/og`],
   },
   other: {
     'mobile-web-app-capable': 'yes',
@@ -109,7 +109,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             "@type": "Organization",
             "name": "ALPAZAR",
             "url": "https://alpazar.vercel.app",
-            "logo": { "@type": "ImageObject", "url": "https://alpazar.vercel.app/icons/icon-512.png?v=3" }
+            "logo": { "@type": "ImageObject", "url": "https://alpazar.vercel.app/icons/icon-512.png?v=3" },
+            "sameAs": [
+              "https://facebook.com/alpazaral",
+              "https://instagram.com/alpazaral",
+              "https://tiktok.com/@alpazaral",
+              "https://t.me/alpazaral",
+              "https://linkedin.com/company/alpazar",
+              "https://x.com/alpazaral"
+            ],
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "contactType": "customer support",
+              "url": "https://alpazar.vercel.app/kontakt",
+              "availableLanguage": ["sq"]
+            }
           }
         })}} />
         {/* Service Worker — regjistrim me flag kundër loop-it të pafund */}

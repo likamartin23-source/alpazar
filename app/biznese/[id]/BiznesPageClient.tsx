@@ -18,11 +18,11 @@ interface Biz {
   nipt: string | null; withdrawal_days: number | null; updated_at: string | null
 }
 
-export default function BiznesPageClient({ params }: { params: { id: string } }) {
-  const [biz, setBiz]               = useState<Biz | null>(null)
+export default function BiznesPageClient({ params, initialBiz }: { params: { id: string }; initialBiz?: any }) {
+  const [biz, setBiz]               = useState<Biz | null>(initialBiz ?? null)
   const [subcats, setSubcats]       = useState<any[]>([])
   const [listings, setListings]     = useState<any[]>([])
-  const [loading, setLoading]       = useState(true)
+  const [loading, setLoading]       = useState(!initialBiz)
   const [loadError, setLoadError]   = useState(false)
   const [activeTab, setActiveTab]   = useState<'grid' | 'info' | 'reviews'>('grid')
   const [userId, setUserId]         = useState<string | null>(null)
