@@ -28,10 +28,10 @@ export default function EditListing({ params }: { params: { id: string } }) {
   const [imageFiles, setImageFiles]     = useState<File[]>([])
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
   const [existingImages, setExistingImages] = useState<string[]>([])
-  const vid = useVideos(setMsg, setIsDirty, existingVideos.length)
-  const maxImages: number = vid.maxImages
   const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null)
   const [isDirty, setIsDirty] = useState(false)
+  const vid = useVideos(setMsg, setIsDirty, existingVideos.length)
+  const maxImages: number = vid.maxImages
 
   useEffect(() => {
     return () => { imagePreviews.forEach(url => URL.revokeObjectURL(url)) }
