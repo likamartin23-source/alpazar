@@ -43,7 +43,6 @@ export default function BillingPage() {
   const sub = data?.subscription
   const plan = sub?.plan
   const plans: any[] = data?.plans || []
-  const methods: any[] = data?.payment_methods || []
   const events: any[] = data?.events || []
   const bank = sub?.payment_method?.config_json || null
   const [mt, mm] = msg.split(/:(.+)/)
@@ -125,7 +124,7 @@ export default function BillingPage() {
 
           <BoostStrip boost={data?.boost} />
 
-          {data && <PlansGrid plans={plans} plan={plan} sub={sub} methods={methods} busy={busy} act={act} />}
+          {data && <PlansGrid plans={plans} plan={plan} sub={sub} busy={busy} act={act} />}
 
           <MyInvoices />
 
