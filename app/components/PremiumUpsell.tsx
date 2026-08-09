@@ -1,6 +1,16 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useAlpazar } from '../../lib/context'
+
+// Cmimi vjen LIVE nga paneli. Asnje vlere e kodifikuar: nese konfigurimi ende
+// s'eshte ngarkuar, nuk shfaqim cmim te gabuar — e heshtim derisa te vije.
+function usePlanPrice(override?: string): string {
+  const { cfg } = useAlpazar()
+  const raw = override ?? cfg('premium_monthly_price_all', '')
+  if (!raw) return ''
+  return Number(raw).toLocaleString('sq-AL', { maximumFractionDigits: 2 }) + ' L'
+}
 
 // ── Premium Upsell Modal ──────────────────────────────────────────────
 // Shfaqet kur:
@@ -9,7 +19,7 @@ import { useState, useEffect } from 'react'
 //  - trigger='exit'   → pas 25s inaktiviteti
 export function PremiumUpsellModal({
   trigger = 'scroll',
-  price = '9.99',
+  price,
   onClose,
 }: {
   trigger?: 'scroll' | 'limit' | 'exit'
@@ -18,6 +28,7 @@ export function PremiumUpsellModal({
 }) {
   const [show, setShow] = useState(false)
   const [dismissed, setDismissed] = useState(false)
+  const shownPrice = usePlanPrice(price)
 
   useEffect(() => {
     if (dismissed) return
@@ -111,7 +122,7 @@ export function PremiumUpsellModal({
         </div>
         <div className="ups-offer">
           <div className="ups-price">
-            {price}€<span>/ muaj · Anulo kurdo</span>
+            {shownPrice}<span>/ muaj · Anulo kurdo</span>
           </div>
         </div>
         <button type="button" className="ups-cta" onClick={() => { window.location.href = '/premium'; close() }}>
@@ -153,8 +164,9 @@ export function SocialProofBar({ viewsCount }: { viewsCount: number; listingId?:
 }
 
 // ── Premium Seller Upsell (në faqen e shpalljes, vetëm për shitësin) ─
-export function SellerPremiumUpsell({ isPremium, price = '9.99' }: { isPremium: boolean; price?: string }) {
+export function SellerPremiumUpsell({ isPremium, price }: { isPremium: boolean; price?: string }) {
   const [visible, setVisible] = useState(true)
+  const shownPrice = usePlanPrice(price)
   if (!visible || isPremium) return null
   return (
     <div style={{
@@ -180,7 +192,7 @@ export function SellerPremiumUpsell({ isPremium, price = '9.99' }: { isPremium: 
             padding: '7px 12px', fontSize: 11, fontWeight: 800, cursor: 'pointer', whiteSpace: 'nowrap',
           }}
         >
-          <span aria-hidden="true">👑</span> {price}€/muaj
+          <span aria-hidden="true">👑</span> {shownPrice}/muaj
         </button>
         <button type="button" aria-label="Mbyll ofertën" onClick={() => setVisible(false)} style={{
           background: 'none', border: 'none', color: '#555', fontSize: 9, cursor: 'pointer',
@@ -194,12 +206,13 @@ export function SellerPremiumUpsell({ isPremium, price = '9.99' }: { isPremium: 
 export function FreeTierBanner({
   listingCount,
   freeLimit = 5,
-  price = '9.99',
+  price,
 }: {
   listingCount: number
   freeLimit?: number
   price?: string
 }) {
+  const shownPrice = usePlanPrice(price)
   const remaining = Math.max(0, freeLimit - listingCount)
   if (remaining > 2) return null
   const pct = ((freeLimit - remaining) / freeLimit) * 100
@@ -234,7 +247,7 @@ export function FreeTierBanner({
             padding: '7px 12px', fontSize: 11, fontWeight: 700, cursor: 'pointer', flexShrink: 0, marginLeft: 10,
           }}
         >
-          <span aria-hidden="true">👑</span> {price}€/muaj
+          <span aria-hidden="true">👑</span> {shownPrice}/muaj
         </button>
       </div>
     </div>
