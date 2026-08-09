@@ -1,8 +1,15 @@
 // @ts-check
 const { withSentryConfig } = require('@sentry/nextjs')
 
+// Identiteti i ndertimit — burimi qe ushqen /sw.js?v= dhe /api/version.
+// Ndryshon vetvetiu ne cdo commit; asnje version nuk mirembahet me dore.
+const BUILD_ID = process.env.VERCEL_GIT_COMMIT_SHA || String(Date.now())
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  generateBuildId: async () => BUILD_ID,
+  env: { NEXT_PUBLIC_BUILD_ID: BUILD_ID },
+
   typescript: { ignoreBuildErrors: true },
   eslint: { ignoreDuringBuilds: true },
 

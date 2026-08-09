@@ -9,6 +9,7 @@ import { LanguageProvider } from '../lib/i18n'
 import { SiteFooter } from './components/SiteFooter'
 
 const AiFloat               = dynamic(() => import('./components/AiFloat'),            { ssr: false })
+const UpdatePrompt          = dynamic(() => import('./components/UpdatePrompt'),       { ssr: false })
 const AlpazarProviderDyn    = dynamic(() => import('../lib/context').then(m => ({ default: m.AlpazarProvider })))
 const NotificationToast     = dynamic(() => import('./components/NotificationToast').then(m => ({ default: m.NotificationToast })), { ssr: false })
 const MaintenanceBanner     = dynamic(() => import('./components/MaintenanceBanner').then(m => ({ default: m.MaintenanceBanner })), { ssr: false })
@@ -130,7 +131,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{__html: `
           if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-              navigator.serviceWorker.register('/sw.js', { scope: '/', updateViaCache: 'none' }).then(function(reg) {
+              var v = ${JSON.stringify(process.env.NEXT_PUBLIC_BUILD_ID || 'dev')};
+              navigator.serviceWorker.register('/sw.js?v=' + v, { scope: '/', updateViaCache: 'none' }).then(function(reg) {
                 var reloading = false;
                 navigator.serviceWorker.addEventListener('controllerchange', function() {
                   if (reloading) return;
@@ -151,6 +153,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <NotificationToast />
           <AgeGateDyn><main id="main-content">{children}</main></AgeGateDyn>
           <AiFloat />
+          <UpdatePrompt />
           <CookieBannerDyn />
           <Analytics />
           <SiteFooter />
