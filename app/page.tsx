@@ -22,8 +22,8 @@ async function fetchHome(): Promise<{ listings: Listing[]; categories: Category[
       sb.from('listings')
         .select('id,title,price,currency,condition,city,is_premium,images,category_id,created_at,user_id,author:user_id(id,full_name,username,avatar_url,is_premium,trust_score)')
         .eq('is_active', true)
-        .order('is_premium', { ascending: false })
-        .order('created_at', { ascending: false })
+        .order('rank_tier', { ascending: false })
+        .order('last_bumped_at', { ascending: false })
         .limit(20),
       sb.from('categories').select('*').eq('is_active', true).order('sort_order'),
     ])

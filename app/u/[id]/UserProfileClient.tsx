@@ -44,8 +44,8 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
         .select('id,title,price,currency,images,city,created_at,is_premium')
         .eq('user_id', params.id)
         .eq('is_active', true)
-        .order('is_premium', { ascending: false })
-        .order('created_at', { ascending: false })
+        .order('rank_tier', { ascending: false })
+        .order('last_bumped_at', { ascending: false })
         .limit(60)
 
       setListings(ls || [])
