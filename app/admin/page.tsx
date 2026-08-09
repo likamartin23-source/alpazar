@@ -11,6 +11,7 @@ import { PlansTab } from './tabs/PlansTab'
 import { LimitsTab } from './tabs/LimitsTab'
 import { InvoicesTab } from './tabs/InvoicesTab'
 import { AuditTab } from './tabs/AuditTab'
+import { BroadcastTab } from './tabs/BroadcastTab'
 
 /* ─── Styles ───────────────────────────────────────────────── */
 const CSS = `
@@ -25,6 +26,7 @@ const CSS = `
 .nl.on{background:#1a1a1a;border-left-color:#F5C842;color:#F5C842;}
 .nl i{font-size:16px;}
 .nl span{font-size:11px;font-weight:600;}
+.sb-group{font-size:9px;font-weight:800;color:#4a4a55;text-transform:uppercase;letter-spacing:.9px;padding:14px 14px 5px;}
 .content{flex:1;padding:22px;overflow:auto;max-width:1000px;}
 .ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
 .pt{font-size:18px;font-weight:800;color:#111;}
@@ -798,22 +800,36 @@ export default function Admin() {
 
   const isMaint = (config['maintenance_mode'] ?? 'false') === 'true'
 
-  const tabs: [string, string, string][] = [
-    ['dash',       'layout-dashboard', 'Dashboard'],
-    ['users',      'users',            'Përdoruesit'],
-    ['preq',       'crown',            'Pagesat'],
-    ['payments',   'credit-card',      'Abonimet'],
-    ['invoices',   'file-invoice',     'Faturat'],
-    ['methods',    'wallet',           'Metodat'],
-    ['plans',      'diamond',          'Planet'],
-    ['limits',     'adjustments',      'Kufijtë'],
-    ['config',     'settings-2',       'Konfigurime'],
-    ['moderation', 'shield-check',     'Moderimi'],
-    ['health',     'activity-heartbeat', 'AI Health'],
-    ['referrals',  'gift',             'Referalet'],
-    ['takedown',   'gavel',            'Heqja'],
-    ['audit',      'history',          'Gjurma'],
+  // Grupim sipas modelit te paneleve te medha (Meta Business Suite, TikTok, Temu):
+  // domene te qarta, jo nje liste e sheshte ku tre tab-e mbulojne te njejten rrjedhe.
+  const groups: [string, [string, string, string][]][] = [
+    ['Vështrim', [
+      ['dash',       'layout-dashboard', 'Dashboard'],
+    ]],
+    ['Njerëz', [
+      ['users',      'users',            'Përdoruesit'],
+      ['broadcast',  'speakerphone',     'Njoftime'],
+      ['referrals',  'gift',             'Referalet'],
+    ]],
+    ['Të ardhura', [
+      ['preq',       'crown',            'Pagesat'],
+      ['payments',   'credit-card',      'Abonimet'],
+      ['invoices',   'file-invoice',     'Faturat'],
+      ['plans',      'diamond',          'Planet'],
+      ['methods',    'wallet',           'Metodat'],
+    ]],
+    ['Përmbajtje', [
+      ['moderation', 'shield-check',     'Moderimi'],
+      ['takedown',   'gavel',            'Heqja'],
+    ]],
+    ['Sistemi', [
+      ['limits',     'adjustments',      'Kufijtë'],
+      ['config',     'settings-2',       'Konfigurime'],
+      ['audit',      'history',          'Gjurma'],
+      ['health',     'activity-heartbeat', 'AI Health'],
+    ]],
   ]
+  const tabs: [string, string, string][] = groups.flatMap(g => g[1])
 
   if (mfaRequired) return (
     <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'#111', flexDirection:'column', gap:20 }}>
@@ -884,7 +900,10 @@ export default function Admin() {
             )}
           </div>
 
-          {tabs.map(([id, icon, label]) => (
+          {groups.map(([gname, items]) => (
+          <div key={gname}>
+          <div className="sb-group">{gname}</div>
+          {items.map(([id, icon, label]) => (
             <button type="button" key={id} className={`nl ${tab === id ? 'on' : ''}`} aria-pressed={tab === id} onClick={() => setTab(id)}>
               <i className={`ti ti-${icon}`} aria-hidden="true" />
               <span>{label}</span>
@@ -899,6 +918,8 @@ export default function Admin() {
                 </span>
               )}
             </button>
+          ))}
+          </div>
           ))}
 
           <div style={{ marginTop: 'auto', padding: '12px 14px', borderTop: '1px solid #1e1e1e' }}>
@@ -1206,6 +1227,7 @@ export default function Admin() {
               {tab === 'limits' && <LimitsTab />}
               {tab === 'invoices' && <InvoicesTab />}
               {tab === 'audit' && <AuditTab />}
+              {tab === 'broadcast' && <BroadcastTab />}
             </>
           )}
         </div>

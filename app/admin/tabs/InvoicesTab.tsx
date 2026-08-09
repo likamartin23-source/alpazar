@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../../../lib/supabase'
+import { exportCsv } from './exportCsv'
 
 const L = (n: any) => Number(n || 0).toLocaleString('sq-AL', { maximumFractionDigits: 2 })
 const d = (x: any) => (x ? new Date(x).toLocaleDateString('sq-AL') : '—')
@@ -84,6 +85,12 @@ export function InvoicesTab() {
             onKeyDown={e => { if (e.key === 'Enter') load(q) }} />
         </div>
         <button type="button" className="btn btn-orange" onClick={() => load(q)}>Kërko</button>
+        <button type="button" className="edit-btn" disabled={rows.length === 0}
+          onClick={() => exportCsv('faturat', rows.map(r => ({
+            numri: r.number, klienti: r.full_name || r.email || r.user_id, plani: r.plan_name,
+            vlera: r.total, monedha: r.currency, statusi: r.status,
+            leshuar: r.issued_at, derguar: r.sent_at || '', lloji: r.file_kind,
+          })))}>Eksporto CSV</button>
       </div>
 
       <div className="card">
