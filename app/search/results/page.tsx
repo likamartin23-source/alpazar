@@ -406,7 +406,7 @@ const [searchError, setSearchError] = useState(false)
 
         /* Body */
         .body{padding:12px 10px;}
-        .results-meta{font-size:11px;color:#888;margin-bottom:14px;}
+        .results-meta{font-size:11px;color:#6B6B6B;margin-bottom:14px;}
         .results-meta strong{color:#111;}
 
         /* Section headings */
@@ -414,7 +414,7 @@ const [searchError, setSearchError] = useState(false)
         .section-hdr{display:flex;align-items:center;gap:7px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #F5C842;}
         .section-hdr .section-icon{font-size:16px;}
         .section-hdr h2{font-size:13px;font-weight:800;color:#111;flex:1;}
-        .section-count{font-size:10px;color:#888;background:#f5f5f0;border-radius:20px;padding:2px 8px;}
+        .section-count{font-size:10px;color:#6B6B6B;background:#f5f5f0;border-radius:20px;padding:2px 8px;}
 
         /* Shop grid */
         .shops-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
@@ -447,7 +447,7 @@ const [searchError, setSearchError] = useState(false)
         .card-body{flex:0 0 30%;padding:7px 8px;display:flex;flex-direction:column;justify-content:space-between;min-height:0;}
         .card-title{font-size:11px;font-weight:700;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
         .card-price{font-size:12.5px;font-weight:800;color:#E63312;}
-        .card-loc{font-size:9.5px;color:#999;display:flex;align-items:center;gap:3px;}
+        .card-loc{font-size:11px;color:#6B6B6B;display:flex;align-items:center;gap:3px;}
 
         /* Empty state per section */
         .section-empty{text-align:center;padding:16px;background:#f9f9f7;border-radius:10px;color:#aaa;font-size:11px;}
@@ -545,6 +545,9 @@ const [searchError, setSearchError] = useState(false)
             <SkeletonGrid count={6} />
           ) : (
             <>
+              <h1 style={{ position: 'absolute', width: 1, height: 1, padding: 0, margin: -1, overflow: 'hidden', clip: 'rect(0 0 0 0)', whiteSpace: 'nowrap', border: 0 }}>
+                {q ? `Rezultatet e kërkimit për "${q}"` : 'Rezultatet e kërkimit'}
+              </h1>
               <div className="results-meta" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
                 <span aria-live="polite" aria-atomic="true">
                   {q
@@ -702,7 +705,7 @@ const [searchError, setSearchError] = useState(false)
               onClick={() => setPremiumOnly(v => !v)}>
               <div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: '#111' }}>Vetëm Premium</div>
-                <div style={{ fontSize: 11, color: '#888', marginTop: 2 }}>Shpallje të verifikuara</div>
+                <div style={{ fontSize: 11, color: '#6B6B6B', marginTop: 2 }}>Shpallje të verifikuara</div>
               </div>
               <div style={{
                 width: 44, height: 24, borderRadius: 12, background: premiumOnly ? '#F5C842' : '#ddd',

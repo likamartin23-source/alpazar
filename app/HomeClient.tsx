@@ -325,14 +325,19 @@ export default function HomeClient({ initialListings = [], initialCategories = [
     }
     document.addEventListener('visibilitychange', onVisible)
 
-    // Poll shpallje çdo 10 sekonda — silent (pa skeleton flicker)
+    // Rrjeti/bateria: useRealtimeTable tashme streamon insert/update/delete per
+    // 'listings', dhe visibilitychange rifreskon kur kthehet perdoruesi. Polling-u
+    // 10s ishte tepri (2 count(exact) — count-i me i shtrenjte ne Postgres — plus
+    // nje refetch i plote qe ri-renderonte gjithe grid-in cdo 10s).
     const listingsPoll = setInterval(() => {
       fetchListings(activeCategory, activeFilter, { silent: true })
-      fetchCounts()
-    }, 10000)
+    }, 60000)
+    // Statistikat ndryshojne ngadale — mjafton cdo 5 minuta.
+    const countsPoll = setInterval(() => { fetchCounts() }, 300000)
 
     return () => {
       clearInterval(listingsPoll)
+      clearInterval(countsPoll)
       document.removeEventListener('visibilitychange', onVisible)
     }
   }, [])

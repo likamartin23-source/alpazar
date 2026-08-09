@@ -119,6 +119,8 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3', rounded =
                 src={src}
                 alt={`${alt} ${i + 1}`}
                 loading={i === 0 ? 'eager' : 'lazy'}
+                fetchPriority={i === 0 ? 'high' : 'auto'}
+                decoding="async"
                 style={{ position: 'relative', width: '100%', height: '100%', objectFit: 'contain', display: 'block', pointerEvents: 'none', userSelect: 'none' }}
                 draggable={false}
                 onError={e => {
