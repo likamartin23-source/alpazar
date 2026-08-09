@@ -36,23 +36,32 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://sopafwfkrxpcdaljddoh.supabase.co' }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || '' }}
 
+      # KUJDES: mesazhi i commit-it eshte input i PABESUESHEM. Me pare interpolohej
+      # direkt ne shell me GitHub expressions -> mesazhet shume-rreshtash ose me
+      # thonjeza e thyenin komanden (CI dilte e kuqe pa asnje defekt kodi) dhe hapnin
+      # nje vektor command-injection. Tani kalon si env dhe JSON-i ndertohet me jq.
+      # continue-on-error: njoftimi s'duhet ta rrezoje kurre nje build te sukseshem.
       - name: Notify Slack on success
-        if: success() && github.ref == 'refs/heads/main' && env.SLACK_WEBHOOK_URL != ''
-        run: |
-          curl -s -X POST "$SLACK_WEBHOOK_URL" \
-            -H "Content-Type: application/json" \
-            -d "{\"text\":\"✅ *CI kaloi* — Alpazar build i suksesshëm!\",\"attachments\":[{\"color\":\"good\",\"fields\":[{\"title\":\"Commit\",\"value\":\"${{ github.event.head_commit.message }}\",\"short\":false}]}]}"
+        if: success() && github.ref == 'refs/heads/main'
+        continue-on-error: true
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          [ -n "$SLACK_WEBHOOK_URL" ] || { echo "::notice::SLACK_WEBHOOK_URL mungon — anashkalohet."; exit 0; }
+          payload=$(jq -nc --arg msg "$COMMIT_MSG" '{text:"✅ *CI kaloi* — Alpazar build i suksesshëm!",attachments:[{color:"good",fields:[{title:"Commit",value:$msg,short:false}]}]}')
+          curl -sS -X POST "$SLACK_WEBHOOK_URL" -H "Content-Type: application/json" -d "$payload" >/dev/null
 
       - name: Notify Slack on failure
-        if: failure() && env.SLACK_WEBHOOK_URL != ''
-        run: |
-          curl -s -X POST "$SLACK_WEBHOOK_URL" \
-            -H "Content-Type: application/json" \
-            -d "{\"text\":\"❌ *CI dështoi* — Alpazar build problem!\",\"attachments\":[{\"color\":\"danger\",\"fields\":[{\"title\":\"Commit\",\"value\":\"${{ github.event.head_commit.message }}\",\"short\":false}]}]}"
+        if: failure()
+        continue-on-error: true
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          [ -n "$SLACK_WEBHOOK_URL" ] || { echo "::notice::SLACK_WEBHOOK_URL mungon — anashkalohet."; exit 0; }
+          payload=$(jq -nc --arg msg "$COMMIT_MSG" '{text:"❌ *CI deshtoi* — Alpazar build problem!",attachments:[{color:"danger",fields:[{title:"Commit",value:$msg,short:false}]}]}')
+          curl -sS -X POST "$SLACK_WEBHOOK_URL" -H "Content-Type: application/json" -d "$payload" >/dev/null
 
   e2e:
     name: E2E smoke (Playwright)
