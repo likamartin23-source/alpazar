@@ -68,7 +68,7 @@ jobs:
           HTTP=$(curl -sS -w '%{http_code}' -o /tmp/ev.json \
             -H "apikey: $SB_SERVICE_KEY" \
             -H "Authorization: Bearer $SB_SERVICE_KEY" \
-            "$SB_URL/rest/v1/health_events?select=id,message,url,kind,severity,count,last_seen_at,resolved&resolved=eq.false&last_seen_at=gte.$SINCE&order=count.desc&limit=15" || echo 000)
+            "$SB_URL/rest/v1/health_events?select=id,message,url,source,level,severity,category,count,last_seen_at,status,likely_cause&status=in.(new,triaged)&last_seen_at=gte.$SINCE&order=count.desc&limit=15" || echo 000)
 
           if [ "$HTTP" != "200" ]; then
             echo "::warning::Leximi i health_events dështoi (HTTP $HTTP) — anashkalohet."
@@ -87,9 +87,11 @@ jobs:
           import json
           evs = json.load(open('/tmp/ev.json'))
           for e in evs:
-              print(f"- [{e.get('severity','?')}] x{e.get('count',1)} ({e.get('kind','?')}) {e.get('message','')}")
+              print(f"- [{e.get('severity','?')}] x{e.get('count',1)} ({e.get('source','?')}/{e.get('category','?')}) {e.get('message','')}")
               if e.get('url'):
                   print(f"    URL: {e['url']}")
+              if e.get('likely_cause'):
+                  print(f"    Shkaku i dyshuar: {e['likely_cause']}")
           PY
 
           {
