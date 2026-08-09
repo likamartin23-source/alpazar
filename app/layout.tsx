@@ -13,6 +13,7 @@ const UpdatePrompt          = dynamic(() => import('./components/UpdatePrompt'),
 const AlpazarProviderDyn    = dynamic(() => import('../lib/context').then(m => ({ default: m.AlpazarProvider })))
 const NotificationToast     = dynamic(() => import('./components/NotificationToast').then(m => ({ default: m.NotificationToast })), { ssr: false })
 const MaintenanceBanner     = dynamic(() => import('./components/MaintenanceBanner').then(m => ({ default: m.MaintenanceBanner })), { ssr: false })
+const AnnouncementBar       = dynamic(() => import('./components/MaintenanceBanner').then(m => ({ default: m.AnnouncementBar })), { ssr: false })
 const GlobalErrorBoundaryDyn = dynamic(() => import('../lib/error-handler').then(m => ({ default: m.GlobalErrorBoundary })))
 const CookieBannerDyn        = dynamic(() => import('./components/CookieBanner').then(m => ({ default: m.CookieBanner })), { ssr: false })
 const AgeGateDyn             = dynamic(() => import('./components/AgeGate').then(m => ({ default: m.AgeGate })))
@@ -150,6 +151,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AlpazarProviderDyn>
           <GlobalErrorBoundaryDyn>
           <MaintenanceBanner />
+          <AnnouncementBar />
           <NotificationToast />
           <AgeGateDyn><main id="main-content">{children}</main></AgeGateDyn>
           <AiFloat />

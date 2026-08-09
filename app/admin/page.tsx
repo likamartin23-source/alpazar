@@ -10,6 +10,7 @@ import { UsersTab } from './tabs/UsersTab'
 import { PlansTab } from './tabs/PlansTab'
 import { LimitsTab } from './tabs/LimitsTab'
 import { InvoicesTab } from './tabs/InvoicesTab'
+import { AuditTab } from './tabs/AuditTab'
 
 /* ─── Styles ───────────────────────────────────────────────── */
 const CSS = `
@@ -707,10 +708,22 @@ export default function Admin() {
     fetchAll()
   }
 
-  async function handlePremiumRequest(id: string, action: 'approved' | 'rejected', userId: string, daysRequested: number) {
-    const r = await callAdminAction('premium_request', { id, action, user_id: userId, days: daysRequested })
-    if (!r.ok) { setPayMsg('Gabim: ' + (r.error || 'dështoi')); return }
+  // Aprovim + leshim + dergim fature ne NJE veprim te vetem.
+  // Me pare: aprovoje ketu, gjeje faturen ne tab tjeter, kujtohu ta dergosh.
+  async function handlePremiumRequest(id: string, action: 'approved' | 'rejected', _userId: string, _daysRequested: number) {
+    const fn = action === 'approved' ? 'admin_approve_request' : 'admin_reject_request'
+    const args = action === 'approved' ? { p_request_id: id, p_send_invoice: true } : { p_request_id: id, p_note: null }
+    const { data, error } = await supabase.rpc(fn, args)
+    if (error || (data as any)?.error) {
+      setPayMsg('Gabim: ' + (error?.message || (data as any)?.error))
+      return
+    }
+    const d: any = data
+    setPayMsg(action === 'approved'
+      ? `Sukses: u aprovua${d?.invoice ? ` · fatura ${d.invoice}` : ''}${d?.sent ? ' u dërgua në inbox' : ''}`
+      : 'Kërkesa u refuzua.')
     setPremiumRequests(prev => prev.map(x => x.id === id ? { ...x, status: action } : x))
+    fetchAll()
   }
 
   async function giftPremium(userId: string) {
@@ -799,6 +812,7 @@ export default function Admin() {
     ['health',     'activity-heartbeat', 'AI Health'],
     ['referrals',  'gift',             'Referalet'],
     ['takedown',   'gavel',            'Heqja'],
+    ['audit',      'history',          'Gjurma'],
   ]
 
   if (mfaRequired) return (
@@ -1003,7 +1017,7 @@ export default function Admin() {
                                   {r.status === 'pending' && (
                                     <>
                                       <button type="button" className="btn btn-green" onClick={() => handlePremiumRequest(r.id, 'approved', r.user_id, r.days_requested || 30)}>
-                                        <span aria-hidden="true">✅</span> Aprovo
+                                        <span aria-hidden="true">✅</span> Aprovo + faturë
                                       </button>
                                       <button type="button" className="btn btn-red" onClick={() => handlePremiumRequest(r.id, 'rejected', r.user_id, r.days_requested || 30)}>
                                         <span aria-hidden="true">❌</span> Refuzo
@@ -1191,6 +1205,7 @@ export default function Admin() {
               {tab === 'plans' && <PlansTab />}
               {tab === 'limits' && <LimitsTab />}
               {tab === 'invoices' && <InvoicesTab />}
+              {tab === 'audit' && <AuditTab />}
             </>
           )}
         </div>
