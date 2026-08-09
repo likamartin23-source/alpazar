@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
   if (!q || q.length < 2) return NextResponse.json({ results: [] })
 
   const sb = anonSb()
-  const SELECT = 'id,title,price,currency,city,category,images,condition,created_at,views_count'
+  const SELECT = 'id,title,price,currency,city,category_id,images,condition,created_at,views_count'
 
   // Build two tsquery forms: original + Albanian-normalized (ë→e, ç→c)
   const tsqueryOriginal   = buildTsquery(q)

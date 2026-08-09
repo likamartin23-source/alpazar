@@ -43,7 +43,7 @@ export default function TeDhenatMiaPage() {
         supabase.from('profiles').select('*').eq('id', userId).single(),
         supabase.from('listings').select('id,title,price,currency,city,created_at,is_active').eq('user_id', userId),
         supabase.from('favorites').select('listing_id,created_at').eq('user_id', userId),
-        supabase.from('messages').select('id,content,created_at,is_read').or(`sender_id.eq.${userId},receiver_id.eq.${userId}`).limit(200),
+        supabase.from('messages').select('id,content,created_at,read').or(`sender_id.eq.${userId},receiver_id.eq.${userId}`).limit(200),
       ])
 
       const exportObj = {

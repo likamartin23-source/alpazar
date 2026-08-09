@@ -5,15 +5,19 @@ export const dynamic = 'force-dynamic'
 import { useEffect, useState } from 'react'
 import nextDynamic from 'next/dynamic'
 import { supabase } from '../../../../lib/supabase'
-import { useAlpazar } from '../../../../lib/context'
 import { uploadImages, UploadProgress } from '../../../../lib/uploadImages'
 
 const MapPicker = nextDynamic(() => import('../../../components/MapPicker').then(m => ({ default: m.MapPicker })), { ssr: false })
 
 
 export default function EditListing({ params }: { params: { id: string } }) {
-  const { cfgInt, profile } = useAlpazar()
-  const maxImages = profile?.is_premium ? cfgInt('max_images_premium', 10) : cfgInt('max_images_free', 5)
+  const [ent, setEnt] = useState<any>(null)
+  const maxImages: number = ent?.max_images ?? 10
+
+  // I njejti burim si te krijimi i shpalljes — kurre dy kufij te ndryshem.
+  useEffect(() => {
+    supabase.rpc('get_my_entitlements').then(({ data }) => setEnt(data), () => {})
+  }, [])
   const [user, setUser]       = useState<any>(null)
   const [categories, setCategories] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
