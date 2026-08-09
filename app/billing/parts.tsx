@@ -5,20 +5,6 @@ import { supabase } from '../../lib/supabase'
 
 const L = (n: any) => Number(n || 0).toLocaleString('sq-AL', { maximumFractionDigits: 2 })
 
-export function PlanBuy({ plan, methods, busy, onBuy }: any) {
-  const [mid, setMid] = useState('')
-  return (
-    <div style={{ marginTop: 8 }}>
-      <select value={mid} onChange={e => setMid(e.target.value)} aria-label="Metoda e pagesës">
-        <option value="">Metoda e pagesës…</option>
-        {methods.map((m: any) => <option key={m.id} value={m.id}>{m.name}</option>)}
-      </select>
-      <button type="button" className="btn primary small" disabled={busy || !mid}
-        onClick={() => onBuy(mid)} style={{ marginTop: 6 }}>Abonohu</button>
-    </div>
-  )
-}
-
 export function BoostStrip({ boost }: any) {
   if (!boost) return null
   const active = boost.status === 'active'
@@ -42,12 +28,31 @@ export function BoostStrip({ boost }: any) {
   )
 }
 
-export function PlansGrid({ plans, plan, sub, methods, busy, act }: any) {
+// /billing menaxhon VETEM abonimin qe ke. Katalogu i planeve eshte te /premium —
+// keshtu nuk ka mbivendosje dhe nuk mund te kalosh gabimisht nga Premium ne Boost.
+export function PlansGrid({ plans, plan, sub, busy, act }: any) {
+  if (!sub) {
+    return (
+      <div className="card center">
+        <div className="sec-t">Nuk ke abonim aktiv</div>
+        <div className="muted" style={{ marginBottom: 10 }}>
+          Shiko planet dhe zgjidh atë që të përshtatet.
+        </div>
+        <a href="/premium" className="btn primary" style={{ display: 'inline-block', textDecoration: 'none' }}>
+          Shiko planet
+        </a>
+      </div>
+    )
+  }
+
+  const tier = sub.tier || plan?.tier || 'premium'
+  const same = plans.filter((p: any) => (p.tier || 'premium') === tier)
+
   return (
     <div className="card">
-      <div className="sec-t">{sub ? 'Ndrysho planin' : 'Zgjidh një plan'}</div>
+      <div className="sec-t">Ndrysho periudhën e faturimit</div>
       <div className="grid">
-        {plans.map((p: any) => (
+        {same.map((p: any) => (
           <div key={p.id} className={`pcard ${plan?.id === p.id ? 'cur' : ''}`}>
             <div className="pname">
               {p.name}
@@ -57,22 +62,22 @@ export function PlansGrid({ plans, plan, sub, methods, busy, act }: any) {
               {L(p.price_all)} L <span className="muted">/ {p.months || 1} muaj</span>
             </div>
             <div className="muted" style={{ fontSize: 11 }}>
-              {p.tier === 'boost' ? 'Shikueshmëri maksimale' : 'Të gjitha përfitimet, pa limite'}
-              {p.discount_pct > 0 && ` · −${p.discount_pct}%`}
+              {p.discount_pct > 0 ? `Kurseni ${p.discount_pct}%` : 'Faturim mujor'}
             </div>
             {plan?.id === p.id
               ? <div className="cur-tag">Plani yt</div>
-              : sub
-                ? <button type="button" className="btn small" disabled={!!busy}
-                    onClick={() => act('change_my_plan', { p_plan_id: p.id })}>Kalo këtu</button>
-                : <PlanBuy plan={p} methods={methods} busy={!!busy}
-                    onBuy={(mid: string) => act('request_subscription', { p_plan_id: p.id, p_payment_method_id: mid })} />}
+              : <button type="button" className="btn small" disabled={!!busy}
+                  onClick={() => act('change_my_plan', { p_plan_id: p.id })}>Kalo këtu</button>}
           </div>
         ))}
       </div>
-      {sub?.status === 'active' && (
-        <div className="muted" style={{ fontSize: 11, marginTop: 8 }}>
-          Ndryshimi i planit hyn në fuqi në rinovimin e ardhshëm — transparencë e plotë, pa pagesa të fshehura.
+      <div className="muted" style={{ fontSize: 11, marginTop: 8 }}>
+        Përfitimet janë të njëjta në çdo periudhë — ndryshon vetëm sa shpesh faturohesh.
+        Ndryshimi hyn në fuqi në rinovimin e ardhshëm, pa pagesa të fshehura.
+      </div>
+      {tier === 'premium' && (
+        <div className="muted" style={{ fontSize: 11, marginTop: 6 }}>
+          Do shikueshmëri maksimale? Shto <a href="/premium" style={{ color: '#E63312', fontWeight: 700 }}>Ekstra Boost VIP</a>.
         </div>
       )}
     </div>
