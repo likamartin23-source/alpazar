@@ -28,7 +28,7 @@ export function useVideos(setMsg: (m: string) => void, setIsDirty: (b: boolean) 
 
   // Kufijte vijne LIVE nga paneli i kontrollit — asnje vlere e kodifikuar.
   useEffect(() => {
-    supabase.rpc('get_my_entitlements').then(({ data }) => setEnt(data)).catch(() => {})
+    supabase.rpc('get_my_entitlements').then(({ data }) => setEnt(data), () => {})
   }, [])
 
   const maxVideos: number = ent?.max_videos ?? 5
