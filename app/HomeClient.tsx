@@ -767,7 +767,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
             <div className="prem-icon"><i className="ti ti-crown" aria-hidden="true" /></div>
             <div className="prem-text">
               <strong><span aria-hidden="true">👑</span> Bëhu Anëtar Premium</strong>
-              <span>Biznes · Badge · Shpallje ∞ · {cfg('premium_monthly_price','9.99')}€/muaj</span>
+              <span>Biznes · Badge · Shpallje ∞ · {cfg('premium_monthly_price_all','') ? `${Number(cfg('premium_monthly_price_all','')).toLocaleString('sq-AL')} L/muaj` : ''}</span>
             </div>
             <button type="button" className="prem-btn" onClick={() => go('/premium')}>Shiko →</button>
           </div>

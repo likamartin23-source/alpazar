@@ -686,7 +686,7 @@ export default function ProfilePage() {
 
               {!profile?.is_premium && (
                 <div className="prem-card">
-                  <h3><span aria-hidden="true">👑</span> Bëhu Premium — 9.99€/muaj</h3>
+                  <h3><span aria-hidden="true">👑</span> Bëhu Premium</h3>
                   <p>Biznes online · Badge verifikimi · Shpallje të pakufizuara · Statistika të avancuara</p>
                   <button type="button" className="prem-cta" onClick={() => window.location.href = '/premium'}>Shiko planin →</button>
                 </div>
@@ -1101,7 +1101,7 @@ export default function ProfilePage() {
                 <div className="prem-card">
                   <h3><span aria-hidden="true">🏢</span> Hap Biznesin Tënd</h3>
                   <p>Biznesi online është i disponueshëm vetëm për anëtarët Premium. Merr badge ⭐ verifikimi, shpal produkte të pakufizuara dhe menaxho biznesin tënd!</p>
-                  <button type="button" className="prem-cta" onClick={() => window.location.href = '/premium'}><span aria-hidden="true">👑</span> Bëhu Premium — 9.99€/muaj</button>
+                  <button type="button" className="prem-cta" onClick={() => window.location.href = '/premium'}><span aria-hidden="true">👑</span> Bëhu Premium</button>
                 </div>
               ) : (
                 <>
