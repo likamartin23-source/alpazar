@@ -247,11 +247,11 @@ export default function ListingPageClient({ params, initialListing }: { params: 
     if (bumpLoading) return
     setBumpLoading(true)
     const now = new Date().toISOString()
-    const { error } = await supabase.from('listings').update({ created_at: now, last_bumped_at: now }).eq('id', params.id)
+    const { error } = await supabase.from('listings').update({ last_bumped_at: now }).eq('id', params.id)
     if (error) {
       setBumpMsg('err:Gabim gjatë ngritjes.')
     } else {
-      setListing((l: any) => l ? { ...l, last_bumped_at: now, created_at: now } : l)
+      setListing((l: any) => l ? { ...l, last_bumped_at: now } : l)
       setBumpMsg('ok:Shpallja u ngrit në krye! ⬆️')
       setTimeout(() => setBumpMsg(''), 3000)
     }
