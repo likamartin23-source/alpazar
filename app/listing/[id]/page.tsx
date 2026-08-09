@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import type { Metadata } from 'next'
 import ListingPageClient from './ListingPageClient'
+import ListingVideos from './ListingVideos'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../lib/supabase'
 import { SITE_URL } from '../../../lib/siteConfig'
 
@@ -18,6 +19,18 @@ async function fetchListingData(id: string) {
   return data
 }
 
+function videoList(listing: any): string[] {
+  const out: string[] = []
+  const arr = Array.isArray(listing?.videos) ? listing.videos : []
+  for (const v of arr) {
+    if (!v) continue
+    if (typeof v === 'string') out.push(v)
+    else if (v.url) out.push(String(v.url))
+  }
+  if (out.length === 0 && listing?.video_url) out.push(String(listing.video_url))
+  return out
+}
+
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   const listing = await fetchListingData(params.id)
   if (!listing) return { title: 'Shpallje — ALPAZAR' }
@@ -27,6 +40,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     || `Bli "${listing.title}" në ALPAZAR — Platforma #1 shqiptare e tregtisë online.`
   const image = listing.images?.[0] || `${SITE_URL}/icons/icon-512.png`
   const url = `${SITE_URL}/listing/${params.id}`
+  const vids = videoList(listing)
 
   return {
     title,
@@ -40,6 +54,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
       title,
       description: desc,
       images: [{ url: image, width: 800, height: 600, alt: listing.title }],
+      ...(vids.length ? { videos: vids.map(v => ({ url: v })) } : {}),
     },
     twitter: {
       card: 'summary_large_image',
@@ -52,6 +67,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 
 export default async function ListingPage({ params }: { params: { id: string } }) {
   const listing = await fetchListingData(params.id)
+  const vids = videoList(listing)
 
   const jsonLd = listing
     ? JSON.stringify({
@@ -67,6 +83,19 @@ export default async function ListingPage({ params }: { params: { id: string } }
           ? { itemCondition: listing.condition === 'i_ri'
               ? 'https://schema.org/NewCondition'
               : 'https://schema.org/UsedCondition' }
+          : {}),
+        // Video e shpalljes -> rich result me miniature video ne Google.
+        ...(vids.length
+          ? {
+              subjectOf: vids.map((v: string) => ({
+                '@type': 'VideoObject',
+                name: listing.title,
+                description: (listing.description || listing.title).slice(0, 200),
+                contentUrl: v,
+                thumbnailUrl: listing.video_poster || listing.images?.[0] || `${SITE_URL}/icons/icon-512.png`,
+                uploadDate: listing.created_at || new Date().toISOString(),
+              })),
+            }
           : {}),
         // Offer vetem kur ka cmim real — price:"0" e bente Offer-in invalid
         // (shpalljet "me marreveshje" humbisnin te gjithe rich-result-in).
@@ -92,6 +121,14 @@ export default async function ListingPage({ params }: { params: { id: string } }
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
       )}
       <ListingPageClient params={params} initialListing={listing} />
+      {listing && (
+        <ListingVideos
+          videos={listing.videos}
+          legacy={listing.video_url}
+          poster={listing.video_poster}
+          images={listing.images}
+        />
+      )}
     </>
   )
 }
