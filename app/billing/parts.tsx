@@ -84,8 +84,7 @@ export function MyInvoices() {
 
   useEffect(() => {
     supabase.rpc('get_my_invoices', { p_limit: 24 })
-      .then(({ data }) => setList((data as any)?.invoices || []))
-      .catch(() => setList([]))
+      .then(({ data }) => setList((data as any)?.invoices || []), () => setList([]))
   }, [])
 
   if (!list || list.length === 0) return null
