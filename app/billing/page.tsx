@@ -6,6 +6,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAlpazar } from '../../lib/context'
 import { BILLING_CSS, EVENT_LABELS, StatusBadge } from './ui'
+import { PlansGrid, MyInvoices, BoostStrip } from './parts'
 
 export default function BillingPage() {
   const { user, authReady } = useAlpazar()
@@ -69,7 +70,9 @@ export default function BillingPage() {
               <div className="row">
                 <div>
                   <div className="plan-name">{plan?.name}</div>
-                  <div className="muted">{Number(sub.price_paid ?? plan?.price_eur)}€ / {plan?.duration_days} ditë</div>
+                  <div className="muted">
+                    {Number(plan?.price_all || 0).toLocaleString('sq-AL')} L / {plan?.months || 1} muaj
+                  </div>
                 </div>
                 <StatusBadge status={sub.status} cape={sub.cancel_at_period_end} />
               </div>
@@ -120,26 +123,11 @@ export default function BillingPage() {
             </div>
           )}
 
-          {data && (
-            <div className="card">
-              <div className="sec-t">{sub ? 'Ndrysho planin' : 'Zgjidh një plan'}</div>
-              <div className="grid">
-                {plans.map(p => (
-                  <div key={p.id} className={`pcard ${plan?.id === p.id ? 'cur' : ''}`}>
-                    <div className="pname">{p.name}</div>
-                    <div className="pprice">{p.price_eur}€ <span className="muted">/ {p.duration_days} ditë</span></div>
-                    <div className="muted" style={{ fontSize: 11 }}>{p.max_listings === -1 ? 'Shpallje pa limit' : `${p.max_listings} shpallje`} · {p.boost_credits} boost</div>
-                    {plan?.id === p.id
-                      ? <div className="cur-tag">Plani yt</div>
-                      : sub
-                        ? <button type="button" className="btn small" disabled={!!busy} onClick={() => act('change_my_plan', { p_plan_id: p.id })}>Kalo këtu</button>
-                        : <PlanBuy plan={p} methods={methods} busy={!!busy} onBuy={(mid) => act('request_subscription', { p_plan_id: p.id, p_payment_method_id: mid })} />}
-                  </div>
-                ))}
-              </div>
-              {sub?.status === 'active' && <div className="muted" style={{ fontSize: 11, marginTop: 8 }}>Ndryshimi i planit hyn në fuqi në rinovimin e ardhshëm — transparencë e plotë, pa pagesa të fshehura.</div>}
-            </div>
-          )}
+          <BoostStrip boost={data?.boost} />
+
+          {data && <PlansGrid plans={plans} plan={plan} sub={sub} methods={methods} busy={busy} act={act} />}
+
+          <MyInvoices />
 
           {data && events.length > 0 && (
             <div className="card">
@@ -155,18 +143,5 @@ export default function BillingPage() {
         </div>
       </div>
     </>
-  )
-}
-
-function PlanBuy({ plan, methods, busy, onBuy }: any) {
-  const [mid, setMid] = useState('')
-  return (
-    <div style={{ marginTop: 8 }}>
-      <select value={mid} onChange={e => setMid(e.target.value)} aria-label="Metoda e pagesës">
-        <option value="">Metoda e pagesës…</option>
-        {methods.map((m: any) => <option key={m.id} value={m.id}>{m.name}</option>)}
-      </select>
-      <button type="button" className="btn primary small" disabled={busy || !mid} onClick={() => onBuy(mid)} style={{ marginTop: 6 }}>Abonohu</button>
-    </div>
   )
 }
