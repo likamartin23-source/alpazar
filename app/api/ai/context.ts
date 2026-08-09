@@ -51,8 +51,10 @@ export async function getLiveContext(query: string): Promise<string> {
       sb.from('premium_plans')
         .select('name,tier,price_all,price_eur,billing_period,months,discount_pct,max_videos')
         .eq('is_active', true).order('tier', { ascending: false }).order('sort_order'),
-      sb.from('admin_settings').select('key,value')
-        .in('key', ['video_max_seconds', 'video_max_count_free', 'video_max_count_premium']),
+      // app_config eshte tabela PUBLIKE — anon key e lexon. (admin_settings bllokohet nga RLS.)
+      sb.from('app_config').select('key,value')
+        .in('key', ['video_max_seconds', 'free_videos_limit', 'max_videos_premium',
+                    'free_listings_limit', 'max_images_free', 'max_images_premium']),
       sb.from('listings')
         .select('title,price,currency,city,category')
         .eq('is_active', true)
@@ -79,23 +81,30 @@ export async function getLiveContext(query: string): Promise<string> {
     if (categories) ctx += `- Kategoritë: ${categories}\n`
     if (payMethods) ctx += `- Mënyra pagese aktive: ${payMethods}\n`
 
+    const nz = (v: any, d: string) => (v === undefined || v === null || v === '' ? d : String(v))
+    const cap = (v: any, d: string) => (nz(v, d) === '-1' ? 'pa limit' : nz(v, d))
+
+    ctx += `- LLOGARIA FALAS: ${cap(cfg.free_listings_limit, '10')} shpallje, `
+    ctx += `${cap(cfg.max_images_free, '10')} foto dhe ${cap(cfg.free_videos_limit, '5')} video per shpallje.\n`
+
     if (prem.length > 0) {
       ctx += `- PLANI PREMIUM (burimi i vetem i vertete — mos shpik cmime as emra). `
-      ctx += `Te gjithe perdoruesit Premium jane TE BARABARTE dhe marrin te njejtat perfitime: `
+      ctx += `Te gjithe perdoruesit Premium jane TE BARABARTE dhe marrin saktesisht te njejtat perfitime: `
       ctx += `shpallje PA LIMIT, renditje ne vend te pare kundrejt perdoruesve pa pagese, profil biznesi, `
-      ctx += `postime pa limit dhe deri ne ${cfg.video_max_count_premium || '10'} video per shpallje.\n`
+      ctx += `postime pa limit, ${cap(cfg.max_images_premium, '-1')} foto dhe `
+      ctx += `${cap(cfg.max_videos_premium, '10')} video per shpallje. Ndryshon vetem periudha e faturimit.\n`
       prem.forEach(p => { ctx += planLine(p) })
     }
 
     if (boost.length > 0) {
-      ctx += `- EKSTRA BOOST (sistem i vecante, VETEM per perdoruesit Premium qe duan shikueshmeri me te larte: `
+      ctx += `- EKSTRA BOOST VIP (produkt krejt i vecante, SHTESE mbi Premium — nuk e zevendeson ate. `
+      ctx += `Blihet VETEM nga perdorues qe kane tashme Premium aktiv. Jep shikueshmeri maksimale: `
       ctx += `kreu absolut i listes, rrotullim ne faqen kryesore, prioritet maksimal ne kerkim):\n`
       boost.forEach(p => { ctx += planLine(p) })
     }
 
-    ctx += `- VIDEO: maksimumi ${Math.round(Number(cfg.video_max_seconds || 300) / 60)} minuta per video; `
-    ctx += `${cfg.video_max_count_free || '5'} video per shpallje pa pagese, `
-    ctx += `${cfg.video_max_count_premium || '10'} per Premium.\n`
+    ctx += `- VIDEO: kohezgjatja maksimale ${Math.round(Number(nz(cfg.video_max_seconds, '300')) / 60)} minuta per video.\n`
+    ctx += `- KU BLIHET: planet zgjidhen te /premium. Abonimi aktual menaxhohet te /billing (anulim, fatura).\n`
 
     if (found.length > 0) {
       ctx += `- Shpallje relevante për pyetjen:\n`

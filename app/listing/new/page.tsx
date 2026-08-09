@@ -4,7 +4,6 @@ export const dynamic = 'force-dynamic'
 
 import { useState } from 'react'
 import { supabase } from '../../../lib/supabase'
-import { useAlpazar } from '../../../lib/context'
 import { uploadImages, UploadProgress } from '../../../lib/uploadImages'
 import { useListingAI } from './useListingAI'
 import { useListingBoot } from './useListingBoot'
@@ -13,9 +12,6 @@ import { NewListingView } from './NewListingView'
 import { SITE_URL } from '../../../lib/siteConfig'
 
 export default function NewListing() {
-  const { cfgInt, profile } = useAlpazar()
-  const maxImages  = profile?.is_premium ? cfgInt('max_images_premium', 10) : cfgInt('max_images_free', 5)
-  const freeLimit  = cfgInt('free_listings_limit', 5)
   const [user, setUser] = useState<any>(null)
   const [categories, setCategories] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
@@ -42,6 +38,10 @@ export default function NewListing() {
   const [draftRestored, setDraftRestored] = useState(false)
   const [isDirty, setIsDirty] = useState(false)
   const vid = useVideos(setMsg, setIsDirty)
+
+  // Kufijte vijne nga nje burim i vetem (get_my_entitlements -> app_config).
+  const maxImages = vid.maxImages
+  const freeLimit = vid.maxListings < 0 ? Number.POSITIVE_INFINITY : vid.maxListings
 
   useListingBoot({ setUser, setCategories, setMyListingCount, setForm, setDraftRestored, imagePreviews, form, isDirty })
 

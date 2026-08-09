@@ -20,18 +20,21 @@ function probeDuration(f: File): Promise<number> {
   })
 }
 
+// Burimi i VETEM i kufijve: get_my_entitlements (i cili lexon app_config).
+// Asnje numer i kodifikuar dhe asnje burim i dyte.
 export function useVideos(setMsg: (m: string) => void, setIsDirty: (b: boolean) => void) {
   const [ent, setEnt] = useState<any>(null)
   const [items, setItems] = useState<VidItem[]>([])
   const [pct, setPct] = useState(0)
   const [uploading, setUploading] = useState(false)
 
-  // Kufijte vijne LIVE nga paneli i kontrollit — asnje vlere e kodifikuar.
   useEffect(() => {
     supabase.rpc('get_my_entitlements').then(({ data }) => setEnt(data), () => {})
   }, [])
 
   const maxVideos: number = ent?.max_videos ?? 5
+  const maxImages: number = ent?.max_images ?? 10
+  const maxListings: number = ent?.max_listings ?? 10
   const maxSec: number = ent?.video_max_seconds ?? 300
   const isPremium: boolean = !!ent?.is_premium
   const maxMin = Math.round(maxSec / 60)
@@ -43,7 +46,7 @@ export function useVideos(setMsg: (m: string) => void, setIsDirty: (b: boolean) 
 
     const room = maxVideos < 0 ? files.length : maxVideos - items.length
     if (room <= 0) {
-      setMsg(`err:Ke arritur kufirin prej ${maxVideos} videosh për një shpallje.${isPremium ? '' : ' Premium lejon 10.'}`)
+      setMsg(`err:Ke arritur kufirin prej ${maxVideos} videosh për një shpallje.${isPremium ? '' : ' Premium lejon më shumë.'}`)
       return
     }
 
@@ -96,5 +99,9 @@ export function useVideos(setMsg: (m: string) => void, setIsDirty: (b: boolean) 
     return { videos: out, poster }
   }
 
-  return { items, add, remove, uploadAll, pct, uploading, maxVideos, maxSec, maxMin, isPremium, count: items.length }
+  return {
+    items, add, remove, uploadAll, pct, uploading,
+    maxVideos, maxImages, maxListings, maxSec, maxMin, isPremium,
+    ready: !!ent, count: items.length,
+  }
 }
