@@ -22,7 +22,7 @@ function probeDuration(f: File): Promise<number> {
 
 // Burimi i VETEM i kufijve: get_my_entitlements (i cili lexon app_config).
 // Asnje numer i kodifikuar dhe asnje burim i dyte.
-export function useVideos(setMsg: (m: string) => void, setIsDirty: (b: boolean) => void) {
+export function useVideos(setMsg: (m: string) => void, setIsDirty: (b: boolean) => void, reserved = 0) {
   const [ent, setEnt] = useState<any>(null)
   const [items, setItems] = useState<VidItem[]>([])
   const [pct, setPct] = useState(0)
@@ -44,7 +44,7 @@ export function useVideos(setMsg: (m: string) => void, setIsDirty: (b: boolean) 
     e.target.value = ''
     if (files.length === 0) return
 
-    const room = maxVideos < 0 ? files.length : maxVideos - items.length
+    const room = maxVideos < 0 ? files.length : maxVideos - reserved - items.length
     if (room <= 0) {
       setMsg(`err:Ke arritur kufirin prej ${maxVideos} videosh për një shpallje.${isPremium ? '' : ' Premium lejon më shumë.'}`)
       return
@@ -102,6 +102,6 @@ export function useVideos(setMsg: (m: string) => void, setIsDirty: (b: boolean) 
   return {
     items, add, remove, uploadAll, pct, uploading,
     maxVideos, maxImages, maxListings, maxSec, maxMin, isPremium,
-    ready: !!ent, count: items.length,
+    ready: !!ent, count: items.length, total: reserved + items.length,
   }
 }
