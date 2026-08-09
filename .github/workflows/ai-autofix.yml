@@ -43,7 +43,8 @@ jobs:
       - id: fetch
         env:
           SB_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          SB_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SB_ANON: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          FEED_TOKEN: ${{ secrets.HEALTH_FEED_TOKEN }}
           MANUAL: ${{ inputs.problem }}
           MIN_SEV: ${{ inputs.min_severity }}
         run: |
@@ -56,22 +57,26 @@ jobs:
             exit 0
           fi
 
-          # 2) Përndryshe lexo nga AI Health. Kërkon service_role (health_events
-          #    është RLS admin-only). Nëse sekreti mungon → dil pastër, mos dështo.
-          if [ -z "${SB_URL:-}" ] || [ -z "${SB_SERVICE_KEY:-}" ]; then
-            echo "::notice::Mungon NEXT_PUBLIC_SUPABASE_URL ose SUPABASE_SERVICE_ROLE_KEY — leximi automatik i AI Health u anashkalua. Workflow-i mund të thirret ende manualisht me input 'problem'."
+          # 2) Perndryshe lexo nga AI Health nepermjet RPC-se me PRIVILEGJ MINIMAL.
+          #    QELLIMISHT NUK perdoret service_role: ai eshte celesi-perendi qe lexon
+          #    e shkruan gjithcka, dhe do ta ekspozonte cdo workflow. Ne vend te tij,
+          #    funksioni health_open_events(p_token) kthen VETEM gabimet e hapura
+          #    (asnje tabele tjeter, asnje shkrim), i mbrojtur me token te dedikuar.
+          if [ -z "${SB_URL:-}" ] || [ -z "${SB_ANON:-}" ] || [ -z "${FEED_TOKEN:-}" ]; then
+            echo "::notice::Mungon SB_URL/SB_ANON/HEALTH_FEED_TOKEN — leximi automatik u anashkalua. Workflow-i thirret ende manualisht me input 'problem'."
             echo "has_work=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          SINCE=$(date -u -d '7 days ago' +%Y-%m-%dT%H:%M:%SZ)
-          HTTP=$(curl -sS -w '%{http_code}' -o /tmp/ev.json \
-            -H "apikey: $SB_SERVICE_KEY" \
-            -H "Authorization: Bearer $SB_SERVICE_KEY" \
-            "$SB_URL/rest/v1/health_events?select=id,message,url,source,level,severity,category,count,last_seen_at,status,likely_cause&status=in.(new,triaged)&last_seen_at=gte.$SINCE&order=count.desc&limit=15" || echo 000)
+          HTTP=$(curl -sS -w '%{http_code}' -o /tmp/ev.json -X POST \
+            -H "apikey: $SB_ANON" \
+            -H "Authorization: Bearer $SB_ANON" \
+            -H "Content-Type: application/json" \
+            --data "$(jq -nc --arg t "$FEED_TOKEN" '{p_token:$t}')" \
+            "$SB_URL/rest/v1/rpc/health_open_events" || echo 000)
 
           if [ "$HTTP" != "200" ]; then
-            echo "::warning::Leximi i health_events dështoi (HTTP $HTTP) — anashkalohet."
+            echo "::warning::Leximi i AI Health deshtoi (HTTP $HTTP) — anashkalohet."
             echo "has_work=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
