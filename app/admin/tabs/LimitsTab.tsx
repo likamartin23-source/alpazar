@@ -36,6 +36,13 @@ const GROUPS: { label: string; note?: string; rows: F[] }[] = [
     ],
   },
   {
+    label: 'Profili i biznesit',
+    note: 'Kur Premium-i bie, profili errësohet vetvetiu dhe zhduket nga publiku.',
+    rows: [
+      { k: 'business_requires_premium', l: 'Kërkon Premium aktiv', d: 'Fike vetëm nëse do që bizneset të mbeten publike pa pagesë', t: 'bool' },
+    ],
+  },
+  {
     label: 'Abonime dhe fatura',
     rows: [
       { k: 'invoice_autosend', l: 'Dërgo faturën automatikisht', d: 'Kur aprovon pagesën, fatura shkon vetë në inbox', t: 'bool' },

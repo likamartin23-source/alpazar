@@ -12,6 +12,7 @@ import { LimitsTab } from './tabs/LimitsTab'
 import { InvoicesTab } from './tabs/InvoicesTab'
 import { AuditTab } from './tabs/AuditTab'
 import { BroadcastTab } from './tabs/BroadcastTab'
+import { BusinessesTab } from './tabs/BusinessesTab'
 
 /* ─── Styles ───────────────────────────────────────────────── */
 const CSS = `
@@ -808,6 +809,7 @@ export default function Admin() {
     ]],
     ['Njerëz', [
       ['users',      'users',            'Përdoruesit'],
+      ['biznese',    'building-store',   'Bizneset'],
       ['broadcast',  'speakerphone',     'Njoftime'],
       ['referrals',  'gift',             'Referalet'],
     ]],
@@ -1228,6 +1230,7 @@ export default function Admin() {
               {tab === 'invoices' && <InvoicesTab />}
               {tab === 'audit' && <AuditTab />}
               {tab === 'broadcast' && <BroadcastTab />}
+              {tab === 'biznese' && <BusinessesTab />}
             </>
           )}
         </div>
