@@ -192,3 +192,71 @@ Admini i dergon ne inbox te klientit dhe mund te **ngarkoje fature tatimore real
    krijimi dhe redaktimi kane qene dy here jashte sinkronit.
 3. **Plan rikthimi para cdo fshirjeje.** Shih `supabase/rollback/`.
 4. **Mos dyfisho vlera.** Nese nje numer shfaqet ne dy vende, njeri do te genjeje.
+
+---
+
+## 11. Rolet e administrates (2026-08-10)
+
+Deri me 9 gusht `is_admin` ishte **binar**: kush hynte ne panel mund te fshinte
+perdorues, biznese, te ndryshonte cmimet dhe te dergonte njoftime te gjitheve.
+Kjo nuk eshte panel — eshte celes i vetem per gjithe shtepine.
+
+Modeli i marre nga Meta Business Suite dhe Stripe Teams: **role te emertuara**
+me nje grup fiks lejesh. Jo kuti zgjedhjeje per person — lejet e lira per person
+behen te pakontrollueshme brenda pak muajsh.
+
+| Roli | Cfare mund te beje |
+|---|---|
+| **Pronar** | Gjithcka, perfshire caktimin e roleve dhe rimbursimet |
+| **Administrator** | Gjithcka pervec roleve dhe rimbursimeve |
+| **Financa** | Pagesat, faturat, rimbursimet, planet. **Nuk fshin.** |
+| **Moderator** | Permbajtja, perdoruesit, bizneset. **Pa para, pa fshirje.** |
+| **Mbeshtetje** | Vetem lexim |
+
+- `profiles.admin_role` ruan rolin; `perm_matrix(role)` kthen lejet; `has_perm(leje)` vendos.
+- **29 funksione admin** e pyesin lejen e vet. Asnje nuk mbeti me `is_admin()` te zhveshur.
+- Zbatimi eshte **ne baze, jo ne pamje**. Fshehja e nje tab-i eshte rehati, jo siguri.
+- Platforma nuk mbetet kurre pa Pronar — i fundit nuk hiqet dot, dhe nje Pronar
+  nuk e ul dot veten. Kjo mbron nga vetembyllja jashte panelit.
+
+**Kur shton nje funksion te ri admin:** shtoji nje `has_perm(...)` ne rreshtin e pare.
+Nese harron, cdo mbeshtetes mund ta thirre.
+
+---
+
+## 12. Notat e kreditit (rimbursimet)
+
+Rregulli i arte: **nje fature e leshuar nuk fshihet dhe nuk ndryshohet kurre.**
+Rimbursimi eshte nje dokument i **dyte**, negativ, qe i referohet te parit.
+Keshtu e kerkon kontabiliteti dhe keshtu mbetet gjurma.
+
+- `invoices.kind` = `invoice` | `credit_note`; `parent_invoice_id` lidh notes me faturen.
+- Numerator i vecante: `NK-VITI-NNNNNN` (fatura mbetet `ALP-VITI-NNNNNN`).
+- `refunded_total` mbahet mbi faturen prinderore; statusi kalon ne
+  `partially_refunded` ose `refunded`. Mbetja llogaritet, **nuk kopjohet**.
+- Rimbursime te pjesshme lejohen derisa mbetja te behet zero. Teprica refuzohet.
+- **Arsyeja eshte e detyrueshme** — mbetet pergjithmone ne `admin_logs`.
+- Opsionale: nderprerja e menjehershme e abonimit ne te njejtin veprim.
+- Kontrolli i shendetit: shuma e `total` per nje fature + notat e saj **duhet te jete 0**
+  kur rimbursohet plotesisht. Kjo u prova me kater skenare para se te dorezohej.
+
+---
+
+## 13. Gabime te gjetura duke verifikuar, jo duke supozuar (2026-08-10)
+
+Kater probleme qe ishin **te padukshme** derisa u ekzekutua kodi:
+
+1. **`admin_list_invoices` lexonte `profiles.email` — kolone qe nuk ekziston.**
+   Tab-i i Faturave nuk kthente liste bosh; kthente **gabim**. Emaili rri te `auth.users`.
+2. **`admin_deactivate_subscription` fshinte gjithmone `is_premium`**, edhe kur
+   abonimi i ndaluar ishte Boost VIP — pra klienti humbte Premium-in pa faj.
+   Dhe `limit 1` pa renditje zgjidhte nje abonim te rastesishem nga te dy.
+3. **`invoices_status_check` lejonte vetem `paid/gifted/refunded`.** Prandaj dega
+   `draft/issued` ne `admin_send_invoice` ishte kod i vdekur qe nga dita e pare,
+   dhe notat e kreditit nuk futeshin dot fare.
+4. **Dy versione te `admin_list_invoices`** njekohesisht — PostgREST nuk zgjidhte
+   dot cilin te thirrte (`function is not unique`).
+
+Mesimi mbetet rregulla 1: **ekzekuto, mos supozo.** `create or replace` ne plpgsql
+nuk verifikon asgje brenda trupit — nje kolone e gabuar kalon pa zhurme derisa
+dikush e thirr funksionin ne prodhim.
