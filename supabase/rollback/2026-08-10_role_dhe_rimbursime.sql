@@ -113,3 +113,9 @@ end $fn$;
 -- rreshtin ['roles', ...] dhe bllokun NEVOJA/lejohet/groups.
 -- Fshi app/admin/tabs/RolesTab.tsx dhe app/admin/tabs/Trend.tsx.
 -- Kthe app/admin/tabs/InvoicesTab.tsx ne commit-in para 2026-08-10.
+
+-- ── 6. RIKTHE AKSESIN E NDIHMESVE TE BRENDSHEM (nuk rekomandohet) ──
+-- Vetem nese diçka mbeshtetet vertet ne thirrjen e tyre nga shfletuesi.
+-- grant execute on function public._issue_invoice(uuid, uuid, text, text, numeric, text) to authenticated;
+-- grant execute on function public._next_invoice_number() to authenticated;
+-- grant execute on function public._sub_event(uuid, uuid, text, jsonb) to authenticated;

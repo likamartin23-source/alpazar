@@ -260,3 +260,24 @@ Kater probleme qe ishin **te padukshme** derisa u ekzekutua kodi:
 Mesimi mbetet rregulla 1: **ekzekuto, mos supozo.** `create or replace` ne plpgsql
 nuk verifikon asgje brenda trupit — nje kolone e gabuar kalon pa zhurme derisa
 dikush e thirr funksionin ne prodhim.
+
+---
+
+## 14. Ndihmesit e brendshem jane te mbyllur
+
+PostgREST ekspozon **cdo** funksion te skemes `public`. Kater ndihmes ishin
+`SECURITY DEFINER` **pa asnje rojtar**, me `EXECUTE` per `anon` dhe `authenticated`:
+
+| Funksioni | Cfare mund te bente kushdo |
+|---|---|
+| `_issue_invoice` | te falsifikonte nje fature |
+| `_next_invoice_number` | te konsumonte numeratorin fiskal |
+| `_sub_event` | te shkruante ngjarje te rreme abonimi |
+| `_revoke_subscription` | te nderpriste abonimin e kujtdo |
+
+Te gjitha u revokuan nga `public, anon, authenticated`. Thirrjet nga brenda
+funksioneve te tjera `SECURITY DEFINER` nuk preken — ato ekzekutohen si pronari.
+
+**Rregull i ri:** cdo funksion i ri qe fillon me `_` duhet te kete `revoke execute
+... from public, anon, authenticated` ne te njejtin migrim ku krijohet.
+Nese nje funksion nuk thirret nga shfletuesi, ai nuk duhet te jete i thirrshem prej tij.
