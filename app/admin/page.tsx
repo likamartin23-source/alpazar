@@ -13,6 +13,8 @@ import { InvoicesTab } from './tabs/InvoicesTab'
 import { AuditTab } from './tabs/AuditTab'
 import { BroadcastTab } from './tabs/BroadcastTab'
 import { BusinessesTab } from './tabs/BusinessesTab'
+import { RolesTab } from './tabs/RolesTab'
+import { Trend } from './tabs/Trend'
 
 /* ─── Styles ───────────────────────────────────────────────── */
 const CSS = `
@@ -611,6 +613,10 @@ function AIHealthTab() {
 export default function Admin() {
   const { config } = useAlpazar()
   const [tab, setTab] = useState('dash')
+  const [perms, setPerms] = useState<string[] | null>(null)
+  const [myRole, setMyRole] = useState('')
+  const [trends, setTrends] = useState<any>(null)
+  const [trendDays, setTrendDays] = useState(30)
   const [stats, setStats] = useState({ users: 0, premium: 0, revenue: 0, listings: 0, messages: 0, reports: 0 })
   const [payments, setPayments] = useState<any[]>([])
   const [premiumRequests, setPremiumRequests] = useState<any[]>([])
@@ -648,6 +654,22 @@ export default function Admin() {
       fetchAll()
     })
   }, [])
+
+  // Lejet vijne nga baza, jo nga pamja. Pamja vetem fsheh ate qe nuk vlen.
+  useEffect(() => {
+    if (!authChecked) return
+    supabase.rpc('my_admin_profile').then(({ data }) => {
+      const d: any = data || {}
+      setPerms(Array.isArray(d.perms) ? d.perms : [])
+      setMyRole(d.role || '')
+    }, () => setPerms([]))
+  }, [authChecked])
+
+  useEffect(() => {
+    if (!authChecked) return
+    supabase.rpc('admin_trends', { p_days: trendDays })
+      .then(({ data }) => { if (data && !(data as any).error) setTrends(data) }, () => {})
+  }, [authChecked, trendDays])
 
   async function verifyAdminMfa() {
     if (totpCode.length !== 6) { setMfaError('Fut kodin 6-shifror!'); return }
@@ -803,7 +825,7 @@ export default function Admin() {
 
   // Grupim sipas modelit te paneleve te medha (Meta Business Suite, TikTok, Temu):
   // domene te qarta, jo nje liste e sheshte ku tre tab-e mbulojne te njejten rrjedhe.
-  const groups: [string, [string, string, string][]][] = [
+  const groupsAll: [string, [string, string, string][]][] = [
     ['Vështrim', [
       ['dash',       'layout-dashboard', 'Dashboard'],
     ]],
@@ -827,10 +849,26 @@ export default function Admin() {
     ['Sistemi', [
       ['limits',     'adjustments',      'Kufijtë'],
       ['config',     'settings-2',       'Konfigurime'],
+      ['roles',      'key',              'Rolet'],
       ['audit',      'history',          'Gjurma'],
       ['health',     'activity-heartbeat', 'AI Health'],
     ]],
   ]
+
+  // Nje tab qe personi s'e perdor dot nuk shfaqet fare. Kjo nuk eshte siguri —
+  // siguria zbatohet ne baze — por eshte pastrim i mendjes dhe mbrojtje nga gabimi.
+  const NEVOJA: Record<string, string> = {
+    users: 'users.view', biznese: 'business.view', broadcast: 'broadcast.send',
+    referrals: 'users.view', preq: 'billing.approve', payments: 'billing.view',
+    invoices: 'billing.view', plans: 'billing.plans', methods: 'billing.plans',
+    moderation: 'content.moderate', takedown: 'content.moderate',
+    limits: 'config.write', config: 'config.write',
+    roles: 'audit.view', audit: 'audit.view', health: 'audit.view',
+  }
+  const lejohet = (id: string) => !perms || !NEVOJA[id] || perms.includes(NEVOJA[id])
+  const groups: [string, [string, string, string][]][] = groupsAll
+    .map(([g, items]) => [g, items.filter(([id]) => lejohet(id))] as [string, [string, string, string][]])
+    .filter(g => g[1].length > 0)
   const tabs: [string, string, string][] = groups.flatMap(g => g[1])
 
   if (mfaRequired) return (
@@ -895,6 +933,14 @@ export default function Admin() {
           <div className="sb-logo">
             <div className="n"><span aria-hidden="true">🦅</span> ALPAZAR</div>
             <div className="r">Admin Panel</div>
+            {myRole && (
+              <div style={{ marginTop: 6, display: 'inline-block', background: '#1a1a1a',
+                color: '#F5C842', borderRadius: 4, padding: '2px 7px', fontSize: 9, fontWeight: 800,
+                textTransform: 'uppercase', letterSpacing: .5 }}>
+                {myRole === 'owner' ? 'Pronar' : myRole === 'admin' ? 'Administrator'
+                  : myRole === 'finance' ? 'Financa' : myRole === 'moderator' ? 'Moderator' : 'Mbështetje'}
+              </div>
+            )}
             {isMaint && (
               <div style={{ marginTop: 8, background: '#E63312', color: '#fff', borderRadius: 4, padding: '2px 6px', fontSize: 9, fontWeight: 700 }}>
                 <><span aria-hidden="true">🔧</span> MIRËMBAJTJE</>
@@ -961,6 +1007,29 @@ export default function Admin() {
                       <div className="sn" style={{ color: stats.reports > 0 ? '#E63312' : '#111' }}>{stats.reports}</div>
                       <div className="sl">Raporte të hapura</div>
                     </div>
+                  </div>
+
+                  <div className="card" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px' }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: '#555' }}>Periudha</span>
+                    {[7, 30, 90].map(n => (
+                      <button type="button" key={n} className="btn" aria-pressed={trendDays === n}
+                        style={{ background: trendDays === n ? '#111' : '#f0f0f0', color: trendDays === n ? '#fff' : '#555' }}
+                        onClick={() => setTrendDays(n)}>{n} ditë</button>
+                    ))}
+                    {trends?.totale && (
+                      <span style={{ marginLeft: 'auto', fontSize: 10.5, color: '#999' }}>
+                        Rimbursuar në periudhë: <strong style={{ color: Number(trends.totale.rimbursime) > 0 ? '#E63312' : '#111' }}>
+                          {Number(trends.totale.rimbursime || 0).toLocaleString('sq-AL')}
+                        </strong>
+                      </span>
+                    )}
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(230px,1fr))', gap: 12, marginBottom: 14 }}>
+                    <Trend titull="Të ardhura neto" data={trends?.te_ardhura || []} fusha="shuma" ngjyra="#1D9E75" />
+                    <Trend titull="Abonime të reja"  data={trends?.abonime || []} ngjyra="#BA7517" />
+                    <Trend titull="Regjistrime"      data={trends?.regjistrime || []} ngjyra="#E63312" />
+                    <Trend titull="Shpallje të reja" data={trends?.shpallje || []} ngjyra="#555" />
                   </div>
                   <div className="card">
                     <div className="ct">Pagesat e fundit</div>
@@ -1228,6 +1297,7 @@ export default function Admin() {
               {tab === 'plans' && <PlansTab />}
               {tab === 'limits' && <LimitsTab />}
               {tab === 'invoices' && <InvoicesTab />}
+              {tab === 'roles' && <RolesTab />}
               {tab === 'audit' && <AuditTab />}
               {tab === 'broadcast' && <BroadcastTab />}
               {tab === 'biznese' && <BusinessesTab />}
