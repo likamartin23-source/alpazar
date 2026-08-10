@@ -119,3 +119,65 @@ end $fn$;
 -- grant execute on function public._issue_invoice(uuid, uuid, text, text, numeric, text) to authenticated;
 -- grant execute on function public._next_invoice_number() to authenticated;
 -- grant execute on function public._sub_event(uuid, uuid, text, jsonb) to authenticated;
+
+-- ── 7. RIKTHIMI I ATOPSISE SE DYTE (RLS + rojtari i profilit) ──
+-- Kthe politikat RLS nga has_perm() te is_admin().
+do $$
+declare v_rec record; v_sql text; v_n int := 0;
+begin
+  for v_rec in
+    select c.relname tbl, p.polname pol,
+           pg_get_expr(p.polqual, p.polrelid) qual,
+           pg_get_expr(p.polwithcheck, p.polrelid) wc
+      from pg_policy p join pg_class c on c.oid=p.polrelid
+      join pg_namespace n on n.oid=c.relnamespace
+     where n.nspname='public'
+       and (pg_get_expr(p.polqual,p.polrelid) ~ 'has_perm'
+         or pg_get_expr(p.polwithcheck,p.polrelid) ~ 'has_perm')
+  loop
+    v_sql := format('alter policy %I on public.%I', v_rec.pol, v_rec.tbl);
+    if v_rec.qual is not null then
+      v_sql := v_sql || format(' using (%s)',
+        regexp_replace(v_rec.qual, 'public\.has_perm\([^)]*\)', 'public.is_admin()', 'g'));
+    end if;
+    if v_rec.wc is not null then
+      v_sql := v_sql || format(' with check (%s)',
+        regexp_replace(v_rec.wc, 'public\.has_perm\([^)]*\)', 'public.is_admin()', 'g'));
+    end if;
+    execute v_sql; v_n := v_n + 1;
+  end loop;
+  raise notice 'U kthyen % politika', v_n;
+end $$;
+
+-- Kthe shkrimin e drejtperdrejte mbi gjurmen, faturat dhe abonimet.
+create policy admin_logs_admin on public.admin_logs for all using (public.is_admin());
+create policy invoices_admin_all on public.invoices for all
+  using (public.is_admin()) with check (public.is_admin());
+create policy subs_admin_all on public.subscriptions for all
+  using (public.is_admin()) with check (public.is_admin());
+
+-- Kthe rojtarin e vjeter te profilit (mbulon vetem kater kolona).
+create or replace function public.guard_profile_privileges()
+returns trigger language plpgsql security definer
+set search_path to 'public','pg_temp' as $fn$
+begin
+  if current_setting('role', true) = 'service_role' then return new; end if;
+  if current_setting('app.skip_privilege_guard', true) = 'true' then return new; end if;
+  if not exists (select 1 from profiles where id = auth.uid() and is_admin = true) then
+    if old.is_admin is distinct from new.is_admin then
+      raise exception 'Permission denied: cannot change is_admin'; end if;
+    if old.is_premium is distinct from new.is_premium then
+      raise exception 'Permission denied: cannot change is_premium'; end if;
+    if old.premium_expires_at is distinct from new.premium_expires_at then
+      raise exception 'Permission denied: cannot change premium_expires_at'; end if;
+    if old.trust_score is distinct from new.trust_score then
+      raise exception 'Permission denied: cannot change trust_score'; end if;
+  end if;
+  return new;
+end $fn$;
+
+-- Hiq zbatimin e cmimit minimal dhe realtime-in e shtuar.
+drop trigger if exists trg_min_listing_price on public.listings;
+drop function if exists public.tg_enforce_min_price();
+alter publication supabase_realtime drop table public.premium_requests;
+alter publication supabase_realtime drop table public.invoices;

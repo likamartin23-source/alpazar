@@ -281,3 +281,70 @@ funksioneve te tjera `SECURITY DEFINER` nuk preken — ato ekzekutohen si pronar
 **Rregull i ri:** cdo funksion i ri qe fillon me `_` duhet te kete `revoke execute
 ... from public, anon, authenticated` ne te njejtin migrim ku krijohet.
 Nese nje funksion nuk thirret nga shfletuesi, ai nuk duhet te jete i thirrshem prej tij.
+
+---
+
+## 15. Atopsi e plote e panelit (2026-08-10, raundi i dyte)
+
+Rolet u shtuan ne mengjes. Kjo atopsi pyeti nje gje te vetme:
+**a zbatohen vertet, ne cdo rruge hyrjeje?** Pergjigjja ishte jo.
+
+### 15.1 RLS nuk i ndiqte rolet
+Rolet mbronin **funksionet**. Por paneli i shkruan disa tabela **drejtperdrejt**
+nga shfletuesi: `premium_plans` (PlansTab), `app_config` (LimitsTab),
+`payment_methods` (page.tsx). Atje rojtari ishte ende `is_admin()`.
+
+Pra nje rol "Mbeshtetje" — qe ne panel duket vetem-lexim — mund te ndryshonte
+cmimet, cdo kufi te sistemit, dhe te fshinte gjurmen. **71 politika** kaluan
+te `has_perm(...)`.
+
+**Mesimi qe mbetet:** kur shton nje rrjet sigurie, numeroji te gjitha dyert.
+Nje funksion i mbrojtur nuk vlen asgje nese tabela pas tij eshte e hapur.
+
+### 15.2 Gjurma ishte e fshishme
+`admin_logs` kishte politike `ALL` me `is_admin()`. Cdo admin mund te fshinte
+gjurmen e vetes. Tani nuk ka **asnje** politike shkrimi — as Pronari nuk e prek.
+Shkruhet vetem nga `admin_log()`, SECURITY DEFINER i zoteruar nga postgres.
+
+E njejta logjike u zbatua te `invoices` dhe `subscriptions`.
+
+### 15.3 Rojtari i profilit mbulonte gjysmen e kolonave
+`guard_profile_privileges` mbronte `is_admin`, `is_premium`, `premium_expires_at`,
+`trust_score`. Mungonin kater, secila nje vrime reale:
+
+| Kolona | Cfare lejonte |
+|---|---|
+| `has_boost`, `boost_expires_at` | cdo perdorues i jepte vetes VIP falas — produkti 19.99 EUR |
+| `is_suspended` | nje perdorues i pezulluar hiqte vete pezullimin |
+| `is_verified` | shenja e verifikimit falsifikohej |
+| `admin_role` | nje admin "Mbeshtetje" ngrihej vete ne "Pronar" |
+
+Tani cdo kolone kerkon lejen e vet, dhe askush — as Pronari — nuk e ndryshon dot
+rolin e **vetes**. Rruga e vetme mbetet `admin_set_role`, e cila e regjistron veprimin.
+
+### 15.4 Kufij qe nuk zbatoheshin
+`min_listing_price` lexohej vetem nga formulari — kalohej me nje kerkese te
+thjeshte API. Tani e zbaton `trg_min_listing_price`.
+
+**Rregull:** cdo kufi qe shfaqet ne tab-in "Kufijte" duhet te kete nje trigger
+ose funksion qe e zbaton. Nje kufi qe jeton vetem ne shfletues eshte dekor.
+
+### 15.5 "Live" qe nuk ishte live
+`premium_requests` dhe `invoices` nuk ishin fare ne publikimin `supabase_realtime`.
+Nje kerkese e re pagese nuk dukej derisa dikush rifreskonte faqen — pikerisht
+ekrani ku vonesa kushton para. Te dyja u shtuan, me abonime ne panel.
+
+### 15.6 Funksione jetime — dokumentuar, jo te fshira
+Keto ekzistojne ne baze por nuk thirren nga asnje rresht kodi:
+
+- `admin_adjust_subscription`, `admin_cancel_subscription`,
+  `admin_change_subscription_plan` — mbivendosen me `admin_deactivate_subscription`,
+  i cili eshte i vetmi i lidhur me panelin.
+- `admin_send_invoices_bulk` — paneli dergon nje nga nje.
+- `admin_review_verification` + tabela `verification_requests` — **asnje rresht
+  kodi nuk fut te dhena atje**, ndaj radha nuk mbushet dot kurre. Verifikimi
+  real i biznesit behet me `admin_set_business_flag`.
+
+Nuk u fshine sepse fshirja pa nevoje eshte rrezik pa perfitim. Por **mos i
+konsidero si veçori qe ekzistojne** — nese do radhe verifikimi, duhet ndertuar
+rruga e paraqitjes se kerkeses, jo vetem ajo e shqyrtimit.
