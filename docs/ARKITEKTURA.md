@@ -38,6 +38,7 @@ Burimi i vetem per kodin: **`get_my_entitlements()`**. Asnje faqe nuk lexon `cfg
 Perfitimet: shpallje pa limit, vend i pare, profil biznesi, postime pa limit.
 
 **Ekstra Boost VIP** — produkt i **vecante**, shtese mbi Premium (nuk e zevendeson).
+Fillon nga **19.99 EUR / 1 999.90 L** ne muaj.
 Blihet vetem nga kush ka Premium aktiv. Jep kreun absolut te listes.
 
 Zbritja per 3-mujor dhe vjetor eshte **17% e sakte**, jo e perafert.
@@ -83,13 +84,49 @@ Kurre te dyja ne te njejtin vend — kjo shkaktonte mbivendosje dhe kalime te ga
 
 ---
 
+## 4-b. Profili i biznesit — errësimi
+
+`businesses.is_visible` **rrjedh nga e drejta e pronarit**, njësoj si renditja. Kur Premium-i
+skadon ose anulohet, profili errësohet vetvetiu dhe zhduket nga publiku; kur pagesa kthehet,
+ndriçohet menjëherë. Pronari e sheh gjithmonë të vetin; admini sheh gjithçka.
+
+- `is_active` — errësim manual nga administrata, vlen edhe kur pronari paguan.
+- `dim_reason` — pse është i errësuar, i dukshëm në panel.
+- `business_requires_premium` (app_config) — fike vetëm nëse do që bizneset të mbeten
+  publike pa pagesë.
+
+**Historia:** para 2026-08-10 `businesses` nuk kishte fare kolonë dukshmërie dhe politika
+publike ishte `true` — një profil biznesi mbetej i dukshëm përgjithmonë edhe pa pagesë.
+
+Fshirja e një biznesi **nuk i prek shpalljet** — ato shkëputen nga biznesi dhe mbeten.
+
+Verifikimi nuk është sistem më vete: `admin_review_verification()` e trajton në të njëjtën
+sipërfaqe, dhe aprovimi verifikon automatikisht biznesin ose përdoruesin dhe njofton pronarin.
+
+---
+
 ## 5. Paneli i kontrollit
 
 Nje faqe e vetme `/admin` me shirit anesor. **Mos krijo faqe paralele** — kjo e prishi
 strukturen njehere dhe u desh te kthehej mbrapsht.
 
-Tab-et: Dashboard · Perdoruesit · Pagesat · Abonimet · Faturat · Metodat · Planet ·
-Kufijte · Konfigurime · Moderimi · AI Health · Referalet · Heqja
+**Pesë domene**, sipas modelit Meta Business Suite / TikTok / Temu Seller Center — jo listë
+e sheshtë ku tre tab-e mbulojnë të njëjtën rrjedhë:
+
+| Domeni | Tab-et |
+|---|---|
+| Vështrim | Dashboard |
+| Njerëz | Përdoruesit · Bizneset · Njoftime · Referalet |
+| Të ardhura | Pagesat · Abonimet · Faturat · Planet · Metodat |
+| Përmbajtje | Moderimi · Heqja |
+| Sistemi | Kufijtë · Konfigurime · Gjurma · AI Health |
+
+**Aftësi që çdo panel serioz i ka dhe tani i ka edhe ky:** gjurmë veprimesh (kush, çfarë, kur),
+njoftime masive të segmentuara me numër marrësish para dërgimit, veprime masive, eksport CSV
+me BOM për Excel-in shqip, trende ditore (`admin_trends`).
+
+**Aprovim me një klikim:** butoni *"Aprovo + faturë"* aktivizon abonimin, lëshon faturën,
+e dërgon në inbox dhe e regjistron veprimin — një transaksion i vetëm.
 
 Komponentet e rinj shkojne te `app/admin/tabs/` dhe regjistrohen ne listen `tabs` te
 `page.tsx`. Klasat vizuale: `.ph .pt .card .ct .stats .sc .badge .btn .finput .cfg-row`.
