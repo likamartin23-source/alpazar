@@ -44,6 +44,14 @@ export function InvoicesTab() {
 
   useEffect(() => { load('', kind) }, [load, kind])
 
+  // Nje fature e re duhet te shfaqet pa rifreskim — ky ekran vendos para.
+  useEffect(() => {
+    const ch = supabase.channel('adm-invoices')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'invoices' }, () => load(q, kind))
+      .subscribe()
+    return () => { supabase.removeChannel(ch) }
+  }, [load, q, kind])
+
   const mesazh = (t: string) => { setOk(t); setTimeout(() => setOk(''), 4000) }
 
   async function send(id: string) {

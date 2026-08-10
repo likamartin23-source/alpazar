@@ -768,6 +768,11 @@ export default function Admin() {
     fetchAll()
   }
 
+  // Realtime — kërkesa të reja pagese. Ky është ekrani ku vonesa kushton para:
+  // pa këtë, një pagesë e re nuk dukej derisa dikush rifreskonte faqen.
+  const onPreq = useCallback(() => { fetchAll(); setLastUpdated(new Date()) }, [fetchAll])
+  useRealtimeTable('premium_requests', null, onPreq, onPreq, onPreq)
+
   // Realtime — listingje të reja
   useRealtimeTable(
     'listings',
