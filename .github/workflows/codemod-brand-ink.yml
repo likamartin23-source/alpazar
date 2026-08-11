@@ -1,12 +1,14 @@
-name: Codemod — kontrast teksti (WCAG 1.4.3)
+name: Codemod — kontrast teksti + prefetch (nje-perdorimsh)
 
-# Nje-perdorimsh. #E63312 mbi te bardhe jep 4.33:1, nen pragun AA 4.5:1.
-# Zevendeson VETEM deklaratat e tekstit me #C42B0F (5.68:1 mbi te bardhe,
-# 5.12:1 mbi #FFF0EE). Sfondet, kufijte, gradientet dhe hijet mbeten #E63312 —
-# identiteti vizual nuk ndryshon, vetem teksti behet i lexueshem.
+# 1) #E63312 mbi te bardhe jep 4.33:1, nen pragun AA 4.5:1. Zevendeson VETEM
+#    deklaratat e tekstit me #C42B0F (5.68:1 mbi te bardhe, 5.12:1 mbi #FFF0EE).
+#    Sfondet, kufijte, gradientet dhe hijet mbeten #E63312 — identiteti vizual
+#    nuk ndryshon, vetem teksti behet i lexueshem.
+# 2) scroll-padding (WCAG 2.2 SC 2.4.11) + Speculation Rules ne layout.tsx.
 #
 # Eshte workflow e jo commit i drejtperdrejte sepse ndryshimi prek 46 skedare;
 # nje zevendesim i skriptuar eshte me i verifikueshem se 46 diff-e me dore.
+# Te gjitha hapat jane idempotente — nje rirun i dyte nuk ndryshon asgje.
 
 on:
   workflow_dispatch:
@@ -33,8 +35,7 @@ jobs:
           pat_jsx = re.compile(r"(?<![-\w])color:\s*'#E63312'")
 
           total, files = 0, 0
-          roots = [pathlib.Path('app'), pathlib.Path('lib')]
-          for root in roots:
+          for root in (pathlib.Path('app'), pathlib.Path('lib')):
               for ext in ('*.tsx', '*.ts'):
                   for p in root.rglob(ext):
                       s = o = p.read_text()
@@ -55,6 +56,67 @@ jobs:
           fi
           echo "OK: vetem deklarata teksti."
 
+      - name: scroll-padding + Speculation Rules
+        run: |
+          python3 - <<'PY'
+          import pathlib, sys
+
+          p = pathlib.Path('app/layout.tsx')
+          s = p.read_text()
+
+          # --- WCAG 2.2 SC 2.4.11 Focus Not Obscured ---
+          # Header-i sticky (~56px) dhe shiriti fiks i poshtem (~80px) mbulojne
+          # elementin e fokusuar kur levizet me tastiere.
+          anchor = ".skip-link:focus{left:16px;top:16px;width:auto;height:auto;overflow:visible;}"
+          pad = "html{scroll-padding-top:64px;scroll-padding-bottom:96px;}"
+          if pad in s:
+              print("scroll-padding: tashme aty")
+          else:
+              if anchor not in s:
+                  sys.exit("ANKORA e skip-link nuk u gjet — ndalohet")
+              s = s.replace(anchor, anchor + pad, 1)
+              print("scroll-padding: u shtua")
+
+          # --- Speculation Rules ---
+          # Navigojme me window.location.href, ndaj prefetch-i i Next-it nuk
+          # aktivizohet KURRE. Keto rregulla punojne mbi navigime dokumenti.
+          # prefetch, JO prerender: prerender-i e EKZEKUTON faqen, cka do te
+          # numeronte shikime shpalljesh qe s'ndodhen.
+          jsonld = "{/* JSON-LD — Google e kupton si marketplace */}"
+          block = '''{/* Speculation Rules — navigojme me window.location.href, ndaj prefetch-i
+            i Next-it nuk aktivizohet KURRE. Keto rregulla punojne mbi navigime
+            dokumenti, pra jane e vetmja menyre qe kemi per te parangarkuar.
+            `prefetch` (jo `prerender`) qellimisht: prerender-i e EKZEKUTON faqen —
+            per nje marketplace kjo do te numeronte shikime shpalljesh qe s'ndodhen.
+            Rruget private/veprim perjashtohen: parangarkimi i tyre eshte humbje.
+            Chromium-only, degradim i paster kudo tjeter.
+            https://developer.chrome.com/docs/web-platform/prerender-pages */}
+        <script type="speculationrules" dangerouslySetInnerHTML={{__html: JSON.stringify({
+          prefetch: [{
+            where: { and: [
+              { href_matches: '/*' },
+              { not: { href_matches: [
+                '/api/*', '/admin*', '/auth/*', '/messages*', '/notifications*',
+                '/profile*', '/dashboard*', '/favorites*', '/saved-searches*',
+                '/te-dhenat-mia*', '/listing/new', '/biznese/new',
+                '/listing/*/edit', '/biznese/*/edit',
+              ] } },
+            ] },
+            eagerness: 'moderate',
+          }],
+        })}} />
+        '''
+          if 'speculationrules' in s:
+              print("speculation rules: tashme aty")
+          else:
+              if jsonld not in s:
+                  sys.exit("ANKORA e JSON-LD nuk u gjet — ndalohet")
+              s = s.replace(jsonld, block + jsonld, 1)
+              print("speculation rules: u shtuan")
+
+          p.write_text(s)
+          PY
+
       - name: Ndertimi duhet te kaloje
         run: |
           npm ci
@@ -73,19 +135,29 @@ jobs:
             exit 0
           fi
           git commit -F - <<'MSG'
-          a11y: ngjyre teksti qe kalon WCAG AA (kontrast 1.4.3)
+          a11y+perf: kontrast teksti WCAG AA, scroll-padding, prefetch qe punon
 
-          #E63312 mbi te bardhe jep 4.33:1 — nen pragun 4.5:1. Cmimet jane
-          14px bold, qe NUK kualifikohet si "tekst i madh" (large = 18.66px
-          bold / 24px regular), ndaj cdo cmim ne cdo karte ishte shkelje.
+          1. Kontrasti (WCAG 1.4.3). #E63312 mbi te bardhe jep 4.33:1 — nen
+             pragun 4.5:1. Cmimet jane 14px bold, qe NUK kualifikohet si "tekst
+             i madh" (large = 18.66px bold / 24px regular), ndaj cdo cmim ne cdo
+             karte ishte shkelje. Deklaratat e tekstit kaluan te #C42B0F:
+             5.68:1 mbi te bardhe, 5.12:1 mbi #FFF0EE, 5.44:1 mbi #FAFAFA —
+             kalon ne cdo sfond qe perdorim. Sfondet, kufijte, gradientet dhe
+             hijet mbeten #E63312: identiteti vizual nuk ndryshon.
 
-          Deklaratat e tekstit kaluan te #C42B0F: 5.68:1 mbi te bardhe,
-          5.12:1 mbi #FFF0EE, 5.44:1 mbi #FAFAFA — kalon ne cdo sfond qe
-          perdorim. Sfondet, kufijte, gradientet dhe hijet mbeten #E63312:
-          identiteti vizual nuk ndryshon, vetem teksti behet i lexueshem.
+          2. WCAG 2.2 SC 2.4.11 Focus Not Obscured: scroll-padding ne <html> qe
+             fokusi me tastiere te mos mbulohet nga header-i sticky (~56px) ose
+             shiriti fiks i poshtem (~80px).
 
-          Zevendesim i skriptuar me lookbehind qe perjashton border-color,
-          me nje kontroll qe deshton nese ndonje kufi preket. Ndertimi
+          3. Speculation Rules. Navigojme me window.location.href, ndaj
+             prefetch-i i Next-it nuk aktivizohet KURRE — s'kishim asnje
+             parangarkim. Zgjodha prefetch, JO prerender: prerender-i e ekzekuton
+             faqen, cka do te numeronte shikime shpalljesh qe s'ndodhen. Rruget
+             private/veprim jane te perjashtuara.
+
+          Zevendesimi i ngjyres eshte i skriptuar, me lookbehind qe perjashton
+          border-color dhe nje kontroll qe deshton nese ndonje kufi preket.
+          Ndryshimet e layout-it jane te ankoruara dhe idempotente. Ndertimi
           verifikohet perpara commit-it.
           MSG
           git push
