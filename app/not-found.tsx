@@ -19,7 +19,7 @@ export default function NotFound() {
               ALPAZAR
             </div>
             <div style={{
-              fontSize: 64, fontWeight: 900, color: '#E63312',
+              fontSize: 64, fontWeight: 900, color: '#C42B0F',
               lineHeight: 1, marginBottom: 8,
             }}>
               404

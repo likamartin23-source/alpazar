@@ -39,10 +39,10 @@ const CSS = `
   .body{padding:16px 12px;}
   .card{background:#fff;border-radius:12px;border:0.5px solid #ececec;padding:18px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 16px -10px rgba(0,0,0,.14);}
   .card-title{font-size:13px;font-weight:700;color:#111;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
-  .card-title i{font-size:16px;color:#E63312;}
+  .card-title i{font-size:16px;color:#C42B0F;}
   .stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:4px;}
   .stat{background:#FFFBEA;border-radius:12px;padding:14px 10px;text-align:center;}
-  .stat-n{font-size:22px;font-weight:700;color:#E63312;}
+  .stat-n{font-size:22px;font-weight:700;color:#C42B0F;}
   .stat-l{font-size:10px;color:#888;margin-top:3px;}
   .ref-box{background:#f9f5e0;border:1.5px dashed #F5C842;border-radius:12px;padding:16px;margin-bottom:12px;text-align:center;}
   .ref-code{font-size:22px;font-weight:700;color:#111;letter-spacing:3px;margin-bottom:6px;font-family:monospace;}

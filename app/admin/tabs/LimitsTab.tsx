@@ -110,7 +110,7 @@ export function LimitsTab() {
         <div className="sc"><div className="sn">{cap(g('max_videos_premium'))}</div><div className="sl">Video Premium</div></div>
       </div>
 
-      {err && <div className="card" role="alert" style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#E63312', fontSize: 12 }}>{err}</div>}
+      {err && <div className="card" role="alert" style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#C42B0F', fontSize: 12 }}>{err}</div>}
 
       {GROUPS.map(grp => (
         <div className="card" key={grp.label}>

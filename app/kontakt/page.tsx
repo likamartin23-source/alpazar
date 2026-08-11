@@ -57,12 +57,12 @@ export default function Kontakt() {
     .body{padding:20px 16px 40px;}
     .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
     .ccard{background:#fff;border-radius:12px;padding:18px;border:0.5px solid #eee;text-align:center;text-decoration:none;}
-    .ccard i{font-size:28px;color:#E63312;display:block;margin-bottom:10px;}
+    .ccard i{font-size:28px;color:#C42B0F;display:block;margin-bottom:10px;}
     .ccard strong{font-size:13px;font-weight:700;color:#111;display:block;margin-bottom:4px;}
     .ccard span{font-size:11px;color:#888;}
     .section{background:#fff;border-radius:12px;padding:18px;border:0.5px solid #eee;margin-bottom:14px;}
     .sec-title{font-size:13px;font-weight:700;color:#111;margin-bottom:14px;display:flex;align-items:center;gap:7px;}
-    .sec-title i{font-size:16px;color:#E63312;}
+    .sec-title i{font-size:16px;color:#C42B0F;}
     .faq-item{padding:10px 0;border-bottom:0.5px solid #f0f0f0;}
     .faq-item:last-child{border:none;}
     .faq-q{font-size:13px;font-weight:600;color:#111;margin-bottom:5px;}
@@ -82,7 +82,7 @@ export default function Kontakt() {
     .send-btn:disabled{opacity:.6;cursor:not-allowed;}
     .msg-box{border-radius:9px;padding:10px 14px;margin-bottom:14px;font-size:12px;font-weight:600;}
     .ok{background:#EAF3DE;color:#3B6D11;border:0.5px solid #97C459;}
-    .err{background:#FFF0EE;color:#E63312;border:0.5px solid #F09595;}
+    .err{background:#FFF0EE;color:#C42B0F;border:0.5px solid #F09595;}
   `
   return (
     <>

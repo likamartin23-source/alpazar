@@ -112,7 +112,7 @@ export function MapPicker({ lat, lng, address, onChange, onCityChange }: MapPick
       </div>
 
       {error && (
-        <div style={{ marginTop: 6, fontSize: 11, color: '#E63312' }}>{error}</div>
+        <div style={{ marginTop: 6, fontSize: 11, color: '#C42B0F' }}>{error}</div>
       )}
 
       <div style={{ marginTop: 6, fontSize: 11, color: '#aaa', display: 'flex', alignItems: 'center', gap: 5 }}>

@@ -75,7 +75,7 @@ export function RolesTab() {
 
       {err && (
         <div className="card" role="alert"
-          style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#E63312', fontSize: 12 }}>{err}</div>
+          style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#C42B0F', fontSize: 12 }}>{err}</div>
       )}
 
       {!mund && (
@@ -123,7 +123,7 @@ export function RolesTab() {
                             <button type="button" className="edit-btn" onClick={() => setHeq('')}>Jo</button>
                           </>
                         ) : (
-                          <button type="button" className="edit-btn" style={{ color: '#E63312' }}
+                          <button type="button" className="edit-btn" style={{ color: '#C42B0F' }}
                             onClick={() => setHeq(a.id)}>Hiq aksesin</button>
                         )}
                       </div>

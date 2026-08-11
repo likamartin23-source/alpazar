@@ -50,7 +50,7 @@ tr:last-child td{border:none;}
 .badge{border-radius:999px;padding:3px 10px;font-size:10px;font-weight:700;display:inline-block;}
 .ba{background:#EAF3DE;color:#1D9E75;}
 .bp{background:#FAEEDA;color:#BA7517;}
-.bd{background:#FFF0EE;color:#E63312;}
+.bd{background:#FFF0EE;color:#C42B0F;}
 .btn{border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;margin-right:6px;font-family:inherit;transition:opacity .15s,transform .1s;}
 .btn:hover{opacity:.88;transform:translateY(-1px);}
 .btn:disabled{opacity:.5;cursor:default;transform:none;}
@@ -72,7 +72,7 @@ tr:last-child td{border:none;}
 .finput:focus{border-color:#F5C842;background:#fff;}
 .section-label{font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.8px;margin:18px 0 10px;}
 .edit-btn{border:1px solid #eee;background:#fff;color:#111;border-radius:10px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s,border .15s;}
-.edit-btn:hover{background:#FDE9E4;border-color:#E63312;color:#E63312;}
+.edit-btn:hover{background:#FDE9E4;border-color:#E63312;color:#C42B0F;}
 .edit-btn:disabled{opacity:.5;cursor:default;}
 .save-row{display:flex;gap:8px;align-items:center;margin-top:6px;}
 .save-btn{background:#111;color:#fff;border:none;border-radius:7px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;}
@@ -268,7 +268,7 @@ function AppConfigTab() {
       )}
 
       {saveErr && (
-        <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', color: '#E63312', borderRadius: 10, padding: '10px 14px', marginBottom: 14, fontSize: 12, fontWeight: 600 }}>
+        <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', color: '#C42B0F', borderRadius: 10, padding: '10px 14px', marginBottom: 14, fontSize: 12, fontWeight: 600 }}>
           {saveErr}
         </div>
       )}
@@ -438,7 +438,7 @@ function ModerationTab() {
                   <td style={{ fontWeight: 700 }}>
                     {r.listings?.title || '—'}
                     {r.listings?.is_active === false && (
-                      <span style={{ marginLeft: 6, background: '#FFF0EE', color: '#E63312', borderRadius: 4, padding: '1px 5px', fontSize: 9, fontWeight: 700 }}>çaktivizuar</span>
+                      <span style={{ marginLeft: 6, background: '#FFF0EE', color: '#C42B0F', borderRadius: 4, padding: '1px 5px', fontSize: 9, fontWeight: 700 }}>çaktivizuar</span>
                     )}
                   </td>
                   <td>{r.profiles?.username || '—'}</td>
@@ -460,7 +460,7 @@ function ModerationTab() {
                           {deactivating[r.id] ? 'Duke çaktivizuar...' : '🚫 Çaktivizo'}
                         </button>
                       ) : (
-                        <span style={{ fontSize: 10, color: '#E63312', fontWeight: 700, padding: '4px 0' }}><span aria-hidden="true">✓</span> Shpallja tashmë çaktive</span>
+                        <span style={{ fontSize: 10, color: '#C42B0F', fontWeight: 700, padding: '4px 0' }}><span aria-hidden="true">✓</span> Shpallja tashmë çaktive</span>
                       )}
                     </div>
                   </td>
@@ -500,7 +500,7 @@ function TakedownTab() {
   return (
     <>
       <div className="ph"><div className="pt"><span aria-hidden="true">⚖️</span> Heqja e Përmbajtjes (Notice &amp; Takedown)</div></div>
-      {tdErr && <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', color: '#E63312', borderRadius: 10, padding: '10px 14px', marginBottom: 14, fontSize: 12, fontWeight: 600 }}>{tdErr}</div>}
+      {tdErr && <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', color: '#C42B0F', borderRadius: 10, padding: '10px 14px', marginBottom: 14, fontSize: 12, fontWeight: 600 }}>{tdErr}</div>}
       <div className="card">
         <div className="ct">Kërkesat ({requests.filter(r => r.status === 'pending').length} të hapura)</div>
         {loading ? <p role="status" aria-live="polite" style={{ color:'#aaa', fontSize:12 }}>Duke ngarkuar...</p> :
@@ -883,7 +883,7 @@ export default function Admin() {
       <div style={{ color:'#F5C842', fontWeight:800, fontSize:16 }}>Verifikimi 2FA i Adminit</div>
       <div style={{ color:'#666', fontSize:12 }}>Fut kodin nga Google Authenticator / Authy</div>
       <input type="text" aria-label="Kodi 2FA (6 shifra)" inputMode="numeric" pattern="[0-9]*" autoComplete="one-time-code" maxLength={6} value={totpCode} onChange={e => setTotpCode(e.target.value.replace(/\D/g,''))} placeholder="000000" onKeyDown={e => e.key === 'Enter' && verifyAdminMfa()} autoFocus />
-      {mfaError && <div role="alert" style={{ color:'#E63312', fontSize:12 }}>{mfaError}</div>}
+      {mfaError && <div role="alert" style={{ color: '#C42B0F', fontSize:12 }}>{mfaError}</div>}
       <button type="button" onClick={verifyAdminMfa} style={{ background:'#F5C842', color:'#111', border:'none', borderRadius:8, padding:'10px 28px', fontWeight:800, fontSize:14, cursor:'pointer' }}>Konfirmo</button>
     </div>
   )
@@ -913,7 +913,7 @@ export default function Admin() {
             style={{ width: '100%', border: '2px solid #F5C842', borderRadius: 10, padding: '12px', fontSize: 22, textAlign: 'center', letterSpacing: 8, fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' as const, marginBottom: 12 }}
             autoFocus
           />
-          {pinError && <div role="alert" style={{ color: '#E63312', fontSize: 12, marginBottom: 10 }}>{pinError}</div>}
+          {pinError && <div role="alert" style={{ color: '#C42B0F', fontSize: 12, marginBottom: 10 }}>{pinError}</div>}
           <button
             type="button"
             onClick={checkPin}
@@ -1140,9 +1140,9 @@ export default function Admin() {
                 <>
                   <div className="ph"><div className="pt"><span aria-hidden="true">💳</span> Abonimet</div></div>
                   {payMsg && (
-                    <div style={{ background: '#FFF0EE', border: '0.5px solid #F09595', color: '#E63312', fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 8, margin: '8px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{ background: '#FFF0EE', border: '0.5px solid #F09595', color: '#C42B0F', fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 8, margin: '8px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span style={{ flex: 1 }}><span aria-hidden="true">⚠️</span> {payMsg}</span>
-                      <button type="button" aria-label="Mbyll mesazhin" onClick={() => setPayMsg('')} style={{ background: 'none', border: 'none', color: '#E63312', cursor: 'pointer', fontSize: 14 }}>✕</button>
+                      <button type="button" aria-label="Mbyll mesazhin" onClick={() => setPayMsg('')} style={{ background: 'none', border: 'none', color: '#C42B0F', cursor: 'pointer', fontSize: 14 }}>✕</button>
                     </div>
                   )}
 

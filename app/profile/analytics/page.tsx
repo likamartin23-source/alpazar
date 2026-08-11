@@ -132,7 +132,7 @@ const [loadError, setLoadError] = useState(false)
         .period-btn.active{background:#E63312;color:#fff;border-color:#E63312;}
         .listing-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f0f0f0;}
         .listing-row:last-child{border-bottom:none;}
-        .listing-rank{width:22px;height:22px;border-radius:50%;background:#FFF0EE;color:#E63312;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .listing-rank{width:22px;height:22px;border-radius:50%;background:#FFF0EE;color:#C42B0F;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
         .listing-name{flex:1;font-size:13px;font-weight:600;color:#111;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
         .listing-stats{display:flex;gap:8px;font-size:11px;color:#888;flex-shrink:0;}
         .listing-stat{display:flex;align-items:center;gap:3px;}
@@ -217,7 +217,7 @@ const [loadError, setLoadError] = useState(false)
                 <div className="listing-rank">{i + 1}</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="listing-name">{l.title}</div>
-                  <div style={{ fontSize: 11, color: '#E63312', fontWeight: 700 }}>{fmt(l.price, l.currency)}</div>
+                  <div style={{ fontSize: 11, color: '#C42B0F', fontWeight: 700 }}>{fmt(l.price, l.currency)}</div>
                 </div>
                 <div className="listing-stats">
                   <div className="listing-stat">

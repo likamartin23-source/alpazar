@@ -543,7 +543,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
     <div style={{ textAlign: 'center', padding: 60, fontFamily: "'Plus Jakarta Sans',system-ui" }}>
       <p style={{ fontSize: 40, marginBottom: 12 }} aria-hidden="true">🔍</p>
       <h2 style={{ color: '#111', marginBottom: 8 }}>Shpallja nuk u gjet</h2>
-      <a href="/" style={{ color: '#E63312', fontSize: 13 }}>← Kthehu</a>
+      <a href="/" style={{ color: '#C42B0F', fontSize: 13 }}>← Kthehu</a>
     </div>
   )
 
@@ -585,11 +585,11 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         .sc-active{background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7;}
         .sc-sold{background:#F3F3F3;color:#555;border:1px solid #ccc;}
         h1{font-size:18px;font-weight:800;color:#1a1a1a;margin-bottom:6px;line-height:1.3;letter-spacing:-.2px;}
-        .price{font-size:25px;font-weight:800;color:#E63312;margin-bottom:12px;letter-spacing:-.5px;}
+        .price{font-size:25px;font-weight:800;color:#C42B0F;margin-bottom:12px;letter-spacing:-.5px;}
         .meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
         .meta-item{display:flex;align-items:center;gap:4px;font-size:11px;color:#555;background:#f5f3eb;padding:5px 10px;border-radius:999px;font-weight:600;}
         .meta-item i{font-size:12px;color:#999;}
-        .cond-new{background:#FFF0EE;color:#E63312;font-weight:700;}
+        .cond-new{background:#FFF0EE;color:#C42B0F;font-weight:700;}
         .cond-used{background:#F0F0F0;color:#555;font-weight:700;}
         .divider{height:1px;background:#f0f0f0;margin:10px 0;}
         .sec-label{font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
@@ -635,9 +635,9 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         .cs-close{width:28px;height:28px;background:#f5f5f5;border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .cs-close i{font-size:14px;color:#888;}
         .cs-ref{background:#FFF8EE;border-bottom:1px solid #FFE8C4;padding:7px 13px;display:flex;align-items:center;gap:7px;flex-shrink:0;}
-        .cs-ref i{font-size:12px;color:#E63312;flex-shrink:0;}
+        .cs-ref i{font-size:12px;color:#C42B0F;flex-shrink:0;}
         .cs-ref-text{font-size:11px;color:#333;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-        .cs-ref-price{font-size:11px;font-weight:700;color:#E63312;white-space:nowrap;}
+        .cs-ref-price{font-size:11px;font-weight:700;color:#C42B0F;white-space:nowrap;}
         .cs-msgs{flex:1;overflow-y:auto;padding:10px 12px 6px;display:flex;flex-direction:column;gap:2px;background:#f9f6ef;}
         .cs-msgs::-webkit-scrollbar{width:2px;}
         .cs-msgs::-webkit-scrollbar-thumb{background:#ddd;border-radius:10px;}
@@ -678,7 +678,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         .bottom-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid #eee;padding:10px 12px;display:flex;gap:8px;align-items:center;z-index:100;box-shadow:0 -6px 20px rgba(0,0,0,.06);}
         .bb-price{display:flex;flex-direction:column;justify-content:center;flex-shrink:0;max-width:112px;padding-right:2px;}
         .bb-price-l{font-size:9px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:.3px;line-height:1;}
-        .bb-price-n{font-size:16px;font-weight:800;color:#E63312;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.3px;line-height:1.2;}
+        .bb-price-n{font-size:16px;font-weight:800;color:#C42B0F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.3px;line-height:1.2;}
         .main-chat-btn{flex:1;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 12px rgba(230,51,18,.3);}
         .main-chat-btn i{font-size:16px;}
         .wa-btn{width:48px;height:48px;background:#25D366;border:none;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(37,211,102,.3);text-decoration:none;}
@@ -701,7 +701,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         .alert-btn-row{display:flex;gap:8px;margin-top:14px;}
         .alert-save{flex:1;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:11px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
         .alert-save:disabled{opacity:.5;cursor:not-allowed;}
-        .alert-del{width:48px;background:#FFF0EE;color:#E63312;border:1.5px solid #FFCDD2;border-radius:11px;padding:13px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+        .alert-del{width:48px;background:#FFF0EE;color:#C42B0F;border:1.5px solid #FFCDD2;border-radius:11px;padding:13px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .alert-msg{font-size:12px;text-align:center;margin-top:8px;font-weight:600;}
 
         @keyframes spin{to{transform:rotate(360deg);}}
@@ -714,12 +714,12 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         .report-sub{font-size:12px;color:#888;margin-bottom:14px;}
         .reason-list{display:flex;flex-direction:column;gap:7px;margin-bottom:16px;}
         .reason-btn{display:flex;align-items:center;gap:10px;border:1.5px solid #eee;border-radius:10px;padding:11px 13px;background:#fff;font-family:inherit;font-size:13px;color:#333;cursor:pointer;text-align:left;}
-        .reason-btn.sel{border-color:#E63312;background:#FFF0EE;color:#E63312;font-weight:600;}
+        .reason-btn.sel{border-color:#E63312;background:#FFF0EE;color:#C42B0F;font-weight:600;}
         .report-submit{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:11px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
         .report-submit:disabled{opacity:.5;cursor:not-allowed;}
         .report-success{text-align:center;padding:18px 0;}
         .report-link{display:block;text-align:center;font-size:11px;color:#bbb;margin-top:14px;cursor:pointer;}
-        .report-link:hover{color:#E63312;}
+        .report-link:hover{color:#C42B0F;}
         @keyframes ai-fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
       ` }} />
 
@@ -1081,7 +1081,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                       </div>
                       <div style={{ padding: '7px 8px 9px' }}>
                         <div style={{ fontSize: 11, fontWeight: 600, color: '#111', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', lineHeight: 1.35, marginBottom: 4 }}>{s.title}</div>
-                        <div style={{ fontSize: 13, fontWeight: 800, color: '#E63312' }}>{priceStr}</div>
+                        <div style={{ fontSize: 13, fontWeight: 800, color: '#C42B0F' }}>{priceStr}</div>
                         {s.city && <div style={{ fontSize: 10, color: '#888', marginTop: 2 }}><i className="ti ti-map-pin" style={{ fontSize: 10 }} aria-hidden="true" /> {s.city}</div>}
                       </div>
                     </div>
@@ -1110,7 +1110,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
           <div className="alert-panel" role="dialog" aria-modal="true" aria-label="Alarmi i Çmimit">
             <div className="alert-handle" />
             <div className="alert-title">
-              <i className="ti ti-bell-ringing" style={{ color: '#E63312' }} aria-hidden="true" />
+              <i className="ti ti-bell-ringing" style={{ color: '#C42B0F' }} aria-hidden="true" />
               Alarmi i Çmimit
             </div>
             <div className="alert-sub">
@@ -1181,7 +1181,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                     </button>
                   ))}
                 </div>
-                {reportErr && <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', color: '#E63312', borderRadius: 10, padding: '9px 12px', margin: '0 0 10px', fontSize: 12, fontWeight: 600 }}>{reportErr}</div>}
+                {reportErr && <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', color: '#C42B0F', borderRadius: 10, padding: '9px 12px', margin: '0 0 10px', fontSize: 12, fontWeight: 600 }}>{reportErr}</div>}
                 <button type="button" className="report-submit" onClick={submitReport}
                   disabled={!reportReason || reportLoading}>
                   {reportLoading ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : 'Dërgo raportin'}

@@ -85,7 +85,7 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
   if (loadError) return (
     <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
       <div style={{ fontSize: 32, marginBottom: 12 }} aria-hidden="true">⚠️</div>
-      <div style={{ fontSize: 14, color: '#E63312', marginBottom: 16, textAlign: 'center' }}>Nuk u ngarkua biznesi. Kontrollo lidhjen dhe provo sërish.</div>
+      <div style={{ fontSize: 14, color: '#C42B0F', marginBottom: 16, textAlign: 'center' }}>Nuk u ngarkua biznesi. Kontrollo lidhjen dhe provo sërish.</div>
       <button type="button" onClick={() => window.location.reload()} style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
     </div>
   )
@@ -117,7 +117,7 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
         .biz-tab{flex:1;padding:13px 0;font-size:13px;font-weight:700;border:none;background:none;cursor:pointer;border-bottom:2.5px solid transparent;color:#888;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:4px;}
-        .biz-tab.active{color:#E63312;border-bottom-color:#E63312;}
+        .biz-tab.active{color:#C42B0F;border-bottom-color:#E63312;}
         .ig-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;}
         .ig-cell{aspect-ratio:1/1;background:#e8e8e8;overflow:hidden;cursor:pointer;position:relative;}
         .ig-cell img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .2s;}
@@ -131,7 +131,7 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
         .info-row:last-child{border:none;}
         .info-icon{font-size:16px;min-width:22px;text-align:center;margin-top:1px;}
         .info-text{font-size:13px;color:#333;line-height:1.5;flex:1;}
-        .info-text a{color:#E63312;font-weight:700;text-decoration:none;}
+        .info-text a{color:#C42B0F;font-weight:700;text-decoration:none;}
         .stat-pill{display:flex;flex-direction:column;align-items:center;flex:1;}
         .stat-n{font-size:18px;font-weight:800;color:#111;}
         .stat-l{font-size:10px;color:#888;font-weight:500;margin-top:1px;}
@@ -241,7 +241,7 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
         <div style={{ background: '#fff', margin: '0 0 8px', padding: '14px 16px' }}>
           <p style={{ fontSize: 13, color: '#444', lineHeight: 1.65, margin: 0 }}>{descText}</p>
           {descShort && (
-            <button type="button" aria-expanded={descExpanded} onClick={() => setDescExpanded(e => !e)} style={{ marginTop: 6, background: 'none', border: 'none', color: '#E63312', fontSize: 12, fontWeight: 700, cursor: 'pointer', padding: 0, fontFamily: 'inherit' }}>
+            <button type="button" aria-expanded={descExpanded} onClick={() => setDescExpanded(e => !e)} style={{ marginTop: 6, background: 'none', border: 'none', color: '#C42B0F', fontSize: 12, fontWeight: 700, cursor: 'pointer', padding: 0, fontFamily: 'inherit' }}>
               {descExpanded ? 'Shfaq më pak ↑' : 'Shfaq më shumë ↓'}
             </button>
           )}
@@ -330,7 +330,7 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
       {activeTab === 'info' && (
         <div id="tabpanel-info" role="tabpanel" aria-labelledby="tab-info" style={{ padding: '8px 0' }}>
           <div className="card">
-            <h2 className="card-title"><i className="ti ti-building-store" style={{ fontSize: 16, color: '#E63312' }} aria-hidden="true" /> Rreth biznesit</h2>
+            <h2 className="card-title"><i className="ti ti-building-store" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Rreth biznesit</h2>
             {biz.description
               ? <p style={{ fontSize: 13, color: '#444', lineHeight: 1.7, marginBottom: 12 }}>{biz.description}</p>
               : <p style={{ fontSize: 12, color: '#aaa', marginBottom: 12 }}>Nuk ka përshkrim.</p>
@@ -344,7 +344,7 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
           </div>
 
           <div className="card">
-            <h2 className="card-title"><i className="ti ti-map-pin" style={{ fontSize: 16, color: '#E63312' }} aria-hidden="true" /> Vendndodhja & Kontakti</h2>
+            <h2 className="card-title"><i className="ti ti-map-pin" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Vendndodhja & Kontakti</h2>
             {biz.address && (
               <div className="info-row">
                 <span className="info-icon" aria-hidden="true">📍</span>
@@ -385,7 +385,7 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
 
           {subcats.length > 0 && (
             <div className="card">
-              <h2 className="card-title"><i className="ti ti-tag" style={{ fontSize: 16, color: '#E63312' }} aria-hidden="true" /> Kategoritë</h2>
+              <h2 className="card-title"><i className="ti ti-tag" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Kategoritë</h2>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                 {subcats.map((s, i) => (
                   <span key={i} style={{ fontSize: 12, background: '#FFF8E1', color: '#7B5000', padding: '5px 12px', borderRadius: 20, fontWeight: 700, border: '1px solid #F5C84244' }}>
@@ -404,7 +404,7 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
 
           {(biz.nipt || biz.withdrawal_days) && (
             <div className="card">
-              <h2 className="card-title"><i className="ti ti-scale" style={{ fontSize: 16, color: '#E63312' }} aria-hidden="true" /> Informacion ligjor</h2>
+              <h2 className="card-title"><i className="ti ti-scale" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Informacion ligjor</h2>
               {biz.nipt && (
                 <div className="info-row">
                   <span className="info-icon" aria-hidden="true">🏛️</span>

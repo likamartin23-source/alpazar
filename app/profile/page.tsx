@@ -448,7 +448,7 @@ export default function ProfilePage() {
         .body{padding:12px 12px;}
         .msg-box{border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:12px;font-weight:600;}
         .ok{background:#EAF3DE;color:#3B6D11;border:0.5px solid #97C459;}
-        .err{background:#FFF0EE;color:#E63312;border:0.5px solid #F09595;}
+        .err{background:#FFF0EE;color:#C42B0F;border:0.5px solid #F09595;}
         .card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;border:0.5px solid #ececec;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 16px -10px rgba(0,0,0,.14);}
         .card-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
         .card-title{font-size:13px;font-weight:700;color:#1a1a1a;}
@@ -468,9 +468,9 @@ export default function ProfilePage() {
         .listing-thumb img{width:100%;height:100%;object-fit:cover;}
         .listing-info{flex:1;}
         .listing-title{font-size:12px;font-weight:700;color:#1a1a1a;}
-        .listing-price{font-size:13px;font-weight:800;color:#E63312;margin-top:2px;}
+        .listing-price{font-size:13px;font-weight:800;color:#C42B0F;margin-top:2px;}
         .listing-meta{font-size:10px;color:#aaa;margin-top:2px;}
-        .del-btn{background:#FFF0EE;border:none;border-radius:10px;padding:6px 10px;font-size:12px;cursor:pointer;color:#E63312;font-family:inherit;}
+        .del-btn{background:#FFF0EE;border:none;border-radius:10px;padding:6px 10px;font-size:12px;cursor:pointer;color:#C42B0F;font-family:inherit;}
         .edit-listing-btn{background:#FFFBEA;border:1px solid #e0b030;border-radius:10px;padding:6px 10px;font-size:12px;cursor:pointer;color:#856404;font-family:inherit;}
         .prem-card{background:linear-gradient(135deg,#111,#1c1c1c);border-radius:12px;padding:18px;margin-bottom:12px;text-align:center;border:1px solid #333;}
         .prem-card h3{color:#F5C842;font-size:15px;font-weight:700;margin-bottom:8px;}
@@ -514,7 +514,7 @@ export default function ProfilePage() {
         .sec-btn{width:100%;background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:12px;transition:all .15s ease;}
         .sec-btn:disabled{opacity:.6;cursor:not-allowed;}
         .danger-zone{background:#FFF0EE;border:1px solid #F09595;border-radius:12px;padding:16px;margin-bottom:12px;}
-        .danger-title{font-size:13px;font-weight:700;color:#E63312;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+        .danger-title{font-size:13px;font-weight:700;color:#C42B0F;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
         .danger-desc{font-size:11px;color:#888;line-height:1.6;margin-bottom:12px;}
         .delete-btn{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(230,51,18,.4);transition:all .15s ease;}
         .delete-btn:disabled{opacity:.6;cursor:not-allowed;}
@@ -706,7 +706,7 @@ export default function ProfilePage() {
                 </div>
                 <button
                   type="button"
-                  style={{ background: '#fff', color: '#E63312', border: 'none', borderRadius: 9, padding: '9px 18px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+                  style={{ background: '#fff', color: '#C42B0F', border: 'none', borderRadius: 9, padding: '9px 18px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
                   onClick={() => window.location.href = '/referral'}
                 >
                   <span aria-hidden="true">🔗</span> Ndaj linkun tënd →
@@ -784,7 +784,7 @@ export default function ProfilePage() {
                   </span>
                 </label>
                 <div style={{ marginTop: 6 }}>
-                  <a href="/te-dhenat-mia" style={{ fontSize: 12, color: '#E63312', fontWeight: 600, textDecoration: 'none' }}>
+                  <a href="/te-dhenat-mia" style={{ fontSize: 12, color: '#C42B0F', fontWeight: 600, textDecoration: 'none' }}>
                     <span aria-hidden="true">🔒</span> Menaxho të gjitha të dhënat e mia (GDPR) →
                   </a>
                 </div>

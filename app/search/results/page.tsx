@@ -39,7 +39,7 @@ function ShopCard({ shop }: { shop: any }) {
         <div className="shop-avatar">
           {shop.avatar_url
             ? <img src={shop.avatar_url} alt={shop.shop_name} loading="lazy" width={60} height={60} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
-            : <span style={{ fontSize: 17, fontWeight: 700, color: '#E63312' }}>{initials}</span>
+            : <span style={{ fontSize: 17, fontWeight: 700, color: '#C42B0F' }}>{initials}</span>
           }
         </div>
         <div className="shop-premium-badge"><span aria-hidden="true">⭐</span> Premium</div>
@@ -427,10 +427,10 @@ const [searchError, setSearchError] = useState(false)
         .shop-premium-badge{position:absolute;top:5px;right:6px;background:#F5C842;color:#111;font-size:7.5px;padding:2px 5px;border-radius:8px;font-weight:700;}
         .shop-body{padding:7px 9px 9px;}
         .shop-name{font-size:11.5px;font-weight:700;color:#111;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-        .shop-cat-tag{font-size:9px;color:#E63312;font-weight:600;margin-bottom:4px;}
+        .shop-cat-tag{font-size:9px;color:#C42B0F;font-weight:600;margin-bottom:4px;}
         .shop-meta{display:flex;align-items:center;justify-content:space-between;}
         .shop-city{font-size:9px;color:#aaa;display:flex;align-items:center;gap:2px;}
-        .shop-count{font-size:9px;color:#E63312;font-weight:700;}
+        .shop-count{font-size:9px;color:#C42B0F;font-weight:700;}
 
         /* Listing grid */
         .listings-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
@@ -447,7 +447,7 @@ const [searchError, setSearchError] = useState(false)
         .badge-premium{position:absolute;top:6px;right:6px;background:linear-gradient(135deg,#F8D24E,#F5C842);color:#111;font-size:8px;padding:2px 6px;border-radius:6px;font-weight:700;box-shadow:0 1px 4px rgba(245,200,66,.5);}
         .card-body{flex:0 0 30%;padding:7px 8px;display:flex;flex-direction:column;justify-content:space-between;min-height:0;}
         .card-title{font-size:11px;font-weight:700;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-        .card-price{font-size:12.5px;font-weight:800;color:#E63312;}
+        .card-price{font-size:12.5px;font-weight:800;color:#C42B0F;}
         .card-loc{font-size:11px;color:#6B6B6B;display:flex;align-items:center;gap:3px;}
 
         /* Empty state per section */
@@ -472,7 +472,7 @@ const [searchError, setSearchError] = useState(false)
         .price-range input{flex:1;}
         .cond-row{display:flex;gap:6px;flex-wrap:wrap;}
         .cond-btn{flex:1;min-width:70px;border:1.5px solid #ddd;border-radius:9px;padding:8px 6px;font-size:11px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;white-space:nowrap;}
-        .cond-btn.active{border-color:#E63312;background:#FFF0EE;color:#E63312;}
+        .cond-btn.active{border-color:#E63312;background:#FFF0EE;color:#C42B0F;}
         .fp-actions{display:flex;gap:8px;margin-top:6px;}
         .fp-apply{flex:1;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:11px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
         .fp-clear{background:#f5f5f5;color:#555;border:none;border-radius:11px;padding:13px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}

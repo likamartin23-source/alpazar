@@ -88,7 +88,7 @@ export function ListingTop({ p }: any) {
                 </div>
               )}
               {priceSuggestion?.startsWith('err:') && (
-                <div style={{ marginTop: 6, fontSize: 11, color: '#E63312' }}>{priceSuggestion.slice(4)}</div>
+                <div style={{ marginTop: 6, fontSize: 11, color: '#C42B0F' }}>{priceSuggestion.slice(4)}</div>
               )}
             </div>
 

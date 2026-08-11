@@ -160,7 +160,7 @@ export default function Privatesia() {
 
           <h2>8. Cookie-t dhe Teknologjitë e Gjurmimit</h2>
           <p>Alpazar përdor vetëm cookie-t teknikë të domosdoshëm për funksionimin e platformës (autentikimi, preferencat). Nuk përdorim cookie-t e marketingut apo ata të palëve të treta pa konsentimin tuaj.</p>
-          <p>Për detaje të plota, lexoni <a href="/cookies" style={{ color: '#E63312' }}>Politikën e Cookie-ve</a>.</p>
+          <p>Për detaje të plota, lexoni <a href="/cookies" style={{ color: '#C42B0F' }}>Politikën e Cookie-ve</a>.</p>
 
           <h2>9. Ndryshimet e Politikës</h2>
           <p>Çdo ndryshim i rëndësishëm i kësaj politike njoftohet me email dhe njoftim në platformë, të paktën <strong>14 ditë</strong> para hyrjes në fuqi, sipas Nenit 13.2 të GDPR. Data e përditësimit shfaqet gjithmonë në krye të faqes.</p>

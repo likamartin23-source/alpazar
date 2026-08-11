@@ -72,7 +72,7 @@ export default async function KategoriIndexPage() {
 const SEO_CSS = `
 .seo-wrap{max-width:960px;margin:0 auto;padding:20px 16px 60px;font-family:inherit;}
 .seo-crumb{font-size:12px;color:#888;margin-bottom:14px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
-.seo-crumb a{color:#E63312;text-decoration:none;}
+.seo-crumb a{color:#C42B0F;text-decoration:none;}
 .seo-crumb span[aria-current]{color:#555;}
 .seo-h1{font-size:24px;font-weight:800;color:#1a1a1a;margin:0 0 6px;}
 .seo-sub{font-size:14px;color:#666;margin:0 0 22px;line-height:1.5;}
@@ -84,5 +84,5 @@ const SEO_CSS = `
 .seo-cat-name{font-size:13px;font-weight:600;text-align:center;}
 .seo-city-links{display:flex;flex-wrap:wrap;gap:8px;}
 .seo-city-chip{padding:8px 14px;background:#F7F7F7;border:1px solid #eee;border-radius:999px;font-size:13px;color:#333;text-decoration:none;transition:background .15s;}
-.seo-city-chip:hover{background:#FDE9E4;color:#E63312;}
+.seo-city-chip:hover{background:#FDE9E4;color:#C42B0F;}
 `
