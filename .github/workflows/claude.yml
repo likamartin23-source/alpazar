@@ -32,6 +32,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
+    # Mos e nis agjentin per komentet e bot-eve. vercel[bot] len nje koment
+    # preview te cdo PR; pa kete kusht ai koment e ringjall workflow-in, dhe
+    # veprimi del me "Workflow initiated by non-human actor" — nje deshtim i
+    # rreme qe e mbante CI-n e kuq te cdo PR.
+    # Per komentet kerkohet edhe @claude: pa te, cdo koment do te digjte nje run.
+    if: >-
+      github.event.sender.type != 'Bot' && (
+        github.event_name == 'workflow_dispatch' ||
+        github.event_name == 'pull_request' ||
+        contains(github.event.comment.body, '@claude')
+      )
+
     # Mos rri në queue nëse ka tashmë një run aktiv
     concurrency:
       group: claude-${{ github.ref }}
@@ -62,7 +74,7 @@ jobs:
 
             DETYRAT:
             1. Nëse ka gabime TypeScript/build → rregulloji
-            2. Nëse ka dobësi sigurie (XSS, SQL injection, secrets të ekspozuara) → rregulloji
+            2. Nëse ka dësë sigurie (XSS, SQL injection, secrets të ekspozuara) → rregulloji
             3. Nëse ka memory leaks (object URLs pa revoke) → rregulloji
             4. Nëse ka Promise-a pa trajtim gabimesh → shto .catch()
             5. Mos ndryshoni logjikën e biznesit pa arsye
@@ -72,21 +84,11 @@ jobs:
           # Lejohen vetëm kur ka @claude në koment
           trigger_phrase: "@claude"
 
-          timeout_minutes: 25
-
-          allowed_tools: >
-            Bash,
-            Read,
-            Edit,
-            Write,
-            Glob,
-            Grep,
-            mcp__github__add_issue_comment,
-            mcp__github__create_or_update_file,
-            mcp__github__push_files,
-            mcp__github__pull_request_review_write,
-            mcp__github__get_file_contents,
-            mcp__github__list_commits
+          # v1: mjetet kalojne si argumente CLI. Si `allowed_tools` ato
+          # injoroheshin heshtazi — shih mesazhin e commit-it.
+          # https://github.com/anthropics/claude-code-action/blob/main/docs/migration-guide.md
+          claude_args: |
+            --allowedTools "Bash,Read,Edit,Write,Glob,Grep,mcp__github__add_issue_comment,mcp__github__create_or_update_file,mcp__github__push_files,mcp__github__pull_request_review_write,mcp__github__get_file_contents,mcp__github__list_commits"
 
       - name: Notify Slack after Claude fix
         if: success() && env.SLACK_WEBHOOK_URL != ''
