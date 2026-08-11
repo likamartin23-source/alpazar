@@ -31,7 +31,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA}
 .tag{background:#F5C842;color:#111;font-size:8px;font-weight:800;padding:2px 6px;border-radius:5px;margin-left:6px;vertical-align:middle}
 .p-desc{font-size:11px;color:#888;margin-top:3px}
 .p-price{text-align:right;white-space:nowrap}
-.p-price b{display:block;font-size:19px;font-weight:800;color:#E63312}
+.p-price b{display:block;font-size:19px;font-weight:800;color:#C42B0F}
 .p-price span{font-size:10px;color:#aaa}
 .p-badge{margin-top:8px;display:inline-block;background:#EAF3DE;color:#3B6D11;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px}
 .feat-list{list-style:none;margin:10px 0 0;padding:10px 0 0;border-top:.5px solid #f0f0f0}
@@ -41,7 +41,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA}
 .sec-t{font-size:13px;font-weight:700;color:#111;margin-bottom:10px}
 .pm{width:100%;display:flex;align-items:center;gap:9px;border:1.5px solid #e8e8e8;background:#fff;border-radius:10px;padding:11px 12px;margin-bottom:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:#333}
 .pm.on{border-color:#E63312;background:#FFF7F5}
-.pm .ok{margin-left:auto;color:#E63312}
+.pm .ok{margin-left:auto;color:#C42B0F}
 .total{display:flex;justify-content:space-between;align-items:center;padding:11px 2px;margin-top:6px;border-top:.5px solid #eee;font-size:12px;color:#666}
 .total b{font-size:17px;font-weight:800;color:#111}
 .cta{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px}
@@ -49,8 +49,8 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA}
 .center{text-align:center}.muted{color:#888;font-size:12px}.small{font-size:11px;margin-top:8px;text-align:center;line-height:1.5}
 .note{background:#FFFBEA;border:.5px solid #F5C842;border-radius:9px;padding:10px 12px;font-size:12px;color:#5d4a00;margin-bottom:12px;line-height:1.5}
 .note.ok{background:#EAF3DE;border-color:#97C459;color:#3B6D11}
-.note a{color:#E63312;font-weight:700}
+.note a{color:#C42B0F;font-weight:700}
 .msg{border-radius:10px;padding:9px 13px;font-size:12px;font-weight:600;margin-bottom:10px}
 .msg.ok{background:#EAF3DE;color:#3B6D11;border:.5px solid #97C459}
-.msg.err{background:#FFF0EE;color:#E63312;border:.5px solid #F09595}
+.msg.err{background:#FFF0EE;color:#C42B0F;border:.5px solid #F09595}
 `

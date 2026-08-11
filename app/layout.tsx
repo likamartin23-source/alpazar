@@ -94,7 +94,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Module 6: Vercel Web Analytics — 100% falas, GDPR-compliant, zero konfigurim */}
         <link rel="manifest" href="/manifest.json?v=3" />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=3" />
-        <style dangerouslySetInnerHTML={{__html:`[role="button"]:focus-visible,[role="link"]:focus-visible,[role="radio"]:focus-visible,[role="switch"]:focus-visible{outline:2px solid #F5C842;outline-offset:2px;border-radius:4px;}.skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:9999;background:#F5C842;color:#111;padding:8px 16px;font-weight:700;border-radius:4px;text-decoration:none;}.skip-link:focus{left:16px;top:16px;width:auto;height:auto;overflow:visible;}`}} />
+        <style dangerouslySetInnerHTML={{__html:`[role="button"]:focus-visible,[role="link"]:focus-visible,[role="radio"]:focus-visible,[role="switch"]:focus-visible{outline:2px solid #F5C842;outline-offset:2px;border-radius:4px;}.skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:9999;background:#F5C842;color:#111;padding:8px 16px;font-weight:700;border-radius:4px;text-decoration:none;}.skip-link:focus{left:16px;top:16px;width:auto;height:auto;overflow:visible;}html{scroll-padding-top:64px;scroll-padding-bottom:96px;}`}} />
+        {/* Speculation Rules — navigojme me window.location.href, ndaj
+            prefetch-i i Next-it nuk aktivizohet KURRE. Keto rregulla punojne
+            mbi navigime dokumenti, pra jane e vetmja menyre qe kemi per te
+            parangarkuar. `prefetch` (jo `prerender`) qellimisht: prerender-i
+            e EKZEKUTON faqen — per nje marketplace kjo do te numeronte shikime
+            shpalljesh qe s'ndodhen. Rruget private/veprim perjashtohen.
+            Chromium-only, degradim i paster kudo tjeter.
+            https://developer.chrome.com/docs/web-platform/prerender-pages */}
+        <script type="speculationrules" dangerouslySetInnerHTML={{__html: JSON.stringify({
+          prefetch: [{
+            where: { and: [
+              { href_matches: '/*' },
+              { not: { href_matches: [
+                '/api/*', '/admin*', '/auth/*', '/messages*', '/notifications*',
+                '/profile*', '/dashboard*', '/favorites*', '/saved-searches*',
+                '/te-dhenat-mia*', '/listing/new', '/biznese/new',
+                '/listing/*/edit', '/biznese/*/edit',
+              ] } },
+            ] },
+            eagerness: 'moderate',
+          }],
+        })}} />
         {/* JSON-LD — Google e kupton si marketplace */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{__html: JSON.stringify({
           "@context": "https://schema.org",

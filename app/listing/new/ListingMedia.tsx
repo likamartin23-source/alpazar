@@ -66,7 +66,7 @@ export function ListingMedia({ p }: any) {
         {full && (
           <div style={{ background: '#FFF8E1', border: '1px solid #FFE082', borderRadius: 10, padding: '10px 12px', fontSize: 11.5, color: '#856404', lineHeight: 1.5 }}>
             Ke arritur kufirin prej {vid.maxVideos} videosh.
-            {!vid.isPremium && <> Me <a href="/premium" style={{ color: '#E63312', fontWeight: 700 }}>Premium</a> ngarkon deri në 10 video për shpallje.</>}
+            {!vid.isPremium && <> Me <a href="/premium" style={{ color: '#C42B0F', fontWeight: 700 }}>Premium</a> ngarkon deri në 10 video për shpallje.</>}
           </div>
         )}
 

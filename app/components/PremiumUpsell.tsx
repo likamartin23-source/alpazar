@@ -85,7 +85,7 @@ export function PremiumUpsellModal({
         .ups-sub{font-size:12px;color:#888;text-align:center;margin-bottom:14px;line-height:1.6;}
         .ups-feats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
         .ups-feat{background:#fff;border:0.5px solid #eee;border-radius:10px;padding:10px 11px;display:flex;align-items:center;gap:7px;}
-        .ups-feat i{font-size:14px;color:#E63312;}
+        .ups-feat i{font-size:14px;color:#C42B0F;}
         .ups-feat span{font-size:11px;font-weight:600;color:#333;}
         .ups-offer{background:#111;border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
         .ups-price{color:#F5C842;font-size:22px;font-weight:800;}

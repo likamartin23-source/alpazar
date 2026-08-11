@@ -39,25 +39,25 @@ const CSS = `
   .btn-yellow:hover{opacity:.9;}
   .msg{text-align:center;font-size:12px;padding:10px 12px;border-radius:8px;margin-bottom:12px;font-weight:500;line-height:1.5;}
   .ok{background:#EAF3DE;color:#3B6D11;border:0.5px solid #97C459;}
-  .err{background:#FFF0EE;color:#E63312;border:0.5px solid #F09595;}
+  .err{background:#FFF0EE;color:#C42B0F;border:0.5px solid #F09595;}
   .info{background:#EEF4FF;color:#185FA5;border:0.5px solid #85B7EB;}
   .warn{background:#FFF8EE;color:#A05000;border:0.5px solid #F5C842;}
   .divider{display:flex;align-items:center;gap:10px;margin:12px 0;color:#ccc;font-size:12px;}
   .divider::before,.divider::after{content:'';flex:1;border-top:1px solid #eee;}
   .back{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:14px;color:#888;font-size:12px;cursor:pointer;}
-  .back:hover{color:#E63312;}
+  .back:hover{color:#C42B0F;}
   .otp-row{display:flex;gap:8px;justify-content:center;margin-bottom:16px;}
   .otp-input{width:46px;height:54px;border:2px solid #e0e0e0;border-radius:12px;font-size:22px;font-weight:700;text-align:center;color:#111;outline:none;transition:border-color .15s ease,box-shadow .15s ease;background:#fff;}
   .otp-input:focus{border-color:#111;box-shadow:0 4px 16px -4px rgba(0,0,0,.2);}
   .otp-input:focus{border-color:#F5C842;background:#FFFBEA;}
-  .otp-input.filled{border-color:#E63312;color:#E63312;}
+  .otp-input.filled{border-color:#E63312;color:#C42B0F;}
   .otp-input:disabled{background:#f9f9f9;color:#bbb;border-color:#eee;}
   .countdown{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding:8px 12px;border-radius:8px;background:#FFFBEA;border:1px solid #f0e0a8;}
   .countdown-time{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;}
   .countdown-time.ok-c{color:#3B6D11;}
   .countdown-time.warn-c{color:#A05000;}
-  .countdown-time.err-c{color:#E63312;}
-  .resend-btn{font-size:12px;color:#E63312;font-weight:600;background:none;border:none;cursor:pointer;font-family:inherit;text-decoration:underline;}
+  .countdown-time.err-c{color:#C42B0F;}
+  .resend-btn{font-size:12px;color:#C42B0F;font-weight:600;background:none;border:none;cursor:pointer;font-family:inherit;text-decoration:underline;}
   .resend-btn:disabled{color:#bbb;text-decoration:none;cursor:default;}
   .steps{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:16px;}
   .step-dot{width:8px;height:8px;border-radius:50%;background:#eee;}
@@ -70,14 +70,14 @@ const CSS = `
   .contact-wrap{position:relative;}
   .contact-type{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;}
   .forgot-link{display:block;text-align:center;font-size:11px;color:#aaa;cursor:pointer;margin-top:4px;}
-  .forgot-link:hover{color:#E63312;text-decoration:underline;}
+  .forgot-link:hover{color:#C42B0F;text-decoration:underline;}
   .sms-fail-box{background:#FFF8EE;border:1.5px solid #F5C842;border-radius:12px;padding:14px;margin-bottom:10px;}
   .sms-fail-header{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;}
   .sms-fail-header span{font-size:22px;flex-shrink:0;}
   .sms-fail-header strong{font-size:13px;font-weight:700;color:#111;display:block;margin-bottom:3px;}
   .sms-fail-header p{font-size:11px;color:#888;margin:0;line-height:1.5;}
   .sec-row{text-align:center;font-size:12px;color:#888;margin-top:6px;}
-  .sec-row a{color:#E63312;font-weight:700;cursor:pointer;text-decoration:none;}
+  .sec-row a{color:#C42B0F;font-weight:700;cursor:pointer;text-decoration:none;}
   .sec-row a:hover{text-decoration:underline;}
 `
 
@@ -861,7 +861,7 @@ export default function Auth() {
           padding:'8px 12px', marginBottom:10, fontSize:12 }}>
           <span style={{ color:'#185FA5' }}><span aria-hidden="true">⏳</span> Duke verifikuar automatikisht në <strong>{autoSubmitIn.toFixed(1)}s</strong>…</span>
           <button type="button" onClick={cancelAutoSubmit}
-            style={{ background:'none', border:'none', color:'#E63312', cursor:'pointer',
+            style={{ background:'none', border:'none', color: '#C42B0F', cursor:'pointer',
               fontWeight:700, fontSize:12, padding:'0 4px' }}><span aria-hidden="true">✕</span> Anulo</button>
         </div>
       )}

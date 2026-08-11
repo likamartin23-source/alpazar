@@ -77,7 +77,7 @@ export function PlansGrid({ plans, plan, sub, busy, act }: any) {
       </div>
       {tier === 'premium' && (
         <div className="muted" style={{ fontSize: 11, marginTop: 6 }}>
-          Do shikueshmëri maksimale? Shto <a href="/premium" style={{ color: '#E63312', fontWeight: 700 }}>Ekstra Boost VIP</a>.
+          Do shikueshmëri maksimale? Shto <a href="/premium" style={{ color: '#C42B0F', fontWeight: 700 }}>Ekstra Boost VIP</a>.
         </div>
       )}
     </div>
@@ -116,7 +116,7 @@ export function MyInvoices() {
             </div>
             {i.file_url
               ? <a href={i.file_url} target="_blank" rel="noopener noreferrer"
-                  style={{ fontSize: 10.5, color: '#E63312', fontWeight: 700 }}>Shkarko</a>
+                  style={{ fontSize: 10.5, color: '#C42B0F', fontWeight: 700 }}>Shkarko</a>
               : <span className="muted" style={{ fontSize: 10 }}>
                   {i.status === 'paid' ? 'E paguar' : i.status === 'sent' ? 'Dërguar' : i.status}
                 </span>}

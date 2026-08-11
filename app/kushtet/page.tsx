@@ -73,7 +73,7 @@ export default function Kushtet() {
             <li>Çdo material seksual që përfshin të mitur <span className="law">(Kodi Penal, neni 117)</span> raportohet <strong>MENJËHERË</strong> te Policia e Shtetit dhe prokuroria kompetente — dhe hiqet pa paralajmërim.</li>
             <li>Moshat nën 16 vjeç nuk mund të regjistrohen <span className="law">(Ligji 124/2024, neni 8)</span>.</li>
             <li>Nuk lejohet asnjë kontakt privat i rritur–fëmijë brenda platformës.</li>
-            <li>Çdo shpallje ose aktivitet i dyshimtë raportohet me butonin <span aria-hidden="true">⚠️</span> ose nëpërmjet <a href="/takedown" style={{ color: '#E63312' }}>/takedown</a>.</li>
+            <li>Çdo shpallje ose aktivitet i dyshimtë raportohet me butonin <span aria-hidden="true">⚠️</span> ose nëpërmjet <a href="/takedown" style={{ color: '#C42B0F' }}>/takedown</a>.</li>
           </ul>
           <div className="note">Shkeljet penale raportohen edhe pa kërkesën e viktimës. Platforma bashkëpunon plotësisht me autoritetet hetimore.</div>
 
@@ -82,11 +82,11 @@ export default function Kushtet() {
 
           <h2>7. Mbrojtja e të Dhënave Personale</h2>
           <p>Mbledhja, ruajtja dhe përpunimi i të dhënave personale kryhet në përputhje me <strong>Ligjin Nr. 124/2024 "Për mbrojtjen e të dhënave personale"</strong> (hyrë në fuqi 1 Janar 2025), i cili harmonizoi legjislacionin shqiptar me Rregulloren GDPR 2016/679 të BE-së.</p>
-          <p>Për detaje të plota, shihni <a href="/privatesia" style={{ color: '#E63312' }}>Politikën e Privatësisë</a> dhe <a href="/cookies" style={{ color: '#E63312' }}>Politikën e Cookie-ve</a>.</p>
+          <p>Për detaje të plota, shihni <a href="/privatesia" style={{ color: '#C42B0F' }}>Politikën e Privatësisë</a> dhe <a href="/cookies" style={{ color: '#C42B0F' }}>Politikën e Cookie-ve</a>.</p>
           <p className="law">Autoritet mbikëqyrëse: Komisioneri për Mbrojtjen e të Dhënave Personale — www.idp.al</p>
 
           <h2>8. Heqja dhe Notice-and-Takedown</h2>
-          <p>Nëse besoni se një shpallje shkel të drejtat tuaja të autorit, privatësinë ose është ilegale, mund të paraqisni kërkesë formale <a href="/takedown" style={{ color: '#E63312' }}>këtu</a>. Alpazar shqyrton çdo kërkesë brenda 72 orëve pune dhe vepron sipas Ligjit Nr. 9880/2008 "Për nënshkrimin elektronik" dhe direktivave europiane mbi tregtinë elektronike.</p>
+          <p>Nëse besoni se një shpallje shkel të drejtat tuaja të autorit, privatësinë ose është ilegale, mund të paraqisni kërkesë formale <a href="/takedown" style={{ color: '#C42B0F' }}>këtu</a>. Alpazar shqyrton çdo kërkesë brenda 72 orëve pune dhe vepron sipas Ligjit Nr. 9880/2008 "Për nënshkrimin elektronik" dhe direktivave europiane mbi tregtinë elektronike.</p>
 
           <h2>9. Kufizimi i Përgjegjësisë</h2>
           <p>Alpazar nuk mban përgjegjësi për: saktësinë e informacionit të postuar nga përdoruesit; humbjet financiare nga transaksionet mes palëve; dëmet e shkaktuara nga ndërprerjet teknike; apo veprimet e palëve të treta. Limiti maksimal i përgjegjësisë së Alpazar ndaj çdo përdoruesi është i barabartë me shumën e paguar prej tij gjatë 12 muajve të fundit.</p>

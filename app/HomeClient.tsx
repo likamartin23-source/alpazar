@@ -496,7 +496,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .searchbar{padding:0 12px 12px;display:flex;gap:8px;}
         .search-wrap{flex:1;background:#fff;border-radius:12px;display:flex;align-items:center;padding:0 12px;gap:8px;border:1.5px solid rgba(0,0,0,.07);box-shadow:0 1px 4px rgba(0,0,0,.05);transition:border-color .2s ease,box-shadow .2s ease;}
         .search-wrap:focus-within{border-color:#E63312;box-shadow:0 6px 20px -6px rgba(230,51,18,.22);transform:translateY(-1px);}
-        .search-wrap:focus-within i{color:#E63312;}
+        .search-wrap:focus-within i{color:#C42B0F;}
         .search-wrap i{font-size:15px;color:#bbb;}
         .search-wrap input{border:none;background:transparent;font-size:13px;color:#111;outline:none;flex:1;padding:10px 0;font-family:inherit;}
         .search-wrap input::placeholder{color:#bbb;}
@@ -508,7 +508,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .sug-item:hover{background:#FFFBEA;}
         .sug-img{width:38px;height:38px;border-radius:6px;object-fit:cover;flex-shrink:0;background:#f0e8d0;}
         .sug-title{font-size:13px;font-weight:600;color:#111;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-        .sug-price{font-size:12px;font-weight:700;color:#E63312;white-space:nowrap;}
+        .sug-price{font-size:12px;font-weight:700;color:#C42B0F;white-space:nowrap;}
         /* Categories */
         .cat-scroll{display:flex;gap:8px;padding:0 12px 12px;overflow-x:auto;scroll-snap-type:x mandatory;}
         .cat-scroll::-webkit-scrollbar{display:none;}
@@ -554,7 +554,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         /* Shops section */
         .section-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
         .section-hdr h3{font-size:13px;font-weight:700;color:#111;}
-        .section-hdr a{color:#E63312;font-size:11px;text-decoration:none;cursor:pointer;font-weight:600;}
+        .section-hdr a{color:#C42B0F;font-size:11px;text-decoration:none;cursor:pointer;font-weight:600;}
         .shops-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:16px;}
         .shop-mini{background:#fff;border-radius:14px;overflow:hidden;cursor:pointer;border:1px solid #eee;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 18px -12px rgba(0,0,0,.14);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;}
         .shop-mini:hover{transform:translateY(-3px);box-shadow:0 10px 24px -8px rgba(0,0,0,.2);}
@@ -569,7 +569,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .filter-row{display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;}
         .filter-row::-webkit-scrollbar{display:none;}
         .filter-btn{background:#fff;border:0.5px solid #ddd;border-radius:20px;padding:6px 13px;font-size:10px;color:#666;white-space:nowrap;flex-shrink:0;cursor:pointer;font-family:inherit;transition:all .12s;box-shadow:0 1px 3px rgba(0,0,0,.04);}
-        .filter-btn:hover{border-color:#F5C842;color:#E63312;}
+        .filter-btn:hover{border-color:#F5C842;color:#C42B0F;}
         .filter-btn.active{background:#111;border-color:#111;color:#F5C842;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.15);}
         /* Listings grid — raporti 70% foto / 30% të dhëna — 3 kolona (-40%) */
         .listings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:16px;}
@@ -588,7 +588,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .badge-premium{position:absolute;top:6px;right:6px;background:linear-gradient(135deg,#F8D24E,#F5C842);color:#111;font-size:9px;padding:3px 7px;border-radius:999px;font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(245,200,66,.5);}
         .card-body{flex:1 1 auto;padding:9px 10px 10px;display:flex;flex-direction:column;gap:4px;min-height:0;}
         .card-title{font-size:13px;line-height:1.3;font-weight:700;color:#222;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;min-height:2.6em;}
-        .card-price{font-size:14px;font-weight:800;color:#E63312;}
+        .card-price{font-size:14px;font-weight:800;color:#C42B0F;}
         .card-meta{display:flex;align-items:center;justify-content:space-between;}
         .card-loc{font-size:11px;color:#6B6B6B;display:flex;align-items:center;gap:3px;}
         .card-loc i{font-size:11px;}
@@ -742,7 +742,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
             <div>
               <h1 style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', margin: 0 }}>Alpazar — Treg Online Shqipëri</h1>
               <h2><span aria-hidden="true">🦅</span> {cfg('site_slogan', 'Shit · Bli · Bëj Pazrin Tënd')}</h2>
-              <p><span style={{color:'#E63312',fontWeight:800}}>Platforma #1 shqiptare<br />e tregtisë online</span></p>
+              <p><span style={{color: '#C42B0F',fontWeight:800}}>Platforma #1 shqiptare<br />e tregtisë online</span></p>
             </div>
             {(cfg('show_listing_count','true') !== 'false' || cfg('show_user_count','true') !== 'false') && (
               <div className="hero-stats">
@@ -812,8 +812,8 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                   )
                 })}
                 <div role="link" tabIndex={0} className="shop-mini" onClick={() => go('/biznese')} onKeyDown={e => { if (e.key === 'Enter') go('/biznese') }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#fff', border: '1.5px dashed #F5C842', cursor: 'pointer' }}>
-                  <i className="ti ti-arrow-right" style={{ fontSize: 14, color: '#E63312' }} aria-hidden="true" />
-                  <div style={{ fontSize: 7, color: '#E63312', fontWeight: 700, marginTop: 3, textAlign: 'center', padding: '0 4px' }}>Shiko të gjitha</div>
+                  <i className="ti ti-arrow-right" style={{ fontSize: 14, color: '#C42B0F' }} aria-hidden="true" />
+                  <div style={{ fontSize: 7, color: '#C42B0F', fontWeight: 700, marginTop: 3, textAlign: 'center', padding: '0 4px' }}>Shiko të gjitha</div>
                 </div>
               </div>
             </>
@@ -872,7 +872,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                       </div>
                       <div style={{ padding: '6px 8px' }}>
                         <div style={{ fontSize: 10, fontWeight: 600, color: '#111', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', lineHeight: 1.3, marginBottom: 2 }}>{item.title}</div>
-                        <div style={{ fontSize: 11, fontWeight: 800, color: '#E63312' }}>{price}</div>
+                        <div style={{ fontSize: 11, fontWeight: 800, color: '#C42B0F' }}>{price}</div>
                       </div>
                     </div>
                   )

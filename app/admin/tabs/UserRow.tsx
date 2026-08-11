@@ -72,7 +72,7 @@ export function UserRow({ u, plans, pick, setPick, busy, confirmDel, setConfirmD
               <button type="button" className="edit-btn" onClick={() => setConfirmDel('')}>Jo</button>
             </>
           ) : (
-            <button type="button" className="edit-btn" style={{ color: '#E63312' }}
+            <button type="button" className="edit-btn" style={{ color: '#C42B0F' }}
               onClick={() => setConfirmDel(u.id)}>Fshi</button>
           )}
         </div>

@@ -786,7 +786,7 @@ export default function MessagesPage() {
         .theirs .rp{border-color:#E63312;background:rgba(230,51,18,.06);}
         .rp-name{font-size:10px;font-weight:700;margin-bottom:2px;opacity:.9;}
         .mine .rp-name{color:#F5C842;}
-        .theirs .rp-name{color:#E63312;}
+        .theirs .rp-name{color:#C42B0F;}
         .rp-text{font-size:11px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;opacity:.65;}
         .rp-img{width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0;}
 
@@ -818,7 +818,7 @@ export default function MessagesPage() {
         /* Reply strip */
         .reply-strip{background:#fff;border-top:1.5px solid #EDE6D0;padding:8px 12px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
         .rs-bar{flex:1;border-left:3px solid #E63312;padding:0 0 0 8px;min-width:0;}
-        .rs-name{font-size:11px;color:#E63312;font-weight:700;margin-bottom:1px;}
+        .rs-name{font-size:11px;color:#C42B0F;font-weight:700;margin-bottom:1px;}
         .rs-text{font-size:11px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
         .rs-img{width:38px;height:38px;border-radius:6px;object-fit:cover;flex-shrink:0;}
 
@@ -851,8 +851,8 @@ export default function MessagesPage() {
 
         /* Blocked bar */
         .blocked-bar{background:#fff3f0;border-top:1px solid #ffd5cc;padding:14px 16px;flex-shrink:0;text-align:center;}
-        .blocked-bar p{font-size:12px;color:#E63312;margin-bottom:8px;}
-        .unblock-btn{background:transparent;border:1.5px solid #E63312;color:#E63312;border-radius:10px;padding:7px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .blocked-bar p{font-size:12px;color:#C42B0F;margin-bottom:8px;}
+        .unblock-btn{background:transparent;border:1.5px solid #E63312;color:#C42B0F;border-radius:10px;padding:7px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
 
         /* Select mode bar */
         .select-bar{background:#111;padding:0 12px;height:52px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
@@ -862,9 +862,9 @@ export default function MessagesPage() {
         /* Recording bar */
         .rec-bar{flex:1;display:flex;align-items:center;gap:8px;background:#fff;border-radius:22px;padding:0 12px;min-height:46px;box-shadow:0 1px 3px rgba(0,0,0,.1);}
         .rec-dot{width:9px;height:9px;border-radius:50%;background:#E63312;flex-shrink:0;animation:pulse .9s infinite;}
-        .rec-time{font-size:13px;font-weight:700;color:#E63312;font-variant-numeric:tabular-nums;white-space:nowrap;}
+        .rec-time{font-size:13px;font-weight:700;color:#C42B0F;font-variant-numeric:tabular-nums;white-space:nowrap;}
         .rec-wave{flex:1;display:flex;align-items:center;gap:2px;height:24px;overflow:hidden;}
-        .rec-cancel{background:none;border:none;color:#E63312;font-size:22px;cursor:pointer;padding:2px;line-height:1;flex-shrink:0;}
+        .rec-cancel{background:none;border:none;color:#C42B0F;font-size:22px;cursor:pointer;padding:2px;line-height:1;flex-shrink:0;}
 
         /* Modals */
         .overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .15s;}
@@ -877,7 +877,7 @@ export default function MessagesPage() {
         .mi:hover{background:#f9f9f9;}
         .mi i{font-size:20px;width:24px;text-align:center;color:#555;}
         .mi span{font-size:14px;color:#111;}
-        .mi.danger i,.mi.danger span{color:#E63312;}
+        .mi.danger i,.mi.danger span{color:#C42B0F;}
         .mi.wa i{color:#25D366;}
         .mi.success i,.mi.success span{color:#22c55e;}
 
@@ -964,7 +964,7 @@ export default function MessagesPage() {
             )}
 
             <div role="button" tabIndex={0} className="mi" onClick={() => { setReplyTo(ctxMenu.msg); setCtxMenu(null); setTimeout(() => inputRef.current?.focus(), 120) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setReplyTo(ctxMenu.msg); setCtxMenu(null); setTimeout(() => inputRef.current?.focus(), 120) } }}>
-              <i className="ti ti-corner-up-left" style={{ color:'#E63312' }} aria-hidden="true" />
+              <i className="ti ti-corner-up-left" style={{ color: '#C42B0F' }} aria-hidden="true" />
               <span>Përgjigju</span>
             </div>
 
@@ -1160,7 +1160,7 @@ export default function MessagesPage() {
             <div className="chat-wrap" style={{ position:'relative' }}>
               <div className="msgs-area" ref={attachScrollListener}>
                 {isBlocked && (
-                  <div style={{ background:'rgba(230,51,18,.08)', borderRadius:12, padding:'10px 14px', margin:'8px 0', textAlign:'center', fontSize:12, color:'#E63312', border:'1px solid rgba(230,51,18,.15)' }}>
+                  <div style={{ background:'rgba(230,51,18,.08)', borderRadius:12, padding:'10px 14px', margin:'8px 0', textAlign:'center', fontSize:12, color: '#C42B0F', border:'1px solid rgba(230,51,18,.15)' }}>
                     <><span aria-hidden="true">🚫</span> Ke bllokuar këtë përdorues</>
                   </div>
                 )}
@@ -1313,7 +1313,7 @@ export default function MessagesPage() {
                   {/* Reply strip */}
                   {replyTo && (
                     <div className="reply-strip">
-                      <i className="ti ti-corner-up-left" style={{ color:'#E63312', fontSize:16, flexShrink:0 }} aria-hidden="true" />
+                      <i className="ti ti-corner-up-left" style={{ color: '#C42B0F', fontSize:16, flexShrink:0 }} aria-hidden="true" />
                       <div className="rs-bar">
                         <div className="rs-name">{replyTo.sender_id === user?.id ? 'Unë' : displayName(selected.other)}</div>
                         {replyTo.type === 'audio' ? (
@@ -1333,9 +1333,9 @@ export default function MessagesPage() {
 
                   {/* Upload error toast */}
                   {uploadErr && (
-                    <div style={{ background:'#FFF0EE', border:'1px solid #f8c0b8', color:'#E63312', fontSize:11, fontWeight:600, padding:'6px 12px', display:'flex', alignItems:'center', gap:8 }}>
+                    <div style={{ background:'#FFF0EE', border:'1px solid #f8c0b8', color: '#C42B0F', fontSize:11, fontWeight:600, padding:'6px 12px', display:'flex', alignItems:'center', gap:8 }}>
                       <span style={{ flex:1 }}><span aria-hidden="true">⚠️</span> {uploadErr}</span>
-                      <button type="button" aria-label="Mbyll gabimin" onClick={() => setUploadErr('')} style={{ background:'none', border:'none', color:'#E63312', cursor:'pointer', padding:0, fontSize:14, lineHeight:1 }}>✕</button>
+                      <button type="button" aria-label="Mbyll gabimin" onClick={() => setUploadErr('')} style={{ background:'none', border:'none', color: '#C42B0F', cursor:'pointer', padding:0, fontSize:14, lineHeight:1 }}>✕</button>
                     </div>
                   )}
 

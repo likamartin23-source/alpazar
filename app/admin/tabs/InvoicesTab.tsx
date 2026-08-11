@@ -125,7 +125,7 @@ export function InvoicesTab() {
 
       {err && (
         <div className="card" role="alert"
-          style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#E63312', fontSize: 12 }}>{err}</div>
+          style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#C42B0F', fontSize: 12 }}>{err}</div>
       )}
 
       <div className="card">
@@ -180,7 +180,7 @@ export function InvoicesTab() {
                   <td>
                     <strong style={{ color: kredit ? '#E63312' : undefined }}>{L(r.total)} {r.currency}</strong>
                     {!kredit && Number(r.refunded_total) > 0 && (
-                      <div style={{ color: '#E63312', fontSize: 9.5 }}>
+                      <div style={{ color: '#C42B0F', fontSize: 9.5 }}>
                         −{L(r.refunded_total)} rimbursuar · mbetet {L(r.mbetja)}
                       </div>
                     )}
@@ -196,7 +196,7 @@ export function InvoicesTab() {
 
                     {!kredit && Number(r.mbetja) > 0 && (
                       <div style={{ marginTop: 6 }}>
-                        <button type="button" className="edit-btn" style={{ color: '#E63312' }}
+                        <button type="button" className="edit-btn" style={{ color: '#C42B0F' }}
                           onClick={() => hapRimbursimin(r)}>
                           {rimb === r.id ? 'Mbyll' : 'Rimburso'}
                         </button>
@@ -211,7 +211,7 @@ export function InvoicesTab() {
 
                     {r.file_url && (
                       <div style={{ marginTop: 4, fontSize: 10 }}>
-                        <a href={r.file_url} target="_blank" rel="noopener noreferrer" style={{ color: '#E63312' }}>
+                        <a href={r.file_url} target="_blank" rel="noopener noreferrer" style={{ color: '#C42B0F' }}>
                           {r.file_name || 'shiko skedarin'}
                         </a>
                       </div>

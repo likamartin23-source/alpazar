@@ -101,7 +101,7 @@ export function UsersTab() {
 
       {err && (
         <div className="card" role="alert"
-          style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#E63312', fontSize: 12 }}>{err}</div>
+          style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#C42B0F', fontSize: 12 }}>{err}</div>
       )}
 
       <div className="card">

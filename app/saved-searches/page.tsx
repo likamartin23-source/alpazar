@@ -68,7 +68,7 @@ export default function SavedSearchesPage() {
         {loadError ? (
           <div style={{ textAlign: 'center', padding: '40px 24px' }}>
             <div style={{ fontSize: 32, marginBottom: 12 }} aria-hidden="true">⚠️</div>
-            <div style={{ fontSize: 14, color: '#E63312', marginBottom: 16 }}>Nuk u ngarkuan të dhënat. Kontrollo lidhjen dhe provo sërish.</div>
+            <div style={{ fontSize: 14, color: '#C42B0F', marginBottom: 16 }}>Nuk u ngarkuan të dhënat. Kontrollo lidhjen dhe provo sërish.</div>
             <button type="button" onClick={() => { setLoadError(false); setLoading(true); window.location.reload() }} style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
           </div>
         ) : loading ? (
@@ -108,7 +108,7 @@ export default function SavedSearchesPage() {
                       <button
                         type="button"
                         onClick={() => runSearch(s)}
-                        style={{ background: 'none', border: 'none', color: '#E63312', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', padding: 0 }}
+                        style={{ background: 'none', border: 'none', color: '#C42B0F', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', padding: 0 }}
                       >
                         <><span aria-hidden="true">🔍</span> Kërko tani →</>
                       </button>

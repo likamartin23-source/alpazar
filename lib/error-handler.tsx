@@ -63,7 +63,7 @@ export class GlobalErrorBoundary extends Component<
           padding: 24, background: '#FFFBEA',
         }}>
           <span style={{ fontSize: 48 }}>⚠️</span>
-          <h2 style={{ fontSize: 20, fontWeight: 700, color: '#E63312', margin: 0 }}>
+          <h2 style={{ fontSize: 20, fontWeight: 700, color: '#C42B0F', margin: 0 }}>
             Ndodhi një gabim
           </h2>
           <p style={{ color: '#666', textAlign: 'center', fontSize: 13, maxWidth: 320 }}>

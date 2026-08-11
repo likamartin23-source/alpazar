@@ -44,7 +44,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA}
 .btns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
 .btn{border:1.5px solid #ddd;background:#fff;border-radius:10px;padding:9px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;color:#333}
 .btn.primary{background:#E63312;border-color:#E63312;color:#fff}
-.btn.danger{background:#fff;border-color:#E63312;color:#E63312}
+.btn.danger{background:#fff;border-color:#E63312;color:#C42B0F}
 .btn.small{padding:7px 10px;font-size:11px;width:100%}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 .sec-t{font-size:13px;font-weight:700;color:#111;margin-bottom:10px}
@@ -52,7 +52,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA}
 .pcard{border:1.5px solid #eee;border-radius:10px;padding:12px}
 .pcard.cur{border-color:#F5C842;background:#FFFBEA}
 .pname{font-size:13px;font-weight:800;color:#111}
-.pprice{font-size:15px;font-weight:800;color:#E63312;margin:4px 0}
+.pprice{font-size:15px;font-weight:800;color:#C42B0F;margin:4px 0}
 .cur-tag{font-size:11px;font-weight:700;color:#8a6d00;margin-top:8px}
 .bank{background:#f8f9fb;border:.5px solid #e3e7ee;border-radius:9px;padding:11px 12px;font-size:12px;color:#333;margin-top:10px;display:flex;flex-direction:column;gap:4px}
 .bank-t{font-weight:700;color:#111;margin-bottom:2px}
@@ -62,6 +62,6 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA}
 .ev:last-child{border-bottom:none}
 .msg{border-radius:10px;padding:9px 13px;font-size:12px;font-weight:600;margin-bottom:10px}
 .msg.ok{background:#EAF3DE;color:#3B6D11;border:.5px solid #97C459}
-.msg.err{background:#FFF0EE;color:#E63312;border:.5px solid #F09595}
+.msg.err{background:#FFF0EE;color:#C42B0F;border:.5px solid #F09595}
 select{width:100%;border:1.5px solid #e0e0e0;border-radius:8px;padding:7px;font-size:11px;font-family:inherit;background:#fff}
 `

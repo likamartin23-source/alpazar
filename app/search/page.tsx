@@ -140,7 +140,7 @@ export default function SearchPage() {
         .search-wrap input{border:none;background:transparent;font-size:13px;color:#111;outline:none;flex:1;padding:9px 0;font-family:inherit;}
         .search-wrap input::placeholder{color:#bbb;}
         .search-wrap:focus-within{border-color:#111;box-shadow:0 4px 16px -4px rgba(0,0,0,.2);}
-        .search-wrap:focus-within i{color:#E63312;}
+        .search-wrap:focus-within i{color:#C42B0F;}
         .search-btn{background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;border:none;border-radius:12px;padding:9px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(0,0,0,.25);transition:transform .15s ease,box-shadow .15s ease;}
         .search-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px -2px rgba(0,0,0,.35);}
 
@@ -150,7 +150,7 @@ export default function SearchPage() {
         .filter-toggle-btn:hover{background:#f5f5f5;}
         .filter-toggle-btn.active{background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;border-color:#111;}
         .filter-badge-inline{background:#E63312;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;}
-        .clear-link{font-size:11px;color:#E63312;font-weight:600;cursor:pointer;background:none;border:none;font-family:inherit;padding:4px 6px;}
+        .clear-link{font-size:11px;color:#C42B0F;font-weight:600;cursor:pointer;background:none;border:none;font-family:inherit;padding:4px 6px;}
 
         /* ── Category chips ── */
         .cats{display:flex;gap:8px;overflow-x:auto;padding:10px 12px;background:#fff;border-bottom:1px solid #f0f0f0;}

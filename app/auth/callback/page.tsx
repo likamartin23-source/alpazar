@@ -108,7 +108,7 @@ export default function AuthCallback() {
       {err ? (
         <>
           <div style={{ fontSize: 40 }} aria-hidden="true">⚠️</div>
-          <p style={{ color: '#E63312', fontSize: 13, fontWeight: 600, maxWidth: 320 }}>{err}</p>
+          <p style={{ color: '#C42B0F', fontSize: 13, fontWeight: 600, maxWidth: 320 }}>{err}</p>
           <p style={{ color: '#aaa', fontSize: 11 }}>Duke të kthyer te hyrja...</p>
         </>
       ) : (

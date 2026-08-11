@@ -216,7 +216,7 @@ export default function BiznesNewPage() {
             </div>
             {mainType === 'sherbime_produkte' && (
               <>
-                <div style={{ fontSize: 12, fontWeight: 700, color: '#E63312', marginBottom: 8 }}><span aria-hidden="true">🛠️</span> SHËRBIME</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#C42B0F', marginBottom: 8 }}><span aria-hidden="true">🛠️</span> SHËRBIME</div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
                   {subcats.filter(s => s.parent_type === 'sherbime').map(s => (
                     <div key={s.id} role="checkbox" aria-checked={selSubs.includes(s.id)} tabIndex={0} onClick={() => toggleSub(s.id)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') toggleSub(s.id) }} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: selSubs.includes(s.id) ? '#F5C842' : '#fff', border: `1.5px solid ${selSubs.includes(s.id) ? '#F5C842' : '#ddd'}`, borderRadius: 20, padding: '7px 13px', fontSize: 12, fontWeight: 600, cursor: 'pointer', transition: 'all .15s' }}>
@@ -224,7 +224,7 @@ export default function BiznesNewPage() {
                     </div>
                   ))}
                 </div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: '#E63312', marginBottom: 8 }}><span aria-hidden="true">📦</span> PRODUKTE</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#C42B0F', marginBottom: 8 }}><span aria-hidden="true">📦</span> PRODUKTE</div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
                   {subcats.filter(s => s.parent_type === 'produkte').map(s => (
                     <div key={s.id} role="checkbox" aria-checked={selSubs.includes(s.id)} tabIndex={0} onClick={() => toggleSub(s.id)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') toggleSub(s.id) }} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: selSubs.includes(s.id) ? '#F5C842' : '#fff', border: `1.5px solid ${selSubs.includes(s.id) ? '#F5C842' : '#ddd'}`, borderRadius: 20, padding: '7px 13px', fontSize: 12, fontWeight: 600, cursor: 'pointer', transition: 'all .15s' }}>
@@ -234,7 +234,7 @@ export default function BiznesNewPage() {
                 </div>
                 {subcats.filter(s => s.parent_type === 'sherbime_produkte').length > 0 && (
                   <>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: '#E63312', marginBottom: 8 }}><span aria-hidden="true">🔁</span> TË DYJA</div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: '#C42B0F', marginBottom: 8 }}><span aria-hidden="true">🔁</span> TË DYJA</div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
                       {subcats.filter(s => s.parent_type === 'sherbime_produkte').map(s => (
                         <div key={s.id} role="checkbox" aria-checked={selSubs.includes(s.id)} tabIndex={0} onClick={() => toggleSub(s.id)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') toggleSub(s.id) }} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: selSubs.includes(s.id) ? '#F5C842' : '#fff', border: `1.5px solid ${selSubs.includes(s.id) ? '#F5C842' : '#ddd'}`, borderRadius: 20, padding: '7px 13px', fontSize: 12, fontWeight: 600, cursor: 'pointer', transition: 'all .15s' }}>
@@ -256,7 +256,7 @@ export default function BiznesNewPage() {
               </div>
             )}
             {selSubs.length > 0 && (
-              <div style={{ fontSize: 12, color: '#E63312', fontWeight: 700, marginBottom: 16 }}><span aria-hidden="true">✓</span> {selSubs.length} të zgjedhura</div>
+              <div style={{ fontSize: 12, color: '#C42B0F', fontWeight: 700, marginBottom: 16 }}><span aria-hidden="true">✓</span> {selSubs.length} të zgjedhura</div>
             )}
             <button type="button" className="step-btn" disabled={selSubs.length === 0} onClick={() => setStep(3)}>Vazhdo →</button>
           </>

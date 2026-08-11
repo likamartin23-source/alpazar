@@ -17,12 +17,12 @@ export default function RrethNesh() {
     .body{padding:20px 16px 40px;}
     .section{background:#fff;border-radius:12px;padding:20px;border:0.5px solid #eee;margin-bottom:14px;}
     .sec-title{font-size:15px;font-weight:700;color:#111;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
-    .sec-title i{font-size:18px;color:#E63312;}
+    .sec-title i{font-size:18px;color:#C42B0F;}
     p{font-size:13px;color:#444;line-height:1.85;margin-bottom:10px;}
     p:last-child{margin-bottom:0;}
     .values{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;}
     .val{background:#FFFBEA;border:0.5px solid #e0b030;border-radius:10px;padding:14px;text-align:center;}
-    .val i{font-size:24px;color:#E63312;display:block;margin-bottom:8px;}
+    .val i{font-size:24px;color:#C42B0F;display:block;margin-bottom:8px;}
     .val strong{font-size:12px;font-weight:700;color:#111;display:block;margin-bottom:4px;}
     .val span{font-size:11px;color:#666;}
     .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px;}
@@ -34,7 +34,7 @@ export default function RrethNesh() {
     .tl-item::before{content:'';position:absolute;left:-16px;top:5px;width:8px;height:8px;border-radius:50%;background:#F5C842;}
     .tl-item::after{content:'';position:absolute;left:-13px;top:13px;width:2px;bottom:0;background:#e0b030;}
     .tl-item:last-child::after{display:none;}
-    .tl-date{font-size:11px;font-weight:700;color:#E63312;margin-bottom:3px;}
+    .tl-date{font-size:11px;font-weight:700;color:#C42B0F;margin-bottom:3px;}
     .tl-text{font-size:12px;color:#555;line-height:1.6;}
     .ftr{display:flex;flex-wrap:wrap;gap:8px 16px;padding:20px;background:#f9f9f9;border-top:1px solid #eee;}
     .ftr a{color:#888;font-size:11px;text-decoration:none;}

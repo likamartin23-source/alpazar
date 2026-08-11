@@ -5,7 +5,7 @@ export type LevelInfo = { key: string; name: string; icon: string; color: string
 
 export function getLevel(points = 0): LevelInfo {
   if (points >= 1000) return { key: 'master',    name: 'Master',    icon: '💎', color: '#7C3AED', bg: '#F3ECFE' }
-  if (points >= 400)  return { key: 'ekspert',   name: 'Ekspert',   icon: '🏆', color: '#E63312', bg: '#FFF0EE' }
+  if (points >= 400)  return { key: 'ekspert',   name: 'Ekspert',   icon: '🏆', color: '#C42B0F', bg: '#FFF0EE' }
   if (points >= 100)  return { key: 'tregtar',   name: 'Tregtar',   icon: '⚡', color: '#185FA5', bg: '#EEF4FF' }
   return                     { key: 'fillestar', name: 'Fillestar', icon: '🌱', color: '#3B6D11', bg: '#EAF3DE' }
 }
