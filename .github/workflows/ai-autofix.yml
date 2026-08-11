@@ -5,7 +5,7 @@ name: AI Auto-Fix — rregullim automatik i gabimeve nga AI Health
 # vetë, duke hapur një PR. Pa nderhyrje manuale.
 #
 # Trigger-at:
-#  - schedule: çdo ditë 05:30 UTC (07:30 Tiranë) — pas auditimit ditor
+#  - schedule: çdo ditë 05:30 UTC (07:30 Tiranë) — pas auditimit ditës
 #  - workflow_dispatch: manual, ose i thirrur nga jashtë me një problem konkret
 on:
   schedule:
@@ -50,7 +50,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          # 1) Problem i dhënë manualisht ka përparësi.
+          # 1) Problem i dhenë manualisht ka përparësi.
           if [ -n "${MANUAL:-}" ]; then
             printf 'problems<<EOF\n%s\nEOF\n' "$MANUAL" >> "$GITHUB_OUTPUT"
             echo "has_work=true" >> "$GITHUB_OUTPUT"
@@ -122,7 +122,6 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ secrets.ALPAZAR_CLAUD_SECRET || secrets.GITHUB_TOKEN }}
-          timeout_minutes: 25
           prompt: |
             Ti je inxhinier i lartë në projektin Alpazar (Next.js 14 App Router + Supabase).
             AI Health ka regjistruar këto gabime REALE nga PRODHIMI:
@@ -140,7 +139,7 @@ jobs:
             SI TË PUNOSH (metodë, jo hamendje):
             1. Për çdo gabim, GJEJ SHKAKUN RRËNJËSOR në kod përpara se të ndryshosh gjë.
                Mos e "fashit" simptomën.
-            2. VERIFIKO se gabimi ekziston ende në kodin aktual — telemetria mund të
+            2. VERIFIKO se gabimi ekziston endë në kodin aktual — telemetria mund të
                jetë e vjetër dhe problemi tashmë i rregulluar. Nëse është i rregulluar,
                mos ndrysho asgjë dhe shpjegoje këtë në PR.
             3. Për React #418/#422/#425 (hydration): shkaktarët e zakonshëm janë
@@ -154,15 +153,11 @@ jobs:
             Hap një Pull Request (MOS bëj push direkt në main) me:
             - titull të shkurtër që përshkruan fiksin
             - në përshkrim: për çdo gabim → shkaku rrënjësor, fiksi, dhe si u verifikua
-            - nëse ndonjë gabim u vlerësua si i vjetër/i parregullueshëm, thuaje qartë
+            - nëse ndonjë gabim u vlerësua si i vjetër/i parregullueshem, thuaje qartë
 
-          allowed_tools: >
-            Bash(npx tsc --noEmit),
-            Bash(npx next build),
-            Bash(npm ci),
-            Bash(git *),
-            Read,
-            Edit,
-            Write,
-            Glob,
-            Grep
+          # v1: mjetet kalojne si argumente CLI. Si `allowed_tools` ato injoroheshin
+          # heshtazi, pra ky workflow — qe niset vete me cron dhe ka leje shkrimi —
+          # punonte pa asnje kufizim. Shih mesazhin e commit-it.
+          # https://github.com/anthropics/claude-code-action/blob/main/docs/migration-guide.md
+          claude_args: |
+            --allowedTools "Bash(npx tsc --noEmit),Bash(npx next build),Bash(npm ci),Bash(git *),Read,Edit,Write,Glob,Grep"
