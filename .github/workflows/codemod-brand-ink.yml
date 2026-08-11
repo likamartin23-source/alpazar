@@ -9,16 +9,22 @@ name: Codemod — kontrast teksti + prefetch (nje-perdorimsh)
 # Eshte workflow e jo commit i drejtperdrejte sepse ndryshimi prek 46 skedare;
 # nje zevendesim i skriptuar eshte me i verifikueshem se 46 diff-e me dore.
 # Te gjitha hapat jane idempotente — nje rirun i dyte nuk ndryshon asgje.
+#
+# Rezultati shkon ne nje DEGE + PR: main-i kerkon statusin "TypeScript + Build",
+# ndaj push-i direkt refuzohet me GH006.
 
 on:
   workflow_dispatch:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   apply:
     runs-on: ubuntu-latest
+    env:
+      BRANCH: codemod/kontrast-a11y
     steps:
       - uses: actions/checkout@v4
 
@@ -132,7 +138,9 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
-      - name: Commit
+      - name: Dege + PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -141,6 +149,7 @@ jobs:
             echo "::notice::Asgje per te ndryshuar — tashme e aplikuar."
             exit 0
           fi
+          git checkout -b "$BRANCH"
           git commit -F - <<'MSG'
           a11y+perf: kontrast teksti WCAG AA, scroll-padding, prefetch qe punon
 
@@ -167,4 +176,8 @@ jobs:
           Ndryshimet e layout-it jane te ankoruara dhe idempotente. Ndertimi
           verifikohet perpara commit-it.
           MSG
-          git push
+          git push -u --force-with-lease origin "$BRANCH"
+          gh pr create --base main --head "$BRANCH" \
+            --title "a11y+perf: kontrast teksti WCAG AA, scroll-padding, prefetch" \
+            --body "Gjeneruar nga codemod-i \`codemod-brand-ink.yml\`. Ndertimi kaloi para commit-it; nje kontroll deshton nese ndonje \`border-color\` preket. Shih mesazhin e commit-it per arsyetimin." \
+            || echo "::notice::PR ekziston tashme — dega u perditesua."
