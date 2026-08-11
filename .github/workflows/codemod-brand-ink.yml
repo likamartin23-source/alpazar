@@ -1,0 +1,91 @@
+name: Codemod — kontrast teksti (WCAG 1.4.3)
+
+# Nje-perdorimsh. #E63312 mbi te bardhe jep 4.33:1, nen pragun AA 4.5:1.
+# Zevendeson VETEM deklaratat e tekstit me #C42B0F (5.68:1 mbi te bardhe,
+# 5.12:1 mbi #FFF0EE). Sfondet, kufijte, gradientet dhe hijet mbeten #E63312 —
+# identiteti vizual nuk ndryshon, vetem teksti behet i lexueshem.
+#
+# Eshte workflow e jo commit i drejtperdrejte sepse ndryshimi prek 46 skedare;
+# nje zevendesim i skriptuar eshte me i verifikueshem se 46 diff-e me dore.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Zevendeso ngjyren e tekstit
+        run: |
+          python3 - <<'PY'
+          import re, pathlib
+
+          INK = '#C42B0F'
+          # Lookbehind-i (?<![-\w]) perjashton border-color, outline-color,
+          # text-decoration-color. Ne JSX kufijte jane borderColor/borderTopColor
+          # me C te madhe, ndaj "color:" me c te vogel s'i prek.
+          pat_css = re.compile(r"(?<![-\w])color:\s*#E63312", re.I)
+          pat_jsx = re.compile(r"(?<![-\w])color:\s*'#E63312'")
+
+          total, files = 0, 0
+          roots = [pathlib.Path('app'), pathlib.Path('lib')]
+          for root in roots:
+              for ext in ('*.tsx', '*.ts'):
+                  for p in root.rglob(ext):
+                      s = o = p.read_text()
+                      s = pat_jsx.sub(f"color: '{INK}'", s)
+                      s = pat_css.sub(f"color:{INK}", s)
+                      if s != o:
+                          total += len(pat_jsx.findall(o)) + len(pat_css.findall(o))
+                          files += 1
+                          p.write_text(s)
+          print(f"{total} deklarata teksti ne {files} skedare")
+          PY
+
+      - name: Verifiko qe s'u prek asnje kufi
+        run: |
+          if git diff -U0 | grep -E '^[+-].*border-color:\s*#C42B0F'; then
+            echo "::error::Nje border-color u ndryshua gabimisht — ndalohet."
+            exit 1
+          fi
+          echo "OK: vetem deklarata teksti."
+
+      - name: Ndertimi duhet te kaloje
+        run: |
+          npm ci
+          npx next build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+      - name: Commit
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -- app lib
+          if git diff --cached --quiet; then
+            echo "::notice::Asgje per te ndryshuar — tashme e aplikuar."
+            exit 0
+          fi
+          git commit -F - <<'MSG'
+          a11y: ngjyre teksti qe kalon WCAG AA (kontrast 1.4.3)
+
+          #E63312 mbi te bardhe jep 4.33:1 — nen pragun 4.5:1. Cmimet jane
+          14px bold, qe NUK kualifikohet si "tekst i madh" (large = 18.66px
+          bold / 24px regular), ndaj cdo cmim ne cdo karte ishte shkelje.
+
+          Deklaratat e tekstit kaluan te #C42B0F: 5.68:1 mbi te bardhe,
+          5.12:1 mbi #FFF0EE, 5.44:1 mbi #FAFAFA — kalon ne cdo sfond qe
+          perdorim. Sfondet, kufijte, gradientet dhe hijet mbeten #E63312:
+          identiteti vizual nuk ndryshon, vetem teksti behet i lexueshem.
+
+          Zevendesim i skriptuar me lookbehind qe perjashton border-color,
+          me nje kontroll qe deshton nese ndonje kufi preket. Ndertimi
+          verifikohet perpara commit-it.
+          MSG
+          git push
