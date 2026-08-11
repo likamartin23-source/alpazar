@@ -74,7 +74,7 @@ jobs:
 
             DETYRAT:
             1. Nëse ka gabime TypeScript/build → rregulloji
-            2. Nëse ka dësë sigurie (XSS, SQL injection, secrets të ekspozuara) → rregulloji
+            2. Nëse ka dobësi sigurie (XSS, SQL injection, secrets të ekspozuara) → rregulloji
             3. Nëse ka memory leaks (object URLs pa revoke) → rregulloji
             4. Nëse ka Promise-a pa trajtim gabimesh → shto .catch()
             5. Mos ndryshoni logjikën e biznesit pa arsye
