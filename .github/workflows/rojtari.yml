@@ -1,0 +1,57 @@
+name: Rojtari — çdo 5 minuta
+
+# Cdo kontroll i meparshem verifikonte Vercel-in. Asnje nuk verifikonte ate qe
+# sheh njeriu. Prandaj nje domen i palidhur mbeti i pazbuluar per jave te tera,
+# ndersa cdo vendosje raportohej "e sukseshme".
+#
+# Ky punon ne intervalin me te shkurter qe lejon GitHub Actions (5 minuta),
+# dhe menjehere pas cdo shtytjeje ne main.
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: rojtari
+  cancel-in-progress: true
+
+jobs:
+  domeni:
+    name: Domeni publik pasqyron prodhimin
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+
+      # pas nje shtytjeje, Vercel-it i duhet pak kohe per te ndertuar
+      - name: Prit ndertimin
+        if: github.event_name == 'push'
+        run: sleep 90
+
+      - name: Verifiko domenin publik
+        run: node scripts/verifiko-live.mjs
+        env:
+          DOMENI_PUBLIK: ${{ vars.DOMENI_PUBLIK || 'https://www.alpazar.al' }}
+          DOMENI_VERCEL: ${{ vars.DOMENI_VERCEL || 'https://alpazar.vercel.app' }}
+
+      - name: Verifiko kontraten kod ↔ bazë
+        if: always()
+        run: node scripts/kontroll-kontrate.mjs
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://sopafwfkrxpcdaljddoh.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+      - name: Alarm ne Slack
+        if: failure()
+        continue-on-error: true
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          [ -n "$SLACK_WEBHOOK_URL" ] || { echo "::notice::SLACK_WEBHOOK_URL mungon."; exit 0; }
+          payload=$(jq -nc --arg u "$RUN_URL" '{text:("🔴 *ALPAZAR — prodhimi nuk pasqyrohet* \nDomeni publik ose kontrata kod↔bazë ka rene. " + $u)}')
+          curl -sS -X POST "$SLACK_WEBHOOK_URL" -H "Content-Type: application/json" -d "$payload" >/dev/null
