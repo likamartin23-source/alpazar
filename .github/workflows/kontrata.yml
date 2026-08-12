@@ -2,16 +2,16 @@ name: Kontrata kod ↔ bazë
 
 # Pse: TypeScript-i nuk e kap dot nje '.rpc("emer_qe_nuk_ekziston")' ose nje
 # funksion baze qe i referohet nje kolone te fshire. Ato dalin vetem kur nje
-# perdorues real i ndesh — dhe atehere eshte vone. Ky kontroll i kap ketu.
+# perdorues real i ndesh — dhe atehere eshte vone.
+#
+# Ky punon mbi PR-te dhe shtytjet. Kontrolli periodik (cdo 5 minuta) kryhet nga
+# .github/workflows/rojtari.yml — ndaj ketu nuk ka me cron ditor.
 
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
-  schedule:
-    # cdo mengjes ne 06:00 UTC — kap edhe ndryshimet e bera drejtpersedrejti ne baze
-    - cron: '0 6 * * *'
   workflow_dispatch:
 
 jobs:
@@ -30,13 +30,3 @@ jobs:
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://sopafwfkrxpcdaljddoh.supabase.co' }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-
-      - name: Njofto ne Slack nese kontrata u thye
-        if: failure() && github.event_name != 'pull_request'
-        continue-on-error: true
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        run: |
-          [ -n "$SLACK_WEBHOOK_URL" ] || { echo "::notice::SLACK_WEBHOOK_URL mungon — anashkalohet."; exit 0; }
-          payload=$(jq -nc '{text:"🔴 *Kontrata kod↔bazë u thye* — ka referenca qe nuk ekzistojne. Shiko CI."}')
-          curl -sS -X POST "$SLACK_WEBHOOK_URL" -H "Content-Type: application/json" -d "$payload" >/dev/null
