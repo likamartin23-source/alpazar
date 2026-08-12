@@ -107,6 +107,17 @@ const UI: Partial<Record<Lang, string[]>> = {
 const TR_URL = 'https://sopafwfkrxpcdaljddoh.supabase.co/functions/v1/translate'
 const SKIP_TAGS = new Set(['SCRIPT','STYLE','NOSCRIPT','TEXTAREA','CODE','PRE'])
 const hasLetters = (s: string) => /[A-Za-zÀ-ɏͰ-ϿЀ-ӿ]/.test(s)
+/* Kodet, shumat, emailet dhe URL-te nuk perkthehen kurre: nje fature 'ALP-2026-00001'
+   ose '999.90 ALL' e perkthyer eshte gabim i rende, jo permiresim. */
+const eshteKod = (s: string) => (
+  (/\d/.test(s) && s.split(/\s+/).length <= 4) ||
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s) ||
+  /^https?:\/\//i.test(s) ||
+  /^#[0-9A-Fa-f]{3,8}$/.test(s) ||
+  (s.length <= 6 && s === s.toUpperCase() && /[A-Z]/.test(s))
+)
+/* Atributet qe permbajne tekst per njeriun ose per lexuesin e ekranit. */
+const ATTRS = ['placeholder', 'aria-label', 'title', 'alt']
 
 interface I18nCtx { lang: Lang; setLang: (l: Lang) => void; t: (key: string) => string }
 const Ctx = createContext<I18nCtx>({ lang: 'sq', setLang: () => {}, t: (k) => k })
@@ -116,6 +127,9 @@ function detect(): Lang {
   const m = document.cookie.match(/(?:^|; )alpazar_lang=([a-z]{2})/)
   if (m && LANGS.some(l => l.code === m[1])) return m[1] as Lang
   try { const s = localStorage.getItem('alpazar_lang'); if (s && LANGS.some(l => l.code === s)) return s as Lang } catch {}
+  // Paneli eshte mjet i brendshem shqip. Pa nje zgjedhje te shprehur te adminit
+  // nuk perkthehet nga gjuha e shfletuesit — perndryshe hapet gjithmone anglisht.
+  try { if (location.pathname.startsWith('/admin')) return 'sq' } catch {}
   const nav = (navigator.language || 'sq').slice(0, 2).toLowerCase()
   return (LANGS.some(l => l.code === nav) ? nav : 'sq') as Lang
 }
@@ -169,7 +183,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         return
       }
       if (!tr) { if (store.current.has(n)) n.nodeValue = store.current.get(n) || ''; return }
-      if (t0.length < 2 || t0.length > 160 || !hasLetters(t0)) return
+      if (t0.length < 2 || t0.length > 160 || !hasLetters(t0) || eshteKod(t0)) return
       if (cache[t0] !== undefined) {
         if (!store.current.has(n)) store.current.set(n, n.nodeValue || '')
         const base = store.current.get(n) || ''
@@ -178,20 +192,35 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       }
       if (!pendingSet.has(t0)) { pendingSet.add(t0); queue.add(t0) }
     }
+    const applyAttr = (el: Element, a: string) => {
+      const bak = 'data-i18n-' + a
+      const orig = el.getAttribute(bak) ?? el.getAttribute(a) ?? ''
+      const t0 = orig.trim()
+      if (!t0) return
+      if (!el.hasAttribute(bak)) el.setAttribute(bak, orig)
+      const i = idx.get(t0)
+      if (i !== undefined) { el.setAttribute(a, tr ? tr[i] : orig); return }
+      if (!tr) { el.setAttribute(a, orig); return }
+      if (t0.length < 2 || t0.length > 160 || !hasLetters(t0) || eshteKod(t0)) return
+      if (cache[t0] !== undefined) { el.setAttribute(a, cache[t0]); return }
+      if (!pendingSet.has(t0)) { pendingSet.add(t0); queue.add(t0) }
+    }
+    const applyAttrs = (root: Element | Document) => {
+      ATTRS.forEach(a => {
+        if (root instanceof Element && root.hasAttribute(a) && !root.closest('[data-no-translate]')) applyAttr(root, a)
+        root.querySelectorAll('[' + a + ']').forEach(el => {
+          if (el.closest('[data-no-translate]')) return
+          applyAttr(el, a)
+        })
+      })
+    }
     const applyNode = (root: Node) => {
       if (root.nodeType === 3) { applyText(root as Text); return }
       if (root.nodeType !== 1 && root.nodeType !== 9) return
       const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
       let n: Node | null
       while ((n = w.nextNode())) applyText(n as Text)
-      document.querySelectorAll('input[placeholder]').forEach((el) => {
-        const e = el as HTMLInputElement
-        const orig = e.getAttribute('data-i18n-ph') ?? e.getAttribute('placeholder') ?? ''
-        const i = idx.get(orig)
-        if (i === undefined) return
-        if (!e.getAttribute('data-i18n-ph')) e.setAttribute('data-i18n-ph', orig)
-        e.setAttribute('placeholder', tr ? tr[i] : orig)
-      })
+      applyAttrs(root as Element | Document)
     }
     const flush = () => {
       if (dead || !tr || queue.size === 0) return

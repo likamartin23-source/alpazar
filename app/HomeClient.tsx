@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { useRealtimeTable } from '../hooks/useRealtimeTable'
+import { LanguageSwitcher } from './components/LanguageSwitcher'
 import type { Category, Listing } from '../lib/types'
 import { SkeletonGrid } from './components/Skeleton'
 import Avatar from './components/Avatar'
@@ -635,6 +636,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
               <span className="brand">{settings.site_name || 'ALPAZAR'}</span>
             </div>
             <div className="nav">
+              <LanguageSwitcher tone="light" />
               {user && unreadNotifications > 0 && (
                 <button type="button" className="icon-btn" aria-label={`${unreadNotifications} njoftime të palexuara`} onClick={() => go('/notifications')} style={{ position: 'relative' }}>
                   <i className="ti ti-bell-ringing" aria-hidden="true" />
