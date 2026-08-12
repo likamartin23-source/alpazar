@@ -6,15 +6,14 @@ import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAlpazar } from '../../lib/context'
 import { useRealtimeTable } from '../../hooks/useRealtimeTable'
-import { UsersTab } from './tabs/UsersTab'
 import { PlansTab } from './tabs/PlansTab'
 import { LimitsTab } from './tabs/LimitsTab'
+import { QueueTab } from './tabs/QueueTab'
+import { PeopleTab } from './tabs/PeopleTab'
+import { TodayTab } from './tabs/TodayTab'
 import { InvoicesTab } from './tabs/InvoicesTab'
-import { AuditTab } from './tabs/AuditTab'
 import { BroadcastTab } from './tabs/BroadcastTab'
-import { BusinessesTab } from './tabs/BusinessesTab'
 import { RolesTab } from './tabs/RolesTab'
-import { Trend } from './tabs/Trend'
 
 /* ─── Styles ───────────────────────────────────────────────── */
 const CSS = `
@@ -181,372 +180,8 @@ async function callAdminAction(action: string, params: Record<string, unknown>):
   }
 }
 
-function AppConfigTab() {
-  const { config } = useAlpazar()
-  const [localVals, setLocalVals] = useState<Record<string, string>>({})
-  const [saved, setSaved] = useState<Record<string, boolean>>({})
 
-  // sync from context
-  useEffect(() => {
-    setLocalVals(prev => ({ ...config, ...prev }))
-  }, [config])
 
-  const [saveErr, setSaveErr] = useState('')
-  const [secretVals, setSecretVals] = useState<Record<string, string>>({})
-
-  const saveSecret = async (key: string) => {
-    setSaveErr('')
-    const val = (secretVals[key] ?? '').trim()
-    if (!val) { setSaveErr(`Shkruaj një vlerë për "${key}".`); return }
-    const ok = await writeConfig(key, val, 'admin_settings')
-    if (ok) {
-      setSaved(prev => ({ ...prev, [key]: true }))
-      setSecretVals(prev => ({ ...prev, [key]: '' }))
-      setTimeout(() => setSaved(prev => ({ ...prev, [key]: false })), 2000)
-      // Nëse ndryshohet PIN-i, përditëso sesionin që shkrimet e mëtejshme të vazhdojnë
-      if (key === 'admin_pin') { try { sessionStorage.setItem('alpazar_admin_pin', val) } catch {} }
-    } else {
-      setSaveErr(`Nuk u ruajt "${key}". Kontrollo PIN-in ose provo sërish.`)
-    }
-  }
-
-  // Shkrimi shkon përmes /api/admin/config (Edge Function service_role) — kalon
-  // RLS-në is_admin() që bllokonte shkrimet kur admini hyn vetëm me PIN.
-  async function writeConfig(key: string, value: string, table: 'app_config' | 'admin_settings' = 'app_config') {
-    const pin = (() => { try { return sessionStorage.getItem('alpazar_admin_pin') || '' } catch { return '' } })()
-    const res = await fetch('/api/admin/config', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ pin, key, value, table }),
-    })
-    const j = await res.json().catch(() => ({ ok: false }))
-    return !!j.ok
-  }
-
-  const save = async (key: string) => {
-    setSaveErr('')
-    const val = localVals[key] ?? ''
-    const ok = await writeConfig(key, val)
-    if (ok) {
-      setSaved(prev => ({ ...prev, [key]: true }))
-      setTimeout(() => setSaved(prev => ({ ...prev, [key]: false })), 2000)
-    } else {
-      setSaveErr(`Nuk u ruajt "${key}". Kontrollo PIN-in ose provo sërish.`)
-    }
-  }
-
-  const toggleBool = async (key: string) => {
-    setSaveErr('')
-    const cur = (localVals[key] ?? config[key] ?? 'false') === 'true'
-    const next = cur ? 'false' : 'true'
-    setLocalVals(prev => ({ ...prev, [key]: next }))
-    const ok = await writeConfig(key, next)
-    if (!ok) {
-      // Rollback — shkrimi dështoi, ktheje vlerën e mëparshme
-      setLocalVals(prev => ({ ...prev, [key]: cur ? 'true' : 'false' }))
-      setSaveErr(`Nuk u ndryshua "${key}". Kontrollo PIN-in ose provo sërish.`)
-    }
-  }
-
-  const boolKeys  = CONFIG_SCHEMA.filter(s => s.type === 'bool')
-  const otherKeys = CONFIG_SCHEMA.filter(s => s.type !== 'bool')
-  const isMaint   = (localVals['maintenance_mode'] ?? config['maintenance_mode'] ?? 'false') === 'true'
-
-  return (
-    <>
-      <div className="ph">
-        <div className="pt"><span aria-hidden="true">⚙️</span> Konfigurimet Live</div>
-        <div className="live-dot"><span aria-hidden="true">●</span> Transmetim Real-Time</div>
-      </div>
-
-      {isMaint && (
-        <div className="maint-banner">
-          <i className="ti ti-alert-triangle" aria-hidden="true" />
-          <p>Modaliteti i mirëmbajtjes është AKTIV — platforma është bllokuar për përdorues.</p>
-          <button type="button" className="btn btn-red" onClick={() => toggleBool('maintenance_mode')}>Çaktivizo</button>
-        </div>
-      )}
-
-      {saveErr && (
-        <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', color: '#C42B0F', borderRadius: 10, padding: '10px 14px', marginBottom: 14, fontSize: 12, fontWeight: 600 }}>
-          {saveErr}
-        </div>
-      )}
-
-      <div className="card">
-        <div className="ct">Çelësat Boolean — klik për ndrysho</div>
-        {boolKeys.map(s => {
-          const val = (localVals[s.key] ?? config[s.key] ?? 'false') === 'true'
-          return (
-            <div key={s.key} className="cfg-row">
-              <div className="cfg-label">
-                {s.label}
-                <div className="cfg-desc">{s.desc}</div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span className="cfg-val" style={{ color: val ? '#1D9E75' : '#999' }}>
-                  {val ? 'Po' : 'Jo'}
-                </span>
-                <span
-                  className={`tgl ${val ? 'tgl-on' : 'tgl-off'}`}
-                  role="switch"
-                  aria-checked={val}
-                  aria-label={s.label}
-                  tabIndex={0}
-                  onClick={() => toggleBool(s.key)}
-                  onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleBool(s.key) } }}
-                ><span className="tdot" /></span>
-              </div>
-            </div>
-          )
-        })}
-      </div>
-
-      <div className="card">
-        <div className="ct">Vlerat e Tekstit / Numrave</div>
-        {otherKeys.map(s => (
-          <div key={s.key} style={{ marginBottom: 14 }}>
-            <label htmlFor={`cfg-${s.key}`} style={{ fontSize: 10, color: '#888', display: 'block', marginBottom: 2 }}>
-              {s.label} <span style={{ color: '#ccc' }}>— {s.desc}</span>
-            </label>
-            <div className="save-row">
-              <input
-                id={`cfg-${s.key}`}
-                className="finput"
-                type={s.type === 'int' || s.type === 'float' ? 'number' : 'text'}
-                value={localVals[s.key] ?? config[s.key] ?? ''}
-                onChange={e => setLocalVals(prev => ({ ...prev, [s.key]: e.target.value }))}
-                onKeyDown={e => e.key === 'Enter' && save(s.key)}
-              />
-              <button type="button" className="save-btn" onClick={() => save(s.key)} style={{ whiteSpace: 'nowrap' }}>
-                {saved[s.key] ? <><span aria-hidden='true'>✓</span> Ruajtur</> : 'Ruaj'}
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="card">
-        <div className="ct"><span aria-hidden="true">🔌</span> Integrime & Sekrete</div>
-        <p style={{ fontSize: 10, color: '#aaa', marginBottom: 12, lineHeight: 1.6 }}>
-          Ruhen te <code style={{ background: '#eee', padding: '1px 4px', borderRadius: 3 }}>admin_settings</code>. Vlerat aktuale nuk shfaqen për siguri — shkruaj një vlerë të re për ta përditësuar.
-        </p>
-        {SECRETS_SCHEMA.map(s => (
-          <div key={s.key} style={{ marginBottom: 14 }}>
-            <label htmlFor={`sec-${s.key}`} style={{ fontSize: 10, color: '#888', display: 'block', marginBottom: 2 }}>
-              {s.label} <span style={{ color: '#ccc' }}>— {s.desc}</span>
-            </label>
-            <div className="save-row">
-              <input
-                id={`sec-${s.key}`}
-                className="finput"
-                type={s.secret ? 'password' : 'text'}
-                autoComplete="off"
-                placeholder={s.secret ? '•••••• (i vendosur)' : 'Vlerë e re…'}
-                value={secretVals[s.key] ?? ''}
-                onChange={e => setSecretVals(prev => ({ ...prev, [s.key]: e.target.value }))}
-                onKeyDown={e => e.key === 'Enter' && saveSecret(s.key)}
-              />
-              <button type="button" className="save-btn" onClick={() => saveSecret(s.key)} style={{ whiteSpace: 'nowrap' }}>
-                {saved[s.key] ? <><span aria-hidden='true'>✓</span> Ruajtur</> : 'Ruaj'}
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="card" style={{ background: '#f9f9f9', border: '1px dashed #ddd' }}>
-        <div className="ct" style={{ color: '#888' }}><span aria-hidden="true">ℹ️</span> Si funksionon?</div>
-        <p style={{ fontSize: 11, color: '#888', lineHeight: 1.7 }}>
-          Çdo ndryshim ruhet direkt në tabelën <code style={{ background: '#eee', padding: '1px 4px', borderRadius: 3 }}>app_config</code> të Supabase.
-          Falë <strong>Supabase Realtime</strong>, të gjithë klientët e lidhur e marrin ndryshimin
-          <strong> brenda 1 sekonde</strong> — pa rikodifikim, pa redeploy.
-        </p>
-      </div>
-    </>
-  )
-}
-
-/* ─── Moderation Tab ─────────────────────────────────────────── */
-function ModerationTab() {
-  const [reports, setReports] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [deactivating, setDeactivating] = useState<Record<string, boolean>>({})
-  const [adminMsg, setAdminMsg] = useState('')
-
-  const fetchReports = () => {
-    supabase.from('reports')
-      .select('*,listings(id,title,is_active,seller_id),profiles!reporter_id(username)')
-      .eq('status', 'pending')
-      .order('created_at', { ascending: true })
-      .limit(50)
-      .then(({ data }) => { setReports(data || []); setLoading(false) })
-  }
-
-  useEffect(() => {
-    fetchReports()
-
-    const ch = supabase.channel('mod_live')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'reports' }, () => {
-        fetchReports()
-      }).subscribe()
-
-    return () => { supabase.removeChannel(ch) }
-  }, [])
-
-  const resolve = async (id: string, action: 'resolved' | 'dismissed') => {
-    const r = await callAdminAction('resolve_report', { report_id: id, status: action })
-    if (!r.ok) { setAdminMsg('Gabim: ' + (r.error || 'shkrimi dështoi')); return }
-    setReports(prev => prev.filter(x => x.id !== id))
-  }
-
-  const deactivateListing = async (listingId: string, reportId: string, sellerId: string) => {
-    if (!listingId) { setAdminMsg('ID e shpalljes mungon.'); return }
-    setDeactivating(prev => ({ ...prev, [reportId]: true }))
-    const r = await callAdminAction('remove_listing', { listing_id: listingId, report_id: reportId, seller_id: sellerId })
-    setDeactivating(prev => ({ ...prev, [reportId]: false }))
-    if (!r.ok) { setAdminMsg('Gabim çaktivizimi: ' + (r.error || 'dështoi')); return }
-    setAdminMsg('Shpallja u çaktivizua dhe shitësi u njoftua.')
-    fetchReports()
-  }
-
-  return (
-    <>
-      <div className="ph">
-        <div className="pt"><span aria-hidden="true">🛡️</span> Moderimi</div>
-        <div className="live-dot"><span aria-hidden="true">●</span> Live</div>
-      </div>
-      {adminMsg && (() => {
-        const isSuccess = adminMsg.startsWith('Shpallja u çaktivizua')
-        return (
-          <div style={{ background: isSuccess ? '#EAF3DE' : '#FFF0EE', border: isSuccess ? '0.5px solid #97C459' : '0.5px solid #F09595', color: isSuccess ? '#3B6D11' : '#E63312', fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 8, margin: '8px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ flex: 1 }}><span aria-hidden="true">{isSuccess ? '✅' : '⚠️'}</span> {adminMsg}</span>
-            <button type="button" aria-label="Mbyll mesazhin" onClick={() => setAdminMsg('')} style={{ background: 'none', border: 'none', color: isSuccess ? '#3B6D11' : '#E63312', cursor: 'pointer', fontSize: 14 }}>✕</button>
-          </div>
-        )
-      })()}
-      <div className="card">
-        <div className="ct">Raporte të hapura ({reports.length})</div>
-        {loading ? <p role="status" aria-live="polite" style={{ color: '#aaa', fontSize: 12, padding: '12px 0' }}>Duke ngarkuar...</p> :
-          reports.length === 0 ? (
-            <p style={{ color: '#1D9E75', fontSize: 12, padding: '12px 0', fontWeight: 700 }}><span aria-hidden="true">✓</span> Asnjë raport i hapur</p>
-          ) : (
-            <table>
-              <thead><tr><th scope="col">Shpallja</th><th scope="col">Raportuar nga</th><th scope="col">Arsyeja</th><th scope="col">Data</th><th scope="col">Veprime</th></tr></thead>
-              <tbody>{reports.map((r: any) => (
-                <tr key={r.id}>
-                  <td style={{ fontWeight: 700 }}>
-                    {r.listings?.title || '—'}
-                    {r.listings?.is_active === false && (
-                      <span style={{ marginLeft: 6, background: '#FFF0EE', color: '#C42B0F', borderRadius: 4, padding: '1px 5px', fontSize: 9, fontWeight: 700 }}>çaktivizuar</span>
-                    )}
-                  </td>
-                  <td>{r.profiles?.username || '—'}</td>
-                  <td>{r.reason}</td>
-                  <td style={{ color: '#888' }}>{new Date(r.created_at).toLocaleDateString('sq-AL')}</td>
-                  <td>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                      <div style={{ display: 'flex', gap: 4 }}>
-                        <button type="button" className="btn btn-green" onClick={() => resolve(r.id, 'resolved')} style={{ fontSize: 11, padding: '4px 10px' }}>✓ Zgjidh</button>
-                        <button type="button" className="btn btn-orange" onClick={() => resolve(r.id, 'dismissed')} style={{ fontSize: 11, padding: '4px 10px' }}>Inoro</button>
-                      </div>
-                      {r.listings?.is_active !== false ? (
-                        <button
-                          type="button"
-                          onClick={() => deactivateListing(r.listings?.id || r.listing_id, r.id, r.listings?.seller_id)}
-                          disabled={deactivating[r.id]}
-                          style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 5, padding: '4px 10px', fontSize: 11, fontWeight: 700, cursor: deactivating[r.id] ? 'not-allowed' : 'pointer', opacity: deactivating[r.id] ? 0.6 : 1 }}
-                        >
-                          {deactivating[r.id] ? 'Duke çaktivizuar...' : '🚫 Çaktivizo'}
-                        </button>
-                      ) : (
-                        <span style={{ fontSize: 10, color: '#C42B0F', fontWeight: 700, padding: '4px 0' }}><span aria-hidden="true">✓</span> Shpallja tashmë çaktive</span>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}</tbody>
-            </table>
-          )
-        }
-      </div>
-    </>
-  )
-}
-
-/* ─── Takedown Tab ───────────────────────────────────────────── */
-function TakedownTab() {
-  const [requests, setRequests] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [note, setNote] = useState<Record<string, string>>({})
-  const [tdErr, setTdErr] = useState('')
-
-  useEffect(() => {
-    supabase.from('takedown_requests').select('*').order('created_at', { ascending: false }).limit(50)
-      .then(({ data }) => { setRequests(data || []); setLoading(false) })
-  }, [])
-
-  const resolve = async (id: string, status: 'resolved' | 'rejected') => {
-    setTdErr('')
-    // Përmes service_role (kalon RLS is_admin() që s'plotësohet me PIN-login)
-    const r = await callAdminAction('resolve_takedown', { id, status, note: note[id] || '' })
-    if (!r.ok) { setTdErr('Nuk u ruajt: ' + (r.error || 'provo sërish')); return }
-    setRequests(prev => prev.map(x => x.id === id ? { ...x, status } : x))
-  }
-
-  const statusBadge: Record<string, string> = { pending: 'bp', resolved: 'ba', rejected: 'bd' }
-  const statusLabel: Record<string, string> = { pending: 'Në pritje', resolved: 'Zgjidhur', rejected: 'Refuzuar' }
-
-  return (
-    <>
-      <div className="ph"><div className="pt"><span aria-hidden="true">⚖️</span> Heqja e Përmbajtjes (Notice &amp; Takedown)</div></div>
-      {tdErr && <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', color: '#C42B0F', borderRadius: 10, padding: '10px 14px', marginBottom: 14, fontSize: 12, fontWeight: 600 }}>{tdErr}</div>}
-      <div className="card">
-        <div className="ct">Kërkesat ({requests.filter(r => r.status === 'pending').length} të hapura)</div>
-        {loading ? <p role="status" aria-live="polite" style={{ color:'#aaa', fontSize:12 }}>Duke ngarkuar...</p> :
-          requests.length === 0 ? (
-            <p style={{ color:'#1D9E75', fontSize:12, padding:'12px 0', fontWeight:700 }}><span aria-hidden="true">✓</span> Asnjë kërkesë heqje</p>
-          ) : (
-            <table>
-              <thead><tr><th scope="col">Lloji</th><th scope="col">URL</th><th scope="col">Kontakti</th><th scope="col">Përshkrimi</th><th scope="col">Data</th><th scope="col">Statusi</th><th scope="col">Veprime</th></tr></thead>
-              <tbody>{requests.map((r: any) => (
-                <tr key={r.id}>
-                  <td style={{ fontWeight:700 }}>{r.type}</td>
-                  <td style={{ maxWidth:120, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
-                    {r.content_url ? <a href={r.content_url} target="_blank" rel="noreferrer" style={{ color:'#185FA5', textDecoration:'none' }}>{r.content_url}</a> : '—'}
-                  </td>
-                  <td>{r.contact_email || '—'}</td>
-                  <td style={{ maxWidth:160, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{r.description}</td>
-                  <td style={{ color:'#888' }}>{new Date(r.created_at).toLocaleDateString('sq-AL')}</td>
-                  <td><span className={`badge ${statusBadge[r.status] || 'bp'}`}>{statusLabel[r.status] || r.status}</span></td>
-                  <td>
-                    {r.status === 'pending' && (
-                      <div style={{ display:'flex', flexDirection:'column', gap:4 }}>
-                        <input type="text" aria-label="Shënim për raport (opsional)" className="finput" placeholder="Shënim (opsional)" style={{ fontSize:10, padding:'4px 6px', marginBottom:2 }}
-                          value={note[r.id] || ''} onChange={e => setNote(prev => ({ ...prev, [r.id]: e.target.value }))} />
-                        <div style={{ display:'flex', gap:4 }}>
-                          <button type="button" className="btn btn-red" onClick={() => resolve(r.id, 'resolved')}>Zgjidh</button>
-                          <button type="button" className="btn btn-orange" onClick={() => resolve(r.id, 'rejected')}>Refuzo</button>
-                        </div>
-                      </div>
-                    )}
-                  </td>
-                </tr>
-              ))}</tbody>
-            </table>
-          )
-        }
-      </div>
-      <div className="card" style={{ marginTop:16 }}>
-        <div className="ct"><span aria-hidden="true">📋</span> Si bëhet dorëzimi?</div>
-        <p style={{ fontSize:11, color:'#888', lineHeight:1.7 }}>
-          Kërkesat e heqjes dorëzohen përmes faqes <strong>/takedown</strong> ose me email.
-          Afati ligjor i përgjigjes: <strong>72 orë</strong> për përmbajtje të paligjshme, <strong>14 ditë</strong> për të drejtat e autorit.
-        </p>
-      </div>
-    </>
-  )
-}
 
 /* ─── AI Health: gabime prodhimi + diagnozë AI (Groq) ─────────── */
 function AIHealthTab() {
@@ -832,30 +467,26 @@ export default function Admin() {
   // domene te qarta, jo nje liste e sheshte ku tre tab-e mbulojne te njejten rrjedhe.
   const groupsAll: [string, [string, string, string][]][] = [
     ['Vështrim', [
-      ['dash',       'layout-dashboard', 'Dashboard'],
+      ['dash',       'layout-dashboard', 'Sot'],
     ]],
     ['Njerëz', [
-      ['users',      'users',            'Përdoruesit'],
-      ['biznese',    'building-store',   'Bizneset'],
+      ['njerez',     'users',            'Njerëzit'],
       ['broadcast',  'speakerphone',     'Njoftime'],
       ['referrals',  'gift',             'Referalet'],
     ]],
     ['Të ardhura', [
       ['preq',       'crown',            'Pagesat'],
       ['payments',   'credit-card',      'Abonimet'],
-      ['invoices',   'file-invoice',     'Faturat'],
+      ['invoices',   'file-invoice',     'Paratë'],
       ['plans',      'diamond',          'Planet'],
       ['methods',    'wallet',           'Metodat'],
     ]],
     ['Përmbajtje', [
-      ['moderation', 'shield-check',     'Moderimi'],
-      ['takedown',   'gavel',            'Heqja'],
+      ['radha',      'shield-check',     'Radha'],
     ]],
     ['Sistemi', [
-      ['limits',     'adjustments',      'Kufijtë'],
       ['config',     'settings-2',       'Konfigurime'],
       ['roles',      'key',              'Rolet'],
-      ['audit',      'history',          'Gjurma'],
       ['health',     'activity-heartbeat', 'AI Health'],
     ]],
   ]
@@ -863,12 +494,11 @@ export default function Admin() {
   // Nje tab qe personi s'e perdor dot nuk shfaqet fare. Kjo nuk eshte siguri —
   // siguria zbatohet ne baze — por eshte pastrim i mendjes dhe mbrojtje nga gabimi.
   const NEVOJA: Record<string, string> = {
-    users: 'users.view', biznese: 'business.view', broadcast: 'broadcast.send',
+    njerez: 'users.view', broadcast: 'broadcast.send',
     referrals: 'users.view', preq: 'billing.approve', payments: 'billing.view',
     invoices: 'billing.view', plans: 'billing.plans', methods: 'billing.plans',
-    moderation: 'content.moderate', takedown: 'content.moderate',
-    limits: 'config.write', config: 'config.write',
-    roles: 'audit.view', audit: 'audit.view', health: 'audit.view',
+    radha: 'content.moderate', config: 'config.write',
+    roles: 'audit.view', health: 'audit.view',
   }
   const lejohet = (id: string) => !perms || !NEVOJA[id] || perms.includes(NEVOJA[id])
   const groups: [string, [string, string, string][]][] = groupsAll
@@ -989,79 +619,7 @@ export default function Admin() {
           ) : (
             <>
               {/* DASHBOARD */}
-              {tab === 'dash' && (
-                <>
-                  <div className="ph">
-                    <div className="pt"><span aria-hidden="true">📊</span> Dashboard</div>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
-                      <div className="live-dot"><span aria-hidden="true">●</span> Live</div>
-                      <span style={{ fontSize: 9, color: '#aaa' }}>
-                        {lastUpdated.toLocaleTimeString('sq-AL')}
-                        {liveStats.newListings > 0 && ` · +${liveStats.newListings} listingje`}
-                        {liveStats.newReports > 0 && ` · +${liveStats.newReports} raporte`}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="stats" style={{ gridTemplateColumns: 'repeat(3,1fr)' }}>
-                    <div className="sc"><div className="sn">{stats.users.toLocaleString()}</div><div className="sl">Përdorues total</div></div>
-                    <div className="sc"><div className="sn">{stats.premium}</div><div className="sl">Premium aktiv</div></div>
-                    <div className="sc"><div className="sn">{stats.revenue.toFixed(0)}€</div><div className="sl">Të ardhura</div></div>
-                    <div className="sc"><div className="sn">{stats.listings.toLocaleString()}</div><div className="sl">Shpallje aktive</div></div>
-                    <div className="sc"><div className="sn">{stats.messages.toLocaleString()}</div><div className="sl">Mesazhe total</div></div>
-                    <div className="sc" style={{ border: stats.reports > 0 ? '1px solid #E63312' : undefined }}>
-                      <div className="sn" style={{ color: stats.reports > 0 ? '#E63312' : '#111' }}>{stats.reports}</div>
-                      <div className="sl">Raporte të hapura</div>
-                    </div>
-                  </div>
-
-                  <div className="card" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px' }}>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: '#555' }}>Periudha</span>
-                    {[7, 30, 90].map(n => (
-                      <button type="button" key={n} className="btn" aria-pressed={trendDays === n}
-                        style={{ background: trendDays === n ? '#111' : '#f0f0f0', color: trendDays === n ? '#fff' : '#555' }}
-                        onClick={() => setTrendDays(n)}>{n} ditë</button>
-                    ))}
-                    {trends?.totale && (
-                      <span style={{ marginLeft: 'auto', fontSize: 10.5, color: '#999' }}>
-                        Rimbursuar në periudhë: <strong style={{ color: Number(trends.totale.rimbursime) > 0 ? '#E63312' : '#111' }}>
-                          {Number(trends.totale.rimbursime || 0).toLocaleString('sq-AL')}
-                        </strong>
-                      </span>
-                    )}
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(230px,1fr))', gap: 12, marginBottom: 14 }}>
-                    <Trend titull="Të ardhura neto" data={trends?.te_ardhura || []} fusha="shuma" ngjyra="#1D9E75" />
-                    <Trend titull="Abonime të reja"  data={trends?.abonime || []} ngjyra="#BA7517" />
-                    <Trend titull="Regjistrime"      data={trends?.regjistrime || []} ngjyra="#E63312" />
-                    <Trend titull="Shpallje të reja" data={trends?.shpallje || []} ngjyra="#555" />
-                  </div>
-                  <div className="card">
-                    <div className="ct">Pagesat e fundit</div>
-                    <table>
-                      <thead><tr><th scope="col">Përdoruesi</th><th scope="col">Plan</th><th scope="col">Shuma</th><th scope="col">Statusi</th><th scope="col">Veprime</th></tr></thead>
-                      <tbody>
-                        {payments.length === 0
-                          ? <tr><td colSpan={5} style={{ textAlign:'center', color:'#aaa', padding:20 }}>Nuk ka pagesa</td></tr>
-                          : payments.slice(0, 10).map((p: any) => (
-                            <tr key={p.id}>
-                              <td>{p.profiles?.full_name || p.profiles?.username || '—'}</td>
-                              <td>{p.plan === 'monthly' ? 'Mujor' : 'Vjetor'}</td>
-                              <td style={{ fontWeight:700, color:'#1D9E75' }}>{p.amount_eur}€</td>
-                              <td><span className={`badge ${p.status==='active'?'ba':p.status==='pending'?'bp':'bd'}`}>{p.status}</span></td>
-                              <td>
-                                {p.status !== 'active'   && <button type="button" className="btn btn-green"  onClick={() => updateStatus(p.id,'active',p.user_id)}>Aktivizo</button>}
-                                {p.status === 'active'   && <button type="button" className="btn btn-orange" onClick={() => updateStatus(p.id,'suspended',p.user_id)}>Pezullo</button>}
-                                <button type="button" className="btn btn-red" onClick={() => updateStatus(p.id,'cancelled',p.user_id)}>Anulo</button>
-                              </td>
-                            </tr>
-                          ))
-                        }
-                      </tbody>
-                    </table>
-                  </div>
-                </>
-              )}
+              {tab === 'dash' && <TodayTab stats={stats} trends={trends} />}
 
               {/* PREMIUM REQUESTS (KOMA 4-c) */}
               {tab === 'preq' && (
@@ -1284,10 +842,9 @@ export default function Admin() {
               )}
 
               {/* APP CONFIG - REAL-TIME */}
-              {tab === 'config' && <AppConfigTab />}
+              {tab === 'config' && <LimitsTab />}
 
               {/* MODERATION */}
-              {tab === 'moderation' && <ModerationTab />}
 
               {/* AI HEALTH */}
               {tab === 'health' && <AIHealthTab />}
@@ -1296,16 +853,13 @@ export default function Admin() {
               {tab === 'referrals' && <ReferralTab />}
 
               {/* TAKEDOWN */}
-              {tab === 'takedown' && <TakedownTab />}
 
-              {tab === 'users' && <UsersTab />}
+              {tab === 'njerez' && <PeopleTab />}
+              {tab === 'radha' && <QueueTab />}
               {tab === 'plans' && <PlansTab />}
-              {tab === 'limits' && <LimitsTab />}
               {tab === 'invoices' && <InvoicesTab />}
               {tab === 'roles' && <RolesTab />}
-              {tab === 'audit' && <AuditTab />}
               {tab === 'broadcast' && <BroadcastTab />}
-              {tab === 'biznese' && <BusinessesTab />}
             </>
           )}
         </div>
