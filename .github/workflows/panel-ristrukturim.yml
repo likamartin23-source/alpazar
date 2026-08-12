@@ -28,8 +28,9 @@ jobs:
           grep -q "'Radha'" app/admin/page.tsx
           grep -q "'Paratë'" app/admin/page.tsx
           ! grep -q 'ModerationTab' app/admin/page.tsx
+          wc -c app/admin/page.tsx
 
-      - name: Commit dhe shty
+      - name: Shty ne degen panel/auto
         run: |
           if git diff --quiet; then
             echo 'Asnje ndryshim - dalje.'
@@ -37,6 +38,7 @@ jobs:
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git checkout -b panel/auto
           git add app/admin/page.tsx
           git commit -m 'Paneli: 17 skeda -> 12 (Sot, Njerezit, Radha, Parate, Konfigurime)'
-          git push origin HEAD:main
+          git push -f origin panel/auto
