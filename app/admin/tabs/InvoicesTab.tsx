@@ -1,6 +1,29 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+/**
+ * PARATË — nga pagesa te fatura tatimore te inbox-i i klientit
+ *
+ * RRJEDHA REALE NE SHQIPERI (jo integrim automatik me DPT-ne):
+ *   1. Klienti paguan            -> fatura krijohet ketu (referencë e brendshme)
+ *   2. Fatura leshohet NE APLIKACIONIN E TATIMEVE, jashte platformes
+ *   3. Shkarkohet PDF-ja
+ *   4. Ngarkohet ketu me numrin tatimor + NIVF/NSLF
+ *   5. I shkon klientit ne inbox
+ *
+ * Me pare kjo skede kerkonte nje URL te gatshme — pra hapi 4 duhej bere diku
+ * tjeter dhe pastaj ngjitur me dore. Tani PDF-ja ngarkohet drejtperdrejt ne
+ * bucket-in PRIVAT 'invoices' (lexohet vetem nga pronari i fatures dhe stafi
+ * i faturimit), dhe nje veprim i vetem e regjistron e dergon.
+ *
+ * NDERLIDHJET REALE:
+ *   admin_awaiting_invoice()   -> kush pret, dhe ne c'faze
+ *   admin_deliver_tax_invoice() -> ngarkim + numer tatimor + dergim, ne nje hap
+ *   admin_send_invoice()        -> ridergim
+ *   admin_refund_invoice()      -> note krediti (perdor te njejten berthame si
+ *                                  e drejta e heqjes dore, neni 37/9902)
+ */
+
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { exportCsv } from './exportCsv'
 
@@ -10,25 +33,38 @@ const d = (x: any) => (x ? new Date(x).toLocaleDateString('sq-AL') : '—')
 const FILTRA: [string, string][] = [['', 'Të gjitha'], ['invoice', 'Fatura'], ['credit_note', 'Nota krediti']]
 
 const STATUS: Record<string, [string, string]> = {
-  paid:               ['Paguar', 'ba'],
-  gifted:             ['Dhuruar', 'bp'],
-  issued:             ['Lëshuar', 'bp'],
-  sent:               ['Dërguar', 'ba'],
-  partially_refunded: ['Rimbursuar pjesërisht', 'bd'],
-  refunded:           ['Rimbursuar', 'bd'],
-  void:               ['Anuluar', 'bd'],
+  paid: ['Paguar', 'ba'], gifted: ['Dhuruar', 'bp'], issued: ['Lëshuar', 'bp'],
+  sent: ['Dërguar', 'ba'], partially_refunded: ['Rimbursuar pjesërisht', 'bd'],
+  refunded: ['Rimbursuar', 'bd'], void: ['Anuluar', 'bd'],
+}
+
+type Pret = {
+  invoice_id: string; reference: string; numri_tatimor: string | null
+  perdoruesi: { id: string; emri: string; telefon: string | null; email: string | null }
+  plani: string; shuma: number; monedha: string; paguar_me: string
+  ka_skedar: boolean; derguar: boolean; gjendja: string
 }
 
 export function InvoicesTab() {
   const [rows, setRows] = useState<any[]>([])
+  const [pret, setPret] = useState<Pret[]>([])
+  const [permbledhje, setPermbledhje] = useState<any>({})
   const [q, setQ] = useState('')
   const [kind, setKind] = useState('')
   const [busy, setBusy] = useState('')
   const [err, setErr] = useState('')
   const [ok, setOk] = useState('')
-  const [open, setOpen] = useState('')
-  const [file, setFile] = useState('')
-  const [note, setNote] = useState('')
+
+  // dorezimi i fatures tatimore
+  const [hap, setHap] = useState('')
+  const [skedari, setSkedari] = useState<File | null>(null)
+  const [nrTatimor, setNrTatimor] = useState('')
+  const [nivf, setNivf] = useState('')
+  const [nslf, setNslf] = useState('')
+  const [mesazhi, setMesazhi] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  // rimbursimi
   const [rimb, setRimb] = useState('')
   const [shuma, setShuma] = useState('')
   const [arsyeja, setArsyeja] = useState('')
@@ -36,15 +72,21 @@ export function InvoicesTab() {
   const [konfirmo, setKonfirmo] = useState(false)
 
   const load = useCallback(async (search = '', k = '') => {
-    const { data, error } = await supabase.rpc('admin_list_invoices',
-      { p_search: search || null, p_limit: 300, p_kind: k || null })
-    if (error || (data as any)?.error) { setErr(error?.message || (data as any)?.error); return }
-    setRows((data as any)?.invoices || []); setErr('')
+    const [a, b] = await Promise.all([
+      supabase.rpc('admin_list_invoices', { p_search: search || null, p_limit: 300, p_kind: k || null }),
+      supabase.rpc('admin_awaiting_invoice', { p_limit: 100 }),
+    ])
+    if (a.error || (a.data as any)?.error) { setErr(a.error?.message || (a.data as any)?.error); return }
+    setRows((a.data as any)?.invoices || []); setErr('')
+    if (!b.error && !(b.data as any)?.error) {
+      setPret(((b.data as any)?.pret_fature || []) as Pret[])
+      setPermbledhje((b.data as any)?.permbledhje || {})
+    }
   }, [])
 
   useEffect(() => { load('', kind) }, [load, kind])
 
-  // Nje fature e re duhet te shfaqet pa rifreskim — ky ekran vendos para.
+  // Nje pagese e re duhet te shfaqet pa rifreskim — ky ekran vendos para.
   useEffect(() => {
     const ch = supabase.channel('adm-invoices')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'invoices' }, () => load(q, kind))
@@ -52,34 +94,72 @@ export function InvoicesTab() {
     return () => { supabase.removeChannel(ch) }
   }, [load, q, kind])
 
-  const mesazh = (t: string) => { setOk(t); setTimeout(() => setOk(''), 4000) }
+  const mesazhOk = (t: string) => { setOk(t); setTimeout(() => setOk(''), 5000) }
+
+  function hapDorezimin(invoiceId: string, ref: string) {
+    const i = hap === invoiceId ? '' : invoiceId
+    setHap(i); setSkedari(null); setNrTatimor(''); setNivf(''); setNslf(''); setMesazhi(''); setErr('')
+    if (inputRef.current) inputRef.current.value = ''
+  }
+
+  /** Ngarkon PDF-në në bucket-in privat, pastaj regjistron dhe dërgon — një veprim. */
+  async function dorezo(r: any) {
+    if (!skedari) { setErr('Zgjidh fillimisht faturën e shkarkuar nga aplikacioni i tatimeve.'); return }
+    if (!nrTatimor.trim()) { setErr('Numri i faturës nga aplikacioni i tatimeve është i detyrueshëm.'); return }
+
+    setBusy(r.id); setErr('')
+
+    // Rruga duhet të nisë me id-në e përdoruesit — RLS e bucket-it e lejon
+    // pronarin të lexojë vetëm dosjen e vet.
+    const emri = skedari.name.replace(/[^\w.\-]/g, '_')
+    const rruga = `${r.user_id}/${Date.now()}-${emri}`
+
+    const up = await supabase.storage.from('invoices').upload(rruga, skedari, {
+      upsert: false, contentType: skedari.type || 'application/pdf',
+    })
+    if (up.error) { setBusy(''); setErr(`Ngarkimi dështoi: ${up.error.message}`); return }
+
+    const { data, error } = await supabase.rpc('admin_deliver_tax_invoice', {
+      p_invoice_id: r.id,
+      p_file_url: rruga,
+      p_fiscal_number: nrTatimor.trim(),
+      p_nivf: nivf.trim() || null,
+      p_nslf: nslf.trim() || null,
+      p_file_name: emri,
+      p_message: mesazhi.trim() || null,
+    })
+    setBusy('')
+    if (error || (data as any)?.error) {
+      setErr(error?.message || (data as any)?.error)
+      // fshij skedarin e ngarkuar që të mos mbetet jetim
+      await supabase.storage.from('invoices').remove([rruga])
+      return
+    }
+    setHap('')
+    mesazhOk(`Fatura ${(data as any)?.numri_tatimor} shkoi në inbox të klientit.`)
+    load(q, kind)
+  }
+
+  /** Bucket-i është privat — hapja kërkon një lidhje të nënshkruar. */
+  async function shihSkedarin(path: string) {
+    if (/^https?:\/\//.test(path)) { window.open(path, '_blank', 'noopener'); return }
+    const { data, error } = await supabase.storage.from('invoices').createSignedUrl(path, 300)
+    if (error) { setErr(`Skedari nuk u hap: ${error.message}`); return }
+    window.open(data.signedUrl, '_blank', 'noopener')
+  }
 
   async function send(id: string) {
     setBusy(id); setErr('')
     const { data, error } = await supabase.rpc('admin_send_invoice', { p_invoice_id: id, p_message: null })
     setBusy('')
     if (error || (data as any)?.error) { setErr(error?.message || (data as any)?.error); return }
-    mesazh(`${(data as any)?.number} shkoi në inbox të klientit.`)
-    load(q, kind)
-  }
-
-  async function attach(id: string) {
-    if (!file.trim()) { setErr('Vendos URL-në e skedarit.'); return }
-    setBusy(id); setErr('')
-    const { data, error } = await supabase.rpc('admin_attach_invoice_file', {
-      p_invoice_id: id, p_file_url: file.trim(), p_file_name: null, p_kind: 'fiscal', p_note: note || null,
-    })
-    setBusy('')
-    if (error || (data as any)?.error) { setErr(error?.message || (data as any)?.error); return }
-    setFile(''); setNote(''); setOpen('')
-    mesazh('Fatura tatimore u bashkëngjit — tani mund ta dërgosh.')
+    mesazhOk(`${(data as any)?.reference || ''} u dërgua sërish.`)
     load(q, kind)
   }
 
   function hapRimbursimin(r: any) {
     setRimb(rimb === r.id ? '' : r.id)
-    setShuma(String(r.mbetja ?? ''))
-    setArsyeja(''); setHiqAbonimin(false); setKonfirmo(false); setErr('')
+    setShuma(String(r.mbetja ?? '')); setArsyeja(''); setHiqAbonimin(false); setKonfirmo(false); setErr('')
   }
 
   async function rimburso(r: any) {
@@ -95,7 +175,7 @@ export function InvoicesTab() {
     if (error || (data as any)?.error) { setErr(error?.message || (data as any)?.error); return }
     const res = data as any
     setRimb(''); setKonfirmo(false)
-    mesazh(`Nota e kreditit ${res.credit_note} — ${L(res.amount)} ${r.currency}`
+    mesazhOk(`Nota e kreditit ${res.credit_note} — ${L(res.amount)} ${r.currency}`
       + (res.abonimi_u_hoq ? ' · abonimi u ndërpre' : '')
       + (res.e_plote ? ' · rimbursim i plotë' : ` · mbeten ${L(res.mbetja)}`))
     load(q, kind)
@@ -103,7 +183,7 @@ export function InvoicesTab() {
 
   const fat = rows.filter(r => r.kind !== 'credit_note')
   const st = {
-    total: rows.length,
+    pret: (permbledhje.pa_skedar || 0) + (permbledhje.pa_derguar || 0),
     sent: rows.filter(r => r.sent_at).length,
     bruto: fat.reduce((a, r) => a + Number(r.total || 0), 0),
     rimb: rows.filter(r => r.kind === 'credit_note').reduce((a, r) => a + Math.abs(Number(r.total || 0)), 0),
@@ -112,21 +192,74 @@ export function InvoicesTab() {
   return (
     <>
       <div className="ph">
-        <div className="pt"><span aria-hidden="true">🧾</span> Faturat</div>
+        <div className="pt"><span aria-hidden="true">🧾</span> Paratë</div>
         {ok && <div className="live-dot">{ok}</div>}
       </div>
 
       <div className="stats">
-        <div className="sc"><div className="sn">{st.total}</div><div className="sl">Dokumente</div></div>
+        <div className="sc">
+          <div className="sn" style={{ color: st.pret > 0 ? '#BA7517' : undefined }}>{st.pret}</div>
+          <div className="sl">Presin veprim</div>
+        </div>
         <div className="sc"><div className="sn">{st.sent}</div><div className="sl">Dërguar</div></div>
         <div className="sc"><div className="sn">{L(st.bruto)}</div><div className="sl">Faturuar bruto</div></div>
-        <div className="sc"><div className="sn" style={{ color: st.rimb > 0 ? '#E63312' : undefined }}>−{L(st.rimb)}</div><div className="sl">Rimbursuar</div></div>
+        <div className="sc">
+          <div className="sn" style={{ color: st.rimb > 0 ? '#E63312' : undefined }}>−{L(st.rimb)}</div>
+          <div className="sl">Rimbursuar</div>
+        </div>
       </div>
 
       {err && (
         <div className="card" role="alert"
           style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#C42B0F', fontSize: 12 }}>{err}</div>
       )}
+
+      {/* ── HAPI QE MUNGONTE: kush pret, dhe ne c'faze ───────────────────── */}
+      <div className="card" style={pret.length ? { borderColor: '#F0C36D', background: '#FFFDF6' } : undefined}>
+        <div className="ct">Presin veprim</div>
+        {pret.length === 0 ? (
+          <div style={{ fontSize: 11.5, color: '#7A9A5B' }}>
+            Asnjë pagesë nuk pret. Çdo faturë është ngarkuar dhe dërguar.
+          </div>
+        ) : (
+          <table>
+            <thead><tr><th>Klienti</th><th>Vlera</th><th>Faza</th><th style={{ width: 200 }} /></tr></thead>
+            <tbody>
+              {pret.map(p => {
+                const r = rows.find(x => x.id === p.invoice_id)
+                const gati = p.ka_skedar && !p.derguar
+                return (
+                  <tr key={p.invoice_id}>
+                    <td style={{ fontSize: 11 }}>
+                      <strong>{p.perdoruesi.emri}</strong>
+                      <div style={{ color: '#aaa', fontSize: 9.5 }}>
+                        {p.perdoruesi.telefon || p.perdoruesi.email || '—'} · {p.reference}
+                      </div>
+                    </td>
+                    <td><strong>{L(p.shuma)} {p.monedha}</strong>
+                      <div style={{ color: '#aaa', fontSize: 9.5 }}>{d(p.paguar_me)}</div>
+                    </td>
+                    <td style={{ fontSize: 10.5, color: gati ? '#7A9A5B' : '#BA7517' }}>{p.gjendja}</td>
+                    <td>
+                      {gati ? (
+                        <button type="button" className="btn btn-green"
+                          disabled={busy === p.invoice_id} onClick={() => send(p.invoice_id)}>
+                          {busy === p.invoice_id ? '…' : 'Dërgo në inbox'}
+                        </button>
+                      ) : (
+                        <button type="button" className="btn btn-orange"
+                          onClick={() => r && hapDorezimin(p.invoice_id, p.reference)}>
+                          Ngarko faturën tatimore
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        )}
+      </div>
 
       <div className="card">
         <div className="ct">
@@ -151,9 +284,7 @@ export function InvoicesTab() {
         <div className="ct">Lista</div>
         <table>
           <thead>
-            <tr>
-              <th>Dokumenti</th><th>Klienti</th><th>Vlera</th><th>Statusi</th><th style={{ width: 240 }} />
-            </tr>
+            <tr><th>Dokumenti</th><th>Klienti</th><th>Vlera</th><th>Statusi</th><th style={{ width: 250 }} /></tr>
           </thead>
           <tbody>
             {rows.map(r => {
@@ -162,13 +293,17 @@ export function InvoicesTab() {
               return (
                 <tr key={r.id} style={kredit ? { background: '#FFFAF9' } : undefined}>
                   <td>
-                    <strong style={{ fontSize: 11.5, color: kredit ? '#E63312' : undefined }}>{r.number}</strong>
+                    <strong style={{ fontSize: 11.5, color: kredit ? '#E63312' : undefined }}>
+                      {r.fiscal_number || r.number}
+                    </strong>
                     {kredit && <> <span className="badge bd">notë krediti</span></>}
-                    {r.file_kind === 'fiscal' && <> <span className="badge ba">tatimore</span></>}
+                    {r.fiscal_number && <> <span className="badge ba">tatimore</span></>}
                     <div style={{ color: '#aaa', fontSize: 9.5 }}>
                       {r.plan_name} · {d(r.issued_at)}
+                      {r.fiscal_number && <> · ref. {r.number}</>}
                       {kredit && r.parent_number && <> · për {r.parent_number}</>}
                     </div>
+                    {r.nivf && <div style={{ color: '#999', fontSize: 9 }}>NIVF {r.nivf}</div>}
                     {r.refund_reason && (
                       <div style={{ color: '#BA7517', fontSize: 9.5, marginTop: 2 }}>“{r.refund_reason}”</div>
                     )}
@@ -190,9 +325,28 @@ export function InvoicesTab() {
                     {r.sent_at && <div style={{ color: '#aaa', fontSize: 9.5 }}>{d(r.sent_at)} · {r.send_count}×</div>}
                   </td>
                   <td>
-                    <button type="button" className="btn btn-green" disabled={busy === r.id} onClick={() => send(r.id)}>
-                      {busy === r.id ? '…' : r.sent_at ? 'Dërgo sërish' : 'Dërgo në inbox'}
-                    </button>
+                    {!kredit && !r.file_url && (
+                      <button type="button" className="btn btn-orange"
+                        onClick={() => hapDorezimin(r.id, r.number)}>
+                        {hap === r.id ? 'Mbyll' : 'Ngarko faturën tatimore'}
+                      </button>
+                    )}
+
+                    {(kredit || r.file_url) && (
+                      <button type="button" className="btn btn-green" disabled={busy === r.id}
+                        onClick={() => send(r.id)}>
+                        {busy === r.id ? '…' : r.sent_at ? 'Dërgo sërish' : 'Dërgo në inbox'}
+                      </button>
+                    )}
+
+                    {r.file_url && (
+                      <div style={{ marginTop: 4, fontSize: 10 }}>
+                        <button type="button" className="edit-btn" style={{ color: '#C42B0F' }}
+                          onClick={() => shihSkedarin(r.file_url)}>
+                          {r.file_name || 'shiko faturën'}
+                        </button>
+                      </div>
+                    )}
 
                     {!kredit && Number(r.mbetja) > 0 && (
                       <div style={{ marginTop: 6 }}>
@@ -203,31 +357,37 @@ export function InvoicesTab() {
                       </div>
                     )}
 
-                    <div style={{ marginTop: 6 }}>
-                      <button type="button" className="edit-btn" onClick={() => setOpen(open === r.id ? '' : r.id)}>
-                        {open === r.id ? 'Mbyll' : 'Ngarko faturë tatimore'}
-                      </button>
-                    </div>
-
-                    {r.file_url && (
-                      <div style={{ marginTop: 4, fontSize: 10 }}>
-                        <a href={r.file_url} target="_blank" rel="noopener noreferrer" style={{ color: '#C42B0F' }}>
-                          {r.file_name || 'shiko skedarin'}
-                        </a>
+                    {/* ── Dorëzimi i faturës tatimore ────────────────────── */}
+                    {hap === r.id && (
+                      <div style={{ marginTop: 8, borderTop: '2px solid #F0C36D', paddingTop: 8 }}>
+                        <div style={{ fontSize: 10, color: '#999', marginBottom: 6 }}>
+                          Ngarko PDF-në e lëshuar në aplikacionin e tatimeve.
+                        </div>
+                        <input ref={inputRef} type="file" accept="application/pdf,image/jpeg,image/png"
+                          aria-label="Fatura tatimore" style={{ fontSize: 10.5, width: '100%' }}
+                          onChange={e => setSkedari(e.target.files?.[0] || null)} />
+                        <input className="finput" style={{ marginTop: 6 }} value={nrTatimor}
+                          aria-label="Numri i faturës nga tatimet"
+                          placeholder="Numri i faturës nga tatimet (i detyrueshëm)"
+                          onChange={e => setNrTatimor(e.target.value)} />
+                        <input className="finput" style={{ marginTop: 6 }} value={nivf}
+                          aria-label="NIVF" placeholder="NIVF (opsional)"
+                          onChange={e => setNivf(e.target.value)} />
+                        <input className="finput" style={{ marginTop: 6 }} value={nslf}
+                          aria-label="NSLF" placeholder="NSLF (opsional)"
+                          onChange={e => setNslf(e.target.value)} />
+                        <input className="finput" style={{ marginTop: 6 }} value={mesazhi}
+                          aria-label="Mesazh për klientin" placeholder="Mesazh për klientin (opsional)"
+                          onChange={e => setMesazhi(e.target.value)} />
+                        <button type="button" className="save-btn" style={{ marginTop: 8 }}
+                          disabled={busy === r.id || !skedari || !nrTatimor.trim()}
+                          onClick={() => dorezo(r)}>
+                          {busy === r.id ? 'Duke ngarkuar…' : 'Ngarko dhe dërgo në inbox'}
+                        </button>
                       </div>
                     )}
 
-                    {open === r.id && (
-                      <div style={{ marginTop: 8, borderTop: '1px solid #eee', paddingTop: 8 }}>
-                        <input className="finput" value={file} placeholder="https://…/fatura.pdf"
-                          aria-label="URL e faturës tatimore" onChange={e => setFile(e.target.value)} />
-                        <input className="finput" style={{ marginTop: 6 }} value={note} placeholder="Shënim (opsional)"
-                          aria-label="Shënim" onChange={e => setNote(e.target.value)} />
-                        <button type="button" className="save-btn" style={{ marginTop: 6 }}
-                          disabled={busy === r.id} onClick={() => attach(r.id)}>Bashkëngjit</button>
-                      </div>
-                    )}
-
+                    {/* ── Rimbursimi ─────────────────────────────────────── */}
                     {rimb === r.id && (
                       <div style={{ marginTop: 8, borderTop: '2px solid #F09595', paddingTop: 8 }}>
                         <div style={{ fontSize: 10, color: '#999', marginBottom: 4 }}>
@@ -249,7 +409,7 @@ export function InvoicesTab() {
                             <>
                               <button type="button" className="btn btn-red" disabled={busy === r.id}
                                 onClick={() => rimburso(r)}>
-                                {busy === r.id ? '…' : `Po, lësho notën e kreditit`}
+                                {busy === r.id ? '…' : 'Po, lësho notën e kreditit'}
                               </button>{' '}
                               <button type="button" className="edit-btn" onClick={() => setKonfirmo(false)}>Anulo</button>
                             </>
@@ -275,14 +435,17 @@ export function InvoicesTab() {
       <div className="card">
         <div className="ct">Si funksionon</div>
         <div style={{ fontSize: 11, color: '#666', lineHeight: 1.8 }}>
-          Faturat lëshohen automatikisht kur aprovohet një pagesë. “Dërgo në inbox” i shfaq klientit
-          njoftimin dhe faturën te <strong>Plani im</strong>.
+          Kur aprovohet një pagesë, këtu krijohet një <strong>referencë e brendshme</strong>
+          (ALP-…). Numri fiskal nuk gjenerohet nga platforma — ai vjen nga
+          <strong> aplikacioni i tatimeve</strong>, ku lëshohet fatura e vërtetë.
+          <br />
+          Ngarko PDF-në e shkarkuar prej andej bashkë me numrin tatimor. Skedari ruhet në një
+          hapësirë <strong>private</strong> — e lexon vetëm klienti i tij dhe stafi i faturimit —
+          dhe i shkon klientit në inbox me një veprim të vetëm.
           <br />
           Një faturë e lëshuar nuk fshihet dhe nuk ndryshohet kurrë. Rimbursimi krijon një
-          <strong> notë krediti</strong> të veçantë me shenjë negative, që i referohet faturës origjinale —
-          kështu e kërkon kontabiliteti dhe kështu mbetet gjurma e plotë.
-          <br />
-          Rimbursimet e pjesshme lejohen deri sa mbetja të bëhet zero.
+          <strong> notë krediti</strong> me shenjë negative që i referohet origjinalit — e njëjta
+          bërthamë që përdor edhe e drejta e heqjes dorë brenda 14 ditëve (neni 37, ligji 9902/2008).
         </div>
       </div>
     </>
