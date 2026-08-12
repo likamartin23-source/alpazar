@@ -1,12 +1,19 @@
-// Versioni merret AUTOMATIKISht nga URL-ja e regjistrimit: /sw.js?v=<BUILD_ID>
-// Keshtu skedari ndryshon ne cdo deploy -> browser-i e detekton gjithmone perditesimin.
-// Asnje version nuk shkruhet me me dore.
+// Versioni merret AUTOMATIKISHT nga URL-ja e regjistrimit: /sw.js?v=<BUILD_ID>
+// Kështu skedari ndryshon në çdo deploy -> shfletuesi e detekton përditësimin.
 const VERSION = new URL(self.location.href).searchParams.get('v') || 'dev'
 const CACHE_NAME = 'alpazar-' + VERSION
 
-// NUK bejme skipWaiting automatikisht: perdoruesi vendos kur te kaloje,
-// ose kalimi behet ne heshtje kur faqja del nga pamja (shih UpdatePrompt).
-self.addEventListener('install', () => { /* prit */ })
+// KALIM I MENJËHERSHËM.
+//
+// Më parë këtu prisnim: versioni i ri instalohej dhe rrinte në pritje derisa
+// të mbylleshin TË GJITHA skedat e faqes. Kush e mban panelin hapur nuk i
+// mbyll kurrë — pra mbetej në versionin e vjetër pa fund, dhe një rifreskim
+// i thjeshtë nuk e zgjidhte.
+//
+// Për një panel ku vendosen afate ligjore dhe lëshohen fatura, freskia vlen
+// më shumë se mosndërprerja. `controllerchange` te layout-i e rifreskon faqen
+// një herë të vetme kur kontrolli kalon.
+self.addEventListener('install', () => self.skipWaiting())
 
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting()
@@ -15,7 +22,7 @@ self.addEventListener('message', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
-      // fshi CDO cache tjeter, perfshi ato legacy 'alpazar-vNN' qe kishin ngecur
+      // fshi ÇDO cache tjetër, përfshirë ato legacy që kishin ngecur
       .then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   )
@@ -27,7 +34,14 @@ self.addEventListener('fetch', (event) => {
 
   if (req.method !== 'GET') return
 
-  // Navigime + API + Supabase -> network-first (HTML/te dhena gjithmone te freskta)
+  // Paneli i administratës nuk sherbehet KURRE nga cache-i: aty vendosen
+  // afate dhe para, dhe nje pamje e vjeter aty eshte me e keqe se asnje.
+  if (url.pathname.startsWith('/admin')) {
+    event.respondWith(fetch(req))
+    return
+  }
+
+  // Navigime + API + Supabase -> network-first (HTML/të dhëna gjithmonë të freskëta)
   if (req.mode === 'navigate' || url.pathname.startsWith('/api') || url.hostname.includes('supabase')) {
     event.respondWith(
       fetch(req).catch(() => caches.match(req).then(c => c || caches.match('/offline.html')))
@@ -35,7 +49,8 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Asetet immutable te Next (content-hashed) -> cache-first
+  // Asetet immutable të Next (emri përmban hash-in e përmbajtjes) -> cache-first.
+  // I sigurt: një ndërtim i ri prodhon emra të rinj, ndaj kurrë nuk shërbehet i vjetri.
   if (url.pathname.startsWith('/_next/static/')) {
     event.respondWith(
       caches.match(req).then(cached => cached || fetch(req).then(res => {
@@ -70,7 +85,7 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Media tjeter statike -> stale-while-revalidate me revalidim REAL
+  // Media tjetër statike -> stale-while-revalidate
   if (/\.(js|css|png|jpg|jpeg|webp|gif|woff2?|ico|json)$/.test(url.pathname)) {
     event.respondWith(
       caches.open(CACHE_NAME).then(cache =>
@@ -90,29 +105,25 @@ self.addEventListener('fetch', (event) => {
 })
 
 self.addEventListener('push', (event) => {
-  let data = { title: 'ALPAZAR', body: 'Ke nje mesazh te ri!' }
-  try { if (event.data) data = event.data.json() } catch { /* malformed push payload -> use defaults */ }
+  let data = { title: 'ALPAZAR', body: 'Ke një mesazh të ri!' }
+  try { if (event.data) data = event.data.json() } catch { /* payload i keq -> vlerat e parazgjedhura */ }
   event.waitUntil(
     self.registration.showNotification(data.title, {
       body: data.body,
       icon: '/icons/icon-192.png',
-      badge: '/icons/icon-96.png',
-      vibrate: [200, 100, 200],
-      tag: 'alpazar-notification',
-      renotify: true,
-      data: { url: data.url || data.link || '/notifications' },
+      badge: '/icons/icon-192.png',
+      data: data.url ? { url: data.url } : undefined,
     })
   )
 })
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close()
-  const targetUrl = event.notification.data?.url || '/messages'
+  const target = (event.notification.data && event.notification.data.url) || '/'
   event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(wins => {
-      const existing = wins.find(w => w.url.includes(self.location.origin))
-      if (existing) { existing.focus(); existing.navigate(targetUrl) }
-      else clients.openWindow(targetUrl)
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+      for (const c of list) if ('focus' in c) return c.navigate(target).then(x => x.focus())
+      if (self.clients.openWindow) return self.clients.openWindow(target)
     })
   )
 })
