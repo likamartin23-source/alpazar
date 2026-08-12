@@ -1,10 +1,11 @@
 'use client'
-/** Ndërrues gjuhe — dropdown i thjeshtë, CSS inline, sipas konventave. */
+/** Ndërrues gjuhe — dy tone: 'dark' (footer, panel) dhe 'light' (koka e verdhë). */
 import { useT, LANGS } from '../../lib/i18n'
 
-export function LanguageSwitcher() {
+export function LanguageSwitcher({ tone = 'dark' }: { tone?: 'dark' | 'light' }) {
   const { lang, setLang, t } = useT()
   const cur = LANGS.find(l => l.code === lang) ?? LANGS[0]
+  const light = tone === 'light'
   return (
     <label data-no-translate style={{ display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
       <span aria-hidden="true" style={{ fontSize: 14 }}>{cur.flag}</span>
@@ -14,9 +15,16 @@ export function LanguageSwitcher() {
         value={lang}
         onChange={(e) => setLang(e.target.value as any)}
         style={{
-          background: '#1a1a1a', color: '#F5C842', border: '1px solid #333',
-          borderRadius: 8, padding: '4px 8px', fontSize: 11, fontWeight: 600,
-          fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", cursor: 'pointer',
+          background: light ? 'rgba(0,0,0,.08)' : '#1a1a1a',
+          color: light ? '#111' : '#F5C842',
+          border: light ? 'none' : '1px solid #333',
+          borderRadius: light ? 20 : 8,
+          padding: light ? '4px 6px' : '4px 8px',
+          fontSize: light ? 10 : 11,
+          fontWeight: 700,
+          fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
+          cursor: 'pointer',
+          maxWidth: light ? 92 : undefined,
         }}
       >
         {LANGS.map(l => (
