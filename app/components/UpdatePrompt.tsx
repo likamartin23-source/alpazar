@@ -5,12 +5,56 @@ import { useEffect, useRef, useState } from 'react'
 const BUILD = process.env.NEXT_PUBLIC_BUILD_ID || 'dev'
 const EVERY = 5 * 60 * 1000
 
-/* Sistemi i vetperditsimit:
-   1. Kerkon perditesim ne ngarkim, ne fokus, kur faqja rikthehet dhe cdo 5 minuta.
-   2. Kur gjendet version i ri -> sugjeron me nje njoftim diskret.
-   3. Nese perdoruesi e injoron, kalimi behet NE HESHTJE kur faqja del nga pamja,
-      keshtu askush nuk mbetet kurre ne version te vjeter dhe askush nuk nderpritet.
-   4. Rrjet sigurie: nese Service Worker mungon, krahason /api/version me build-in aktual. */
+/* Shënues i njëhershëm. Ndryshoje VETËM nëse duhet një shkrirje e re e
+   detyruar për të gjithë shfletuesit. */
+const RESET = 'alpazar-sw-reset-1'
+
+/**
+ * DALJA E EMERGJENCËS — pse ekziston
+ *
+ * Service worker-i i vjetër nuk thërriste kurrë `skipWaiting()`. Versioni i ri
+ * instalohej dhe rrinte **në pritje** derisa të mbylleshin të gjitha skedat e
+ * faqes. Kush e mban panelin hapur nuk i mbyll kurrë — pra mbetej pa fund në
+ * versionin e vjetër, dhe një rifreskim i thjeshtë nuk e zgjidhte.
+ *
+ * Kurthi: rregullimi i atij problemi dërgohet pikërisht nga service worker-i
+ * që nuk përditësohet. Pra nuk mbërrinte dot kurrë vetë.
+ *
+ * Prandaj kjo shkrirje ekzekutohet NË FAQE, jo në service worker: çregjistron
+ * çdo service worker, fshin çdo cache, dhe rifreskon një herë. Kryhet një herë
+ * për shfletues — shënuesi vendoset PARA rifreskimit, ndaj nuk hyn në cikël.
+ *
+ * Pas kësaj, cikli normal merr përsëri, tashmë me një service worker që kalon
+ * menjëherë në versionin e ri.
+ */
+async function shkrirjeNjehere(): Promise<boolean> {
+  try {
+    if (typeof window === 'undefined') return false
+    if (window.localStorage.getItem(RESET) === '1') return false
+
+    // Shënuesi PARA veprimit — që një dështim në mes të mos e përsërisë pafund.
+    window.localStorage.setItem(RESET, '1')
+
+    let dicka = false
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations()
+      for (const r of regs) { await r.unregister().catch(() => {}); dicka = true }
+    }
+    if ('caches' in window) {
+      const keys = await caches.keys()
+      for (const k of keys) { await caches.delete(k).catch(() => {}); dicka = true }
+    }
+
+    if (dicka) { window.location.reload(); return true }
+  } catch { /* nese deshton, vazhdo normalisht */ }
+  return false
+}
+
+/* Sistemi i vetëpërditësimit:
+   1. Kërkon përditësim në ngarkim, në fokus, kur faqja rikthehet dhe çdo 5 minuta.
+   2. Kur gjendet version i ri -> e sugjeron me një njoftim diskret.
+   3. Nëse përdoruesi e injoron, kalimi bëhet në heshtje kur faqja del nga pamja.
+   4. Rrjet sigurie: nëse Service Worker mungon, krahason /api/version me build-in. */
 export default function UpdatePrompt() {
   const [ready, setReady] = useState(false)
   const regRef = useRef<any>(null)
@@ -35,28 +79,36 @@ export default function UpdatePrompt() {
           if (reg) {
             regRef.current = reg
             await reg.update().catch(() => {})
-            if (!stop && reg.waiting) { setReady(true); return }
+            // Nese nje version i ri pret, kaloje menjehere — mos e le perdoruesin prapa.
+            if (!stop && reg.waiting) {
+              reg.waiting.postMessage({ type: 'SKIP_WAITING' })
+              setReady(true)
+              return
+            }
           }
         }
         const res = await fetch('/api/version', { cache: 'no-store' })
         if (!res.ok) return
         const j = await res.json()
         if (!stop && j?.build && BUILD !== 'dev' && j.build !== BUILD) setReady(true)
-      } catch { /* offline — provo me vone */ }
+      } catch { /* offline — provo më vonë */ }
     }
 
     const onVisible = () => {
       if (document.visibilityState === 'visible') check()
       else if (regRef.current?.waiting) {
-        // Kalim i heshtur kur perdoruesi nuk po e shikon faqen
         regRef.current.waiting.postMessage({ type: 'SKIP_WAITING' })
       }
     }
 
-    check()
-    timer = setInterval(check, EVERY)
-    window.addEventListener('focus', check)
-    document.addEventListener('visibilitychange', onVisible)
+    // Shkrirja vjen e para: nëse rifreskon, asgjë tjetër nuk ka nevojë të nisë.
+    shkrirjeNjehere().then(uRifreskua => {
+      if (uRifreskua || stop) return
+      check()
+      timer = setInterval(check, EVERY)
+      window.addEventListener('focus', check)
+      document.addEventListener('visibilitychange', onVisible)
+    })
 
     return () => {
       stop = true
