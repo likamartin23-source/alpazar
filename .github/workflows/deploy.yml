@@ -1,10 +1,14 @@
 name: Deploy → Vercel Production
 
-# Vercel është i lidhur direkt me GitHub (native integration).
-# Çdo push në main → deploy automatik PA këtë file.
+# Vendosja automatike behet nga integrimi natyv i Vercel-it me GitHub.
+# Ky workflow eshte rruga e shpetimit: kur ai nderpritet, e nis me dore.
 #
-# Ky workflow VETËM ekziston si fallback nëse integracioni natyv çaktivizohet,
-# ose për deploy manual (workflow_dispatch).
+# GABIMI I MEPARSHEM: kushtet ishin shkruar si
+#     if: env.VERCEL_DEPLOY_HOOK != ''
+# por konteksti `env` i nje hapi NUK lexohet brenda `if:` te atij hapi.
+# Prandaj te dyja deget e vendosjes ishin gjithmone false dhe punonte vetem
+# dega "nuk ka celesa" — pra ky workflow nuk ka vendosur kurre asgje.
+# Zgjidhja: kushtet lexojne drejtperdrejt kontekstin `secrets`.
 
 on:
   workflow_dispatch:
@@ -22,48 +26,48 @@ permissions:
 
 jobs:
   deploy:
-    name: Manual Deploy
+    name: Vendosje me dore
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
 
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - run: npm install -g vercel@latest
-
-      - name: Deploy via hook
-        if: env.VERCEL_DEPLOY_HOOK != ''
-        run: |
-          echo "Triggering Vercel deploy hook for ${{ inputs.environment }}..."
-          RESPONSE=$(curl -s -X POST "$VERCEL_DEPLOY_HOOK")
-          echo "$RESPONSE"
-          JOB_ID=$(echo "$RESPONSE" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('job',{}).get('id',''))" 2>/dev/null)
-          echo "Deploy triggered. Job: $JOB_ID"
-          echo "Track at: https://vercel.com/personal-accaunt-s-projects/alpazar"
+      - name: Nis vendosjen me deploy hook
+        if: ${{ secrets.VERCEL_DEPLOY_HOOK != '' }}
         env:
-          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
-
-      - name: Deploy via CLI
-        if: env.VERCEL_TOKEN != '' && env.VERCEL_DEPLOY_HOOK == ''
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
         run: |
-          vercel pull --yes --environment=${{ inputs.environment }} --token=$VERCEL_TOKEN
-          vercel build ${{ inputs.environment == 'production' && '--prod' || '' }} --token=$VERCEL_TOKEN
-          vercel deploy --prebuilt ${{ inputs.environment == 'production' && '--prod' || '' }} --token=$VERCEL_TOKEN
+          echo "Nis vendosjen për ${{ inputs.environment }}…"
+          RESPONSE=$(curl -sS -X POST "$HOOK")
+          echo "$RESPONSE"
+          echo "Ndiqe te: https://vercel.com/personal-accaunt-s-projects/alpazar"
+
+      - name: Vendosje me CLI (kur ka token)
+        if: ${{ secrets.VERCEL_DEPLOY_HOOK == '' && secrets.VERCEL_TOKEN != '' }}
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: team_Kkg5W4qnF2t5CQZj64ZS8xbz
           VERCEL_PROJECT_ID: prj_KNCEtuUDGNCA6ulHomdKniNAZEuX
-
-      - name: No secrets configured
-        if: env.VERCEL_TOKEN == '' && env.VERCEL_DEPLOY_HOOK == ''
         run: |
-          echo "ℹ️  Deploy manual nuk nevojitet — Vercel është i lidhur direkt me GitHub."
-          echo "   Çdo push në main deploy-on automatikisht."
+          npm install -g vercel@latest
+          vercel pull --yes --environment=${{ inputs.environment }} --token=$VERCEL_TOKEN
+          vercel build ${{ inputs.environment == 'production' && '--prod' || '' }} --token=$VERCEL_TOKEN
+          vercel deploy --prebuilt ${{ inputs.environment == 'production' && '--prod' || '' }} --token=$VERCEL_TOKEN
+
+      - name: Asnje celes i konfiguruar
+        if: ${{ secrets.VERCEL_DEPLOY_HOOK == '' && secrets.VERCEL_TOKEN == '' }}
+        run: |
+          echo "::error::As VERCEL_DEPLOY_HOOK dhe as VERCEL_TOKEN nuk jane vendosur."
+          echo "Shtoji te Settings → Secrets and variables → Actions."
+          exit 1
+
+      - name: Verifiko qe prodhimi u perditesua
+        if: success()
+        run: |
+          sleep 210
+          node scripts/verifiko-live.mjs
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+          URL_PRODHIMI: ${{ vars.URL_PRODHIMI || 'https://alpazar.vercel.app' }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          TOLERANCA_MIN: '20'
