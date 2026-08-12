@@ -6,6 +6,7 @@ import { supabase } from '../../../lib/supabase'
 import { nf, dateShort, dayMonth, monthYear, clockTime } from '../../../lib/format'
 import { getLevel, isNewMember } from '../../components/Badges'
 import { SocialProofBar, SellerPremiumUpsell } from '../../components/PremiumUpsell'
+import { ReportSheet } from '../../components/ReportSheet'
 import { saveRefFromUrl, buildShareUrl } from '../../../lib/referral'
 import { TrustBadge } from '../../components/TrustBadge'
 import { SharePanel } from '../../components/SharePanel'
@@ -86,19 +87,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
 
   // Report
   const [reportOpen, setReportOpen]   = useState(false)
-  const [reportReason, setReportReason] = useState('')
-  const [reportSent, setReportSent]   = useState(false)
-  const [reportLoading, setReportLoading] = useState(false)
-  const [reportErr, setReportErr]     = useState('')
 
-  const REPORT_REASONS = [
-    'Shpallje mashtruese / e rreme',
-    'Çmim i dyshimtë',
-    'Produkt i ndaluar',
-    'Foto / informacion i vjedhur',
-    'Kontakt i rremë',
-    'Tjetër',
-  ]
 
   async function submitReview() {
     if (!user || !seller || reviewStars === 0) return
@@ -132,25 +121,6 @@ export default function ListingPageClient({ params, initialListing }: { params: 
     setReviewSaving(false)
   }
 
-  async function submitReport() {
-    if (!reportReason) return
-    setReportLoading(true); setReportErr('')
-    const { error } = await supabase.from('reports').insert({
-      listing_id: params.id,
-      reporter_id: user?.id || null,
-      reason: reportReason,
-      status: 'pending',
-    })
-    setReportLoading(false)
-    if (!error) {
-      setReportSent(true)
-      setTimeout(() => setReportOpen(false), 1800)
-    } else {
-      setReportErr(/row-level security|permission|denied/i.test(error.message)
-        ? 'Duhet të kyçesh për të raportuar. Hyr dhe provo sërish.'
-        : 'Raporti nuk u dërgua. Provo sërish.')
-    }
-  }
 
   // Chat bottom sheet
   const [chatOpen, setChatOpen]   = useState(false)
@@ -1159,38 +1129,11 @@ export default function ListingPageClient({ params, initialListing }: { params: 
 
       {/* ── REPORT MODAL ── */}
       {reportOpen && (
-        <>
-          <div className="report-overlay" onClick={() => setReportOpen(false)} />
-          <div className="report-panel" role="dialog" aria-modal="true" aria-label="Raporto këtë shpallje">
-            <div className="report-handle" />
-            {reportSent ? (
-              <div className="report-success">
-                <div style={{ fontSize: 40, marginBottom: 10 }} aria-hidden="true">✅</div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: '#3B6D11' }}>Raporti u dërgua!</div>
-                <div style={{ fontSize: 12, color: '#888', marginTop: 4 }}>Faleminderit. Ekipi ynë do ta shqyrtojë.</div>
-              </div>
-            ) : (
-              <>
-                <div className="report-title"><span aria-hidden="true">⚑</span> Raporto shpalljen</div>
-                <div className="report-sub">Zgjidh arsyen e raportimit</div>
-                <div role="group" aria-label="Arsyeja e raportimit" className="reason-list">
-                  {REPORT_REASONS.map(r => (
-                    <button key={r} type="button" aria-pressed={reportReason === r} className={`reason-btn ${reportReason === r ? 'sel' : ''}`}
-                      onClick={() => setReportReason(r)}>
-                      <><span aria-hidden='true'>{reportReason === r ? '●' : '○'}</span> {r}</>
-                    </button>
-                  ))}
-                </div>
-                {reportErr && <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', color: '#C42B0F', borderRadius: 10, padding: '9px 12px', margin: '0 0 10px', fontSize: 12, fontWeight: 600 }}>{reportErr}</div>}
-                <button type="button" className="report-submit" onClick={submitReport}
-                  disabled={!reportReason || reportLoading}>
-                  {reportLoading ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : 'Dërgo raportin'}
-                </button>
-                <button type="button" className="report-link" onClick={() => setReportOpen(false)}>Anulo</button>
-              </>
-            )}
-          </div>
-        </>
+        <ReportSheet
+          listingId={params.id}
+          userId={user?.id || null}
+          onClose={() => setReportOpen(false)}
+        />
       )}
 
       {/* ── CHAT BOTTOM SHEET ── */}

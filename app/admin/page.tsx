@@ -14,6 +14,7 @@ import { TodayTab } from './tabs/TodayTab'
 import { InvoicesTab } from './tabs/InvoicesTab'
 import { BroadcastTab } from './tabs/BroadcastTab'
 import { RolesTab } from './tabs/RolesTab'
+import { LanguageSwitcher } from '../components/LanguageSwitcher'
 
 /* ─── Styles ───────────────────────────────────────────────── */
 const CSS = `
@@ -567,7 +568,7 @@ export default function Admin() {
         <div className="sb">
           <div className="sb-logo">
             <div className="n"><span aria-hidden="true">🦅</span> ALPAZAR</div>
-            <div className="r">Admin Panel</div>
+            <div className="r">Paneli i Administrimit</div>
             {myRole && (
               <div style={{ marginTop: 6, display: 'inline-block', background: '#1a1a1a',
                 color: '#F5C842', borderRadius: 4, padding: '2px 7px', fontSize: 9, fontWeight: 800,
@@ -590,7 +591,7 @@ export default function Admin() {
             <button type="button" key={id} className={`nl ${tab === id ? 'on' : ''}`} aria-pressed={tab === id} onClick={() => setTab(id)}>
               <i className={`ti ti-${icon}`} aria-hidden="true" />
               <span>{label}</span>
-              {id === 'moderation' && stats.reports > 0 && (
+              {id === 'radha' && stats.reports > 0 && (
                 <span style={{ marginLeft: 'auto', background: '#E63312', color: '#fff', borderRadius: 10, fontSize: 9, fontWeight: 800, padding: '1px 5px' }}>
                   {stats.reports}
                 </span>
@@ -605,7 +606,8 @@ export default function Admin() {
           </div>
           ))}
 
-          <div style={{ marginTop: 'auto', padding: '12px 14px', borderTop: '1px solid #1e1e1e' }}>
+          <div style={{ marginTop: 'auto', padding: '12px 14px', borderTop: '1px solid #1e1e1e', display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <LanguageSwitcher />
             <a href="/" style={{ color: '#666', fontSize: 11, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
               <i className="ti ti-arrow-left" style={{ fontSize: 13 }} aria-hidden="true" />Kthehu
             </a>
