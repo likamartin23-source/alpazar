@@ -1,0 +1,45 @@
+name: Pastrimi i butonave
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/pastro_butonat.py'
+      - '.github/workflows/pastrim.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  pastro:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Zbato
+        run: python3 scripts/pastro_butonat.py
+
+      - name: Kontroll
+        run: |
+          test ! -f app/admin/tabs/UserRow.tsx
+          test ! -f app/admin/tabs/UsersTab.tsx
+          test ! -f app/admin/tabs/AuditTab.tsx
+          test ! -f app/admin/tabs/BusinessesTab.tsx
+          test ! -f app/admin/tabs/Trend.tsx
+          test "$(grep -c '<button' app/admin/page.tsx)" = "16"
+          sha256sum app/admin/page.tsx
+
+      - name: Shty ne degen pastrim/auto
+        run: |
+          if git diff --quiet && git diff --cached --quiet; then
+            echo 'Asnje ndryshim - dalje.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git checkout -b pastrim/auto
+          git add -A
+          git commit -m 'Auditi i butonave: 76 -> 66, zero te vdekur'
+          git push -f origin pastrim/auto
