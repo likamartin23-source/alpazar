@@ -22,6 +22,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../../../lib/supabase'
+import { DosjaLigjore } from './DosjaLigjore'
 
 const URGJENCA: Record<string, [string, string]> = {
   kritike: ['Kritike', '#C42B0F'], larte: ['E lartë', '#BA7517'],
@@ -52,6 +53,7 @@ export function QueueTab() {
   const [ok, setOk] = useState('')
   const [hap, setHap] = useState('')
   const [arsyetimi, setArsyetimi] = useState('')
+  const [dosja, setDosja] = useState('')
 
   const load = useCallback(async () => {
     const [q, t] = await Promise.all([
@@ -234,6 +236,16 @@ export function QueueTab() {
                       onClick={() => { setHap(hap === r.id ? '' : r.id); setArsyetimi(''); setErr('') }}>
                       {hap === r.id ? 'Mbyll' : 'Vendos'}
                     </button>
+                    {ligjore && (() => {
+                      const nj = njoftime.find((n: any) => n.shpallja?.id === l?.id) || null
+                      return nj ? (
+                        <button type="button" className="edit-btn"
+                          style={{ borderColor: '#C9A227', color: '#8A6D1F' }}
+                          onClick={() => setDosja(nj.id)}>
+                          Dosja ligjore
+                        </button>
+                      ) : null
+                    })()}
                   </div>
 
                   {hap === r.id && (
@@ -291,6 +303,9 @@ export function QueueTab() {
                   onClick={() => { setHap(hap === n.id ? '' : n.id); setArsyetimi(''); setErr('') }}>
                   {hap === n.id ? 'Mbyll' : 'Vendos'}
                 </button>
+                <button type="button" className="edit-btn"
+                  style={{ borderColor: '#C9A227', color: '#8A6D1F', marginLeft: 6 }}
+                  onClick={() => setDosja(n.id)}>Dosja ligjore</button>
               </div>
               {hap === n.id && (
                 <div style={{ marginTop: 8 }}>
@@ -309,6 +324,8 @@ export function QueueTab() {
           ))}
         </div>
       )}
+
+      {dosja && <DosjaLigjore id={dosja} onClose={() => { setDosja(''); load() }} />}
 
       <div className="card">
         <div className="ct">Si funksionon</div>
