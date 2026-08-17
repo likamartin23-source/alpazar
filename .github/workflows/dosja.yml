@@ -1,0 +1,43 @@
+name: Dosja ligjore - lidhja
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/lidh_dosjen.py'
+      - '.github/workflows/dosja.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  lidh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Zbato
+        run: python3 scripts/lidh_dosjen.py
+
+      - name: Kontroll
+        run: |
+          grep -q 'DosjaLigjore' app/admin/tabs/QueueTab.tsx
+          grep -q 'admin_takedown_dossier' app/admin/tabs/DosjaLigjore.tsx
+          grep -q 'admin_report_to_authority' app/admin/tabs/DosjaLigjore.tsx
+          ! grep -q 'ngarko(' app/admin/tabs/QueueTab.tsx
+          sha256sum app/admin/tabs/QueueTab.tsx app/admin/tabs/DosjaLigjore.tsx
+
+      - name: Shty ne degen dosja/auto
+        run: |
+          if git diff --quiet; then
+            echo 'Asnje ndryshim - dalje.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git checkout -b dosja/auto
+          git add -A
+          git commit -m 'Radha: butoni Dosja ligjore'
+          git push -f origin dosja/auto
