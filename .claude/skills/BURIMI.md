@@ -23,3 +23,4 @@ prompt-injection dhe per kerkesa sekretesh perpara kopjimit.
 | `alpex-ai/ui-extractor` | `e8d321716dc61dabc5a64bd995de638c3a030e83` | `.` |
 | `maiconlara/design-system-extraction` | `9e84ba73b6aed6a5efe15bcdfd1276f9da48e189` | `.` |
 | `Bomx/distribb-skill` | `70f242be355665b903cf5ad5143ded2d63a7fdf3` | `.` |
+| `usestrix/strix` | `85513391305171ecc6faffe03da4a8bda5e3febb` | `skills` |
