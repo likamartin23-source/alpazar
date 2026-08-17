@@ -1,31 +1,21 @@
-name: Instalo skills nga nje burim i verifikuar
+name: Instalo skills nga burime te verifikuara
 
 # Kontejneri i sesionit s'ka akses te github.com — vetem raw.githubusercontent.
 # Ndaj shkarkimi behet ketu, ku runner-i e ka aksesin e plote.
 #
 # KUJDES: nje skill eshte nje skedar INSTRUKSIONESH qe agjenti i ndjek. Instalimi
-# eshte siperfaqe sulmi (prompt injection / exfiltrim sekretesh), ndaj:
-#  - commit-i i burimit regjistrohet per gjurmueshmeri;
-#  - cdo skedar skanohet per urdhera te dyshimte;
-#  - skills tona ekzistuese nuk mbishkruhen kurre;
-#  - rezultati kalon nga PR, jo push direkt.
+# eshte siperfaqe sulmi (prompt injection / exfiltrim sekretesh), ndaj cdo skedar
+# skanohet, skills tona nuk mbishkruhen kurre, dhe rezultati kalon nga PR.
+#
+# Dega eshte UNIKE per run: nje dege fikse mbijeton merge-et dhe e ben push-in
+# te deshtoje heshtazi si "stale info".
 
 on:
   workflow_dispatch:
     inputs:
-      repo:
-        description: 'Repo burim (owner/name)'
+      repos:
+        description: 'Nje rresht per repo: owner/repo  ose  owner/repo|nendrejtoria|prefiks'
         required: true
-        type: string
-      subdir:
-        description: 'Nendrejtoria ku te kerkohet ("." = krejt repoja)'
-        required: false
-        default: '.'
-        type: string
-      prefix:
-        description: 'Prapashtese emri per te shmangur perplasje (bosh = pa prefiks)'
-        required: false
-        default: ''
         type: string
 
 permissions:
@@ -35,133 +25,145 @@ permissions:
 jobs:
   install:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    env:
-      SRC: ${{ inputs.repo }}
-      SUB: ${{ inputs.subdir }}
-      PREFIX: ${{ inputs.prefix }}
-      BRANCH: skills/instalim
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
           ref: main
-          fetch-depth: 0
 
-      - name: Shkarko burimin
-        run: |
-          set -euo pipefail
-          git clone --depth 1 "https://github.com/$SRC.git" /tmp/src
-          echo "SRC_SHA=$(git -C /tmp/src rev-parse HEAD)" >> "$GITHUB_ENV"
-          rm -rf /tmp/src/.git
-          echo "SKILL.md te gjetura:"
-          find "/tmp/src/$SUB" -name SKILL.md | head -40
-
-      - name: Skano per prompt-injection dhe kerkesa sekretesh
+      - name: Shkarko, skano dhe kopjo
+        env:
+          REPOS: ${{ inputs.repos }}
         run: |
           python3 - <<'PY'
-          import os, pathlib, re, sys
+          import os, pathlib, re, shutil, subprocess, sys
 
-          root = (pathlib.Path('/tmp/src') / os.environ['SUB']).resolve()
-
+          # Modele qe s'kane pse te dalin ne nje skill legjitim.
           RED = [
               (r'ignore (all |any )?previous instructions', 'anashkalim instruksionesh'),
               (r'disregard (the |your )?(system|previous)', 'anashkalim instruksionesh'),
-              (r'service_role', 'çelës service_role'),
-              (r'ANTHROPIC_API_KEY|OPENAI_API_KEY|GITHUB_TOKEN', 'emër sekreti'),
+              (r'service_role', 'celes service_role'),
+              (r'ANTHROPIC_API_KEY|OPENAI_API_KEY|GITHUB_TOKEN', 'emer sekreti'),
               (r'curl\s+[^|\n]*\|\s*(ba)?sh', 'curl | sh'),
-              (r'base64\s+-d\s*\|', 'base64 -d | ...'),
-              (r'~/\.ssh|id_rsa', 'çelësa SSH'),
+              (r'base64\s+-d\s*\|', 'base64 -d |'),
+              (r'~/\.ssh|id_rsa', 'celesa SSH'),
           ]
 
-          trees = {p.parent for p in root.rglob('SKILL.md')}
-          hits, files = [], 0
-          for t in sorted(trees):
-              for p in sorted(t.rglob('*')):
-                  if not p.is_file():
-                      continue
-                  files += 1
-                  try:
-                      txt = p.read_text(errors='replace')
-                  except Exception:
-                      continue
-                  for pat, why in RED:
-                      for m in re.finditer(pat, txt, re.I):
-                          line = txt[:m.start()].count(chr(10)) + 1
-                          hits.append(f"{p.relative_to(root)}:{line}  [{why}]  {m.group(0)!r}")
-
-          print(f"U skanuan {files} skedare ne {len(trees)} skills.")
-          if hits:
-              print('::error::Modele te dyshimta — instalimi ndalohet:')
-              for h in hits[:50]:
-                  print('  ' + h)
-              sys.exit(1)
-          print('OK: asnje model i dyshimte.')
-          PY
-
-      - name: Kopjo pa mbishkruar asgje tonen
-        run: |
-          python3 - <<'PY'
-          import os, pathlib, shutil
-
-          root = (pathlib.Path('/tmp/src') / os.environ['SUB']).resolve()
-          repo = os.environ['SRC'].split('/')[-1]
-          prefix = os.environ.get('PREFIX', '').strip()
           dst = pathlib.Path('.claude/skills')
           dst.mkdir(parents=True, exist_ok=True)
-
           existing = {d.name for d in dst.iterdir() if d.is_dir()}
-          added, skipped, bad = [], [], []
 
-          # Cdo SKILL.md eshte nje skill; emri vjen nga drejtoria prinderore,
-          # ose nga vete repoja kur SKILL.md rri ne rrenje.
-          for skill in sorted(root.rglob('SKILL.md')):
-              d = skill.parent
-              name = repo if d == root else d.name
-              if prefix:
-                  name = f"{prefix}-{name}"
+          report, provenance = [], []
 
-              head = skill.read_text(errors='replace')[:2000]
-              if not head.lstrip().startswith('---') or 'name:' not in head or 'description:' not in head:
-                  bad.append(f"{name}: frontmatter i pavlefshem")
+          for raw in os.environ['REPOS'].splitlines():
+              line = raw.strip()
+              if not line or line.startswith('#'):
                   continue
-              if name in existing:
-                  skipped.append(name)
-                  continue
-              shutil.copytree(d, dst / name)
-              existing.add(name)
-              added.append(name)
+              parts = [p.strip() for p in line.split('|')]
+              src = parts[0]
+              sub = parts[1] if len(parts) > 1 and parts[1] else '.'
+              prefix = parts[2] if len(parts) > 2 else ''
 
-          print(f"Shtuar ({len(added)}): {', '.join(added) or '-'}")
-          print(f"Anashkaluar ({len(skipped)}): {', '.join(skipped) or '-'}")
-          if bad:
-              print('::warning::Anashkaluar si te keqformuara:')
-              for b in bad:
-                  print('  ' + b)
-          if not added:
-              print('::notice::Asgje e re per te shtuar.')
+              work = pathlib.Path('/tmp') / src.replace('/', '_')
+              shutil.rmtree(work, ignore_errors=True)
+              r = subprocess.run(['git', 'clone', '--depth', '1',
+                                  f'https://github.com/{src}.git', str(work)],
+                                 capture_output=True, text=True)
+              if r.returncode != 0:
+                  report.append(f"{src}: KLONIMI DESHTOI — {r.stderr.strip()[:120]}")
+                  continue
+              sha = subprocess.run(['git', '-C', str(work), 'rev-parse', 'HEAD'],
+                                   capture_output=True, text=True).stdout.strip()
+              shutil.rmtree(work / '.git', ignore_errors=True)
+
+              root = (work / sub).resolve()
+              if not root.exists():
+                  report.append(f"{src}: nendrejtoria '{sub}' s'ekziston")
+                  continue
+
+              skills = sorted(root.rglob('SKILL.md'))
+              if not skills:
+                  report.append(f"{src}: asnje SKILL.md")
+                  continue
+
+              added, skipped, blocked = [], [], []
+              for skill in skills:
+                  d = skill.parent
+                  name = src.split('/')[-1] if d == root else d.name
+                  if prefix:
+                      name = f"{prefix}-{name}"
+
+                  head = skill.read_text(errors='replace')[:2000]
+                  if not head.lstrip().startswith('---') or 'name:' not in head or 'description:' not in head:
+                      blocked.append(f"{name} (frontmatter)")
+                      continue
+                  if name in existing:
+                      skipped.append(name)
+                      continue
+
+                  # Skano VETEM pemen e ketij skill-i.
+                  hits = []
+                  for p in sorted(d.rglob('*')):
+                      if not p.is_file():
+                          continue
+                      try:
+                          txt = p.read_text(errors='replace')
+                      except Exception:
+                          continue
+                      for pat, why in RED:
+                          m = re.search(pat, txt, re.I)
+                          if m:
+                              hits.append(f"{p.relative_to(d)} [{why}] {m.group(0)!r}")
+                  if hits:
+                      blocked.append(f"{name} (skanimi: {hits[0]})")
+                      continue
+
+                  shutil.copytree(d, dst / name)
+                  existing.add(name)
+                  added.append(name)
+
+              provenance.append((src, sha, sub))
+              report.append(
+                  f"{src} @ {sha[:7]}\n"
+                  f"   shtuar   ({len(added)}): {', '.join(added) or '-'}\n"
+                  f"   ekziston ({len(skipped)}): {', '.join(skipped) or '-'}\n"
+                  f"   bllokuar ({len(blocked)}): {'; '.join(blocked) or '-'}"
+              )
+
+          # Gjurma e burimeve
+          f = dst / 'BURIMI.md'
+          if not f.exists():
+              f.write_text(
+                  '# Burimet e skills-eve te importuara\n\n'
+                  'Keto skills NUK jane shkruar nga ne. Jane importuar te pandryshuara,\n'
+                  'pas skanimit per prompt-injection dhe kerkesa sekretesh, permes\n'
+                  '`.github/workflows/install-skills.yml`.\n\n'
+                  '| Repo | Commit | Nendrejtoria |\n|---|---|---|\n')
+          txt = f.read_text()
+          for src, sha, sub in provenance:
+              if sha not in txt:
+                  txt += f"| `{src}` | `{sha}` | `{sub}` |\n"
+          f.write_text(txt)
+
+          print('=' * 60)
+          for r in report:
+              print(r)
+          print('=' * 60)
           PY
-
-      - name: Shto gjurmen e burimit
-        run: |
-          F=.claude/skills/BURIMI.md
-          [ -f "$F" ] || printf '# Burimet e skills-eve te importuara\n\nKeto skills NUK jane shkruar nga ne. Jane importuar te pandryshuara, pas\nskanimit per prompt-injection dhe kerkesa sekretesh, permes\n`.github/workflows/install-skills.yml`.\n\n| Repo | Commit | Nendrejtoria |\n|---|---|---|\n' > "$F"
-          grep -q "$SRC_SHA" "$F" || printf '| `%s` | `%s` | `%s` |\n' "$SRC" "$SRC_SHA" "$SUB" >> "$F"
 
       - name: Dege + PR
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: skills/${{ github.run_id }}
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A -- .claude/skills
           if git diff --cached --quiet; then
-            echo "::notice::Asgje per te ndryshuar."
+            echo "::notice::Asgje e re per te shtuar."
             exit 0
           fi
-          # Dega e punes mbijeton merge-et. Pa e njohur gjendjen e saj ne remote,
-          # --force-with-lease e refuzon push-in si "stale info".
-          git fetch origin "$BRANCH" || true
-          git checkout -B "$BRANCH"
-          git commit -m "skills: importo nga $SRC @ ${SRC_SHA:0:7}" -m "Importuar te pandryshuara pas skanimit. Skills ekzistuese nuk u prekën. Gjurma: .claude/skills/BURIMI.md"
-          git push -u --force origin "$BRANCH"
-          gh pr create --base main --head "$BRANCH" --title "skills: importo nga $SRC" --body "Importim automatik nga \`$SRC\` @ \`$SRC_SHA\`, pas skanimit per prompt-injection." || echo "::notice::PR ekziston tashme."
+          git checkout -b "$BRANCH"
+          git commit -m "skills: importo nga burime te verifikuara" -m "Pas skanimit per prompt-injection. Skills ekzistuese nuk u preken. Gjurma: .claude/skills/BURIMI.md"
+          git push -u origin "$BRANCH"
+          gh pr create --base main --head "$BRANCH" --title "skills: importim nga burime te verifikuara" --body "Importim automatik pas skanimit per prompt-injection. Shih \`.claude/skills/BURIMI.md\` per repo-t dhe commit-et e sakta."
