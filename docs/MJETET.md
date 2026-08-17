@@ -1,95 +1,97 @@
-# Mjetet e Alpazar-it — inventar
+# Mjetet e Alpazar-it — audit
 
-Gjendja më 17 gusht 2026. Qëllimi: asnjë sesion i ri të mos e rinisë kërkimin
-nga zeroja.
+Gjendja më 17 gusht 2026.
 
 ---
 
-## 1. Skills në repo — 105
+## 1. Çfarë kemi
 
-Të gjitha jetojnë te `.claude/skills/`, pra vlejnë në **çdo** sesion: Claude Code
-lokal, Cowork, CI. Burimet dhe commit-et e sakta: **`.claude/skills/BURIMI.md`**.
-
-| Burimi | Sa | Çfarë jep |
+| Shtresa | Sasia | Ku jeton |
 |---|---|---|
-| `arnabbagxd/brand-building-skills` | 29 | brand, pozicionim, audiencë, Meta/Google ads, email, WhatsApp, UGC, ASO |
-| `garrytan/gstack` | 23 | Claude si ekip inxhinierik: `/autoplan`, `/qa`, `/ship`, `/retro`, review CEO/eng/design/devex |
-| `emilkowalski/skills` | ≈10 | animacion dhe polish (autori i Sonner dhe Vaul) |
-| `yuvalcohenrappaport/claude-skill-ui-ux-pro-max` | 1 | 67 stile, 96 paleta, 57 çifte fontesh, 13 stack-e |
-| `billhector/design-skills` | 2 | `design-extractor`, `design-auditor` |
-| `alpex-ai/ui-extractor` | 1 | analizë regjistrimesh ekrani → spec |
-| `maiconlara/design-system-extraction` | 1 | nxjerrje tokenash nga CSS i renderuar |
-| `rebelytics/one-skill-to-rule-them-all` | 1 | meta-skill që përmirëson vetë skills-et |
-| `Bomx/distribb-skill` | 2 | SEO — **kerkon `DISTRIBB_API_KEY`**, pa të rri inaktiv |
+| Skills | **106** | `.claude/skills/` — në repo, pra vlejnë në **çdo** sesion |
+| Servera MCP | 7 | `.mcp.json` |
+| Plugin-e | 7 | `.claude/settings.json` |
+| Workflow-e | 12 | `.github/workflows/` |
+| Konektorë Cowork | ~25 | claude.ai → Settings → Connectors |
 
-> `.claude/skills/` ishte dikur krëjt në `.gitignore`. Ndaj çdo skill ishte lokal
-> dhe i përkohshëm — Cowork-u dhe çdo kontejner i ri nisnin pa to. Tani
-> commit-ohen; jashtë mbeten vetëm ato që i instalon vetë mjedisi (`caveman*`).
+### Skills sipas burimit
 
-### Si shtohen të tjera
-Workflow-i `.github/workflows/install-skills.yml`, me një listë:
+| Burimi | Sa | Për çfarë |
+|---|---|---|
+| `arnabbagxd/brand-building-skills` | 29 | brand, audiencë, Meta/Google ads, email, WhatsApp, UGC, ASO |
+| `garrytan/gstack` | 23 | Claude si ekip inxhinierik: `/autoplan`, `/qa`, `/ship`, `/retro` |
+| `emilkowalski/skills` | ~10 | animacion, polish (autori i Sonner dhe Vaul) |
+| `usestrix/strix` | 2 | **pentest dhe rregullim dobesish** |
+| `billhector/design-skills` | 2 | design-extractor, design-auditor |
+| `Bomx/distribb-skill` | 2 | SEO — kërkon `DISTRIBB_API_KEY` |
+| ui-ux-pro-max, ui-extractor, design-system-extraction, task-observer | 4 | dizajn + meta-skill |
+| caveman/cavecrew | 7 | vijnë me mjedisin, jo me repon |
+
+Burimet dhe commit-et e sakta: **`.claude/skills/BURIMI.md`**.
+
+---
+
+## 2. Vegla që NUK janë skills
+
+Këto nuk hyjnë dot te `.claude/skills/` — janë programe që xhirojnë te ti.
+
+| Vegla | Komanda | Shënim |
+|---|---|---|
+| **skillui** | `npx skillui --url <adresa>` | nxjerr design-system nga çdo sajt; MIT, pa çelës |
+| **uxskill** | `pip install uxskill` | 84 stile, 176 paleta, 112 ligje UX, 152 rregulla anti-slop |
+| **Strix CLI** | `pipx install strix-agent` | pentest lokal; skill-i `fix-security-vulnerabilities-with-strix` e përdor |
+| **OmniRoute** | gateway lokal, `localhost:20128` | ⚠️ sheh **çdo** thirrje AI që kalon nga ai |
+| **Agent Reach** | CLI Python | akses në X, Reddit, YouTube, LinkedIn, Bilibili pa çelësa |
+| Anime.js, Motion.dev, Coconut UI, Backlit UI | `npm i` | librari, hyjnë kur ndërtojmë UI |
+
+---
+
+## 3. Çfarë pret ty
+
+| Çështja | Pse ka rëndësi |
+|---|---|
+| **Google Search Console** | Ndryshuam sitemap-in, `robots.txt` dhe `lastmod` — dhe s'kemi **asnjë** matës nëse funksionoi. Ky është boshllëku #1. |
+| **Facebook + Instagram** | Kanali ku jeton tregu shqiptar; u shtuan 29 skills marketingu që pa to rrinë bosh |
+| **Semrush** | I lidhur, por çdo thirrje kërkon miratim interaktiv → zero volume kyword-esh shqip |
+| `TAVILY_API_KEY`, `EXA_API_KEY` | `.mcp.json` i pret nga mjedisi |
+
+OAuth bëhet **vetëm nga shfletuesi yt**. Një sesion i larguët nuk e kryen dot
+dhe nuk duhet të të kërkojë kurrë kode ose token-a.
+
+---
+
+## 4. Kufiri i dobishmerise — lexoje këtë para se të shtosh të tjera
+
+Brenda një dite kaluam nga 7 skills në 106. Kjo ka një çmim që nuk duket:
+
+1. **Konteksti është i fundmë.** Çdo skill i shtuar merr hapësirë nga përshkrimet
+   që agjenti lexon. Në njej numer te caktuar, shtimi fillon të **dëmtojë**
+   përzgjedhjen, jo ta ndihmojë.
+2. **Siperfaqja e sulmit.** Një skill është skedar instruksionesh që agjenti i
+   ndjek. 310 skedarë nga 8 autorë hynën në një PR të vetëm. Skanimi kaloi
+   pastër, por skanimi nuk është garanci.
+3. **Mjeti nuk është puna.** Asnjë nga 106 skills-et nuk shkruan një rresht kodi
+   vetë.
+
+**Boshllëqet që kanë mbetur nuk mbyllen me skill:**
+
+- **Next.js 14 është End-of-Life** (EOL 26 tetor 2025; tri valë sigurie që
+  atehere, asnjë patch për 14-shin). Kërkon migrim me QA manuale, sepse
+  `ignoreBuildErrors: true` dhe `strict: false` do të thonë që kompajlleri
+  **nuk** do i kapë thyerjet. Ky është rreziku më i madh teknik që kemi.
+- **Vercel** — tre projekte të lidhura me të njëjtën depo; çdo push nis tre
+  build-e. Fshirja e dublikatëve kërkon lidhjen Vercel te Composio.
+- **Matja** — pa GSC, çdo puna SEO e sotme mbetet e paverifikuar.
+
+---
+
+## 5. Si shtohen skills të reja
+
+`.github/workflows/install-skills.yml`, me një listë:
 ```
 owner/repo
 owner/repo|nendrejtoria|prefiks
 ```
-Skanon çdo skedar për prompt-injection, `service_role`, emra sekretesh,
-`curl | sh`, çelësa SSH — dhe **e ndal** instalimin nëse gjen. Nuk mbishkruan
-kurrë një skill ekzistues. Rezultati kalon nga PR.
-
----
-
-## 2. MCP — `.mcp.json`
-
-| Serveri | Gjendja |
-|---|---|
-| playwright, firecrawl, context7 | ✅ gati |
-| tavily, exa | ⚠️ duan `TAVILY_API_KEY` / `EXA_API_KEY` në mjedis |
-| sequential-thinking | ✅ zyrtar, pa çelës |
-| **omniroute** | ⚠️ lidhet vetëm nëse gateway-i xhiron lokalisht |
-
----
-
-## 3. Çfarë kërkon **ty** (jo skills — programe që xhirojnë te ti)
-
-### OmniRoute — `diegosouzapw/OmniRoute` (MIT)
-Gateway falas për 339 ofrues AI. **Nuk është skill.** Duhet nisur lokalisht;
-përndryshe hyrja te `.mcp.json` thjesht nuk lidhet dhe asgjë nuk prishet.
-
-> **Para se ta nisësh:** çdo thirrje AI që kalon nga ai gateway është e dukshme
-> për të. Alpazari mban PII, numra telefoni dhe rrjedhë OTP.
-
-### Agent Reach — `Panniantong/Agent-Reach` (MIT, Python 3.10+)
-CLI që i jep agjentit akses në Twitter/X, Reddit, YouTube, GitHub, LinkedIn,
-Instagram, Bilibili, XiaoHongShu — pa çelësa API. **Nuk është skill**, është
-veglë rreshti komandash që instalon scraper-a në makinën tënde.
-
-### Instagram
-Composio ka toolkit Instagram, por Graph API jep vetëm median e llogarisë
-**tënde** Business/Creator — jo reel-et e krijuesve të tjerë. Lidhja **nuk** e
-zgjidh leximin e reel-eve. Ajo që funksionoi ishte kërkimi web i Composio-s
-(Exa) plus shfletuesi cloud, të dy aktivë pa autorizim.
-
----
-
-## 4. Mbetur jashtë
-
-| Çfarë | Pse |
-|---|---|
-| **STRIX** | asnjë burim publik i identifikueshem |
-| `laith0003/ux-skill` ("Skill UI") | s'u gjet `SKILL.md` i vlefshëm |
-| Anime.js, Motion.dev, Coconut UI, Backlit UI | librari npm, jo skills — hyjnë me `npm i` kur ndërtojmë UI |
-| Manus AI, Dodo Payments, CodeBurn | shërbime të jashtme, pa lidhje me repon |
-| `pm-claude-skills` (npm, "1099 skills") | botues i paverifikuar; 1099 skedarë instruksionesh në një repo prodhimi me PII — rrezik i papranueshem |
-
----
-
-## 5. Auditimi i importit të madh (PR #58)
-
-310 skedarë, ≈25 skripte, 8 autorë. Skanimi automatik: pastruar.
-Kontroll shtesë mbi rrjetin: **një** skript i vetëm del jashtë —
-`ui-extractor/scripts/figma-export.sh` → `api.figma.com`, me `FIGMA_ACCESS_TOKEN`
-që e jep vetë përdoruesi. Hostet e tjerë në skripte (`stripe.com`, `example.com`,
-`myapp.com`, `competitor.com`) janë shembuj dokumentacioni. Asnjë skript nuk
-lexon sekretet tona.
-
-Skanimi është i mirë, por nuk është garanci absolute.
+Gjen çdo `SKILL.md` rekursivisht, skanon për prompt-injection / `service_role` /
+emra sekretesh / `curl | sh` / çelësa SSH, **ndalon** nëse gjen, nuk mbishkruan
+kurrë një skill ekzistues, dhe hap PR me dege unike për çdo run.
