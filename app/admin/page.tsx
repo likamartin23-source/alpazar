@@ -706,45 +706,6 @@ export default function Admin() {
                     </div>
                   )}
 
-                  {/* Premium Requests (FAZA 4-c) */}
-                  <div className="card" style={{ marginBottom: 16 }}>
-                    <div className="ct">
-                      <><span aria-hidden="true">🎁</span> Kërkesat Premium</>
-                      {premiumRequests.filter(r => r.status === 'pending').length > 0 && (
-                        <span style={{ background: '#E63312', color: '#fff', borderRadius: 10, fontSize: 9, fontWeight: 800, padding: '1px 7px' }}>
-                          {premiumRequests.filter(r => r.status === 'pending').length} të reja
-                        </span>
-                      )}
-                    </div>
-                    {premiumRequests.length === 0 ? (
-                      <p style={{ color: '#aaa', fontSize: 12 }}>Asnjë kërkesë premium</p>
-                    ) : (
-                      <table>
-                        <thead><tr><th scope="col">Përdoruesi</th><th scope="col">Plan</th><th scope="col">Statusi</th><th scope="col">Data</th><th scope="col">Veprime</th></tr></thead>
-                        <tbody>{premiumRequests.map((r: any) => (
-                          <tr key={r.id}>
-                            <td>{r.profiles?.full_name || r.profiles?.username || '—'}</td>
-                            <td>{r.plan === 'yearly' ? 'Vjetor' : 'Mujor'}</td>
-                            <td>
-                              <span className={`badge ${r.status === 'approved' || r.status === 'gifted' ? 'ba' : r.status === 'pending' ? 'bp' : 'bd'}`}>
-                                {r.status === 'approved' ? 'Aprovuar' : r.status === 'rejected' ? 'Refuzuar' : r.status === 'gifted' ? <><span aria-hidden='true'>🎁</span> Dhuruar</> : 'Në pritje'}
-                              </span>
-                            </td>
-                            <td style={{ color: '#888' }}>{new Date(r.created_at).toLocaleDateString('sq-AL')}</td>
-                            <td>
-                              {r.status === 'pending' && (
-                                <>
-                                  <button type="button" className="btn btn-green" onClick={() => handlePremiumRequest(r.id, 'approved', r.user_id, r.days_requested || 30)}><span aria-hidden="true">✓</span> Aprovo</button>
-                                  <button type="button" className="btn btn-orange" onClick={() => giftPremium(r.user_id)}><span aria-hidden="true">🎁</span> Dhuratë</button>
-                                  <button type="button" className="btn btn-red" onClick={() => handlePremiumRequest(r.id, 'rejected', r.user_id, r.days_requested || 30)}><span aria-hidden="true">✕</span> Refuzo</button>
-                                </>
-                              )}
-                            </td>
-                          </tr>
-                        ))}</tbody>
-                      </table>
-                    )}
-                  </div>
 
                   <div className="card">
                     <table>
