@@ -1,19 +1,12 @@
-# dependencies
-node_modules
-.pnp
-.pnp.js
-
-# testing
-coverage
-
-# next.js
+# Kredencialet - MOS ngarko!
+.env
+.env.local
+.env.*.local
 .next/
 out/
-build
-
-# misc
+node_modules/
 .DS_Store
-*.pem
+Thumbs.db
 .vercel
 tsconfig.tsbuildinfo
 
@@ -25,25 +18,14 @@ skills-lock.json
 # Code intelligence indexes (generated)
 .codegraph/
 .graphify/
-
 # Skills: ato të importuara janë të commit-uara qëllimisht — vetëm kështu i sheh
 # edhe Cowork-u dhe çdo sesion i ri. Jashtë mbeten vetëm ato që i instalon vetë
 # mjedisi (vijnë me harness-in, jo me projektin).
 .claude/skills/caveman*
 .claude/skills/cavecrew/
-
 .playwright-mcp/
 alpazar-playwright.png
 
 # Test artifacts (generated)
 test-results/
 playwright-report/
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# local env files
-.env*.local
-.env
