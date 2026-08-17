@@ -40,6 +40,17 @@
       "env": {
         "EXA_API_KEY": "${EXA_API_KEY}"
       }
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
+    },
+    "omniroute": {
+      "type": "http",
+      "url": "http://localhost:20128/api/mcp/stream"
     }
   }
 }
