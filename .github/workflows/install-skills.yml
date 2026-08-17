@@ -45,6 +45,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
+          fetch-depth: 0
 
       - name: Shkarko burimin
         run: |
@@ -62,7 +63,6 @@ jobs:
 
           root = (pathlib.Path('/tmp/src') / os.environ['SUB']).resolve()
 
-          # Modele qe s'kane pse te dalin ne nje skill legjitim.
           RED = [
               (r'ignore (all |any )?previous instructions', 'anashkalim instruksionesh'),
               (r'disregard (the |your )?(system|previous)', 'anashkalim instruksionesh'),
@@ -73,7 +73,6 @@ jobs:
               (r'~/\.ssh|id_rsa', 'çelësa SSH'),
           ]
 
-          # Skanohen vetem skedaret qe do te kopjohen: cdo pemë me SKILL.md brenda.
           trees = {p.parent for p in root.rglob('SKILL.md')}
           hits, files = [], 0
           for t in sorted(trees):
@@ -102,7 +101,7 @@ jobs:
       - name: Kopjo pa mbishkruar asgje tonen
         run: |
           python3 - <<'PY'
-          import os, pathlib, shutil, sys
+          import os, pathlib, shutil
 
           root = (pathlib.Path('/tmp/src') / os.environ['SUB']).resolve()
           repo = os.environ['SRC'].split('/')[-1]
@@ -159,7 +158,10 @@ jobs:
             echo "::notice::Asgje per te ndryshuar."
             exit 0
           fi
+          # Dega e punes mbijeton merge-et. Pa e njohur gjendjen e saj ne remote,
+          # --force-with-lease e refuzon push-in si "stale info".
+          git fetch origin "$BRANCH" || true
           git checkout -B "$BRANCH"
           git commit -m "skills: importo nga $SRC @ ${SRC_SHA:0:7}" -m "Importuar te pandryshuara pas skanimit. Skills ekzistuese nuk u prekën. Gjurma: .claude/skills/BURIMI.md"
-          git push -u --force-with-lease origin "$BRANCH"
+          git push -u --force origin "$BRANCH"
           gh pr create --base main --head "$BRANCH" --title "skills: importo nga $SRC" --body "Importim automatik nga \`$SRC\` @ \`$SRC_SHA\`, pas skanimit per prompt-injection." || echo "::notice::PR ekziston tashme."
