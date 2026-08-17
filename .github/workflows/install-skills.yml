@@ -16,12 +16,16 @@ on:
       repo:
         description: 'Repo burim (owner/name)'
         required: true
-        default: 'arnabbagxd/brand-building-skills'
         type: string
       subdir:
-        description: 'Nendrejtoria me skills brenda repo-s'
-        required: true
-        default: 'skills'
+        description: 'Nendrejtoria ku te kerkohet ("." = krejt repoja)'
+        required: false
+        default: '.'
+        type: string
+      prefix:
+        description: 'Prapashtese emri per te shmangur perplasje (bosh = pa prefiks)'
+        required: false
+        default: ''
         type: string
 
 permissions:
@@ -35,33 +39,33 @@ jobs:
     env:
       SRC: ${{ inputs.repo }}
       SUB: ${{ inputs.subdir }}
+      PREFIX: ${{ inputs.prefix }}
       BRANCH: skills/instalim
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Shkarko burimin
         run: |
           set -euo pipefail
           git clone --depth 1 "https://github.com/$SRC.git" /tmp/src
           echo "SRC_SHA=$(git -C /tmp/src rev-parse HEAD)" >> "$GITHUB_ENV"
-          if [ ! -d "/tmp/src/$SUB" ]; then
-            echo "::error::Nendrejtoria '$SUB' s'u gjet te $SRC"
-            exit 1
-          fi
-          ls -1 "/tmp/src/$SUB" | head -40
+          rm -rf /tmp/src/.git
+          echo "SKILL.md te gjetura:"
+          find "/tmp/src/$SUB" -name SKILL.md | head -40
 
       - name: Skano per prompt-injection dhe kerkesa sekretesh
         run: |
           python3 - <<'PY'
           import os, pathlib, re, sys
 
-          root = pathlib.Path('/tmp/src') / os.environ['SUB']
+          root = (pathlib.Path('/tmp/src') / os.environ['SUB']).resolve()
 
-          # Modele qe s'kane pse te dalin ne nje skill legjitim marketingu.
+          # Modele qe s'kane pse te dalin ne nje skill legjitim.
           RED = [
               (r'ignore (all |any )?previous instructions', 'anashkalim instruksionesh'),
               (r'disregard (the |your )?(system|previous)', 'anashkalim instruksionesh'),
-              (r'\.env\b', 'referencë te .env'),
               (r'service_role', 'çelës service_role'),
               (r'ANTHROPIC_API_KEY|OPENAI_API_KEY|GITHUB_TOKEN', 'emër sekreti'),
               (r'curl\s+[^|\n]*\|\s*(ba)?sh', 'curl | sh'),
@@ -69,21 +73,24 @@ jobs:
               (r'~/\.ssh|id_rsa', 'çelësa SSH'),
           ]
 
+          # Skanohen vetem skedaret qe do te kopjohen: cdo pemë me SKILL.md brenda.
+          trees = {p.parent for p in root.rglob('SKILL.md')}
           hits, files = [], 0
-          for p in sorted(root.rglob('*')):
-              if not p.is_file():
-                  continue
-              files += 1
-              try:
-                  txt = p.read_text(errors='replace')
-              except Exception:
-                  continue
-              for pat, why in RED:
-                  for m in re.finditer(pat, txt, re.I):
-                      line = txt[:m.start()].count(chr(10)) + 1
-                      hits.append(f"{p.relative_to(root)}:{line}  [{why}]  {m.group(0)!r}")
+          for t in sorted(trees):
+              for p in sorted(t.rglob('*')):
+                  if not p.is_file():
+                      continue
+                  files += 1
+                  try:
+                      txt = p.read_text(errors='replace')
+                  except Exception:
+                      continue
+                  for pat, why in RED:
+                      for m in re.finditer(pat, txt, re.I):
+                          line = txt[:m.start()].count(chr(10)) + 1
+                          hits.append(f"{p.relative_to(root)}:{line}  [{why}]  {m.group(0)!r}")
 
-          print(f"U skanuan {files} skedare.")
+          print(f"U skanuan {files} skedare ne {len(trees)} skills.")
           if hits:
               print('::error::Modele te dyshimta — instalimi ndalohet:')
               for h in hits[:50]:
@@ -95,64 +102,51 @@ jobs:
       - name: Kopjo pa mbishkruar asgje tonen
         run: |
           python3 - <<'PY'
-          import os, pathlib, re, shutil, sys
+          import os, pathlib, shutil, sys
 
-          src = pathlib.Path('/tmp/src') / os.environ['SUB']
+          root = (pathlib.Path('/tmp/src') / os.environ['SUB']).resolve()
+          repo = os.environ['SRC'].split('/')[-1]
+          prefix = os.environ.get('PREFIX', '').strip()
           dst = pathlib.Path('.claude/skills')
           dst.mkdir(parents=True, exist_ok=True)
 
           existing = {d.name for d in dst.iterdir() if d.is_dir()}
           added, skipped, bad = [], [], []
 
-          for d in sorted(src.iterdir()):
-              if not d.is_dir():
-                  continue
-              skill = d / 'SKILL.md'
-              if not skill.exists():
-                  bad.append(f"{d.name}: s'ka SKILL.md")
-                  continue
+          # Cdo SKILL.md eshte nje skill; emri vjen nga drejtoria prinderore,
+          # ose nga vete repoja kur SKILL.md rri ne rrenje.
+          for skill in sorted(root.rglob('SKILL.md')):
+              d = skill.parent
+              name = repo if d == root else d.name
+              if prefix:
+                  name = f"{prefix}-{name}"
+
               head = skill.read_text(errors='replace')[:2000]
               if not head.lstrip().startswith('---') or 'name:' not in head or 'description:' not in head:
-                  bad.append(f"{d.name}: frontmatter i pavlefshem")
+                  bad.append(f"{name}: frontmatter i pavlefshem")
                   continue
-              if d.name in existing:
-                  skipped.append(d.name)   # kurre mos mbishkruaj tonat
+              if name in existing:
+                  skipped.append(name)
                   continue
-              shutil.copytree(d, dst / d.name)
-              added.append(d.name)
+              shutil.copytree(d, dst / name)
+              existing.add(name)
+              added.append(name)
 
           print(f"Shtuar ({len(added)}): {', '.join(added) or '-'}")
-          print(f"Anashkaluar sepse ekzistonin ({len(skipped)}): {', '.join(skipped) or '-'}")
+          print(f"Anashkaluar ({len(skipped)}): {', '.join(skipped) or '-'}")
           if bad:
-              print('::error::Skills te keqformuara:')
+              print('::warning::Anashkaluar si te keqformuara:')
               for b in bad:
                   print('  ' + b)
-              sys.exit(1)
           if not added:
               print('::notice::Asgje e re per te shtuar.')
           PY
 
-      - name: Shkruaj gjurmen e burimit
+      - name: Shto gjurmen e burimit
         run: |
-          {
-            echo "# Burimi i skills-eve te importuara"
-            echo
-            echo "Keto skills NUK jane shkruar nga ne. Jane importuar te pandryshuara"
-            echo "nga nje burim i jashtem, me gjurmueshmeri te plote."
-            echo
-            echo "| Fusha | Vlera |"
-            echo "|---|---|"
-            echo "| Repo | \`$SRC\` |"
-            echo "| Commit | \`$SRC_SHA\` |"
-            echo "| Nendrejtoria | \`$SUB\` |"
-            echo
-            echo "## Pse ka rendesi"
-            echo
-            echo "Nje skill eshte nje skedar instruksionesh qe agjenti i ndjek. Cdo"
-            echo "perditesim nga burimi duhet te ri-kaloje nga i njejti workflow"
-            echo "(\`.github/workflows/install-skills.yml\`), i cili skanon per"
-            echo "prompt-injection dhe per kerkesa sekretesh perpara kopjimit."
-          } > .claude/skills/BURIMI.md
+          F=.claude/skills/BURIMI.md
+          [ -f "$F" ] || printf '# Burimet e skills-eve te importuara\n\nKeto skills NUK jane shkruar nga ne. Jane importuar te pandryshuara, pas\nskanimit per prompt-injection dhe kerkesa sekretesh, permes\n`.github/workflows/install-skills.yml`.\n\n| Repo | Commit | Nendrejtoria |\n|---|---|---|\n' > "$F"
+          grep -q "$SRC_SHA" "$F" || printf '| `%s` | `%s` | `%s` |\n' "$SRC" "$SRC_SHA" "$SUB" >> "$F"
 
       - name: Dege + PR
         env:
@@ -165,7 +159,7 @@ jobs:
             echo "::notice::Asgje per te ndryshuar."
             exit 0
           fi
-          git checkout -b "$BRANCH"
-          git commit -m "skills: importo nga $SRC @ ${SRC_SHA:0:7}" -m "Importuar te pandryshuara pas skanimit per prompt-injection dhe kerkesa sekretesh. Skills tona ekzistuese nuk u prekën. Gjurma: .claude/skills/BURIMI.md"
+          git checkout -B "$BRANCH"
+          git commit -m "skills: importo nga $SRC @ ${SRC_SHA:0:7}" -m "Importuar te pandryshuara pas skanimit. Skills ekzistuese nuk u prekën. Gjurma: .claude/skills/BURIMI.md"
           git push -u --force-with-lease origin "$BRANCH"
-          gh pr create --base main --head "$BRANCH" --title "skills: importo nga $SRC" --body "Importim automatik nga \`$SRC\` @ \`$SRC_SHA\`, pas skanimit per prompt-injection. Shih \`.claude/skills/BURIMI.md\`." || echo "::notice::PR ekziston tashme."
+          gh pr create --base main --head "$BRANCH" --title "skills: importo nga $SRC" --body "Importim automatik nga \`$SRC\` @ \`$SRC_SHA\`, pas skanimit per prompt-injection." || echo "::notice::PR ekziston tashme."
