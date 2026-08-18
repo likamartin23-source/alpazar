@@ -36,7 +36,7 @@ jobs:
           REPOS: ${{ inputs.repos }}
         run: |
           python3 - <<'PY'
-          import os, pathlib, re, shutil, subprocess, sys
+          import os, pathlib, re, shutil, subprocess
 
           # Modele qe s'kane pse te dalin ne nje skill legjitim.
           RED = [
@@ -48,6 +48,10 @@ jobs:
               (r'base64\s+-d\s*\|', 'base64 -d |'),
               (r'~/\.ssh|id_rsa', 'celesa SSH'),
           ]
+
+          # Sipas spec-it, keto e perbejne nje skill. Gjithcka tjeter ne repo
+          # (teste, .github, dokumentacion) NUK eshte pjese e tij.
+          SKILL_DIRS = ('references', 'scripts', 'assets', 'templates')
 
           dst = pathlib.Path('.claude/skills')
           dst.mkdir(parents=True, exist_ok=True)
@@ -89,7 +93,8 @@ jobs:
               added, skipped, blocked = [], [], []
               for skill in skills:
                   d = skill.parent
-                  name = src.split('/')[-1] if d == root else d.name
+                  at_root = (d == root)
+                  name = src.split('/')[-1] if at_root else d.name
                   if prefix:
                       name = f"{prefix}-{name}"
 
@@ -101,11 +106,20 @@ jobs:
                       skipped.append(name)
                       continue
 
-                  # Skano VETEM pemen e ketij skill-i.
+                  # Cfare e perben skillin. Kur SKILL.md rri ne rrenje, kjo NUK
+                  # eshte krejt repoja — perndryshe testet e saj hyjne ne skanim
+                  # dhe bllokojne skillin e vertete.
+                  if at_root:
+                      sources = [skill] + [d / p for p in SKILL_DIRS if (d / p).is_dir()]
+                  else:
+                      sources = [d]
+
+                  files = []
+                  for s in sources:
+                      files.extend([f for f in s.rglob('*') if f.is_file()] if s.is_dir() else [s])
+
                   hits = []
-                  for p in sorted(d.rglob('*')):
-                      if not p.is_file():
-                          continue
+                  for p in sorted(files):
                       try:
                           txt = p.read_text(errors='replace')
                       except Exception:
@@ -113,14 +127,20 @@ jobs:
                       for pat, why in RED:
                           m = re.search(pat, txt, re.I)
                           if m:
-                              hits.append(f"{p.relative_to(d)} [{why}] {m.group(0)!r}")
+                              hits.append(f"{p.name} [{why}] {m.group(0)!r}")
                   if hits:
                       blocked.append(f"{name} (skanimi: {hits[0]})")
                       continue
 
-                  shutil.copytree(d, dst / name)
+                  target = dst / name
+                  target.mkdir(parents=True)
+                  for s in sources:
+                      if s.is_dir():
+                          shutil.copytree(s, target / s.name)
+                      else:
+                          shutil.copy2(s, target / s.name)
                   existing.add(name)
-                  added.append(name)
+                  added.append(f"{name} ({len(files)} skedare)")
 
               provenance.append((src, sha, sub))
               report.append(
@@ -130,7 +150,6 @@ jobs:
                   f"   bllokuar ({len(blocked)}): {'; '.join(blocked) or '-'}"
               )
 
-          # Gjurma e burimeve
           f = dst / 'BURIMI.md'
           if not f.exists():
               f.write_text(
@@ -166,4 +185,4 @@ jobs:
           git checkout -b "$BRANCH"
           git commit -m "skills: importo nga burime te verifikuara" -m "Pas skanimit per prompt-injection. Skills ekzistuese nuk u preken. Gjurma: .claude/skills/BURIMI.md"
           git push -u origin "$BRANCH"
-          gh pr create --base main --head "$BRANCH" --title "skills: importim nga burime te verifikuara" --body "Importim automatik pas skanimit per prompt-injection. Shih \`.claude/skills/BURIMI.md\` per repo-t dhe commit-et e sakta."
+          gh pr create --base main --head "$BRANCH" --title "skills: importim nga burime te verifikuara" --body "Importim automatik pas skanimit per prompt-injection. Shih \`.claude/skills/BURIMI.md\`."
