@@ -3,6 +3,7 @@
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
 import nextDynamic from 'next/dynamic'
 import { supabase } from '../../../../lib/supabase'
 import { uploadImages, UploadProgress } from '../../../../lib/uploadImages'
@@ -11,7 +12,10 @@ import { useVideos } from '../../new/useVideos'
 const MapPicker = nextDynamic(() => import('../../../components/MapPicker').then(m => ({ default: m.MapPicker })), { ssr: false })
 
 
-export default function EditListing({ params }: { params: { id: string } }) {
+export default function EditListing() {
+  // Ne Next 15 nje faqe klient e merr `params` si Promise. Hook-u e jep
+  // sinkron dhe punon njesoj ne 14 e ne 15.
+  const params = useParams() as { id: string }
   const [existingVideos, setExistingVideos] = useState<any[]>([])
   const [user, setUser]       = useState<any>(null)
   const [categories, setCategories] = useState<any[]>([])

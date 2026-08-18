@@ -31,7 +31,8 @@ function videoList(listing: any): string[] {
   return out
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const params = await props.params
   const listing = await fetchListingData(params.id)
   if (!listing) return { title: 'Shpallje — ALPAZAR' }
 
@@ -65,7 +66,8 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   }
 }
 
-export default async function ListingPage({ params }: { params: { id: string } }) {
+export default async function ListingPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const listing = await fetchListingData(params.id)
   const vids = videoList(listing)
 

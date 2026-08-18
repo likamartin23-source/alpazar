@@ -14,8 +14,9 @@ export const dynamicParams = true
 export function generateStaticParams() { return [] }
 
 export async function generateMetadata(
-  { params }: { params: { slug: string; qytet: string } },
+  props: { params: Promise<{ slug: string; qytet: string }> },
 ): Promise<Metadata> {
+  const params = await props.params
   const cat = await fetchCategoryBySlug(params.slug)
   const city = cityFromSlug(params.qytet)
   if (!cat || !city) return { title: 'Kategori — ALPAZAR' }
@@ -37,8 +38,9 @@ export async function generateMetadata(
 }
 
 export default async function CategoryCityPage(
-  { params }: { params: { slug: string; qytet: string } },
+  props: { params: Promise<{ slug: string; qytet: string }> },
 ) {
+  const params = await props.params
   const cat = await fetchCategoryBySlug(params.slug)
   const city = cityFromSlug(params.qytet)
   if (!cat || !city) notFound()
