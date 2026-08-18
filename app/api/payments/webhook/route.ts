@@ -5,14 +5,14 @@ import { getSupabaseAdmin } from '../../../../lib/supabase-admin'
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
-// ── Webhook i pagesave: HYRJA e leximit automatik ────────────────────────
-// FAIL-CLOSED: pa PAYMENT_WEBHOOK_SECRET nuk përpunohet asgjë (kurrë grant mbi
-// input të paverifikuar). Regjistrimi/dhurimi manual nga paneli mbetet gjithmonë
-// i disponueshëm si rrjetë sigurie.
+// Webhook i pagesave: HYRJA e leximit automatik.
+// FAIL-CLOSED: pa PAYMENT_WEBHOOK_SECRET nuk perpunohet asgje (kurre grant mbi
+// input te paverifikuar). Regjistrimi/dhurimi manual nga paneli mbetet gjithmone
+// i disponueshem si rrjete sigurie.
 //
-// Trupi normalizohet nga ofruesi (adapter) në formën:
+// Trupi normalizohet nga ofruesi (adapter) ne formen:
 //   { provider, provider_ref, user_id?|email?, plan_id?|plan_slug?, amount, currency, event_type? }
-// Nënshkrimi: header 'x-alpazar-signature' = HMAC-SHA256(rawBody, secret) në hex.
+// Nenshkrimi: header 'x-alpazar-signature' = HMAC-SHA256(rawBody, secret) ne hex.
 // Idempotenca dhe atomiciteti garantohen nga funksioni DB process_payment_event.
 
 function safeEqualHex(a: string, b: string): boolean {
@@ -29,7 +29,7 @@ function safeEqualHex(a: string, b: string): boolean {
 export async function POST(req: NextRequest) {
   const secret = process.env.PAYMENT_WEBHOOK_SECRET
   if (!secret) {
-    // Ende i palidhur me ofrues pagese — përgjigju fail-closed.
+    // Ende i palidhur me ofrues pagese - pergjigju fail-closed.
     return NextResponse.json({ error: 'not_configured' }, { status: 503 })
   }
 
@@ -56,8 +56,8 @@ export async function POST(req: NextRequest) {
   try {
     const db = getSupabaseAdmin()
 
-    // Zgjidh përdoruesin (user_id ose email). Nëse s'zgjidhet, process_payment_event
-    // e regjistron pagesën si 'review' (paraja nuk humbet).
+    // Zgjidh perdoruesin (user_id ose email). Nese s'zgjidhet, process_payment_event
+    // e regjistron pagesen si 'review' (paraja nuk humbet).
     let userId: string | null = body.user_id || null
     if (!userId && body.email) {
       const { data } = await db.from('profiles').select('id').eq('email', String(body.email)).maybeSingle()
@@ -83,11 +83,11 @@ export async function POST(req: NextRequest) {
     })
 
     if (error) {
-      // Gabim i papritur i DB -> 500, që ofruesi ta riprovojë webhook-un.
+      // Gabim i papritur i DB -> 500, qe ofruesi ta riprovoje webhook-un.
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
-    // ok / already / review / grant_failed = TË REGJISTRUARA -> 200 (mos riprovo;
-    // rrjeta e sigurisë reconcile_payments ose admini manual e trajton më pas).
+    // ok / already / review / grant_failed = TE REGJISTRUARA -> 200 (mos riprovo;
+    // rrjeta e sigurise reconcile_payments ose admini manual e trajton me pas).
     return NextResponse.json({ received: true, result: data }, { status: 200 })
   } catch (e: any) {
     return NextResponse.json({ error: String(e?.message || e) }, { status: 500 })
