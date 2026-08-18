@@ -17,6 +17,10 @@ on:
         description: 'Nje rresht per repo: owner/repo  ose  owner/repo|nendrejtoria|prefiks'
         required: true
         type: string
+      perjashtime:
+        description: 'Perjashtime skanimi te shqyrtuara: nje rresht — emri-i-skillit|arsyeja'
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -34,6 +38,7 @@ jobs:
       - name: Shkarko, skano dhe kopjo
         env:
           REPOS: ${{ inputs.repos }}
+          PERJASHTIME: ${{ inputs.perjashtime }}
         run: |
           python3 - <<'PY'
           import os, pathlib, re, shutil, subprocess
@@ -53,11 +58,23 @@ jobs:
           # (teste, .github, dokumentacion) NUK eshte pjese e tij.
           SKILL_DIRS = ('references', 'scripts', 'assets', 'templates')
 
+          # Skaneri eshte i trashe me qellim. Kur nje perputhje shqyrtohet me
+          # dore dhe del e pademshme (p.sh. dokumentim i nje env var qe e kerkon
+          # nje mjet i trete, jo yni), lejohet shprehimisht — dhe arsyeja mbetet
+          # e shkruar te BURIMI.md. Asgje nuk kalon ne heshtje.
+          EXC = {}
+          for raw in os.environ.get('PERJASHTIME', '').splitlines():
+              line = raw.strip()
+              if not line or line.startswith('#'):
+                  continue
+              k, _, why = line.partition('|')
+              EXC[k.strip()] = why.strip() or 'pa arsye te dhene'
+
           dst = pathlib.Path('.claude/skills')
           dst.mkdir(parents=True, exist_ok=True)
           existing = {d.name for d in dst.iterdir() if d.is_dir()}
 
-          report, provenance = [], []
+          report, provenance, waivers = [], [], []
 
           for raw in os.environ['REPOS'].splitlines():
               line = raw.strip()
@@ -90,18 +107,25 @@ jobs:
                   report.append(f"{src}: asnje SKILL.md")
                   continue
 
-              added, skipped, blocked = [], [], []
+              added, skipped, blocked, waived = [], [], [], []
               for skill in skills:
                   d = skill.parent
                   at_root = (d == root)
-                  name = src.split('/')[-1] if at_root else d.name
-                  if prefix:
-                      name = f"{prefix}-{name}"
+                  fallback = src.split('/')[-1] if at_root else d.name
 
                   head = skill.read_text(errors='replace')[:2000]
                   if not head.lstrip().startswith('---') or 'name:' not in head or 'description:' not in head:
-                      blocked.append(f"{name} (frontmatter)")
+                      blocked.append(f"{fallback} (frontmatter)")
                       continue
+
+                  # Drejtoria duhet te mbaje emrin e skillit: Claude Code e gjen
+                  # skillin nga drejtoria, jo nga frontmatter-i. Emri i repos-e
+                  # nuk perputhet gjithmone — 'one-skill-to-rule-them-all'
+                  # permban skillin 'task-observer'.
+                  m = re.search(r'^name:[ \t]*([A-Za-z0-9._-]+)[ \t]*$', head, re.M)
+                  name = m.group(1) if m else fallback
+                  if prefix:
+                      name = f"{prefix}-{name}"
                   if name in existing:
                       skipped.append(name)
                       continue
@@ -128,9 +152,12 @@ jobs:
                           m = re.search(pat, txt, re.I)
                           if m:
                               hits.append(f"{p.name} [{why}] {m.group(0)!r}")
-                  if hits:
+                  if hits and name not in EXC:
                       blocked.append(f"{name} (skanimi: {hits[0]})")
                       continue
+                  if hits:
+                      waived.append(name)
+                      waivers.append(f"`{name}` — {hits[0]} — lejuar: {EXC[name]}")
 
                   target = dst / name
                   target.mkdir(parents=True)
@@ -147,7 +174,8 @@ jobs:
                   f"{src} @ {sha[:7]}\n"
                   f"   shtuar   ({len(added)}): {', '.join(added) or '-'}\n"
                   f"   ekziston ({len(skipped)}): {', '.join(skipped) or '-'}\n"
-                  f"   bllokuar ({len(blocked)}): {'; '.join(blocked) or '-'}"
+                  f"   bllokuar ({len(blocked)}): {'; '.join(blocked) or '-'}\n"
+                  f"   lejuar   ({len(waived)}): {', '.join(waived) or '-'}"
               )
 
           f = dst / 'BURIMI.md'
@@ -162,6 +190,12 @@ jobs:
           for src, sha, sub in provenance:
               if sha not in txt:
                   txt += f"| `{src}` | `{sha}` | `{sub}` |\n"
+          if waivers:
+              if '## Perjashtime skanimi' not in txt:
+                  txt += '\n## Perjashtime skanimi te shqyrtuara\n\n'
+              for w in waivers:
+                  if w not in txt:
+                      txt += f"- {w}\n"
           f.write_text(txt)
 
           print('=' * 60)
@@ -185,4 +219,7 @@ jobs:
           git checkout -b "$BRANCH"
           git commit -m "skills: importo nga burime te verifikuara" -m "Pas skanimit per prompt-injection. Skills ekzistuese nuk u preken. Gjurma: .claude/skills/BURIMI.md"
           git push -u origin "$BRANCH"
-          gh pr create --base main --head "$BRANCH" --title "skills: importim nga burime te verifikuara" --body "Importim automatik pas skanimit per prompt-injection. Shih \`.claude/skills/BURIMI.md\`."
+          # `gh pr create` deshton gjithmone: token-i i Actions s'ka te drejte te
+          # hapi PR ("GitHub Actions is not permitted to create or approve pull
+          # requests"). Cdo run dilte i kuq vetem per kete. PR-ja hapet nga jashte.
+          echo "::notice::Dega u shty. Hape PR-ne ketu: https://github.com/${{ github.repository }}/compare/main...$BRANCH"
