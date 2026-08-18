@@ -43,6 +43,9 @@
 **Karta shpalljeje** (`ListingCard`):
 - Sfond `#fff`, `border: 1px solid #eee`, `border-radius: 14px`, `overflow: hidden`.
 - Foto sipër `aspect-ratio: 4/3`, `object-fit: cover`; placeholder emoji `📷` mbi `#f4f4f4`.
+- **Raporti i kartës:** foto/video ≈ **70%**, të dhëna ≈ **30%**. Titulli 1 rresht, çmim, vendndodhje·kohë.
+- **Posteri (shitësi) si overlay chip mbi foto** (poshtë-majtas), sipas modelit Instagram — jo rresht i veçantë poshtë, që të mos rritet trupi.
+- **Karta e biznesit = karta e shpalljes në madhësi** (i njëjti grid `minmax(150px,1fr)`, e njëjta `aspect-ratio: 4/3`, trup kompakt). Harmoni e detyrueshme.
 - Badge: "I ri" (jeshile `#1FA463`), "I përdorur" (`#555`), Premium `⭐` (verdhë `#F5C842`).
 - Hover: `box-shadow: 0 6px 18px rgba(0,0,0,.08)`, `transform: translateY(-2px)`, `transition .15s`.
 - Titull 2 rreshta (`-webkit-line-clamp: 2`), çmim kuqe 800, lokacion `📍` 11px `#999`.

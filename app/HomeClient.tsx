@@ -583,12 +583,12 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .listing-card:active{transform:scale(.97);}
         .card-img{flex:none;width:100%;aspect-ratio:4/3;position:relative;background:linear-gradient(135deg,#FBF7E8,#F2EAD0);overflow:hidden;display:flex;align-items:center;justify-content:center;}
         .card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;transition:transform .35s cubic-bezier(.2,.8,.2,1);}
-        .card-img i{font-size:28px;color:#d0c9a0;}
+        .card-img i{font-size:28px;color:#d0c9a0;}.card-seller-ov{position:absolute;left:6px;bottom:6px;display:flex;align-items:center;gap:5px;max-width:calc(100% - 12px);background:rgba(0,0,0,.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border-radius:999px;padding:2px 9px 2px 2px;z-index:2;cursor:pointer;}.card-seller-ov span{font-size:10px;color:#fff;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
         .badge-new{position:absolute;top:6px;left:6px;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;font-size:9px;padding:3px 7px;border-radius:999px;font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(230,51,18,.4);letter-spacing:.2px;}
         .badge-used{position:absolute;top:6px;left:6px;background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;font-size:9px;padding:3px 7px;border-radius:999px;font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(0,0,0,.3);letter-spacing:.2px;}
         .badge-premium{position:absolute;top:6px;right:6px;background:linear-gradient(135deg,#F8D24E,#F5C842);color:#111;font-size:9px;padding:3px 7px;border-radius:999px;font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(245,200,66,.5);}
         .card-body{flex:1 1 auto;padding:9px 10px 10px;display:flex;flex-direction:column;gap:4px;min-height:0;}
-        .card-title{font-size:13px;line-height:1.3;font-weight:700;color:#222;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;min-height:2.6em;}
+        .card-title{font-size:13px;line-height:1.3;font-weight:700;color:#222;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;min-height:1.3em;}
         .card-price{font-size:14px;font-weight:800;color:#C42B0F;}
         .card-meta{display:flex;align-items:center;justify-content:space-between;}
         .card-loc{font-size:11px;color:#6B6B6B;display:flex;align-items:center;gap:3px;}
@@ -908,6 +908,15 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                       {listing.condition === 'i_ri' && <span className="badge-new">I ri</span>}
                       {listing.condition === 'i_perdorur' && <span className="badge-used">I përdorur</span>}
                       {listing.is_premium && <span className="badge-premium" aria-label="Premium">⭐</span>}
+                      {(listing as any).author && (
+                        <div className="card-seller-ov" role="link" tabIndex={0}
+                          aria-label={`Profili i ${(listing as any).author.full_name || (listing as any).author.username || 'shitësit'}`}
+                          onClick={e => { e.stopPropagation(); go(`/u/${(listing as any).author.id}`) }}
+                          onKeyDown={e => { if (e.key === 'Enter') { e.stopPropagation(); go(`/u/${(listing as any).author.id}`) } }}>
+                          <Avatar src={(listing as any).author.avatar_url} name={(listing as any).author.full_name || (listing as any).author.username} type={(listing as any).author.is_premium ? 'premium' : 'user'} verified={((listing as any).author.trust_score ?? 0) >= 60} size={18} />
+                          <span>{(listing as any).author.full_name || (listing as any).author.username || 'Shitës'}</span>
+                        </div>
+                      )}
                     </div>
                     <div className="card-body">
                       <div className="card-title">{listing.title}</div>
@@ -919,27 +928,6 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                         </span>
                         <span style={{ fontSize: 11, color: '#6B6B6B', flexShrink: 0 }}>{mounted ? timeAgo(listing.created_at) : ''}</span>
                       </div>
-                      {(listing as any).author && (
-                        <div
-                          role="link"
-                          tabIndex={0}
-                          aria-label={`Profili i ${(listing as any).author.full_name || (listing as any).author.username || 'shitësit'}`}
-                          style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6, paddingTop: 6, borderTop: '1px solid #f0f0f0' }}
-                          onKeyDown={e => { if (e.key === 'Enter') { e.stopPropagation(); go(`/u/${(listing as any).author.id}`) } }}
-                          onClick={e => { e.stopPropagation(); go(`/u/${(listing as any).author.id}`) }}
-                        >
-                          <Avatar
-                            src={(listing as any).author.avatar_url}
-                            name={(listing as any).author.full_name || (listing as any).author.username}
-                            type={(listing as any).author.is_premium ? 'premium' : 'user'}
-                            verified={((listing as any).author.trust_score ?? 0) >= 60}
-                            size={20}
-                          />
-                          <span style={{ fontSize: 11, color: '#888', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                            {(listing as any).author.full_name || (listing as any).author.username || 'Shitës'}
-                          </span>
-                        </div>
-                      )}
                     </div>
                   </div>
                 ))
