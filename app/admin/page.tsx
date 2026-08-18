@@ -337,7 +337,7 @@ export default function Admin() {
       supabase.from('messages').select('*', { count: 'exact', head: true }).is('deleted_at', null),
       supabase.from('reports').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
       supabase.rpc('admin_list_subscriptions', { p_limit: 200 }),
-      supabase.from('payment_methods').select('*').order('sort_order'),
+      supabase.rpc('admin_list_payment_methods'),
       supabase.from('premium_requests')
         .select('*,profiles(full_name,username),payment_methods(name,type)').order('created_at', { ascending: false }).limit(100),
     ])
@@ -407,8 +407,8 @@ export default function Admin() {
   }
 
   async function toggleMethod(id: string, cur: boolean) {
-    const r = await callAdminAction('toggle_method', { id, active: !cur })
-    if (!r.ok) setPayMsg('Gabim: ' + (r.error || 'dështoi'))
+    const { data, error } = await supabase.rpc('admin_set_payment_method_active', { p_id: id, p_active: !cur })
+    if (error || (data as any)?.error) setPayMsg('Gabim: ' + (error?.message || (data as any)?.error))
     fetchAll()
   }
 
@@ -750,7 +750,7 @@ export default function Admin() {
                   <div className="card">
                     <div className="ct">Aktivizo / Çaktivizo / Redakto</div>
                     {methods.map((m: any) => (
-                      <div key={m.id} className="pm-r" style={{ cursor: 'pointer' }} onClick={() => setPmForm({ id: m.id, name: m.name, type: m.type, is_active: m.is_active, sort_order: m.sort_order ?? 0, details: m.details ?? '' })}>
+                      <div key={m.id} className="pm-r" style={{ cursor: 'pointer' }} onClick={() => setPmForm({ id: m.id, name: m.name, type: m.type, is_active: m.is_active, sort_order: m.sort_order ?? 0, details: m.description ?? '' })}>
                         <div className="pm-inf">
                           <strong>{m.name}</strong>
                           <span>{m.type}</span>
@@ -759,12 +759,12 @@ export default function Admin() {
                           <span role="switch" aria-checked={m.is_active} tabIndex={0} className={`tgl ${m.is_active ? 'tgl-on' : 'tgl-off'}`} onClick={e => { e.stopPropagation(); toggleMethod(m.id, m.is_active) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') toggleMethod(m.id, m.is_active) }}>
                             <span className="tdot" />
                           </span>
-                          <button type="button" className="btn btn-red" onClick={async e => { e.stopPropagation(); const { error } = await supabase.from('payment_methods').delete().eq('id',m.id); if (error) setPayMsg('Gabim: ' + error.message); fetchAll() }}>Fshi</button>
+                          <button type="button" className="btn btn-red" onClick={async e => { e.stopPropagation(); const { data, error } = await supabase.rpc('admin_delete_payment_method', { p_id: m.id }); if (error || (data as any)?.error) setPayMsg('Gabim: ' + (error?.message || (data as any)?.error)); fetchAll() }}>Fshi</button>
                         </div>
                       </div>
                     ))}
                     {methods.length === 0 && <p style={{ color:'#aaa', fontSize:12 }}>Nuk ka metoda pagese</p>}
-                    <button type="button" className="btn" style={{ marginTop: 12 }} onClick={() => setPmForm({ name: '', type: 'card', is_active: true, sort_order: methods.length, details: '' })}>
+                    <button type="button" className="btn" style={{ marginTop: 12 }} onClick={() => setPmForm({ name: '', type: 'paypal', is_active: true, sort_order: methods.length, details: '' })}>
                       <span aria-hidden="true">+</span> Shto metodë
                     </button>
                   </div>
@@ -781,9 +781,8 @@ export default function Admin() {
                         ))}
                         <div style={{ marginBottom:10 }}>
                           <label style={{ fontSize:11, fontWeight:600, color:'#555', display:'block', marginBottom:4 }}>Tipi</label>
-                          <select value={pmForm.type} onChange={e => setPmForm(f => f && ({ ...f, type: e.target.value }))} style={{ width:'100%', border:'1.5px solid #ddd', borderRadius:8, padding:'8px 10px', fontSize:13 }}>
-                            {['card','paypal','bank','mobile','wallet'].map(t => <option key={t} value={t}>{t}</option>)}
-                          </select>
+                          <input type="text" list="pm-types" value={pmForm.type} onChange={e => setPmForm(f => f && ({ ...f, type: e.target.value }))} placeholder="paypal, epara, easypay, paysera, card, bank..." style={{ width:'100%', border:'1.5px solid #ddd', borderRadius:8, padding:'8px 10px', fontSize:13, boxSizing:'border-box' }} />
+                          <datalist id="pm-types"><option value="paypal" /><option value="epara" /><option value="easypay" /><option value="paysera" /><option value="card" /><option value="bank" /><option value="mobile" /><option value="wallet" /></datalist>
                         </div>
                         <div style={{ marginBottom:10 }}>
                           <label style={{ fontSize:11, fontWeight:600, color:'#555', display:'block', marginBottom:4 }}>Rend ({pmForm.sort_order})</label>
@@ -796,12 +795,13 @@ export default function Admin() {
                         <div style={{ display:'flex', gap:8 }}>
                           <button type="button" className="btn" style={{ flex:1 }} onClick={async () => {
                             if (!pmForm.name.trim()) { setPayMsg('err:Emri është i detyrueshëm'); return }
-                            const payload = { name: pmForm.name.trim(), type: pmForm.type, is_active: pmForm.is_active, sort_order: pmForm.sort_order, details: pmForm.details.trim() }
-                            const { error } = pmForm.id
-                              ? await supabase.from('payment_methods').update(payload).eq('id', pmForm.id)
-                              : await supabase.from('payment_methods').insert(payload)
-                            if (error) setPayMsg('Gabim: ' + error.message)
-                            else { setPayMsg('✅ Ruajtur!'); setPmForm(null); fetchAll() }
+                            const { data: sv, error } = await supabase.rpc('admin_save_payment_method', { p_id: pmForm.id ?? null, p_name: pmForm.name.trim(), p_type: pmForm.type, p_description: pmForm.details.trim(), p_sort_order: pmForm.sort_order })
+                            const sid = (sv as any)?.id
+                            if (error || (sv as any)?.error) setPayMsg('Gabim: ' + (error?.message || (sv as any)?.error))
+                            else {
+                              if (sid) await supabase.rpc('admin_set_payment_method_active', { p_id: sid, p_active: pmForm.is_active })
+                              setPayMsg('✅ Ruajtur!'); setPmForm(null); fetchAll()
+                            }
                           }}>Ruaj</button>
                           <button type="button" className="btn" style={{ flex:1, background:'#f5f5f5', color:'#111' }} onClick={() => setPmForm(null)}>Anulo</button>
                         </div>
