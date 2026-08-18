@@ -1,6 +1,6 @@
 # Mjetet e Alpazar-it — audit
 
-Gjendja më 17 gusht 2026.
+Gjendja më 18 gusht 2026, e numëruar nga `.claude/skills/`, jo e kujtuar.
 
 ---
 
@@ -8,26 +8,34 @@ Gjendja më 17 gusht 2026.
 
 | Shtresa | Sasia | Ku jeton |
 |---|---|---|
-| Skills | **106** | `.claude/skills/` — në repo, pra vlejnë në **çdo** sesion |
+| Skills | **110** | `.claude/skills/` — në repo, pra vlejnë në **çdo** sesion |
 | Servera MCP | 7 | `.mcp.json` |
 | Plugin-e | 7 | `.claude/settings.json` |
-| Workflow-e | 12 | `.github/workflows/` |
+| Workflow-e | 14 | `.github/workflows/` |
 | Konektorë Cowork | ~25 | claude.ai → Settings → Connectors |
 
 ### Skills sipas burimit
 
 | Burimi | Sa | Për çfarë |
 |---|---|---|
+| `garrytan/gstack` | 59 | Claude si ekip inxhinierik: `/autoplan`, `/qa`, `/ship`, `/retro`, `/cso`, `/browse` |
 | `arnabbagxd/brand-building-skills` | 29 | brand, audiencë, Meta/Google ads, email, WhatsApp, UGC, ASO |
-| `garrytan/gstack` | 23 | Claude si ekip inxhinierik: `/autoplan`, `/qa`, `/ship`, `/retro` |
-| `emilkowalski/skills` | ~10 | animacion, polish (autori i Sonner dhe Vaul) |
-| `usestrix/strix` | 2 | **pentest dhe rregullim dobesish** |
+| `emilkowalski/skills` | 10 | animacion, polish (autori i Sonner dhe Vaul) |
+| `usestrix/strix` | 4 | **pentest dhe rregullim dobesish** |
 | `billhector/design-skills` | 2 | design-extractor, design-auditor |
 | `Bomx/distribb-skill` | 2 | SEO — kërkon `DISTRIBB_API_KEY` |
 | ui-ux-pro-max, ui-extractor, design-system-extraction, task-observer | 4 | dizajn + meta-skill |
 | caveman/cavecrew | 7 | vijnë me mjedisin, jo me repon |
 
 Burimet dhe commit-et e sakta: **`.claude/skills/BURIMI.md`**.
+
+> **106 ishte gabim, dhe jo i vetmi.** Numri i vjetër numëronte `alpha` dhe
+> `beta` — *fixture testimi* të `garrytan/gstack`. Njëkohësisht **13 skills
+> mungonin** pa u vënë re: `task-observer` dhe `distribb` (drejtoria merrte
+> emrin e repos), plus 11 që skaneri i kishte bllokuar. Të 11 u lexuan në burim
+> dhe rezultuan **pozitivë të rremë** — nëntë prej tyre janë dokumentim
+> *mbrojtës* (`cso` bllokohej sepse përmban të njëjtën listë modelesh që përdor
+> skaneri ynë). Arsyet janë të shkruara te `BURIMI.md`.
 
 ---
 
@@ -62,7 +70,7 @@ dhe nuk duhet të të kërkojë kurrë kode ose token-a.
 
 ## 4. Kufiri i dobishmerise — lexoje këtë para se të shtosh të tjera
 
-Brenda një dite kaluam nga 7 skills në 106. Kjo ka një çmim që nuk duket:
+Brenda një dite kaluam nga 7 skills në 110. Kjo ka një çmim që nuk duket:
 
 1. **Konteksti është i fundmë.** Çdo skill i shtuar merr hapësirë nga përshkrimet
    që agjenti lexon. Në njej numer te caktuar, shtimi fillon të **dëmtojë**
@@ -70,8 +78,14 @@ Brenda një dite kaluam nga 7 skills në 106. Kjo ka një çmim që nuk duket:
 2. **Siperfaqja e sulmit.** Një skill është skedar instruksionesh që agjenti i
    ndjek. 310 skedarë nga 8 autorë hynën në një PR të vetëm. Skanimi kaloi
    pastër, por skanimi nuk është garanci.
-3. **Mjeti nuk është puna.** Asnjë nga 106 skills-et nuk shkruan një rresht kodi
+3. **Mjeti nuk është puna.** Asnjë nga 110 skills-et nuk shkruan një rresht kodi
    vetë.
+4. **Instalimi nuk quhet i kryer derisa të shohësh drejtorinë.** Trupi i një
+   PR-je nuk është provë; `ls .claude/skills/` është. Ky rregull lindi nga një
+   raportim i rremë timi.
+5. **Raporti i një xhirimi lexohet.** Instaluesi i printonte bllokimet që në
+   ditën e parë. Askush s'i lexoi — prandaj 11 skills qëndruan jashtë pa u
+   vënë re.
 
 **Boshllëqet që kanë mbetur nuk mbyllen me skill:**
 
@@ -92,6 +106,21 @@ Brenda një dite kaluam nga 7 skills në 106. Kjo ka një çmim që nuk duket:
 owner/repo
 owner/repo|nendrejtoria|prefiks
 ```
-Gjen çdo `SKILL.md` rekursivisht, skanon për prompt-injection / `service_role` /
+Gjen çdo `SKILL.md` rekursivisht, e emërton drejtorinë sipas `name:` te
+frontmatter-i (jo sipas repos), skanon për prompt-injection / `service_role` /
 emra sekretesh / `curl | sh` / çelësa SSH, **ndalon** nëse gjen, nuk mbishkruan
-kurrë një skill ekzistues, dhe hap PR me dege unike për çdo run.
+kurrë një skill ekzistues, dhe shtyn një degë unike për çdo run.
+
+Dy fusha të tjera:
+
+- `perjashtime` — `emri|arsyeja`: një përputhje e skanerit e **shqyrtuar me
+  dorë** dhe e gjetur e padëmshme. Arsyeja shkruhet te `BURIMI.md`; asgjë nuk
+  kalon në heshtje.
+- `injoro` — `emri|arsyeja`: emra që nuk instalohen kurrë (fixture testimi).
+
+PR-në e hap **ti ose një mjet i jashtëm**: token-i i GitHub Actions nuk ka të
+drejtë të hapë PR, ndaj `gh pr create` dështonte gjithmonë dhe e nxirrte run-in
+të kuq edhe kur puna kryhej. Run-i tani printon URL-në e krahasimit.
+
+**Lexoje raportin e run-it.** Aty shkruhen katër numra për çdo burim: sa u
+shtuan, sa ekzistonin, sa u bllokuan, sa u lejuan. Bllokimet janë puna që mbetet.
