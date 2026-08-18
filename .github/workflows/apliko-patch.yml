@@ -3,25 +3,25 @@ name: Apliko nje patch te verifikuar
 # Perse ekziston: skedaret e medhenj te kesaj repoje (ListingPageClient.tsx 78 KB,
 # HomeClient.tsx 54 KB) nuk kalojne dot te plote nga sesioni i agjentit.
 #
-# Provimi i pare e kaloi diferencen si `workflow_dispatch` input — dhe ngarkesa
-# u demtua ne rruge: `base64: invalid input`. Nje varg 22 000 karakteresh i
-# kaluar me dore prishet pa u vene re.
+# Dy provat e para deshtuan te i njejti mur: kanali i shkrimit e pret ngarkesen
+# rreth 19,4 KB. E para si `workflow_dispatch` input (`base64: invalid input`),
+# e dyta si nje skedar i vetem (mberriti 19 429 bajt nga 22 256).
 #
-# Tani patch-i vjen si SKEDAR i komituar (`.github/patches/*.patch.gz`).
-# Ngarkimi permes API-t te GitHub-it kthen SHA-ne e blob-it, e cila krahasohet
-# me ate te llogaritur lokalisht — pra transferi verifikohet para se te niset
-# workflow-u. Ketu verifikohet edhe njehere me `sha256`.
+# Zgjidhja: patch-i vjen i ndare ne pjese TEKSTI nen ate kufi, te bashkuara
+# ketu. Rreshtat qe nisin me `#` jane shenime dhe hiqen. Shuma `sha256` eshte
+# porta: nese ndonje pjese mberrin e cunguar, hapi bie me nje mesazh te qarte
+# ne vend qe patch-i te aplikohet gjysmak.
 #
-# Sekuenca: verifiko shumen → apliko → `tsc` → teste → `next build` → dege e re.
+# Sekuenca: bashko → verifiko → apliko → `tsc` → teste → `next build` → dege.
 # Nese ndonje porte bie, dega nuk krijohet fare.
 
 on:
   workflow_dispatch:
     inputs:
-      skedari:
-        description: 'Shtegu i patch-it te ngjeshur'
+      pjeset:
+        description: 'Model shell-i qe kap pjeset, sipas radhes'
         required: true
-        default: '.github/patches/interlink.patch.gz'
+        default: '.github/patches/p-*.txt'
       sha256:
         description: 'sha256 i patch-it TE DEKOMPRESUAR'
         required: true
@@ -50,9 +50,12 @@ jobs:
           node-version: 20
           cache: npm
 
-      - name: Dekompreso dhe verifiko shumen
+      - name: Bashko pjeset dhe verifiko shumen
         run: |
-          gunzip -c "${{ inputs.skedari }}" > /tmp/nderhyrje.patch
+          echo "Pjeset e gjetura:"
+          ls -l ${{ inputs.pjeset }}
+          cat ${{ inputs.pjeset }} | grep -v '^#' | tr -d '\n' \
+            | base64 -d | gunzip -c > /tmp/nderhyrje.patch
           echo "Madhesia e patch-it: $(wc -c < /tmp/nderhyrje.patch) bajt"
           echo "${{ inputs.sha256 }}  /tmp/nderhyrje.patch" | sha256sum -c -
 
@@ -81,9 +84,8 @@ jobs:
           git config user.name  'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           git checkout -b "${{ inputs.dega }}"
-          # Patch-i eshte nje mjet transporti, jo pjese e kodit — hiqet qe te mos
-          # mbetet ne dege.
-          git rm -q "${{ inputs.skedari }}"
+          # Pjeset jane mjet transporti, jo kod — hiqen qe te mos mbeten ne dege.
+          git rm -q ${{ inputs.pjeset }}
           git add -A
           git commit -m "${{ inputs.mesazhi }}"
           git push -u origin "${{ inputs.dega }}"
