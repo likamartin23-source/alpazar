@@ -3,10 +3,14 @@
 export const dynamic = 'force-dynamic'
 
 import { useState, useEffect } from 'react'
+import { useParams } from 'next/navigation'
 import { supabase } from '../../../../lib/supabase'
 import { MapPicker } from '../../../components/MapPicker'
 
-export default function BiznesEditPage({ params }: { params: { id: string } }) {
+export default function BiznesEditPage() {
+  // Ne Next 15 nje faqe klient e merr `params` si Promise. Hook-u e jep
+  // sinkron dhe punon njesoj ne 14 e ne 15.
+  const params = useParams() as { id: string }
   const [loading, setLoading]   = useState(true)
   const [saving, setSaving]     = useState(false)
   const [uploading, setUploading] = useState(false)

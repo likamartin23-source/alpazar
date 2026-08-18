@@ -7,15 +7,16 @@ import './ui-refine.css'
 import { SITE_URL } from '../lib/siteConfig'
 import { LanguageProvider } from '../lib/i18n'
 import { SiteFooter } from './components/SiteFooter'
+import {
+  AiFloat, UpdatePrompt, NotificationToast,
+  MaintenanceBanner, AnnouncementBar,
+  CookieBanner as CookieBannerDyn,
+} from './components/ChromeClient'
 
-const AiFloat               = dynamic(() => import('./components/AiFloat'),            { ssr: false })
-const UpdatePrompt          = dynamic(() => import('./components/UpdatePrompt'),       { ssr: false })
-const AlpazarProviderDyn    = dynamic(() => import('../lib/context').then(m => ({ default: m.AlpazarProvider })))
-const NotificationToast     = dynamic(() => import('./components/NotificationToast').then(m => ({ default: m.NotificationToast })), { ssr: false })
-const MaintenanceBanner     = dynamic(() => import('./components/MaintenanceBanner').then(m => ({ default: m.MaintenanceBanner })), { ssr: false })
-const AnnouncementBar       = dynamic(() => import('./components/MaintenanceBanner').then(m => ({ default: m.AnnouncementBar })), { ssr: false })
+// `ssr: false` nuk lejohet ne nje Server Component (Next 15) — keto rrine te
+// ./components/ChromeClient, qe eshte modul klient. Sjellja s'ndryshon.
+const AlpazarProviderDyn     = dynamic(() => import('../lib/context').then(m => ({ default: m.AlpazarProvider })))
 const GlobalErrorBoundaryDyn = dynamic(() => import('../lib/error-handler').then(m => ({ default: m.GlobalErrorBoundary })))
-const CookieBannerDyn        = dynamic(() => import('./components/CookieBanner').then(m => ({ default: m.CookieBanner })), { ssr: false })
 const AgeGateDyn             = dynamic(() => import('./components/AgeGate').then(m => ({ default: m.AgeGate })))
 
 export const metadata: Metadata = {

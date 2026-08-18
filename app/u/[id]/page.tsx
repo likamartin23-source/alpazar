@@ -6,7 +6,8 @@ import { SITE_URL } from '../../../lib/siteConfig'
 
 export const dynamic = 'force-dynamic'
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const params = await props.params
   const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
   const { data: p } = await sb
     .from('profiles')
@@ -40,6 +41,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   }
 }
 
-export default function UserProfilePage({ params }: { params: { id: string } }) {
+export default async function UserProfilePage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return <UserProfileClient params={params} />
 }
