@@ -24,3 +24,7 @@ prompt-injection dhe per kerkesa sekretesh perpara kopjimit.
 | `maiconlara/design-system-extraction` | `9e84ba73b6aed6a5efe15bcdfd1276f9da48e189` | `.` |
 | `Bomx/distribb-skill` | `70f242be355665b903cf5ad5143ded2d63a7fdf3` | `.` |
 | `usestrix/strix` | `85513391305171ecc6faffe03da4a8bda5e3febb` | `skills` |
+
+## Perjashtime skanimi te shqyrtuara
+
+- `distribb` — youtube-motion-video-playbook.md [emer sekreti] 'OPENAI_API_KEY' — lejuar: references/youtube-motion-video-playbook.md dokumenton celesat qe kerkon nje skill i trete (super-video-maker): OPENAI_API_KEY, FALAI_API_KEY, ELEVENLABS_API_KEY. Nuk lexon asnje sekret tonin. Shqyrtuar me dore.
