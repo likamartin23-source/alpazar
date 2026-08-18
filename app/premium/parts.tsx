@@ -89,7 +89,14 @@ export function PayBox({ methods, methodId, setMethodId, sel, busy, planId, owne
     <div className="card">
       <div className="sec-t">Metoda e pagesës</div>
       {methods.length === 0 && <div className="muted">Asnjë metodë aktive. Kontakto administratën.</div>}
-      {methods.map((m: any) => (
+      {methods.map((m: any) => m.is_active === false ? (
+        <div key={m.id} className="pm" aria-disabled="true" title="Përkohësisht e padisponueshme"
+          style={{ opacity: .55, cursor: 'not-allowed', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <i className={`ti ti-${m.type === 'card' ? 'credit-card' : m.type === 'paypal' ? 'brand-paypal' : m.type === 'mobile' ? 'device-mobile' : m.type === 'bank' ? 'building-bank' : 'wallet'}`} aria-hidden="true" />
+          {m.name}
+          <span style={{ marginLeft: 'auto', fontSize: 10.5, fontWeight: 800, color: '#9a6b00', background: '#FFF3D6', border: '1px solid #FFE082', borderRadius: 8, padding: '2px 8px', whiteSpace: 'nowrap' }}>Përkohësisht e padisponueshme</span>
+        </div>
+      ) : (
         <button key={m.id} type="button" aria-pressed={methodId === m.id}
           className={`pm ${methodId === m.id ? 'on' : ''}`} onClick={() => setMethodId(m.id)}>
           <i className={`ti ti-${m.type === 'card' ? 'credit-card' : m.type === 'paypal' ? 'brand-paypal' : m.type === 'mobile' ? 'device-mobile' : m.type === 'bank' ? 'building-bank' : 'wallet'}`} aria-hidden="true" />
