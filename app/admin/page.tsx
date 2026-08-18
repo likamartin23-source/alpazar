@@ -301,6 +301,14 @@ export default function Admin() {
     }, () => setPerms([]))
   }, [authChecked])
 
+  // PIN i panelit i çaktivizuar përkohësisht nga admini (app_config.admin_pin_disabled='true').
+  // Aksesi mbetet i mbrojtur nga sesioni + is_admin + MFA — PIN-i ishte shtresa e 4-t e tepërt.
+  useEffect(() => {
+    if (!authChecked) return
+    supabase.from('app_config').select('value').eq('key', 'admin_pin_disabled').maybeSingle()
+      .then(({ data }) => { if ((data as any)?.value === 'true') setAdminUnlocked(true) })
+  }, [authChecked])
+
   useEffect(() => {
     if (!authChecked) return
     supabase.rpc('admin_trends', { p_days: trendDays })
