@@ -104,7 +104,7 @@ Deno.serve(async (req: Request) => {
           if (e1) return { ok: false, error: e1.message }
 
           if (p.seller_id) {
-            const email = await setting('company_email', 'info@alpazar.al')
+            const email = await setting('company_email', 'alpazarsuport@gmail.com')
             await db.from('notifications').insert({
               user_id: p.seller_id,
               type: 'listing_removed',

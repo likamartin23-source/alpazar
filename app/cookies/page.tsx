@@ -152,7 +152,7 @@ export default function Cookies() {
 
           <h2>7. Kontakti dhe Ankesat</h2>
           <p>Pyetje rreth cookie-ve dhe privatësisë:<br />
-          <strong>privacy@alpazar.al</strong> · Alpazar, Tiranë, Shqipëri</p>
+          <strong>alpazarsuport@gmail.com</strong> · Alpazar, Tiranë, Shqipëri</p>
           <p>Ankesa te autoriteti mbikëqyrës:<br />
           <strong>Komisioneri për Mbrojtjen e të Dhënave Personale</strong><br />
           Rruga "Abdi Toptani", Nr. 2, Tiranë · <strong>www.idp.al</strong></p>

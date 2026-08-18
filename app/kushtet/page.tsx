@@ -65,7 +65,7 @@ export default function Kushtet() {
             <li>Shërbime mashtruese ose shërbime me natyrë seksuale</li>
             <li>Çdo artikull ose shërbim i ndaluar me ligjet e Republikës së Shqipërisë</li>
           </ul>
-          <div className="note">Raportimi i shpalljeve të dyshimta bëhet me butonin "Raporto" ose me email tek support@alpazar.al. Shpalljet ilegale i raportohen autoriteteve kompetente.</div>
+          <div className="note">Raportimi i shpalljeve të dyshimta bëhet me butonin "Raporto" ose me email tek alpazarsuport@gmail.com. Shpalljet ilegale i raportohen autoriteteve kompetente.</div>
 
           <h2>5-a. Mbrojtja e Fëmijëve dhe Raportimi i Shkeljeve</h2>
           <p>Alpazar zbaton tolerancë zero ndaj çdo përmbajtjeje që dëmton ose shfrytëzon fëmijët:</p>
@@ -102,7 +102,7 @@ export default function Kushtet() {
           <p>Alpazar njofton ndryshimet e rëndësishme të kushteve të paktën 30 ditë para hyrjes në fuqi, me email dhe njoftim brenda platformës. Vazhdimi i përdorimit pas datës efektive nënkupton pranimin e plotë të kushteve të reja.</p>
 
           <h2>13. Kontakti Ligjor</h2>
-          <p>Pyetje ligjore dhe ankesa: <strong>support@alpazar.al</strong><br />Alpazar · Tiranë, Shqipëri</p>
+          <p>Pyetje ligjore dhe ankesa: <strong>alpazarsuport@gmail.com</strong><br />Alpazar · Tiranë, Shqipëri</p>
         </div>
         <div className="ftr">
           <a href="/privatesia" style={LS}>Privatësia</a>

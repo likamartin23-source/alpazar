@@ -48,8 +48,8 @@ export default function Privatesia() {
           <h2>1. Identiteti dhe Kontakti i Kontrolluesit</h2>
           <p><strong>Kontrolluesi i të dhënave:</strong> Alpazar<br />
           <strong>Adresa:</strong> Tiranë, Shqipëri<br />
-          <strong>Email kontakti (DPO/Privatësi):</strong> privacy@alpazar.al<br />
-          <strong>Email i përgjithshëm:</strong> support@alpazar.al</p>
+          <strong>Email kontakti (DPO/Privatësi):</strong> alpazarsuport@gmail.com<br />
+          <strong>Email i përgjithshëm:</strong> alpazarsuport@gmail.com</p>
 
           <h2>2. Kategoritë e të Dhënave dhe Qëllimi i Përpunimit</h2>
           <p>Përpunojmë kategorinë minimale të nevojshme të të dhënave personale. Tabela më poshtë shpjegon çdo kategori, qëllimin dhe bazën ligjore:</p>
@@ -153,7 +153,7 @@ export default function Privatesia() {
               <li><strong>Tërhiqni konsentimin</strong> — pa pasoja negative, në çdo kohë (Art. 7.3)</li>
             </ul>
           </div>
-          <p>Ushtroni të drejtat tuaja duke dërguar email tek <strong>privacy@alpazar.al</strong> me subjekt "Kërkesë Privatësi". Përgjigjet jepen brenda <strong>30 ditëve</strong> (ose 90 ditë nëse kompleksiteti e kërkon, me njoftim).</p>
+          <p>Ushtroni të drejtat tuaja duke dërguar email tek <strong>alpazarsuport@gmail.com</strong> me subjekt "Kërkesë Privatësi". Përgjigjet jepen brenda <strong>30 ditëve</strong> (ose 90 ditë nëse kompleksiteti e kërkon, me njoftim).</p>
           <p>Nëse nuk jeni të kënaqur me përgjigjen, keni të drejtë të paraqisni ankesë tek:</p>
           <p className="law"><strong>Komisioneri për Mbrojtjen e të Dhënave Personale (IDP)</strong><br />
           Adresa: Rruga "Abdi Toptani", Nr. 2, Tiranë · Tel: +355 4 2235996 · www.idp.al</p>
@@ -167,8 +167,8 @@ export default function Privatesia() {
 
           <h2>10. Kontakti për Privatësinë</h2>
           <p>
-            <strong>Email privatësi (DPO):</strong> privacy@alpazar.al<br />
-            <strong>Email i përgjithshëm:</strong> support@alpazar.al<br />
+            <strong>Email privatësi (DPO):</strong> alpazarsuport@gmail.com<br />
+            <strong>Email i përgjithshëm:</strong> alpazarsuport@gmail.com<br />
             <strong>Adresa:</strong> Alpazar · Tiranë, Shqipëri
           </p>
         </div>
