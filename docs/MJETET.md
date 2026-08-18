@@ -9,7 +9,7 @@ Gjendja më 18 gusht 2026, e numëruar dhe e matur — jo e kujtuar.
 | Shtresa | Sasia | Ku jeton |
 |---|---|---|
 | Skills | **110** | `.claude/skills/` — në repo, pra vlejnë në **çdo** sesion |
-| Servera MCP | 7 | `.mcp.json` |
+| Servera MCP | 4 | `.mcp.json` — ishin 7; tre ishin dublikatë konektorësh |
 | Plugin-e | 7 | `.claude/settings.json` |
 | Workflow-e | 14 | `.github/workflows/` |
 | Next.js | **15.5** | ishte 14 (EOL) deri më 18 gusht |
@@ -62,27 +62,36 @@ Këto nuk hyjnë dot te `.claude/skills/` — janë programe që xhirojnë te ti
 | **Google Search Console** | Ndryshuam sitemap-in, `robots.txt` dhe `lastmod` — dhe s'kemi **asnjë** matës nëse funksionoi. Ky është boshllëku #1. |
 | **Facebook + Instagram** | Kanali ku jeton tregu shqiptar; u shtuan 29 skills marketingu që pa to rrinë bosh |
 | **Semrush** | I lidhur, por çdo thirrje kërkon miratim interaktiv → zero volume kyword-esh shqip |
-| `TAVILY_API_KEY`, `EXA_API_KEY` | `.mcp.json` i pret nga mjedisi |
+| **Allowlist-i i rrjetit** | Baza e prodhimit është e paarritshme nga sesionet e largëta — shih [`RRJETI.md`](RRJETI.md) |
 
 OAuth bëhet **vetëm nga shfletuesi yt**. Një sesion i larguët nuk e kryen dot
 dhe nuk duhet të të kërkojë kurrë kode ose token-a.
 
-### Servera MCP: i deklaruar ≠ i lidhur
+### Rrjeti: i deklaruar ≠ i arritshëm
 
-`.mcp.json` liston 7 servera. Nga brenda një sesioni të largët, tre prej tyre
-**nuk arrijnë dot te hosti i vet** — jo për mungesë çelësi, por sepse rrjeti i
-mjedisit i bllokon:
+Nga një sesion i largët, **gjithçka përveç GitHub-it dhe regjistrave të paketave
+është e bllokuar** — përfshirë **bazën tonë të prodhimit**. Mjedisi rri në
+nivelin **Trusted**, dhe asnjë nga hostet tanë nuk është në listën e
+parazgjedhur:
 
-| Server | Hosti | Gjendja e matur |
-|---|---|---|
-| exa | `api.exa.ai` | `403 Host not in allowlist` |
-| tavily | `api.tavily.com` | `403` |
-| context7 | `context7.com` | `fetch failed` |
-| omniroute | `localhost:20128` | s'përgjigjet — gateway lokal, ekziston vetëm te ti |
+| Hosti | Gjendja |
+|---|---|
+| `sopafwfkrxpcdaljddoh.supabase.co` | ❌ baza e prodhimit, e paarritshme |
+| `alpazar.vercel.app` | ❌ |
+| `*.ingest.de.sentry.io` | ❌ Sentry, gjatë build dhe runtime |
+| `api.cloudinary.com`, `api.brevo.com`, `api.resend.com` | ❌ |
+| `nominatim.openstreetmap.org` | ❌ |
 
-Zgjidhja nuk është çelës: te **Claude Code on the web → environment → network
-policy** shtohen hostet. Deri atëherë këto tre janë të pafuqishëm në çdo sesion
-të largët, ndërsa te makina jote punojnë normalisht.
+Nuk është mungesë çelësi dhe **nuk rregullohet dot nga kodi**: gateway-i kthen
+403 në CONNECT sipas politikës së mjedisit. Rregullohet te **claude.ai → Code →
+Environments → Network access → Custom**.
+
+Lista e saktë për t'u ngjitur, hapat, dhe arsyeja pse jo thjesht **Full**:
+**[`docs/RRJETI.md`](RRJETI.md)**. Matet sërish me `bash scripts/rrjeti.sh`.
+
+`exa`, `tavily` dhe `context7` u hoqën nga `.mcp.json`: ishin dublikatë të
+konektorëve të claude.ai — dhe trafiku i një konektori kalon nga serverat e
+Anthropic-ut, jo nga rrjeti i sesionit, ndaj punon pa prekur fare allowlist-in.
 
 ---
 
