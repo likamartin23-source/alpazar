@@ -110,7 +110,7 @@ export function PremiumUpsellModal({
             ['building-store', 'Biznes online'],
             ['infinity', 'Shpallje ∞'],
             ['shield-check', 'Badge ✓'],
-            ['photo', 'Deri 20 foto'],
+            ['photo', 'Foto pa limit'],
             ['star', 'Prioritet listimi'],
             ['chart-bar', 'Statistika live'],
           ].map(([icon, text]) => (
