@@ -123,3 +123,27 @@ Deri atehere `fiscal_status='not_required'` dhe asgje nuk prishet.
   pyetje, ato jane nje ekran.
 - **Cdo veprim shkaterrues me arsye te detyrueshme dhe gjurme.**
 - **Mos e zgjidh me kod ate qe zgjidhet me konfigurim.**
+
+---
+
+## 7. Skills — gjeji perpara se te nisesh
+
+Repoja ka **110 skills** te `.claude/skills/`. Nje skill qe nuk gjendet eshte
+nje skill qe nuk ekziston: perputhja me pershkrim vetvetiu deshton pikerisht
+kur je i perqendruar te detyra.
+
+1. **Ne fillim te cdo sesioni pune** — cdo nderveprim ku do te perdoresh mjete
+   dhe do te prodhosh dicka — thirr **`task-observer`** para se te nisesh.
+   Ai kap friksionin dhe mesimet gjate punes; te thirrur ne fund, ato humbasin.
+2. **Perpara se te shkruash kod** shiko indeksin qe printon
+   `.claude/hooks/session-start.sh` dhe pyet: a e mbulon nje skill kete detyre?
+   Nese po, thirre. Nese jo, vazhdo — mos e detyro nje skill qe nuk pershtatet.
+3. **Kur ngarkon nje skill**, kontrollo regjistrin e vezhgimeve per shenime
+   OPEN te lidhura me te dhe zbatoji, edhe nese skedari i skillit nuk eshte
+   perditesuar ende.
+4. **Mos e lidh aktivizimin permes nje skilli tjeter.** Ngarkoji nga
+   konfigurimi, te pavarur: nje zinxhir i keputur i heshton te gjithe.
+
+Aktivizimi eshte i lidhur ne dy vende, jo ne nje: kjo pjese e CLAUDE.md dhe
+hook-u `SessionStart` te `.claude/settings.json`. I pari mbijeton kompaktimin
+e kontekstit, i dyti e printon listen edhe kur CLAUDE.md nuk lexohet.
