@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { uploadImages, UploadProgress } from '../../../lib/uploadImages'
 import { useListingAI } from './useListingAI'
@@ -14,6 +14,7 @@ import { SITE_URL } from '../../../lib/siteConfig'
 export default function NewListing() {
   const [user, setUser] = useState<any>(null)
   const [categories, setCategories] = useState<any[]>([])
+  const [myBusinesses, setMyBusinesses] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [msg, setMsg] = useState('')
   const [form, setForm] = useState({
@@ -23,6 +24,7 @@ export default function NewListing() {
     currency: 'ALL',
     condition: '',
     category_id: '',
+    business_id: '',
     city: '',
     images: [] as string[],
     latitude: null as number | null,
@@ -44,6 +46,13 @@ export default function NewListing() {
   const freeLimit = vid.maxListings < 0 ? Number.POSITIVE_INFINITY : vid.maxListings
 
   useListingBoot({ setUser, setCategories, setMyListingCount, setForm, setDraftRestored, imagePreviews, form, isDirty })
+
+  useEffect(() => {
+    const uid = user?.id
+    if (!uid) return
+    supabase.from('businesses').select('id,name').eq('owner_id', uid).order('name')
+      .then(({ data }) => setMyBusinesses(data || []))
+  }, [user?.id])
 
   function set(k: string, v: string) { setIsDirty(true); setForm(f => ({ ...f, [k]: v })) }
 
@@ -107,6 +116,7 @@ export default function NewListing() {
         currency: form.currency,
         condition: form.condition || null,
         category_id: form.category_id,
+        business_id: form.business_id || null,
         city: form.city,
         images: uploadedUrls,
         videos,
@@ -145,5 +155,5 @@ export default function NewListing() {
 
   const [mt, mm] = msg.split(/:(.+)/)
 
-  return <NewListingView p={{ form, set, setForm, msg, mt, mm, uploadProgress, vid, handleImages, imagePreviews, maxImages, categories, catLoading, catSuggested, suggestCategory, priceLoading, priceSuggestion, suggestPrice, descLoading, generateDescription, loading, submit, draftRestored, setDraftRestored, myListingCount, freeLimit, showUpsell }} />
+  return <NewListingView p={{ form, set, setForm, msg, mt, mm, uploadProgress, vid, handleImages, imagePreviews, maxImages, categories, catLoading, catSuggested, suggestCategory, priceLoading, priceSuggestion, suggestPrice, descLoading, generateDescription, loading, submit, draftRestored, setDraftRestored, myListingCount, freeLimit, showUpsell, myBusinesses }} />
 }
