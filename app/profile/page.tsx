@@ -351,7 +351,7 @@ export default function ProfilePage() {
     const { data, error } = await supabase
       .from('listings').update({ is_active: false }).eq('id', id).select('id')
     if (error || !data || data.length === 0) {
-      setListErr(error?.message || 'Nuk u fshi dot shpallja. Provo sërish ose kontakto support@alpazar.al.')
+      setListErr(error?.message || 'Nuk u fshi dot shpallja. Provo sërish ose kontakto alpazarsuport@gmail.com.')
       return
     }
     setMyListings(ls => ls.filter(l => l.id !== id))

@@ -66,7 +66,7 @@ export const FAQ: Array<{ keys: string[]; answer: string }> = [
   },
   {
     keys: ['problem', 'ndihmë', 'nuk funksionon', 'gabim', 'error', 'support'],
-    answer: 'Për çdo problem: kontakto **support@alpazar.al** ose raporto shpalljen me butonin "Raporto" në fund të faqes. 🆘',
+    answer: 'Për çdo problem: kontakto **alpazarsuport@gmail.com** ose raporto shpalljen me butonin "Raporto" në fund të faqes. 🆘',
   },
 ]
 
@@ -106,14 +106,14 @@ Planet Premium janë te **/premium**. Emrat, çmimet dhe limitet vijnë LIVE te 
 - Mosha minimale **16+**. Takohu në vend publik, mos dërgo para paraprakisht.
 
 ## Kujdesi ndaj klientit (ji empatik — dëgjo, trego mirëkuptim, jep zgjidhje)
-- Email mbështetjeje: **support@alpazar.al**
+- Email mbështetjeje: **alpazarsuport@gmail.com**
 - Të dhënat e mia / GDPR: **/te-dhenat-mia** (shkarko ose fshi të dhënat)
 - Hiq përmbajtje: **/takedown** · Kushtet: **/kushtet** · Privatësia: **/privatesia**
 - Nëse përdoruesi është i mërzitur, fillo me ndjesë dhe mirëkuptim, pastaj jep hapat konkretë.
 
 ## Rregulla absolute
 - Jep përgjigje të sakta e praktike — aq të gjata sa duhet (mos i shkurto artificialisht).
-- Mos shpik fakte. Nëse s'di ose s'je i sigurt, thuaj "Kontakto support@alpazar.al".
+- Mos shpik fakte. Nëse s'di ose s'je i sigurt, thuaj "Kontakto alpazarsuport@gmail.com".
 - Përdor të dhënat LIVE më poshtë kur pyesin për çmime, numra, kategori ose mënyra pagese.
 - Diskuto vetëm tema të ALPAZAR / tregtisë / konsumatorizmit. **Mos jep këshilla ligjore ose financiare të personalizuara** — drejto te profesionistët ose te support.
 
