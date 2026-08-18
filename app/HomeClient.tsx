@@ -375,9 +375,9 @@ export default function HomeClient({ initialListings = [], initialCategories = [
     if (!opts?.silent) setLoading(true) // poll/visibility: mos rifut skeleton-in
     let query = supabase
       .from('listings')
-      .select('id,title,price,currency,condition,city,is_premium,images,category_id,created_at,user_id,author:user_id(id,full_name,username,avatar_url,is_premium,trust_score)')
+      .select('id,title,price,currency,condition,city,is_premium,rank_tier,images,category_id,created_at,user_id,author:user_id(id,full_name,username,avatar_url,is_premium,trust_score)')
       .eq('is_active', true)
-      .order('is_premium', { ascending: false })
+      .order('rank_tier', { ascending: false })
       .order('created_at', { ascending: false })
       .limit(20)
 
@@ -907,7 +907,9 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                       }
                       {listing.condition === 'i_ri' && <span className="badge-new">I ri</span>}
                       {listing.condition === 'i_perdorur' && <span className="badge-used">I përdorur</span>}
-                      {listing.is_premium && <span className="badge-premium" aria-label="Premium">⭐</span>}
+                      {(listing as any).rank_tier === 2
+                        ? <span className="badge-premium" aria-label="VIP" style={{ background: 'linear-gradient(135deg,#7A3FA6,#B57AE0)', color: '#fff' }}>VIP</span>
+                        : listing.is_premium && <span className="badge-premium" aria-label="Premium">⭐</span>}
                       {(listing as any).author && (
                         <div className="card-seller-ov" role="link" tabIndex={0}
                           aria-label={`Profili i ${(listing as any).author.full_name || (listing as any).author.username || 'shitësit'}`}
