@@ -92,7 +92,7 @@ export function PayBox({ methods, methodId, setMethodId, sel, busy, planId, owne
       {methods.map((m: any) => (
         <button key={m.id} type="button" aria-pressed={methodId === m.id}
           className={`pm ${methodId === m.id ? 'on' : ''}`} onClick={() => setMethodId(m.id)}>
-          <i className={`ti ti-${m.type === 'card' ? 'credit-card' : m.type === 'paypal' ? 'brand-paypal' : m.type === 'mobile' ? 'device-mobile' : 'building-bank'}`} aria-hidden="true" />
+          <i className={`ti ti-${m.type === 'card' ? 'credit-card' : m.type === 'paypal' ? 'brand-paypal' : m.type === 'mobile' ? 'device-mobile' : m.type === 'bank' ? 'building-bank' : 'wallet'}`} aria-hidden="true" />
           {m.name}
           {methodId === m.id && <i className="ti ti-circle-check ok" aria-hidden="true" />}
         </button>
