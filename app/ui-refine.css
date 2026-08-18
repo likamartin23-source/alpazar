@@ -126,3 +126,14 @@ button[aria-label="Ndaj aplikacionin"]{box-shadow:0 4px 13px -5px rgba(0,0,0,.22
 .ig-cell{aspect-ratio:4/3 !important;border-radius:14px !important;border:1px solid #eee !important;box-shadow:0 1px 2px rgba(0,0,0,.05),0 6px 18px -12px rgba(0,0,0,.16) !important;transition:transform .2s ease, box-shadow .2s ease;}
 .ig-cell:hover{transform:translateY(-2px);box-shadow:0 12px 26px -10px rgba(0,0,0,.22) !important;}
 .ig-price{font-size:12px !important;bottom:8px !important;left:8px !important;right:auto !important;text-align:left !important;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border-radius:999px;padding:3px 10px !important;}
+
+/*  7) SISTEMI I DIZAJNIT: tokens semantike + aksesueshmeri (harmoni + WCAG/EAA)  */
+:root{
+  --action-red:#E63312; --action-red-deep:#C42305; --flag-red:#E01F26;
+  --gold-ink:#856404; --ok:#16a34a;
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px; --sp-6:24px; --sp-8:32px;
+  --r-btn:10px; --r-card:14px; --r-panel:16px; --r-pill:999px;
+}
+a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="button"]:focus-visible, [tabindex]:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible{
+  outline:2px solid var(--action-red) !important; outline-offset:2px !important;
+}
