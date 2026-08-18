@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import type { Metadata } from 'next'
 import ListingPageClient from './ListingPageClient'
-import ListingVideos from './ListingVideos'
+import { ListingMediaProvider } from '../../components/ListingMediaContext'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../lib/supabase'
 import { SITE_URL } from '../../../lib/siteConfig'
 
@@ -122,15 +122,9 @@ export default async function ListingPage(props: { params: Promise<{ id: string 
       {jsonLd && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
       )}
-      <ListingPageClient params={params} initialListing={listing} />
-      {listing && (
-        <ListingVideos
-          videos={listing.videos}
-          legacy={listing.video_url}
-          poster={listing.video_poster}
-          images={listing.images}
-        />
-      )}
+      <ListingMediaProvider videos={listing?.videos} legacy={listing?.video_url} poster={listing?.video_poster}>
+        <ListingPageClient params={params} initialListing={listing} />
+      </ListingMediaProvider>
     </>
   )
 }
