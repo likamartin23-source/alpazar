@@ -1,0 +1,74 @@
+name: Apliko nje patch te verifikuar
+
+# Perse ekziston: skedaret e medhenj te kesaj repoje (ListingPageClient.tsx 78 KB,
+# HomeClient.tsx 54 KB) nuk kalojne dot te plote nga sesioni i agjentit. Diferenca
+# e ngjeshur, perkundrazi, kalon — 62 KB patch behen 22 KB base64.
+#
+# Patch-i vjen si input, jo si skedar i komituar: keshtu repoja nuk mbush me
+# mbeturina nje-perdorimeshe.
+#
+# Sekuenca eshte: apliko → `tsc` → teste → `next build` → dege e re. Nese ndonje
+# porte bie, dega nuk krijohet fare. Nje deshtim ketu do te thote qe patch-i nuk
+# e la repone ne gjendje te sakte — jo qe workflow-u prishi dicka.
+
+on:
+  workflow_dispatch:
+    inputs:
+      patch_b64:
+        description: 'git diff --binary | gzip -9 | base64 -w0'
+        required: true
+      dega:
+        description: 'Emri i deges se re'
+        required: true
+        default: 'feature/interlink-harmonize'
+      mesazhi:
+        description: 'Titulli i commit-it'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  apliko:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Dekodo dhe apliko patch-in
+        run: |
+          printf '%s' '${{ inputs.patch_b64 }}' | base64 -d | gunzip -c > /tmp/nderhyrje.patch
+          echo "Madhesia e patch-it: $(wc -c < /tmp/nderhyrje.patch) bajt"
+          git apply --check --whitespace=nowarn /tmp/nderhyrje.patch
+          git apply --whitespace=nowarn /tmp/nderhyrje.patch
+          echo "Skedaret e prekur:"
+          git status --porcelain | sed 's/^/  /'
+
+      - run: npm ci
+
+      - name: Kontroll tipesh
+        run: npx tsc --noEmit
+
+      - name: Testet
+        run: npm run test
+
+      - name: Ndertimi
+        run: npx next build
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+
+      - name: Krijo degen
+        run: |
+          git config user.name  'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout -b "${{ inputs.dega }}"
+          git add -A
+          git commit -m "${{ inputs.mesazhi }}"
+          git push -u origin "${{ inputs.dega }}"
