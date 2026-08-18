@@ -86,16 +86,17 @@ Hyn në fuqi në sesionin **tjetër**, jo në atë që është hapur.
 
 ### Nëse pas shtimit ende bllokohen
 
-Ky është diagnostiku çelës: **GitHub-i vazhdon të punojë?**
+Ky është diagnostiku çelës: **a vazhdon të punojë GitHub-i?**
 
 - **Po** → lista e parazgjedhur është ende në fuqi. Pra ose niveli mbeti
-  **Trusted** (domenet u shkuan por niveli nuk u ndërrua), ose është redaktuar
-  një **mjedis tjetër** nga ai që përdor k� sesion.
-- **Jo** → niveli është **Custom** por harroji kutia "Also include default list".
+  **Trusted** (domenet u shkruan, por niveli nuk u ndërrua), ose u redaktua
+  një **mjedis tjetër** nga ai që përdor sesioni.
+- **Jo** → niveli është **Custom**, por mbeti pa u shënuar kutia
+  "Also include default list of common package managers".
 
-Për të dallur mjedisin: hap një **sesion të ri** (jo rihapje të këtij) dhe xhiro
-`bash scripts/rrjeti.sh` aty. Një sesion i riu merr mjedisin aktual; një sesion
-i rihapur mund të mbesë te lidhja e vjetër.
+Për të dalluar mjedisin: hap një **sesion të ri** — jo rihapje të këtij — dhe
+xhiro `bash scripts/rrjeti.sh` aty. Një sesion i ri merr mjedisin aktual; një
+sesion i rihapur mund të mbetet i lidhur me konfigurimin e vjetër.
 
 ### Pse jo thjesht "Full"
 
