@@ -43,6 +43,7 @@ export function PeopleTab() {
   const [ok, setOk] = useState('')
   const [arsyeja, setArsyeja] = useState('')
   const [konfirmoFshirjen, setKonfirmoFshirjen] = useState('')
+  const [konfirmoBiz, setKonfirmoBiz] = useState('')
   const [plane, setPlane] = useState<any[]>([])
   const [plani, setPlani] = useState<Record<string, string>>({})
 
@@ -73,7 +74,7 @@ export function PeopleTab() {
 
   async function hapDosjen(id: string) {
     if (hap === id) { setHap(''); setDosja(null); return }
-    setHap(id); setDosja(null); setDuke(true); setErr(''); setArsyeja(''); setKonfirmoFshirjen('')
+    setHap(id); setDosja(null); setDuke(true); setErr(''); setArsyeja(''); setKonfirmoFshirjen(''); setKonfirmoBiz('')
     const { data, error } = await supabase.rpc('admin_person', { p_user_id: id })
     setDuke(false)
     if (error || (data as any)?.error) { setErr(error?.message || (data as any)?.error); return }
@@ -245,6 +246,30 @@ export function PeopleTab() {
                                   b.i_verifikuar ? 'Verifikimi u hoq.' : 'Biznesi u verifikua.')}>
                                 {b.i_verifikuar ? 'Hiq verifikimin' : 'Verifiko'}
                               </button>
+                              <button type="button" className="edit-btn" disabled={busy === b.id}
+                                onClick={() => thirr('admin_set_business_flag',
+                                  { p_business_id: b.id, p_flag: 'is_visible', p_value: !b.i_dukshem,
+                                    p_reason: arsyeja || null }, b.id,
+                                  b.i_dukshem ? 'Biznesi u errësua.' : 'Biznesi u çerrësua.')}>
+                                {b.i_dukshem ? 'Errëso' : 'Çerrëso'}
+                              </button>
+                              {konfirmoBiz === b.id ? (
+                                <>
+                                  <button type="button" className="edit-btn" disabled={busy === b.id}
+                                    style={{ color: '#fff', background: '#C42B0F', borderColor: '#C42B0F' }}
+                                    onClick={async () => {
+                                      const ok = await thirr('admin_delete_business',
+                                        { p_business_id: b.id, p_reason: arsyeja || null }, b.id, 'Biznesi u fshi.')
+                                      if (ok) setKonfirmoBiz('')
+                                    }}>Po, fshije</button>
+                                  <button type="button" className="edit-btn" disabled={busy === b.id}
+                                    onClick={() => setKonfirmoBiz('')}>Anulo</button>
+                                </>
+                              ) : (
+                                <button type="button" className="edit-btn" disabled={busy === b.id}
+                                  style={{ color: '#C42B0F' }}
+                                  onClick={() => setKonfirmoBiz(b.id)}>Fshi biznesin</button>
+                              )}
                             </div>
                           ))}
                           {dosja.bizneset.some((b: any) => !b.i_dukshem) && (
