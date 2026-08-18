@@ -1,0 +1,69 @@
+name: Adresat e kontaktit -> Gmail-i i punes
+
+# Adresat `@alpazar.al` jane te botuara te Kushtet, Privatesia, Cookies dhe
+# faqja e te dhenave, por asnje prej tyre nuk merr poste. Nje kontakt DPO qe
+# kthen mesazhin mbrapsht do te thote qe kerkesat e subjektit te te dhenave
+# nuk mberrijne kurre.
+#
+# Zevendesohen me kutine e vetme qe punon. Kur te krijohen kutite te Zoho
+# (DNS-ja eshte gati: MX, verifikim, DKIM), kthehen te @alpazar.al.
+#
+# Xhirohet nje here. Pas merge-it, ky skedar mund te fshihet.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  nderro:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Zevendeso adresat
+        run: |
+          files=$(grep -rlE '[a-zA-Z0-9._%-]+@alpazar\.al' \
+                    --include='*.ts' --include='*.tsx' app lib supabase || true)
+          if [ -z "$files" ]; then
+            echo "::error::Asnje adrese @alpazar.al — main mund te jete ndryshuar tashme."
+            exit 1
+          fi
+          echo "$files" | xargs sed -i -E 's/[a-zA-Z0-9._%-]+@alpazar\.al/alpazarsuport@gmail.com/g'
+          echo "Skedaret e prekur:"
+          echo "$files" | sed 's/^/  /'
+          echo
+          echo "Kontroll: a mbeti ndonje?"
+          grep -rnE '[a-zA-Z0-9._%-]+@alpazar\.al' --include='*.ts' --include='*.tsx' app lib supabase \
+            && { echo "::error::Mbeti nje adrese."; exit 1; } || echo "  asnje"
+
+      - name: Install
+        run: npm ci
+
+      - name: Kontroll tipesh
+        run: npx tsc --noEmit
+
+      - name: Teste
+        run: npm run test
+
+      - name: Dege
+        env:
+          BRANCH: email/${{ github.run_id }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git checkout -b "$BRANCH"
+          git commit -m "Adresat e kontaktit: @alpazar.al -> alpazarsuport@gmail.com" \
+                     -m "Asnje kuti @alpazar.al nuk merr poste. Kontakti DPO, rruga e ankimit dhe raportimi i shpalljeve ishin te gjitha adresa qe kthenin mesazhin mbrapsht."
+          git push -u origin "$BRANCH"
+          echo "::notice::Hape PR-ne: https://github.com/${{ github.repository }}/compare/main...$BRANCH"
