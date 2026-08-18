@@ -1,21 +1,29 @@
 name: Apliko nje patch te verifikuar
 
 # Perse ekziston: skedaret e medhenj te kesaj repoje (ListingPageClient.tsx 78 KB,
-# HomeClient.tsx 54 KB) nuk kalojne dot te plote nga sesioni i agjentit. Diferenca
-# e ngjeshur, perkundrazi, kalon — 62 KB patch behen 22 KB base64.
+# HomeClient.tsx 54 KB) nuk kalojne dot te plote nga sesioni i agjentit.
 #
-# Patch-i vjen si input, jo si skedar i komituar: keshtu repoja nuk mbush me
-# mbeturina nje-perdorimeshe.
+# Provimi i pare e kaloi diferencen si `workflow_dispatch` input — dhe ngarkesa
+# u demtua ne rruge: `base64: invalid input`. Nje varg 22 000 karakteresh i
+# kaluar me dore prishet pa u vene re.
 #
-# Sekuenca eshte: apliko → `tsc` → teste → `next build` → dege e re. Nese ndonje
-# porte bie, dega nuk krijohet fare. Nje deshtim ketu do te thote qe patch-i nuk
-# e la repone ne gjendje te sakte — jo qe workflow-u prishi dicka.
+# Tani patch-i vjen si SKEDAR i komituar (`.github/patches/*.patch.gz`).
+# Ngarkimi permes API-t te GitHub-it kthen SHA-ne e blob-it, e cila krahasohet
+# me ate te llogaritur lokalisht — pra transferi verifikohet para se te niset
+# workflow-u. Ketu verifikohet edhe njehere me `sha256`.
+#
+# Sekuenca: verifiko shumen → apliko → `tsc` → teste → `next build` → dege e re.
+# Nese ndonje porte bie, dega nuk krijohet fare.
 
 on:
   workflow_dispatch:
     inputs:
-      patch_b64:
-        description: 'git diff --binary | gzip -9 | base64 -w0'
+      skedari:
+        description: 'Shtegu i patch-it te ngjeshur'
+        required: true
+        default: '.github/patches/interlink.patch.gz'
+      sha256:
+        description: 'sha256 i patch-it TE DEKOMPRESUAR'
         required: true
       dega:
         description: 'Emri i deges se re'
@@ -42,10 +50,14 @@ jobs:
           node-version: 20
           cache: npm
 
-      - name: Dekodo dhe apliko patch-in
+      - name: Dekompreso dhe verifiko shumen
         run: |
-          printf '%s' '${{ inputs.patch_b64 }}' | base64 -d | gunzip -c > /tmp/nderhyrje.patch
+          gunzip -c "${{ inputs.skedari }}" > /tmp/nderhyrje.patch
           echo "Madhesia e patch-it: $(wc -c < /tmp/nderhyrje.patch) bajt"
+          echo "${{ inputs.sha256 }}  /tmp/nderhyrje.patch" | sha256sum -c -
+
+      - name: Apliko patch-in
+        run: |
           git apply --check --whitespace=nowarn /tmp/nderhyrje.patch
           git apply --whitespace=nowarn /tmp/nderhyrje.patch
           echo "Skedaret e prekur:"
@@ -69,6 +81,9 @@ jobs:
           git config user.name  'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           git checkout -b "${{ inputs.dega }}"
+          # Patch-i eshte nje mjet transporti, jo pjese e kodit — hiqet qe te mos
+          # mbetet ne dege.
+          git rm -q "${{ inputs.skedari }}"
           git add -A
           git commit -m "${{ inputs.mesazhi }}"
           git push -u origin "${{ inputs.dega }}"
