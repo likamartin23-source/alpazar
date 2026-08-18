@@ -1,8 +1,9 @@
-/* ui-refine.css — Sistem dizajni ALPAZAR (Cowork, matje live).
-   NGARKOHET NGA layout.tsx NË ÇDO FAQE. Seksioni GLOBAL prek të gjitha faqet;
-   seksionet homepage prekin vetëm klasat që ekzistojnë te HomeClient. */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&display=swap');
+/* ui-refine.css  Sistem dizajni ALPAZAR (Cowork, matje live).
+   NGARKOHET NGA layout.tsx N DO FAQE. Seksioni GLOBAL prek t gjitha faqet;
+   seksionet homepage prekin vetm klasat q ekzistojn te HomeClient. */
 
-/* ═══ 0) SISTEMI GLOBAL I DIZAJNIT (prek ÇDO faqe) ═══ */
+/*  0) SISTEMI GLOBAL I DIZAJNIT (prek DO faqe)  */
 :root{
   --az-yellow:#F5C842; --az-yellow-hi:#F8D24E; --az-yellow-lo:#EEB828;
   --az-red:#E63312; --az-red-deep:#C42305;
@@ -25,7 +26,7 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 ::-webkit-scrollbar-thumb{background:var(--az-yellow-lo);border-radius:8px;border:2px solid transparent;background-clip:content-box;}
 ::-webkit-scrollbar-thumb:hover{background:var(--az-red);}
 
-/* — Mikro-ndërveprime globale — */
+/*  Mikro-ndrveprime globale  */
 a,button{transition:color .15s ease,background-color .15s ease,box-shadow .15s ease,transform .1s ease;}
 button:active{transform:scale(.97);}
 
@@ -38,7 +39,7 @@ button:active{transform:scale(.97);}
   *{animation:none !important;}
 }
 
-/* ═══ HOMEPAGE ═══ */
+/*  HOMEPAGE  */
 .cat-item{padding:9px 14px !important;}
 .cat-item span{font-size:12px !important;}
 .stat-l{font-size:11px !important;}
@@ -68,13 +69,14 @@ button:active{transform:scale(.97);}
 .brand{
   background:none !important;
   -webkit-text-fill-color:#111 !important; color:#111 !important;
-  letter-spacing:2.5px !important; font-weight:800 !important;
+  font-family:'Fraunces','Georgia','Times New Roman',serif !important;
+  letter-spacing:.5px !important; font-weight:600 !important; font-size:23px !important;
   text-shadow:0 1px 0 rgba(255,255,255,.35) !important;
 }
 
-/* — Logo e re ne header: fsheh SVG-ne e vjeter, shfaq icon.svg e re (shqiponja dykrenare) — */
+/*  Logo e re ne header: fsheh SVG-ne e vjeter, shfaq icon.svg e re (shqiponja dykrenare)  */
 .logo svg{display:none !important;}
-.logo::before{content:"";display:inline-block;width:36px;height:36px;flex-shrink:0;background:url(/icons/icon.svg) center/contain no-repeat;box-shadow:0 1px 4px rgba(0,0,0,.25);border-radius:9px;}
+.logo::before{content:"";display:inline-block;width:38px;height:38px;flex-shrink:0;border-radius:11px;background-color:#E01F26;background-image:url(/icons/eagle.svg),linear-gradient(150deg,rgba(255,255,255,.16),rgba(0,0,0,.10));background-size:64%,100% 100%;background-position:center,center;background-repeat:no-repeat,no-repeat;box-shadow:0 3px 9px rgba(196,20,27,.34),inset 0 1px 0 rgba(255,255,255,.30);}
 
 .hero{border:1px solid rgba(230,51,18,.18) !important; animation:az-fade-up .5s cubic-bezier(.22,1,.36,1) both;}
 
@@ -99,7 +101,7 @@ button[aria-label="Ndaj aplikacionin"]{box-shadow:0 4px 13px -5px rgba(0,0,0,.22
 .nav-add{transition:transform .16s ease, box-shadow .16s ease;}
 .nav-add:hover{transform:translateY(-2px) scale(1.04);}
 
-/* ── Shqiponja zyrtare e flamurit ne hero (ne vend te emoji-t 🦅) ────────── */
+/*  Shqiponja zyrtare e flamurit ne hero (ne vend te emoji-t )  */
 .hero h2 > span[aria-hidden="true"]:first-child{
   font-size:0 !important; display:inline-block; width:19px; height:16px;
   vertical-align:-2px; margin-right:3px;
@@ -109,7 +111,7 @@ button[aria-label="Ndaj aplikacionin"]{box-shadow:0 4px 13px -5px rgba(0,0,0,.22
   background:url(/icons/eagle.svg) center/contain no-repeat;
 }
 
-/* ── Shqiponja zyrtare ne logon e Admin Panel (ne vend te emoji-t) ──────── */
+/*  Shqiponja zyrtare ne logon e Admin Panel (ne vend te emoji-t)  */
 .sb-logo .n > span[aria-hidden="true"]:first-child{
   font-size:0 !important; display:inline-block; width:15px; height:13px;
   vertical-align:-1px; margin-right:2px;
