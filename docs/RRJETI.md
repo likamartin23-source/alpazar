@@ -39,9 +39,15 @@ paketave, GitHub, SDK-të e cloud-it. Asnjë nga hostet tanë nuk është aty.
 | `api.github.com`, `raw.githubusercontent.com` | GitHub | ✅ punon |
 | `registry.npmjs.org`, `pypi.org` | paketat | ✅ nuk kalojnë fare nga proxy-ja |
 
-**Pasoja që ka rëndësi:** baza e prodhimit është e paarritshme nga çdo sesion i
-largët. Migrimet, kontrollet e të dhënave dhe çdo smoke test që lexon vërtet nga
-baza **nuk kryhen dot këtu**. Ndërtimi dhe testet kalojnë sepse nuk e prekin bazën.
+**Pasoja, e saktësuar.** Bllokohet **procesi i aplikacionit** — `next build`,
+`next start`, një skript, një `curl`. Nuk bllokohet **agjenti**: konektori
+Supabase i claude.ai kalon nga serverat e Anthropic-ut dhe e arrin bazën
+normalisht. E provova: 238 migrime, PG 17.6, 16 kategori — ndërsa `curl` te i
+njëjti host merr 403 nga i njëjti kontejner.
+
+> Fillimisht këtu shkrova se "migrimet dhe kontrollet e të dhënave nuk kryhen dot
+> këtu". **Kjo ishte gabim.** Kryhen — përmes konektorit. Ajo që nuk kryhet dot
+> është kodi i aplikacionit që flet vetë me bazën.
 
 > Kjo shpjegon edhe pse `/kategori/elektronike` ktheu 404 gjatë smoke testit të
 > Next 15: `fetchCategoryBySlug` nuk e arriti dot Supabase-in dhe ra te
@@ -78,6 +84,19 @@ api.firecrawl.dev
 
 Hyn në fuqi në sesionin **tjetër**, jo në atë që është hapur.
 
+### Nëse pas shtimit ende bllokohen
+
+Ky është diagnostiku çelës: **GitHub-i vazhdon të punojë?**
+
+- **Po** → lista e parazgjedhur është ende në fuqi. Pra ose niveli mbeti
+  **Trusted** (domenet u shkuan por niveli nuk u ndërrua), ose është redaktuar
+  një **mjedis tjetër** nga ai që përdor k� sesion.
+- **Jo** → niveli është **Custom** por harroji kutia "Also include default list".
+
+Për të dallur mjedisin: hap një **sesion të ri** (jo rihapje të këtij) dhe xhiro
+`bash scripts/rrjeti.sh` aty. Një sesion i riu merr mjedisin aktual; një sesion
+i rihapur mund të mbesë te lidhja e vjetër.
+
 ### Pse jo thjesht "Full"
 
 **Full** i hap të gjitha domenet. Ky repo është publik dhe ka celësa te
@@ -92,7 +111,10 @@ zgjidh me leje të gjerë atë që zgjidhet me një listë të saktë.
 
 Zbulim që ndryshon zgjedhjen: trafiku i një **konektori MCP të claude.ai** kalon
 nga serverat e Anthropic-ut, **jo** nga rrjeti i sesionit. Ndaj një konektor
-punon pa e prekur fare allowlist-in.
+punon pa e prekur fare allowlist-in — edhe kur `curl` te i njëjti host merr 403.
+
+**Prova më e fortë:** `sopafwfkrxpcdaljddoh.supabase.co` është i bllokuar për
+`curl`, por konektori Supabase lexon bazën pa problem nga i njëjti kontejner.
 
 I njëjti shërbim mund të ekzistojë dy herë:
 
@@ -102,9 +124,19 @@ I njëjti shërbim mund të ekzistojë dy herë:
 | Rrjeti | i sesionit → **bllokohet** | i Anthropic → **punon** |
 | Çelësi | e do nga mjedisi | tashmë i autentikuar |
 
-Prandaj `exa`, `tavily` dhe `context7` **u hoqën nga `.mcp.json`**: ishin
-dublikatë të konektorëve tashmë të autentikuar, dhe pa `EXA_API_KEY` /
-`TAVILY_API_KEY` nuk punonin as lokalisht. Konektorët mbeten dhe punojnë.
+Prandaj `exa`, `tavily` dhe `context7` **u hoqën nga `.mcp.json`** — por arsyeja
+nuk është e njëjtë për të tretët, dhe këtë e pata thënë me nxitim:
+
+| | Konektori i claude.ai |
+|---|---|
+| **Exa** | i lidhur ✅ |
+| **Context7** | i lidhur ✅ |
+| **Tavily** | **i palidhur** — pret autorizim nga shfletuesi yt |
+
+Për Exa dhe Context7 heqja është fitim i pastër. Për **Tavily** nuk ka konektor
+zëvendësues: pas heqjes nuk mbetet asnë Tavily. Praktikisht nuk humbi gjë,
+sepse kopja lokale s'kishte `TAVILY_API_KEY` dhe s'punonte as ajo — por nëse e
+do Tavily-n, **autorizoje konektorin**, mos e kthe serverin lokal.
 
 `firecrawl` mbetet te `.mcp.json` — nuk ka konektor përkatës dhe punon pa çelës
 te makina jote.
