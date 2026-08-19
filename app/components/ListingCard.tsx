@@ -69,6 +69,12 @@ type Props = {
    * hidratimi). Prinderit qe kane tashme nje flamur `mounted` ia japin ketu.
    */
   mounted?: boolean
+  /**
+   * Thirret kur perdoruesi heq shpalljen nga te preferuarat. Faqja e te
+   * preferuarave e perdor per ta hequr karten menjehere nga lista; siperfaqet
+   * e tjera e lene bosh (zemra thjesht zbrazet).
+   */
+  onUnfavorite?: () => void
 }
 
 const fmt = (price: number, cur: string) =>
@@ -90,7 +96,7 @@ function timeAgo(iso: string): string {
 
 const go = (path: string) => { window.location.href = path }
 
-export default function ListingCard({ listing, index = 0, showSeller = true, mounted = true }: Props) {
+export default function ListingCard({ listing, index = 0, showSeller = true, mounted = true, onUnfavorite }: Props) {
   const l = listing
   const author = l.author || null
   // Nese shpallja i perket nje biznesi (business_id + join biznesi), identiteti
@@ -175,6 +181,7 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
           listingId={l.id}
           size={30}
           style={{ position: 'absolute', right: 6, bottom: 6, zIndex: 3 }}
+          onUnfavorite={onUnfavorite}
         />
         {/* Shitur (Vendimi 3): social proof, jo fshehje — overlay mbi media. */}
         {l.status === 'sold' && (

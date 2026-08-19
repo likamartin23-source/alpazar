@@ -12,6 +12,7 @@ import { TrustBadge } from '../../components/TrustBadge'
 import { SharePanel } from '../../components/SharePanel'
 import { ImageCarousel } from '../../components/ImageCarousel'
 import Avatar, { tierNgaProfili } from '../../components/Avatar'
+import ListingCard from '../../components/ListingCard'
 
 const MapDisplay = dynamic(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), { ssr: false })
 
@@ -1137,37 +1138,15 @@ export default function ListingPageClient({ params, initialListing }: { params: 
               <div style={{ fontWeight: 700, fontSize: 14, color: '#111', marginBottom: 12 }}>
                 Shpallje të ngjashme
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 9 }}>
-                {similar.map(s => {
-                  const img = Array.isArray(s.images) && s.images.length ? s.images[0] : null
-                  const priceStr = s.currency === 'EUR'
-                    ? `€${nf(s.price)}`
-                    : `${nf(s.price)} L`
-                  return (
-                    <div
-                      key={s.id}
-                      role="link" tabIndex={0}
-                      onClick={() => { window.location.href = `/listing/${s.id}` }}
-                      onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/listing/${s.id}` }}
-                      style={{ borderRadius: 12, overflow: 'hidden', background: '#fff', border: '1px solid #F0F0F0', boxShadow: '0 1px 6px rgba(0,0,0,0.06)', cursor: 'pointer' }}
-                    >
-                      <div style={{ width: '100%', aspectRatio: '4/3', background: '#F6F6F6', overflow: 'hidden', position: 'relative' }}>
-                        {img
-                          ? <img src={img} alt={s.title} loading="lazy" width={400} height={300} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                          : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><i className="ti ti-photo" style={{ fontSize: 24, color: '#ccc' }} aria-hidden="true" /></div>
-                        }
-                        {s.is_premium && (
-                          <div style={{ position: 'absolute', top: 5, left: 5, background: 'linear-gradient(90deg,#FFD700,#FFA500)', color: '#7B5000', fontSize: 9, fontWeight: 800, padding: '2px 6px', borderRadius: 5 }}>GOLD</div>
-                        )}
-                      </div>
-                      <div style={{ padding: '7px 8px 9px' }}>
-                        <div style={{ fontSize: 11, fontWeight: 600, color: '#111', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', lineHeight: 1.35, marginBottom: 4 }}>{s.title}</div>
-                        <div style={{ fontSize: 13, fontWeight: 800, color: '#C42B0F' }}>{priceStr}</div>
-                        {s.city && <div style={{ fontSize: 10, color: '#888', marginTop: 2 }}><i className="ti ti-map-pin" style={{ fontSize: 10 }} aria-hidden="true" /> {s.city}</div>}
-                      </div>
-                    </div>
-                  )
-                })}
+              {/* I njejti ListingCard si kudo tjeter. `showSeller={false}`: kartat
+                  jane kompakte dhe te dhenat e ngjashme vijne nga tri burime
+                  (/api/similar, recommend_similar, fallback) qe s'i mbajne gjithmone
+                  join-et e shitesit; karta shfaqet e njesuar edhe pa to. `similar`
+                  mbushet vetem pas montimit, ndaj mounted={true} eshte i sigurt. */}
+              <div className="listings-grid">
+                {similar.map((s, i) => (
+                  <ListingCard key={s.id} listing={s as any} index={i} showSeller={false} mounted={true} />
+                ))}
               </div>
             </div>
           )}
