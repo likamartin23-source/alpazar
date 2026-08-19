@@ -3,16 +3,15 @@ name: Apliko nje patch te verifikuar
 # Perse ekziston: skedaret e medhenj te kesaj repoje (ListingPageClient.tsx 78 KB,
 # HomeClient.tsx 54 KB) nuk kalojne dot te plote nga sesioni i agjentit.
 #
-# Dy provat e para deshtuan te i njejti mur: kanali i shkrimit e pret ngarkesen
-# rreth 19,4 KB. E para si `workflow_dispatch` input (`base64: invalid input`),
-# e dyta si nje skedar i vetem (mberriti 19 429 bajt nga 22 256).
+# Kanali i shkrimit eshte i humbshem ne dy menyra, te dyja te matura:
+#   1. SHKURTON mbi ~19,4 KB (nje skedar 22 256 bajt mberriti 19 429).
+#   2. NDERRON ndonje bajt te vetem edhe kur gjatesia del e sakte.
 #
-# Zgjidhja: patch-i vjen i ndare ne pjese TEKSTI nen ate kufi, te bashkuara
-# ketu. Rreshtat qe nisin me `#` jane shenime dhe hiqen. Shuma `sha256` eshte
-# porta: nese ndonje pjese mberrin e cunguar, hapi bie me nje mesazh te qarte
-# ne vend qe patch-i te aplikohet gjysmak.
+# Prandaj: ngarkesa vjen ne pjese teksti nen kufi, me korrigjimet e matura te
+# dhena si `riparime`, dhe `sha256` si porte e vetme qe i kap te dyja. Rreshtat
+# qe nisin me `#` jane shenime dhe hiqen gjate bashkimit.
 #
-# Sekuenca: bashko → verifiko → apliko → `tsc` → teste → `next build` → dege.
+# Sekuenca: riparë → bashko → verifiko → apliko → `tsc` → teste → build → dege.
 # Nese ndonje porte bie, dega nuk krijohet fare.
 
 on:
@@ -22,6 +21,10 @@ on:
         description: 'Model shell-i qe kap pjeset, sipas radhes'
         required: true
         default: '.github/patches/p-*.txt'
+      riparime:
+        description: 'Korrigjime bajtesh: skedar:pozicion:karakter, ndare me presje (1-indeksuar)'
+        required: false
+        default: ''
       sha256:
         description: 'sha256 i patch-it TE DEKOMPRESUAR'
         required: true
@@ -50,6 +53,29 @@ jobs:
           node-version: 20
           cache: npm
 
+      - name: Ripare bajtet e nderruar
+        if: inputs.riparime != ''
+        env:
+          RIPARIME: ${{ inputs.riparime }}
+          RRENJA: .github/patches
+        run: |
+          python3 - <<'PY'
+          import os, pathlib
+          rrenja = pathlib.Path(os.environ['RRENJA'])
+          for pjesa in os.environ['RIPARIME'].split(','):
+              pjesa = pjesa.strip()
+              if not pjesa:
+                  continue
+              emri, poz, karakter = pjesa.split(':')
+              i = int(poz) - 1                      # inputi eshte 1-indeksuar
+              p = rrenja / emri
+              b = bytearray(p.read_bytes())
+              vjeter = chr(b[i])
+              b[i] = ord(karakter)
+              p.write_bytes(bytes(b))
+              print(f"{emri} @{poz}: {vjeter!r} -> {karakter!r}")
+          PY
+
       - name: Bashko pjeset dhe verifiko shumen
         run: |
           echo "Pjeset e gjetura:"
@@ -61,6 +87,7 @@ jobs:
 
       - name: Apliko patch-in
         run: |
+          git checkout -- ${{ inputs.pjeset }}
           git apply --check --whitespace=nowarn /tmp/nderhyrje.patch
           git apply --whitespace=nowarn /tmp/nderhyrje.patch
           echo "Skedaret e prekur:"
