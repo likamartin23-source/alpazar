@@ -51,6 +51,7 @@ export type ListingCardItem = {
   author?: ListingCardAuthor | null
   business_id?: string | null
   business?: ListingCardBusiness | null
+  status?: string | null
 }
 
 type Props = {
@@ -175,6 +176,12 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
           size={30}
           style={{ position: 'absolute', right: 6, bottom: 6, zIndex: 3 }}
         />
+        {/* Shitur (Vendimi 3): social proof, jo fshehje — overlay mbi media. */}
+        {l.status === 'sold' && (
+          <div aria-label="Shitur" style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,.42)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>
+            <span style={{ background: '#0E7A35', color: '#fff', fontWeight: 800, fontSize: 12, letterSpacing: '.5px', padding: '5px 14px', borderRadius: 999, transform: 'rotate(-8deg)', boxShadow: '0 2px 8px rgba(0,0,0,.3)' }}>SHITUR</span>
+          </div>
+        )}
       </div>
       <div className="card-body">
         <div className="card-title">{l.title}</div>

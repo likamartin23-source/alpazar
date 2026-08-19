@@ -92,6 +92,7 @@ export default function ProfilePage() {
 
   // Listing deletion inline confirm
   const [pendingDelete, setPendingDelete] = useState<string | null>(null)
+  const [pendingSold, setPendingSold]     = useState<string | null>(null)
   const [listErr, setListErr] = useState('')
 
   // Cover + Avatar upload
@@ -361,6 +362,25 @@ export default function ProfilePage() {
     setMyListings(ls => ls.filter(l => l.id !== id))
     setPendingDelete(null)
     // Drop it from the "Rishikimet e fundit" cache so it disappears from the homepage too.
+    try {
+      const rv = JSON.parse(localStorage.getItem('_alpazar_rv') || '[]')
+      localStorage.setItem('_alpazar_rv', JSON.stringify(rv.filter((x: any) => x.id !== id)))
+    } catch { /* ignore */ }
+  }
+
+  // Shëno Shitur (Vendimi 3): statusi 'sold' ekziston ne enum listing_status.
+  // E heq nga grid-i aktiv (is_active=false) por e ruan si te shitur — social
+  // proof i mevonshem numerohet nga statusi 'sold', jo nga grid-i aktiv.
+  async function markSold(id: string) {
+    setListErr('')
+    const { data, error } = await supabase
+      .from('listings').update({ status: 'sold', is_active: false }).eq('id', id).select('id')
+    if (error || !data || data.length === 0) {
+      setListErr(error?.message || 'Nuk u shënua dot si e shitur. Provo sërish.')
+      return
+    }
+    setMyListings(ls => ls.filter(l => l.id !== id))
+    setPendingSold(null)
     try {
       const rv = JSON.parse(localStorage.getItem('_alpazar_rv') || '[]')
       localStorage.setItem('_alpazar_rv', JSON.stringify(rv.filter((x: any) => x.id !== id)))
@@ -914,6 +934,20 @@ export default function ProfilePage() {
                 <i className="ti ti-chevron-right" style={{ fontSize: 16, marginLeft: 'auto' }} aria-hidden="true" />
               </button>
 
+              {/* Abonimi im — lidh me /billing (get_my_billing / cancel_my_subscription ekzistojne) */}
+              <button
+                type="button"
+                style={{ width: '100%', background: '#fff', border: '1px solid #eee', borderRadius: 13, padding: '12px 14px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, color: '#111' }}
+                onClick={() => window.location.href = profile?.is_premium ? '/billing' : '/premium'}
+              >
+                <i className="ti ti-crown" style={{ fontSize: 20, color: '#F5C842' }} aria-hidden="true" />
+                <div style={{ textAlign: 'left', flex: 1 }}>
+                  <div>Abonimi im</div>
+                  <div style={{ fontSize: 10, fontWeight: 500, color: '#888', marginTop: 2 }}>{profile?.is_premium ? 'Premium aktiv · shiko / menaxho / anulo' : 'Kalo në Premium — biznes online, VIP, pa limit'}</div>
+                </div>
+                <i className="ti ti-chevron-right" style={{ fontSize: 16 }} aria-hidden="true" />
+              </button>
+
               <div className="card">
                 <div className="card-hdr">
                   <span className="card-title">Shpalljet e mia ({myListings.filter(l => l.is_active).length})</span>
@@ -950,6 +984,14 @@ export default function ProfilePage() {
                         <span title={`Mund ta rifreskosh pas ${bumpDaysLeft(l.last_bumped_at)} ditësh`} style={{ fontSize: 10, color: '#aaa', padding: '0 4px', cursor: 'default' }}>{bumpDaysLeft(l.last_bumped_at)}d</span>
                       )}
                       <button type="button" className="edit-listing-btn" onClick={() => window.location.href = `/listing/${l.id}/edit`} aria-label="Ndrysho">✏️</button>
+                      {pendingSold === l.id ? (
+                        <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
+                          <button type="button" onClick={() => markSold(l.id)} style={{ background: 'linear-gradient(135deg,#0E7A35,#0b6a2e)', color: '#fff', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Shitur ✓</button>
+                          <button type="button" onClick={() => setPendingSold(null)} style={{ background: '#eee', color: '#555', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Jo</button>
+                        </div>
+                      ) : (
+                        <button type="button" className="edit-listing-btn" onClick={() => setPendingSold(l.id)} aria-label="Shëno si të shitur" title="Shëno si të shitur"><span aria-hidden="true">💰</span></button>
+                      )}
                       {pendingDelete === l.id ? (
                         <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
                           <button type="button" onClick={() => deleteListing(l.id)} style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Fshi</button>
