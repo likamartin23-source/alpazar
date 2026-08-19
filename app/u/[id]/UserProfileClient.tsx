@@ -45,6 +45,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
         .from('listings')
         .select('id,title,price,currency,images,city,created_at,is_premium,condition,rank_tier')
         .eq('user_id', params.id)
+        .is('business_id', null)   // vetem shpallje personale — ato te biznesit rrine te faqja e biznesit (Vendimi 7, pa dyfishim)
         .eq('is_active', true)
         .order('rank_tier', { ascending: false })
         .order('last_bumped_at', { ascending: false })

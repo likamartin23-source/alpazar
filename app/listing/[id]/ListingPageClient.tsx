@@ -554,12 +554,11 @@ export default function ListingPageClient({ params, initialListing }: { params: 
   //
   // `shop_name` ishte nje kopje e emrit te biznesit e mbajtur te profili, dhe
   // mbi te varej edhe shenja "Biznes" edhe pamja e avatarit. Kjo i mbante
-  // identitetet e ngaterruar: emri i dyqanit mbulonte emrin e personit, dhe
-  // po te pastrohej `shop_name` — sic e kerkon ndarja person/biznes — bashke
-  // me te binte edhe shenja e besueshmerise. Tani shenja varet nga
-  // `business_id`, pra nga fakti, dhe `shop_name` mbetet vetem rrugedalje per
-  // llogarite e vjetra qe s'kane rresht `businesses`.
-  const isBusinessListing = !!listing?.business_id || !!hasShop
+  // identitetet e ngaterruar: emri i dyqanit mbulonte emrin e personit. Tani
+  // identiteti biznes/person varet VETEM nga `business_id` (fakti i lidhjes),
+  // jo nga `shop_name` — ndarja person/biznes eshte e prere (Vendimi 7). Per
+  // lidhjen (bizHref) `hasShop` mbetet vetem si rrugedalje legacy me poshte.
+  const isBusinessListing = !!listing?.business_id
 
   // Lidhja me biznesin del GJITHMONE nga `listing.business_id` — ky eshte
   // biznesi te cili i PERKET kjo shpallje.
