@@ -1,10 +1,16 @@
 #!/bin/bash
-# SessionStart — dy detyra, te dyja te lehta.
+# SessionStart — tri detyra, te gjitha te lehta.
 #
 # 1. Printon indeksin e skills-eve. Pa te, nje sesion i ri i "gjen" skills vetem
 #    nese pershkrimi i tyre perputhet rastesisht me fjalet e perdoruesit. Me te,
 #    agjenti e sheh listen e plote qe ne rreshtin e pare.
 # 2. Siguron `node_modules` — pa to nuk xhirohen as testet as `next build`.
+# 3. Lidh Chromium-in per shfletuesin e shikimit (Rregulli 11: verifikim live me
+#    sy). Serveri MCP `playwright` e kerkon Chrome te /opt/google/chrome/chrome,
+#    por mjedisi e ka te /opt/pw-browsers. Kjo e ben shfletuesin gati ne cdo
+#    sesion. (Dalja e jashtme qeveriset nga politika e rrjetit e mjedisit — nese
+#    hostet jane te bllokuar me 403, hapja e tyre behet te konfigurimi i mjedisit,
+#    jo ketu.)
 #
 # Xhirohet ne cdo sesion; duhet te jete idempotent dhe pa nderveprim.
 set -euo pipefail
@@ -38,4 +44,12 @@ if [ -f "$ROOT/package.json" ] && [ ! -d "$ROOT/node_modules" ]; then
   (cd "$ROOT" && npm install --no-audit --no-fund >/dev/null 2>&1) \
     && echo "Varesite u instaluan." \
     || echo "KUJDES: npm install deshtoi. Testet dhe ndertimi nuk do te xhirojne."
+fi
+
+# Shfletuesi i shikimit: lidhje idempotente e Chromium-it te paketuar (glob mbi
+# versionin, qe te mos varet nga chromium-1194). Kurre nuk e nderpret hook-un.
+CHROMIUM="$(ls -d /opt/pw-browsers/chromium-*/chrome-linux/chrome 2>/dev/null | head -1 || true)"
+if [ -n "${CHROMIUM:-}" ] && [ ! -e /opt/google/chrome/chrome ]; then
+  ( mkdir -p /opt/google/chrome && ln -sf "$CHROMIUM" /opt/google/chrome/chrome ) 2>/dev/null \
+    && echo "Chromium u lidh per shfletuesin e shikimit (verifikim live)." || true
 fi
