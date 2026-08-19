@@ -25,7 +25,7 @@ Puna e vlefshme ketu eshte **auditim dhe konsolidim**, jo ndertim.
 
 ---
 
-## 1. Tre kurthe teknike te verifikuara
+## 1. Kurthe teknike te verifikuara
 
 1. **`revoke ... from anon` nuk ka efekt** kur e drejta vjen nga `PUBLIC`.
    Gjithmone: `revoke ... from public` → pastaj `grant` shprehimisht.
@@ -33,6 +33,22 @@ Puna e vlefshme ketu eshte **auditim dhe konsolidim**, jo ndertim.
 2. **`has_perm()` dhe `is_admin()` nuk u hiqet kurre EXECUTE** nga `anon`/
    `authenticated` — thirren brenda politikave RLS; heqja rrezon aplikacionin.
 3. **`audit()` nuk ekziston.** Gjurma shkruhet me `admin_log()` → `admin_logs`.
+4. **`admin_log()` humbet ne heshtje nga cdo rruge e automatizuar.**
+   `admin_logs.admin_id` eshte NOT NULL, ndersa `admin_log()` fut `auth.uid()`
+   — qe nga nje cron ose skript me `service_role` eshte NULL. Shkelja kapet nga
+   `exception when others then null`, ndaj thirrja duket se punon dhe nuk shkruan
+   asgje. Matur me 19 gusht 2026: `expire_listings_run()` caktivizoi nje shpallje
+   ne 03:20 dhe `admin_logs` mbeti bosh.
+   Per gjurme qe duhet te mbijetoje pa perdorues, perdor `audit_logs`
+   (`actor_id` e lejon NULL).
+5. **`current_user` brenda `SECURITY DEFINER` eshte PRONARI, jo thirresi.**
+   Per rolin e vertete perdor `auth.role()`; `session_user` nuk vlen sepse
+   PostgREST lidhet si `authenticator` dhe ben `SET ROLE`.
+6. **`UPDATE OF kolona` ndizet edhe kur vlera nuk ndryshon** — mjafton qe kolona
+   te permendet te `SET`. Krahaso `OLD`/`NEW` brenda trigerit.
+7. **`listings` shkruhet ne cdo hapje faqeje** (`increment_listing_views` rrit
+   `views_count`). Cdo triger i pakufizuar mbi kete tabele prodhon nje rresht per
+   cdo shikim.
 
 ---
 
