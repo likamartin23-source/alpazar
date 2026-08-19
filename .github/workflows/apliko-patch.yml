@@ -11,8 +11,14 @@ name: Apliko nje patch te verifikuar
 # dhena si `riparime`, dhe `sha256` si porte e vetme qe i kap te dyja. Rreshtat
 # qe nisin me `#` jane shenime dhe hiqen gjate bashkimit.
 #
-# Sekuenca: riparë → bashko → verifiko → apliko → `tsc` → teste → build → dege.
-# Nese ndonje porte bie, dega nuk krijohet fare.
+# Sekuenca: sill pjeset → riparo → bashko → verifiko → apliko → tsc → teste →
+# build → dege. Nese ndonje porte bie, dega nuk preket fare.
+#
+# `baza`: dega/ref mbi te cilen aplikohet patch-i (default main). Kjo lejon
+# grumbullimin e fazave njera mbi tjetren (p.sh. §1B mbi Fazen 1) pa i bashkuar
+# ne nje commit te vetem. Pjeset e transportit rrojne gjithmone ne `main`;
+# kodi aplikohet mbi `baza`. `fetch-depth: 0` i jep klientit historine e plote
+# qe push-i te provoje fast-forward-in edhe kur dega ekziston.
 
 on:
   workflow_dispatch:
@@ -28,8 +34,12 @@ on:
       sha256:
         description: 'sha256 i patch-it TE DEKOMPRESUAR'
         required: true
+      baza:
+        description: 'Dega/ref mbi te cilen aplikohet patch-i'
+        required: true
+        default: 'main'
       dega:
-        description: 'Emri i deges se re'
+        description: 'Emri i deges qe krijohet/perditesohet'
         required: true
         default: 'feature/interlink-harmonize'
       mesazhi:
@@ -46,12 +56,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ inputs.baza }}
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
+
+      - name: Sill pjeset e transportit nga origin/main
+        run: |
+          git fetch origin main
+          git checkout origin/main -- ${{ inputs.pjeset }}
 
       - name: Ripare bajtet e nderruar
         if: inputs.riparime != ''
@@ -85,10 +101,15 @@ jobs:
           echo "Madhesia e patch-it: $(wc -c < /tmp/nderhyrje.patch) bajt"
           echo "${{ inputs.sha256 }}  /tmp/nderhyrje.patch" | sha256sum -c -
 
+      - name: Hiq pjeset e transportit para aplikimit
+        # Pjeset jane mjet transporti, jo kod — s'duhet te mbeten ne dege.
+        run: |
+          git rm -q --cached ${{ inputs.pjeset }} 2>/dev/null || true
+          rm -f ${{ inputs.pjeset }} 2>/dev/null || true
+
       - name: Apliko patch-in
         run: |
-          git checkout -- ${{ inputs.pjeset }}
-          # Patch-i mban edhe nje kopje te vjeteruar te ketij workflow-i, sepse
+          # Patch-i mund te mbaje nje kopje te vjeteruar te ketij workflow-i, sepse
           # u nxor nga nje peme pune ku edhe ai ishte i ndryshuar. Makineria e
           # transportit administrohet vec nga kodi.
           APLIKO="--whitespace=nowarn --exclude=.github/workflows/*"
@@ -110,13 +131,11 @@ jobs:
         env:
           NEXT_TELEMETRY_DISABLED: '1'
 
-      - name: Krijo degen
+      - name: Krijo/perditeso degen
         run: |
           git config user.name  'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git checkout -b "${{ inputs.dega }}"
-          # Pjeset jane mjet transporti, jo kod — hiqen qe te mos mbeten ne dege.
-          git rm -q ${{ inputs.pjeset }}
+          git checkout -B "${{ inputs.dega }}"
           git add -A
           git commit -m "${{ inputs.mesazhi }}"
           git push -u origin "${{ inputs.dega }}"
