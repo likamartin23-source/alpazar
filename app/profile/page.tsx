@@ -23,7 +23,7 @@ const SHOP_CATEGORIES = [
 
 const FN_URL = 'https://sopafwfkrxpcdaljddoh.supabase.co/functions/v1'
 
-function BizUpsellBanner({ userId }: { userId?: string }) {
+function BizUpsellBanner({ userId, isPremium }: { userId?: string; isPremium?: boolean }) {
   const [hasBiz, setHasBiz] = useState<boolean | null>(null)
   useEffect(() => {
     if (!userId) return
@@ -31,17 +31,21 @@ function BizUpsellBanner({ userId }: { userId?: string }) {
       .then(({ count }) => setHasBiz((count ?? 0) > 0))
   }, [userId])
   if (hasBiz !== false) return null
+  // §1B: krijimi i biznesit eshte vecori Premium. Jo-premium -> ftese te /premium.
+  const dest = isPremium ? '/biznese/new' : '/premium'
   return (
     <div
       role="link" tabIndex={0}
-      onClick={() => window.location.href = '/biznese/new'}
-      onKeyDown={e => { if (e.key === 'Enter') window.location.href = '/biznese/new' }}
+      onClick={() => window.location.href = dest}
+      onKeyDown={e => { if (e.key === 'Enter') window.location.href = dest }}
       style={{ background: 'linear-gradient(135deg,#111,#1c1c1c)', borderRadius: 13, padding: '14px 16px', marginBottom: 12, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12 }}
     >
       <span style={{ fontSize: 28 }} aria-hidden="true">🏢</span>
       <div style={{ flex: 1 }}>
         <div style={{ fontSize: 13, fontWeight: 800, color: '#F5C842', marginBottom: 3 }}>Krijo Biznes Online</div>
-        <div style={{ fontSize: 11, color: '#aaa', lineHeight: 1.5 }}>Faqe e dedikuar · Shpallje pa limit · Badge <span aria-hidden="true">✓</span> Biznes</div>
+        <div style={{ fontSize: 11, color: '#aaa', lineHeight: 1.5 }}>{isPremium
+          ? <>Faqe e dedikuar · Shpallje pa limit · Badge <span aria-hidden="true">✓</span> Biznes</>
+          : <><span aria-hidden="true">👑</span> Veçori Premium · Faqe e dedikuar · Badge <span aria-hidden="true">✓</span> Biznes</>}</div>
       </div>
       <i className="ti ti-chevron-right" style={{ color: '#F5C842', fontSize: 18 }} aria-hidden="true" />
     </div>
@@ -895,7 +899,7 @@ export default function ProfilePage() {
           {activeTab === 'listings' && (
             <>
               {/* Business upsell — shown only if user has no business */}
-              <BizUpsellBanner userId={user?.id} />
+              <BizUpsellBanner userId={user?.id} isPremium={tierNgaProfili(profile) !== 'free'} />
 
               <button
                 type="button"

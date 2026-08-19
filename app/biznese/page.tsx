@@ -33,6 +33,26 @@ export default function BiznestPage() {
   const [loadError, setLoadError]   = useState(false)
   const [search, setSearch]         = useState('')
   const [typeFilter, setTypeFilter] = useState('')
+  // §1B: krijimi i biznesit eshte vecori Premium (i toggle-ueshem nga app_config).
+  // Gate-i i vertete eshte RLS + ridrejtimi te /biznese/new; ky routing CTA eshte per UX.
+  const [krijoDest, setKrijoDest]       = useState('/biznese/new')
+  const [ftesePremium, setFtesePremium] = useState(false)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session) return // vizitor: CTA -> /biznese/new (aty vendoset login + gate)
+      const [{ data: prof }, { data: cfg }] = await Promise.all([
+        supabase.from('profiles')
+          .select('is_premium,premium_expires_at,has_boost,boost_expires_at')
+          .eq('id', session.user.id).single(),
+        supabase.from('app_config').select('value')
+          .eq('key', 'business_requires_premium').maybeSingle(),
+      ])
+      const gated = ((cfg?.value ?? 'true') === 'true') && tierNgaProfili(prof) === 'free'
+      setFtesePremium(gated)
+      setKrijoDest(gated ? '/premium' : '/biznese/new')
+    })
+  }, [])
 
   useEffect(() => {
     supabase
@@ -97,10 +117,12 @@ export default function BiznestPage() {
       </div>
 
       {/* Create business CTA */}
-      <div role="link" tabIndex={0} style={{ margin: '12px 16px 4px', background: 'linear-gradient(135deg,#151515,#1c1c1c 60%,#231a0a)', borderRadius: 12, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', boxShadow: '0 6px 18px -8px rgba(0,0,0,.4)' }} onClick={() => window.location.href = '/biznese/new'} onKeyDown={e => { if (e.key === 'Enter') window.location.href = '/biznese/new' }}>
+      <div role="link" tabIndex={0} style={{ margin: '12px 16px 4px', background: 'linear-gradient(135deg,#151515,#1c1c1c 60%,#231a0a)', borderRadius: 12, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', boxShadow: '0 6px 18px -8px rgba(0,0,0,.4)' }} onClick={() => window.location.href = krijoDest} onKeyDown={e => { if (e.key === 'Enter') window.location.href = krijoDest }}>
         <div>
           <div style={{ color: '#F5C842', fontWeight: 800, fontSize: 14, marginBottom: 2 }}>+ Krijo Biznesin Tënd</div>
-          <div style={{ color: '#aaa', fontSize: 11 }}>Falas · Prezencë profesionale online</div>
+          <div style={{ color: '#aaa', fontSize: 11 }}>{ftesePremium
+            ? <><span aria-hidden="true">👑</span> Veçori Premium · Prezencë profesionale</>
+            : <>Prezencë profesionale online</>}</div>
         </div>
         <i className="ti ti-arrow-right" style={{ fontSize: 20, color: '#F5C842' }} aria-hidden="true" />
       </div>

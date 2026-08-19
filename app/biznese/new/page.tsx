@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { MapPicker } from '../../components/MapPicker'
+import { tierNgaProfili } from '../../components/Avatar'
 
 const MAIN_TYPES = [
   { id: 'sherbime',          icon: '🛠️', label: 'Shërbime',           desc: 'Riparime, transport, bukuri, IT, evente...' },
@@ -37,8 +38,22 @@ export default function BiznesNewPage() {
   const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/auth/login'; return }
+      // §1B: krijimi i biznesit kerkon Premium aktiv, i toggle-ueshem nga
+      // app_config.business_requires_premium (pasqyre e gate-it RLS ne baze).
+      // Gate-i i vertete eshte RLS; ky ridrejtim eshte per rrjedhe te paster.
+      const [{ data: prof }, { data: cfg }] = await Promise.all([
+        supabase.from('profiles')
+          .select('is_premium,premium_expires_at,has_boost,boost_expires_at')
+          .eq('id', session.user.id).single(),
+        supabase.from('app_config').select('value')
+          .eq('key', 'business_requires_premium').maybeSingle(),
+      ])
+      const kerkohetPremium = ((cfg?.value ?? 'true') === 'true')
+      if (kerkohetPremium && tierNgaProfili(prof) === 'free') {
+        window.location.href = '/premium'; return
+      }
       setUserId(session.user.id)
     })
   }, [])
