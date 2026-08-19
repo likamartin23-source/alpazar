@@ -14,7 +14,8 @@
 // layout-i ne cdo faqe, ndaj karta duket njesoj edhe atje ku faqja s'ka
 // stilet e veta.
 
-import Avatar, { tierNgaProfili } from './Avatar'
+import Avatar, { tierNgaRankTier } from './Avatar'
+import { FavoriteButton } from './FavoriteButton'
 import { nf, dayMonth } from '../../lib/format'
 
 export type ListingCardAuthor = {
@@ -24,6 +25,16 @@ export type ListingCardAuthor = {
   avatar_url?: string | null
   is_premium?: boolean | null
   trust_score?: number | null
+}
+
+// Biznesi te i cili i PERKET shpallja (nga listing.business_id). Kur ekziston,
+// karta shfaq identitetin e biznesit (jo te personit) — model Facebook, entitete
+// te ndara (Vendimi 1/7). Vjen nga join `business:business_id(...)` te query-t.
+export type ListingCardBusiness = {
+  id: string
+  name?: string | null
+  logo_url?: string | null
+  is_verified?: boolean | null
 }
 
 export type ListingCardItem = {
@@ -38,6 +49,8 @@ export type ListingCardItem = {
   rank_tier?: number | null
   created_at?: string | null
   author?: ListingCardAuthor | null
+  business_id?: string | null
+  business?: ListingCardBusiness | null
 }
 
 type Props = {
@@ -79,6 +92,12 @@ const go = (path: string) => { window.location.href = path }
 export default function ListingCard({ listing, index = 0, showSeller = true, mounted = true }: Props) {
   const l = listing
   const author = l.author || null
+  // Nese shpallja i perket nje biznesi (business_id + join biznesi), identiteti
+  // i kartes eshte biznesi; perndryshe personi. Tier-i vjen nga `rank_tier` i
+  // shpalljes (pasqyre e sakte e owner_rank_tier: VIP kur =2), jo nga `author`
+  // qe mban vetem `is_premium`.
+  const biz = l.business_id && l.business ? l.business : null
+  const tier = tierNgaRankTier(l.rank_tier)
   const open = () => go(`/listing/${l.id}`)
 
   return (
@@ -110,7 +129,27 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
         {l.rank_tier === 2
           ? <span className="badge-premium" aria-label="VIP" style={{ background: 'linear-gradient(135deg,#7A3FA6,#B57AE0)', color: '#fff' }}>VIP</span>
           : l.is_premium && <span className="badge-premium" aria-label="Premium">⭐</span>}
-        {showSeller && author && (
+        {showSeller && biz && (
+          <div
+            className="card-seller-ov"
+            role="link"
+            tabIndex={0}
+            aria-label={`Biznesi ${biz.name || ''}`}
+            onClick={e => { e.stopPropagation(); go(`/biznese/${biz.id}`) }}
+            onKeyDown={e => { if (e.key === 'Enter') { e.stopPropagation(); go(`/biznese/${biz.id}`) } }}
+          >
+            <Avatar
+              src={biz.logo_url}
+              name={biz.name}
+              type="business"
+              tier={tier}
+              verified={!!biz.is_verified}
+              size={18}
+            />
+            <span>{biz.name || 'Biznes'}</span>
+          </div>
+        )}
+        {showSeller && !biz && author && (
           <div
             className="card-seller-ov"
             role="link"
@@ -123,13 +162,19 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
               src={author.avatar_url}
               name={author.full_name || author.username}
               type="person"
-              tier={tierNgaProfili(author)}
+              tier={tier}
               verified={(author.trust_score ?? 0) >= 60}
               size={18}
             />
             <span>{author.full_name || author.username || 'Shitës'}</span>
           </div>
         )}
+        {/* Ruaj (favorites) — kend i lire poshte-djathtas; trajton vete auth-in. */}
+        <FavoriteButton
+          listingId={l.id}
+          size={30}
+          style={{ position: 'absolute', right: 6, bottom: 6, zIndex: 3 }}
+        />
       </div>
       <div className="card-body">
         <div className="card-title">{l.title}</div>
