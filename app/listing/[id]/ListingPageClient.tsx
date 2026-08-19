@@ -1064,13 +1064,13 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                   </div>
                 )}
                 {delMsg && (
-                  <div role="alert" style={{ fontSize: 12, fontWeight: 600, color: '#E63312', textAlign: 'center', padding: '6px 0 0' }}>
+                  <div role="alert" style={{ fontSize: 12, fontWeight: 600, color: '#C42305', textAlign: 'center', padding: '6px 0 0' }}>
                     {delMsg}
                   </div>
                 )}
               </div>
               {bumpMsg && (
-                <div role="alert" style={{ fontSize: 12, fontWeight: 600, color: bumpMsg.startsWith('ok:') ? '#1D9E75' : '#E63312', textAlign: 'center', padding: '4px 0' }}>
+                <div role="alert" style={{ fontSize: 12, fontWeight: 600, color: bumpMsg.startsWith('ok:') ? '#1D9E75' : '#C42305', textAlign: 'center', padding: '4px 0' }}>
                   {bumpMsg.replace(/^(ok:|err:)/, '')}
                 </div>
               )}
@@ -1115,7 +1115,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                     style={{ width: '100%', border: '1.5px solid #ddd', borderRadius: 9, padding: '8px 11px', fontSize: 12, fontFamily: 'inherit', outline: 'none', resize: 'none', minHeight: 60, color: '#111', background: '#fff', boxSizing: 'border-box' }}
                   />
                   {reviewMsg && (
-                    <div style={{ fontSize: 11, marginTop: 6, color: reviewMsg.startsWith('ok:') ? '#3B6D11' : '#E63312', fontWeight: 600 }}>
+                    <div style={{ fontSize: 11, marginTop: 6, color: reviewMsg.startsWith('ok:') ? '#3B6D11' : '#C42305', fontWeight: 600 }}>
                       {reviewMsg.split(/:(.+)/)[1]}
                     </div>
                   )}
@@ -1262,7 +1262,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
               </button>
             </div>
             {alertMsg && (
-              <div role="alert" className="alert-msg" style={{ color: alertMsg.startsWith('ok:') ? '#2e7d32' : '#E63312' }}>
+              <div role="alert" className="alert-msg" style={{ color: alertMsg.startsWith('ok:') ? '#2e7d32' : '#C42305' }}>
                 {alertMsg.replace(/^(ok|err):/, '')}
               </div>
             )}

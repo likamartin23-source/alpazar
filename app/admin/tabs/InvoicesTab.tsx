@@ -293,7 +293,7 @@ export function InvoicesTab() {
               return (
                 <tr key={r.id} style={kredit ? { background: '#FFFAF9' } : undefined}>
                   <td>
-                    <strong style={{ fontSize: 11.5, color: kredit ? '#E63312' : undefined }}>
+                    <strong style={{ fontSize: 11.5, color: kredit ? '#C42305' : undefined }}>
                       {r.fiscal_number || r.number}
                     </strong>
                     {kredit && <> <span className="badge bd">notë krediti</span></>}
@@ -313,7 +313,7 @@ export function InvoicesTab() {
                     <div style={{ color: '#aaa', fontSize: 9.5 }}>{r.email}</div>
                   </td>
                   <td>
-                    <strong style={{ color: kredit ? '#E63312' : undefined }}>{L(r.total)} {r.currency}</strong>
+                    <strong style={{ color: kredit ? '#C42305' : undefined }}>{L(r.total)} {r.currency}</strong>
                     {!kredit && Number(r.refunded_total) > 0 && (
                       <div style={{ color: '#C42B0F', fontSize: 9.5 }}>
                         −{L(r.refunded_total)} rimbursuar · mbetet {L(r.mbetja)}

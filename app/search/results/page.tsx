@@ -565,8 +565,8 @@ const [searchError, setSearchError] = useState(false)
                     aria-label="Ruaj këtë kërkim"
                     style={{
                       background: savedOk ? '#10B981' : '#fff',
-                      color: savedOk ? '#fff' : '#E63312',
-                      border: `1.5px solid ${savedOk ? '#10B981' : '#E63312'}`,
+                      color: savedOk ? '#fff' : '#C42305',
+                      border: `1.5px solid ${savedOk ? '#10B981' : '#C42305'}`,
                       borderRadius: 20, padding: '3px 10px', fontSize: 10,
                       fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
                       display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0,

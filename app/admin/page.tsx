@@ -643,7 +643,7 @@ export default function Admin() {
                     )}
                   </div>
                   {payMsg && (
-                    <div style={{ background: payMsg.startsWith('Sukses') ? '#EAF3DE' : '#FFF0EE', border: payMsg.startsWith('Sukses') ? '0.5px solid #97C459' : '0.5px solid #F09595', color: payMsg.startsWith('Sukses') ? '#3B6D11' : '#E63312', fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 8, margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{ background: payMsg.startsWith('Sukses') ? '#EAF3DE' : '#FFF0EE', border: payMsg.startsWith('Sukses') ? '0.5px solid #97C459' : '0.5px solid #F09595', color: payMsg.startsWith('Sukses') ? '#3B6D11' : '#C42305', fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 8, margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span style={{ flex: 1 }}>{payMsg}</span>
                       <button type="button" aria-label="Mbyll mesazhin" onClick={() => setPayMsg('')} style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', fontSize: 14 }}>✕</button>
                     </div>
@@ -805,7 +805,7 @@ export default function Admin() {
                           }}>Ruaj</button>
                           <button type="button" className="btn" style={{ flex:1, background:'#f5f5f5', color:'#111' }} onClick={() => setPmForm(null)}>Anulo</button>
                         </div>
-                        {payMsg && <div style={{ marginTop:8, fontSize:12, color: payMsg.startsWith('err') ? '#E63312' : '#1D9E75' }}>{payMsg.replace(/^(err:|✅ )/, '')}</div>}
+                        {payMsg && <div style={{ marginTop:8, fontSize:12, color: payMsg.startsWith('err') ? '#C42305' : '#1D9E75' }}>{payMsg.replace(/^(err:|✅ )/, '')}</div>}
                       </div>
                     </div>
                   )}
