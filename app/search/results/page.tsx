@@ -436,11 +436,13 @@ const [searchError, setSearchError] = useState(false)
         .listings-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
         .listing-card{background:#fff;border:0.5px solid #ececec;border-radius:12px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;aspect-ratio:3/4;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 16px -10px rgba(0,0,0,.14);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s cubic-bezier(.2,.8,.2,1);text-decoration:none;color:inherit;animation:card-in .45s cubic-bezier(.2,.8,.2,1) both;}
         @keyframes card-in{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
-        @media (prefers-reduced-motion: reduce){.listing-card{animation:none;}}
+        @media (prefers-reduced-motion: reduce){.listing-card{animation:none;}.card-img img{transition:none;}.listing-card:hover .card-img img{transform:none;}}
         .listing-card:hover{transform:translateY(-3px);box-shadow:0 10px 24px -8px rgba(0,0,0,.2);}
         .listing-card:active{transform:scale(.98);}
+        .listing-card:focus-visible{outline:2px solid var(--action-red);outline-offset:2px;}
         .card-img{flex:0 0 70%;position:relative;background:linear-gradient(135deg,#FBF7E8,#F2EAD0);overflow:hidden;}
-        .card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+        .card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;transition:transform .55s cubic-bezier(.2,.8,.2,1);will-change:transform;}
+        .listing-card:hover .card-img img{transform:scale(1.06);}
         .card-img i{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
         .badge-new{position:absolute;top:6px;left:6px;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;font-size:8px;padding:2px 6px;border-radius:6px;font-weight:700;box-shadow:0 1px 4px rgba(230,51,18,.4);letter-spacing:.2px;}
         .badge-used{position:absolute;top:6px;left:6px;background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;font-size:8px;padding:2px 6px;border-radius:6px;font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.3);letter-spacing:.2px;}
