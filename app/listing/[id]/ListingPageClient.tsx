@@ -88,6 +88,11 @@ export default function ListingPageClient({ params, initialListing }: { params: 
   // Report
   const [reportOpen, setReportOpen]   = useState(false)
 
+  // Fshirja e shpalljes nga pronari — dy hapa: klikimi i pare kerkon konfirmim.
+  const [delConfirm, setDelConfirm]   = useState(false)
+  const [delLoading, setDelLoading]   = useState(false)
+  const [delMsg, setDelMsg]           = useState('')
+
 
   async function submitReview() {
     if (!user || !seller || reviewStars === 0) return
@@ -226,6 +231,29 @@ export default function ListingPageClient({ params, initialListing }: { params: 
       setTimeout(() => setBumpMsg(''), 3000)
     }
     setBumpLoading(false)
+  }
+
+  // Fshirje e BUTE — rreshti mbetet ne baze, vetem shenohet.
+  //
+  // `is_active:false` nuk eshte dekor: politika `listings_select` e lejon
+  // publikun te lexoje rreshtin kur `is_active = true`, dhe asnje triger nuk e
+  // sinkronizon `status` me `is_active`. Po te vendosnim vetem `deleted_at`
+  // dhe `status='deleted'`, shpallja do te vazhdonte te dukej per te gjithe —
+  // pra fshirja do te ishte vetem e dukshme per pronarin, jo reale.
+  async function doDelete() {
+    if (delLoading) return
+    setDelLoading(true); setDelMsg('')
+    const { error } = await supabase
+      .from('listings')
+      .update({ deleted_at: new Date().toISOString(), status: 'deleted', is_active: false })
+      .eq('id', params.id)
+    if (error) {
+      setDelMsg('Fshirja deshtoi: ' + error.message)
+      setDelLoading(false)
+      setDelConfirm(false)
+      return
+    }
+    window.location.href = '/'
   }
 
   async function fetchListing() {
@@ -520,6 +548,35 @@ export default function ListingPageClient({ params, initialListing }: { params: 
   const images  = listing.images?.length ? listing.images : []
   const isOwner = user?.id === listing.user_id
   const hasShop = seller?.is_premium && seller?.shop_name
+
+  // A i perket kjo shpallje nje biznesi? Burimi i vertete eshte lidhja, jo
+  // `profiles.shop_name`.
+  //
+  // `shop_name` ishte nje kopje e emrit te biznesit e mbajtur te profili, dhe
+  // mbi te varej edhe shenja "Biznes" edhe pamja e avatarit. Kjo i mbante
+  // identitetet e ngaterruar: emri i dyqanit mbulonte emrin e personit, dhe
+  // po te pastrohej `shop_name` — sic e kerkon ndarja person/biznes — bashke
+  // me te binte edhe shenja e besueshmerise. Tani shenja varet nga
+  // `business_id`, pra nga fakti, dhe `shop_name` mbetet vetem rrugedalje per
+  // llogarite e vjetra qe s'kane rresht `businesses`.
+  const isBusinessListing = !!listing?.business_id || !!hasShop
+
+  // Lidhja me biznesin del GJITHMONE nga `listing.business_id` — ky eshte
+  // biznesi te cili i PERKET kjo shpallje.
+  //
+  // Me pare perdorej `/biznese/${seller.id}`, pra id-ja e PERDORUESIT ne vend
+  // te id-se se biznesit. Ajo faqe nuk binte gjithmone, sepse BiznesPageClient
+  // ka nje rrugedalje: nese s'gjen biznes me ate id, e kerkon me `owner_id`.
+  // Por rrugedalja te con te biznesi i PARE i atij personi — jo domosdoshmerisht
+  // te ai i shpalljes. Nje shites me dy biznese e conte blerësin te i gabuari.
+  //
+  // `hasShop` mbetet vetem si rrugedalje per shitesit e vjeter premium qe kane
+  // `shop_name` pa nje rresht `businesses` te lidhur; atje id-ja e perdoruesit
+  // eshte e vetmja qe kemi dhe rrugedalja me `owner_id` e zgjidh sakte.
+  const bizHref = listing?.business_id
+    ? `/biznese/${listing.business_id}`
+    : (hasShop && seller ? `/biznese/${seller.id}` : null)
+  const sellerHref = bizHref || (seller ? `/u/${seller.id}` : '/')
   const initials  = (seller?.shop_name || seller?.full_name || '?').slice(0, 2).toUpperCase()
   const groups    = buildGroups(chatMsgs)
   const showChatSheet = !isOwner
@@ -535,6 +592,10 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .back i{font-size:18px;color:#111;}
         .topbar-title{font-size:15px;font-weight:700;color:#111;flex:1;}
+        /* Butonat e sigurise (§7.4): terciar i vogel, gjithmone i arritshem,
+           lartesi prekjeje 36px dhe kontrast qe kalon WCAG AA. */
+        .safety-btn{display:inline-flex;align-items:center;gap:4px;min-height:36px;padding:0 12px;background:#fff;border:1px solid #e6e6e6;border-radius:10px;color:#5a5a5a;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:border-color .15s ease,color .15s ease;}
+        .safety-btn:hover{border-color:#C42305;color:#C42305;}
         .share-btn{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .share-btn i{font-size:16px;color:#111;}
 
@@ -795,50 +856,6 @@ export default function ListingPageClient({ params, initialListing }: { params: 
             {(listing.views_count || 0) > 0 && <div className="meta-item"><i className="ti ti-eye" aria-hidden="true" />{listing.views_count}</div>}
           </div>
 
-          {listing.description && (
-            <>
-              <div className="divider" />
-              <div className="sec-label">Përshkrimi</div>
-              <div className="desc">{listing.description}</div>
-            </>
-          )}
-
-          {/* Vendndodhja */}
-          {(listing.city || (listing.latitude && listing.longitude)) && (
-            <>
-              <div className="divider" />
-              <div className="sec-label">Vendndodhja</div>
-              {listing.latitude && listing.longitude ? (
-                <MapDisplay
-                  lat={listing.latitude}
-                  lng={listing.longitude}
-                  address={listing.location_address || listing.city || ''}
-                />
-              ) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: 13, color: '#555' }}><span aria-hidden="true">📍</span> {listing.city}</span>
-                  <a
-                    href={`https://www.google.com/maps/search/${encodeURIComponent(listing.city + ', Shqipëri')}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="map-link">
-                    <i className="ti ti-map" aria-hidden="true" />Hap në Maps
-                  </a>
-                </div>
-              )}
-            </>
-          )}
-
-          {/* Business mini-card — shown when listing belongs to a business */}
-          {listing.business_id && (
-            <BusinessMiniCard bizId={listing.business_id} />
-          )}
-
-          {/* Marketing: upsell per pronarin jo-premium */}
-          {isOwner && !seller?.is_premium && (
-            <SellerPremiumUpsell isPremium={false} />
-          )}
-
           {/* ── PROFILI I SHITËSIT — free-flowing ── */}
           {seller && (
             <>
@@ -846,11 +863,11 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                 <div className="sec-label" style={{ marginTop: 0 }}>Shitësi</div>
 
                 {/* Avatar row */}
-                <div role="link" tabIndex={0} className="seller-av-row" onClick={() => window.location.href = hasShop ? `/biznese/${seller.id}` : `/u/${seller.id}`} onKeyDown={e => { if (e.key === 'Enter') window.location.href = hasShop ? `/biznese/${seller.id}` : `/u/${seller.id}` }} style={{ cursor: 'pointer' }}>
+                <div role="link" tabIndex={0} className="seller-av-row" onClick={() => window.location.href = sellerHref} onKeyDown={e => { if (e.key === 'Enter') window.location.href = sellerHref }} style={{ cursor: 'pointer' }}>
                   <Avatar
                     src={seller.avatar_url}
                     name={seller.shop_name || seller.full_name || seller.username}
-                    type={hasShop ? 'business' : (seller.is_premium ? 'premium' : 'user')}
+                    type={isBusinessListing ? 'business' : (seller.is_premium ? 'premium' : 'user')}
                     verified={(seller.trust_score ?? 0) >= 60}
                     size={44}
                   />
@@ -870,7 +887,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                 <div className="seller-chips">
                   {seller.is_admin   && <span className="schip sch-admin"><span aria-hidden="true">🛡</span> Admin</span>}
                   {seller.is_premium && <span className="schip sch-prem"><span aria-hidden="true">👑</span> Premium</span>}
-                  {seller.shop_name  && <span className="schip sch-shop"><span aria-hidden="true">🏢</span> Biznes</span>}
+                  {isBusinessListing && <span className="schip sch-shop"><span aria-hidden="true">🏢</span> Biznes</span>}
                   {(() => { const l = getLevel(seller.gamification_points || 0); return <span className="schip" style={{ background: l.bg, color: l.color }}>{l.icon} {l.name}</span> })()}
                   {sellerCount > 0 && <span className="schip sch-seller"><span aria-hidden="true">📦</span> Shitës aktiv</span>}
                   {isNewMember(seller.created_at) && <span className="schip sch-new"><span aria-hidden="true">🆕</span> Anëtar i ri</span>}
@@ -908,14 +925,17 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                 )}
 
                 {/* Profile / Business button */}
-                {!isOwner && hasShop && (
+                {!isOwner && bizHref && (
                   <button type="button" className="view-profile-btn"
-                    onClick={() => window.location.href = `/biznese/${seller.id}`}>
+                    onClick={() => { window.location.href = bizHref }}>
                     <i className="ti ti-building-store" aria-hidden="true" />
                     Shiko biznesin →
                   </button>
                 )}
-                {!isOwner && !hasShop && (
+                {/* Profili i personit del edhe kur shitesi eshte biznes:
+                    dyqani dhe njeriu pas tij jane dy faqe te ndryshme dhe
+                    blerësi mund te doje te dyja (§4.5 — lidhje dydrejtimeshe). */}
+                {!isOwner && (
                   <button type="button" className="view-profile-btn"
                     onClick={() => window.location.href = `/u/${seller.id}`}>
                     <i className="ti ti-user" aria-hidden="true" />
@@ -923,9 +943,11 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                   </button>
                 )}
 
-                {/* Shop link */}
-                {hasShop && !isOwner && (
-                  <a className="shop-link-row" href={`/biznese/${seller.id}`}>
+                {/* Shop link — vetem per shitesit e vjeter me `shop_name` pa
+                    `business_id`; kur shpallja ka biznes, BusinessMiniCard e
+                    mbulon tashme kete rresht dhe do te ishte dyfishim. */}
+                {hasShop && !isOwner && !listing.business_id && bizHref && (
+                  <a className="shop-link-row" href={bizHref}>
                     <span style={{ fontSize: 20 }} aria-hidden="true">🏢</span>
                     <div>
                       <span>{seller.shop_name}</span>
@@ -937,6 +959,50 @@ export default function ListingPageClient({ params, initialListing }: { params: 
               </div>
               <div style={{ height: 11 }} />
             </>
+          )}
+
+          {/* Business mini-card — shown when listing belongs to a business */}
+          {listing.business_id && (
+            <BusinessMiniCard bizId={listing.business_id} />
+          )}
+
+          {listing.description && (
+            <>
+              <div className="divider" />
+              <div className="sec-label">Përshkrimi</div>
+              <div className="desc">{listing.description}</div>
+            </>
+          )}
+
+          {/* Vendndodhja */}
+          {(listing.city || (listing.latitude && listing.longitude)) && (
+            <>
+              <div className="divider" />
+              <div className="sec-label">Vendndodhja</div>
+              {listing.latitude && listing.longitude ? (
+                <MapDisplay
+                  lat={listing.latitude}
+                  lng={listing.longitude}
+                  address={listing.location_address || listing.city || ''}
+                />
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: 13, color: '#555' }}><span aria-hidden="true">📍</span> {listing.city}</span>
+                  <a
+                    href={`https://www.google.com/maps/search/${encodeURIComponent(listing.city + ', Shqipëri')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="map-link">
+                    <i className="ti ti-map" aria-hidden="true" />Hap në Maps
+                  </a>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Marketing: upsell per pronarin jo-premium */}
+          {isOwner && !seller?.is_premium && (
+            <SellerPremiumUpsell isPremium={false} />
           )}
 
           {/* Owner actions */}
@@ -954,9 +1020,54 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                   onClick={doBump}
                   disabled={bumpLoading || !canBump(listing.last_bumped_at)}
                   aria-label={canBump(listing.last_bumped_at) ? 'Ngrije shpalljen në krye' : 'Mund ta ngresh pas 7 ditësh'}
+                  title="Rifresko dukshmërinë — një herë çdo 7 ditë"
                   style={{ flex: 1, background: canBump(listing.last_bumped_at) ? '#E63312' : '#F0F0F0', color: canBump(listing.last_bumped_at) ? '#fff' : '#999', border: 'none', borderRadius: 10, padding: '10px', fontSize: 12, fontWeight: 700, cursor: canBump(listing.last_bumped_at) ? 'pointer' : 'not-allowed', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, opacity: bumpLoading ? 0.7 : 1 }}>
-                  <i className="ti ti-arrow-up" style={{ fontSize: 14 }} aria-hidden="true" />{canBump(listing.last_bumped_at) ? 'Ngrije' : 'Ngritur'}
+                  <i className="ti ti-arrow-up" style={{ fontSize: 14 }} aria-hidden="true" />{canBump(listing.last_bumped_at) ? 'Ngrije në krye' : 'Ngritur'}
                 </button>
+              </div>
+
+              {/* Fshirja — buton shkaterrues: outline i kuq, jo mbushje, dhe
+                  kurre me nje klikim te vetem (§7.4). Klikimi i pare hap
+                  konfirmimin, i dyti fshin. */}
+              <div style={{ marginTop: 8 }}>
+                {!delConfirm ? (
+                  <button
+                    type="button"
+                    onClick={() => { setDelConfirm(true); setDelMsg('') }}
+                    aria-label="Fshi shpalljen"
+                    style={{ width: '100%', background: '#fff', color: '#C42305', border: '1.5px solid #C42305', borderRadius: 12, minHeight: 44, padding: '10px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+                    <i className="ti ti-trash" style={{ fontSize: 14 }} aria-hidden="true" />Fshi shpalljen
+                  </button>
+                ) : (
+                  <div role="alertdialog" aria-label="Konfirmo fshirjen" style={{ background: '#FFF5F3', border: '1.5px solid #F0BDB2', borderRadius: 12, padding: '11px 12px' }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: '#C42305', marginBottom: 4 }}>
+                      Ta fshijmë këtë shpallje?
+                    </div>
+                    <div style={{ fontSize: 11.5, color: '#6b5a56', lineHeight: 1.5, marginBottom: 10 }}>
+                      Hiqet nga faqja dhe nga kërkimi. Bisedat dhe historiku i pagesave nuk preken.
+                    </div>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <button
+                        type="button"
+                        onClick={() => setDelConfirm(false)}
+                        style={{ flex: 1, background: '#fff', color: '#555', border: '1px solid #ddd', borderRadius: 12, minHeight: 44, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
+                        Jo, hiqe
+                      </button>
+                      <button
+                        type="button"
+                        onClick={doDelete}
+                        disabled={delLoading}
+                        style={{ flex: 1, background: '#C42305', color: '#fff', border: 'none', borderRadius: 12, minHeight: 44, fontSize: 12, fontWeight: 800, cursor: delLoading ? 'wait' : 'pointer', fontFamily: 'inherit', opacity: delLoading ? 0.7 : 1 }}>
+                        {delLoading ? 'Po fshihet…' : 'Po, fshije'}
+                      </button>
+                    </div>
+                  </div>
+                )}
+                {delMsg && (
+                  <div role="alert" style={{ fontSize: 12, fontWeight: 600, color: '#E63312', textAlign: 'center', padding: '6px 0 0' }}>
+                    {delMsg}
+                  </div>
+                )}
               </div>
               {bumpMsg && (
                 <div role="alert" style={{ fontSize: 12, fontWeight: 600, color: bumpMsg.startsWith('ok:') ? '#1D9E75' : '#E63312', textAlign: 'center', padding: '4px 0' }}>
@@ -1061,13 +1172,45 @@ export default function ListingPageClient({ params, initialListing }: { params: 
             </div>
           )}
 
-          {/* Report link — only for non-owner visitors */}
+          {/* Rreshti siguri/besim — Raporto, Takedown, Ndaj bashke.
+              Me pare "Raporto" rrinte vetem, me ngjyre #ccc mbi te bardhe
+              (rreth 1.6:1 — nen cdo prag WCAG); tani teksti eshte i lexueshem
+              dhe rruget e ankimit qendrojne bashke, ku i kerkon syri. */}
           {!isOwner && (
-            <div style={{ padding: '0 13px 20px', textAlign: 'center' }}>
-              <button type="button" aria-label="Raporto shpalljen" aria-haspopup="dialog" onClick={() => setReportOpen(true)}
-                style={{ background: 'none', border: 'none', color: '#ccc', fontSize: 11, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                <i className="ti ti-flag" style={{ fontSize: 12 }} aria-hidden="true" />Raporto këtë shpallje
-              </button>
+            <div style={{ padding: '0 13px 20px' }}>
+              <div style={{ display: 'flex', gap: 6, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  aria-label="Raporto shpalljen"
+                  aria-haspopup="dialog"
+                  onClick={() => setReportOpen(true)}
+                  className="safety-btn">
+                  <i className="ti ti-flag" style={{ fontSize: 12 }} aria-hidden="true" />Raporto
+                </button>
+                <a
+                  href="/takedown"
+                  className="safety-btn"
+                  title="Kërkesë ligjore për heqjen e përmbajtjes">
+                  <i className="ti ti-gavel" style={{ fontSize: 12 }} aria-hidden="true" />Kërkesë heqjeje
+                </a>
+                <button
+                  type="button"
+                  aria-label="Ndaj shpalljen"
+                  onClick={() => {
+                    const url = buildShareUrl(`/listing/${params.id}`, myRefCode)
+                    if (navigator.share) {
+                      navigator.share({ title: listing.title, url }).catch(() => {})
+                    } else {
+                      navigator.clipboard?.writeText(url).then(
+                        () => { setLinkCopied(true); setTimeout(() => setLinkCopied(false), 2000) },
+                        () => {},
+                      )
+                    }
+                  }}
+                  className="safety-btn">
+                  <i className="ti ti-share" style={{ fontSize: 12 }} aria-hidden="true" />{linkCopied ? 'U kopjua' : 'Ndaj'}
+                </button>
+              </div>
             </div>
           )}
         </div>
@@ -1148,7 +1291,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
               <Avatar
                 src={seller.avatar_url}
                 name={seller.shop_name || seller.full_name || seller.username}
-                type={hasShop ? 'business' : (seller.is_premium ? 'premium' : 'user')}
+                type={isBusinessListing ? 'business' : (seller.is_premium ? 'premium' : 'user')}
                 verified={(seller.trust_score ?? 0) >= 60}
                 size={36}
               />

@@ -7,6 +7,7 @@ import { LanguageSwitcher } from './components/LanguageSwitcher'
 import type { Category, Listing } from '../lib/types'
 import { SkeletonGrid } from './components/Skeleton'
 import Avatar from './components/Avatar'
+import ListingCard from './components/ListingCard'
 import { getLevel } from './components/Badges'
 import { PremiumUpsellModal } from './components/PremiumUpsell'
 import { Onboarding } from './components/Onboarding'
@@ -439,18 +440,8 @@ export default function HomeClient({ initialListings = [], initialCategories = [
 
   useEffect(() => { setMounted(true) }, [])
 
-  const fmt = (price: number, cur: string) =>
-    !price ? 'Çmim me marrëveshje' :
-    cur === 'EUR' ? `${nf(price)} €` : `${nf(price)} L`
-
-  function timeAgo(iso: string): string {
-    const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000)
-    if (diff < 60)    return 'tani'
-    if (diff < 3600)  return `${Math.floor(diff / 60)}min`
-    if (diff < 86400) return `${Math.floor(diff / 3600)}h`
-    if (diff < 604800) return `${Math.floor(diff / 86400)}d`
-    return new Date(iso).toLocaleDateString('sq-AL', { day: 'numeric', month: 'short' })
-  }
+  // `fmt` dhe `timeAgo` u zhvendosen te ListingCard bashke me karten — ishin
+  // te vetmit perdorues te tyre ketu.
 
   const go = (path: string) => { window.location.href = path }
 
@@ -572,27 +563,10 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .filter-btn{background:#fff;border:0.5px solid #ddd;border-radius:20px;padding:6px 13px;font-size:10px;color:#666;white-space:nowrap;flex-shrink:0;cursor:pointer;font-family:inherit;transition:all .12s;box-shadow:0 1px 3px rgba(0,0,0,.04);}
         .filter-btn:hover{border-color:#F5C842;color:#C42B0F;}
         .filter-btn.active{background:#111;border-color:#111;color:#F5C842;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.15);}
-        /* Listings grid — raporti 70% foto / 30% të dhëna — 3 kolona (-40%) */
-        .listings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:16px;}
-        .listing-card{background:#fff;border:1px solid #eee;border-radius:14px;overflow:hidden;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 18px -12px rgba(0,0,0,.14);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;animation:card-in .45s cubic-bezier(.2,.8,.2,1) both;}
-        @keyframes card-in{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
-        @media (prefers-reduced-motion: reduce){.listing-card{animation:none;}.card-img img{transition:none;}.listing-card:hover .card-img img{transform:none;}}
-        .listing-card:hover{transform:translateY(-3px);box-shadow:0 12px 28px -8px rgba(0,0,0,.22);border-color:#f2ded7;}
-        .listing-card:hover .card-img img{transform:scale(1.05);}
-        .listing-card:focus-visible{outline:2px solid #E63312;outline-offset:2px;}
-        .listing-card:active{transform:scale(.97);}
-        .card-img{flex:none;width:100%;aspect-ratio:4/3;position:relative;background:linear-gradient(135deg,#FBF7E8,#F2EAD0);overflow:hidden;display:flex;align-items:center;justify-content:center;}
-        .card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;transition:transform .35s cubic-bezier(.2,.8,.2,1);}
-        .card-img i{font-size:28px;color:#d0c9a0;}.card-seller-ov{position:absolute;left:6px;bottom:6px;display:flex;align-items:center;gap:5px;max-width:calc(100% - 12px);background:rgba(0,0,0,.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border-radius:999px;padding:2px 9px 2px 2px;z-index:2;cursor:pointer;}.card-seller-ov span{font-size:10px;color:#fff;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-        .badge-new{position:absolute;top:6px;left:6px;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;font-size:9px;padding:3px 7px;border-radius:999px;font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(230,51,18,.4);letter-spacing:.2px;}
-        .badge-used{position:absolute;top:6px;left:6px;background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;font-size:9px;padding:3px 7px;border-radius:999px;font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(0,0,0,.3);letter-spacing:.2px;}
-        .badge-premium{position:absolute;top:6px;right:6px;background:linear-gradient(135deg,#F8D24E,#F5C842);color:#111;font-size:9px;padding:3px 7px;border-radius:999px;font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(245,200,66,.5);}
-        .card-body{flex:1 1 auto;padding:9px 10px 10px;display:flex;flex-direction:column;gap:4px;min-height:0;}
-        .card-title{font-size:13px;line-height:1.3;font-weight:700;color:#222;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;min-height:1.3em;}
-        .card-price{font-size:14px;font-weight:800;color:#C42B0F;}
-        .card-meta{display:flex;align-items:center;justify-content:space-between;}
-        .card-loc{font-size:11px;color:#6B6B6B;display:flex;align-items:center;gap:3px;}
-        .card-loc i{font-size:11px;}
+        /* Karta e shpalljes (.listing-card e me radhe) rri te
+           app/ui-refine.css seksioni 8 — nje burim i vetem per kryefaqen,
+           faqen e biznesit dhe profilin. Ketu mbeten vetem klasat qe i
+           perkasin VETEM kryefaqes. */
         .empty-state{grid-column:1/-1;text-align:center;padding:36px 16px;background:linear-gradient(135deg,#f9f5e0,#f5f0d5);border:0.5px solid #eee;border-radius:13px;}
         .empty-state i{font-size:40px;color:#F5C842;display:block;margin-bottom:10px;}
         .empty-state h3{font-size:14px;font-weight:700;color:#555;margin-bottom:6px;}
@@ -899,39 +873,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                 </div>
               ) : (
                 listings.map((listing, idx) => (
-                  <div key={listing.id} className="listing-card" style={{ animationDelay: `${Math.min(idx * 45, 360)}ms` }} role="link" tabIndex={0} onClick={() => go(`/listing/${listing.id}`)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') go(`/listing/${listing.id}`) }}>
-                    <div className="card-img">
-                      {listing.images?.[0]
-                        ? <img src={listing.images[0]} alt={listing.title} loading={idx < 3 ? 'eager' : 'lazy'} fetchPriority={idx < 3 ? 'high' : 'auto'} decoding="async" width={400} height={300} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
-                        : <i className="ti ti-photo" style={{ fontSize: 26, color: '#ccc' }} aria-hidden="true" />
-                      }
-                      {listing.condition === 'i_ri' && <span className="badge-new">I ri</span>}
-                      {listing.condition === 'i_perdorur' && <span className="badge-used">I përdorur</span>}
-                      {(listing as any).rank_tier === 2
-                        ? <span className="badge-premium" aria-label="VIP" style={{ background: 'linear-gradient(135deg,#7A3FA6,#B57AE0)', color: '#fff' }}>VIP</span>
-                        : listing.is_premium && <span className="badge-premium" aria-label="Premium">⭐</span>}
-                      {(listing as any).author && (
-                        <div className="card-seller-ov" role="link" tabIndex={0}
-                          aria-label={`Profili i ${(listing as any).author.full_name || (listing as any).author.username || 'shitësit'}`}
-                          onClick={e => { e.stopPropagation(); go(`/u/${(listing as any).author.id}`) }}
-                          onKeyDown={e => { if (e.key === 'Enter') { e.stopPropagation(); go(`/u/${(listing as any).author.id}`) } }}>
-                          <Avatar src={(listing as any).author.avatar_url} name={(listing as any).author.full_name || (listing as any).author.username} type={(listing as any).author.is_premium ? 'premium' : 'user'} verified={((listing as any).author.trust_score ?? 0) >= 60} size={18} />
-                          <span>{(listing as any).author.full_name || (listing as any).author.username || 'Shitës'}</span>
-                        </div>
-                      )}
-                    </div>
-                    <div className="card-body">
-                      <div className="card-title">{listing.title}</div>
-                      <div className="card-price">{fmt(listing.price, listing.currency)}</div>
-                      <div className="card-meta">
-                        <span className="card-loc">
-                          <i className="ti ti-map-pin" aria-hidden="true" />
-                          {listing.city || 'Shqipëri'}
-                        </span>
-                        <span style={{ fontSize: 11, color: '#6B6B6B', flexShrink: 0 }}>{mounted ? timeAgo(listing.created_at) : ''}</span>
-                      </div>
-                    </div>
-                  </div>
+                  <ListingCard key={listing.id} listing={listing as any} index={idx} mounted={mounted} />
                 ))
               )}
             </div>

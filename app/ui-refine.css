@@ -121,11 +121,10 @@ button[aria-label="Ndaj aplikacionin"]{box-shadow:0 4px 13px -5px rgba(0,0,0,.22
   background:url(/icons/eagle.svg) center/contain no-repeat;
 }
 
-/*  Kartat e biznesit ne sinkron te plote me shpalljet e homepage (i njejti grid + pamje karte)  */
-.ig-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr)) !important;gap:12px !important;padding:12px !important;}
-.ig-cell{aspect-ratio:4/3 !important;border-radius:14px !important;border:1px solid #eee !important;box-shadow:0 1px 2px rgba(0,0,0,.05),0 6px 18px -12px rgba(0,0,0,.16) !important;transition:transform .2s ease, box-shadow .2s ease;}
-.ig-cell:hover{transform:translateY(-2px);box-shadow:0 12px 26px -10px rgba(0,0,0,.22) !important;}
-.ig-price{font-size:12px !important;bottom:8px !important;left:8px !important;right:auto !important;text-align:left !important;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border-radius:999px;padding:3px 10px !important;}
+/*  Kartat e biznesit: sinkroni behej me mbishkrime `!important` mbi `.ig-*`
+    (PR #76). Tani faqja e biznesit rendon te njejtin komponent `ListingCard`
+    si kryefaqja, ndaj s'ka me markup te dyte per te sinkronizuar dhe keto
+    rregulla u hoqen.  */
 
 /*  7) SISTEMI I DIZAJNIT: tokens semantike + aksesueshmeri (harmoni + WCAG/EAA)  */
 :root{
@@ -136,4 +135,37 @@ button[aria-label="Ndaj aplikacionin"]{box-shadow:0 4px 13px -5px rgba(0,0,0,.22
 }
 a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="button"]:focus-visible, [tabindex]:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible{
   outline:2px solid var(--action-red) !important; outline-offset:2px !important;
+}
+
+/* ═══ 8) KARTA UNIVERSALE E SHPALLJES (app/components/ListingCard.tsx) ═══
+   Nxjerre nga stili inline i HomeClient-it qe te vleje ne cdo faqe: kryefaqe,
+   faqe biznesi, profil. Raporti 70/30 — media 4/3 siper, te dhenat poshte.
+   Vlerat jane te njejtat qe kishte kryefaqja; ndryshuar vetem vendi. */
+.listings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--sp-3);margin-bottom:var(--sp-4);}
+.listing-card{background:#fff;border:1px solid #eee;border-radius:var(--r-card);overflow:hidden;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 18px -12px rgba(0,0,0,.14);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;animation:card-in .45s cubic-bezier(.2,.8,.2,1) both;}
+@keyframes card-in{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+.listing-card:hover{transform:translateY(-3px);box-shadow:0 12px 28px -8px rgba(0,0,0,.22);border-color:#f2ded7;}
+.listing-card:hover .card-img img{transform:scale(1.05);}
+.listing-card:focus-visible{outline:2px solid var(--action-red);outline-offset:2px;}
+.listing-card:active{transform:scale(.97);}
+.card-img{flex:none;width:100%;aspect-ratio:4/3;position:relative;background:linear-gradient(135deg,#FBF7E8,#F2EAD0);overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;transition:transform .35s cubic-bezier(.2,.8,.2,1);}
+.card-img i{font-size:28px;color:#d0c9a0;}
+.card-seller-ov{position:absolute;left:6px;bottom:6px;display:flex;align-items:center;gap:5px;max-width:calc(100% - 12px);background:rgba(0,0,0,.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border-radius:var(--r-pill);padding:2px 9px 2px 2px;z-index:2;cursor:pointer;}
+.card-seller-ov span{font-size:10px;color:#fff;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.badge-new{position:absolute;top:6px;left:6px;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;font-size:9px;padding:3px 7px;border-radius:var(--r-pill);font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(230,51,18,.4);letter-spacing:.2px;}
+.badge-used{position:absolute;top:6px;left:6px;background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;font-size:9px;padding:3px 7px;border-radius:var(--r-pill);font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(0,0,0,.3);letter-spacing:.2px;}
+.badge-premium{position:absolute;top:6px;right:6px;background:linear-gradient(135deg,#F8D24E,#F5C842);color:#111;font-size:9px;padding:3px 7px;border-radius:var(--r-pill);font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(245,200,66,.5);}
+.card-body{flex:1 1 auto;padding:9px 10px 10px;display:flex;flex-direction:column;gap:var(--sp-1);min-height:0;}
+.card-title{font-size:13px;line-height:1.3;font-weight:700;color:#222;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;min-height:1.3em;}
+/* Cmimi perdor `--action-red-deep`: `#E63312` mbi te bardhe nuk e kalon
+   WCAG AA per tekst nen 18px (§7.1 i planit). */
+.card-price{font-size:14px;font-weight:800;color:var(--action-red-deep);}
+.card-meta{display:flex;align-items:center;justify-content:space-between;}
+.card-loc{font-size:11px;color:#6B6B6B;display:flex;align-items:center;gap:3px;}
+.card-loc i{font-size:11px;}
+@media (prefers-reduced-motion: reduce){
+  .listing-card{animation:none;}
+  .card-img img{transition:none;}
+  .listing-card:hover .card-img img{transform:none;}
 }
