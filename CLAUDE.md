@@ -163,3 +163,79 @@ kur je i perqendruar te detyra.
 Aktivizimi eshte i lidhur ne dy vende, jo ne nje: kjo pjese e CLAUDE.md dhe
 hook-u `SessionStart` te `.claude/settings.json`. I pari mbijeton kompaktimin
 e kontekstit, i dyti e printon listen edhe kur CLAUDE.md nuk lexohet.
+
+---
+
+## 8. RREGULLORJA E PUNES
+
+> Urdheruar nga Martinel. Zbatohet ne cdo nderhyrje, pa perjashtim. Asnje hap
+> nuk kapercehet. Regjistruar ketu perhere me 19 gusht 2026; burimi eshte faqja
+> e Notion-it "EKZEKUTIM: Harmonizimi i Identitetit".
+
+### Tete fazat
+
+1. **Verifikim dhe audit live — kod dhe sy paralelisht.** Asnje pohim pa prove.
+   Kodi lexohet nga burimi live (`origin/main`, jo kujtesa) dhe faqja shihet me
+   sy ne shfletues. Nese s'perputhen, e verteta eshte ajo qe sheh perdoruesi.
+2. **Memorizim i cdo aspekti dhe levizjeje.** Cdo gjetje, hash, commit, gabim
+   shkruhet. Gabimi i memorizuar nuk perseritet.
+3. **Mendim sistematik dhe logjik.** Shkaku i vertete, jo simptoma. Nje shkak
+   shpjegon disa ankesa. Asnje veprim kontradiktor me nje te meparshem.
+4. **Kerkim dhe analize shkencore.** Burime zyrtare te cituara. Hipoteze →
+   prove → perfundim. Asnje "besoj se".
+5. **Plan shkencor i permiresimit.** Para cdo prekjeje: plan i shkruar qe
+   parashikon cdo detaj, modalitet, rrezik dhe rrugen e kthimit.
+6. **Implementim me precizion absolut.** Ndryshimet verifikohen lokalisht para
+   dergimit; hash-i krahasohet. Zero tolerance ndaj gabimit.
+7. **Testim dhe verifikim live i nderhyrjes.** Pas cdo nderhyrjeje: versioni =
+   commit-i i ri, kontrollet kaluan, ekrani provohet realisht.
+8. **Kerkim dhe perdorim i mjeteve me efikase.** Para punes manuale, kerkohet
+   mjet i specializuar dhe perdoret me efikasitet.
+
+### Rregullat 9–15
+
+9. **Te gjithe elementet njekohesisht.** Cdo vendim peshon njekohesisht ligjin e
+   plote (konsumatori, tregtia elektronike, fiskalizimi, te dhenat personale,
+   pronesia industriale, pergjegjesia e ndermjetesit), teken, dizajnin (i bukur,
+   jo "funksional"), standardet premium, marketingun, besueshmerine,
+   funksionalitetin, performancen. Nje zgjidhje qe kenaq njerin dhe demton
+   tjetrin s'eshte zgjidhje.
+10. **Permbush urdhrat ne detaje; mos u shmang.** Dy perjashtime, secili me
+    shpjegim: (a) kushtet teknike s'e lejojne; (b) urdhri shkakton dem.
+    **Kufiri fiskal:** ndertohet GATI per konformitet (NIPT, fiskalizim, pagesa
+    ligjore); KURRE vecori per shmangie takse.
+11. **Verifikim live si perdorues i pari — pastaj kodi, pastaj te tjera.**
+    Rendi i detyruar: **sy live → kod (`origin/main`) → tjeter.** Skede e re ne
+    shfletues.
+12. **Historiku dhe sistematika.** Para cdo veprimi shihet historiku; puna
+    organizohet ne sistem; asnje veprim i rastesishem.
+13. **Audit, autopsi, verifikim, testim i vazhdueshem.** Autopsi e shkakut,
+    prove, test live para dhe pas. Asgje s'quhet e mbaruar pa u audituar.
+14. **Vendimi SUPERPOWER — mendje paralele.** Cdo vendim kombinon njekohesisht
+    mendim te thelle, shkencen, mjetet e specializuara, informacionin real live,
+    logjiken, rregullat 1–13, punen sistematike. Asnje vendim nga nje burim i
+    vetem.
+15. **Gjuha shqipe dhe informacion i duhur.** Pergjigju gjithmone shqip; jep
+    vetem informacion te sakte, te plote, te nevojshem — pa tepri.
+
+**ZBATIM KUMULATIV:** rregullat 1–13 zbatohen NJEKOHESISHT ne cdo veprim.
+
+### Denoncimet
+
+I ben vete admini. Sistemi i jep adminit akses per te verifikuar proven e plote
+e te pandryshuar, per ta administruar, per ta shkarkuar (dosje e printueshme).
+Sistemi nuk merr vendime ligjore — siguron qe prova te mos humbase.
+
+### Paralajmerim sigurie
+
+Celesa ose token-a te ngjitur ne tekst te hapur trajtohen si te **komprometuar**
+→ anulohen dhe rigjenerohen. Ekzekutuesi i kodit nuk i trajton sekretet;
+i vendos Martineli.
+
+### Kufi i matur i ketij mjedisi (jo i rregullores)
+
+Rregulli 11 kerkon verifikim live me sy. Nga nje sesion i larguar, dalja HTTPS
+drejt `alpazar.vercel.app` dhe `*.supabase.co` eshte e bllokuar nga politika e
+mjedisit (shih `docs/RRJETI.md`). Pra hapi "sy live" e kryen pronari; agjenti
+raporton cfare mati dhe cfare nuk e verifikoi dot — kurre nuk e paraqet si te
+verifikuar.
