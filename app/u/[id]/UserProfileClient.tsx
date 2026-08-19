@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { useAlpazar } from '../../../lib/context'
 import Avatar from '../../components/Avatar'
+import ListingCard from '../../components/ListingCard'
 
 function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime()
@@ -15,10 +16,8 @@ function timeAgo(dateStr: string) {
   return `${Math.floor(m / 12)} vite më parë`
 }
 
-function formatPrice(price: number | null | undefined, currency: string) {
-  if (!price) return 'Me marrëveshje'
-  return `${price.toLocaleString('sq-AL')} ${currency || 'L'}`
-}
+// `formatPrice` u hoq bashke me grid-in katror: ListingCard e formaton vete
+// cmimin me `nf()`, qe jep te njejtin rezultat ne server e ne shfletues.
 
 export default function PublicProfilePage({ params }: { params: { id: string } }) {
   const { user } = useAlpazar()
@@ -27,6 +26,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
   const [activeTab, setActiveTab] = useState<'listings' | 'about'>('listings')
+  const [biz, setBiz] = useState<any>(null)
 
   useEffect(() => {
     async function load() {
@@ -39,9 +39,11 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
       if (!p) { setNotFound(true); setLoading(false); return }
       setProfile(p)
 
+      // `condition` dhe `rank_tier` u shtuan per ListingCard (shenjat
+      // "I ri"/"I perdorur" dhe VIP).
       const { data: ls } = await supabase
         .from('listings')
-        .select('id,title,price,currency,images,city,created_at,is_premium')
+        .select('id,title,price,currency,images,city,created_at,is_premium,condition,rank_tier')
         .eq('user_id', params.id)
         .eq('is_active', true)
         .order('rank_tier', { ascending: false })
@@ -49,6 +51,18 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
         .limit(60)
 
       setListings(ls || [])
+
+      // Biznesi i ketij personi — lidhja person → dyqan (§4.5). Merret nga
+      // tabela `businesses`, jo nga `profiles.shop_name`: ai i fundit tregon
+      // vetem qe dikur eshte shkruar nje emer dyqani, jo qe ekziston nje
+      // faqe biznesi per te.
+      const { data: bz } = await supabase
+        .from('businesses')
+        .select('id,name,logo_url,is_verified')
+        .eq('owner_id', params.id)
+        .maybeSingle()
+      setBiz(bz || null)
+
       setLoading(false)
     }
     load()
@@ -72,7 +86,8 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
   const name = profile.full_name || profile.username || 'Përdorues'
   const memberSince = new Date(profile.created_at).getFullYear()
   const isOwnProfile = user?.id === profile.id
-  const isBusiness = !!profile.shop_name
+  // Nje faqe biznesi e vertete peshon me shume se nje `shop_name` i mbetur.
+  const isBusiness = !!biz || !!profile.shop_name
 
   const tabs = [
     { key: 'listings', label: `Shpalljet (${listings.length})` },
@@ -179,10 +194,13 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
                 <><span aria-hidden="true">✏️</span> Edito Profilin</>
               </button>
             )}
-            {isBusiness && (
+            {/* Lidhja del nga rreshti real i biznesit; me pare perdorej
+                id-ja e profilit dhe faqja e biznesit e shpetonte me nje
+                rrugedalje `owner_id`. */}
+            {biz && (
               <button
                 type="button"
-                onClick={() => window.location.href = `/biznese/${profile.id}`}
+                onClick={() => window.location.href = `/biznese/${biz.id}`}
                 style={{ padding: '10px 16px', background: '#111', color: '#F5C842', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}
               >
                 <><span aria-hidden="true">🏢</span> Shiko Biznesin</>
@@ -219,43 +237,14 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
               Nuk ka shpallje aktive
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 2 }}>
-              {listings.map(l => {
-                const img = Array.isArray(l.images) ? l.images[0] : null
-                return (
-                  <div
-                    key={l.id}
-                    role="link"
-                    tabIndex={0}
-                    aria-label={`${l.title} — ${l.price ? `${l.price.toLocaleString('sq-AL')} ${l.currency || 'L'}` : 'Falas'}`}
-                    onClick={() => window.location.href = `/listing/${l.id}`}
-                    onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/listing/${l.id}` }}
-                    style={{ position: 'relative', aspectRatio: '1/1', background: '#eee', overflow: 'hidden', cursor: 'pointer' }}
-                  >
-                    {img ? (
-                      <img
-                        src={img}
-                        alt={l.title}
-                        loading="lazy"
-                        width={400}
-                        height={400}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                        onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
-                      />
-                    ) : (
-                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg,#F5C842,#E63312)', color: '#fff', fontSize: 28 }} aria-hidden="true">📦</div>
-                    )}
-                    {/* Price overlay */}
-                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)', padding: '20px 6px 6px', color: '#fff' }}>
-                      <div style={{ fontSize: 11, fontWeight: 700, lineHeight: 1.2, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical' }}>{l.title}</div>
-                      <div style={{ fontSize: 12, fontWeight: 800, color: '#F5C842' }}>{formatPrice(l.price, l.currency)}</div>
-                    </div>
-                    {l.is_premium && (
-                      <div style={{ position: 'absolute', top: 4, right: 4, fontSize: 12 }} role="img" aria-label="Premium">⭐</div>
-                    )}
-                  </div>
-                )
-              })}
+            // I njejti ListingCard si te kryefaqja dhe te faqja e biznesit.
+            // Me pare ky ishte nje grid katror 1/1 me titullin e mbivendosur
+            // mbi foto — i lexueshem me veshtiresi dhe i ndryshem nga cdo
+            // siperfaqe tjeter.
+            <div className="listings-grid" style={{ padding: '0 12px' }}>
+              {listings.map((l, idx) => (
+                <ListingCard key={l.id} listing={l as any} index={idx} showSeller={false} />
+              ))}
             </div>
           )}
         </div>

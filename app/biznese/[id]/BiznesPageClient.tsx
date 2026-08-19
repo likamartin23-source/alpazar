@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabase'
 import dynamicImport from 'next/dynamic'
 import Avatar from '../../components/Avatar'
+import ListingCard from '../../components/ListingCard'
 
 const MapDisplay = dynamicImport(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), { ssr: false })
 
@@ -29,13 +30,62 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
   const [isOwner, setIsOwner]       = useState(false)
   const [descExpanded, setDescExpanded] = useState(false)
   const [totalViews, setTotalViews] = useState(0)
+  // Faqja renderohet edhe ne server (`initialBiz`). Koha relative e kartes
+  // varet nga `Date.now()`, ndaj i jepet ListingCard-it vetem pas montimit.
+  const [mounted, setMounted]       = useState(false)
+
+  // Ndjekesit. Tabela `business_followers` ekzistonte ne baze me RLS te plote
+  // (lexim publik; shto/hiq vetem rreshtin tend) por asnje ekran nuk e prekte.
+  const [followers, setFollowers]   = useState(0)
+  const [following, setFollowing]   = useState(false)
+  const [followBusy, setFollowBusy] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) setUserId(session.user.id)
     })
     fetchBiz()
   }, [])
+
+  async function refreshFollow(bizId: string) {
+    const { count } = await supabase
+      .from('business_followers')
+      .select('id', { count: 'exact', head: true })
+      .eq('business_id', bizId)
+    setFollowers(count ?? 0)
+
+    const uid = (await supabase.auth.getSession()).data.session?.user.id
+    if (!uid) { setFollowing(false); return }
+    const { data: mine } = await supabase
+      .from('business_followers')
+      .select('id')
+      .eq('business_id', bizId)
+      .eq('user_id', uid)
+      .maybeSingle()
+    setFollowing(!!mine)
+  }
+
+  async function toggleFollow() {
+    if (followBusy || !biz) return
+    if (!userId) { window.location.href = '/auth/login'; return }
+    setFollowBusy(true)
+    // Numri perditesohet ne cast dhe kthehet mbrapsht nese shkruarja deshton —
+    // butoni s'duhet te rrije i ngrire sa te vije pergjigjja.
+    const wasFollowing = following
+    setFollowing(!wasFollowing)
+    setFollowers(n => n + (wasFollowing ? -1 : 1))
+
+    const { error } = wasFollowing
+      ? await supabase.from('business_followers').delete().eq('business_id', biz.id).eq('user_id', userId)
+      : await supabase.from('business_followers').insert({ business_id: biz.id, user_id: userId })
+
+    if (error) {
+      setFollowing(wasFollowing)
+      setFollowers(n => n + (wasFollowing ? 1 : -1))
+    }
+    setFollowBusy(false)
+  }
 
   async function fetchBiz() {
     try {
@@ -54,9 +104,11 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
         .eq('business_id', b.id)
       if (mapRows) setSubcats(mapRows.map((r: any) => r.business_subcategories).filter(Boolean))
 
+      // `created_at` dhe `rank_tier` u shtuan bashke me ListingCard: karta
+      // shfaq kohen relative dhe shenjen VIP, te dyja mungonin ne kete select.
       const { data: ls } = await supabase
         .from('listings')
-        .select('id,title,price,currency,images,condition,city,is_premium,views_count')
+        .select('id,title,price,currency,images,condition,city,is_premium,views_count,created_at,rank_tier')
         .eq('business_id', b.id)
         .eq('is_active', true)
         .order('created_at', { ascending: false })
@@ -65,6 +117,8 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
         setListings(ls)
         setTotalViews(ls.reduce((s: number, l: any) => s + (l.views_count || 0), 0))
       }
+
+      await refreshFollow(b.id)
     } catch {
       setLoadError(true)
     } finally {
@@ -72,10 +126,9 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
     }
   }
 
-  function fmt(price: number, cur: string) {
-    if (!price) return 'Me marrëveshje'
-    return cur === 'EUR' ? `€${Number(price).toLocaleString('sq-AL')}` : `${Number(price).toLocaleString('sq-AL')} L`
-  }
+  // `fmt` u hoq bashke me grid-in e vjeter: ishte i vetmi perdorues i tij dhe
+  // formatonte me `toLocaleString('sq-AL')`, qe jep rezultat te ndryshem ne
+  // server e ne shfletues (shih lib/format.ts). ListingCard perdor `nf()`.
 
   function share() {
     if (navigator.share) navigator.share({ title: biz?.name, url: window.location.href })
@@ -112,18 +165,28 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
   const descText  = descExpanded || !descShort ? biz.description : (biz.description || '').slice(0, 120) + '…'
 
   return (
-    <div style={{ maxWidth: 480, margin: '0 auto', background: '#f2f2f2', minHeight: '100vh', paddingBottom: 60 }}>
+    <div className="biz-page">
       <style dangerouslySetInnerHTML={{ __html: `
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
+        /* Gjeresia rrinte si stil inline (maxWidth:480) mbi rrenjen, pra nuk
+           kapërcehej dot me CSS dhe desktopi mbetej nje shirit i ngushte.
+           Tani eshte klase: mobili identik (480 i centruar), dhe nga 1000px
+           e siper dy kolona — koka/info ngjitese majtas, tabet me grid-in
+           djathtas, si te faqja e shpalljes (PR #72). */
+        .biz-page{background:#f2f2f2;min-height:100vh;padding-bottom:60px;}
+        .biz-shell{max-width:480px;margin:0 auto;}
+        @media (min-width:1000px){
+          .biz-shell{max-width:1120px;display:grid;grid-template-columns:minmax(320px,390px) 1fr;gap:24px;align-items:start;padding:0 20px;}
+          .biz-left{position:sticky;top:12px;align-self:start;max-height:calc(100vh - 24px);overflow-y:auto;overscroll-behavior:contain;}
+          .biz-left::-webkit-scrollbar{width:0;}
+          .biz-right{min-width:0;}
+        }
         .biz-tab{flex:1;padding:13px 0;font-size:13px;font-weight:700;border:none;background:none;cursor:pointer;border-bottom:2.5px solid transparent;color:#888;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:4px;}
         .biz-tab.active{color:#C42B0F;border-bottom-color:#E63312;}
-        .ig-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;}
-        .ig-cell{aspect-ratio:1/1;background:#e8e8e8;overflow:hidden;cursor:pointer;position:relative;}
-        .ig-cell img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .2s;}
-        .ig-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.55) 0%,transparent 50%);opacity:0;transition:opacity .2s;}
-        .ig-cell:active .ig-overlay{opacity:1;}
-        .ig-price{position:absolute;bottom:5px;left:0;right:0;text-align:center;color:#fff;font-size:10px;font-weight:800;text-shadow:0 1px 3px rgba(0,0,0,.8);padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        /* Grid-i .ig-* (katror 1/1, vetem foto + cmim) u zevendesua nga
+           .listings-grid + ListingCard — stilet e tyre rrine te
+           app/ui-refine.css, seksioni 8. */
         .action-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 0;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;border:none;box-shadow:0 2px 8px -2px rgba(0,0,0,.25);transition:transform .15s ease,box-shadow .15s ease;}
         .action-btn:hover{transform:translateY(-1px);}
         .action-btn:active{opacity:.8;}
@@ -139,6 +202,8 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
         .card-title{font-size:13px;font-weight:800;color:#111;margin-bottom:14px;display:flex;align-items:center;gap:6px;}
       ` }} />
 
+      <div className="biz-shell">
+      <div className="biz-left">
       {/* ── Cover photo ────────────────────────────────────── */}
       <div style={{ position: 'relative' }}>
         <div style={{ aspectRatio: '16/7', overflow: 'hidden', background: 'linear-gradient(135deg,#F5C842,#E63312)' }}>
@@ -213,10 +278,28 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
             </div>
             <div style={{ width: 1, background: '#f0f0f0' }} />
             <div className="stat-pill">
+              <span className="stat-n">{followers}</span>
+              <span className="stat-l">Ndjekës</span>
+            </div>
+            <div style={{ width: 1, background: '#f0f0f0' }} />
+            <div className="stat-pill">
               <span className="stat-n">{new Date(biz.created_at).getFullYear()}</span>
               <span className="stat-l">Anëtar prej</span>
             </div>
           </div>
+
+          {/* Lidhja biznes → person. Gjysma tjeter e ndërlidhjes: profili i
+              personit çon te biznesi i tij (§4.5). */}
+          {biz.owner_id && (
+            <div style={{ marginBottom: 12 }}>
+              <a
+                href={`/u/${biz.owner_id}`}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#5a5a5a', textDecoration: 'none', minHeight: 36 }}>
+                <i className="ti ti-user" style={{ fontSize: 13 }} aria-hidden="true" />
+                Menaxhuar nga <span style={{ color: '#C42305', fontWeight: 700 }}>profili i pronarit →</span>
+              </a>
+            </div>
+          )}
 
           {/* Action buttons */}
           <div style={{ display: 'flex', gap: 8 }}>
@@ -229,6 +312,21 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
               className="action-btn" style={{ background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842' }}>
               <i className="ti ti-message" style={{ fontSize: 15 }} aria-hidden="true" /> Mesazh
             </button>
+            {!isOwner && (
+              <button
+                type="button"
+                onClick={toggleFollow}
+                disabled={followBusy}
+                aria-pressed={following}
+                aria-label={following ? 'Mos e ndiq më këtë biznes' : 'Ndiq këtë biznes'}
+                className="action-btn"
+                style={following
+                  ? { background: '#fff', color: '#C42305', border: '1.5px solid #C42305', boxShadow: 'none' }
+                  : { background: 'linear-gradient(135deg,#F8D24E,#F5C842)', color: '#111' }}>
+                <i className={`ti ti-${following ? 'check' : 'plus'}`} style={{ fontSize: 15 }} aria-hidden="true" />
+                {following ? 'Po ndjek' : 'Ndiq'}
+              </button>
+            )}
             <button type="button" aria-label="Ndaj" onClick={share} className="action-btn" style={{ background: '#f0f0f0', color: '#333', flex: '0 0 48px' }}>
               <i className="ti ti-share-3" style={{ fontSize: 17 }} aria-hidden="true" />
             </button>
@@ -276,6 +374,9 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
         )}
       </div>
 
+      </div>{/* /biz-left */}
+
+      <div className="biz-right">
       {/* ── Sticky tabs ──────────────────────────────────────── */}
       <div role="tablist" aria-label="Seksionet e biznesit" style={{ position: 'sticky', top: 0, zIndex: 10, background: '#fff', borderBottom: '1px solid #eee', display: 'flex', marginBottom: 2 }}>
         <button id="tab-grid" type="button" role="tab" aria-selected={activeTab === 'grid'} aria-controls="tabpanel-grid" className={`biz-tab ${activeTab === 'grid' ? 'active' : ''}`} onClick={() => setActiveTab('grid')}>
@@ -301,23 +402,14 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
               )}
             </div>
           ) : (
-            <div className="ig-grid">
-              {listings.map(l => {
-                const img = Array.isArray(l.images) && l.images.length ? l.images[0] : null
-                return (
-                  <div key={l.id} role="link" tabIndex={0} aria-label={`${l.title} — ${fmt(l.price, l.currency)}`} className="ig-cell" onClick={() => window.location.href = `/listing/${l.id}`} onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/listing/${l.id}` }}>
-                    {img
-                      ? <img src={img} alt={l.title} loading="lazy" width={400} height={400} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
-                      : <div style={{ width: '100%', height: '100%', background: '#e8e8e8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><i className="ti ti-photo" style={{ fontSize: 22, color: '#ccc' }} aria-hidden="true" /></div>
-                    }
-                    <div className="ig-overlay" />
-                    <div className="ig-price">{fmt(l.price, l.currency)}</div>
-                    {l.is_premium && (
-                      <div style={{ position: 'absolute', top: 5, left: 5, background: '#F5C842', color: '#7B5000', fontSize: 8, fontWeight: 800, padding: '2px 5px', borderRadius: 4 }}>GOLD</div>
-                    )}
-                  </div>
-                )
-              })}
+            // I njejti komponent si te kryefaqja — keshtu kartat e biznesit
+            // marrin titull dhe cmim poshte fotos, jo vetem nje pill cmimi mbi
+            // te. `showSeller={false}`: te gjitha shpalljet ketu i perkasin
+            // ketij biznesi, ndaj chip-i i shitesit vetem do te perseritej.
+            <div className="listings-grid" style={{ padding: 12, marginBottom: 0 }}>
+              {listings.map((l, idx) => (
+                <ListingCard key={l.id} listing={l as any} index={idx} showSeller={false} mounted={mounted} />
+              ))}
             </div>
           )}
           <div style={{ textAlign: 'center', padding: '14px 0', fontSize: 11, color: '#bbb' }}>
@@ -434,6 +526,8 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
           <div style={{ fontSize: 12, color: '#888', lineHeight: 1.6 }}>Klientët do të mund të lënë vlerësime<br />për shërbimin dhe produktet e biznesit.</div>
         </div>
       )}
+      </div>{/* /biz-right */}
+      </div>{/* /biz-shell */}
     </div>
   )
 }
