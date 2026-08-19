@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState, useRef } from 'react'
-import Avatar from '../components/Avatar'
+import Avatar, { tierNgaProfili } from '../components/Avatar'
 import { supabase } from '../../lib/supabase'
 import { SITE_URL } from '../../lib/siteConfig'
 import { getLevel, isNewMember } from '../components/Badges'
@@ -554,7 +554,8 @@ export default function ProfilePage() {
               <Avatar
                 src={profile?.avatar_url}
                 name={profile?.full_name || profile?.username}
-                type={profile?.is_premium ? (profile?.shop_name ? 'business' : 'premium') : 'user'}
+                type={profile?.shop_name ? 'business' : 'person'}
+                tier={tierNgaProfili(profile)}
                 verified={(profile?.trust_score ?? 0) >= 60}
                 size={96}
               />
@@ -1057,7 +1058,8 @@ export default function ProfilePage() {
                             <Avatar
                               src={p?.avatar_url}
                               name={name}
-                              type={p?.is_premium ? 'premium' : 'user'}
+                              type={p?.shop_name ? 'business' : 'person'}
+                              tier={tierNgaProfili(p)}
                               size={44}
                             />
                             {conv.unread > 0 && (

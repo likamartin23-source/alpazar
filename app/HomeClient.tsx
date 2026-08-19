@@ -6,7 +6,7 @@ import { useRealtimeTable } from '../hooks/useRealtimeTable'
 import { LanguageSwitcher } from './components/LanguageSwitcher'
 import type { Category, Listing } from '../lib/types'
 import { SkeletonGrid } from './components/Skeleton'
-import Avatar from './components/Avatar'
+import Avatar, { tierNgaProfili } from './components/Avatar'
 import ListingCard from './components/ListingCard'
 import { getLevel } from './components/Badges'
 import { PremiumUpsellModal } from './components/PremiumUpsell'
@@ -633,7 +633,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                   return (
                     <button type="button" className="user-chip" onClick={() => go('/profile')} aria-label="Profili im">
                       <span className="user-chip-av" style={{ overflow: 'visible' }}>
-                        <Avatar src={profile?.avatar_url} name={nm} type={profile?.is_premium ? 'premium' : 'user'} verified={(profile?.trust_score ?? 0) >= 60} size={28} />
+                        <Avatar src={profile?.avatar_url} name={nm} type="person" tier={tierNgaProfili(profile)} verified={(profile?.trust_score ?? 0) >= 60} size={28} />
                         <span className="user-chip-on" />
                       </span>
                       <span className="user-chip-txt">
@@ -776,7 +776,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                     <div key={shop.id} role="link" tabIndex={0} className="shop-mini" onClick={() => go(`/biznese/${shop.id}`)} onKeyDown={e => { if (e.key === 'Enter') go(`/biznese/${shop.id}`) }}>
                       <div className="shop-top" style={{ background: `linear-gradient(135deg,${col}22,${col}44)` }}>
                         <div className="shop-av" style={{ background: 'transparent' }}>
-                          <Avatar src={shop.avatar_url} name={shop.shop_name || shop.full_name} type="business" verified={shop.is_premium} size={40} />
+                          <Avatar src={shop.avatar_url} name={shop.shop_name || shop.full_name} type="business" tier={tierNgaProfili(shop)} verified={shop.is_verified} size={40} />
                         </div>
                         <span className="shop-prem" aria-label="Premium">⭐</span>
                       </div>

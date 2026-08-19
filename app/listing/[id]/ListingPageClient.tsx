@@ -11,7 +11,7 @@ import { saveRefFromUrl, buildShareUrl } from '../../../lib/referral'
 import { TrustBadge } from '../../components/TrustBadge'
 import { SharePanel } from '../../components/SharePanel'
 import { ImageCarousel } from '../../components/ImageCarousel'
-import Avatar from '../../components/Avatar'
+import Avatar, { tierNgaProfili } from '../../components/Avatar'
 
 const MapDisplay = dynamic(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), { ssr: false })
 
@@ -867,7 +867,8 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                   <Avatar
                     src={seller.avatar_url}
                     name={seller.shop_name || seller.full_name || seller.username}
-                    type={isBusinessListing ? 'business' : (seller.is_premium ? 'premium' : 'user')}
+                    type={isBusinessListing ? 'business' : 'person'}
+                    tier={tierNgaProfili(seller)}
                     verified={(seller.trust_score ?? 0) >= 60}
                     size={44}
                   />
@@ -1291,7 +1292,8 @@ export default function ListingPageClient({ params, initialListing }: { params: 
               <Avatar
                 src={seller.avatar_url}
                 name={seller.shop_name || seller.full_name || seller.username}
-                type={isBusinessListing ? 'business' : (seller.is_premium ? 'premium' : 'user')}
+                type={isBusinessListing ? 'business' : 'person'}
+                tier={tierNgaProfili(seller)}
                 verified={(seller.trust_score ?? 0) >= 60}
                 size={36}
               />

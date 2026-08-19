@@ -14,7 +14,7 @@
 // layout-i ne cdo faqe, ndaj karta duket njesoj edhe atje ku faqja s'ka
 // stilet e veta.
 
-import Avatar from './Avatar'
+import Avatar, { tierNgaProfili } from './Avatar'
 import { nf, dayMonth } from '../../lib/format'
 
 export type ListingCardAuthor = {
@@ -122,7 +122,8 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
             <Avatar
               src={author.avatar_url}
               name={author.full_name || author.username}
-              type={author.is_premium ? 'premium' : 'user'}
+              type="person"
+              tier={tierNgaProfili(author)}
               verified={(author.trust_score ?? 0) >= 60}
               size={18}
             />

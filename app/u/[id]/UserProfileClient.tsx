@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { useAlpazar } from '../../../lib/context'
-import Avatar from '../../components/Avatar'
+import Avatar, { tierNgaProfili } from '../../components/Avatar'
 import ListingCard from '../../components/ListingCard'
 
 function timeAgo(dateStr: string) {
@@ -32,7 +32,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
     async function load() {
       const { data: p } = await supabase
         .from('profiles')
-        .select('id,full_name,username,avatar_url,cover_url,bio,city,is_premium,is_verified,trust_score,trust_score_visible,created_at,shop_name,seller_rating,reviews_count')
+        .select('id,full_name,username,avatar_url,cover_url,bio,city,is_premium,premium_expires_at,has_boost,boost_expires_at,is_verified,trust_score,trust_score_visible,created_at,shop_name,seller_rating,reviews_count')
         .eq('id', params.id)
         .single()
 
@@ -124,7 +124,8 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
           <Avatar
             src={profile.avatar_url}
             name={name}
-            type={isBusiness ? 'business' : profile.is_premium ? 'premium' : 'user'}
+            type={isBusiness ? 'business' : 'person'}
+            tier={tierNgaProfili(profile)}
             verified={profile.is_verified || (profile.trust_score ?? 0) >= 60}
             size={96}
           />

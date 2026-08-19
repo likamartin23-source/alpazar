@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAlpazar } from '../../lib/context'
-import AlpazarAvatar from '../components/Avatar'
+import AlpazarAvatar, { tierNgaProfili } from '../components/Avatar'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -115,7 +115,8 @@ function Avatar({ profile, size = 46, online = false }: { profile: any; size?: n
       <AlpazarAvatar
         src={profile?.avatar_url}
         name={name}
-        type={profile?.shop_name ? 'business' : profile?.is_premium ? 'premium' : 'user'}
+        type={profile?.shop_name ? 'business' : 'person'}
+        tier={tierNgaProfili(profile)}
         verified={(profile?.trust_score ?? 0) >= 60}
         size={size}
       />

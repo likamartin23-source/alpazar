@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabase'
 import dynamicImport from 'next/dynamic'
-import Avatar from '../../components/Avatar'
+import Avatar, { tierNgaProfili } from '../../components/Avatar'
 import ListingCard from '../../components/ListingCard'
 
 const MapDisplay = dynamicImport(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), { ssr: false })
@@ -39,6 +39,13 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
   const [followers, setFollowers]   = useState(0)
   const [following, setFollowing]   = useState(false)
   const [followBusy, setFollowBusy] = useState(false)
+  // Tier-i i unazes se biznesit vjen nga pronari (Vendimi 1: identiteti eshte i
+  // biznesit, abonimi eshte i personit). Marrim vetem kater fushat qe llogarit
+  // `owner_rank_tier`.
+  const [pronari, setPronari]       = useState<{
+    is_premium?: boolean | null; premium_expires_at?: string | null
+    has_boost?: boolean | null; boost_expires_at?: string | null
+  } | null>(null)
 
   useEffect(() => {
     setMounted(true)
@@ -97,6 +104,14 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
       if (!b) { setLoading(false); return }
       setBiz(b)
       setIsOwner((await supabase.auth.getSession()).data.session?.user.id === b.owner_id)
+
+      // Profili i pronarit — vetem fushat e tier-it, per unazen e avatarit.
+      const { data: pr } = await supabase
+        .from('profiles')
+        .select('is_premium,premium_expires_at,has_boost,boost_expires_at')
+        .eq('id', b.owner_id)
+        .maybeSingle()
+      setPronari(pr)
 
       const { data: mapRows } = await supabase
         .from('business_subcategory_map')
@@ -237,6 +252,7 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
             src={biz.logo_url}
             name={biz.name}
             type="business"
+            tier={tierNgaProfili(pronari)}
             verified={biz.is_verified}
             size={84}
           />

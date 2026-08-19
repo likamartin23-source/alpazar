@@ -4,12 +4,21 @@ export const dynamic = 'force-dynamic'
 
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
-import Avatar from '../components/Avatar'
+import Avatar, { tierNgaProfili } from '../components/Avatar'
 
 interface Biz {
   id: string; name: string; type: string; logo_url: string | null
   city: string | null; description: string | null; is_verified: boolean
   listing_count?: number
+  // Tier-i i unazes se avatarit vjen nga pronari, jo nga biznesi (Vendimi 1 i
+  // planit: identiteti dhe abonimi jane boshte te ndryshem). Join i vetem, jo
+  // per-rresht — pa N+1.
+  owner?: {
+    is_premium?: boolean | null
+    premium_expires_at?: string | null
+    has_boost?: boolean | null
+    boost_expires_at?: string | null
+  } | null
 }
 
 const TYPE_LABELS: Record<string, string> = {
@@ -28,13 +37,15 @@ export default function BiznestPage() {
   useEffect(() => {
     supabase
       .from('businesses')
-      .select('id,name,type,logo_url,city,description,is_verified')
+      .select('id,name,type,logo_url,city,description,is_verified,owner:owner_id(is_premium,premium_expires_at,has_boost,boost_expires_at)')
       .order('is_verified', { ascending: false })
       .order('created_at', { ascending: false })
       .limit(100)
       .then(({ data, error }) => {
         if (error) { setLoadError(true); setLoading(false); return }
-        setBusinesses(data || [])
+        // Supabase e tipizon join-in to-one `owner:owner_id(...)` si varg, por
+        // ne runtime eshte objekt (nje biznes → nje pronar). Cast i shenuar.
+        setBusinesses((data ?? []) as unknown as Biz[])
         setLoading(false)
       })
   }, [])
@@ -132,7 +143,7 @@ export default function BiznestPage() {
                 onClick={() => window.location.href = `/biznese/${b.id}`}
                 style={{ background: '#fff', border: '0.5px solid #ececec', borderRadius: 12, padding: 14, display: 'flex', gap: 12, alignItems: 'center', cursor: 'pointer', boxShadow: '0 1px 2px rgba(0,0,0,.04),0 6px 16px -10px rgba(0,0,0,.14)', transition: 'transform .1s' }}
               >
-                <Avatar src={b.logo_url} name={b.name} type="business" verified={b.is_verified} size={52} />
+                <Avatar src={b.logo_url} name={b.name} type="business" tier={tierNgaProfili(b.owner)} verified={b.is_verified} size={52} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 3 }}>
                     <span style={{ fontSize: 14, fontWeight: 800, color: '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{b.name}</span>
