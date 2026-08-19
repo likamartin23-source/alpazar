@@ -34,19 +34,39 @@ Deno.serve(async (req: Request) => {
 
     /* Gjurma e cdo veprimi. Shkruhet edhe kur veprimi deshton, edhe kur PIN-i
        eshte i gabuar — perpjekjet e deshtuara jane po aq te rendesishme sa ato
-       te suksesshmet. Nuk e ndalon kurre veprimin nese vete shkrimi deshton. */
+       te suksesshmet.
+
+       Shkruhej te `admin_logs` me `admin_id: null`, po ajo kolone eshte NOT
+       NULL: cdo futje binte dhe `catch` e gelltiste. U mat me 19 gusht 2026 —
+       zero rreshta `pin.*` qe nga dita e pare. Pra perpjekjet e deshtuara me
+       PIN, qe jane kontroll sigurie, nuk regjistroheshin fare.
+
+       `audit_logs.actor_id` e lejon NULL, ndaj rruga me PIN regjistrohet si
+       ajo qe eshte: veprim pa identitet perdoruesi. IP-ja dhe user-agent-i
+       rrine brenda `new_data` — `audit_logs.actor_ip` eshte `inet` dhe nje
+       vlere si 'unknown' do ta rrezonte futjen. */
     async function logAction(act: string, ok: boolean, detail: Record<string, unknown> = {}) {
       try {
-        await db.from('admin_logs').insert({
-          admin_id: null,                       // rruga me PIN s'ka identitet perdoruesi
+        const { error } = await db.from('audit_logs').insert({
+          actor_id: null,
+          actor_role: 'pin',
           action: `pin.${act}`,
           target_type: String(detail.target_type ?? 'system'),
           target_id: detail.target_id ?? null,
-          new_value: { ok, ip, params: p, ...detail },
-          ip_address: ip,
-          user_agent: req.headers.get('user-agent') ?? null,
+          new_data: {
+            ok,
+            ip,
+            user_agent: req.headers.get('user-agent') ?? null,
+            params: p,
+            ...detail,
+          },
         })
-      } catch { /* gjurma nuk duhet te bllokoje kurre veprimin */ }
+        // Nuk e ndalon veprimin, po as nuk hesht: nje gjurme qe deshton pa ze
+        // ishte pikerisht defekti i mesiperm.
+        if (error) console.error('[gjurma] shkrimi te audit_logs deshtoi:', error.message)
+      } catch (e) {
+        console.error('[gjurma] shkrimi te audit_logs hodhi perjashtim:', e)
+      }
     }
 
     async function setting(key: string, fallback: string): Promise<string> {
