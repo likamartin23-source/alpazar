@@ -36,6 +36,9 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
   const [rating, setRating]         = useState<{ avg: number | null; count: number }>({ avg: null, count: 0 })
   const [reviews, setReviews]       = useState<any[]>([])
   const [reviewsLoaded, setReviewsLoaded] = useState(false)
+  // Shitjet e kryera — social proof (jo fshehje). Funksion agregimi
+  // business_sold_count (status='sold'), pa N+1. Shfaqet vetem kur >0.
+  const [soldCount, setSoldCount]   = useState(0)
   // Faqja renderohet edhe ne server (`initialBiz`). Koha relative e kartes
   // varet nga `Date.now()`, ndaj i jepet ListingCard-it vetem pas montimit.
   const [mounted, setMounted]       = useState(false)
@@ -123,6 +126,12 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
       supabase.rpc('business_rating', { p_business: b.id }).then(({ data }) => {
         const row = Array.isArray(data) ? data[0] : data
         if (row) setRating({ avg: row.avg_rating ?? null, count: row.review_count ?? 0 })
+      })
+
+      // Numri i shitjeve — social proof (Faza 6). Funksioni kthen skalar integer.
+      supabase.rpc('business_sold_count', { p_business: b.id }).then(({ data }) => {
+        const n = Number(Array.isArray(data) ? data[0] : data)
+        if (Number.isFinite(n)) setSoldCount(n)
       })
 
       const { data: mapRows } = await supabase
@@ -301,6 +310,11 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#FFF8E1', color: '#7B5000', border: '1px solid #F5C84255', borderRadius: 9, padding: '3px 9px', fontSize: 12.5, fontWeight: 800 }}>
                 <span aria-hidden="true">★</span> {rating.avg.toFixed(1)}
                 <span style={{ fontWeight: 600, color: '#9a7b2a' }}>({rating.count})</span>
+              </span>
+            )}
+            {soldCount > 0 && (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#E7F6EC', color: '#0E7A35', border: '1px solid #0E7A3533', borderRadius: 9, padding: '3px 9px', fontSize: 12.5, fontWeight: 800 }}>
+                <span aria-hidden="true">✓</span> {soldCount} të shitura
               </span>
             )}
             <TrustBadge createdAt={biz.created_at} listingsActive={listings.length} gamificationPoints={0} compact />

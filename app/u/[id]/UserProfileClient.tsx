@@ -27,6 +27,9 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
   const [notFound, setNotFound] = useState(false)
   const [activeTab, setActiveTab] = useState<'listings' | 'about'>('listings')
   const [biz, setBiz] = useState<any>(null)
+  // Shitjet personale te kryera — social proof (Faza 6). Funksioni
+  // user_sold_count numeron vetem status='sold' me business_id null.
+  const [soldCount, setSoldCount] = useState(0)
 
   useEffect(() => {
     async function load() {
@@ -63,6 +66,12 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
         .eq('owner_id', params.id)
         .maybeSingle()
       setBiz(bz || null)
+
+      // Shitjet personale — funksioni kthen skalar integer (Faza 6).
+      supabase.rpc('user_sold_count', { p_user: params.id }).then(({ data }) => {
+        const n = Number(Array.isArray(data) ? data[0] : data)
+        if (Number.isFinite(n)) setSoldCount(n)
+      })
 
       setLoading(false)
     }
@@ -155,6 +164,12 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
               <div style={{ fontWeight: 800, fontSize: 17, color: '#111' }}>{listings.length}</div>
               <div style={{ fontSize: 11, color: '#888' }}>Shpallje</div>
             </div>
+            {soldCount > 0 && (
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontWeight: 800, fontSize: 17, color: '#0E7A35' }}>{soldCount}</div>
+                <div style={{ fontSize: 11, color: '#888' }}>Të shitura</div>
+              </div>
+            )}
             {(profile.trust_score_visible !== false) && (profile.trust_score ?? 0) > 0 && (
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontWeight: 800, fontSize: 17, color: '#111' }}>{profile.trust_score}%</div>
