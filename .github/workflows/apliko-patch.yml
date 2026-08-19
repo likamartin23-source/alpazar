@@ -88,8 +88,12 @@ jobs:
       - name: Apliko patch-in
         run: |
           git checkout -- ${{ inputs.pjeset }}
-          git apply --check --whitespace=nowarn /tmp/nderhyrje.patch
-          git apply --whitespace=nowarn /tmp/nderhyrje.patch
+          # Patch-i mban edhe nje kopje te vjeteruar te ketij workflow-i, sepse
+          # u nxor nga nje peme pune ku edhe ai ishte i ndryshuar. Makineria e
+          # transportit administrohet vec nga kodi.
+          APLIKO="--whitespace=nowarn --exclude=.github/workflows/*"
+          git apply --check $APLIKO /tmp/nderhyrje.patch
+          git apply $APLIKO /tmp/nderhyrje.patch
           echo "Skedaret e prekur:"
           git status --porcelain | sed 's/^/  /'
 
