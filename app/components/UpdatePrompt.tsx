@@ -1,204 +1,24 @@
 "use client"
 
-import { useEffect, useRef, useState } from 'react'
-
-const BUILD = process.env.NEXT_PUBLIC_BUILD_ID || 'dev'
-// Kadencë afër-real-time: kontroll çdo 60s, plus në fokus/rikthim/rilidhje
-// rrjeti. Mjafton për ta kapur çdo deploy brenda pak sekondash pa e ngarkuar
-// serverin (/api/version është edge + no-store).
-const EVERY = 60 * 1000
-
-/* Shënues i njëhershëm. Ndryshoje VETËM nëse duhet një shkrirje e re e
-   detyruar për të gjithë shfletuesit.
-   -2 (harmonizimi live): shfletuesit që kishin ngecur në një service worker /
-   cache të vjetër para merge-it në prodhim çregjistrohen e pastrohen një herë,
-   që të marrin menjëherë ndërfaqen e re (kartat e njësuara, "Afër meje", etj.). */
-const RESET = 'alpazar-sw-reset-2'
-
 /**
- * DALJA E EMERGJENCËS — pse ekziston
+ * UPDATE PROMPT — ÇARMATOSUR QËLLIMISHT (pa asnjë ringarkim automatik).
  *
- * Service worker-i i vjetër nuk thërriste kurrë `skipWaiting()`. Versioni i ri
- * instalohej dhe rrinte **në pritje** derisa të mbylleshin të gjitha skedat e
- * faqes. Kush e mban panelin hapur nuk i mbyll kurrë — pra mbetej pa fund në
- * versionin e vjetër, dhe një rifreskim i thjeshtë nuk e zgjidhte.
+ * PSE: Versioni i mëparshëm krahasonte build-id-in e ngulitur në faqe me atë të
+ * `/api/version` dhe, në mospërputhje, e RINGARKONTE faqen vetvetiu — pas 25s,
+ * në `visibilitychange`, dhe ndër-skeda me BroadcastChannel. Kur dokumenti dhe
+ * `/api/version` binin te sinjale build-id jokonsistente (skew vendosjesh /
+ * fallback `Date.now()`), kjo prodhonte një CIKËL ringarkimi të dhunshëm e të
+ * padukshëm që përdoruesi e përjetonte si "versioni i ri flakeron dhe kthehet
+ * me forcë te i vjetri" — EDHE në incognito, sepse s'varej nga cache-i.
  *
- * Kurthi: rregullimi i atij problemi dërgohet pikërisht nga service worker-i
- * që nuk përditësohet. Pra nuk mbërrinte dot kurrë vetë.
- *
- * Prandaj kjo shkrirje ekzekutohet NË FAQE, jo në service worker: çregjistron
- * çdo service worker, fshin çdo cache, dhe rifreskon një herë. Kryhet një herë
- * për shfletues — shënuesi vendoset PARA rifreskimit, ndaj nuk hyn në cikël.
- *
- * Pas kësaj, cikli normal merr përsëri, tashmë me një service worker që kalon
- * menjëherë në versionin e ri.
+ * TANI: freskia garantohet tërësisht nga serveri (`force-dynamic` + middleware
+ * `no-store`) dhe nga mungesa e Service Worker-it (kill-switch). Çdo navigim merr
+ * HTML të freskët nga rrjeti. Prandaj asnjë mekanizëm ringarkimi në klient nuk
+ * është më i nevojshëm — dhe çdo ringarkim automatik i bazuar në një sinjal
+ * jo-100%-të-besueshëm është i rrezikshëm. Ndaj ky komponent nuk bën ASGJË
+ * automatike: pa poll, pa timer, pa reload. Mbetet si pikë-zgjerimi për një
+ * njoftim strikt opt-in (vetëm me klik) nëse do të duhet në të ardhmen.
  */
-async function shkrirjeNjehere(): Promise<boolean> {
-  try {
-    if (typeof window === 'undefined') return false
-    if (window.localStorage.getItem(RESET) === '1') return false
-
-    // Shënuesi PARA veprimit — që një dështim në mes të mos e përsërisë pafund.
-    window.localStorage.setItem(RESET, '1')
-
-    let dicka = false
-    if ('serviceWorker' in navigator) {
-      const regs = await navigator.serviceWorker.getRegistrations()
-      for (const r of regs) { await r.unregister().catch(() => {}); dicka = true }
-    }
-    if ('caches' in window) {
-      const keys = await caches.keys()
-      for (const k of keys) { await caches.delete(k).catch(() => {}); dicka = true }
-    }
-
-    if (dicka) { window.location.reload(); return true }
-  } catch { /* nese deshton, vazhdo normalisht */ }
-  return false
-}
-
-/* Sistemi i vetëpërditësimit:
-   1. Kërkon përditësim në ngarkim, në fokus, kur faqja rikthehet dhe çdo 5 minuta.
-   2. Kur gjendet version i ri -> e sugjeron me një njoftim diskret.
-   3. Nëse përdoruesi e injoron, kalimi bëhet në heshtje kur faqja del nga pamja.
-   4. Rrjet sigurie: nëse Service Worker mungon, krahason /api/version me build-in. */
 export default function UpdatePrompt() {
-  const [ready, setReady] = useState(false)
-  const regRef = useRef<any>(null)
-  const applying = useRef(false)
-  const bcRef = useRef<any>(null)
-
-  function apply() {
-    if (applying.current) return
-    applying.current = true
-    // Koordinim ndër-skeda: njofto skedat e tjera të kalojnë njëkohësisht.
-    try { bcRef.current?.postMessage('reload') } catch { /* pa BroadcastChannel */ }
-    const w = regRef.current?.waiting
-    if (w) w.postMessage({ type: 'SKIP_WAITING' })
-    else window.location.reload()
-  }
-
-  // GARANCI: kur zbulohet version i ri, aplikohet vetë — kur skeda fshihet, ose pas
-  // një afati të shkurtër nëse përdoruesi s'vepron. Askush nuk ngec te i vjetri.
-  useEffect(() => {
-    if (!ready) return
-    const t = setTimeout(() => apply(), 25000)
-    const onHide = () => { if (document.visibilityState === 'hidden') apply() }
-    document.addEventListener('visibilitychange', onHide)
-    return () => { clearTimeout(t); document.removeEventListener('visibilitychange', onHide) }
-  }, [ready])
-
-  useEffect(() => {
-    let stop = false
-    let timer: any = null
-
-    async function check() {
-      try {
-        if ('serviceWorker' in navigator) {
-          const reg = regRef.current || await navigator.serviceWorker.getRegistration()
-          if (reg) {
-            regRef.current = reg
-            await reg.update().catch(() => {})
-            // Nese nje version i ri pret, kaloje menjehere — mos e le perdoruesin prapa.
-            if (!stop && reg.waiting) {
-              reg.waiting.postMessage({ type: 'SKIP_WAITING' })
-              setReady(true)
-              return
-            }
-          }
-        }
-        const res = await fetch('/api/version', { cache: 'no-store' })
-        if (!res.ok) return
-        const j = await res.json()
-        if (!stop && j?.build && BUILD !== 'dev' && j.build !== BUILD) setReady(true)
-      } catch { /* offline — provo më vonë */ }
-    }
-
-    const onVisible = () => {
-      if (document.visibilityState === 'visible') check()
-      else if (regRef.current?.waiting) {
-        regRef.current.waiting.postMessage({ type: 'SKIP_WAITING' })
-      }
-    }
-
-    // bfcache: kur faqja rikthehet nga back/forward cache, ajo është "e ngrirë"
-    // (pa rrjet, pa re-render) — skenari më dinak i strukturës së vjetër. Ri-kontrollo.
-    const onPageShow = (e: any) => { if (e?.persisted) check() }
-
-    // Shkrirja vjen e para: nëse rifreskon, asgjë tjetër nuk ka nevojë të nisë.
-    shkrirjeNjehere().then(uRifreskua => {
-      if (uRifreskua || stop) return
-      // Koordinim ndër-skeda: kur një skedë kalon në versionin e ri, të tjerat e ndjekin.
-      try {
-        if (typeof BroadcastChannel !== 'undefined') {
-          bcRef.current = new BroadcastChannel('alpazar-version')
-          bcRef.current.onmessage = (e: any) => {
-            if (e?.data === 'reload' && !applying.current) { applying.current = true; window.location.reload() }
-          }
-        }
-      } catch { /* pa BroadcastChannel */ }
-      check()
-      timer = setInterval(check, EVERY)
-      window.addEventListener('focus', check)
-      window.addEventListener('online', check)
-      window.addEventListener('pageshow', onPageShow)
-      document.addEventListener('visibilitychange', onVisible)
-    })
-
-    return () => {
-      stop = true
-      if (timer) clearInterval(timer)
-      window.removeEventListener('focus', check)
-      window.removeEventListener('online', check)
-      window.removeEventListener('pageshow', onPageShow)
-      document.removeEventListener('visibilitychange', onVisible)
-      try { bcRef.current?.close() } catch { /* mbyllur tashmë */ }
-    }
-  }, [])
-
-  if (!ready) return null
-
-  return (
-    <div
-      role="status"
-      aria-live="polite"
-      style={{
-        position: 'fixed', left: 12, right: 12, bottom: 84, zIndex: 9997,
-        maxWidth: 456, margin: '0 auto',
-        background: '#111', color: '#fff', borderRadius: 14,
-        padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 12,
-        boxShadow: '0 8px 28px rgba(0,0,0,.28)',
-        fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-      }}
-    >
-      <span aria-hidden="true" style={{ fontSize: 18 }}>✨</span>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 12.5, fontWeight: 800, color: '#F5C842' }}>Version i ri i ALPAZAR</div>
-        <div style={{ fontSize: 11, color: '#bbb', marginTop: 2 }}>
-          Përditësoje për ndryshimet më të fundit.
-        </div>
-      </div>
-      <button
-        type="button"
-        onClick={apply}
-        style={{
-          background: '#F5C842', color: '#111', border: 'none', borderRadius: 10,
-          padding: '9px 16px', fontSize: 12.5, fontWeight: 800, cursor: 'pointer',
-          fontFamily: 'inherit', flexShrink: 0,
-        }}
-      >
-        Përditëso
-      </button>
-      <button
-        type="button"
-        aria-label="Mbyll njoftimin"
-        onClick={() => setReady(false)}
-        style={{
-          background: 'transparent', color: '#666', border: 'none',
-          fontSize: 18, cursor: 'pointer', lineHeight: 1, padding: '0 2px', flexShrink: 0,
-        }}
-      >
-        ×
-      </button>
-    </div>
-  )
+  return null
 }
