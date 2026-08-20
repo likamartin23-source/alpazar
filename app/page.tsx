@@ -5,9 +5,12 @@ import { SITE_URL } from '../lib/siteConfig'
 import type { Listing, Category } from '../lib/types'
 import HomeClient from './HomeClient'
 
-// ISR: crawlers get real, recent content in the initial HTML (not an empty
-// client shell), refreshed every 60s. Fixes the SEO "0 photos / 0 h1" blocker.
-export const revalidate = 60
+// SSR DINAMIK (jo ISR). Crawler-at vazhdojnë të marrin përmbajtje reale në HTML-in
+// fillestar (SEO i ruajtur), POR pa `stale-while-revalidate`-in ~1-vjeçar që Next-i
+// stampon për faqet e para-renderuara — pikërisht ai header e mbante shfletuesin në
+// versionin e vjetër edhe pas rifreskimit (autopsia e mospasqyrimit live). Dinamik
+// => çdo kërkesë merr HTML të freskët; asetet me hash mbeten immutable e të shpejta.
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'ALPAZAR — Shit · Bli · Bëj Pazrin Tënd',

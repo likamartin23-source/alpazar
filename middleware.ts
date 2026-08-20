@@ -14,6 +14,16 @@ export async function middleware(req: NextRequest) {
     return res
   }
 
+  // GARANCIA E FRESKISË (shkaku rrënjësor i mospasqyrimit live): faqet e
+  // para-renderuara nga Next dalin me `stale-while-revalidate` ~1-vjeçar, ndaj
+  // shfletuesit shërbenin strukturën e vjetër edhe pas rifreskimit, në çdo pajisje.
+  // Këtu detyrojmë çdo dokument HTML të mos ruhet/rivalidohet gjithmonë — mbishkruan
+  // header-in e ISR/prerender. Asetet me hash (_next/static) dalin më lart si
+  // immutable, ndaj shpejtësia nuk preket; vetëm HTML-ja bëhet gjithmonë e freskët.
+  res.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+  res.headers.set('CDN-Cache-Control', 'no-store')
+  res.headers.set('Vercel-CDN-Cache-Control', 'no-store')
+
   // Module 7: Referral — ruaj cookie kur dikush hap ?ref=CODE (i lehtë, pa Supabase).
   const refParam = req.nextUrl.searchParams.get('ref')
   if (refParam && /^[a-zA-Z0-9_-]{3,30}$/.test(refParam)) {
