@@ -151,6 +151,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             }
           }
         })}} />
+        {/* Rikuperim automatik nga ChunkLoadError — GARANCIA kunder "struktures se vjeter".
+            Pas nje deploy-i, faqja e vjeter mund te kerkoje nje chunk JS qe s'ekziston
+            me; e kapim globalisht (error + unhandledrejection) dhe rifreskojme nje here
+            (rojtar 20s kunder ciklit). Rri ne <head> qe te jete aktiv para cdo importi. */}
+        <script dangerouslySetInnerHTML={{__html: `
+          (function(){
+            var KEY='alpazar-chunk-reload';
+            function isChunk(m){
+              if(!m) return false; m=String(m);
+              return m.indexOf('ChunkLoadError')>=0
+                || (m.indexOf('Loading chunk')>=0 && m.indexOf('failed')>=0)
+                || m.indexOf('Failed to fetch dynamically imported module')>=0
+                || m.indexOf('error loading dynamically imported module')>=0
+                || m.indexOf('Importing a module script failed')>=0;
+            }
+            function recover(){
+              try{ var t=+(sessionStorage.getItem(KEY)||0); if(Date.now()-t<20000) return; sessionStorage.setItem(KEY,String(Date.now())); }catch(e){}
+              location.reload();
+            }
+            window.addEventListener('error', function(e){ var m=(e&&(e.message||(e.error&&(e.error.message||e.error.name))))||''; if(isChunk(m)) recover(); }, true);
+            window.addEventListener('unhandledrejection', function(e){ var r=e&&e.reason; var m=(r&&(r.message||r.name))||(typeof r==='string'?r:''); if(isChunk(m)) recover(); });
+          })();
+        `}} />
         {/* Service Worker — regjistrim me flag kundër loop-it të pafund */}
         <script dangerouslySetInnerHTML={{__html: `
           if ('serviceWorker' in navigator) {

@@ -49,6 +49,21 @@ export class GlobalErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error) {
+    // Nje deploy i ri e ben te vjeter chunk-un JS qe kjo faqe kerkon ->
+    // ChunkLoadError. Rikuperim automatik: rifresko nje here (rojtar 20s kunder
+    // ciklit, i njejti celes si guard-i ne <head>) qe perdoruesi te marre
+    // strukturen e re dhe kurre te mos ngece te e vjetra.
+    const m = `${error?.name ?? ''} ${error?.message ?? ''}`
+    if (/ChunkLoadError|Loading chunk|dynamically imported module|module script failed/i.test(m)) {
+      try {
+        const t = Number(sessionStorage.getItem('alpazar-chunk-reload') || 0)
+        if (Date.now() - t > 20000) {
+          sessionStorage.setItem('alpazar-chunk-reload', String(Date.now()))
+          window.location.reload()
+          return
+        }
+      } catch { /* vazhdo te raportimi */ }
+    }
     // React render error → send to AI monitor for diagnosis.
     reportError(error, 'boundary')
   }
