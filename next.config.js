@@ -1,9 +1,12 @@
 // @ts-check
 const { withSentryConfig } = require('@sentry/nextjs')
 
-// Identiteti i ndertimit — burimi qe ushqen /sw.js?v= dhe /api/version.
-// Ndryshon vetvetiu ne cdo commit; asnje version nuk mirembahet me dore.
-const BUILD_ID = process.env.VERCEL_GIT_COMMIT_SHA || String(Date.now())
+// Identiteti i ndertimit — burimi qe ushqen /api/version.
+// SHENIM: fallback-u KURRE nuk perdor Date.now(): nje vlere qe ndryshon ne cdo
+// ndertim prodhon build-id te ndryshem edhe kur kodi eshte i njejte, gje qe
+// shkakton mospershtatje te rreme te versionit. Ne Vercel, VERCEL_GIT_COMMIT_SHA
+// eshte gjithmone i pranishem; fallback-u eshte nje konstante e qendrueshme.
+const BUILD_ID = process.env.VERCEL_GIT_COMMIT_SHA || 'dev'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -70,15 +73,17 @@ const nextConfig = {
         // Me pare 'no-store' anulonte ISR-in: cdo vizite thirrte funksionin.
         source: '/',
         headers: [
-          { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' },
-          { key: 'Vercel-CDN-Cache-Control', value: 's-maxage=60, stale-while-revalidate=300' },
+          { key: 'Cache-Control', value: 'no-store, must-revalidate' },
+          { key: 'CDN-Cache-Control', value: 'no-store' },
+          { key: 'Vercel-CDN-Cache-Control', value: 'no-store' },
         ],
       },
       {
         source: '/listing/:id',
         headers: [
-          { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' },
-          { key: 'Vercel-CDN-Cache-Control', value: 's-maxage=120, stale-while-revalidate=600' },
+          { key: 'Cache-Control', value: 'no-store, must-revalidate' },
+          { key: 'CDN-Cache-Control', value: 'no-store' },
+          { key: 'Vercel-CDN-Cache-Control', value: 'no-store' },
         ],
       },
       {
@@ -120,6 +125,5 @@ module.exports = withSentryConfig(nextConfig, {
   silent: true,
   widenClientFileUpload: true,
   hideSourceMaps: true,
-  disableLogger: true,
   automaticVercelMonitors: true,
 })
