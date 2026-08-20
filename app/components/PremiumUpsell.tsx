@@ -224,7 +224,7 @@ export function FreeTierBanner({
       borderRadius: 12, padding: '12px 14px', marginBottom: 14,
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-        <span style={{ fontSize: 12, fontWeight: 700, color: remaining === 0 ? '#E63312' : '#A05000' }}>
+        <span style={{ fontSize: 12, fontWeight: 700, color: remaining === 0 ? '#C42305' : '#A05000' }}>
           {remaining === 0 ? <><span aria-hidden='true'>🚫</span> Ke arritur kufirin falas</> : <><span aria-hidden='true'>⚠️</span> {remaining} shpallje të mbetura falas</>}
         </span>
         <span style={{ fontSize: 10, color: '#888' }}>{listingCount}/{freeLimit}</span>

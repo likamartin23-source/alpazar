@@ -18,7 +18,7 @@ export function ListingMedia({ p }: any) {
       <div className="card">
         <div className="card-title">
           <i className="ti ti-photo" aria-hidden="true" />Fotot{' '}
-          <span style={{ fontWeight: 400, color: (maxImages >= 0 && imagePreviews.length >= maxImages) ? '#E63312' : '#888', fontSize: 12 }}>
+          <span style={{ fontWeight: 400, color: (maxImages >= 0 && imagePreviews.length >= maxImages) ? '#C42305' : '#888', fontSize: 12 }}>
             ({imagePreviews.length}/{imgCap})
           </span>
         </div>
@@ -47,7 +47,7 @@ export function ListingMedia({ p }: any) {
       <div className="card">
         <div className="card-title">
           <i className="ti ti-video" aria-hidden="true" />Video{' '}
-          <span style={{ fontWeight: 400, color: full ? '#E63312' : '#888', fontSize: 12 }}>
+          <span style={{ fontWeight: 400, color: full ? '#C42305' : '#888', fontSize: 12 }}>
             ({vid.count}/{vidCap})
           </span>
         </div>

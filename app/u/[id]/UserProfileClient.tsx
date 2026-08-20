@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { useAlpazar } from '../../../lib/context'
-import Avatar from '../../components/Avatar'
+import Avatar, { tierNgaProfili } from '../../components/Avatar'
 import ListingCard from '../../components/ListingCard'
 
 function timeAgo(dateStr: string) {
@@ -27,12 +27,15 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
   const [notFound, setNotFound] = useState(false)
   const [activeTab, setActiveTab] = useState<'listings' | 'about'>('listings')
   const [biz, setBiz] = useState<any>(null)
+  // Shitjet personale te kryera — social proof (Faza 6). Funksioni
+  // user_sold_count numeron vetem status='sold' me business_id null.
+  const [soldCount, setSoldCount] = useState(0)
 
   useEffect(() => {
     async function load() {
       const { data: p } = await supabase
         .from('profiles')
-        .select('id,full_name,username,avatar_url,cover_url,bio,city,is_premium,is_verified,trust_score,trust_score_visible,created_at,shop_name,seller_rating,reviews_count')
+        .select('id,full_name,username,avatar_url,cover_url,bio,city,is_premium,premium_expires_at,has_boost,boost_expires_at,is_verified,trust_score,trust_score_visible,created_at,shop_name,seller_rating,reviews_count')
         .eq('id', params.id)
         .single()
 
@@ -45,6 +48,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
         .from('listings')
         .select('id,title,price,currency,images,city,created_at,is_premium,condition,rank_tier')
         .eq('user_id', params.id)
+        .is('business_id', null)   // vetem shpallje personale — ato te biznesit rrine te faqja e biznesit (Vendimi 7, pa dyfishim)
         .eq('is_active', true)
         .order('rank_tier', { ascending: false })
         .order('last_bumped_at', { ascending: false })
@@ -62,6 +66,12 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
         .eq('owner_id', params.id)
         .maybeSingle()
       setBiz(bz || null)
+
+      // Shitjet personale — funksioni kthen skalar integer (Faza 6).
+      supabase.rpc('user_sold_count', { p_user: params.id }).then(({ data }) => {
+        const n = Number(Array.isArray(data) ? data[0] : data)
+        if (Number.isFinite(n)) setSoldCount(n)
+      })
 
       setLoading(false)
     }
@@ -124,7 +134,8 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
           <Avatar
             src={profile.avatar_url}
             name={name}
-            type={isBusiness ? 'business' : profile.is_premium ? 'premium' : 'user'}
+            type={isBusiness ? 'business' : 'person'}
+            tier={tierNgaProfili(profile)}
             verified={profile.is_verified || (profile.trust_score ?? 0) >= 60}
             size={96}
           />
@@ -153,6 +164,12 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
               <div style={{ fontWeight: 800, fontSize: 17, color: '#111' }}>{listings.length}</div>
               <div style={{ fontSize: 11, color: '#888' }}>Shpallje</div>
             </div>
+            {soldCount > 0 && (
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontWeight: 800, fontSize: 17, color: '#0E7A35' }}>{soldCount}</div>
+                <div style={{ fontSize: 11, color: '#888' }}>Të shitura</div>
+              </div>
+            )}
             {(profile.trust_score_visible !== false) && (profile.trust_score ?? 0) > 0 && (
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontWeight: 800, fontSize: 17, color: '#111' }}>{profile.trust_score}%</div>
@@ -221,7 +238,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
             aria-selected={activeTab === t.key}
             aria-controls={`tabpanel-${t.key}`}
             onClick={() => setActiveTab(t.key as any)}
-            style={{ flex: 1, padding: '14px 8px', border: 'none', background: 'transparent', fontWeight: activeTab === t.key ? 800 : 500, fontSize: 13, color: activeTab === t.key ? '#E63312' : '#666', borderBottom: activeTab === t.key ? '2px solid #E63312' : '2px solid transparent', cursor: 'pointer', transition: 'all .15s' }}
+            style={{ flex: 1, padding: '14px 8px', border: 'none', background: 'transparent', fontWeight: activeTab === t.key ? 800 : 500, fontSize: 13, color: activeTab === t.key ? '#C42305' : '#666', borderBottom: activeTab === t.key ? '2px solid #C42305' : '2px solid transparent', cursor: 'pointer', transition: 'all .15s' }}
           >
             {t.label}
           </button>

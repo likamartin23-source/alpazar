@@ -126,7 +126,7 @@ export default function TeDhenatMiaPage() {
 
       <div style={{ padding: '16px 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
         {msg && (
-          <div role="alert" style={{ background: msg.startsWith('err:') ? '#FFF0EE' : '#F0FFF4', border: `1px solid ${msg.startsWith('err:') ? '#F09595' : '#86efac'}`, borderRadius: 10, padding: '10px 14px', fontSize: 12, color: msg.startsWith('err:') ? '#E63312' : '#166534', fontWeight: 600 }}>
+          <div role="alert" style={{ background: msg.startsWith('err:') ? '#FFF0EE' : '#F0FFF4', border: `1px solid ${msg.startsWith('err:') ? '#F09595' : '#86efac'}`, borderRadius: 10, padding: '10px 14px', fontSize: 12, color: msg.startsWith('err:') ? '#C42305' : '#166534', fontWeight: 600 }}>
             {msg.replace(/^(err:|ok:)/, '')}
           </div>
         )}

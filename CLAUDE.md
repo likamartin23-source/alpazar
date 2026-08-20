@@ -217,6 +217,20 @@ e kontekstit, i dyti e printon listen edhe kur CLAUDE.md nuk lexohet.
     vetem.
 15. **Gjuha shqipe dhe informacion i duhur.** Pergjigju gjithmone shqip; jep
     vetem informacion te sakte, te plote, te nevojshem — pa tepri.
+16. **Kontroll autonom me gjykimin me te mire.** Kur pronari eshte larg ose jep
+    akses te plote, merr kontrollin dhe procedo pa pritur aprovim — duke zgjedhur
+    çdo here vendimin me te zgjuar, me te mire, me te bukur, me me shume benefite,
+    qe nuk krijon probleme dhe ka avantazhet me te medha. Cdo faze mbetet CI-green
+    (tsc + teste + build) dhe verifikohet para landing-ut; gabimi kap portat, jo
+    perdoruesin. (Urdheruar 19 gusht 2026.)
+    - **Verifikimi vizual "me sy" nga sesioni i larguar:** dalja te
+      `alpazar.vercel.app`/`*.supabase.co` eshte 403 nga politika e mjedisit, POR
+      `localhost` lejohet. Metoda: `next dev` lokal + Chromium lokal
+      (`/opt/pw-browsers/chromium`, lidhur te `/opt/google/chrome/chrome` nga
+      hook-u) → nje rruge harness (`app/verifikim-vizual`, e pakomituar) qe
+      render-on komponentet reale me te dhena perfaqesuese → screenshot → shihet
+      realisht. Kjo verifikon komponentet (Avatar, ListingCard, TrustBadge…);
+      faqet e plota me te dhena kerkojne qe pronari te hape politiken e rrjetit.
 
 **ZBATIM KUMULATIV:** rregullat 1–13 zbatohen NJEKOHESISHT ne cdo veprim.
 

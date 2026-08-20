@@ -5,8 +5,9 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabase'
 import dynamicImport from 'next/dynamic'
-import Avatar from '../../components/Avatar'
+import Avatar, { tierNgaProfili } from '../../components/Avatar'
 import ListingCard from '../../components/ListingCard'
+import { TrustBadge } from '../../components/TrustBadge'
 
 const MapDisplay = dynamicImport(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), { ssr: false })
 
@@ -30,6 +31,14 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
   const [isOwner, setIsOwner]       = useState(false)
   const [descExpanded, setDescExpanded] = useState(false)
   const [totalViews, setTotalViews] = useState(0)
+  // Vleresimet e biznesit: agregim nga reviews→listings.business_id (funksionet
+  // DB business_rating/business_reviews). Empty-state dinjitoz kur 0 (Notion §5B/5).
+  const [rating, setRating]         = useState<{ avg: number | null; count: number }>({ avg: null, count: 0 })
+  const [reviews, setReviews]       = useState<any[]>([])
+  const [reviewsLoaded, setReviewsLoaded] = useState(false)
+  // Shitjet e kryera — social proof (jo fshehje). Funksion agregimi
+  // business_sold_count (status='sold'), pa N+1. Shfaqet vetem kur >0.
+  const [soldCount, setSoldCount]   = useState(0)
   // Faqja renderohet edhe ne server (`initialBiz`). Koha relative e kartes
   // varet nga `Date.now()`, ndaj i jepet ListingCard-it vetem pas montimit.
   const [mounted, setMounted]       = useState(false)
@@ -39,6 +48,13 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
   const [followers, setFollowers]   = useState(0)
   const [following, setFollowing]   = useState(false)
   const [followBusy, setFollowBusy] = useState(false)
+  // Tier-i i unazes se biznesit vjen nga pronari (Vendimi 1: identiteti eshte i
+  // biznesit, abonimi eshte i personit). Marrim vetem kater fushat qe llogarit
+  // `owner_rank_tier`.
+  const [pronari, setPronari]       = useState<{
+    is_premium?: boolean | null; premium_expires_at?: string | null
+    has_boost?: boolean | null; boost_expires_at?: string | null
+  } | null>(null)
 
   useEffect(() => {
     setMounted(true)
@@ -98,6 +114,26 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
       setBiz(b)
       setIsOwner((await supabase.auth.getSession()).data.session?.user.id === b.owner_id)
 
+      // Profili i pronarit — vetem fushat e tier-it, per unazen e avatarit.
+      const { data: pr } = await supabase
+        .from('profiles')
+        .select('is_premium,premium_expires_at,has_boost,boost_expires_at')
+        .eq('id', b.owner_id)
+        .maybeSingle()
+      setPronari(pr)
+
+      // Rating agregat i biznesit (pa N+1 — nje funksion). Empty kur 0 reviews.
+      supabase.rpc('business_rating', { p_business: b.id }).then(({ data }) => {
+        const row = Array.isArray(data) ? data[0] : data
+        if (row) setRating({ avg: row.avg_rating ?? null, count: row.review_count ?? 0 })
+      })
+
+      // Numri i shitjeve — social proof (Faza 6). Funksioni kthen skalar integer.
+      supabase.rpc('business_sold_count', { p_business: b.id }).then(({ data }) => {
+        const n = Number(Array.isArray(data) ? data[0] : data)
+        if (Number.isFinite(n)) setSoldCount(n)
+      })
+
       const { data: mapRows } = await supabase
         .from('business_subcategory_map')
         .select('subcategory_id, business_subcategories(name, icon)')
@@ -111,6 +147,7 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
         .select('id,title,price,currency,images,condition,city,is_premium,views_count,created_at,rank_tier')
         .eq('business_id', b.id)
         .eq('is_active', true)
+        .order('rank_tier', { ascending: false })   // VIP-first (Vendimi 2)
         .order('created_at', { ascending: false })
         .limit(20)
       if (ls) {
@@ -237,6 +274,7 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
             src={biz.logo_url}
             name={biz.name}
             type="business"
+            tier={tierNgaProfili(pronari)}
             verified={biz.is_verified}
             size={84}
           />
@@ -264,6 +302,23 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
               ))}
             </div>
           )}
+
+          {/* Reputacioni: rating agregat (vetem kur ka reviews — Notion §5B/5) +
+              TrustBadge (0-100 + nivel), si karta e shitesit. */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
+            {rating.count > 0 && rating.avg != null && (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#FFF8E1', color: '#7B5000', border: '1px solid #F5C84255', borderRadius: 9, padding: '3px 9px', fontSize: 12.5, fontWeight: 800 }}>
+                <span aria-hidden="true">★</span> {rating.avg.toFixed(1)}
+                <span style={{ fontWeight: 600, color: '#9a7b2a' }}>({rating.count})</span>
+              </span>
+            )}
+            {soldCount > 0 && (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#E7F6EC', color: '#0E7A35', border: '1px solid #0E7A3533', borderRadius: 9, padding: '3px 9px', fontSize: 12.5, fontWeight: 800 }}>
+                <span aria-hidden="true">✓</span> {soldCount} të shitura
+              </span>
+            )}
+            <TrustBadge createdAt={biz.created_at} listingsActive={listings.length} gamificationPoints={0} compact />
+          </div>
 
           {/* Stats row */}
           <div style={{ display: 'flex', borderTop: '1px solid #f0f0f0', paddingTop: 14, marginBottom: 14 }}>
@@ -385,8 +440,8 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
         <button id="tab-info" type="button" role="tab" aria-selected={activeTab === 'info'} aria-controls="tabpanel-info" className={`biz-tab ${activeTab === 'info' ? 'active' : ''}`} onClick={() => setActiveTab('info')}>
           <i className="ti ti-info-circle" style={{ fontSize: 14 }} aria-hidden="true" /> Info
         </button>
-        <button id="tab-reviews" type="button" role="tab" aria-selected={activeTab === 'reviews'} aria-controls="tabpanel-reviews" className={`biz-tab ${activeTab === 'reviews' ? 'active' : ''}`} onClick={() => setActiveTab('reviews')}>
-          <i className="ti ti-star" style={{ fontSize: 14 }} aria-hidden="true" /> Vlerësime
+        <button id="tab-reviews" type="button" role="tab" aria-selected={activeTab === 'reviews'} aria-controls="tabpanel-reviews" className={`biz-tab ${activeTab === 'reviews' ? 'active' : ''}`} onClick={() => { setActiveTab('reviews'); if (biz && !reviewsLoaded) { setReviewsLoaded(true); supabase.rpc('business_reviews', { p_business: biz.id }).then(({ data }) => setReviews(data || [])) } }}>
+          <i className="ti ti-star" style={{ fontSize: 14 }} aria-hidden="true" /> Vlerësime{rating.count > 0 ? ` (${rating.count})` : ''}
         </button>
       </div>
 
@@ -520,10 +575,39 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
 
       {/* ── Reviews tab ──────────────────────────────────────── */}
       {activeTab === 'reviews' && (
-        <div id="tabpanel-reviews" role="tabpanel" aria-labelledby="tab-reviews" style={{ background: '#fff', margin: 8, borderRadius: 16, padding: '40px 16px', textAlign: 'center' }}>
-          <div style={{ fontSize: 44, marginBottom: 14 }} aria-hidden="true">⭐</div>
-          <div style={{ fontSize: 16, fontWeight: 800, color: '#111', marginBottom: 6 }}>Vlerësimet vijnë së shpejti</div>
-          <div style={{ fontSize: 12, color: '#888', lineHeight: 1.6 }}>Klientët do të mund të lënë vlerësime<br />për shërbimin dhe produktet e biznesit.</div>
+        <div id="tabpanel-reviews" role="tabpanel" aria-labelledby="tab-reviews" style={{ margin: 8 }}>
+          {rating.count > 0 && rating.avg != null && (
+            <div style={{ background: '#fff', borderRadius: 16, padding: '16px', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ fontSize: 32, fontWeight: 800, color: '#111' }}>{rating.avg.toFixed(1)}</div>
+              <div>
+                <div style={{ color: '#F5C842', fontSize: 16 }} aria-hidden="true">{'★'.repeat(Math.round(rating.avg))}{'☆'.repeat(5 - Math.round(rating.avg))}</div>
+                <div style={{ fontSize: 12, color: '#888' }}>{rating.count} vlerësim{rating.count !== 1 ? 'e' : ''}</div>
+              </div>
+            </div>
+          )}
+          {reviews.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {reviews.map(rv => (
+                <div key={rv.id} style={{ background: '#fff', borderRadius: 14, padding: '12px 14px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                    <Avatar src={rv.reviewer_avatar} name={rv.reviewer_name} type="person" size={30} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: '#111' }}>{rv.reviewer_name}</div>
+                      <div style={{ fontSize: 10, color: '#aaa' }}>{new Date(rv.created_at).toLocaleDateString('sq-AL', { day: 'numeric', month: 'short', year: 'numeric' })}{rv.purchase_verified ? ' · ✅ Blerje e verifikuar' : ''}</div>
+                    </div>
+                    <div style={{ color: '#F5C842', fontSize: 13 }} aria-label={`${rv.rating} nga 5`}>{'★'.repeat(rv.rating)}{'☆'.repeat(5 - rv.rating)}</div>
+                  </div>
+                  {rv.comment && <div style={{ fontSize: 13, color: '#444', lineHeight: 1.5 }}>{rv.comment}</div>}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div style={{ background: '#fff', borderRadius: 16, padding: '40px 16px', textAlign: 'center' }}>
+              <div style={{ fontSize: 44, marginBottom: 14 }} aria-hidden="true">⭐</div>
+              <div style={{ fontSize: 16, fontWeight: 800, color: '#111', marginBottom: 6 }}>Ende pa vlerësime</div>
+              <div style={{ fontSize: 12, color: '#888', lineHeight: 1.6 }}>Klientët që blejnë nga ky biznes do të mund<br />të lënë vlerësimin e tyre këtu.</div>
+            </div>
+          )}
         </div>
       )}
       </div>{/* /biz-right */}
