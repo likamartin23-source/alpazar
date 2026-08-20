@@ -1,16 +1,24 @@
 name: Deploy → Vercel Production
 
-# Vendosja automatike behet nga integrimi natyv i Vercel-it me GitHub.
-# Ky workflow eshte rruga e shpetimit: kur ai nderpritet, e nis me dore.
+# RRUGA E GARANTUAR e vendosjes: POST-on Vercel Deploy Hook nga runner-i i
+# GitHub-ut (pa bllokim egress). Niset AUTOMATIKISHT ne cdo push kodi ne main dhe
+# me dore (workflow_dispatch). Sherben si shtrese e dyte krahas integrimit nativ
+# te Vercel-it — nese njeri deshton, tjetri e nxjerr kodin live.
 #
-# GABIMI I MEPARSHEM: kushtet ishin shkruar si
-#     if: env.VERCEL_DEPLOY_HOOK != ''
-# por konteksti `env` i nje hapi NUK lexohet brenda `if:` te atij hapi.
-# Prandaj te dyja deget e vendosjes ishin gjithmone false dhe punonte vetem
-# dega "nuk ka celesa" — pra ky workflow nuk ka vendosur kurre asgje.
-# Zgjidhja: kushtet lexojne drejtperdrejt kontekstin `secrets`.
+# GABIMET E MEPARSHME (te dyja te rregulluara ketu, mos i perserit):
+#  1) `env.X` i nje HAPI nuk lexohet ne `if:` te po atij hapi.
+#  2) `secrets.X` NUK lejohet fare ne `if:` — e bente file-in te paanalizueshem,
+#     pra workflow-i ishte i VDEKUR (nuk nisej dot). Zgjidhja e sakte: map i
+#     sekreteve ne `env` te JOB-it si boolean, pastaj `env.HAS_*` ne `if:`.
+#
+# Transport-i (.github/patches/**) NUK nxit vendosje (paths-ignore) — bashke me
+# `ignoreCommand` te vercel.json, kodi i vjeter nuk zbret me kurre ne prodhim.
 
 on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '.github/patches/**'
   workflow_dispatch:
     inputs:
       environment:
@@ -24,45 +32,58 @@ permissions:
   contents: read
   deployments: write
 
+concurrency:
+  group: deploy-vercel-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   deploy:
-    name: Vendosje me dore
+    name: Vendosje e garantuar
     runs-on: ubuntu-latest
+    env:
+      HAS_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK != '' }}
+      HAS_TOKEN: ${{ secrets.VERCEL_TOKEN != '' }}
+      TARGET: ${{ github.event.inputs.environment || 'production' }}
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Nis vendosjen me deploy hook
-        if: ${{ secrets.VERCEL_DEPLOY_HOOK != '' }}
+        if: ${{ env.HAS_HOOK == 'true' }}
         env:
           HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
         run: |
-          echo "Nis vendosjen për ${{ inputs.environment }}…"
+          echo "Nis vendosjen për ${TARGET}…"
           RESPONSE=$(curl -sS -X POST "$HOOK")
           echo "$RESPONSE"
           echo "Ndiqe te: https://vercel.com/personal-accaunt-s-projects/alpazar"
 
-      - name: Vendosje me CLI (kur ka token)
-        if: ${{ secrets.VERCEL_DEPLOY_HOOK == '' && secrets.VERCEL_TOKEN != '' }}
+      - name: Vendosje me CLI (kur ka token, s'ka hook)
+        if: ${{ env.HAS_HOOK != 'true' && env.HAS_TOKEN == 'true' }}
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: team_Kkg5W4qnF2t5CQZj64ZS8xbz
           VERCEL_PROJECT_ID: prj_KNCEtuUDGNCA6ulHomdKniNAZEuX
         run: |
           npm install -g vercel@latest
-          vercel pull --yes --environment=${{ inputs.environment }} --token=$VERCEL_TOKEN
-          vercel build ${{ inputs.environment == 'production' && '--prod' || '' }} --token=$VERCEL_TOKEN
-          vercel deploy --prebuilt ${{ inputs.environment == 'production' && '--prod' || '' }} --token=$VERCEL_TOKEN
+          vercel pull --yes --environment="${TARGET}" --token="$VERCEL_TOKEN"
+          if [ "${TARGET}" = "production" ]; then
+            vercel build --prod --token="$VERCEL_TOKEN"
+            vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"
+          else
+            vercel build --token="$VERCEL_TOKEN"
+            vercel deploy --prebuilt --token="$VERCEL_TOKEN"
+          fi
 
       - name: Asnje celes i konfiguruar
-        if: ${{ secrets.VERCEL_DEPLOY_HOOK == '' && secrets.VERCEL_TOKEN == '' }}
+        if: ${{ env.HAS_HOOK != 'true' && env.HAS_TOKEN != 'true' }}
         run: |
           echo "::error::As VERCEL_DEPLOY_HOOK dhe as VERCEL_TOKEN nuk jane vendosur."
           echo "Shtoji te Settings → Secrets and variables → Actions."
           exit 1
 
       - name: Verifiko qe prodhimi u perditesua
-        if: success()
+        if: ${{ success() && env.TARGET == 'production' }}
         run: |
           sleep 210
           node scripts/verifiko-live.mjs
