@@ -5,8 +5,8 @@
 > veprimet e mbetura. Përditësohet sa herë ndodh diçka e rëndësishme. Cowork dhe
 > çdo sesion tjetër duhet ta lexojnë këtë PARA se të nisin, bashkë me CLAUDE.md.
 
-Përditësuar: 20 gusht 2026 (12:07 UTC). Prodhimi live: **`cfd774f`** READY;
-main HEAD: **`c85534c`** (listing force-dynamic, deploy në pritje → verifikohet READY).
+Përditësuar: 20 gusht 2026 (12:36 UTC). Prodhimi live: **`55f714f`** READY
+(të gjitha rrugët force-dynamic; buildId i njëjtë i provuar anonim në çdo rrugë). main HEAD = `55f714f`.
 
 ---
 
@@ -87,37 +87,44 @@ vetëm rikuperimi i mbrojtur nga ChunkLoadError, që s'ndizet me no-store).
 auto-reload-it (pa "Version i ri", pa `alpazar-version`, pa `serviceWorker.register`).
 Pra origjina publike, në Shqipëri, jep të renë.
 
-## 4.4 §12 (urdhri i Cowork-ut) — konsistenca cross-route: progres + vendim SEO
+## 4.4 §12 (urdhri i Cowork-ut) — konsistenca cross-route: I ZBATUAR + I PROVUAR
 
 **Urdhri:** shtri `no-store`/`force-dynamic` (ose revalidim on-demand) te TË GJITHA
 rrugët; verifiko buildId të njëjtë në çdo rrugë.
 
-**Bërë (force-dynamic te siperfaqet e app-it, ku freskia e të dhënave është kritike):**
+**Bërë — TË GJITHA rrugët tani SSR dinamik (force-dynamic), landuar në `main` byte-për-byte:**
 - `/` (homepage) — force-dynamic (arku i mëparshëm).
-- `/biznese/[id]` — force-dynamic + canonical/noindex kur s'gjendet (`cfd774f`, live).
-- `/listing/[id]` — force-dynamic (`c85534c`, main HEAD). ISR `revalidate=120` shërbente
-  çmim/status/foto të vjetra deri 120s pas një ndryshimi; tani origjina rirenderon me DB-në
-  aktuale në çdo kërkesë. Byte-verifikuar (git-hash `c9e4c49`).
+- `/biznese/[id]` — force-dynamic + canonical/noindex kur s'gjendet (`cfd774f`).
+- `/listing/[id]` — force-dynamic (`c85534c`). ISR `revalidate=120` shërbente çmim/status/foto
+  të vjetra deri 120s pas një ndryshimi; tani rirenderon me DB-në aktuale çdo kërkesë.
+- `/kategori`, `/kategori/[slug]`, `/kategori/[slug]/[qytet]` — force-dynamic
+  (`ac0d10f`, `bfee444`, `55f714f`; u hoqën `revalidate=3600` + `generateStaticParams`).
 
-**VENDIM i arsyetuar — rrugët SEO `/kategori/*` MBETEN ISR (nuk u kaluan në force-dynamic):**
-Prova (lexim i `middleware.ts`): middleware-i vendos tashmë në ÇDO dokument HTML
-`Cache-Control: no-store` + `CDN-Cache-Control: no-store` + **`Vercel-CDN-Cache-Control:
-no-store`**. Pasojë:
-1. Edge-i i Vercel-it S'RUAN HTML — pra s'mund të shërbejë një prerender të një deploy-i
-   të vjetër (mekanizmi i vetëm që do të jepte buildId të ndryshëm mes rrugëve).
-2. Vercel rindërton prerender-at e `generateStaticParams` në BUILD të çdo deploy-i; rrugët
-   on-demand rigjenerohen në kërkesën e parë pas deploy-it.
-→ Konsistenca e buildId-it + freskia janë TASHMË të garantuara për këto rrugë pa
-force-dynamic. Kalimi i tyre në force-dynamic vetëm heq ripërdorimin e ISR data-cache =>
-TTFB më i ngadaltë për crawler-at + ngarkesë DB + humbje crawl-budget — **dëm SEO pa asnjë
-përfitim freskie** (Rregulli 10b: shmangie e urdhrit kur shkakton dëm, me shpjegim).
-Nëse ndonjëherë do freski të-dhënash në kohë reale për këto faqe, rruga e duhur është
-**revalidim on-demand** (`revalidateTag` te mutacionet), jo force-dynamic — pjesë e harness-it
-më të gjerë (Faza 2+).
+**AUTOPSI E VENDIMIT TIM (korrigjim — Rregulli 11/13):** fillimisht vendosa t'i lija
+kategoritë ISR, me arsyetimin se middleware no-store (edhe `Vercel-CDN-Cache-Control:
+no-store`) e garanton freskinë. **Matja e Cowork-ut §12 e rrëzoi këtë premisë:** `/biznese`
+(ISR) shërbeu build të VJETËR (`9cfd9a60`) PAVARËSISHT no-store. Kur mata vetë `sentry-release`
+anonim, `/kategori` + `/kategori/prona` **s'e kishin fare** (rrugët ISR statike s'e injektojnë)
+→ as s'verifikoheshin dot. Përfundim empirik: middleware no-store mbron shfletuesin/CDN, POR
+edge-i shërben gjithsesi prerender-in ISR të një deploy-i të vjetër derisa rindërtohet. **Pra
+force-dynamic ishte i nevojshëm** — e ktheva vendimin.
 
-**Verifikim buildId (anonim, AL):** `/api/version` → `cfd774f` (build koherent, një deploy).
-Garancia arkitekturore mbi (middleware no-store në CDN + rindërtim per-deploy) e siguron
-buildId të njëjtë kudo; s'ka edge-cache që të fusë një build të vjetër në një rrugë të vetme.
+**PROVA (anonim, AL, `sentry-release` për çdo rrugë) — pas deploy-it `55f714f` READY:**
+```
+/               → 55f714f  ✅
+/listing/…      → 55f714f  ✅
+/biznese/…      → 55f714f  ✅
+/kategori       → 55f714f  ✅ (më parë: MUNGONTE sentry-release)
+/kategori/prona → 55f714f  ✅ (më parë: MUNGONTE sentry-release)
+```
+Të gjitha rrugët = i njëjti build dhe TANI të monitorueshme (sentry-release prezent kudo) →
+urdhri "buildId i njëjtë në çdo rrugë" i përmbushur me provë. Deploy `55f714f` READY (jo ERROR;
+heqja e `generateStaticParams` s'e prishi build-in) — verifikuar te Vercel API.
+
+**Kosto SEO e pranuar:** force-dynamic te kategoritë heq ripërdorimin e ISR data-cache (TTFB
+pak më i ngadaltë për crawler, ngarkesë DB). Zgjedhur me vetëdije: zero-toleranca e pronarit
+ndaj staleness + verifikueshmëria mbizotërojnë; trafiku është modest. Nëse duhet optimizim i
+mëvonshëm, rruga është **revalidim on-demand** (`revalidateTag` te mutacionet, Faza 2), jo kthim në ISR.
 
 ## 5. VEPRIME QË I TAKOJNË PRONARIT (unë s'kam akses)
 
