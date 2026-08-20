@@ -20,12 +20,39 @@ self.addEventListener('message', (event) => {
 })
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys()
-      // fshi ÇDO cache tjetër, përfshirë ato legacy që kishin ngecur
-      .then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))))
-      .then(() => self.clients.claim())
-  )
+  event.waitUntil((async () => {
+    // 1) Fshi ÇDO cache tjetër, përfshirë ato legacy që kishin ngecur.
+    const keys = await caches.keys()
+    await Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+    // 2) Merr kontrollin e menjëhershëm të çdo skede.
+    await self.clients.claim()
+
+    // 3) RIFRESKIM I DREJTUAR NGA SW-JA — hallka që mungonte.
+    //
+    // Kurthi themelor: çdo garanci vetërregullimi (UpdatePrompt, sw-reset,
+    // controllerchange) rri BRENDA bundle-it të ri JS. Një Service Worker i
+    // vjetër i ngecur shërben app-shell-in e vjetër nga cache dhe s'e ngarkon
+    // KURRË atë bundle — pra ai kod shërues s'ekzekutohet dot. Faqja e vjetër
+    // s'ka as dëgjues `controllerchange`.
+    //
+    // Zgjidhja: browser-i e merr `/sw.js` përmes update-check-ut (me `no-cache`,
+    // duke anashkaluar fetch-handler-in e SW-së së vjetër). Sapo ky SW i ri
+    // aktivizohet, VETË e rifreskon çdo skedë me `client.navigate()` — s'varet
+    // nga kodi i faqes, ndaj shpëton edhe faqet e vjetra që s'kanë asnjë dëgjues.
+    // Aktivizimi ndodh një herë për version (VERSION ndryshon çdo deploy), ndaj
+    // s'ka cikël: pas rifreskimit skeda kontrollohet nga i njëjti SW aktiv.
+    try {
+      const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true })
+      for (const c of clients) {
+        try {
+          const u = new URL(c.url)
+          if (u.origin !== self.location.origin) continue           // vetëm same-origin
+          if (u.pathname.startsWith('/admin')) continue              // mos ndërpre veprim admini në mes
+          if ('navigate' in c) await c.navigate(c.url)               // rifresko te e njëjta URL
+        } catch (e) { /* skedë e pa-navigueshme — anashkaloje */ }
+      }
+    } catch (e) { /* pa clients API — kalo */ }
+  })())
 })
 
 self.addEventListener('fetch', (event) => {
