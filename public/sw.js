@@ -1,51 +1,32 @@
-// SERVICE WORKER VETËSHKATËRRUES (kill-switch)
+// SERVICE WORKER VETËSHKATËRRUES (kill-switch) — PA RINGARKIM.
 //
-// PSE: Për muaj të tërë app-i shërbente "versionin e vjetër" në pajisjet e
-// përdoruesve — me flake të shkurtra të së resë që kthehej me forcë te e vjetra.
-// Shkaku themelor: një Service Worker/PWA cache që rimerrte kontrollin dhe
-// shërbente app-shell-in e vjetër, ndërsa çdo garanci vetërregullimi rrinte
-// brenda bundle-it të ri që SW-ja e vjetër s'e ngarkonte kurrë (kurthi klasik).
+// PSE: Për muaj të tërë app-i shërbente "versionin e vjetër" me flake që kthehej
+// te i vjetri. Dy shkaqe u gjetën e u hoqën: (1) UpdatePrompt që ringarkonte
+// faqen vetvetiu; (2) edge-cache/SW që shërbente HTML të vjetër. Ky skedar heq
+// Service Worker-in krejt.
 //
-// ZGJIDHJA MË E FUQISHME DHE E GARANTUAR PËR FRESKI: hiqe SW-në krejt. Ky skedar
-// tani NUK ka fetch-handler (s'ndërhyn më në asnjë kërkesë → çdo gjë shkon direkt
-// në rrjet), fshin ÇDO cache, dhe ç'regjistron veten. Shfletuesi e merr këtë
-// /sw.js përmes update-check-ut (shërbehet me `no-cache`, duke anashkaluar SW-në
-// e vjetër); sapo aktivizohet, pastron gjithçka dhe largohet përgjithmonë.
-//
-// Pas kësaj: pa Service Worker → pa cache → shfletuesi merr gjithmonë nga rrjeti
-// → header-at `no-store` (middleware + force-dynamic) garantojnë freski absolute.
-// Regjistrimi i SW-së është hequr edhe nga faqja, ndaj s'rikrijohet dhe s'ka cikël.
+// KUJDES I VEÇANTË: versioni i mëparshëm i kill-switch-it bënte `client.navigate()`
+// (një ringarkim) në `activate`. Për një pajisje me HTML të vjetër ende në cache,
+// ai ringarkim mund të hynte në cikël (HTML i vjetër -> riregjistron SW -> kill
+// -> navigate -> HTML i vjetër ...). Prandaj TANI kill-switch-i vetëshkatërrohet
+// NË HESHTJE: fshin çdo cache, çregjistron veten, dhe NUK ringarkon. Faqja
+// përditësohet vetvetiu në navigimin/rifreskimin e radhës — pa Service Worker,
+// çdo kërkesë shkon te rrjeti dhe `no-store` garanton freskinë. Zero ringarkim
+// automatik kudo => zero cikël "flicker->old".
 
 self.addEventListener('install', () => self.skipWaiting())
 
 self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
-    // 1) Fshi ÇDO cache — pa përjashtim.
     try {
       const keys = await caches.keys()
       await Promise.all(keys.map(k => caches.delete(k)))
     } catch (e) { /* pa Cache API — vazhdo */ }
-
-    // 2) Ç'regjistro këtë Service Worker përgjithmonë.
+    try { await self.clients.claim() } catch (e) { /* vazhdo */ }
     try { await self.registration.unregister() } catch (e) { /* vazhdo */ }
-
-    // 3) Rifresko një herë çdo skedë të hapur — TANI shërbehet nga rrjeti i pastër
-    //    (pa SW, pa cache). Funksionon edhe për faqet e vjetra pa dëgjues.
-    //    /admin përjashtohet që të mos ndërpritet një veprim ligjor në mes.
-    //    S'ka cikël: faqja e re s'e regjistron më SW-në, ndaj kjo ndodh një herë.
-    try {
-      const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true })
-      for (const c of clients) {
-        try {
-          const u = new URL(c.url)
-          if (u.origin !== self.location.origin) continue
-          if (u.pathname.startsWith('/admin')) continue
-          if ('navigate' in c) await c.navigate(c.url)
-        } catch (e) { /* skedë e pa-navigueshme */ }
-      }
-    } catch (e) { /* pa clients API */ }
+    // PA client.navigate()/reload — vetëshkatërrim i heshtur.
   })())
 })
 
-// PA fetch-handler qëllimisht: SW-ja nuk ndërhyn në asnjë kërkesë. Çdo navigim,
-// aset apo API shkon DIREKT te rrjeti — kurrë nga një cache i vjetër.
+// PA fetch-handler: SW-ja nuk ndërhyn në asnjë kërkesë. Çdo navigim/aset/API
+// shkon DIREKT te rrjeti — kurrë nga një cache i vjetër.
