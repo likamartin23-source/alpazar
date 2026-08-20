@@ -3,11 +3,17 @@
 import { useEffect, useRef, useState } from 'react'
 
 const BUILD = process.env.NEXT_PUBLIC_BUILD_ID || 'dev'
-const EVERY = 5 * 60 * 1000
+// Kadencë afër-real-time: kontroll çdo 60s, plus në fokus/rikthim/rilidhje
+// rrjeti. Mjafton për ta kapur çdo deploy brenda pak sekondash pa e ngarkuar
+// serverin (/api/version është edge + no-store).
+const EVERY = 60 * 1000
 
 /* Shënues i njëhershëm. Ndryshoje VETËM nëse duhet një shkrirje e re e
-   detyruar për të gjithë shfletuesit. */
-const RESET = 'alpazar-sw-reset-1'
+   detyruar për të gjithë shfletuesit.
+   -2 (harmonizimi live): shfletuesit që kishin ngecur në një service worker /
+   cache të vjetër para merge-it në prodhim çregjistrohen e pastrohen një herë,
+   që të marrin menjëherë ndërfaqen e re (kartat e njësuara, "Afër meje", etj.). */
+const RESET = 'alpazar-sw-reset-2'
 
 /**
  * DALJA E EMERGJENCËS — pse ekziston
@@ -107,6 +113,7 @@ export default function UpdatePrompt() {
       check()
       timer = setInterval(check, EVERY)
       window.addEventListener('focus', check)
+      window.addEventListener('online', check)
       document.addEventListener('visibilitychange', onVisible)
     })
 
@@ -114,6 +121,7 @@ export default function UpdatePrompt() {
       stop = true
       if (timer) clearInterval(timer)
       window.removeEventListener('focus', check)
+      window.removeEventListener('online', check)
       document.removeEventListener('visibilitychange', onVisible)
     }
   }, [])
