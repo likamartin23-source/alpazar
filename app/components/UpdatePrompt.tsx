@@ -6,8 +6,11 @@ const BUILD = process.env.NEXT_PUBLIC_BUILD_ID || 'dev'
 const EVERY = 5 * 60 * 1000
 
 /* Shënues i njëhershëm. Ndryshoje VETËM nëse duhet një shkrirje e re e
-   detyruar për të gjithë shfletuesit. */
-const RESET = 'alpazar-sw-reset-1'
+   detyruar për të gjithë shfletuesit.
+   -2 (harmonizimi live): shfletuesit që kishin ngecur në një service worker /
+   cache të vjetër para merge-it në prodhim çregjistrohen e pastrohen një herë,
+   që të marrin menjëherë ndërfaqen e re (kartat e njësuara, "Afër meje", etj.). */
+const RESET = 'alpazar-sw-reset-2'
 
 /**
  * DALJA E EMERGJENCËS — pse ekziston
