@@ -65,14 +65,27 @@ export default function UpdatePrompt() {
   const [ready, setReady] = useState(false)
   const regRef = useRef<any>(null)
   const applying = useRef(false)
+  const bcRef = useRef<any>(null)
 
   function apply() {
     if (applying.current) return
     applying.current = true
+    // Koordinim ndër-skeda: njofto skedat e tjera të kalojnë njëkohësisht.
+    try { bcRef.current?.postMessage('reload') } catch { /* pa BroadcastChannel */ }
     const w = regRef.current?.waiting
     if (w) w.postMessage({ type: 'SKIP_WAITING' })
     else window.location.reload()
   }
+
+  // GARANCI: kur zbulohet version i ri, aplikohet vetë — kur skeda fshihet, ose pas
+  // një afati të shkurtër nëse përdoruesi s'vepron. Askush nuk ngec te i vjetri.
+  useEffect(() => {
+    if (!ready) return
+    const t = setTimeout(() => apply(), 25000)
+    const onHide = () => { if (document.visibilityState === 'hidden') apply() }
+    document.addEventListener('visibilitychange', onHide)
+    return () => { clearTimeout(t); document.removeEventListener('visibilitychange', onHide) }
+  }, [ready])
 
   useEffect(() => {
     let stop = false
@@ -107,13 +120,27 @@ export default function UpdatePrompt() {
       }
     }
 
+    // bfcache: kur faqja rikthehet nga back/forward cache, ajo është "e ngrirë"
+    // (pa rrjet, pa re-render) — skenari më dinak i strukturës së vjetër. Ri-kontrollo.
+    const onPageShow = (e: any) => { if (e?.persisted) check() }
+
     // Shkrirja vjen e para: nëse rifreskon, asgjë tjetër nuk ka nevojë të nisë.
     shkrirjeNjehere().then(uRifreskua => {
       if (uRifreskua || stop) return
+      // Koordinim ndër-skeda: kur një skedë kalon në versionin e ri, të tjerat e ndjekin.
+      try {
+        if (typeof BroadcastChannel !== 'undefined') {
+          bcRef.current = new BroadcastChannel('alpazar-version')
+          bcRef.current.onmessage = (e: any) => {
+            if (e?.data === 'reload' && !applying.current) { applying.current = true; window.location.reload() }
+          }
+        }
+      } catch { /* pa BroadcastChannel */ }
       check()
       timer = setInterval(check, EVERY)
       window.addEventListener('focus', check)
       window.addEventListener('online', check)
+      window.addEventListener('pageshow', onPageShow)
       document.addEventListener('visibilitychange', onVisible)
     })
 
@@ -122,7 +149,9 @@ export default function UpdatePrompt() {
       if (timer) clearInterval(timer)
       window.removeEventListener('focus', check)
       window.removeEventListener('online', check)
+      window.removeEventListener('pageshow', onPageShow)
       document.removeEventListener('visibilitychange', onVisible)
+      try { bcRef.current?.close() } catch { /* mbyllur tashmë */ }
     }
   }, [])
 

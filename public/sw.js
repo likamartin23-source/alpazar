@@ -41,10 +41,13 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Navigime + API + Supabase -> network-first (HTML/të dhëna gjithmonë të freskëta)
+  // Navigime + API + Supabase -> network-first (HTML/të dhëna gjithmonë të freskëta).
+  // Për navigimet përdorim `cache: 'reload'` që të anashkalohet edhe cache-i HTTP i
+  // shfletuesit — dokumenti vjen GJITHMONË nga rrjeti, kurrë një kopje e vjetër.
   if (req.mode === 'navigate' || url.pathname.startsWith('/api') || url.hostname.includes('supabase')) {
+    const opts = req.mode === 'navigate' ? { cache: 'reload' } : undefined
     event.respondWith(
-      fetch(req).catch(() => caches.match(req).then(c => c || caches.match('/offline.html')))
+      fetch(req, opts).catch(() => caches.match(req).then(c => c || caches.match('/offline.html')))
     )
     return
   }

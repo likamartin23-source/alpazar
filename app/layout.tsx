@@ -186,6 +186,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   reloading = true;
                   window.location.reload();
                 });
+                // GARANCI: detyro rikontrollin e sw.js — menjehere, cdo 60s, kur skeda
+                // kthehet ne pamje, kur rikthehet interneti, dhe kur faqja rikthehet nga
+                // bfcache. Keshtu versioni i ri kapet brenda sekondash, pa pritur
+                // heuristiken ~24-oreshe te shfletuesit qe e mbante pajisjen prapa.
+                function ping(){ try { reg.update(); } catch(e){} }
+                ping();
+                setInterval(ping, 60000);
+                document.addEventListener('visibilitychange', function(){ if (document.visibilityState === 'visible') ping(); });
+                window.addEventListener('online', ping);
+                window.addEventListener('pageshow', function(e){ if (e && e.persisted) ping(); });
               }).catch(function() {});
             });
           }
