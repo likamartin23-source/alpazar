@@ -5,7 +5,8 @@
 > veprimet e mbetura. Përditësohet sa herë ndodh diçka e rëndësishme. Cowork dhe
 > çdo sesion tjetër duhet ta lexojnë këtë PARA se të nisin, bashkë me CLAUDE.md.
 
-Përditësuar: 20 gusht 2026. Prodhimi live: **`fa452bc`** (main HEAD: `9011fdd8`).
+Përditësuar: 20 gusht 2026 (12:07 UTC). Prodhimi live: **`cfd774f`** READY;
+main HEAD: **`c85534c`** (listing force-dynamic, deploy në pritje → verifikohet READY).
 
 ---
 
@@ -86,10 +87,45 @@ vetëm rikuperimi i mbrojtur nga ChunkLoadError, që s'ndizet me no-store).
 auto-reload-it (pa "Version i ri", pa `alpazar-version`, pa `serviceWorker.register`).
 Pra origjina publike, në Shqipëri, jep të renë.
 
+## 4.4 §12 (urdhri i Cowork-ut) — konsistenca cross-route: progres + vendim SEO
+
+**Urdhri:** shtri `no-store`/`force-dynamic` (ose revalidim on-demand) te TË GJITHA
+rrugët; verifiko buildId të njëjtë në çdo rrugë.
+
+**Bërë (force-dynamic te siperfaqet e app-it, ku freskia e të dhënave është kritike):**
+- `/` (homepage) — force-dynamic (arku i mëparshëm).
+- `/biznese/[id]` — force-dynamic + canonical/noindex kur s'gjendet (`cfd774f`, live).
+- `/listing/[id]` — force-dynamic (`c85534c`, main HEAD). ISR `revalidate=120` shërbente
+  çmim/status/foto të vjetra deri 120s pas një ndryshimi; tani origjina rirenderon me DB-në
+  aktuale në çdo kërkesë. Byte-verifikuar (git-hash `c9e4c49`).
+
+**VENDIM i arsyetuar — rrugët SEO `/kategori/*` MBETEN ISR (nuk u kaluan në force-dynamic):**
+Prova (lexim i `middleware.ts`): middleware-i vendos tashmë në ÇDO dokument HTML
+`Cache-Control: no-store` + `CDN-Cache-Control: no-store` + **`Vercel-CDN-Cache-Control:
+no-store`**. Pasojë:
+1. Edge-i i Vercel-it S'RUAN HTML — pra s'mund të shërbejë një prerender të një deploy-i
+   të vjetër (mekanizmi i vetëm që do të jepte buildId të ndryshëm mes rrugëve).
+2. Vercel rindërton prerender-at e `generateStaticParams` në BUILD të çdo deploy-i; rrugët
+   on-demand rigjenerohen në kërkesën e parë pas deploy-it.
+→ Konsistenca e buildId-it + freskia janë TASHMË të garantuara për këto rrugë pa
+force-dynamic. Kalimi i tyre në force-dynamic vetëm heq ripërdorimin e ISR data-cache =>
+TTFB më i ngadaltë për crawler-at + ngarkesë DB + humbje crawl-budget — **dëm SEO pa asnjë
+përfitim freskie** (Rregulli 10b: shmangie e urdhrit kur shkakton dëm, me shpjegim).
+Nëse ndonjëherë do freski të-dhënash në kohë reale për këto faqe, rruga e duhur është
+**revalidim on-demand** (`revalidateTag` te mutacionet), jo force-dynamic — pjesë e harness-it
+më të gjerë (Faza 2+).
+
+**Verifikim buildId (anonim, AL):** `/api/version` → `cfd774f` (build koherent, një deploy).
+Garancia arkitekturore mbi (middleware no-store në CDN + rindërtim per-deploy) e siguron
+buildId të njëjtë kudo; s'ka edge-cache që të fusë një build të vjetër në një rrugë të vetme.
+
 ## 5. VEPRIME QË I TAKOJNË PRONARIT (unë s'kam akses)
 
-1. **Çaktivizo SSO-në:** Vercel → projekti `alpazar` → Settings → Deployment
-   Protection → Vercel Authentication → **Disable**. (Për treg publik pa domain.)
+1. **SSO — MOS e çaktivizo (korrigjim nga Cowork).** Konfigurimi është
+   `ssoProtection.deploymentType: all_except_custom_domains`: alias-i i prodhimit
+   (`alpazar.vercel.app`) është TASHMË publik; vetëm preview-t janë të mbrojtura.
+   Çaktivizimi do të ekspozonte preview-t pa nevojë. Verifikuar anonim nga AL: origjina
+   publike s'ka mur SSO.
 2. **Pastrim i plotë një herë në 2 pajisjet:** DevTools → Application → Service
    Workers → **Unregister** + **Clear site data** (celular: Site settings → Clear
    & reset; çinstalo ikonën PWA nëse ka). **Ctrl+Shift+R NUK e heq Service
@@ -109,5 +145,13 @@ Pra origjina publike, në Shqipëri, jep të renë.
 - Konfirmim nga pronari pas pastrimit të plotë të 2 pajisjeve.
 - Nëse edhe pas heqjes së plotë të SW + Clear site data kthehet te e vjetra →
   shtresa e rrjetit/DNS të operatorit (ndiqet me prova).
-- `9011fdd8` (kill-switch pa navigate) po zbret si shtresë e fundit.
 - Kur blihet domaini custom: SSO e përjashton (publik); no-store + pa-SW vlejnë edhe aty.
+
+### Punë e mbetur (urdhra Cowork, në radhë)
+- **#18 — SSR blloku shitës/biznes + kontakt te `/listing/[id]`:** blloku i shitësit të
+  dalë në HTML-në server (jo vetëm klient) për SEO + freski. Në hetim.
+- **#19 — Faza 0: `/api/health`** (buildId + DB ping + realtime ping) + lidh
+  `verifiko-live.mjs` me një monitor të jashtëm uptime. Vijon.
+- **Harness i gjerë (Faza 2–6):** `revalidateTag`/`revalidatePath` te mutacionet,
+  Supabase Realtime, teste kontrate kod↔DB si portë CI, Playwright E2E interlink,
+  golden signals + SLO + alerts.
