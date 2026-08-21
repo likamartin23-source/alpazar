@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import { moneyDec } from '../../lib/format'
 
-const L = (n: any) => Number(n || 0).toLocaleString('sq-AL', { maximumFractionDigits: 2 })
+// Çmim plani gjithmonë me 2 shifra (EAA), determinist (moneyDec te lib/format).
+const L = (n: any) => moneyDec(n)
 
 export function BoostStrip({ boost }: any) {
   if (!boost) return null
