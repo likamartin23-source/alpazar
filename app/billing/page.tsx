@@ -94,7 +94,7 @@ export default function BillingPage() {
                       : confirmCancel
                         ? <>
                             <button type="button" className="btn danger" disabled={!!busy} onClick={() => act('cancel_my_subscription')}>Po, anulo</button>
-                            <button type="button" className="btn" onClick={() => setConfirmCancel(false)}>Jo</span></button>
+                            <button type="button" className="btn" onClick={() => setConfirmCancel(false)}>Jo</button>
                           </>
                         : <button type="button" className="btn" disabled={!!busy} onClick={() => setConfirmCancel(true)}>Anulo abonimin</button>}
                   </div>
@@ -108,7 +108,7 @@ export default function BillingPage() {
                   {bank && (
                     <div className="bank">
                       <div className="bank-t">Të dhënat e pagesës — {sub.payment_method?.name}</div>
-                      {bank.bank_name && <div><span>Banka:</span> {bank.swift}</div>}
+                      {bank.bank_name && <div><span>Banka:</span> {bank.bank_name}</div>}
                       {bank.account_holder && <div><span>Përfituesi:</span> {bank.account_holder}</div>}
                       {bank.iban && <div><span>IBAN:</span> <code>{bank.iban}</code></div>}
                       {bank.swift && <div><span>SWIFT:</span> {bank.swift}</div>}
