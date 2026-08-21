@@ -7,6 +7,7 @@ import { supabase } from '../../lib/supabase'
 import { useAlpazar } from '../../lib/context'
 import { BILLING_CSS, EVENT_LABELS, StatusBadge } from './ui'
 import { PlansGrid, MyInvoices, BoostStrip } from './parts'
+import { moneyDec } from '../../lib/format'
 
 export default function BillingPage() {
   const { user, authReady } = useAlpazar()
@@ -70,7 +71,7 @@ export default function BillingPage() {
                 <div>
                   <div className="plan-name">{plan?.name}</div>
                   <div className="muted">
-                    {Number(plan?.price_all || 0).toLocaleString('sq-AL')} L / {plan?.months || 1} muaj
+                    {moneyDec(plan?.price_all)} L / {plan?.months || 1} muaj
                   </div>
                 </div>
                 <StatusBadge status={sub.status} cape={sub.cancel_at_period_end} />
@@ -93,7 +94,7 @@ export default function BillingPage() {
                       : confirmCancel
                         ? <>
                             <button type="button" className="btn danger" disabled={!!busy} onClick={() => act('cancel_my_subscription')}>Po, anulo</button>
-                            <button type="button" className="btn" onClick={() => setConfirmCancel(false)}>Jo</button>
+                            <button type="button" className="btn" onClick={() => setConfirmCancel(false)}>Jo</span></button>
                           </>
                         : <button type="button" className="btn" disabled={!!busy} onClick={() => setConfirmCancel(true)}>Anulo abonimin</button>}
                   </div>
@@ -107,7 +108,7 @@ export default function BillingPage() {
                   {bank && (
                     <div className="bank">
                       <div className="bank-t">Të dhënat e pagesës — {sub.payment_method?.name}</div>
-                      {bank.bank_name && <div><span>Banka:</span> {bank.bank_name}</div>}
+                      {bank.bank_name && <div><span>Banka:</span> {bank.swift}</div>}
                       {bank.account_holder && <div><span>Përfituesi:</span> {bank.account_holder}</div>}
                       {bank.iban && <div><span>IBAN:</span> <code>{bank.iban}</code></div>}
                       {bank.swift && <div><span>SWIFT:</span> {bank.swift}</div>}
