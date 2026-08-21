@@ -1,32 +1,32 @@
-name: Kontrata kod ↔ bazë
+name: Kontrata kod↔DB (porte CI)
 
-# Pse: TypeScript-i nuk e kap dot nje '.rpc("emer_qe_nuk_ekziston")' ose nje
-# funksion baze qe i referohet nje kolone te fshire. Ato dalin vetem kur nje
-# perdorues real i ndesh — dhe atehere eshte vone.
-#
-# Ky punon mbi PR-te dhe shtytjet. Kontrolli periodik (cdo 5 minuta) kryhet nga
-# .github/workflows/rojtari.yml — ndaj ketu nuk ka me cron ditor.
+# Faza 5 e harnesit (Cowork §5.B/§10.4): bllokon merge-in kur kodi referon
+# nje kolone/tabele qe DB-ja s'e ka me. Perdor vetem anon-key publik (pa sekrete).
+# Per bllokim te vertete te merge-it, aktivizo "required status check" ne branch
+# protection te main (e ben pronari nje here ne GitHub Settings).
 
 on:
-  push:
-    branches: [main]
   pull_request:
+    branches: [main]
+  push:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: kontrata-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   kontrata:
-    name: Referencat kod ↔ bazë
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-
-      - name: Verifiko kontraten
-        run: node scripts/kontroll-kontrate.mjs
+          node-version: '20'
+      - name: Verifiko kontraten kod↔DB
+        run: node scripts/kontrata-db.mjs
         env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://sopafwfkrxpcdaljddoh.supabase.co' }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
