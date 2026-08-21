@@ -86,22 +86,31 @@ function getInitials(name?: string | null): string {
   return (parts[0][0] + parts[1][0]).toUpperCase()
 }
 
-/** #7C3AED — vjollca e VIP-it, e fiksuar te Vendimi 8. */
-const VIP = '#7C3AED'
+/** Ari i VIP-it (BLLOKU 21 gusht, Imazhi 1: VIP = ari→kuqe + kurore). */
+const ARI = '#D4AF37'
 
-function ringStyle(type: AvatarType, tier: AvatarTier): React.CSSProperties {
-  if (type === 'business') {
-    // Biznesi niset nga e zeza — spiranca e identitetit tregtar.
-    if (tier === 'vip') return { background: `linear-gradient(135deg,#111,${VIP})` }
-    // `free` e ndan te njejten unaze me `premium`: nje biznes pa premium nuk
-    // duhet te ekzistoje (gate-i i §1B), ndaj s'ka gjendje pamore te vetën.
-    // Kur ai gate te vihet, ky rast zhduket vetvetiu.
-    return { background: 'linear-gradient(135deg,#111,#E63312)' }
-  }
-  if (tier === 'vip')     return { background: `linear-gradient(135deg,${VIP},#B57AE0)` }
+/**
+ * BLLOKU §2 (vendim i ngrire): "unaza = identiteti i PERDORUESIT; biznesi
+ * trashegon TE NJEJTEN unaze + shenje ndertese". Prandaj unaza varet VETEM nga
+ * `tier`; `type` shton vetem badge-in 🏢 — biznesi s'ka me ngjyra te vetat.
+ * Matrica (Imazhi 1): falas gri (pa vule) · premium e verdhe + ★ · VIP ari→kuqe + kurore.
+ */
+function ringStyle(tier: AvatarTier): React.CSSProperties {
+  if (tier === 'vip')     return { background: `linear-gradient(135deg,${ARI},#E63312)` }
   if (tier === 'premium') return { background: 'linear-gradient(135deg,#F5C842,#E63312)' }
   return { background: '#e2e2e2' }
 }
+
+/**
+ * Pulsimi i unazes VIP (BLLOKU §3.3). Keyframes s'behen dot me stil inline,
+ * ndaj injektohet nje <style> i vogel vetem kur ka VIP. `prefers-reduced-motion`
+ * e fik — leviza e vazhdueshme s'i imponohet kujt qe e ka refuzuar (a11y).
+ */
+const VIP_PULSE_CSS = `
+@keyframes alpzVipPulse{0%,100%{box-shadow:0 0 0 0 rgba(212,175,55,.55)}50%{box-shadow:0 0 0 6px rgba(212,175,55,0)}}
+.alpz-vip-ring{animation:alpzVipPulse 2.2s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.alpz-vip-ring{animation:none}}
+`
 
 export default function Avatar({
   src, name, type = 'person', tier = 'free', verified = false, size = 48, onClick,
@@ -122,7 +131,8 @@ export default function Avatar({
       onKeyDown={onClick ? (e => { if (e.key === 'Enter' || e.key === ' ') onClick() }) : undefined}
       style={{ position: 'relative', width: size, height: size, flexShrink: 0, cursor: onClick ? 'pointer' : 'default', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}
     >
-      <div style={{ width: size, height: size, borderRadius: '50%', padding: ring, boxSizing: 'border-box', ...ringStyle(type, tier), transition: 'transform .15s ease' }}>
+      {tier === 'vip' && <style dangerouslySetInnerHTML={{ __html: VIP_PULSE_CSS }} />}
+      <div className={tier === 'vip' ? 'alpz-vip-ring' : undefined} style={{ width: size, height: size, borderRadius: '50%', padding: ring, boxSizing: 'border-box', ...ringStyle(tier), transition: 'transform .15s ease' }}>
         <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: '#fff', padding: white, boxSizing: 'border-box' }}>
           {showImage ? (
             <img src={src as string} alt={name || 'avatar'} loading="lazy" onError={() => setBroken(true)} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', display: 'block' }} />
@@ -134,19 +144,27 @@ export default function Avatar({
         </div>
       </div>
 
-      {/* Kurora e VIP-it rri lart-djathtas, qe te mos perplaset me badge-in
-          poshte-djathtas: ato thone dy gjera te ndryshme (abonim vs identitet)
-          dhe duhen lexuar te dyja njeheresh. */}
+      {/* Vula e abonimit rri lart-djathtas, qe te mos perplaset me badge-in e
+          identitetit poshte-djathtas: thone dy gjera te ndryshme (abonim vs
+          identitet) dhe duhen lexuar te dyja njeheresh. Matrica (Imazhi 1):
+          VIP → 👑 mbi ari · premium → ★ mbi te verdhe · falas → pa vule. */}
       {tier === 'vip' && (
         <div
-          aria-label="VIP"
-          style={{ position: 'absolute', right: -2, top: -2, width: badge, height: badge, borderRadius: '50%', background: VIP, border: '2px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: Math.round(badge * 0.5), lineHeight: 1 }}>
+          role="img" aria-label="VIP"
+          style={{ position: 'absolute', right: -2, top: -2, width: badge, height: badge, borderRadius: '50%', background: ARI, border: '2px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: Math.round(badge * 0.5), lineHeight: 1 }}>
           <span aria-hidden="true">👑</span>
+        </div>
+      )}
+      {tier === 'premium' && (
+        <div
+          role="img" aria-label="Premium"
+          style={{ position: 'absolute', right: -2, top: -2, width: badge, height: badge, borderRadius: '50%', background: '#F5C842', border: '2px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: Math.round(badge * 0.55), color: '#7A4A00', lineHeight: 1 }}>
+          <span aria-hidden="true">★</span>
         </div>
       )}
 
       {(type === 'business' || verified) && (
-        <div style={{ position: 'absolute', right: -2, bottom: -2, width: badge, height: badge, borderRadius: '50%', background: verified ? '#16a34a' : '#111', border: '2px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: Math.round(badge * 0.55), color: '#fff', lineHeight: 1 }}>
+        <div role="img" aria-label={verified ? 'I verifikuar' : 'Biznes'} style={{ position: 'absolute', right: -2, bottom: -2, width: badge, height: badge, borderRadius: '50%', background: verified ? '#16a34a' : '#111', border: '2px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: Math.round(badge * 0.55), color: '#fff', lineHeight: 1 }}>
           {verified ? <span aria-hidden='true'>✓</span> : <span aria-hidden='true'>🏢</span>}
         </div>
       )}
