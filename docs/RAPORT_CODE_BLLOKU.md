@@ -10,7 +10,7 @@
 
 ### 0 · KUFIJ ABSOLUTË — MOS I PREK
 - **Fiskalizimi (NIPT/TVSH/faturë): NUK preket tani** — reformohet më vonë bashkë me panelin.
-- **Hyrja e adminit në panel ("Paneli i Adminit"): mbetet SIÇ ËSTË** — admin-only. Mos e ndrysho.
+- **Hyrja e adminit në panel ("Paneli i Adminit"): mbetet SIÇ ËSHTË** — admin-only. Mos e ndrysho.
 - **Bërthama e pagesave** (`process_payment_event`, `reconcile_payments`, webhook): **fail-closed + vetëm `service_role`**. Mos e prek. Abonimi vetëm **lexon/shfaq**.
 - **Koka e panelit "Profili im" + struktura 12-skeda "sipas punës"**: mbeten **IDENTIKE**.
 - **RLS e dukshmërisë** dhe **çmimet**: mos i "rregullo". Charm "999.9" → shfaqe **"999.90"** (dy shifra, EAA), pa ndryshuar vlerën e brendshme.
