@@ -2,7 +2,11 @@ import type { Metadata } from 'next'
 import { SITE_URL } from '../../lib/siteConfig'
 import { fetchCategories, FALLBACK_CATEGORIES, slugify, CITIES, citySlug } from '../../lib/seoTaxonomy'
 
-export const revalidate = 3600
+// SSR DINAMIK (jo ISR). Prova (Cowork, verifikim anonim §12): rrugët ISR mund të
+// shërbejnë një prerender të një deploy-i të VJETËR nga edge-i (staleness cross-deploy)
+// — middleware no-store s'e parandalon dhe as sentry-release/buildId s'del në prerender
+// statik (s'monitorohet dot). force-dynamic => buildId i njëjtë kudo + i verifikueshëm.
+export const dynamic = 'force-dynamic'
 
 const TITLE = 'Kategoritë — ALPAZAR'
 const DESC = 'Shfleto të gjitha kategoritë e shpalljeve në ALPAZAR: elektronikë, makina, shtëpi, veshje e më shumë — sipas kategorisë dhe qytetit në Shqipëri.'

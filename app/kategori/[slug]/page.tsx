@@ -2,18 +2,15 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { SITE_URL } from '../../../lib/siteConfig'
 import {
-  fetchCategories, fetchCategoryBySlug, fetchCategoryListings,
+  fetchCategoryBySlug, fetchCategoryListings,
   CITIES, citySlug,
 } from '../../../lib/seoTaxonomy'
 import { ListingGrid, LANDING_CSS } from '../_shared'
 
-export const revalidate = 3600
-export const dynamicParams = true
-
-export async function generateStaticParams() {
-  const cats = await fetchCategories()
-  return cats.map(c => ({ slug: c.slug }))
-}
+// SSR DINAMIK (jo ISR) — konsistencë build-i cross-route + verifikueshmëri (Cowork §12).
+// ISR-ja shërbente prerender të deploy-eve të vjetra nga edge-i (staleness) dhe s'jepte
+// sentry-release/buildId në HTML statik (s'monitorohej dot). force-dynamic i zgjidh të dyja.
+export const dynamic = 'force-dynamic'
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const params = await props.params

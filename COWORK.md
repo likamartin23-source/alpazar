@@ -5,7 +5,8 @@
 > veprimet e mbetura. Përditësohet sa herë ndodh diçka e rëndësishme. Cowork dhe
 > çdo sesion tjetër duhet ta lexojnë këtë PARA se të nisin, bashkë me CLAUDE.md.
 
-Përditësuar: 20 gusht 2026. Prodhimi live: **`fa452bc`** (main HEAD: `9011fdd8`).
+Përditësuar: 20 gusht 2026 (12:36 UTC). Prodhimi live: **`55f714f`** READY
+(të gjitha rrugët force-dynamic; buildId i njëjtë i provuar anonim në çdo rrugë). main HEAD = `55f714f`.
 
 ---
 
@@ -86,10 +87,52 @@ vetëm rikuperimi i mbrojtur nga ChunkLoadError, që s'ndizet me no-store).
 auto-reload-it (pa "Version i ri", pa `alpazar-version`, pa `serviceWorker.register`).
 Pra origjina publike, në Shqipëri, jep të renë.
 
+## 4.4 §12 (urdhri i Cowork-ut) — konsistenca cross-route: I ZBATUAR + I PROVUAR
+
+**Urdhri:** shtri `no-store`/`force-dynamic` (ose revalidim on-demand) te TË GJITHA
+rrugët; verifiko buildId të njëjtë në çdo rrugë.
+
+**Bërë — TË GJITHA rrugët tani SSR dinamik (force-dynamic), landuar në `main` byte-për-byte:**
+- `/` (homepage) — force-dynamic (arku i mëparshëm).
+- `/biznese/[id]` — force-dynamic + canonical/noindex kur s'gjendet (`cfd774f`).
+- `/listing/[id]` — force-dynamic (`c85534c`). ISR `revalidate=120` shërbente çmim/status/foto
+  të vjetra deri 120s pas një ndryshimi; tani rirenderon me DB-në aktuale çdo kërkesë.
+- `/kategori`, `/kategori/[slug]`, `/kategori/[slug]/[qytet]` — force-dynamic
+  (`ac0d10f`, `bfee444`, `55f714f`; u hoqën `revalidate=3600` + `generateStaticParams`).
+
+**AUTOPSI E VENDIMIT TIM (korrigjim — Rregulli 11/13):** fillimisht vendosa t'i lija
+kategoritë ISR, me arsyetimin se middleware no-store (edhe `Vercel-CDN-Cache-Control:
+no-store`) e garanton freskinë. **Matja e Cowork-ut §12 e rrëzoi këtë premisë:** `/biznese`
+(ISR) shërbeu build të VJETËR (`9cfd9a60`) PAVARËSISHT no-store. Kur mata vetë `sentry-release`
+anonim, `/kategori` + `/kategori/prona` **s'e kishin fare** (rrugët ISR statike s'e injektojnë)
+→ as s'verifikoheshin dot. Përfundim empirik: middleware no-store mbron shfletuesin/CDN, POR
+edge-i shërben gjithsesi prerender-in ISR të një deploy-i të vjetër derisa rindërtohet. **Pra
+force-dynamic ishte i nevojshëm** — e ktheva vendimin.
+
+**PROVA (anonim, AL, `sentry-release` për çdo rrugë) — pas deploy-it `55f714f` READY:**
+```
+/               → 55f714f  ✅
+/listing/…      → 55f714f  ✅
+/biznese/…      → 55f714f  ✅
+/kategori       → 55f714f  ✅ (më parë: MUNGONTE sentry-release)
+/kategori/prona → 55f714f  ✅ (më parë: MUNGONTE sentry-release)
+```
+Të gjitha rrugët = i njëjti build dhe TANI të monitorueshme (sentry-release prezent kudo) →
+urdhri "buildId i njëjtë në çdo rrugë" i përmbushur me provë. Deploy `55f714f` READY (jo ERROR;
+heqja e `generateStaticParams` s'e prishi build-in) — verifikuar te Vercel API.
+
+**Kosto SEO e pranuar:** force-dynamic te kategoritë heq ripërdorimin e ISR data-cache (TTFB
+pak më i ngadaltë për crawler, ngarkesë DB). Zgjedhur me vetëdije: zero-toleranca e pronarit
+ndaj staleness + verifikueshmëria mbizotërojnë; trafiku është modest. Nëse duhet optimizim i
+mëvonshëm, rruga është **revalidim on-demand** (`revalidateTag` te mutacionet, Faza 2), jo kthim në ISR.
+
 ## 5. VEPRIME QË I TAKOJNË PRONARIT (unë s'kam akses)
 
-1. **Çaktivizo SSO-në:** Vercel → projekti `alpazar` → Settings → Deployment
-   Protection → Vercel Authentication → **Disable**. (Për treg publik pa domain.)
+1. **SSO — MOS e çaktivizo (korrigjim nga Cowork).** Konfigurimi është
+   `ssoProtection.deploymentType: all_except_custom_domains`: alias-i i prodhimit
+   (`alpazar.vercel.app`) është TASHMË publik; vetëm preview-t janë të mbrojtura.
+   Çaktivizimi do të ekspozonte preview-t pa nevojë. Verifikuar anonim nga AL: origjina
+   publike s'ka mur SSO.
 2. **Pastrim i plotë një herë në 2 pajisjet:** DevTools → Application → Service
    Workers → **Unregister** + **Clear site data** (celular: Site settings → Clear
    & reset; çinstalo ikonën PWA nëse ka). **Ctrl+Shift+R NUK e heq Service
@@ -109,5 +152,13 @@ Pra origjina publike, në Shqipëri, jep të renë.
 - Konfirmim nga pronari pas pastrimit të plotë të 2 pajisjeve.
 - Nëse edhe pas heqjes së plotë të SW + Clear site data kthehet te e vjetra →
   shtresa e rrjetit/DNS të operatorit (ndiqet me prova).
-- `9011fdd8` (kill-switch pa navigate) po zbret si shtresë e fundit.
 - Kur blihet domaini custom: SSO e përjashton (publik); no-store + pa-SW vlejnë edhe aty.
+
+### Punë e mbetur (urdhra Cowork, në radhë)
+- **#18 — SSR blloku shitës/biznes + kontakt te `/listing/[id]`:** blloku i shitësit të
+  dalë në HTML-në server (jo vetëm klient) për SEO + freski. Në hetim.
+- **#19 — Faza 0: `/api/health`** (buildId + DB ping + realtime ping) + lidh
+  `verifiko-live.mjs` me një monitor të jashtëm uptime. Vijon.
+- **Harness i gjerë (Faza 2–6):** `revalidateTag`/`revalidatePath` te mutacionet,
+  Supabase Realtime, teste kontrate kod↔DB si portë CI, Playwright E2E interlink,
+  golden signals + SLO + alerts.

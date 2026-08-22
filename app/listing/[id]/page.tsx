@@ -5,9 +5,10 @@ import { ListingMediaProvider } from '../../components/ListingMediaContext'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../lib/supabase'
 import { SITE_URL } from '../../../lib/siteConfig'
 
-// ISR: permbajtja e shpalljes ndryshon rralle; klienti rifreskon live ne mount.
-// Zevendeson force-dynamic -> TTFB me i shpejte + kursen crawl budget.
-export const revalidate = 120
+// SSR DINAMIK (jo ISR). ISR-ja mund te sherbente nje prerender te nje deploy-i te
+// vjeter (mospershtatje build-i mes rrugeve — gjetja e Cowork-ut §12). force-dynamic
+// => cdo rruge renderon me kodin e deploy-it aktual => buildId i njejte kudo, pa staleness.
+export const dynamic = 'force-dynamic'
 
 async function fetchListingData(id: string) {
   const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)

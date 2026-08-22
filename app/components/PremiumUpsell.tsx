@@ -2,14 +2,51 @@
 
 import { useState, useEffect } from 'react'
 import { useAlpazar } from '../../lib/context'
+import { supabase } from '../../lib/supabase'
+import { moneyDec, nf } from '../../lib/format'
 
 // Cmimi vjen LIVE nga paneli. Asnje vlere e kodifikuar: nese konfigurimi ende
 // s'eshte ngarkuar, nuk shfaqim cmim te gabuar — e heshtim derisa te vije.
+// moneyDec: gjithmone 2 shifra (999,90) — BLLOKU FAZA0, determinist pa ICU.
 function usePlanPrice(override?: string): string {
   const { cfg } = useAlpazar()
   const raw = override ?? cfg('premium_monthly_price_all', '')
   if (!raw) return ''
-  return Number(raw).toLocaleString('sq-AL', { maximumFractionDigits: 2 }) + ' L'
+  return moneyDec(Number(raw)) + ' L'
+}
+
+/**
+ * SYTE LIVE (BLLOKU FAZA 2.1): sa vete po e shohin kete shpallje TANI —
+ * Supabase Realtime *presence* REALE (jo Math.random si dikur; ajo praktike
+ * u hoq si mashtruese). Fail-soft: cdo gabim kanali → 0 → pjesa 🔴 thjesht
+ * s'shfaqet; faqja nuk preket. Track-ohet nje celes anonim per skede.
+ */
+export function useSyteLive(listingId?: string): number {
+  const [syte, setSyte] = useState(0)
+  useEffect(() => {
+    if (!listingId) return
+    let alive = true
+    const key = 'sy-' + Math.random().toString(36).slice(2)
+    const ch = supabase.channel(`syte-live-${listingId}`, {
+      config: { presence: { key } },
+    })
+    ch.on('presence', { event: 'sync' }, () => {
+      if (!alive) return
+      try {
+        setSyte(Object.keys(ch.presenceState()).length)
+      } catch { /* fail-soft */ }
+    })
+    ch.subscribe((status: string) => {
+      if (status === 'SUBSCRIBED') {
+        ch.track({ t: 1 }).catch(() => { /* fail-soft */ })
+      }
+    })
+    return () => {
+      alive = false
+      try { supabase.removeChannel(ch) } catch { /* fail-soft */ }
+    }
+  }, [listingId])
+  return syte
 }
 
 // ── Premium Upsell Modal ──────────────────────────────────────────────
@@ -135,12 +172,12 @@ export function PremiumUpsellModal({
 }
 
 // ── Social Proof Bar ─────────────────────────────────────────────────
-// Rreshti i vogël me interesin REAL të shpalljes.
-// KUJDES: më parë kjo shfaqte "X persona po shikojnë tani" të prodhuar me
-// Math.random() (jo prezencë reale) — praktikë mashtruese që dëmton besimin
-// dhe bie ndesh me DESIGN.md ("gjithmonë përmbajtje reale"). U hoq.
-// Nëse duhet prezencë e vërtetë, lidhe me Supabase Realtime presence.
-export function SocialProofBar({ viewsCount }: { viewsCount: number; listingId?: string }) {
+// Rreshti i vogël me interesin REAL të shpalljes (BLLOKU FAZA 2.2):
+// "👁 N shikime · 🔴 M duke shikuar". Shikimet nga baza (views_count);
+// "duke shikuar" nga Supabase Realtime presence REALE (useSyteLive, fail-soft) —
+// kurrë numra të trilluar (praktika e vjetër me Math.random u hoq si mashtruese).
+export function SocialProofBar({ viewsCount, listingId }: { viewsCount: number; listingId?: string }) {
+  const syte = useSyteLive(listingId)
   if (!viewsCount || viewsCount < 1) return null
   return (
     <div style={{
@@ -153,7 +190,12 @@ export function SocialProofBar({ viewsCount }: { viewsCount: number; listingId?:
       }} aria-hidden="true">👁</div>
       <div style={{ flex: 1 }}>
         <span style={{ fontSize: 11, fontWeight: 700, color: '#111', display: 'block' }}>
-          {viewsCount.toLocaleString('sq-AL')} {viewsCount === 1 ? 'shikim' : 'shikime'}
+          {nf(viewsCount)} {viewsCount === 1 ? 'shikim' : 'shikime'}
+          {syte > 0 && (
+            <span style={{ marginLeft: 8, color: '#C4230F', fontWeight: 800 }}>
+              <span aria-hidden="true">🔴</span> {syte} duke shikuar
+            </span>
+          )}
         </span>
         <span style={{ fontSize: 10, color: '#6B6B6B', display: 'block' }}>
           Interes real për këtë shpallje

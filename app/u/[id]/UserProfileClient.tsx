@@ -30,6 +30,9 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
   // Shitjet personale te kryera — social proof (Faza 6). Funksioni
   // user_sold_count numeron vetem status='sold' me business_id null.
   const [soldCount, setSoldCount] = useState(0)
+  // Ndjekesit e personit (tabela `follows`, following_id = ky profil) —
+  // kutia e 4-te e matrices se ngrire (BLLOKU Imazhi 5), identike me biznesin.
+  const [followers, setFollowers] = useState(0)
 
   useEffect(() => {
     async function load() {
@@ -72,6 +75,13 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
         const n = Number(Array.isArray(data) ? data[0] : data)
         if (Number.isFinite(n)) setSoldCount(n)
       })
+
+      // Ndjekesit — count pa rreshta (head:true), fail-soft ne 0.
+      supabase
+        .from('follows')
+        .select('id', { count: 'exact', head: true })
+        .eq('following_id', params.id)
+        .then(({ count }) => { if (typeof count === 'number') setFollowers(count) }, () => {})
 
       setLoading(false)
     }
@@ -158,30 +168,22 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
             <div style={{ color: '#666', fontSize: 13, marginBottom: 6 }}><span aria-hidden="true">📍</span> {profile.city}</div>
           )}
 
-          {/* Stats row */}
+          {/* Stats row — matrica e ngrire (BLLOKU Imazhi 5): Shpallje / Të shitura /
+              Ndjekës / Anëtar, IDENTIKE me kutine e biznesit. Rating u zhvendos
+              te vlerësimet (seksioni "Rreth"), Besueshmëria te "Informacion". */}
           <div style={{ display: 'flex', gap: 20, marginBottom: 12 }}>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontWeight: 800, fontSize: 17, color: '#111' }}>{listings.length}</div>
               <div style={{ fontSize: 11, color: '#888' }}>Shpallje</div>
             </div>
-            {soldCount > 0 && (
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontWeight: 800, fontSize: 17, color: '#0E7A35' }}>{soldCount}</div>
-                <div style={{ fontSize: 11, color: '#888' }}>Të shitura</div>
-              </div>
-            )}
-            {(profile.trust_score_visible !== false) && (profile.trust_score ?? 0) > 0 && (
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontWeight: 800, fontSize: 17, color: '#111' }}>{profile.trust_score}%</div>
-                <div style={{ fontSize: 11, color: '#888' }}>Besueshmëri</div>
-              </div>
-            )}
-            {profile.seller_rating > 0 && (
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontWeight: 800, fontSize: 17, color: '#111' }}><span aria-hidden="true">⭐</span> {Number(profile.seller_rating).toFixed(1)}</div>
-                <div style={{ fontSize: 11, color: '#888' }}>Vlerësim</div>
-              </div>
-            )}
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontWeight: 800, fontSize: 17, color: soldCount > 0 ? '#0E7A35' : '#111' }}>{soldCount}</div>
+              <div style={{ fontSize: 11, color: '#888' }}>Të shitura</div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontWeight: 800, fontSize: 17, color: '#111' }}>{followers}</div>
+              <div style={{ fontSize: 11, color: '#888' }}>Ndjekës</div>
+            </div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontWeight: 800, fontSize: 17, color: '#111' }}>{memberSince}</div>
               <div style={{ fontSize: 11, color: '#888' }}>Anëtar</div>
@@ -289,6 +291,13 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
             {profile.reviews_count > 0 && (
               <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 14, color: '#333' }}>
                 <span aria-hidden="true">⭐</span><span>{profile.reviews_count} vlerësime · mesatare {Number(profile.seller_rating).toFixed(1)}</span>
+              </div>
+            )}
+            {/* Besueshmëria u zhvendos ketu nga stats-row (matrica 4-kuti e bllokut);
+                respekton opt-out-in `trust_score_visible` (Ligji 124/2024). */}
+            {(profile.trust_score_visible !== false) && (profile.trust_score ?? 0) > 0 && (
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 14, color: '#333' }}>
+                <span aria-hidden="true">🛡️</span><span>Besueshmëri {profile.trust_score}%</span>
               </div>
             )}
           </div>

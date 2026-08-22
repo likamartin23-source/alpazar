@@ -3,8 +3,11 @@ import type { Metadata } from 'next'
 import BiznesPageClient from './BiznesPageClient'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../lib/supabase'
 
-// ISR: te dhenat e biznesit ndryshojne rralle; klienti rifreskon ne mount.
-export const revalidate = 300
+// SSR DINAMIK (jo ISR). ISR-ja (revalidate) shkaktonte "mospershtatje build-i mes
+// rrugeve": edge-i sherbente nje prerender te nje deploy-i te VJETER per /biznese
+// ndersa / dhe /listing ishin te reja (gjetja e Cowork-ut, §12). force-dynamic =>
+// cdo kerkese renderon me kodin e deploy-it aktual => buildId i njejte kudo.
+export const dynamic = 'force-dynamic'
 
 const SITE_URL = 'https://alpazar.vercel.app'
 
@@ -41,7 +44,17 @@ function toOpeningHours(hours: any): string[] {
 export async function generateMetadata(props: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const params = await props.params
   const biz = await fetchBizData(params.id)
-  if (!biz) return { title: 'Biznes — ALPAZAR' }
+  // Kur biznesi s'gjendet ose s'eshte i dukshem publikisht (RLS): canonical te
+  // vetja (jo te lista /biznese) dhe noindex — qe te mos demtohet SEO-ja e as te
+  // krijohet canonical i gabuar (gjetja e Cowork-ut, §12).
+  if (!biz) {
+    return {
+      title: 'Biznes — ALPAZAR',
+      description: 'Ky biznes nuk eshte i disponueshem publikisht ne ALPAZAR.',
+      alternates: { canonical: `${SITE_URL}/biznese/${params.id}` },
+      robots: { index: false, follow: true },
+    }
+  }
 
   const title = `${biz.name} — ALPAZAR`
   const desc = biz.description?.slice(0, 155)

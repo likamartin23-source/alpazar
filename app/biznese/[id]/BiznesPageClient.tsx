@@ -8,6 +8,8 @@ import dynamicImport from 'next/dynamic'
 import Avatar, { tierNgaProfili } from '../../components/Avatar'
 import ListingCard from '../../components/ListingCard'
 import { TrustBadge } from '../../components/TrustBadge'
+import { useSyteLive } from '../../components/PremiumUpsell'
+import { nf } from '../../../lib/format'
 
 const MapDisplay = dynamicImport(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), { ssr: false })
 
@@ -55,6 +57,10 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
     is_premium?: boolean | null; premium_expires_at?: string | null
     has_boost?: boolean | null; boost_expires_at?: string | null
   } | null>(null)
+
+  // Syte live te faqja e biznesit (BLLOKU Imazhi 4: "👁+🔴") — e njejta presence
+  // reale fail-soft si te shpallja; kanal i vecante 'biz-{id}'.
+  const syteLive = useSyteLive(biz ? `biz-${biz.id}` : undefined)
 
   useEffect(() => {
     setMounted(true)
@@ -320,16 +326,17 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
             <TrustBadge createdAt={biz.created_at} listingsActive={listings.length} gamificationPoints={0} compact />
           </div>
 
-          {/* Stats row */}
-          <div style={{ display: 'flex', borderTop: '1px solid #f0f0f0', paddingTop: 14, marginBottom: 14 }}>
+          {/* Stats row — matrica e ngrire (BLLOKU Imazhi 4): Shpallje / Të shitura /
+              Ndjekës / Anëtar, PA Shikime (ato zbresin te rreshti 👁+🔴 poshtë). */}
+          <div style={{ display: 'flex', borderTop: '1px solid #f0f0f0', paddingTop: 14, marginBottom: 8 }}>
             <div className="stat-pill">
               <span className="stat-n">{listings.length}</span>
               <span className="stat-l">Shpallje</span>
             </div>
             <div style={{ width: 1, background: '#f0f0f0' }} />
             <div className="stat-pill">
-              <span className="stat-n">{totalViews >= 1000 ? (totalViews / 1000).toFixed(1) + 'K' : totalViews}</span>
-              <span className="stat-l">Shikime</span>
+              <span className="stat-n" style={soldCount > 0 ? { color: '#0E7A35' } : undefined}>{soldCount}</span>
+              <span className="stat-l">Të shitura</span>
             </div>
             <div style={{ width: 1, background: '#f0f0f0' }} />
             <div className="stat-pill">
@@ -342,6 +349,19 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
               <span className="stat-l">Anëtar prej</span>
             </div>
           </div>
+
+          {/* "👁 N shikime · 🔴 M duke shikuar" (Imazhi 4) — shikimet reale nga baza,
+              syte live nga presence reale (fail-soft: 0 → pjesa 🔴 s'shfaqet). */}
+          {(totalViews > 0 || syteLive > 0) && (
+            <div style={{ fontSize: 12, color: '#6B6B6B', marginBottom: 14 }}>
+              <span aria-hidden="true">👁</span> {nf(totalViews)} shikime
+              {syteLive > 0 && (
+                <span style={{ marginLeft: 8, color: '#C4230F', fontWeight: 700 }}>
+                  <span aria-hidden="true">🔴</span> {syteLive} duke shikuar
+                </span>
+              )}
+            </div>
+          )}
 
           {/* Lidhja biznes → person. Gjysma tjeter e ndërlidhjes: profili i
               personit çon te biznesi i tij (§4.5). */}

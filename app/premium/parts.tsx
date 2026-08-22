@@ -1,12 +1,15 @@
 'use client'
 
+import { moneyDec } from '../../lib/format'
+
 export const PERIODS = [
   { k: 'monthly', l: 'Mujor' },
   { k: 'quarterly', l: '3-mujor' },
   { k: 'yearly', l: 'Vjetor' },
 ]
 
-export const L = (n: any) => Number(n || 0).toLocaleString('sq-AL', { maximumFractionDigits: 2 })
+// Çmim plani gjithmonë me 2 shifra (EAA), determinist (moneyDec te lib/format).
+export const L = (n: any) => moneyDec(n)
 
 export function TierTabs({ tier, onPick, pricing }: any) {
   return (

@@ -7,6 +7,7 @@ import { supabase } from '../../lib/supabase'
 import { useAlpazar } from '../../lib/context'
 import { BILLING_CSS, EVENT_LABELS, StatusBadge } from './ui'
 import { PlansGrid, MyInvoices, BoostStrip } from './parts'
+import { moneyDec } from '../../lib/format'
 
 export default function BillingPage() {
   const { user, authReady } = useAlpazar()
@@ -70,7 +71,7 @@ export default function BillingPage() {
                 <div>
                   <div className="plan-name">{plan?.name}</div>
                   <div className="muted">
-                    {Number(plan?.price_all || 0).toLocaleString('sq-AL')} L / {plan?.months || 1} muaj
+                    {moneyDec(plan?.price_all)} L / {plan?.months || 1} muaj
                   </div>
                 </div>
                 <StatusBadge status={sub.status} cape={sub.cancel_at_period_end} />

@@ -133,9 +133,11 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
         }
         {l.condition === 'i_ri' && <span className="badge-new">I ri</span>}
         {l.condition === 'i_perdorur' && <span className="badge-used">I përdorur</span>}
+        {/* Vulat sipas matrices se ngrire (BLLOKU Imazhi 2): 👑 VIP mbi ari→kuqe ·
+            ★ premium · falas asgje. E njejta teme si unaza e Avatar-it (ari→kuqe). */}
         {l.rank_tier === 2
-          ? <span className="badge-premium" aria-label="VIP" style={{ background: 'linear-gradient(135deg,#7A3FA6,#B57AE0)', color: '#fff' }}>VIP</span>
-          : l.is_premium && <span className="badge-premium" aria-label="Premium">⭐</span>}
+          ? <span className="badge-premium" role="img" aria-label="VIP" style={{ background: 'linear-gradient(135deg,#D4AF37,#E63312)', color: '#fff' }}><span aria-hidden="true">👑</span> VIP</span>
+          : l.is_premium && <span className="badge-premium" role="img" aria-label="Premium"><span aria-hidden="true">★</span></span>}
         {showSeller && biz && (
           <div
             className="card-seller-ov"

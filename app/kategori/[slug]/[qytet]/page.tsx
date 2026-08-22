@@ -6,12 +6,10 @@ import {
 } from '../../../../lib/seoTaxonomy'
 import { ListingGrid, LANDING_CSS } from '../../_shared'
 
-export const revalidate = 3600
-export const dynamicParams = true
-
-// City pages are generated on demand (ISR) — the combinatorial space is large,
-// so we don't pre-build them; the sitemap still lists them for discovery.
-export function generateStaticParams() { return [] }
+// SSR DINAMIK (jo ISR) — konsistencë build-i cross-route + verifikueshmëri (Cowork §12).
+// Hapësira kombinatorike qytet×kategori s'para-ndërtohej gjithsesi; tani renderon me
+// kodin e deploy-it aktual në çdo kërkesë (buildId i njëjtë kudo). Sitemap-i i liston për zbulim.
+export const dynamic = 'force-dynamic'
 
 export async function generateMetadata(
   props: { params: Promise<{ slug: string; qytet: string }> },
