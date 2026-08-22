@@ -62,6 +62,9 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
   const [activeTab, setActiveTab] = useState<'profile'|'listings'|'saved'|'shop'|'messages'>('profile')
+  // FAZA 3 (BLLOKU Imazhi 6a): tabi "Profili" ndahet ne nen-pamje permes nen-butonave.
+  // Koka dhe tabet mbeten identike; kartat ekzistuese vetem grupohen, s'krijohet sistem i ri.
+  const [profSub, setProfSub] = useState<'menu'|'tedhena'|'siguri'>('menu')
   const [editing, setEditing] = useState(false)
   const [form, setForm] = useState({ full_name: '', username: '', city: '', bio: '' })
   const [shopForm, setShopForm] = useState({ shop_name: '', shop_description: '', shop_category: '', shop_banner_url: '' })
@@ -675,6 +678,44 @@ export default function ProfilePage() {
                 </button>
               )}
 
+              {/* Nen-butonat (Imazhi 6a): Te dhenat / Analitika / Abonimi / Siguri / Fto miq / Biznesi im.
+                  Analitika, Abonimi, Fto miq dhe Biznesi im shkojne te sistemet EKZISTUESE. */}
+              {profSub === 'menu' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
+                  {([
+                    { ike: 'ti-user',           titull: 'Të dhënat e profilit', nen: 'Informacioni personal — emri, username, qyteti, bio', vepro: () => setProfSub('tedhena') },
+                    { ike: 'ti-chart-bar',      titull: 'Analitika',            nen: 'Pamje, kontaktime (WhatsApp/Viber), CTR — 7 ose 30 ditë', vepro: () => { window.location.href = '/profile/analytics' } },
+                    { ike: 'ti-crown',          titull: 'Abonimi im',           nen: profile?.is_premium ? 'Premium aktiv · shiko / menaxho / anulo' : 'Kalo në Premium — biznes online, VIP, pa limit', vepro: () => { window.location.href = profile?.is_premium ? '/billing' : '/premium' } },
+                    { ike: 'ti-shield-lock',    titull: 'Siguri & privatësi',   nen: 'Fjalëkalimi, email-i, GDPR, Trust Score, Takedown, fshirja', vepro: () => setProfSub('siguri') },
+                    { ike: 'ti-gift',           titull: 'Fto miq',              nen: `50 pikë për çdo mik të regjistruar${(profile?.gamification_points ?? 0) > 0 ? ` · ke ${profile.gamification_points} pikë` : ''}`, vepro: () => { window.location.href = '/referral' } },
+                    { ike: 'ti-building-store', titull: 'Biznesi im',           nen: 'Faqja dhe shpalljet e biznesit tënd', vepro: () => setActiveTab('shop') },
+                  ] as const).map(b => (
+                    <button
+                      key={b.titull}
+                      type="button"
+                      onClick={b.vepro}
+                      style={{ width: '100%', background: '#fff', border: '1px solid #eee', borderRadius: 13, padding: '12px 14px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 10, color: '#111', minHeight: 48, textAlign: 'left' }}>
+                      <i className={`ti ${b.ike}`} style={{ fontSize: 20, color: '#C42B0F' }} aria-hidden="true" />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div>{b.titull}</div>
+                        <div style={{ fontSize: 10, fontWeight: 500, color: '#767676', marginTop: 2 }}>{b.nen}</div>
+                      </div>
+                      <i className="ti ti-chevron-right" style={{ fontSize: 16, color: '#999' }} aria-hidden="true" />
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {profSub !== 'menu' && (
+                <button
+                  type="button"
+                  onClick={() => setProfSub('menu')}
+                  style={{ background: 'none', border: 'none', color: '#C42305', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', padding: '4px 0', marginBottom: 8, minHeight: 44, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <i className="ti ti-arrow-left" style={{ fontSize: 16 }} aria-hidden="true" /> Kthehu te paneli
+                </button>
+              )}
+
+              {profSub === 'tedhena' && (
               <div className="card">
                 <div className="card-hdr">
                   <span className="card-title">Informacioni personal</span>
@@ -708,8 +749,9 @@ export default function ProfilePage() {
                   </>
                 )}
               </div>
+              )}
 
-              {!profile?.is_premium && (
+              {profSub === 'menu' && !profile?.is_premium && (
                 <div className="prem-card">
                   <h3><span aria-hidden="true">👑</span> Bëhu Premium</h3>
                   <p>Biznes online · Badge verifikimi · Shpallje të pakufizuara · Statistika të avancuara</p>
@@ -717,27 +759,11 @@ export default function ProfilePage() {
                 </div>
               )}
 
-              {/* Referral CTA */}
-              <div style={{
-                background: 'linear-gradient(135deg,#E63312,#c42a0e)',
-                borderRadius: 13, padding: 16, marginBottom: 12,
-              }}>
-                <div style={{ color: '#fff', fontWeight: 700, fontSize: 14, marginBottom: 6 }}>
-                  <span aria-hidden="true">🎁</span> Fto miq, fito pikë!
-                </div>
-                <div style={{ color: 'rgba(255,255,255,.8)', fontSize: 11, marginBottom: 12, lineHeight: 1.6 }}>
-                  Për çdo mik të regjistruar përmes linkut tënd, fiton <strong>50 pikë</strong> — kumulativisht.
-                  {profile?.gamification_points > 0 && ` Ke ${profile.gamification_points} pikë aktualisht.`}
-                </div>
-                <button
-                  type="button"
-                  style={{ background: '#fff', color: '#C42B0F', border: 'none', borderRadius: 9, padding: '9px 18px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
-                  onClick={() => window.location.href = '/referral'}
-                >
-                  <span aria-hidden="true">🔗</span> Ndaj linkun tënd →
-                </button>
-              </div>
+              {/* Karta e madhe "Fto miq" u hoq si dublim: nen-butoni "Fto miq" i menuse
+                  mban te njejtin informacion (50 pike + gjendja) dhe con te /referral. */}
 
+              {profSub === 'siguri' && (
+              <>
               {/* ── Trust Score — Kundërshtim Profilizimit (Ligj 124/2024 n.19) ── */}
               <div className="card">
                 <div className="card-hdr">
@@ -876,6 +902,25 @@ export default function ProfilePage() {
                 </button>
               </div>
 
+              {/* ── Mbrojtja & ndihma — lidhje me sistemet EKZISTUESE (asnje sistem i ri):
+                    Takedown → /takedown (moderimi ekzistues), Kujdes klienti → /kontakt,
+                    te dhenat GDPR → /te-dhenat-mia (e njejta lidhje si te karta e marketingut). */}
+              <div className="card">
+                <div className="card-hdr">
+                  <span className="card-title"><span aria-hidden="true">🛡️</span> Mbrojtja & ndihma</span>
+                </div>
+                <a href="/takedown" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 0', borderBottom: '1px solid #f0f0f0', textDecoration: 'none', color: '#111', fontSize: 13, fontWeight: 600, minHeight: 44 }}>
+                  <i className="ti ti-flag" style={{ fontSize: 17, color: '#C42B0F' }} aria-hidden="true" />
+                  <span style={{ flex: 1 }}>Kërkesë heqjeje (Takedown)<br /><span style={{ fontSize: 10.5, fontWeight: 500, color: '#767676' }}>Raporto përmbajtje të paligjshme — shqyrtohet nga moderimi</span></span>
+                  <i className="ti ti-chevron-right" style={{ fontSize: 15, color: '#999' }} aria-hidden="true" />
+                </a>
+                <a href="/kontakt" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 0', textDecoration: 'none', color: '#111', fontSize: 13, fontWeight: 600, minHeight: 44 }}>
+                  <i className="ti ti-headset" style={{ fontSize: 17, color: '#C42B0F' }} aria-hidden="true" />
+                  <span style={{ flex: 1 }}>Kujdesi ndaj klientit<br /><span style={{ fontSize: 10.5, fontWeight: 500, color: '#767676' }}>Na shkruaj për çdo pyetje a problem</span></span>
+                  <i className="ti ti-chevron-right" style={{ fontSize: 15, color: '#999' }} aria-hidden="true" />
+                </a>
+              </div>
+
               {/* ── Fshi Llogarinë ── */}
               <div className="danger-zone">
                 <div className="danger-title"><span aria-hidden="true">⚠️</span> Zona e Rrezikshme</div>
@@ -912,6 +957,8 @@ export default function ProfilePage() {
                   </div>
                 )}
               </div>
+              </>
+              )}
             </>
           )}
 
