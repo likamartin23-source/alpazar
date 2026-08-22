@@ -109,6 +109,6 @@
 | FAZA 2.1-2.2 · sytë live | ✅ LIVE | `1f0933d`+fix `c52d6e6` | presence reale fail-soft te SocialProofBar; build=c52d6e6 live |
 | FAZA 2.2 · metrikat 4-kuti | ✅ LIVE | `14eab53`,`89bd548`,`6dd19c24` | /u/: Shpallje/Të shitura/Ndjekës/Anëtar (follows count fail-soft); /biznese/: Shikime→Të shitura + rreshti 👁+🔴 (useSyteLive 'biz-{id}'); blob-et == hash lokal (2db59aa/b07ed3d/e93fd0c2); /api/health build=6dd19c24 (anonim, db 230ms rt 132ms) |
 | FAZA 2.3 · "Menaxhuar nga" | ✅ (para-ekzistuese) | — | kutia "Menaxhuar nga profili i pronarit →" ekzistonte te BiznesPageClient; u ruajt |
-| FAZA 3 · nën-butonat panel | ⏳ | — | — |
+| FAZA 3 · nën-butonat panel | ✅ LIVE | PR #83 → `6108f381` | 6 nën-butona (Imazhi 6a); Siguri&privatësi konsolidon kartat + Mbrojtja&ndihma (Takedown→/takedown, Kujdesi→/kontakt); koka+tabet identike; CI-green (sha256+tsc+teste+build, run #27 + PR); /api/health build=6108f381 (anonim, db 229ms rt 139ms) |
 | FAZA 4 · kuota+skadimi | ⏳ | — | — |
 | FAZA 5 · nën-paneli biznes | ⏳ | — | — |
