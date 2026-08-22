@@ -21,7 +21,7 @@ function usePlanPrice(override?: string): string {
  * u hoq si mashtruese). Fail-soft: cdo gabim kanali → 0 → pjesa 🔴 thjesht
  * s'shfaqet; faqja nuk preket. Track-ohet nje celes anonim per skede.
  */
-function useSyteLive(listingId?: string): number {
+export function useSyteLive(listingId?: string): number {
   const [syte, setSyte] = useState(0)
   useEffect(() => {
     if (!listingId) return
