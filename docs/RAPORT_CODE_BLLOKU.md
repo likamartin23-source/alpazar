@@ -10,7 +10,7 @@
 
 ### 0 · KUFIJ ABSOLUTË — MOS I PREK
 - **Fiskalizimi (NIPT/TVSH/faturë): NUK preket tani** — reformohet më vonë bashkë me panelin.
-- **Hyrja e adminit në panel ("Paneli i Adminit"): mbetet SIÇ ËSHTË** — admin-only. Mos e ndrysho.
+- **Hyrja e adminit në panel ("Paneli i Adminit"): mbetet SIÇ ËSTË** — admin-only. Mos e ndrysho.
 - **Bërthama e pagesave** (`process_payment_event`, `reconcile_payments`, webhook): **fail-closed + vetëm `service_role`**. Mos e prek. Abonimi vetëm **lexon/shfaq**.
 - **Koka e panelit "Profili im" + struktura 12-skeda "sipas punës"**: mbeten **IDENTIKE**.
 - **RLS e dukshmërisë** dhe **çmimet**: mos i "rregullo". Charm "999.9" → shfaqe **"999.90"** (dy shifra, EAA), pa ndryshuar vlerën e brendshme.
@@ -107,8 +107,8 @@
 | FAZA 1 · Avatar matrica | ✅ LIVE | `4128b88` | unaza nga tier, ★/👑, pulsim reduced-motion; tsc 16 call-site |
 | FAZA 1 · ListingCard vulat | ✅ LIVE | `1e515b4`+fix `9f8229f` | 👑 ari→kuqe, ★; /api/health build=9f8229f (anonim AL) |
 | FAZA 2.1-2.2 · sytë live | ✅ LIVE | `1f0933d`+fix `c52d6e6` | presence reale fail-soft te SocialProofBar; build=c52d6e6 live |
-| FAZA 2.2 · metrikat 4-kuti | ⏳ | — | — |
-| FAZA 2.3 · "Menaxhuar nga" | ⏳ | — | — |
+| FAZA 2.2 · metrikat 4-kuti | ✅ LIVE | `14eab53`,`89bd548`,`6dd19c24` | /u/: Shpallje/Të shitura/Ndjekës/Anëtar (follows count fail-soft); /biznese/: Shikime→Të shitura + rreshti 👁+🔴 (useSyteLive 'biz-{id}'); blob-et == hash lokal (2db59aa/b07ed3d/e93fd0c2); /api/health build=6dd19c24 (anonim, db 230ms rt 132ms) |
+| FAZA 2.3 · "Menaxhuar nga" | ✅ (para-ekzistuese) | — | kutia "Menaxhuar nga profili i pronarit →" ekzistonte te BiznesPageClient; u ruajt |
 | FAZA 3 · nën-butonat panel | ⏳ | — | — |
 | FAZA 4 · kuota+skadimi | ⏳ | — | — |
 | FAZA 5 · nën-paneli biznes | ⏳ | — | — |
