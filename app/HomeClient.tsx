@@ -602,7 +602,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .shop-top{flex:none;width:100%;aspect-ratio:4/3;display:flex;align-items:flex-end;padding:8px;position:relative;}
         .shop-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;border:1.5px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25);}
         .shop-prem{position:absolute;top:6px;right:6px;font-size:9px;background:#F5C842;color:#111;padding:3px 7px;border-radius:999px;font-weight:700;}
-        .shop-info{flex:1 1 auto;padding:9px 10px 10px;display:flex;flex-direction:column;gap:3px;}
+        .shop-info{flex:1 1 auto;padding:9px 10px 10px;display:flex;flex-direction:column;gap:3px;min-height:72px;}
         .shop-nm{font-size:13px;font-weight:700;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
         .shop-ct{font-size:11px;color:#6B6B6B;}
         /* Filter row */

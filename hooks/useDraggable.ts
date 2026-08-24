@@ -55,6 +55,8 @@ export function useDraggable(
       const dy = ev.clientY - startRef.current.py
       if (Math.abs(dx) > 5 || Math.abs(dy) > 5) didDragRef.current = true
       if (!didDragRef.current) return
+      // Parandalon scroll-in e touch-it pasi drag-u u konfirmua
+      ev.preventDefault()
       const vw = window.innerWidth
       const vh = window.innerHeight
       const newPos: DragPos = {
@@ -78,7 +80,8 @@ export function useDraggable(
       startRef.current = null
     }
 
-    document.addEventListener('pointermove', onMove)
+    // passive:false nevojitet që ev.preventDefault() brenda onMove të punojë
+    document.addEventListener('pointermove', onMove, { passive: false })
     document.addEventListener('pointerup', onUp)
   }
 
