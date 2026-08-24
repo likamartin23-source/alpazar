@@ -7,6 +7,7 @@ import './ui-refine.css'
 import { SITE_URL } from '../lib/siteConfig'
 import { LanguageProvider } from '../lib/i18n'
 import { SiteFooter } from './components/SiteFooter'
+import { OnlinePresenceProvider } from './components/OnlinePresence'
 import {
   AiFloat, UpdatePrompt, NotificationToast,
   MaintenanceBanner, AnnouncementBar,
@@ -205,6 +206,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <LanguageProvider>
         <AlpazarProviderDyn>
           <GlobalErrorBoundaryDyn>
+          <OnlinePresenceProvider>
           <MaintenanceBanner />
           <AnnouncementBar />
           <NotificationToast />
@@ -214,6 +216,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <CookieBannerDyn />
           <Analytics />
           <SiteFooter />
+          </OnlinePresenceProvider>
           </GlobalErrorBoundaryDyn>
         </AlpazarProviderDyn>
         </LanguageProvider>
