@@ -20,6 +20,23 @@ async function fetchListingData(id: string) {
   return data
 }
 
+// §12/task#18: marrim shitesin + numrin e shpalljeve + biznesin NE SERVER, qe blloku
+// i shitesit/biznesit + kontakti te jene ne HTML-in e pare (SSR) — jo vetem pas
+// fetch-it ne klient. Anon key => respekton RLS-in (i njejti akses si klienti).
+async function fetchSellerData(listing: any) {
+  if (!listing?.user_id) return { seller: null, sellerCount: 0, biz: null }
+  const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  const [{ data: seller }, { count }, biz] = await Promise.all([
+    sb.from('profiles').select('*').eq('id', listing.user_id).single(),
+    sb.from('listings').select('*', { count: 'exact', head: true })
+      .eq('user_id', listing.user_id).eq('is_active', true),
+    listing.business_id
+      ? sb.from('businesses').select('id,name,logo_url,is_verified').eq('id', listing.business_id).single().then(r => r.data)
+      : Promise.resolve(null),
+  ])
+  return { seller: seller ?? null, sellerCount: count ?? 0, biz: biz ?? null }
+}
+
 function videoList(listing: any): string[] {
   const out: string[] = []
   const arr = Array.isArray(listing?.videos) ? listing.videos : []
@@ -70,6 +87,7 @@ export async function generateMetadata(props: { params: Promise<{ id: string }> 
 export default async function ListingPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params
   const listing = await fetchListingData(params.id)
+  const { seller, sellerCount, biz } = await fetchSellerData(listing)
   const vids = videoList(listing)
 
   const jsonLd = listing
@@ -124,7 +142,7 @@ export default async function ListingPage(props: { params: Promise<{ id: string 
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
       )}
       <ListingMediaProvider videos={listing?.videos} legacy={listing?.video_url} poster={listing?.video_poster}>
-        <ListingPageClient params={params} initialListing={listing} />
+        <ListingPageClient params={params} initialListing={listing} initialSeller={seller} initialSellerCount={sellerCount} initialBiz={biz} />
       </ListingMediaProvider>
     </>
   )
