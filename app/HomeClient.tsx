@@ -547,6 +547,10 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .section-hdr h3{font-size:13px;font-weight:700;color:#111;}
         .section-hdr a{color:#C42B0F;font-size:11px;text-decoration:none;cursor:pointer;font-weight:600;}
         .shops-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:16px;}
+        /* Kartat e bizneseve = madhësi e barabartë me kartat e shpalljeve: të njëjtat
+           kolona responsive si .listings-grid (768→180px, 1024→220px) + media 4/3 e njëjtë. */
+        @media(min-width:768px){.shops-grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));}}
+        @media(min-width:1024px){.shops-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));}}
         .shop-mini{background:#fff;border-radius:14px;overflow:hidden;cursor:pointer;border:1px solid #eee;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 18px -12px rgba(0,0,0,.14);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;}
         .shop-mini:hover{transform:translateY(-3px);box-shadow:0 10px 24px -8px rgba(0,0,0,.2);}
         .shop-mini:active{transform:scale(.96);}
@@ -648,16 +652,16 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                   {authReady && user ? 'Profili' : 'Hyr'}
                 </button>
               </div>
-              {user && unreadNotifications > 0 && (
-                <button type="button" className="icon-btn" aria-label={`${unreadNotifications} njoftime të palexuara`} onClick={() => go('/notifications')} style={{ position: 'relative' }}>
-                  <i className="ti ti-bell-ringing" aria-hidden="true" />
-                  <span aria-hidden="true" style={{ position: 'absolute', top: 2, right: 2, background: '#E63312', color: '#fff', fontSize: 7, fontWeight: 700, borderRadius: 8, padding: '1px 3px', minWidth: 12, textAlign: 'center', lineHeight: '12px' }}>{unreadNotifications > 9 ? '9+' : unreadNotifications}</span>
-                </button>
-              )}
-              {user && unreadNotifications === 0 && unreadCount > 0 && (
-                <button type="button" className="icon-btn" aria-label={`${unreadCount} mesazhe të palexuara`} onClick={() => go('/messages')} style={{ position: 'relative' }}>
-                  <i className="ti ti-bell" aria-hidden="true" />
-                  <span aria-hidden="true" style={{ position: 'absolute', top: 2, right: 2, background: '#E63312', color: '#fff', fontSize: 7, fontWeight: 700, borderRadius: 8, padding: '1px 3px', minWidth: 12, textAlign: 'center', lineHeight: '12px' }}>{unreadCount > 9 ? '9+' : unreadCount}</span>
+              {/* Njoftimet — GJITHMONË i dukshëm e funksional për përdoruesin e loguar
+                  (më parë zhdukej kur s'kishte njoftime të palexuara, ose çonte gabimisht
+                  te /messages). Tani: kambanë e qëndrueshme → /notifications; distinktivi
+                  del vetëm kur ka të palexuara. Mesazhet kanë hyrjen e vet (bottom-nav + desk-nav). */}
+              {user && (
+                <button type="button" className="icon-btn" aria-label={unreadNotifications > 0 ? `Njoftime — ${unreadNotifications} të palexuara` : 'Njoftime'} onClick={() => go('/notifications')} style={{ position: 'relative' }}>
+                  <i className={`ti ti-bell${unreadNotifications > 0 ? '-ringing' : ''}`} aria-hidden="true" />
+                  {unreadNotifications > 0 && (
+                    <span aria-hidden="true" style={{ position: 'absolute', top: 2, right: 2, background: '#E63312', color: '#fff', fontSize: 7, fontWeight: 700, borderRadius: 8, padding: '1px 3px', minWidth: 12, textAlign: 'center', lineHeight: '12px' }}>{unreadNotifications > 9 ? '9+' : unreadNotifications}</span>
+                  )}
                 </button>
               )}
               {!authReady ? (
