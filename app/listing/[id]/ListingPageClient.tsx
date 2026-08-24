@@ -12,6 +12,7 @@ import { TrustBadge } from '../../components/TrustBadge'
 import { SharePanel } from '../../components/SharePanel'
 import { ImageCarousel } from '../../components/ImageCarousel'
 import Avatar, { tierNgaProfili } from '../../components/Avatar'
+import { useIsOnline } from '../../components/OnlinePresence'
 import ListingCard from '../../components/ListingCard'
 
 const MapDisplay = dynamic(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), { ssr: false })
@@ -63,6 +64,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
   // shitesit/biznesit + kontakti render-ohen ne SSR; useEffect vetem i freskon.
   const [seller, setSeller]           = useState<any>(initialSeller ?? null)
   const [sellerCount, setSellerCount] = useState(initialSellerCount ?? 0)
+  const sellerOnline = useIsOnline(seller?.id) // prania LIVE e shitësit (BLLOKU Imazhi 3)
   const [loading, setLoading]         = useState(!initialListing)
   const [loadError, setLoadError]     = useState(false)
   const [similar, setSimilar]         = useState<any[]>([])
@@ -874,6 +876,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                     type={isBusinessListing ? 'business' : 'person'}
                     tier={tierNgaProfili(seller)}
                     verified={(seller.trust_score ?? 0) >= 60}
+                    online={sellerOnline}
                     size={44}
                   />
                   <div>

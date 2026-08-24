@@ -36,6 +36,9 @@ interface AvatarProps {
   type?: AvatarType
   tier?: AvatarTier
   verified?: boolean
+  /** Prania LIVE (BLLOKU Imazhi 1/2): pikë jeshile kur përdoruesi është online.
+   *  `undefined` → asnjë pikë (fail-soft, pa gjendje të panjohur si "offline"). */
+  online?: boolean
   size?: number
   onClick?: () => void
 }
@@ -113,7 +116,7 @@ const VIP_PULSE_CSS = `
 `
 
 export default function Avatar({
-  src, name, type = 'person', tier = 'free', verified = false, size = 48, onClick,
+  src, name, type = 'person', tier = 'free', verified = false, online, size = 48, onClick,
 }: AvatarProps) {
   const [broken, setBroken] = useState(false)
   const showImage = src && !broken
@@ -121,6 +124,7 @@ export default function Avatar({
   const white = Math.max(1, Math.round(size * 0.04))
   const inner = size - ring * 2 - white * 2
   const badge = Math.round(size * 0.34)
+  const dot = Math.max(8, Math.round(size * 0.26))
   const initialsFont = Math.round(inner * 0.4)
 
   return (
@@ -167,6 +171,16 @@ export default function Avatar({
         <div role="img" aria-label={verified ? 'I verifikuar' : 'Biznes'} style={{ position: 'absolute', right: -2, bottom: -2, width: badge, height: badge, borderRadius: '50%', background: verified ? '#16a34a' : '#111', border: '2px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: Math.round(badge * 0.55), color: '#fff', lineHeight: 1 }}>
           {verified ? <span aria-hidden='true'>✓</span> : <span aria-hidden='true'>🏢</span>}
         </div>
+      )}
+
+      {/* Prania LIVE (BLLOKU Imazhi 1/2): pikë jeshile poshtë-majtas — cepi i lirë,
+          që të mos përplaset me vulën e abonimit (lart-djathtas) as me badge-in e
+          identitetit (poshtë-djathtas). Shfaqet VETËM kur online===true. */}
+      {online === true && (
+        <div
+          role="img" aria-label="Në linjë"
+          style={{ position: 'absolute', left: -1, bottom: -1, width: dot, height: dot, borderRadius: '50%', background: '#16a34a', border: '2px solid #fff', boxShadow: '0 0 0 1px rgba(0,0,0,.04)' }}
+        />
       )}
     </div>
   )
