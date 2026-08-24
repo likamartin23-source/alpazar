@@ -32,8 +32,10 @@ function dayLabel(d: string) {
   if (dt.toDateString() === yes.toDateString()) return 'Dje'
   return dayMonth(d)
 }
-function BusinessMiniCard({ bizId }: { bizId: string }) {
-  const [biz, setBiz] = useState<any>(null)
+// §12/task#18: `initialBiz` mbjell gjendjen nga serveri → karta e biznesit del ne
+// HTML-in e serverit (SSR), jo vetem pas fetch-it ne klient.
+function BusinessMiniCard({ bizId, initialBiz }: { bizId: string; initialBiz?: any }) {
+  const [biz, setBiz] = useState<any>(initialBiz ?? null)
   useEffect(() => {
     supabase.from('businesses').select('id,name,logo_url,is_verified').eq('id', bizId).single().then(({ data }) => { if (data) setBiz(data) })
   }, [bizId])
@@ -55,10 +57,12 @@ function pubDate(d: string) {
   return dateShort(d)
 }
 
-export default function ListingPageClient({ params, initialListing }: { params: { id: string }; initialListing?: any }) {
+export default function ListingPageClient({ params, initialListing, initialSeller, initialSellerCount, initialBiz }: { params: { id: string }; initialListing?: any; initialSeller?: any; initialSellerCount?: number; initialBiz?: any }) {
   const [listing, setListing]         = useState<any>(initialListing ?? null)
-  const [seller, setSeller]           = useState<any>(null)
-  const [sellerCount, setSellerCount] = useState(0)
+  // §12/task#18: shitesi + numri + biznesi vijne nga serveri (initial*) → blloku i
+  // shitesit/biznesit + kontakti render-ohen ne SSR; useEffect vetem i freskon.
+  const [seller, setSeller]           = useState<any>(initialSeller ?? null)
+  const [sellerCount, setSellerCount] = useState(initialSellerCount ?? 0)
   const [loading, setLoading]         = useState(!initialListing)
   const [loadError, setLoadError]     = useState(false)
   const [similar, setSimilar]         = useState<any[]>([])
@@ -141,7 +145,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
   const channelRef   = useRef<any>(null)
   const typingTimer  = useRef<any>(null)
   const userRef      = useRef<any>(null)
-  const sellerRef    = useRef<any>(null)
+  const sellerRef    = useRef<any>(initialSeller ?? null)
   const listingRef   = useRef<any>(initialListing ?? null)
   const autoOpenDone = useRef(false)
 
@@ -964,7 +968,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
 
           {/* Business mini-card — shown when listing belongs to a business */}
           {listing.business_id && (
-            <BusinessMiniCard bizId={listing.business_id} />
+            <BusinessMiniCard bizId={listing.business_id} initialBiz={initialBiz} />
           )}
 
           {listing.description && (
