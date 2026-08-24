@@ -56,6 +56,12 @@ export default function ProfilePage() {
   const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
   const [myListings, setMyListings] = useState<any[]>([])
+  // FAZA 4 (BLLOKU Skema 1): filtri i shpalljeve + kufiri nga entitlements (JO i ngurtesuar
+  // ne kod — vjen nga get_my_entitlements → app_config). -1 = pa limit (premium).
+  const [listFilter, setListFilter] = useState<'active'|'paused'|'sold'>('active')
+  const [maxListings, setMaxListings] = useState<number | null>(null)
+  const [reactBusy, setReactBusy] = useState<string | null>(null)
+  const [reactMsg, setReactMsg] = useState('')
   const [savedListings, setSavedListings] = useState<any[]>([])
   const [savedSearches, setSavedSearches] = useState<any[]>([])
   const [conversations, setConversations] = useState<any[]>([])
@@ -162,6 +168,10 @@ export default function ProfilePage() {
         setShopForm({ shop_name: p.shop_name || '', shop_description: p.shop_description || '', shop_category: p.shop_category || '', shop_banner_url: p.shop_banner_url || '' })
       }
       if (ls) setMyListings(ls)
+      supabase.rpc('get_my_entitlements').then(({ data }) => {
+        const m = Number((data as any)?.max_listings)
+        if (Number.isFinite(m)) setMaxListings(m)
+      })
       await Promise.all([fetchConversations(uid), fetchSavedListings(uid), fetchSavedSearches(uid)])
     } catch {
       setLoadError(true)
@@ -388,6 +398,26 @@ export default function ProfilePage() {
       const rv = JSON.parse(localStorage.getItem('_alpazar_rv') || '[]')
       localStorage.setItem('_alpazar_rv', JSON.stringify(rv.filter((x: any) => x.id !== id)))
     } catch { /* ignore */ }
+  }
+
+  // FAZA 4: Riaktivizim idempotent. Trigeri `tg_enforce_listing_quota` mbron kufirin
+  // ne server (INSERT OR UPDATE OF is_active); ketu vetem shfaqim gabimin miqesor.
+  async function reactivateListing(id: string) {
+    if (reactBusy) return
+    setReactBusy(id); setReactMsg('')
+    const { data, error } = await supabase
+      .from('listings').update({ is_active: true, status: 'active' }).eq('id', id).select('id')
+    if (error || !data || data.length === 0) {
+      const msg = (error?.message || '').includes('KUFI_SHPALLJESH')
+        ? `Ke arritur kufirin prej ${maxListings ?? 10} shpalljesh aktive. Pauzo një tjetër ose kalo në Premium.`
+        : (error?.message || 'Nuk u riaktivizua dot. Provo sërish.')
+      setReactMsg('err:' + msg)
+    } else {
+      setMyListings(ls => ls.map(l => l.id === id ? { ...l, is_active: true, status: 'active' } : l))
+      setReactMsg('ok:Shpallja u riaktivizua.')
+    }
+    setReactBusy(null)
+    setTimeout(() => setReactMsg(''), 4000)
   }
 
   function canBump(lastBumped: string | null): boolean {
@@ -997,20 +1027,56 @@ export default function ProfilePage() {
 
               <div className="card">
                 <div className="card-hdr">
-                  <span className="card-title">Shpalljet e mia ({myListings.filter(l => l.is_active).length})</span>
+                  <span className="card-title">
+                    Shpalljet e mia
+                    {maxListings != null && maxListings >= 0
+                      ? <span style={{ marginLeft: 6, fontSize: 12, fontWeight: 700, color: myListings.filter(l => l.is_active).length >= maxListings ? '#C42305' : '#0E7A35' }}>{myListings.filter(l => l.is_active).length}/{maxListings}</span>
+                      : <span style={{ marginLeft: 6, fontSize: 12, fontWeight: 700, color: '#7A4A00' }}>{myListings.filter(l => l.is_active).length} · <span aria-hidden="true">👑</span> pa limit</span>}
+                  </span>
                   <button type="button" className="edit-btn" onClick={() => window.location.href = '/listing/new'}>+ Shto</button>
                 </div>
                 {listErr && (
                   <div role="alert" style={{ background: '#FEECEC', color: '#B42318', border: '1px solid #F5C2C2', borderRadius: 8, padding: '8px 10px', fontSize: 12, marginBottom: 10 }}>{listErr}</div>
                 )}
-                {myListings.filter(l => l.is_active).length === 0 ? (
+                {reactMsg && (
+                  <div role="alert" className={`msg-box msg-sm ${reactMsg.split(':')[0]}`} style={{ marginBottom: 10 }}>{reactMsg.split(/:(.+)/)[1]}</div>
+                )}
+                {maxListings != null && maxListings >= 0 && myListings.filter(l => l.is_active).length >= maxListings && (
+                  <div style={{ background: '#FFF9C3', border: '1px solid #FDE047', borderRadius: 8, padding: '8px 12px', fontSize: 11.5, color: '#713F12', marginBottom: 10 }}>
+                    <span aria-hidden="true">⚠️</span> Ke arritur kufirin falas ({maxListings} aktive). Pauzo një shpallje ose <a href="/premium" style={{ color: '#C42305', fontWeight: 700 }}>kalo në Premium</a> për shpallje pa limit.
+                  </div>
+                )}
+                {/* FAZA 4: filtra Aktive / Të pauzuara / Të shitura */}
+                <div role="tablist" aria-label="Filtro shpalljet" style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
+                  {([['active','Aktive'],['paused','Të pauzuara'],['sold','Të shitura']] as const).map(([k, etiketa]) => {
+                    const n = k === 'active' ? myListings.filter(l => l.is_active).length
+                            : k === 'sold' ? myListings.filter(l => l.status === 'sold').length
+                            : myListings.filter(l => !l.is_active && l.status !== 'sold').length
+                    return (
+                      <button key={k} type="button" role="tab" aria-selected={listFilter === k} onClick={() => setListFilter(k)}
+                        style={{ flex: 1, minHeight: 40, borderRadius: 9, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+                          border: listFilter === k ? '1.5px solid #C42305' : '1px solid #eee',
+                          background: listFilter === k ? '#FFF1EE' : '#fff', color: listFilter === k ? '#C42305' : '#666' }}>
+                        {etiketa} ({n})
+                      </button>
+                    )
+                  })}
+                </div>
+                {(() => {
+                  const shown = listFilter === 'active' ? myListings.filter(l => l.is_active)
+                              : listFilter === 'sold'   ? myListings.filter(l => l.status === 'sold')
+                              : myListings.filter(l => !l.is_active && l.status !== 'sold')
+                  const bosh = listFilter === 'active' ? 'Nuk ke shpallje aktive.'
+                             : listFilter === 'sold'   ? 'Ende asnjë shpallje e shitur.'
+                             : 'Asnjë shpallje e pauzuar.'
+                  return shown.length === 0 ? (
                   <div style={{ textAlign: 'center', padding: '24px 0', color: '#aaa', fontSize: 12 }}>
                     <i className="ti ti-package" style={{ fontSize: 36, display: 'block', marginBottom: 10, color: '#F5C842' }} aria-hidden="true" />
-                    Nuk ke shpallje aktive.<br />Shto tani falas!
+                    {bosh}{listFilter === 'active' ? <><br />Shto tani falas!</> : null}
                   </div>
                 ) : (
-                  myListings.filter(l => l.is_active).map(l => (
-                    <div key={l.id} className="listing-row">
+                  shown.map(l => (
+                    <div key={l.id} className="listing-row" style={!l.is_active ? { opacity: 0.72 } : undefined}>
                       <div role="link" tabIndex={0} className="listing-thumb" onClick={() => window.location.href = `/listing/${l.id}`} onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/listing/${l.id}` }}>
                         {l.images?.[0] ? <img src={l.images[0]} alt={l.title} loading="lazy" width={80} height={80} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <i className="ti ti-photo" style={{ color: '#ccc', fontSize: 20 }} aria-hidden="true" />}
                       </div>
@@ -1019,7 +1085,7 @@ export default function ProfilePage() {
                         <div className="listing-price">{fmt(l.price, l.currency)}</div>
                         <div className="listing-meta"><span aria-hidden="true">👁</span> {l.views_count || 0} · <span aria-hidden="true">📍</span> {l.city || 'Shqipëri'}{l.is_premium ? ' · ⭐ Premium' : ''}</div>
                       </div>
-                      {canBump(l.last_bumped_at) ? (
+                      {l.is_active && (canBump(l.last_bumped_at) ? (
                         <button
                           type="button"
                           className="edit-listing-btn"
@@ -1029,16 +1095,19 @@ export default function ProfilePage() {
                         ><span aria-hidden="true">⬆️</span></button>
                       ) : (
                         <span title={`Mund ta rifreskosh pas ${bumpDaysLeft(l.last_bumped_at)} ditësh`} style={{ fontSize: 10, color: '#aaa', padding: '0 4px', cursor: 'default' }}>{bumpDaysLeft(l.last_bumped_at)}d</span>
+                      ))}
+                      {!l.is_active && l.status !== 'sold' && (
+                        <button type="button" className="edit-listing-btn" disabled={reactBusy === l.id} onClick={() => reactivateListing(l.id)} aria-label="Riaktivizo shpalljen" title="Riaktivizo" style={{ fontSize: 13 }}><span aria-hidden="true">{reactBusy === l.id ? '⏳' : '♻️'}</span></button>
                       )}
                       <button type="button" className="edit-listing-btn" onClick={() => window.location.href = `/listing/${l.id}/edit`} aria-label="Ndrysho">✏️</button>
-                      {pendingSold === l.id ? (
+                      {l.is_active && (pendingSold === l.id ? (
                         <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
                           <button type="button" onClick={() => markSold(l.id)} style={{ background: 'linear-gradient(135deg,#0E7A35,#0b6a2e)', color: '#fff', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Shitur ✓</button>
                           <button type="button" onClick={() => setPendingSold(null)} style={{ background: '#eee', color: '#555', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Jo</button>
                         </div>
                       ) : (
                         <button type="button" className="edit-listing-btn" onClick={() => setPendingSold(l.id)} aria-label="Shëno si të shitur" title="Shëno si të shitur"><span aria-hidden="true">💰</span></button>
-                      )}
+                      ))}
                       {pendingDelete === l.id ? (
                         <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
                           <button type="button" onClick={() => deleteListing(l.id)} style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Fshi</button>
@@ -1049,7 +1118,8 @@ export default function ProfilePage() {
                       )}
                     </div>
                   ))
-                )}
+                )
+                })()}
               </div>
             </>
           )}
