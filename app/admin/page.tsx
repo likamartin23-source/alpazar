@@ -14,7 +14,6 @@ import { TodayTab } from './tabs/TodayTab'
 import { InvoicesTab } from './tabs/InvoicesTab'
 import { BroadcastTab } from './tabs/BroadcastTab'
 import { RolesTab } from './tabs/RolesTab'
-import { LanguageSwitcher } from '../components/LanguageSwitcher'
 
 /* ─── Styles ───────────────────────────────────────────────── */
 const CSS = `
@@ -615,7 +614,6 @@ export default function Admin() {
           ))}
 
           <div style={{ marginTop: 'auto', padding: '12px 14px', borderTop: '1px solid #1e1e1e', display: 'flex', flexDirection: 'column', gap: 10 }}>
-            <LanguageSwitcher />
             <a href="/" style={{ color: '#666', fontSize: 11, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
               <i className="ti ti-arrow-left" style={{ fontSize: 13 }} aria-hidden="true" />Kthehu
             </a>
