@@ -20,7 +20,7 @@ function timeAgo(dateStr: string) {
 // `formatPrice` u hoq bashke me grid-in katror: ListingCard e formaton vete
 // cmimin me `nf()`, qe jep te njejtin rezultat ne server e ne shfletues.
 
-export default function PublicProfilePage({ params, initialProfile, initialListings, initialBiz }: { params: { id: string }; initialProfile?: any; initialListings?: any[]; initialBiz?: any }) {
+export default function PublicProfilePage({ params, initialProfile, initialListings, initialBiz, initialIsOwn }: { params: { id: string }; initialProfile?: any; initialListings?: any[]; initialBiz?: any; initialIsOwn?: boolean }) {
   const { user } = useAlpazar()
   const seedListings = Array.isArray(initialListings) ? initialListings : []
   // Seed nga SSR => paraqitja e pare eshte e plote (profil + shpallje), pa spinner
@@ -112,7 +112,9 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
 
   const name = profile.full_name || profile.username || 'Përdorues'
   const memberSince = new Date(profile.created_at).getFullYear()
-  const isOwnProfile = user?.id === profile.id
+  // FIX-3: para se konteksti të zgjidhë `user`, përdor vlerën nga serveri (initialIsOwn)
+  // => paraqitja e parë s'kërcen vizitor↔pronar. Kur `user` vjen, përputhet.
+  const isOwnProfile = user ? user.id === profile.id : !!initialIsOwn
   // Nje faqe biznesi e vertete peshon me shume se nje `shop_name` i mbetur.
   const isBusiness = !!biz || !!profile.shop_name
 

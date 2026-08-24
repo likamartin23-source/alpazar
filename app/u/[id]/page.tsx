@@ -1,8 +1,24 @@
 import { createClient } from '@supabase/supabase-js'
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { cookies } from 'next/headers'
 import type { Metadata } from 'next'
 import UserProfileClient from './UserProfileClient'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../lib/supabase'
 import { SITE_URL } from '../../../lib/siteConfig'
+
+// FIX-3 (Cowork): identiteti i viewer-it NE SERVER nga cookie-sesioni => paraqitja
+// e parë rendon degën e saktë (pronar↔vizitor) pa kërcim pas hidratimit. Defensiv:
+// çdo dështim => null (= vizitor), default-i aktual, pa regresion.
+async function fetchViewerId(): Promise<string | null> {
+  try {
+    const cookieStore = await cookies()
+    const sb = createServerComponentClient({ cookies: () => cookieStore as any })
+    const { data: { session } } = await sb.auth.getSession()
+    return session?.user?.id ?? null
+  } catch {
+    return null
+  }
+}
 
 export const dynamic = 'force-dynamic'
 
@@ -74,13 +90,18 @@ async function fetchProfileData(id: string) {
 
 export default async function UserProfilePage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params
-  const { profile, listings, biz } = await fetchProfileData(params.id)
+  const [{ profile, listings, biz }, viewerId] = await Promise.all([
+    fetchProfileData(params.id),
+    fetchViewerId(),
+  ])
+  const initialIsOwn = !!(profile && viewerId && viewerId === profile.id)
   return (
     <UserProfileClient
       params={params}
       initialProfile={profile}
       initialListings={listings}
       initialBiz={biz}
+      initialIsOwn={initialIsOwn}
     />
   )
 }

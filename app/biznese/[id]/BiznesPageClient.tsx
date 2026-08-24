@@ -22,18 +22,20 @@ interface Biz {
   nipt: string | null; withdrawal_days: number | null; updated_at: string | null
 }
 
-export default function BiznesPageClient({ params, initialBiz, initialListings }: { params: { id: string }; initialBiz?: any; initialListings?: any[] }) {
+export default function BiznesPageClient({ params, initialBiz, initialListings, initialSubcats, initialIsOwner }: { params: { id: string }; initialBiz?: any; initialListings?: any[]; initialSubcats?: any[]; initialIsOwner?: boolean }) {
   const seedListings = Array.isArray(initialListings) ? initialListings : []
+  const seedSubcats  = Array.isArray(initialSubcats) ? initialSubcats : []
   const [biz, setBiz]               = useState<Biz | null>(initialBiz ?? null)
-  const [subcats, setSubcats]       = useState<any[]>([])
-  // Seed nga SSR (initialListings) => paraqitja e pare tregon shpalljet reale,
-  // pa flash 0->N. Refetch-i ne klient eshte vetem "rifreskim i heshtur".
+  // Seed nga SSR (initialListings/initialSubcats/initialIsOwner) => paraqitja e parë
+  // renderon TE NJEJTEN dege si klienti (FIX-3): shpallje, kategori, pronar/vizitor —
+  // pa kërcim pas hidratimit. Refetch-i ne klient eshte vetem "rifreskim i heshtur".
+  const [subcats, setSubcats]       = useState<any[]>(seedSubcats)
   const [listings, setListings]     = useState<any[]>(seedListings)
   const [loading, setLoading]       = useState(!initialBiz)
   const [loadError, setLoadError]   = useState(false)
   const [activeTab, setActiveTab]   = useState<'grid' | 'info' | 'reviews'>('grid')
   const [userId, setUserId]         = useState<string | null>(null)
-  const [isOwner, setIsOwner]       = useState(false)
+  const [isOwner, setIsOwner]       = useState(!!initialIsOwner)
   const [descExpanded, setDescExpanded] = useState(false)
   const [totalViews, setTotalViews] = useState(() => seedListings.reduce((s: number, l: any) => s + (l?.views_count || 0), 0))
   // Vleresimet e biznesit: agregim nga reviews→listings.business_id (funksionet
@@ -121,7 +123,11 @@ export default function BiznesPageClient({ params, initialBiz, initialListings }
       }
       if (!b) { setLoading(false); return }
       setBiz(b)
-      setIsOwner((await supabase.auth.getSession()).data.session?.user.id === b.owner_id)
+      // Mos e ndrysho degën pronar↔vizitor pas hidratimit (FIX-3): përditëso isOwner
+      // VETËM kur ka sesion të vërtetë. Nëse s'ka sesion (vizitor ose ende s'u ngarkua),
+      // ruaj vlerën fillestare nga serveri => pa kërcim true→false.
+      const sid = (await supabase.auth.getSession()).data.session?.user.id
+      if (sid) setIsOwner(sid === b.owner_id)
 
       // Profili i pronarit — vetem fushat e tier-it, per unazen e avatarit.
       const { data: pr } = await supabase
@@ -147,7 +153,10 @@ export default function BiznesPageClient({ params, initialBiz, initialListings }
         .from('business_subcategory_map')
         .select('subcategory_id, business_subcategories(name, icon)')
         .eq('business_id', b.id)
-      if (mapRows) setSubcats(mapRows.map((r: any) => r.business_subcategories).filter(Boolean))
+      // Rifreskim i heshtur: zëvendëso vetëm kur ka të dhëna reale; kurrë mos i fshij
+      // kategoritë (do të kërciste layout-i). Bosh legjitim vjen nga SSR seed.
+      const sc = (mapRows ?? []).map((r: any) => r.business_subcategories).filter(Boolean)
+      if (sc.length) setSubcats(sc)
 
       // `created_at` dhe `rank_tier` u shtuan bashke me ListingCard: karta
       // shfaq kohen relative dhe shenjen VIP, te dyja mungonin ne kete select.
