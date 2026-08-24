@@ -25,9 +25,11 @@ import { useEffect, useState } from 'react'
  * contentEditable në fokus) ose ka formular të shënuar `data-alpz-dirty="1"`.
  * Në atë rast bie te banderola opt-in (klik për të rifreskuar) — puna s'humbet.
  *
- * PA TIMER/POLL LOOP: kontrolli bëhet vetëm në montim dhe kur skeda rikthehet në
- * dukje (visibilitychange). Themeli (pa SW, no-store, force-dynamic) garanton
- * tashmë freski në çdo navigim; ky komponent mbulon vetëm skedën e hapur.
+ * ZBULIM KOHË-REALE, PA CIKËL: kontrolli bëhet në montim, në rikthim fokusi
+ * (visibilitychange), DHE me një poll të butë çdo 30s vetëm kur skeda është e
+ * dukshme (ndalon kur fshihet). Poll-i vetëm ZBULON; ringarkimi mbetet i çelësuar
+ * me build-id (një herë për build) → cikël i pamundur. Themeli (pa SW, no-store,
+ * force-dynamic) garanton freski në çdo navigim; ky komponent mbulon skedën idle.
  *
  * KRAHASIMI I BESUESHËM: `NEXT_PUBLIC_BUILD_ID` futet në KËTË bundle gjatë build-it
  * (= build-i që shërbeu këtë skedë); `/api/health.build` vjen nga i njëjti env i
@@ -88,7 +90,26 @@ export default function UpdatePrompt() {
     check()
     const onVis = () => { if (document.visibilityState === 'visible') check() }
     document.addEventListener('visibilitychange', onVis)
-    return () => { cancelled = true; document.removeEventListener('visibilitychange', onVis) }
+
+    // GARANCI KOHË-REALE: poll i butë çdo 30s vetëm kur skeda është e dukshme,
+    // që një skedë e hapur idle ta kapë deploy-in e ri brenda ~30s (jo vetëm në
+    // rikthim fokusi). NUK është cikël: check() e bën auto-refresh të çelësuar me
+    // build-id (një herë për build), ndaj poll-i vetëm ZBULON — kurrë s'ringarkon
+    // dy herë për të njëjtin version. Ndalon kur skeda fshihet (kursen rrjetin).
+    const POLL_MS = 30000
+    let iv: ReturnType<typeof setInterval> | null = null
+    const startPoll = () => { if (iv == null) iv = setInterval(check, POLL_MS) }
+    const stopPoll = () => { if (iv != null) { clearInterval(iv); iv = null } }
+    const onVisPoll = () => { if (document.visibilityState === 'visible') startPoll(); else stopPoll() }
+    document.addEventListener('visibilitychange', onVisPoll)
+    if (document.visibilityState === 'visible') startPoll()
+
+    return () => {
+      cancelled = true
+      document.removeEventListener('visibilitychange', onVis)
+      document.removeEventListener('visibilitychange', onVisPoll)
+      stopPoll()
+    }
   }, [])
 
   if (!live) return null
@@ -100,7 +121,7 @@ export default function UpdatePrompt() {
 
   // Rifreskim "i fortë": pastron çdo cache + çregjistron çdo Service Worker të
   // mbetur (pajisje të ngecura para kill-switch-it), pastaj ringarkon. Fail-soft.
-  async function rifreskoFort() {
+  async function rifreskoTani() {
     try {
       if ('serviceWorker' in navigator) {
         const rs = await navigator.serviceWorker.getRegistrations()
@@ -134,7 +155,7 @@ export default function UpdatePrompt() {
       </span>
       <button
         type="button"
-        onClick={rifreskoFort}
+        onClick={rifreskoTani}
         style={{ background: '#F5C842', color: '#111', border: 'none', borderRadius: 9, padding: '8px 14px', fontSize: 12.5, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', minHeight: 40 }}
       >
         Rifresko
