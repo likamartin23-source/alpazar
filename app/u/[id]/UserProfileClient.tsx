@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { useAlpazar } from '../../../lib/context'
 import Avatar, { tierNgaProfili } from '../../components/Avatar'
+import { useIsOnline } from '../../components/OnlinePresence'
 import ListingCard from '../../components/ListingCard'
 
 function timeAgo(dateStr: string) {
@@ -22,6 +23,7 @@ function timeAgo(dateStr: string) {
 export default function PublicProfilePage({ params }: { params: { id: string } }) {
   const { user } = useAlpazar()
   const [profile, setProfile] = useState<any>(null)
+  const ownerOnline = useIsOnline(profile?.id) // prania LIVE (BLLOKU Imazhi 5)
   const [listings, setListings] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
@@ -147,6 +149,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
             type={isBusiness ? 'business' : 'person'}
             tier={tierNgaProfili(profile)}
             verified={profile.is_verified || (profile.trust_score ?? 0) >= 60}
+            online={ownerOnline}
             size={96}
           />
         </div>
