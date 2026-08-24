@@ -15,10 +15,11 @@ name: Deploy → Vercel Production
 # `ignoreCommand` te vercel.json, kodi i vjeter nuk zbret me kurre ne prodhim.
 
 on:
-  push:
-    branches: [main]
-    paths-ignore:
-      - '.github/patches/**'
+  # Auto-push i ÇAKTIVIZUAR (24 gusht): integrimi nativ i Vercel-it deploy-on çdo
+  # push në main (rrugë parësore). Ky workflow POST-onte gjithashtu deploy-hook-un
+  # në çdo push → DY build për një commit (i njëjti SHA, harxhim minutash). Tani
+  # mbetet vetëm SHTRESË FALLBACK: me dorë (workflow_dispatch) + rojtari (çdo 5 min)
+  # që POST-on hook-un nëse prodhimi ngec. Garancia mbetet; dyfishimi hiqet.
   workflow_dispatch:
     inputs:
       environment:
