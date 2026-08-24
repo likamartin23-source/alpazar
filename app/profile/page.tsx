@@ -74,6 +74,10 @@ export default function ProfilePage() {
   const [editing, setEditing] = useState(false)
   const [form, setForm] = useState({ full_name: '', username: '', city: '', bio: '' })
   const [shopForm, setShopForm] = useState({ shop_name: '', shop_description: '', shop_category: '', shop_banner_url: '' })
+  // FAZA 5 (BLLOKU Skema 2=A): biznesi REAL nga tabela `businesses` (jo legacy shop_*).
+  // Butoni një hyrje, tri gjendje. Faqja /biznese/[id] është nën-paneli "Vepro si"
+  // (BiznesPageClient ka tashmë kontrollet e pronarit). Krijimi te /biznese/new (§1B premium).
+  const [myBiz, setMyBiz] = useState<{ id: string; name: string; is_verified: boolean } | null>(null)
   const [saving, setSaving] = useState(false)
   const [savingShop, setSavingShop] = useState(false)
   const [msg, setMsg] = useState('')
@@ -172,6 +176,9 @@ export default function ProfilePage() {
         const m = Number((data as any)?.max_listings)
         if (Number.isFinite(m)) setMaxListings(m)
       })
+      // FAZA 5: biznesi real (nëse ekziston). maybeSingle — fail-soft, pa hedhur.
+      supabase.from('businesses').select('id,name,is_verified').eq('owner_id', uid).maybeSingle()
+        .then(({ data }) => { if (data) setMyBiz(data as any) })
       await Promise.all([fetchConversations(uid), fetchSavedListings(uid), fetchSavedSearches(uid)])
     } catch {
       setLoadError(true)
@@ -1270,6 +1277,46 @@ export default function ProfilePage() {
                 </div>
               ) : (
                 <>
+                  {/* FAZA 5 (Imazhi 6a): biznesi REAL — një hyrje, tri gjendje.
+                      Gjendja 1 (jo premium) trajtohet më lart. Këtu: me plan.
+                      Gjendja 2: pa biznes → Krijo te /biznese/new (§1B).
+                      Gjendja 3: me biznes → hap nën-panelin /biznese/[id] ("Vepro si"). */}
+                  {myBiz ? (
+                    <div className="card" style={{ borderLeft: '3px solid #C42305' }}>
+                      <div className="card-hdr">
+                        <span className="card-title"><span aria-hidden="true">🏢</span> Biznesi yt</span>
+                        {myBiz.is_verified && <span style={{ fontSize: 11, fontWeight: 700, color: '#16a34a', background: '#dcfce7', padding: '2px 8px', borderRadius: 6 }}>✅ I verifikuar</span>}
+                      </div>
+                      <div style={{ fontSize: 15, fontWeight: 800, color: '#111', margin: '4px 0 12px' }}>{myBiz.name}</div>
+                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                        <button type="button" onClick={() => window.location.href = `/biznese/${myBiz.id}`}
+                          style={{ flex: 1, minWidth: 150, minHeight: 44, background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842', border: 'none', borderRadius: 11, fontSize: 13, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                          <i className="ti ti-briefcase" aria-hidden="true" /> Vepro si biznes →
+                        </button>
+                        <button type="button" onClick={() => window.location.href = `/biznese/${myBiz.id}/edit`}
+                          style={{ flex: '0 0 auto', minHeight: 44, background: '#f0f0f0', color: '#333', border: 'none', borderRadius: 11, padding: '0 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
+                          <span aria-hidden="true">✏️</span> Edito
+                        </button>
+                      </div>
+                      <p style={{ fontSize: 11, color: '#767676', marginTop: 10, lineHeight: 1.5 }}>
+                        Faqja e biznesit është nën-paneli yt: aty menaxhon shpalljet, vlerësimet dhe të dhënat si biznes. Identiteti dhe abonimi mbeten te llogaria jote personale.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="card" style={{ borderLeft: '3px solid #C42305' }}>
+                      <div className="card-hdr">
+                        <span className="card-title"><span aria-hidden="true">🏢</span> Krijo biznesin tënd</span>
+                      </div>
+                      <p style={{ fontSize: 12.5, color: '#555', lineHeight: 1.6, marginBottom: 12 }}>
+                        Ke Premium — mund të hapësh faqen tënde të biznesit: logo, kontakt, vendndodhje, vlerësime dhe shpallje të lidhura, me badge verifikimi.
+                      </p>
+                      <button type="button" onClick={() => window.location.href = '/biznese/new'}
+                        style={{ width: '100%', minHeight: 46, background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 11, fontSize: 13, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' }}>
+                        + Krijo faqen e biznesit
+                      </button>
+                    </div>
+                  )}
+
                   {profile?.shop_name && (
                     <div className="shop-preview">
                       <div className="shop-preview-icon"><i className="ti ti-building-store" aria-hidden="true" /></div>
@@ -1285,7 +1332,7 @@ export default function ProfilePage() {
 
                   <div className="card">
                     <div className="card-hdr">
-                      <span className="card-title"><span aria-hidden="true">🏢</span> Konfiguro Biznesin</span>
+                      <span className="card-title"><span aria-hidden="true">🏷️</span> Etiketa e vitrinës (profili)</span>
                     </div>
 
                     <label htmlFor="shop-name">Emri i biznesit *</label>
