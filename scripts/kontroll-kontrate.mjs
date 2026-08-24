@@ -26,7 +26,7 @@ if (!URL_BAZA || !CELESI) {
   process.exit(0)
 }
 
-const SHPERFILL = new Set(['node_modules', '.next', '.git', 'dist', 'build', 'coverage', '.vercel', 'scripts'])
+const SHPERFILL = new Set(['node_modules', '.next', '.git', 'dist', 'build', 'coverage', '.vercel', 'scripts', '.claude'])
 const SHTESA = new Set(['.ts', '.tsx', '.js', '.jsx', '.mjs'])
 
 function skedaret(rrenja, mbledhur = []) {
