@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { useRealtimeTable } from '../hooks/useRealtimeTable'
+import { useDraggable } from '../hooks/useDraggable'
 import type { Category, Listing } from '../lib/types'
 import { SkeletonGrid } from './components/Skeleton'
 import Avatar, { tierNgaProfili } from './components/Avatar'
@@ -21,6 +22,12 @@ function InstallBanner() {
   const [show, setShow] = useState(false)
   const [installed, setInstalled] = useState(false)
   const [dismissed, setDismissed] = useState(false)
+
+  const { pos, dragging, onPointerDown } = useDraggable(
+    '_alpz_pos_install',
+    () => window.innerWidth >= 768 ? { left: 24, bottom: 104 } : { left: 12, bottom: 226 },
+    64
+  )
 
   useEffect(() => {
     if (window.matchMedia('(display-mode: standalone)').matches) return
@@ -41,7 +48,24 @@ function InstallBanner() {
 
   if (!show || installed || dismissed) return null
   return (
-    <div className="install-float" style={{ position: 'fixed', bottom: 226, left: 12, zIndex: 190, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 3 }}>
+    <div
+      className="install-float"
+      style={{
+        position: 'fixed',
+        bottom: pos?.bottom ?? 226,
+        left: pos?.left ?? 12,
+        right: 'auto',
+        zIndex: 190,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        gap: 3,
+        cursor: dragging ? 'grabbing' : 'grab',
+        touchAction: 'none',
+        userSelect: 'none',
+      }}
+      onPointerDown={onPointerDown}
+    >
       <button
         type="button"
         aria-label="Instalo aplikacionin"
@@ -50,16 +74,14 @@ function InstallBanner() {
           width: 36, height: 44,
           background: 'linear-gradient(135deg,#22C55E,#16a34a)',
           borderRadius: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2,
-          border: 'none', cursor: 'pointer',
+          border: 'none', cursor: 'inherit',
           boxShadow: '0 4px 13px rgba(34,197,94,.45)',
           animation: 'install-pulse 2.2s infinite',
           transition: 'transform .15s',
         }}
-        onMouseDown={e => (e.currentTarget.style.transform = 'scale(.92)')}
-        onMouseUp={e => (e.currentTarget.style.transform = '')}
       >
-        <i className="ti ti-device-mobile-down" style={{ fontSize: 16, color: '#fff' }} aria-hidden="true" />
-        <span style={{ fontSize: 7, color: '#fff', fontWeight: 800, letterSpacing: .3, lineHeight: 1 }}>Instalo</span>
+        <i className="ti ti-device-mobile-down float-icon-main" aria-hidden="true" />
+        <span className="float-label">Instalo</span>
       </button>
       <button type="button" aria-label="Mbyll" onClick={() => setDismissed(true)} style={{ background: 'none', border: 'none', color: 'rgba(34,197,94,.7)', cursor: 'pointer', fontSize: 7, padding: 0, lineHeight: 1, alignSelf: 'center' }}>✕</button>
     </div>
@@ -71,6 +93,12 @@ function ShareBox({ refCode }: { refCode?: string }) {
   const [open, setOpen] = useState(false)
   const [mode, setMode] = useState<'feed' | 'msg'>('feed')
   const [copied, setCopied] = useState<string | null>(null)
+
+  const { pos, dragging, onPointerDown } = useDraggable(
+    '_alpz_pos_share',
+    () => window.innerWidth >= 768 ? { left: 24, bottom: 24 } : { left: 12, bottom: 157 },
+    64
+  )
 
   const base = SITE_URL
   const url  = refCode ? `${base}?ref=${refCode}` : base
@@ -152,7 +180,24 @@ function ShareBox({ refCode }: { refCode?: string }) {
   }
 
   return (
-    <div className="share-float" style={{ position: 'fixed', bottom: 157, left: 12, zIndex: 190, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 3 }}>
+    <div
+      className="share-float"
+      style={{
+        position: 'fixed',
+        bottom: pos?.bottom ?? 157,
+        left: pos?.left ?? 12,
+        right: 'auto',
+        zIndex: 190,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        gap: 3,
+        cursor: dragging ? 'grabbing' : 'grab',
+        touchAction: 'none',
+        userSelect: 'none',
+      }}
+      onPointerDown={onPointerDown}
+    >
       {open && (
         <div style={{
           background: '#111', border: '1.5px solid #1d4ed8', borderRadius: '14px 14px 14px 0',
@@ -213,8 +258,8 @@ function ShareBox({ refCode }: { refCode?: string }) {
         onMouseDown={e => (e.currentTarget.style.transform = 'scale(.92)')}
         onMouseUp={e => (e.currentTarget.style.transform = '')}
       >
-        <i className={`ti ti-${open ? 'x' : 'share-2'}`} aria-hidden="true" style={{ fontSize: 16, color: '#fff' }} />
-        <span style={{ fontSize: 7, color: '#fff', fontWeight: 800, letterSpacing: .3, lineHeight: 1 }}>Ndaj</span>
+        <i className={`ti ti-${open ? 'x' : 'share-2'} float-icon-main`} aria-hidden="true" />
+        <span className="float-label">Ndaj</span>
       </button>
       <button type="button" aria-label="Mbyll" onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', color: 'rgba(59,130,246,.7)', cursor: 'pointer', fontSize: 8, padding: 0, lineHeight: 1, alignSelf: 'center', display: open ? 'block' : 'none' }}>✕</button>
     </div>
@@ -603,6 +648,9 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .new-listing-toast{background:#EAF3DE;border:1px solid #97C459;border-radius:8px;padding:6px 12px;display:flex;align-items:center;gap:7px;margin-bottom:7px;animation:toast-in .3s ease;}
         @keyframes toast-in{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
         .new-listing-toast span{font-size:11px;font-weight:700;color:#3B6D11;}
+        /* ── Etiketat e butonave lundrues (responsive me className) ── */
+        .float-label{font-size:7px;color:#fff;font-weight:800;letter-spacing:.3px;line-height:1;}
+        .float-icon-main{font-size:16px;color:#fff;}
         /* ── Navigimi desktop ── */
         .desk-nav{display:none;}
         .desk-nav-btn{background:rgba(0,0,0,.08);border:none;border-radius:8px;padding:6px 11px;font-size:12px;font-weight:700;color:#111;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:background .15s;}
@@ -612,14 +660,19 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .desk-nav-add:hover{opacity:.88;}
         /* ── Responsive breakpoints (additive) ── */
         @media(min-width:768px){
+          body{background:#FFFBEA;}
           .wrap{max-width:960px;padding-bottom:0;}
+          .body{padding:0 24px;}
           .bottom-nav{display:none;}
           .desk-nav{display:flex;gap:3px;align-items:center;margin-right:6px;}
-          .share-float{bottom:24px !important;left:auto !important;right:24px !important;}
-          .install-float{display:none !important;}
+          /* pozicioni i share-float dhe install-float menaxhohet nga useDraggable (JS) */
+          .share-float>button:first-of-type,.install-float>button:first-of-type{width:60px !important;height:60px !important;border-radius:50% !important;}
+          .float-label{font-size:11px;}
+          .float-icon-main{font-size:22px;}
         }
         @media(min-width:1024px){
           .wrap{max-width:1200px;}
+          .body{padding:0 32px;}
         }
       ` }} />
 
