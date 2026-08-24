@@ -169,7 +169,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             }
             function recover(){
               try{ var t=+(sessionStorage.getItem(KEY)||0); if(Date.now()-t<20000) return; sessionStorage.setItem(KEY,String(Date.now())); }catch(e){}
-              location.reload();
+              // 1s-e-re->e-vjeter: SW i vjeter thyen chunk-et e reja -> ChunkLoadError -> reload -> SW sherben shell-in e vjeter.
+              // Prandaj: heq SW + cache (te koordinuar), PASTAJ reload -> reload pa SW -> chunk-et e reja -> pa ChunkLoadError -> rri i ri.
+              var done=false;
+              function go(){ if(done) return; done=true; try{ location.reload(); }catch(e){} }
+              try{
+                var tasks=[];
+                if ('serviceWorker' in navigator) {
+                  tasks.push(navigator.serviceWorker.getRegistrations().then(function(rs){
+                    return Promise.all(rs.map(function(r){ return r.unregister().catch(function(){}); }));
+                  }).catch(function(){}));
+                }
+                if (window.caches && caches.keys) {
+                  tasks.push(caches.keys().then(function(ks){
+                    return Promise.all(ks.map(function(k){ return caches.delete(k).catch(function(){}); }));
+                  }).catch(function(){}));
+                }
+                Promise.all(tasks).then(go, go);
+                setTimeout(go, 1500); // fallback nese SW s'pergjigjet
+              } catch(e){ go(); }
             }
             window.addEventListener('error', function(e){ var m=(e&&(e.message||(e.error&&(e.error.message||e.error.name))))||''; if(isChunk(m)) recover(); }, true);
             window.addEventListener('unhandledrejection', function(e){ var r=e&&e.reason; var m=(r&&(r.message||r.name))||(typeof r==='string'?r:''); if(isChunk(m)) recover(); });
