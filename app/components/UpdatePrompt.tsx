@@ -3,28 +3,38 @@
 import { useEffect, useState } from 'react'
 
 /**
- * UPDATE PROMPT — SELF-HEAL STRIKT OPT-IN (§13). ZERO RINGARKIM AUTOMATIK.
+ * UPDATE PROMPT — AUTO-REFRESH I SIGURT, LOOP-FREE (§13, v2).
  *
- * DOKTRINA (e ngrirë, nga saga e "flicker→old"): app-i NUK ringarkohet KURRË
- * vetvetiu. Versioni i vjetër i këtij komponenti ringarkonte faqen me forcë në
- * mospërputhje build-id (timer 25s, visibilitychange, BroadcastChannel) dhe, kur
- * sinjalet e build-id binin jokonsistente, prodhonte cikël ringarkimi të dhunshëm
- * — edhe në incognito. Prandaj: **asnjë `location.reload()` automatik.**
+ * DOKTRINA (nga saga "flicker→old"): app-i NUK duhet të hyjë KURRË në cikël
+ * ringarkimi. Versioni i vjetër ringarkonte pakushtëzuar (timer 25s +
+ * visibilitychange + BroadcastChannel) dhe, kur sinjalet e build-id binin
+ * jokonsistente, prodhonte cikël të dhunshëm — edhe në incognito.
  *
- * ÇFARË BËN TANI (self-heal i sigurt): freskia tashmë garantohet nga serveri
- * (`force-dynamic` + `no-store` + pa SW). Ky komponent shton VETËM një rrjet
- * sigurie: nëse skeda po ekzekuton një bundle më të vjetër se deploy-i aktual,
- * i shfaq përdoruesit një banderolë të vogël, të mbylllshme, dhe RIFRESKON VETËM
- * kur përdoruesi klikon. Kurrë vetvetiu.
+ * ÇFARË BËN TANI (miratuar nga pronari — "auto-refresh i sigurt"):
+ * kur skeda është TASHMË e hapur dhe del një deploy i ri, e freskon vetvetiu
+ * NJË herë, pa e prekur përdoruesi — POR me garanci matematike kundër ciklit:
+ *
+ *   ÇELËSI I SIGURISË = build-id i synuar. Para ringarkimit vendosim
+ *   sessionStorage['_alpz_autoupd_<liveBuild>']='1'. Pas ringarkimit, bund-i i
+ *   ri E KA build-id-in = liveBuild → `mine === b` → asnjë ringarkim tjetër.
+ *   Cikël i pamundur: çdo build synohet me ringarkim maksimumi NJË herë; sapo
+ *   je te versioni më i ri, ndalon. Edhe nëse /api/health luhatet mes dy build-eve,
+ *   secili merr një ringarkim dhe konvergon te më i riu.
+ *
+ * MOS-NDËRPRERJA: nuk ringarkon nëse përdoruesi po shkruan (input/textarea/select/
+ * contentEditable në fokus) ose ka formular të shënuar `data-alpz-dirty="1"`.
+ * Në atë rast bie te banderola opt-in (klik për të rifreskuar) — puna s'humbet.
+ *
+ * ZBULIM KOHË-REALE, PA CIKËL: kontrolli bëhet në montim, në rikthim fokusi
+ * (visibilitychange), DHE me një poll të butë çdo 30s vetëm kur skeda është e
+ * dukshme (ndalon kur fshihet). Poll-i vetëm ZBULON; ringarkimi mbetet i çelësuar
+ * me build-id (një herë për build) → cikël i pamundur. Themeli (pa SW, no-store,
+ * force-dynamic) garanton freski në çdo navigim; ky komponent mbulon skedën idle.
  *
  * KRAHASIMI I BESUESHËM: `NEXT_PUBLIC_BUILD_ID` futet në KËTË bundle gjatë build-it
  * (= build-i që shërbeu këtë skedë); `/api/health.build` vjen nga i njëjti env i
- * deploy-it aktual. Të njëjtin burim → pa `Date.now()`, pa fallback jokonsistent.
- * Nëse build-id mungon ('dev'/bosh) → asnjë krahasim, asnjë banderolë.
- *
- * PA TIMER/POLL LOOP: kontrolli bëhet vetëm në montim dhe kur skeda rikthehet në
- * dukje (visibilitychange) — të dyja vetëm SHFAQIN banderolën, s'ringarkojnë.
- * sessionStorage siguron që për të njëjtin version të mos bezdisë dy herë.
+ * deploy-it aktual. I njëjti burim → pa `Date.now()`, pa fallback jokonsistent.
+ * Nëse build-id mungon ('dev'/bosh) → asnjë krahasim, asnjë veprim.
  */
 export default function UpdatePrompt() {
   const [live, setLive] = useState<string | null>(null)
@@ -34,22 +44,72 @@ export default function UpdatePrompt() {
     if (!mine || mine === 'dev') return // pa build-id të besueshëm → asgjë
 
     let cancelled = false
+
+    // A po e përdor përdoruesi skedën tani (mos ndërpri punën e tij)?
+    function poPunon(): boolean {
+      try {
+        const el = document.activeElement as HTMLElement | null
+        if (el) {
+          const tag = el.tagName
+          if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true
+          if (el.isContentEditable) return true
+        }
+        // Formular i shënuar shprehimisht si "i nisur/i pandryshuar-ruajtur".
+        if (document.querySelector('[data-alpz-dirty="1"]')) return true
+      } catch { /* ignore */ }
+      return false
+    }
+
     async function check() {
       try {
         const r = await fetch('/api/health', { cache: 'no-store' })
         if (!r.ok) return
         const j = await r.json()
         const b = j?.build
-        if (!b || b === 'dev' || b === mine) return // njësoj → pa njoftim
+        if (!b || b === 'dev' || b === mine) return // njësoj → asgjë
+        if (cancelled) return
+
+        // ---- AUTO-REFRESH I SIGURT (i çelësuar me build-id → cikël i pamundur) ----
+        const key = '_alpz_autoupd_' + b
+        let tentuar = false
+        try { tentuar = sessionStorage.getItem(key) === '1' } catch { /* ignore */ }
+
+        if (!tentuar && !poPunon()) {
+          try { sessionStorage.setItem(key, '1') } catch { /* ignore */ }
+          try { location.reload() } catch { /* ignore */ }
+          return
+        }
+
+        // Përndryshe (u provua tashmë për këtë build, ose përdoruesi po punon)
+        // → banderolë opt-in, e mbylllshme, pa ndërprerje.
         try { if (sessionStorage.getItem('_alpz_upd_dismiss') === b) return } catch { /* ignore */ }
-        if (!cancelled) setLive(b)
+        setLive(b)
       } catch { /* rrjeti — provo herën tjetër, pa gjë */ }
     }
 
     check()
     const onVis = () => { if (document.visibilityState === 'visible') check() }
     document.addEventListener('visibilitychange', onVis)
-    return () => { cancelled = true; document.removeEventListener('visibilitychange', onVis) }
+
+    // GARANCI KOHË-REALE: poll i butë çdo 30s vetëm kur skeda është e dukshme,
+    // që një skedë e hapur idle ta kapë deploy-in e ri brenda ~30s (jo vetëm në
+    // rikthim fokusi). NUK është cikël: check() e bën auto-refresh të çelësuar me
+    // build-id (një herë për build), ndaj poll-i vetëm ZBULON — kurrë s'ringarkon
+    // dy herë për të njëjtin version. Ndalon kur skeda fshihet (kursen rrjetin).
+    const POLL_MS = 30000
+    let iv: ReturnType<typeof setInterval> | null = null
+    const startPoll = () => { if (iv == null) iv = setInterval(check, POLL_MS) }
+    const stopPoll = () => { if (iv != null) { clearInterval(iv); iv = null } }
+    const onVisPoll = () => { if (document.visibilityState === 'visible') startPoll(); else stopPoll() }
+    document.addEventListener('visibilitychange', onVisPoll)
+    if (document.visibilityState === 'visible') startPoll()
+
+    return () => {
+      cancelled = true
+      document.removeEventListener('visibilitychange', onVis)
+      document.removeEventListener('visibilitychange', onVisPoll)
+      stopPoll()
+    }
   }, [])
 
   if (!live) return null
@@ -57,6 +117,24 @@ export default function UpdatePrompt() {
   function dismiss() {
     try { sessionStorage.setItem('_alpz_upd_dismiss', live!) } catch { /* ignore */ }
     setLive(null)
+  }
+
+  // Rifreskim "i fortë": pastron çdo cache + çregjistron çdo Service Worker të
+  // mbetur (pajisje të ngecura para kill-switch-it), pastaj ringarkon. Fail-soft.
+  async function rifreskoTani() {
+    try {
+      if ('serviceWorker' in navigator) {
+        const rs = await navigator.serviceWorker.getRegistrations()
+        await Promise.all(rs.map(r => r.unregister().catch(() => {})))
+      }
+    } catch { /* ignore */ }
+    try {
+      if (typeof caches !== 'undefined') {
+        const keys = await caches.keys()
+        await Promise.all(keys.map(k => caches.delete(k).catch(() => false)))
+      }
+    } catch { /* ignore */ }
+    try { location.reload() } catch { /* ignore */ }
   }
 
   return (
@@ -77,7 +155,7 @@ export default function UpdatePrompt() {
       </span>
       <button
         type="button"
-        onClick={() => { try { location.reload() } catch { /* ignore */ } }}
+        onClick={rifreskoTani}
         style={{ background: '#F5C842', color: '#111', border: 'none', borderRadius: 9, padding: '8px 14px', fontSize: 12.5, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', minHeight: 40 }}
       >
         Rifresko

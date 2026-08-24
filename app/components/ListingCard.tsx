@@ -16,6 +16,7 @@
 
 import Avatar, { tierNgaRankTier } from './Avatar'
 import { FavoriteButton } from './FavoriteButton'
+import { useIsOnline } from './OnlinePresence'
 import { nf, dayMonth } from '../../lib/format'
 
 export type ListingCardAuthor = {
@@ -105,6 +106,8 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
   // qe mban vetem `is_premium`.
   const biz = l.business_id && l.business ? l.business : null
   const tier = tierNgaRankTier(l.rank_tier)
+  // Prania LIVE e shitësit-person (BLLOKU Imazhi 2: overlay unazë + online/offline).
+  const authorOnline = useIsOnline(author?.id)
   const open = () => go(`/listing/${l.id}`)
 
   return (
@@ -173,6 +176,7 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
               type="person"
               tier={tier}
               verified={(author.trust_score ?? 0) >= 60}
+              online={authorOnline}
               size={18}
             />
             <span>{author.full_name || author.username || 'Shitës'}</span>
