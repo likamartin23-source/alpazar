@@ -60,6 +60,23 @@ export async function middleware(req: NextRequest) {
       // Fail closed për rrugët admin.
       return NextResponse.redirect(new URL('/auth/login', req.url))
     }
+  } else if (
+    pathname.startsWith('/biznese') ||
+    pathname.startsWith('/u/') ||
+    pathname.startsWith('/listing')
+  ) {
+    // RIFRESKIMI I SESIONIT për faqet që përcaktojnë pronar-vs-vizitor NË SERVER (SSR).
+    // Pa këtë, `auth-helpers` s'e mban cookie-sesionin të freskët → pas skadimit të
+    // access-token-it (~1 orë), `getSession()` server-side kthen NULL edhe kur përdoruesi
+    // është i loguar → pronari lexohet gabimisht si vizitor → kërcim/lexim i gabuar
+    // (shkaku sistemik i "s'po lexon nëse e hapi pronari apo vizitori"). `getSession()`
+    // këtu rifreskon token-in dhe shkruan cookie-n e re te `res`. Fail-soft: çdo dështim
+    // → faqja rendon si vizitor (pa regresion). Vetëm rifreskim, PA redirect.
+    try {
+      const { createMiddlewareClient } = await import('@supabase/auth-helpers-nextjs')
+      const supabase = createMiddlewareClient({ req, res })
+      await supabase.auth.getSession()
+    } catch { /* fail-soft */ }
   }
 
   return res
