@@ -1289,9 +1289,14 @@ export default function ProfilePage() {
                       </div>
                       <div style={{ fontSize: 15, fontWeight: 800, color: '#111', margin: '4px 0 12px' }}>{myBiz.name}</div>
                       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                        {/* Ky panel (/profile → Biznesi im) ËSHTË administrimi i biznesit.
+                            Butoni çon te faqja PUBLIKE e biznesit (pamja vizitor); ndaj
+                            u riemërua "Shiko faqen e biznesit" — që të mos ketë dy butona
+                            "Vepro si biznes" në kahje të kundërta (faqja e biznesit ka
+                            "Vepro si biznes" që kthehet këtu). Zero mbivendosje. */}
                         <button type="button" onClick={() => window.location.href = `/biznese/${myBiz.id}`}
                           style={{ flex: 1, minWidth: 150, minHeight: 44, background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842', border: 'none', borderRadius: 11, fontSize: 13, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                          <i className="ti ti-briefcase" aria-hidden="true" /> Vepro si biznes →
+                          <i className="ti ti-eye" aria-hidden="true" /> Shiko faqen e biznesit →
                         </button>
                         <button type="button" onClick={() => window.location.href = `/biznese/${myBiz.id}/edit`}
                           style={{ flex: '0 0 auto', minHeight: 44, background: '#f0f0f0', color: '#333', border: 'none', borderRadius: 11, padding: '0 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>

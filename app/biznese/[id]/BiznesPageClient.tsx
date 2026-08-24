@@ -279,11 +279,9 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           <button type="button" aria-label="Ndaj biznesin" onClick={share} style={{ background: 'rgba(0,0,0,.45)', border: 'none', borderRadius: '50%', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
             <i className="ti ti-share" style={{ fontSize: 16, color: '#fff' }} aria-hidden="true" />
           </button>
-          {isOwner && (
-            <button type="button" aria-label="Edito biznesin" onClick={() => window.location.href = `/biznese/${biz.id}/edit`} style={{ background: 'rgba(0,0,0,.45)', border: 'none', borderRadius: '50%', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-              <i className="ti ti-pencil" style={{ fontSize: 16, color: '#fff' }} aria-hidden="true" />
-            </button>
-          )}
+          {/* Lapsi edit u hoq: pronari e sheh faqen si vizitor i veçantë (pamje e pastër);
+              administrimi (përfshi Edito) bëhet te paneli ekzistues përmes "Vepro si biznes"
+              → /profile → Biznesi im. Pa hibrid pronar/vizitor te koka. */}
         </div>
       </div>
 
@@ -391,31 +389,44 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
             </div>
           )}
 
-          {/* Action buttons */}
+          {/* Action buttons — modaliteti pronar vs vizitor (urdhër pronari):
+              Pronari e shikon biznesin si "vizitor i veçantë" (entitet i mëvetësishëm)
+              dhe ka NJË buton "Vepro si biznes" që e çon te administrimi EKZISTUES
+              (/profile → Biznesi im), pa dublim, në sinkron me modalitetet ekzistuese.
+              Vizitori sheh veprimet e kontaktit (Telefono/Mesazh/Ndiq). Veprimet drejt
+              vetes (mesazh/telefono/ndiq) nuk i shfaqen pronarit — s'kanë kuptim. */}
           <div style={{ display: 'flex', gap: 8 }}>
-            {biz.phone && (
-              <a href={`tel:${biz.phone}`} className="action-btn" style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff' }}>
-                <i className="ti ti-phone" style={{ fontSize: 15 }} aria-hidden="true" /> Telefono
-              </a>
-            )}
-            <button type="button" aria-label="Dërgo mesazh" onClick={() => { if (!userId) { window.location.href = '/auth/login'; return } window.location.href = `/messages?biz=${biz.id}` }}
-              className="action-btn" style={{ background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842' }}>
-              <i className="ti ti-message" style={{ fontSize: 15 }} aria-hidden="true" /> Mesazh
-            </button>
-            {!isOwner && (
-              <button
-                type="button"
-                onClick={toggleFollow}
-                disabled={followBusy}
-                aria-pressed={following}
-                aria-label={following ? 'Mos e ndiq më këtë biznes' : 'Ndiq këtë biznes'}
-                className="action-btn"
-                style={following
-                  ? { background: '#fff', color: '#C42305', border: '1.5px solid #C42305', boxShadow: 'none' }
-                  : { background: 'linear-gradient(135deg,#F8D24E,#F5C842)', color: '#111' }}>
-                <i className={`ti ti-${following ? 'check' : 'plus'}`} style={{ fontSize: 15 }} aria-hidden="true" />
-                {following ? 'Po ndjek' : 'Ndiq'}
+            {isOwner ? (
+              <button type="button" aria-label="Vepro si biznes — administro biznesin tënd"
+                onClick={() => { window.location.href = '/profile?tab=shop' }}
+                className="action-btn" style={{ background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842' }}>
+                <i className="ti ti-briefcase" style={{ fontSize: 15 }} aria-hidden="true" /> Vepro si biznes
               </button>
+            ) : (
+              <>
+                {biz.phone && (
+                  <a href={`tel:${biz.phone}`} className="action-btn" style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff' }}>
+                    <i className="ti ti-phone" style={{ fontSize: 15 }} aria-hidden="true" /> Telefono
+                  </a>
+                )}
+                <button type="button" aria-label="Dërgo mesazh" onClick={() => { if (!userId) { window.location.href = '/auth/login'; return } window.location.href = `/messages?biz=${biz.id}` }}
+                  className="action-btn" style={{ background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842' }}>
+                  <i className="ti ti-message" style={{ fontSize: 15 }} aria-hidden="true" /> Mesazh
+                </button>
+                <button
+                  type="button"
+                  onClick={toggleFollow}
+                  disabled={followBusy}
+                  aria-pressed={following}
+                  aria-label={following ? 'Mos e ndiq më këtë biznes' : 'Ndiq këtë biznes'}
+                  className="action-btn"
+                  style={following
+                    ? { background: '#fff', color: '#C42305', border: '1.5px solid #C42305', boxShadow: 'none' }
+                    : { background: 'linear-gradient(135deg,#F8D24E,#F5C842)', color: '#111' }}>
+                  <i className={`ti ti-${following ? 'check' : 'plus'}`} style={{ fontSize: 15 }} aria-hidden="true" />
+                  {following ? 'Po ndjek' : 'Ndiq'}
+                </button>
+              </>
             )}
             <button type="button" aria-label="Ndaj" onClick={share} className="action-btn" style={{ background: '#f0f0f0', color: '#333', flex: '0 0 48px' }}>
               <i className="ti ti-share-3" style={{ fontSize: 17 }} aria-hidden="true" />
