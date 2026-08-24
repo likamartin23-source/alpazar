@@ -22,17 +22,20 @@ interface Biz {
   nipt: string | null; withdrawal_days: number | null; updated_at: string | null
 }
 
-export default function BiznesPageClient({ params, initialBiz }: { params: { id: string }; initialBiz?: any }) {
+export default function BiznesPageClient({ params, initialBiz, initialListings }: { params: { id: string }; initialBiz?: any; initialListings?: any[] }) {
+  const seedListings = Array.isArray(initialListings) ? initialListings : []
   const [biz, setBiz]               = useState<Biz | null>(initialBiz ?? null)
   const [subcats, setSubcats]       = useState<any[]>([])
-  const [listings, setListings]     = useState<any[]>([])
+  // Seed nga SSR (initialListings) => paraqitja e pare tregon shpalljet reale,
+  // pa flash 0->N. Refetch-i ne klient eshte vetem "rifreskim i heshtur".
+  const [listings, setListings]     = useState<any[]>(seedListings)
   const [loading, setLoading]       = useState(!initialBiz)
   const [loadError, setLoadError]   = useState(false)
   const [activeTab, setActiveTab]   = useState<'grid' | 'info' | 'reviews'>('grid')
   const [userId, setUserId]         = useState<string | null>(null)
   const [isOwner, setIsOwner]       = useState(false)
   const [descExpanded, setDescExpanded] = useState(false)
-  const [totalViews, setTotalViews] = useState(0)
+  const [totalViews, setTotalViews] = useState(() => seedListings.reduce((s: number, l: any) => s + (l?.views_count || 0), 0))
   // Vleresimet e biznesit: agregim nga reviews→listings.business_id (funksionet
   // DB business_rating/business_reviews). Empty-state dinjitoz kur 0 (Notion §5B/5).
   const [rating, setRating]         = useState<{ avg: number | null; count: number }>({ avg: null, count: 0 })
@@ -156,7 +159,10 @@ export default function BiznesPageClient({ params, initialBiz }: { params: { id:
         .order('rank_tier', { ascending: false })   // VIP-first (Vendimi 2)
         .order('created_at', { ascending: false })
         .limit(20)
-      if (ls) {
+      // Rifreskim i heshtur: zevendeso VETEM kur kthehen te dhena reale. Nese
+      // query-ja kthen bosh (race/rrjet), MBAJ te dhenat ekzistuese (SSR ose te
+      // meparshmet) => kurre nuk shfaqet flash 0. (Bosh legjitim shfaqet nga SSR.)
+      if (ls && ls.length) {
         setListings(ls)
         setTotalViews(ls.reduce((s: number, l: any) => s + (l.views_count || 0), 0))
       }
