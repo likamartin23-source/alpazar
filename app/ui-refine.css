@@ -169,3 +169,5 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
   .card-img img{transition:none;}
   .listing-card:hover .card-img img{transform:none;}
 }
+@media(min-width:768px){.listings-grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));}}
+@media(min-width:1024px){.listings-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));}}
