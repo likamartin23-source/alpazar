@@ -26,9 +26,9 @@ export async function generateMetadata(props: { params: Promise<{ id: string }> 
     title,
     description: desc,
     alternates: { canonical: url },
-    // Faqja renderohet ne klient (HTML server bosh) -> permbajtje e holle.
-    // Deri sa te behet SSR, mos e indekso por ndiq linqet drejt shpalljeve.
-    robots: { index: false, follow: true },
+    // Faqja tani renderohet ne SSR (profili + shpalljet ne HTML-in e pare) ->
+    // permbajtje e plote -> e indeksueshme.
+    robots: { index: true, follow: true },
     openGraph: {
       type: 'website',
       url,
@@ -41,7 +41,46 @@ export async function generateMetadata(props: { params: Promise<{ id: string }> 
   }
 }
 
+// SSR-seed: profili + shpalljet personale + biznesi — E NJEJTA query si klienti.
+// Pa kete, faqja niste me spinner mbi gjithe ekranin (loading=true) dhe shpalljet
+// []=0, qe pastaj mbusheshin => flicker "spinner/bosh -> permbajtje" ne cdo ngarkim.
+// RLS lejon anon (profiles publike, listings_select is_active). Serveri (anon key)
+// i merr sakte => paraqitja e pare eshte e plote.
+async function fetchProfileData(id: string) {
+  const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  const { data: profile } = await sb
+    .from('profiles')
+    .select('id,full_name,username,avatar_url,cover_url,bio,city,is_premium,premium_expires_at,has_boost,boost_expires_at,is_verified,trust_score,trust_score_visible,created_at,shop_name,seller_rating,reviews_count')
+    .eq('id', id)
+    .single()
+  if (!profile) return { profile: null, listings: [], biz: null }
+
+  const [{ data: listings }, { data: biz }] = await Promise.all([
+    sb.from('listings')
+      .select('id,title,price,currency,images,city,created_at,is_premium,condition,rank_tier')
+      .eq('user_id', id)
+      .is('business_id', null)
+      .eq('is_active', true)
+      .order('rank_tier', { ascending: false })
+      .order('last_bumped_at', { ascending: false })
+      .limit(60),
+    sb.from('businesses')
+      .select('id,name,logo_url,is_verified')
+      .eq('owner_id', id)
+      .maybeSingle(),
+  ])
+  return { profile, listings: listings ?? [], biz: biz ?? null }
+}
+
 export default async function UserProfilePage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params
-  return <UserProfileClient params={params} />
+  const { profile, listings, biz } = await fetchProfileData(params.id)
+  return (
+    <UserProfileClient
+      params={params}
+      initialProfile={profile}
+      initialListings={listings}
+      initialBiz={biz}
+    />
+  )
 }
