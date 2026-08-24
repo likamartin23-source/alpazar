@@ -20,15 +20,18 @@ function timeAgo(dateStr: string) {
 // `formatPrice` u hoq bashke me grid-in katror: ListingCard e formaton vete
 // cmimin me `nf()`, qe jep te njejtin rezultat ne server e ne shfletues.
 
-export default function PublicProfilePage({ params }: { params: { id: string } }) {
+export default function PublicProfilePage({ params, initialProfile, initialListings, initialBiz }: { params: { id: string }; initialProfile?: any; initialListings?: any[]; initialBiz?: any }) {
   const { user } = useAlpazar()
-  const [profile, setProfile] = useState<any>(null)
+  const seedListings = Array.isArray(initialListings) ? initialListings : []
+  // Seed nga SSR => paraqitja e pare eshte e plote (profil + shpallje), pa spinner
+  // mbi ekran e pa flash 0. Refetch-i ne klient eshte vetem rifreskim i heshtur.
+  const [profile, setProfile] = useState<any>(initialProfile ?? null)
   const ownerOnline = useIsOnline(profile?.id) // prania LIVE (BLLOKU Imazhi 5)
-  const [listings, setListings] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+  const [listings, setListings] = useState<any[]>(seedListings)
+  const [loading, setLoading] = useState(!initialProfile)
   const [notFound, setNotFound] = useState(false)
   const [activeTab, setActiveTab] = useState<'listings' | 'about'>('listings')
-  const [biz, setBiz] = useState<any>(null)
+  const [biz, setBiz] = useState<any>(initialBiz ?? null)
   // Shitjet personale te kryera — social proof (Faza 6). Funksioni
   // user_sold_count numeron vetem status='sold' me business_id null.
   const [soldCount, setSoldCount] = useState(0)
@@ -59,7 +62,9 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
         .order('last_bumped_at', { ascending: false })
         .limit(60)
 
-      setListings(ls || [])
+      // Rifreskim i heshtur: zevendeso VETEM kur kthehen te dhena reale; nese bosh
+      // (race/rrjet), mbaj seed-in SSR => kurre flash 0. Bosh legjitim vjen nga SSR.
+      if (ls && ls.length) setListings(ls)
 
       // Biznesi i ketij personi — lidhja person → dyqan (§4.5). Merret nga
       // tabela `businesses`, jo nga `profiles.shop_name`: ai i fundit tregon
