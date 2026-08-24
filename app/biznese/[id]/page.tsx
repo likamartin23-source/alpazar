@@ -1,4 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { cookies } from 'next/headers'
 import type { Metadata } from 'next'
 import BiznesPageClient from './BiznesPageClient'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../lib/supabase'
@@ -38,6 +40,33 @@ async function fetchBizListings(businessId: string) {
     .order('created_at', { ascending: false })
     .limit(20)
   return data ?? []
+}
+
+// SSR-seed i nen-kategorive — E NJEJTA query si klienti. Pa kete, kategoritë
+// shfaqeshin vetem pas fetch-it ne klient (bosh -> plot) => kerciste layout-i.
+async function fetchBizSubcats(businessId: string) {
+  const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  const { data } = await sb
+    .from('business_subcategory_map')
+    .select('subcategory_id, business_subcategories(name, icon)')
+    .eq('business_id', businessId)
+  return (data ?? []).map((r: any) => r.business_subcategories).filter(Boolean)
+}
+
+// FIX-3 (Cowork): përcakto pronar-vs-vizitor NE SERVER nga cookie-sesioni, që
+// paraqitja e parë të renderojë TE NJEJTEN dege si klienti — pa kërcim pronar↔vizitor
+// pas hidratimit. Defensiv: çdo dështim (p.sh. pa sesion) => null (= vizitor),
+// pikërisht default-i aktual, pa regresion. getSession() lexon nga cookie pa
+// shkruar cookie (s'provokon "cookies can only be modified..." te Server Component).
+async function fetchViewerId(): Promise<string | null> {
+  try {
+    const cookieStore = await cookies()
+    const sb = createServerComponentClient({ cookies: () => cookieStore as any })
+    const { data: { session } } = await sb.auth.getSession()
+    return session?.user?.id ?? null
+  } catch {
+    return null
+  }
 }
 
 // hours -> openingHours ne format schema.org (p.sh. "Mo-Fr 09:00-18:00")
@@ -105,9 +134,12 @@ export async function generateMetadata(props: { params: Promise<{ id: string }> 
 export default async function BiznesPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params
   const biz = await fetchBizData(params.id)
-  // Shpalljet SSR vetem nese biznesi ekziston (perdorim id-ne reale te biznesit,
-  // jo params.id qe mund te jete owner_id nga fallback-u).
-  const initialListings = biz ? await fetchBizListings(biz.id) : []
+  // Shpalljet + nen-kategoritë + identiteti i viewer-it SSR (paralel) vetem nese
+  // biznesi ekziston (perdorim id-ne reale te biznesit, jo params.id).
+  const [initialListings, initialSubcats, viewerId] = biz
+    ? await Promise.all([fetchBizListings(biz.id), fetchBizSubcats(biz.id), fetchViewerId()])
+    : [[], [], null]
+  const initialIsOwner = !!(biz && viewerId && viewerId === biz.owner_id)
 
   const jsonLd = biz
     ? JSON.stringify({
@@ -144,7 +176,13 @@ export default async function BiznesPage(props: { params: Promise<{ id: string }
       {jsonLd && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
       )}
-      <BiznesPageClient params={params} initialBiz={biz} initialListings={initialListings} />
+      <BiznesPageClient
+        params={params}
+        initialBiz={biz}
+        initialListings={initialListings}
+        initialSubcats={initialSubcats}
+        initialIsOwner={initialIsOwner}
+      />
     </>
   )
 }
