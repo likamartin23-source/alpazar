@@ -29,3 +29,7 @@ alpazar-playwright.png
 # Test artifacts (generated)
 test-results/
 playwright-report/
+
+# Python cache nga skill CLIs
+__pycache__/
+*.pyc

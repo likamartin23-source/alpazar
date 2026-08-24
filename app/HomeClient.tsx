@@ -41,7 +41,7 @@ function InstallBanner() {
 
   if (!show || installed || dismissed) return null
   return (
-    <div style={{ position: 'fixed', bottom: 226, left: 12, zIndex: 190, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 3 }}>
+    <div className="install-float" style={{ position: 'fixed', bottom: 226, left: 12, zIndex: 190, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 3 }}>
       <button
         type="button"
         aria-label="Instalo aplikacionin"
@@ -152,7 +152,7 @@ function ShareBox({ refCode }: { refCode?: string }) {
   }
 
   return (
-    <div style={{ position: 'fixed', bottom: 157, left: 12, zIndex: 190, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 3 }}>
+    <div className="share-float" style={{ position: 'fixed', bottom: 157, left: 12, zIndex: 190, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 3 }}>
       {open && (
         <div style={{
           background: '#111', border: '1.5px solid #1d4ed8', borderRadius: '14px 14px 14px 0',
@@ -599,6 +599,24 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .new-listing-toast{background:#EAF3DE;border:1px solid #97C459;border-radius:8px;padding:6px 12px;display:flex;align-items:center;gap:7px;margin-bottom:7px;animation:toast-in .3s ease;}
         @keyframes toast-in{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
         .new-listing-toast span{font-size:11px;font-weight:700;color:#3B6D11;}
+        /* ── Navigimi desktop ── */
+        .desk-nav{display:none;}
+        .desk-nav-btn{background:rgba(0,0,0,.08);border:none;border-radius:8px;padding:6px 11px;font-size:12px;font-weight:700;color:#111;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:background .15s;}
+        .desk-nav-btn:hover{background:rgba(0,0,0,.16);}
+        .desk-nav-btn.dn-active{background:rgba(0,0,0,.16);}
+        .desk-nav-add{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:8px;padding:6px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:opacity .15s;box-shadow:0 2px 8px rgba(230,51,18,.3);}
+        .desk-nav-add:hover{opacity:.88;}
+        /* ── Responsive breakpoints (additive) ── */
+        @media(min-width:768px){
+          .wrap{max-width:960px;padding-bottom:0;}
+          .bottom-nav{display:none;}
+          .desk-nav{display:flex;gap:3px;align-items:center;margin-right:6px;}
+          .share-float{bottom:24px !important;left:auto !important;right:24px !important;}
+          .install-float{display:none !important;}
+        }
+        @media(min-width:1024px){
+          .wrap{max-width:1200px;}
+        }
       ` }} />
 
       <div className="wrap">
@@ -609,6 +627,27 @@ export default function HomeClient({ initialListings = [], initialCategories = [
               <span className="brand">{settings.site_name || 'ALPAZAR'}</span>
             </div>
             <div className="nav">
+              {/* Navigim desktop — i fshehur në mobile me CSS */}
+              <div className="desk-nav">
+                <button type="button" className="desk-nav-btn dn-active" aria-current="page">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                  Kreu
+                </button>
+                <button type="button" className="desk-nav-btn" onClick={() => go('/search')}>
+                  <i className="ti ti-search" aria-hidden="true" />Kërko
+                </button>
+                <button type="button" className="desk-nav-add" onClick={() => go(user ? '/listing/new' : '/auth/login')}>
+                  <i className="ti ti-plus" aria-hidden="true" />Shto
+                </button>
+                <button type="button" className="desk-nav-btn" onClick={() => go(user ? '/messages' : '/auth/login')} style={{ position: 'relative' }}>
+                  <i className="ti ti-message-circle" aria-hidden="true" />Mesazhe
+                  {unreadCount > 0 && <span className="nav-badge" aria-hidden="true">{unreadCount > 9 ? '9+' : unreadCount}</span>}
+                </button>
+                <button type="button" className="desk-nav-btn" onClick={() => go(user ? '/profile' : '/auth/login')}>
+                  <i className="ti ti-user-circle" aria-hidden="true" />
+                  {authReady && user ? 'Profili' : 'Hyr'}
+                </button>
+              </div>
               {user && unreadNotifications > 0 && (
                 <button type="button" className="icon-btn" aria-label={`${unreadNotifications} njoftime të palexuara`} onClick={() => go('/notifications')} style={{ position: 'relative' }}>
                   <i className="ti ti-bell-ringing" aria-hidden="true" />
