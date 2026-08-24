@@ -22,6 +22,24 @@ async function fetchBizData(id: string) {
   return data
 }
 
+// SSR-seed i shpalljeve — E NJEJTA query si klienti (BiznesPageClient.fetchBiz).
+// Pa kete, shpalljet merreshin VETEM ne klient => paraqitja e pare kishte 0 shpallje
+// (gjendja fillestare []), pastaj mbushej ne 3 => flicker-i "1s e re -> bosh -> e re"
+// qe pa perdoruesi. RLS lejon anon (`listings_select`: is_active AND business_is_visible),
+// ndaj serveri (anon key) i merr sakte => paraqitja e pare eshte tashme e plote.
+async function fetchBizListings(businessId: string) {
+  const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  const { data } = await sb
+    .from('listings')
+    .select('id,title,price,currency,images,condition,city,is_premium,views_count,created_at,rank_tier')
+    .eq('business_id', businessId)
+    .eq('is_active', true)
+    .order('rank_tier', { ascending: false })
+    .order('created_at', { ascending: false })
+    .limit(20)
+  return data ?? []
+}
+
 // hours -> openingHours ne format schema.org (p.sh. "Mo-Fr 09:00-18:00")
 const DAY_MAP: Record<string, string> = {
   hene: 'Mo', marte: 'Tu', merkure: 'We', enjte: 'Th',
@@ -87,6 +105,9 @@ export async function generateMetadata(props: { params: Promise<{ id: string }> 
 export default async function BiznesPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params
   const biz = await fetchBizData(params.id)
+  // Shpalljet SSR vetem nese biznesi ekziston (perdorim id-ne reale te biznesit,
+  // jo params.id qe mund te jete owner_id nga fallback-u).
+  const initialListings = biz ? await fetchBizListings(biz.id) : []
 
   const jsonLd = biz
     ? JSON.stringify({
@@ -123,7 +144,7 @@ export default async function BiznesPage(props: { params: Promise<{ id: string }
       {jsonLd && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
       )}
-      <BiznesPageClient params={params} initialBiz={biz} />
+      <BiznesPageClient params={params} initialBiz={biz} initialListings={initialListings} />
     </>
   )
 }
