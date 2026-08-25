@@ -526,11 +526,11 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           formularin e plotë + fshirjen 3-shkallëshe. Këtu: shkurtoret e tjera. Shpalljet/
           Vlerësimet/metrikat janë tashmë në këtë faqe (tabet + koka). */}
       {isOwner && !asVisitor && (
-        // Paneli i brendshëm i biznesit (spec §"paneli i biznesit"): butonat e biznesit,
-        // panel identik në formë me profilin. "Të dhënat e biznesit" (primar) rri te koka;
-        // këtu shkurtoret e tjera: Analitika (pa referral) · Vlerësime · Mesazhe(filtër) ·
-        // Plani(trashëgim) · Logo & Kopertinë. Ekskluzivitetet e llogarisë (personale/siguri/
-        // GDPR/referral) NUK transpozohen te biznesi — ato rrinë te "Vepro si: Unë" (profili).
+        // Paneli i brendshëm i biznesit: VETËM butona që i shërbejnë misionit të biznesit —
+        // Analitika (pa referral) · Vlerësime · Mesazhe(filtër biznes) · Logo & Kopertinë ·
+        // Shiko si vizitor. "Të dhënat e biznesit" (primar) rri te koka. Butonat e "përdoruesit
+        // si përdorues platforme" (të dhëna personale · siguri · GDPR · Abonimi/Plani · Fto miq/
+        // referral) NUK dublohen këtu — janë të llogarisë personale, arrihen me "Vepro si: Unë".
         <div style={{ background: '#fff', margin: '0 0 8px', padding: '12px 16px', borderBottom: '1px solid #f0f0f0' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
             <button type="button" onClick={() => { window.location.href = `/biznese/${biz.id}/analytics` }} className="biz-panel-btn">
@@ -541,9 +541,6 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
             </button>
             <button type="button" onClick={() => { window.location.href = `/messages?biz=${biz.id}` }} className="biz-panel-btn">
               <i className="ti ti-message" aria-hidden="true" /> Mesazhet
-            </button>
-            <button type="button" onClick={() => { window.location.href = '/billing' }} className="biz-panel-btn">
-              <i className="ti ti-crown" aria-hidden="true" /> Plani
             </button>
             <button type="button" onClick={() => { window.location.href = `/biznese/${biz.id}/edit` }} className="biz-panel-btn">
               <i className="ti ti-photo" aria-hidden="true" /> Logo &amp; Kopertinë
