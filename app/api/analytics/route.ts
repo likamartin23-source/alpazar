@@ -32,25 +32,33 @@ export async function GET(req: NextRequest) {
   const days = Math.min(Math.max(Number.isFinite(_daysRaw) ? _daysRaw : 30, 1), 90)
   const since = new Date(Date.now() - days * 86400000).toISOString()
 
-  // Metrikat e reja të gjurmimit (impresione/reach/shares/kontakt-split/saves/
-  // followers) nga RPC-ja SECURITY DEFINER `analytics_extra` — agregim në SQL,
-  // i kufizuar te auth.uid(). Fail-soft: nëse mungon, thjesht s'shtohet.
-  const { data: extra } = await sb.rpc('analytics_extra', { p_days: days })
-  const extraObj = extra && typeof extra === 'object' ? extra : {}
+  // Modaliteti "biznes" (spec: paneli i biznesit → Analitika e VET, PA referral). Additive:
+  // sjellja e paracaktuar (personale) s'ndryshon. Kërkon pronësi të verifikuar server-side.
+  const bizId = req.nextUrl.searchParams.get('biz')
+  if (bizId) {
+    const { data: owned } = await sb.from('businesses').select('id').eq('id', bizId).eq('owner_id', user.id).maybeSingle()
+    if (!owned) return NextResponse.json({ error: 'Jo pronar i këtij biznesi' }, { status: 403 })
+  }
 
-  // 1. User's listings
-  const { data: listings } = await sb
+  // Metrikat e reja të gjurmimit nga RPC-ja `analytics_extra` (auth.uid). VETËM në modalitetin
+  // personal — referral/metrikat personale s'transpozohen te biznesi (ekskluzivitet i llogarisë).
+  const extra = bizId ? null : (await sb.rpc('analytics_extra', { p_days: days })).data
+  const extraData = (!bizId && extra && typeof extra === 'object') ? extra : {}
+
+  // 1. Shpalljet — sipas biznesit (business_id) kur bizId, përndryshe personale (user_id).
+  let lq = sb
     .from('listings')
     .select('id,title,price,currency,is_active,views_count,created_at')
-    .eq('user_id', user.id)
     .order('created_at', { ascending: false })
     .limit(50)
+  lq = bizId ? lq.eq('business_id', bizId) : lq.eq('user_id', user.id)
+  const { data: listings } = await lq
 
   if (!listings || listings.length === 0) {
     return NextResponse.json({
       views_by_day: [], top_listings: [], hourly: [],
       total_views: 0, total_contacts: 0,
-      ...extraObj,
+      ...extraData,
     }, { headers: NO_STORE })
   }
 
@@ -120,6 +128,6 @@ export async function GET(req: NextRequest) {
     total_views: (rawViews ?? []).length,
     total_contacts: (msgCounts ?? []).length,
     period_days: days,
-    ...extraObj,
+    ...extraData,
   }, { headers: NO_STORE })
 }

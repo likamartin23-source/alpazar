@@ -533,7 +533,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
         // GDPR/referral) NUK transpozohen te biznesi — ato rrinë te "Vepro si: Unë" (profili).
         <div style={{ background: '#fff', margin: '0 0 8px', padding: '12px 16px', borderBottom: '1px solid #f0f0f0' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
-            <button type="button" onClick={() => { window.location.href = `/profile/analytics?biz=${biz.id}` }} className="biz-panel-btn">
+            <button type="button" onClick={() => { window.location.href = `/biznese/${biz.id}/analytics` }} className="biz-panel-btn">
               <i className="ti ti-chart-bar" aria-hidden="true" /> Analitika
             </button>
             <button type="button" onClick={() => { setActiveTab('about'); if (!reviewsLoaded) { setReviewsLoaded(true); supabase.rpc('business_reviews', { p_business: biz.id }).then(({ data }) => setReviews(data || [])) } }} className="biz-panel-btn">
