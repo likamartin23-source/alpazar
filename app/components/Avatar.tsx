@@ -195,6 +195,14 @@ export default function Avatar({
           style={{ position: 'absolute', left: -1, bottom: -1, width: dot, height: dot, borderRadius: '50%', background: '#16a34a', border: '2px solid #fff', boxShadow: '0 0 0 1px rgba(0,0,0,.04)' }}
         />
       )}
+      {/* Offline i DUKSHËM (BLLOKU I PËRMIRËSUAR §2b): pikë gri VETËM kur online===false.
+          `undefined` mbetet pa pikë (fail-soft, pa "offline" të rremë kur s'e dimë). */}
+      {online === false && (
+        <div
+          role="img" aria-label="Jashtë linje"
+          style={{ position: 'absolute', left: -1, bottom: -1, width: dot, height: dot, borderRadius: '50%', background: '#9aa0a6', border: '2px solid #fff', boxShadow: '0 0 0 1px rgba(0,0,0,.04)' }}
+        />
+      )}
     </div>
   )
 }

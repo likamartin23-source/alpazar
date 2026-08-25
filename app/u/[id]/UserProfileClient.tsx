@@ -54,7 +54,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
       // "I ri"/"I perdorur" dhe VIP).
       const { data: ls } = await supabase
         .from('listings')
-        .select('id,title,price,currency,images,city,created_at,is_premium,condition,rank_tier')
+        .select('id,title,price,currency,images,city,created_at,is_premium,condition,rank_tier,views_count')
         .eq('user_id', params.id)
         .is('business_id', null)   // vetem shpallje personale — ato te biznesit rrine te faqja e biznesit (Vendimi 7, pa dyfishim)
         .eq('is_active', true)
