@@ -11,8 +11,12 @@ const PERIODS = [
   { label: '30 ditë', days: 30 },
 ]
 
-function fmt(n: number, cur = 'ALL') {
-  return n >= 1000 ? `${(n / 1000).toFixed(1)}K ${cur}` : `${n} ${cur}`
+function fmt(n: number | null | undefined, cur?: string | null) {
+  // BLLOKU I PËRMIRËSUAR §10 (rregullim i bug-ut "null ALL"): çmimi bosh/0 → tekst
+  // marrëveshjeje; monedha bosh → "L" (jo kodi i papërpunuar "ALL"/"null").
+  if (n == null || n === 0) return 'Çmim me marrëveshje'
+  const sym = cur === 'EUR' ? '€' : 'L'
+  return n >= 1000 ? `${(n / 1000).toFixed(1)}K ${sym}` : `${n} ${sym}`
 }
 
 function BarChart({ data, color = '#E63312' }: { data: { date: string; count: number }[]; color?: string }) {
@@ -232,6 +236,15 @@ const [loadError, setLoadError] = useState(false)
                 </div>
               </div>
             ))}
+          </div>
+          {/* Referral i integruar (BLLOKU I PËRMIRËSUAR §10): CTA te programi ekzistues,
+              pa dyfishuar sistemin — thjesht hyrje nga analitika. */}
+          <div className="an-card">
+            <div className="an-title">Referral</div>
+            <button type="button" onClick={() => { window.location.href = '/referral' }}
+              style={{ width: '100%', minHeight: 48, background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842', border: 'none', borderRadius: 11, fontSize: 13, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              <i className="ti ti-gift" aria-hidden="true" /> Fto miq — fito pikë & Premium →
+            </button>
           </div>
         </>
       )}
