@@ -170,4 +170,19 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
   .listing-card:hover .card-img img{transform:none;}
 }
 @media(min-width:768px){.listings-grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));}}
-@media(min-width:1024px){.listings-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));}}
+/* Desktop: karta zmadhohet NË SINKRON me webin (jo mobile e tejzgjatur) —
+   kolona më të gjera, hapësirë më e madhe, tekst më i madh. */
+@media(min-width:1024px){
+  .listings-grid{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:var(--sp-4);}
+  .card-body{padding:12px 13px 13px;}
+  .card-title{font-size:15px;}
+  .card-price{font-size:17px;}
+  .card-loc,.card-loc i{font-size:12px;}
+  .card-seller-ov span{font-size:11px;}
+  .card-img i{font-size:34px;}
+}
+@media(min-width:1440px){
+  .listings-grid{grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:24px;}
+  .card-title{font-size:16px;}
+  .card-price{font-size:19px;}
+}

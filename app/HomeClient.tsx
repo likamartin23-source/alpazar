@@ -19,9 +19,10 @@ import { nf } from '../lib/format'
 // Banner shkarkim — buton i vogël katrore pulsues (fixed, vetem faqja kryesore)
 function InstallBanner() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
-  const [show, setShow] = useState(false)
   const [installed, setInstalled] = useState(false)
   const [dismissed, setDismissed] = useState(false)
+  const [standalone, setStandalone] = useState(false)
+  const [showGuide, setShowGuide] = useState(false)
 
   const { pos, dragging, onPointerDown } = useDraggable(
     '_alpz_pos_install',
@@ -30,23 +31,34 @@ function InstallBanner() {
   )
 
   useEffect(() => {
-    if (window.matchMedia('(display-mode: standalone)').matches) return
-    const handler = (e: any) => { e.preventDefault(); setDeferredPrompt(e); setShow(true) }
-    const installedHandler = () => { setInstalled(true); setShow(false) }
+    // Nese app-i eshte tashme i instaluar (standalone), fshihe butonin.
+    try {
+      if (window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone) setStandalone(true)
+    } catch { /* ignore */ }
+    // Chromium ndez beforeinstallprompt -> instalim me nje klik. Firefox/Safari nuk e ndezin;
+    // atehere butoni mbetet i dukshem dhe klik-u tregon udhezime manuale (shih install()).
+    const handler = (e: any) => { e.preventDefault(); setDeferredPrompt(e) }
+    const installedHandler = () => { setInstalled(true) }
     window.addEventListener('beforeinstallprompt', handler)
     window.addEventListener('appinstalled', installedHandler)
     return () => { window.removeEventListener('beforeinstallprompt', handler); window.removeEventListener('appinstalled', installedHandler) }
   }, [])
 
   async function install() {
-    if (!deferredPrompt) return
-    deferredPrompt.prompt()
-    const { outcome } = await deferredPrompt.userChoice
-    if (outcome === 'accepted') setInstalled(true)
-    setShow(false)
+    if (deferredPrompt) {
+      deferredPrompt.prompt()
+      const { outcome } = await deferredPrompt.userChoice
+      if (outcome === 'accepted') setInstalled(true)
+      setDeferredPrompt(null)
+      return
+    }
+    // Pa prompt native (Firefox/Safari) -> udhezime manuale.
+    setShowGuide(v => !v)
   }
 
-  if (!show || installed || dismissed) return null
+  // GJITHMONE i dukshem per perdoruesin (jo i varur nga beforeinstallprompt qe s'ndizet
+  // ne cdo browser) — fshihet vetem nese eshte instaluar, mbyllur, ose ne standalone.
+  if (installed || dismissed || standalone) return null
   return (
     <div
       className="install-float"
@@ -66,6 +78,33 @@ function InstallBanner() {
       }}
       onPointerDown={onPointerDown}
     >
+      {showGuide && (
+        <div
+          role="dialog"
+          aria-label="Si të instaloni Alpazar"
+          style={{
+            position: 'absolute', bottom: '112%', left: 0,
+            width: 236, maxWidth: '78vw',
+            background: '#111', color: '#fff', borderRadius: '12px 12px 12px 4px',
+            padding: '12px 13px', boxShadow: '0 10px 30px rgba(0,0,0,.35)',
+            fontSize: 12, lineHeight: 1.5, zIndex: 5, cursor: 'default',
+          }}
+          onPointerDown={e => e.stopPropagation()}
+        >
+          <strong style={{ display: 'block', color: '#22C55E', fontSize: 13, marginBottom: 6 }}>
+            Instalo Alpazar-in
+          </strong>
+          <div style={{ marginBottom: 5 }}><b>Chrome/Edge:</b> menyja ⋮ → “Instalo aplikacionin”.</div>
+          <div style={{ marginBottom: 5 }}><b>iPhone (Safari):</b> Ndaj <span aria-hidden="true">↑</span> → “Add to Home Screen”.</div>
+          <div><b>Android:</b> menyja ⋮ → “Shto te ekrani kryesor”.</div>
+          <button
+            type="button"
+            onClick={() => setShowGuide(false)}
+            style={{ position: 'absolute', top: 6, right: 8, background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: 13, lineHeight: 1 }}
+            aria-label="Mbyll udhëzimet"
+          >✕</button>
+        </div>
+      )}
       <button
         type="button"
         aria-label="Instalo aplikacionin"
@@ -595,7 +634,8 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         /* Kartat e bizneseve = madhësi e barabartë me kartat e shpalljeve: të njëjtat
            kolona responsive si .listings-grid (768→180px, 1024→220px) + media 4/3 e njëjtë. */
         @media(min-width:768px){.shops-grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));}}
-        @media(min-width:1024px){.shops-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));}}
+        @media(min-width:1024px){.shops-grid{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;}}
+        @media(min-width:1440px){.shops-grid{grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:24px;}}
         .shop-mini{background:#fff;border-radius:14px;overflow:hidden;cursor:pointer;border:1px solid #eee;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 18px -12px rgba(0,0,0,.14);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;}
         .shop-mini:hover{transform:translateY(-3px);box-shadow:0 10px 24px -8px rgba(0,0,0,.2);}
         .shop-mini:active{transform:scale(.96);}
@@ -671,8 +711,60 @@ export default function HomeClient({ initialListings = [], initialCategories = [
           .float-icon-main{font-size:22px;}
         }
         @media(min-width:1024px){
-          .wrap{max-width:1200px;}
-          .body{padding:0 32px;}
+          /* 100% full screen: wrap-i mbush gjithë gjerësinë e ekranit; padding-u
+             anësor rritet me viewport-in. Rregull i artë (#4): gjithçka zmadhohet
+             NË SINKRON — header, kërkim, kategori, hero, tituj, karta, banner-a —
+             përndryshe do dukej si mobile e tejzgjatur nëpër ekran. */
+          .wrap{max-width:100%;}
+          .body{padding:0 clamp(32px,4vw,72px);}
+          .topbar{padding:14px clamp(32px,4vw,72px);}
+          .searchbar{padding:0 clamp(32px,4vw,72px) 14px;}
+          .cat-scroll{padding:0 clamp(32px,4vw,72px) 14px;flex-wrap:wrap;}
+          /* Header */
+          .brand{font-size:24px;}
+          .icon-btn{width:40px;height:40px;}
+          .icon-btn i{font-size:20px;}
+          /* Kërkimi */
+          .search-wrap i{font-size:18px;}
+          .search-wrap input{font-size:15px;padding:14px 0;}
+          .search-btn{font-size:14px;padding:14px 24px;}
+          /* Kategoritë */
+          .cat-item{padding:9px 16px;}
+          .cat-item i{font-size:16px;}
+          .cat-item span{font-size:13px;}
+          /* Hero */
+          .hero{padding:26px 32px;border-radius:22px;margin-bottom:18px;}
+          .hero h2{font-size:24px;}
+          .hero p{font-size:14px;}
+          .stat{padding:0 22px;}
+          .stat-n{font-size:30px;}
+          .stat-l{font-size:10px;}
+          /* Tituj seksioni */
+          .section-hdr h3{font-size:18px;}
+          .section-hdr a{font-size:14px;}
+          /* Kartat e bizneseve — në sinkron me kartat e shpalljeve */
+          .shop-av{width:42px;height:42px;font-size:16px;}
+          .shop-nm{font-size:15px;}
+          .shop-ct{font-size:13px;}
+          .shop-info{min-height:80px;padding:12px 13px 13px;}
+          /* Banner-a & rreshta */
+          .no-ads{padding:10px 16px;} .no-ads i{font-size:16px;} .no-ads span{font-size:12px;}
+          .trust-card{padding:10px 12px;} .trust-card i{font-size:18px;} .trust-card span{font-size:11px;}
+          .filter-btn{font-size:13px;padding:8px 16px;}
+          .premium-cta{padding:14px 20px;border-radius:16px;}
+          .prem-icon{width:38px;height:38px;} .prem-icon i{font-size:19px;}
+          .prem-text strong{font-size:14px;} .prem-text span{font-size:12px;}
+          .prem-btn{font-size:13px;padding:11px 18px;}
+        }
+        @media(min-width:1440px){
+          .body{padding:0 clamp(56px,5vw,120px);}
+          .topbar{padding-left:clamp(56px,5vw,120px);padding-right:clamp(56px,5vw,120px);}
+          .searchbar{padding-left:clamp(56px,5vw,120px);padding-right:clamp(56px,5vw,120px);}
+          .cat-scroll{padding-left:clamp(56px,5vw,120px);padding-right:clamp(56px,5vw,120px);}
+          .brand{font-size:26px;}
+          .hero h2{font-size:27px;}
+          .stat-n{font-size:34px;}
+          .section-hdr h3{font-size:20px;}
         }
       ` }} />
 
