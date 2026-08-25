@@ -1,0 +1,396 @@
+'use client'
+// BLLOKU PËRFUNDIMTAR §3.8 — Formulari i VETËM i biznesit (create + edit), i plotë,
+// profesional, i integruar. Ripërdoret nga /biznese/new dhe nga paneli i brendshëm
+// (Të dhënat e biznesit). 7 seksione; vetëm Tipi+Nënkategoritë+Emri të detyrueshme;
+// pjesa tjetër progresive (opsionale). Kolonat additive nga migrimi 20260825.
+// §3.9: fshirja 3-shkallëshe (vetëm te editimi, vetëm-pronar, RPC delete_own_business).
+import { useState, useEffect } from 'react'
+import { supabase } from '../../lib/supabase'
+import { MapPicker } from './MapPicker'
+
+const MAIN_TYPES = [
+  { id: 'sherbime',          icon: '🛠️', label: 'Shërbime' },
+  { id: 'produkte',          icon: '📦', label: 'Produkte' },
+  { id: 'sherbime_produkte', icon: '🔁', label: 'Shërbime & Produkte' },
+]
+const DAYS = [['mon','Hënë'],['tue','Martë'],['wed','Mërkurë'],['thu','Enjte'],['fri','Premte'],['sat','Shtunë'],['sun','Diel']] as const
+const PAY_OPTS = ['Para në dorë (COD)', 'PayPal', 'e-Para', 'EasyPay', 'Paysera', 'Kartë', 'Transfertë bankare']
+const LEGAL_FORMS = ['Person fizik', 'SHPK', 'SHA', 'Tjetër']
+
+interface SubCat { id: number; parent_type: string; name: string; slug: string; icon: string }
+type Hours = Record<string, { closed: boolean; open: string; close: string }>
+
+export interface BusinessInitial {
+  id?: string
+  name?: string; type?: string; description?: string; tagline?: string; founded_year?: number | null
+  logo_url?: string | null; cover_url?: string | null; gallery?: string[] | null
+  phone?: string; whatsapp?: string; email?: string; website?: string; contact_person?: string
+  socials?: { instagram?: string; facebook?: string; tiktok?: string } | null
+  city?: string; address?: string; latitude?: number | null; longitude?: number | null
+  service_area?: string; delivery?: { ka?: boolean; detaje?: string } | null
+  hours?: any; nipt?: string; legal_form?: string; withdrawal_days?: number
+  payment_methods?: string[] | null; return_policy?: string; warranty?: string
+  subcatIds?: number[]
+}
+
+const emptyHours = (): Hours => Object.fromEntries(DAYS.map(([k]) => [k, { closed: k === 'sun', open: '09:00', close: '18:00' }]))
+
+function hoursSummary(h: Hours): string {
+  const open = DAYS.filter(([k]) => !h[k].closed)
+  if (open.length === 0) return 'Mbyllur'
+  return open.map(([k, l]) => `${l} ${h[k].open}–${h[k].close}`).join(' · ')
+}
+
+export default function BusinessForm({ mode, initial, onSaved }: {
+  mode: 'create' | 'edit'
+  initial?: BusinessInitial
+  onSaved?: (id: string) => void
+}) {
+  const [userId, setUserId]   = useState<string | null>(null)
+  const [saving, setSaving]   = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [msg, setMsg]         = useState('')
+  const [subcats, setSubcats] = useState<SubCat[]>([])
+  const [selSubs, setSelSubs] = useState<number[]>(initial?.subcatIds || [])
+  const [mainType, setMainType] = useState(initial?.type || '')
+
+  const [f, setForm] = useState({
+    name: initial?.name || '', description: initial?.description || '', tagline: initial?.tagline || '',
+    founded_year: initial?.founded_year ?? ('' as number | ''),
+    phone: initial?.phone || '', whatsapp: initial?.whatsapp || '', email: initial?.email || '',
+    website: initial?.website || '', contact_person: initial?.contact_person || '',
+    ig: initial?.socials?.instagram || '', fb: initial?.socials?.facebook || '', tiktok: initial?.socials?.tiktok || '',
+    city: initial?.city || '', address: initial?.address || '',
+    latitude: initial?.latitude ?? null, longitude: initial?.longitude ?? null,
+    service_area: initial?.service_area || '', delivery_ka: !!initial?.delivery?.ka, delivery_detaje: initial?.delivery?.detaje || '',
+    nipt: initial?.nipt || '', legal_form: initial?.legal_form || '', withdrawal_days: initial?.withdrawal_days ?? 14,
+    return_policy: initial?.return_policy || '', warranty: initial?.warranty || '',
+  })
+  const [pay, setPay] = useState<string[]>(initial?.payment_methods || [])
+  const [hours, setHours] = useState<Hours>(() => {
+    const h = initial?.hours
+    if (h && typeof h === 'object' && h.days) return { ...emptyHours(), ...h.days }
+    return emptyHours()
+  })
+
+  const [logoFile, setLogoFile] = useState<File | null>(null)
+  const [coverFile, setCoverFile] = useState<File | null>(null)
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([])
+  const [logoPrev, setLogoPrev] = useState(initial?.logo_url || '')
+  const [coverPrev, setCoverPrev] = useState(initial?.cover_url || '')
+  const [gallery, setGallery] = useState<string[]>(initial?.gallery || [])
+
+  // Fshirja 3-shkallëshe (§3.9)
+  const [delStage, setDelStage] = useState(0)      // 0 mbyllur · 1 paralajmërim · 2 shkruaj emrin · 3 duke fshirë
+  const [delConfirmName, setDelConfirmName] = useState('')
+
+  const setV = (k: string, v: any) => setForm(s => ({ ...s, [k]: v }))
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) { window.location.href = '/auth/login'; return }
+      setUserId(session.user.id)
+    })
+  }, [])
+
+  useEffect(() => {
+    if (!mainType) { setSubcats([]); return }
+    const types = mainType === 'sherbime_produkte' ? ['sherbime', 'produkte', 'sherbime_produkte'] : [mainType]
+    supabase.from('business_subcategories').select('*').in('parent_type', types).order('id')
+      .then(({ data }) => { if (data) setSubcats(data) })
+  }, [mainType])
+
+  function toggleSub(id: number) { setSelSubs(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]) }
+  function togglePay(m: string) { setPay(p => p.includes(m) ? p.filter(x => x !== m) : [...p, m]) }
+
+  async function compress(file: File, maxW: number): Promise<Blob> {
+    if (file.size < 100 * 1024) return file
+    return new Promise(res => {
+      const img = new Image(), url = URL.createObjectURL(file)
+      img.onload = () => {
+        URL.revokeObjectURL(url)
+        const scale = Math.min(1, maxW / Math.max(img.naturalWidth, img.naturalHeight))
+        const c = document.createElement('canvas')
+        c.width = Math.round(img.naturalWidth * scale); c.height = Math.round(img.naturalHeight * scale)
+        c.getContext('2d')!.drawImage(img, 0, 0, c.width, c.height)
+        c.toBlob(b => res(b ?? file), 'image/jpeg', 0.82)
+      }
+      img.onerror = () => { URL.revokeObjectURL(url); res(file) }
+      img.src = url
+    })
+  }
+  async function up(file: File, path: string, maxW: number, bucket: string): Promise<string> {
+    const blob = await compress(file, maxW)
+    const { error } = await supabase.storage.from(bucket).upload(path, blob, { contentType: 'image/jpeg', upsert: true })
+    if (error) throw error
+    return supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl
+  }
+
+  async function save() {
+    if (!mainType) { setMsg('err:Zgjidh llojin e biznesit.'); return }
+    if (selSubs.length === 0) { setMsg('err:Zgjidh të paktën një nënkategori.'); return }
+    if (!f.name.trim()) { setMsg('err:Emri i biznesit është i detyrueshëm.'); return }
+    if (!userId) return
+    setSaving(true); setMsg(''); setUploading(true)
+    let logoUrl = logoPrev, coverUrl = coverPrev, gal = [...gallery]
+    try {
+      if (logoFile) logoUrl = await up(logoFile, `${userId}/biz-logo.jpg`, 400, 'avatars')
+      if (coverFile) coverUrl = await up(coverFile, `${userId}/biz-cover.jpg`, 1920, 'covers')
+      for (let i = 0; i < galleryFiles.length; i++) {
+        gal.push(await up(galleryFiles[i], `${userId}/biz-gal-${Date.now()}-${i}.jpg`, 1280, 'listing-images'))
+      }
+    } catch (e: any) { setMsg(`err:Gabim gjatë ngarkimit: ${e.message}`); setSaving(false); setUploading(false); return }
+    setUploading(false)
+
+    const payload: any = {
+      name: f.name.trim(), type: mainType,
+      description: f.description || null, tagline: f.tagline || null,
+      founded_year: f.founded_year ? Number(f.founded_year) : null,
+      logo_url: logoUrl || null, cover_url: coverUrl || null, gallery: gal.length ? gal : null,
+      phone: f.phone || null, whatsapp: f.whatsapp || null, email: f.email || null,
+      website: f.website || null, contact_person: f.contact_person || null,
+      socials: (f.ig || f.fb || f.tiktok) ? { instagram: f.ig || null, facebook: f.fb || null, tiktok: f.tiktok || null } : null,
+      city: f.city || null, address: f.address || null, latitude: f.latitude, longitude: f.longitude,
+      service_area: f.service_area || null,
+      delivery: f.delivery_ka ? { ka: true, detaje: f.delivery_detaje || null } : { ka: false },
+      hours: { days: hours, schedule: hoursSummary(hours) },
+      nipt: f.nipt || null, legal_form: f.legal_form || null, withdrawal_days: f.withdrawal_days || 14,
+      payment_methods: pay.length ? pay : null, return_policy: f.return_policy || null, warranty: f.warranty || null,
+    }
+
+    let bizId = initial?.id
+    if (mode === 'edit' && bizId) {
+      const { error } = await supabase.from('businesses').update(payload).eq('id', bizId)
+      if (error) { setMsg(`err:${error.message}`); setSaving(false); return }
+    } else {
+      payload.owner_id = userId
+      payload.slug = f.name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Date.now().toString(36)
+      const { data: biz, error } = await supabase.from('businesses').insert(payload).select('id').single()
+      if (error) { setMsg(`err:${error.message}`); setSaving(false); return }
+      bizId = biz.id
+    }
+
+    // Nënkategoritë: rifresko hartën (fshi + rifut) — idempotent.
+    if (bizId) {
+      await supabase.from('business_subcategory_map').delete().eq('business_id', bizId)
+      await supabase.from('business_subcategory_map').insert(selSubs.map(sid => ({ business_id: bizId, subcategory_id: sid })))
+      await supabase.from('profiles').update({ shop_name: f.name.trim() }).eq('id', userId)
+    }
+    setSaving(false)
+    if (bizId) { if (onSaved) onSaved(bizId); else window.location.href = `/biznese/${bizId}` }
+  }
+
+  async function doDelete() {
+    if (!initial?.id) return
+    setDelStage(3)
+    const { error } = await supabase.rpc('delete_own_business', { p_business_id: initial.id })
+    if (error) { setMsg(`err:Fshirja dështoi: ${error.message}`); setDelStage(0); return }
+    // Pas fshirjes: tab Biznes → G2 (krijo). Kthehu te profili.
+    window.location.href = '/profile?tab=shop'
+  }
+
+  const lbl: React.CSSProperties = { fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }
+  const sec: React.CSSProperties = { fontSize: 12, fontWeight: 800, color: '#C42B0F', textTransform: 'uppercase', letterSpacing: 0.5, margin: '18px 0 10px' }
+
+  return (
+    <div>
+      <style dangerouslySetInnerHTML={{ __html: `
+        .bf-input{width:100%;border:1px solid #e5e5e5;border-radius:10px;padding:11px 13px;font-size:13px;font-family:inherit;background:#fff;outline:none;box-sizing:border-box;}
+        .bf-input:focus{border-color:#E63312;}
+        .bf-chip{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1.5px solid #ddd;border-radius:20px;padding:7px 13px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;}
+        .bf-chip.on{background:#F5C842;border-color:#F5C842;color:#111;}
+        .bf-save{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:13px;padding:15px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;margin-top:20px;}
+        .bf-save:disabled{opacity:.5;cursor:not-allowed;}
+      ` }} />
+
+      {msg && (
+        <div role="alert" style={{ background: msg.startsWith('err:') ? '#FFF0EE' : '#F0FFF4', border: `1px solid ${msg.startsWith('err:') ? '#F09595' : '#86efac'}`, borderRadius: 10, padding: '10px 14px', marginBottom: 14, fontSize: 12, color: msg.startsWith('err:') ? '#C42305' : '#166534', fontWeight: 600 }}>
+          {msg.replace(/^(err|warn):/, '')}
+        </div>
+      )}
+
+      {/* Kopertina + logo (ngarkim direkt, model rrjeti social) */}
+      <div style={{ position: 'relative', width: '100%', aspectRatio: '16/6', borderRadius: 12, overflow: 'hidden', marginBottom: 40, background: coverPrev ? 'transparent' : 'linear-gradient(135deg,#F5C842,#E63312)' }}>
+        {coverPrev && <img src={coverPrev} alt="Kopertinë" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+        <label style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: coverPrev ? 'rgba(0,0,0,.25)' : 'none' }}>
+          <span style={{ background: 'rgba(0,0,0,.55)', color: '#fff', borderRadius: 10, padding: '8px 16px', fontSize: 12, fontWeight: 700 }}><span aria-hidden="true">📷</span> {coverPrev ? 'Ndrysho kopertinën' : 'Shto kopertinën'}</span>
+          <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const x = e.target.files?.[0]; if (x) { setCoverFile(x); setCoverPrev(URL.createObjectURL(x)) } }} />
+        </label>
+        <div style={{ position: 'absolute', bottom: -28, left: 16 }}>
+          <div style={{ position: 'relative', width: 56, height: 56 }}>
+            <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#fff', border: '3px solid #fff', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, boxShadow: '0 2px 8px rgba(0,0,0,.15)' }}>
+              {logoPrev ? <img src={logoPrev} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span aria-hidden="true">🏢</span>}
+            </div>
+            <label aria-label="Ndrysho logon" style={{ position: 'absolute', bottom: -2, right: -2, background: '#E63312', width: 20, height: 20, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, cursor: 'pointer', border: '2px solid #fff' }}>
+              <span aria-hidden="true">📷</span>
+              <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const x = e.target.files?.[0]; if (x) { setLogoFile(x); setLogoPrev(URL.createObjectURL(x)) } }} />
+            </label>
+          </div>
+        </div>
+      </div>
+
+      {/* 1 · Tipi & Nënkategoritë */}
+      <div style={sec}>1 · Tipi & Kategoritë *</div>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
+        {MAIN_TYPES.map(t => (
+          <button key={t.id} type="button" className={`bf-chip ${mainType === t.id ? 'on' : ''}`} onClick={() => { setMainType(t.id); setSelSubs([]) }}>
+            <span aria-hidden="true">{t.icon}</span> {t.label}
+          </button>
+        ))}
+      </div>
+      {subcats.length > 0 && (
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {subcats.map(s => (
+            <button key={s.id} type="button" className={`bf-chip ${selSubs.includes(s.id) ? 'on' : ''}`} onClick={() => toggleSub(s.id)}>
+              {s.icon} {s.name}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* 2 · Identiteti vizual */}
+      <div style={sec}>2 · Identiteti vizual</div>
+      <label style={lbl}>Slogan / Moto</label>
+      <input className="bf-input" value={f.tagline} onChange={e => setV('tagline', e.target.value)} placeholder="p.sh. Cilësi që i besohet" maxLength={120} />
+      <label style={{ ...lbl, marginTop: 12 }}>Galeria (foto shtesë)</label>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
+        {gallery.map((g, i) => (
+          <div key={g} style={{ position: 'relative', width: 64, height: 64 }}>
+            <img src={g} alt="" style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 8 }} />
+            <button type="button" aria-label="Hiq foton" onClick={() => setGallery(gallery.filter((_, x) => x !== i))} style={{ position: 'absolute', top: -6, right: -6, width: 20, height: 20, borderRadius: '50%', background: '#E63312', color: '#fff', border: '2px solid #fff', cursor: 'pointer', fontSize: 11, lineHeight: 1 }}>✕</button>
+          </div>
+        ))}
+        <label style={{ width: 64, height: 64, borderRadius: 8, border: '1.5px dashed #ccc', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 22, color: '#aaa' }}>
+          +
+          <input type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={e => { const fs = Array.from(e.target.files || []); setGalleryFiles(p => [...p, ...fs]); }} />
+        </label>
+      </div>
+      {galleryFiles.length > 0 && <div style={{ fontSize: 11, color: '#888' }}>{galleryFiles.length} foto të reja për ngarkim</div>}
+
+      {/* 3 · Informacion bazë */}
+      <div style={sec}>3 · Informacion bazë</div>
+      <label style={lbl}>Emri i biznesit *</label>
+      <input className="bf-input" value={f.name} onChange={e => setV('name', e.target.value)} placeholder="p.sh. Elektro Servisi Tirana" maxLength={80} required />
+      <label style={{ ...lbl, marginTop: 12 }}>Përshkrim</label>
+      <textarea className="bf-input" value={f.description} onChange={e => setV('description', e.target.value)} placeholder="Çfarë ofroni..." maxLength={500} style={{ resize: 'none', minHeight: 80 }} />
+      <label style={{ ...lbl, marginTop: 12 }}>Viti i themelimit</label>
+      <input className="bf-input" type="number" min={1900} max={2100} value={f.founded_year} onChange={e => setV('founded_year', e.target.value ? parseInt(e.target.value) : '')} placeholder="p.sh. 2015" />
+
+      {/* 4 · Kontakti */}
+      <div style={sec}>4 · Kontakti</div>
+      <label style={lbl}>Telefon</label>
+      <input className="bf-input" type="tel" value={f.phone} onChange={e => setV('phone', e.target.value)} placeholder="+355 6X XXX XXXX" />
+      <label style={{ ...lbl, marginTop: 12 }}>WhatsApp / Viber</label>
+      <input className="bf-input" type="tel" value={f.whatsapp} onChange={e => setV('whatsapp', e.target.value)} placeholder="+355 6X XXX XXXX" />
+      <label style={{ ...lbl, marginTop: 12 }}>Email</label>
+      <input className="bf-input" type="email" value={f.email} onChange={e => setV('email', e.target.value)} placeholder="info@biznesi.al" />
+      <label style={{ ...lbl, marginTop: 12 }}>Website</label>
+      <input className="bf-input" type="url" value={f.website} onChange={e => setV('website', e.target.value)} placeholder="https://..." />
+      <label style={{ ...lbl, marginTop: 12 }}>Personi i kontaktit</label>
+      <input className="bf-input" value={f.contact_person} onChange={e => setV('contact_person', e.target.value)} placeholder="Emri Mbiemri" maxLength={80} />
+      <label style={{ ...lbl, marginTop: 12 }}>Rrjete sociale</label>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <input className="bf-input" value={f.ig} onChange={e => setV('ig', e.target.value)} placeholder="Instagram (username ose link)" />
+        <input className="bf-input" value={f.fb} onChange={e => setV('fb', e.target.value)} placeholder="Facebook" />
+        <input className="bf-input" value={f.tiktok} onChange={e => setV('tiktok', e.target.value)} placeholder="TikTok" />
+      </div>
+
+      {/* 5 · Vendndodhja & mbulimi */}
+      <div style={sec}>5 · Vendndodhja & mbulimi</div>
+      <label style={lbl}>Qyteti</label>
+      <input className="bf-input" value={f.city} onChange={e => setV('city', e.target.value)} placeholder="p.sh. Tiranë" maxLength={80} />
+      <label style={{ ...lbl, marginTop: 12 }}><span aria-hidden="true">📍</span> Adresa (harta OSM)</label>
+      <MapPicker address={f.address} lat={f.latitude} lng={f.longitude} onChange={(lat, lng, address) => { setV('latitude', lat); setV('longitude', lng); setV('address', address) }} />
+      <label style={{ ...lbl, marginTop: 12 }}>Zona e shërbimit</label>
+      <input className="bf-input" value={f.service_area} onChange={e => setV('service_area', e.target.value)} placeholder="p.sh. Tiranë, Durrës dhe rrethina" />
+      <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12, fontSize: 13, cursor: 'pointer' }}>
+        <input type="checkbox" checked={f.delivery_ka} onChange={e => setV('delivery_ka', e.target.checked)} /> Ofron dorëzim
+      </label>
+      {f.delivery_ka && <input className="bf-input" style={{ marginTop: 8 }} value={f.delivery_detaje} onChange={e => setV('delivery_detaje', e.target.value)} placeholder="Detaje dorëzimi (tarifa, zona, afat)" />}
+
+      {/* 6 · Orari */}
+      <div style={sec}>6 · Orari</div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        {DAYS.map(([k, l]) => (
+          <div key={k} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ width: 64, fontSize: 12, fontWeight: 600, color: '#555' }}>{l}</span>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: '#888', cursor: 'pointer' }}>
+              <input type="checkbox" checked={hours[k].closed} onChange={e => setHours(h => ({ ...h, [k]: { ...h[k], closed: e.target.checked } }))} /> Mbyllur
+            </label>
+            {!hours[k].closed && (
+              <>
+                <input type="time" className="bf-input" style={{ width: 110, padding: '7px 8px' }} value={hours[k].open} onChange={e => setHours(h => ({ ...h, [k]: { ...h[k], open: e.target.value } }))} />
+                <span style={{ color: '#aaa' }}>–</span>
+                <input type="time" className="bf-input" style={{ width: 110, padding: '7px 8px' }} value={hours[k].close} onChange={e => setHours(h => ({ ...h, [k]: { ...h[k], close: e.target.value } }))} />
+              </>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* 7 · Ligjore (B2C) */}
+      <div style={sec}>7 · Të dhëna ligjore (B2C)</div>
+      <label style={lbl}>NIPT / Nr. TVSH</label>
+      <input className="bf-input" value={f.nipt} onChange={e => setV('nipt', e.target.value.toUpperCase())} placeholder="p.sh. K12345678A" maxLength={20} />
+      <label style={{ ...lbl, marginTop: 12 }}>Forma ligjore</label>
+      <select className="bf-input" value={f.legal_form} onChange={e => setV('legal_form', e.target.value)}>
+        <option value="">— Zgjidh —</option>
+        {LEGAL_FORMS.map(x => <option key={x} value={x}>{x}</option>)}
+      </select>
+      <label style={{ ...lbl, marginTop: 12 }}>E drejta e tërheqjes (ditë, min. 14)</label>
+      <input className="bf-input" type="number" min={14} max={60} value={f.withdrawal_days} onChange={e => setV('withdrawal_days', parseInt(e.target.value) || 14)} />
+      <label style={{ ...lbl, marginTop: 12 }}>Metodat e pagesës</label>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        {PAY_OPTS.map(m => (
+          <button key={m} type="button" className={`bf-chip ${pay.includes(m) ? 'on' : ''}`} onClick={() => togglePay(m)}>{m}</button>
+        ))}
+      </div>
+      <label style={{ ...lbl, marginTop: 12 }}>Politika e kthimit</label>
+      <textarea className="bf-input" value={f.return_policy} onChange={e => setV('return_policy', e.target.value)} placeholder="Kushtet e kthimit të produktit..." maxLength={400} style={{ resize: 'none', minHeight: 60 }} />
+      <label style={{ ...lbl, marginTop: 12 }}>Garancia</label>
+      <textarea className="bf-input" value={f.warranty} onChange={e => setV('warranty', e.target.value)} placeholder="Kushtet e garancisë..." maxLength={400} style={{ resize: 'none', minHeight: 60 }} />
+
+      <button type="button" className="bf-save" disabled={saving || !f.name.trim()} onClick={save}>
+        {saving ? (uploading ? '⏳ Duke ngarkuar...' : '⏳ Duke ruajtur...') : (mode === 'edit' ? '✓ Ruaj ndryshimet' : '✓ Krijo Biznesin')}
+      </button>
+
+      {/* §3.9 — Fshirja 3-shkallëshe (vetëm te editimi) */}
+      {mode === 'edit' && initial?.id && (
+        <div style={{ marginTop: 28, borderTop: '1px solid #eee', paddingTop: 16 }}>
+          {delStage === 0 && (
+            <button type="button" onClick={() => setDelStage(1)} style={{ background: 'none', border: '1px solid #E63312', color: '#C42305', borderRadius: 10, padding: '10px 14px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', width: '100%' }}>
+              <span aria-hidden="true">🗑</span> Fshij biznesin
+            </button>
+          )}
+          {delStage >= 1 && (
+            <div style={{ border: '1.5px solid #E63312', borderRadius: 12, padding: 14, background: '#FFF6F4' }}>
+              <div style={{ fontSize: 13, fontWeight: 800, color: '#C42305', marginBottom: 6 }}>⚠️ Fshirje e biznesit — e pakthyeshme</div>
+              {delStage === 1 && (
+                <>
+                  <p style={{ fontSize: 12, color: '#555', lineHeight: 1.6, marginBottom: 12 }}>
+                    Do të fshihet faqja e biznesit, kategoritë dhe ndjekësit. <b>Shpalljet nuk fshihen</b> — shkëputen nga biznesi dhe mbeten te profili yt personal. Llogaria jote mbetet.
+                  </p>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button type="button" onClick={() => setDelStage(0)} style={{ flex: 1, background: '#fff', border: '1px solid #ccc', borderRadius: 10, padding: '10px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Anulo</button>
+                    <button type="button" onClick={() => setDelStage(2)} style={{ flex: 1, background: '#E63312', color: '#fff', border: 'none', borderRadius: 10, padding: '10px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Vazhdo</button>
+                  </div>
+                </>
+              )}
+              {delStage === 2 && (
+                <>
+                  <p style={{ fontSize: 12, color: '#555', marginBottom: 8 }}>Për të konfirmuar, shkruaj emrin e biznesit: <b>{initial.name}</b></p>
+                  <input className="bf-input" value={delConfirmName} onChange={e => setDelConfirmName(e.target.value)} placeholder={initial.name} style={{ marginBottom: 10 }} />
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button type="button" onClick={() => { setDelStage(0); setDelConfirmName('') }} style={{ flex: 1, background: '#fff', border: '1px solid #ccc', borderRadius: 10, padding: '10px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Anulo</button>
+                    <button type="button" disabled={delConfirmName.trim() !== (initial.name || '').trim()} onClick={doDelete} style={{ flex: 1, background: delConfirmName.trim() === (initial.name || '').trim() ? '#C42305' : '#e9a99f', color: '#fff', border: 'none', borderRadius: 10, padding: '10px', fontSize: 13, fontWeight: 800, cursor: delConfirmName.trim() === (initial.name || '').trim() ? 'pointer' : 'not-allowed', fontFamily: 'inherit' }}>Fshij përfundimisht</button>
+                  </div>
+                </>
+              )}
+              {delStage === 3 && <div style={{ fontSize: 13, color: '#C42305', fontWeight: 700 }}>⏳ Duke fshirë...</div>}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
