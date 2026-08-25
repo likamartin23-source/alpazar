@@ -19,9 +19,10 @@ import { nf } from '../lib/format'
 // Banner shkarkim — buton i vogël katrore pulsues (fixed, vetem faqja kryesore)
 function InstallBanner() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
-  const [show, setShow] = useState(false)
   const [installed, setInstalled] = useState(false)
   const [dismissed, setDismissed] = useState(false)
+  const [standalone, setStandalone] = useState(false)
+  const [showGuide, setShowGuide] = useState(false)
 
   const { pos, dragging, onPointerDown } = useDraggable(
     '_alpz_pos_install',
@@ -30,23 +31,34 @@ function InstallBanner() {
   )
 
   useEffect(() => {
-    if (window.matchMedia('(display-mode: standalone)').matches) return
-    const handler = (e: any) => { e.preventDefault(); setDeferredPrompt(e); setShow(true) }
-    const installedHandler = () => { setInstalled(true); setShow(false) }
+    // Nese app-i eshte tashme i instaluar (standalone), fshihe butonin.
+    try {
+      if (window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone) setStandalone(true)
+    } catch { /* ignore */ }
+    // Chromium ndez beforeinstallprompt -> instalim me nje klik. Firefox/Safari nuk e ndezin;
+    // atehere butoni mbetet i dukshem dhe klik-u tregon udhezime manuale (shih install()).
+    const handler = (e: any) => { e.preventDefault(); setDeferredPrompt(e) }
+    const installedHandler = () => { setInstalled(true) }
     window.addEventListener('beforeinstallprompt', handler)
     window.addEventListener('appinstalled', installedHandler)
     return () => { window.removeEventListener('beforeinstallprompt', handler); window.removeEventListener('appinstalled', installedHandler) }
   }, [])
 
   async function install() {
-    if (!deferredPrompt) return
-    deferredPrompt.prompt()
-    const { outcome } = await deferredPrompt.userChoice
-    if (outcome === 'accepted') setInstalled(true)
-    setShow(false)
+    if (deferredPrompt) {
+      deferredPrompt.prompt()
+      const { outcome } = await deferredPrompt.userChoice
+      if (outcome === 'accepted') setInstalled(true)
+      setDeferredPrompt(null)
+      return
+    }
+    // Pa prompt native (Firefox/Safari) -> udhezime manuale.
+    setShowGuide(v => !v)
   }
 
-  if (!show || installed || dismissed) return null
+  // GJITHMONE i dukshem per perdoruesin (jo i varur nga beforeinstallprompt qe s'ndizet
+  // ne cdo browser) — fshihet vetem nese eshte instaluar, mbyllur, ose ne standalone.
+  if (installed || dismissed || standalone) return null
   return (
     <div
       className="install-float"
@@ -66,6 +78,33 @@ function InstallBanner() {
       }}
       onPointerDown={onPointerDown}
     >
+      {showGuide && (
+        <div
+          role="dialog"
+          aria-label="Si të instaloni Alpazar"
+          style={{
+            position: 'absolute', bottom: '112%', left: 0,
+            width: 236, maxWidth: '78vw',
+            background: '#111', color: '#fff', borderRadius: '12px 12px 12px 4px',
+            padding: '12px 13px', boxShadow: '0 10px 30px rgba(0,0,0,.35)',
+            fontSize: 12, lineHeight: 1.5, zIndex: 5, cursor: 'default',
+          }}
+          onPointerDown={e => e.stopPropagation()}
+        >
+          <strong style={{ display: 'block', color: '#22C55E', fontSize: 13, marginBottom: 6 }}>
+            Instalo Alpazar-in
+          </strong>
+          <div style={{ marginBottom: 5 }}><b>Chrome/Edge:</b> menyja ⋮ → “Instalo aplikacionin”.</div>
+          <div style={{ marginBottom: 5 }}><b>iPhone (Safari):</b> Ndaj <span aria-hidden="true">↑</span> → “Add to Home Screen”.</div>
+          <div><b>Android:</b> menyja ⋮ → “Shto te ekrani kryesor”.</div>
+          <button
+            type="button"
+            onClick={() => setShowGuide(false)}
+            style={{ position: 'absolute', top: 6, right: 8, background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: 13, lineHeight: 1 }}
+            aria-label="Mbyll udhëzimet"
+          >✕</button>
+        </div>
+      )}
       <button
         type="button"
         aria-label="Instalo aplikacionin"
@@ -671,8 +710,16 @@ export default function HomeClient({ initialListings = [], initialCategories = [
           .float-icon-main{font-size:22px;}
         }
         @media(min-width:1024px){
-          .wrap{max-width:1200px;}
-          .body{padding:0 32px;}
+          /* 100% full screen: wrap-i mbush gjithë gjerësinë e ekranit; padding-u
+             anësor rritet me viewport-in që përmbajtja të mos ngjitet te skajet.
+             Grid-et auto-fill shtojnë kolona kur ka hapësirë → asnjë kartë e tejzgjatur. */
+          .wrap{max-width:100%;}
+          .body{padding:0 clamp(32px,4vw,72px);}
+          .topbar{padding-left:clamp(32px,4vw,72px);padding-right:clamp(32px,4vw,72px);}
+        }
+        @media(min-width:1600px){
+          .body{padding:0 clamp(72px,6vw,140px);}
+          .topbar{padding-left:clamp(72px,6vw,140px);padding-right:clamp(72px,6vw,140px);}
         }
       ` }} />
 
