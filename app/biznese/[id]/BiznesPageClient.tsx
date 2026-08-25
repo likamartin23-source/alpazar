@@ -13,6 +13,31 @@ import { nf } from '../../../lib/format'
 
 const MapDisplay = dynamicImport(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), { ssr: false })
 
+// "Hapur tani" — llogaritet nga hours.days ({mon..sun:{closed,open,close}}) i shkruar nga
+// BusinessForm. Thirret VETËM pas montimit (mounted) sepse varet nga ora → pa mospërputhje SSR.
+// getDay(): 0=Diel..6=Shtunë. Kthen null kur s'ka orar → chip-i s'shfaqet.
+const DAY_KEYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const
+function openNowFromHours(h: any): boolean | null {
+  const days = h?.days
+  if (!days || typeof days !== 'object') return null
+  const now = new Date()
+  const d = days[DAY_KEYS[now.getDay()]]
+  if (!d) return null
+  if (d.closed) return false
+  if (!d.open || !d.close) return null
+  const [oh, om] = String(d.open).split(':').map(Number)
+  const [ch, cm] = String(d.close).split(':').map(Number)
+  if ([oh, om, ch, cm].some(x => !Number.isFinite(x))) return null
+  const cur = now.getHours() * 60 + now.getMinutes(), o = oh * 60 + om, c = ch * 60 + cm
+  return c <= o ? (cur >= o || cur < c) : (cur >= o && cur < c) // c<=o => kalon mesnatën
+}
+// "Përgjigjet ~N orë/ditë" nga business_response_time (median në orë).
+function fmtResp(hrs: number): string {
+  if (hrs < 1.5) return '~1 orë'
+  if (hrs < 24) return `~${Math.round(hrs)} orë`
+  return `~${Math.round(hrs / 24)} ditë`
+}
+
 interface Biz {
   id: string; owner_id: string; name: string; slug: string; type: string
   logo_url: string | null; cover_url: string | null; description: string | null
@@ -57,6 +82,9 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   // Shitjet e kryera — social proof (jo fshehje). Funksion agregimi
   // business_sold_count (status='sold'), pa N+1. Shfaqet vetem kur >0.
   const [soldCount, setSoldCount]   = useState(0)
+  // Koha e përgjigjes ("Përgjigjet ~N orë") — median nga business_response_time.
+  // Fail-soft: null kur pak të dhëna → s'shfaqet (spec: subjekti biznes, ana e jashtme).
+  const [respHrs, setRespHrs]       = useState<number | null>(null)
   // Faqja renderohet edhe ne server (`initialBiz`). Koha relative e kartes
   // varet nga `Date.now()`, ndaj i jepet ListingCard-it vetem pas montimit.
   const [mounted, setMounted]       = useState(false)
@@ -160,6 +188,12 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
         if (Number.isFinite(n)) setSoldCount(n)
       })
 
+      // Koha e përgjigjes — median në orë; null kur pak të dhëna (fail-soft).
+      supabase.rpc('business_response_time', { p_business: b.id }).then(({ data }) => {
+        const n = Number(Array.isArray(data) ? data[0] : data)
+        setRespHrs(Number.isFinite(n) && n > 0 ? n : null)
+      })
+
       const { data: mapRows } = await supabase
         .from('business_subcategory_map')
         .select('subcategory_id, business_subcategories(name, icon)')
@@ -232,6 +266,8 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
 
   const descShort = (biz.description || '').length > 120
   const descText  = descExpanded || !descShort ? biz.description : (biz.description || '').slice(0, 120) + '…'
+  // "Hapur tani" — vetëm pas montimit (varet nga ora → pa mospërputhje SSR).
+  const openNow   = mounted ? openNowFromHours(biz.hours) : null
 
   return (
     <div className="biz-page">
@@ -269,6 +305,10 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
         .stat-l{font-size:10px;color:#888;font-weight:500;margin-top:1px;}
         .card{background:#fff;border-radius:16px;margin:8px 12px 0;padding:16px;}
         .card-title{font-size:13px;font-weight:800;color:#111;margin-bottom:14px;display:flex;align-items:center;gap:6px;}
+        .biz-chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:#444;background:#f4f4f4;border:1px solid #e2e2e2;border-radius:999px;padding:6px 11px;min-height:32px;text-decoration:none;cursor:default;}
+        a.biz-chip{cursor:pointer;}
+        .biz-panel-btn{min-height:44px;background:#fff;border:1px solid #e5e5e5;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;color:#111;display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:0 6px;text-align:center;}
+        .biz-panel-btn:hover{background:#fafafa;border-color:#d8d8d8;}
       ` }} />
 
       <div className="biz-shell">
@@ -376,12 +416,19 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
 
           {/* "👁 N shikime · 🔴 M duke shikuar" (Imazhi 4) — shikimet reale nga baza,
               syte live nga presence reale (fail-soft: 0 → pjesa 🔴 s'shfaqet). */}
-          {(totalViews > 0 || syteLive > 0) && (
-            <div style={{ fontSize: 12, color: '#6B6B6B', marginBottom: 14 }}>
-              <span aria-hidden="true">👁</span> {nf(totalViews)} shikime
+          {(totalViews > 0 || syteLive > 0 || respHrs != null) && (
+            <div style={{ fontSize: 12, color: '#6B6B6B', marginBottom: 14, display: 'flex', flexWrap: 'wrap', gap: 4, alignItems: 'center' }}>
+              {totalViews > 0 && <span><span aria-hidden="true">👁</span> {nf(totalViews)} shikime</span>}
               {syteLive > 0 && (
-                <span style={{ marginLeft: 8, color: '#C4230F', fontWeight: 700 }}>
+                <span style={{ color: '#C4230F', fontWeight: 700 }}>
+                  {totalViews > 0 && <span style={{ color: '#ccc', margin: '0 4px' }}>·</span>}
                   <span aria-hidden="true">🔴</span> {syteLive} duke shikuar
+                </span>
+              )}
+              {respHrs != null && (
+                <span>
+                  {(totalViews > 0 || syteLive > 0) && <span style={{ color: '#ccc', margin: '0 4px' }}>·</span>}
+                  <span aria-hidden="true">⏱️</span> Përgjigjet {fmtResp(respHrs)}
                 </span>
               )}
             </div>
@@ -447,6 +494,29 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               <i className="ti ti-share-3" style={{ fontSize: 17 }} aria-hidden="true" />
             </button>
           </div>
+
+          {/* Chip-et e biznesit (spec — ana e jashtme): Harta · Hapur tani · NIPT · 0% komision.
+              Secili shfaqet vetëm kur ka kuptim; "Hapur tani" vetëm pas montimit (varet nga ora). */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
+            {biz.latitude && biz.longitude && (
+              <a href={`https://www.google.com/maps?q=${biz.latitude},${biz.longitude}`} target="_blank" rel="noopener noreferrer" className="biz-chip">
+                <span aria-hidden="true">🗺️</span> Harta
+              </a>
+            )}
+            {openNow !== null && (
+              <span className="biz-chip" style={openNow
+                ? { background: '#E7F6EC', color: '#0E7A35', borderColor: '#0E7A3533' }
+                : { background: '#FDECEC', color: '#C42305', borderColor: '#C4230533' }}>
+                <span aria-hidden="true">🕐</span> {openNow ? 'Hapur tani' : 'Mbyllur tani'}
+              </span>
+            )}
+            {biz.nipt && (
+              <span className="biz-chip"><span aria-hidden="true">🏛️</span> NIPT</span>
+            )}
+            <span className="biz-chip" style={{ background: '#E7F6EC', color: '#0E7A35', borderColor: '#0E7A3533' }}>
+              <span aria-hidden="true">🚫</span> 0% komision
+            </span>
+          </div>
         </div>
       </div>
 
@@ -456,22 +526,35 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           formularin e plotë + fshirjen 3-shkallëshe. Këtu: shkurtoret e tjera. Shpalljet/
           Vlerësimet/metrikat janë tashmë në këtë faqe (tabet + koka). */}
       {isOwner && !asVisitor && (
-        <div style={{ background: '#fff', margin: '0 0 8px', padding: '12px 16px', display: 'flex', flexWrap: 'wrap', gap: 8, borderBottom: '1px solid #f0f0f0' }}>
-          <button type="button" onClick={() => { window.location.href = `/messages?biz=${biz.id}` }}
-            style={{ flex: '1 1 auto', minHeight: 40, background: '#fff', border: '1px solid #e5e5e5', borderRadius: 10, fontSize: 12.5, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', color: '#111', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-            <i className="ti ti-message" aria-hidden="true" /> Mesazhet
-          </button>
-          <button type="button" onClick={() => { window.location.href = '/billing' }}
-            style={{ flex: '1 1 auto', minHeight: 40, background: '#fff', border: '1px solid #e5e5e5', borderRadius: 10, fontSize: 12.5, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', color: '#111', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-            <i className="ti ti-crown" aria-hidden="true" /> Plani
-          </button>
-          <button type="button" onClick={() => setAsVisitor(true)}
-            style={{ flex: '1 1 auto', minHeight: 40, background: '#fff', border: '1px solid #e5e5e5', borderRadius: 10, fontSize: 12.5, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', color: '#111', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-            <i className="ti ti-eye" aria-hidden="true" /> Shiko si vizitor
-          </button>
+        // Paneli i brendshëm i biznesit (spec §"paneli i biznesit"): butonat e biznesit,
+        // panel identik në formë me profilin. "Të dhënat e biznesit" (primar) rri te koka;
+        // këtu shkurtoret e tjera: Analitika (pa referral) · Vlerësime · Mesazhe(filtër) ·
+        // Plani(trashëgim) · Logo & Kopertinë. Ekskluzivitetet e llogarisë (personale/siguri/
+        // GDPR/referral) NUK transpozohen te biznesi — ato rrinë te "Vepro si: Unë" (profili).
+        <div style={{ background: '#fff', margin: '0 0 8px', padding: '12px 16px', borderBottom: '1px solid #f0f0f0' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
+            <button type="button" onClick={() => { window.location.href = `/profile/analytics?biz=${biz.id}` }} className="biz-panel-btn">
+              <i className="ti ti-chart-bar" aria-hidden="true" /> Analitika
+            </button>
+            <button type="button" onClick={() => { setActiveTab('about'); if (!reviewsLoaded) { setReviewsLoaded(true); supabase.rpc('business_reviews', { p_business: biz.id }).then(({ data }) => setReviews(data || [])) } }} className="biz-panel-btn">
+              <i className="ti ti-star" aria-hidden="true" /> Vlerësime
+            </button>
+            <button type="button" onClick={() => { window.location.href = `/messages?biz=${biz.id}` }} className="biz-panel-btn">
+              <i className="ti ti-message" aria-hidden="true" /> Mesazhet
+            </button>
+            <button type="button" onClick={() => { window.location.href = '/billing' }} className="biz-panel-btn">
+              <i className="ti ti-crown" aria-hidden="true" /> Plani
+            </button>
+            <button type="button" onClick={() => { window.location.href = `/biznese/${biz.id}/edit` }} className="biz-panel-btn">
+              <i className="ti ti-photo" aria-hidden="true" /> Logo &amp; Kopertinë
+            </button>
+            <button type="button" onClick={() => setAsVisitor(true)} className="biz-panel-btn">
+              <i className="ti ti-eye" aria-hidden="true" /> Shiko si vizitor
+            </button>
+          </div>
           <button type="button" onClick={() => { window.location.href = '/profile' }}
-            style={{ flex: '1 1 auto', minHeight: 40, background: '#FFFBEA', border: '1px solid #F5C842', borderRadius: 10, fontSize: 12.5, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', color: '#7A4A00', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-            <i className="ti ti-user" aria-hidden="true" /> Vepro si: Unë
+            style={{ width: '100%', marginTop: 8, minHeight: 40, background: '#FFFBEA', border: '1px solid #F5C842', borderRadius: 10, fontSize: 12.5, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', color: '#7A4A00', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            <i className="ti ti-user" aria-hidden="true" /> Vepro si: Unë (llogaria personale)
           </button>
         </div>
       )}
@@ -569,7 +652,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
 
       {/* ── Rreth & Vlerësime (info) ─────────────────────────── */}
       {activeTab === 'about' && (
-        <div id="tabpanel-info" role="tabpanel" aria-labelledby="tab-info" style={{ padding: '8px 0' }}>
+        <div id="tabpanel-about" role="tabpanel" aria-labelledby="tab-about" style={{ padding: '8px 0' }}>
           <div className="card">
             <h2 className="card-title"><i className="ti ti-building-store" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Rreth biznesit</h2>
             {biz.description
@@ -695,7 +778,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
       {/* ── Reviews tab ──────────────────────────────────────── */}
       {/* ── Rreth & Vlerësime (vlerësimet) ───────────────────── */}
       {activeTab === 'about' && (
-        <div id="tabpanel-reviews" role="tabpanel" aria-labelledby="tab-reviews" style={{ margin: 8 }}>
+        <div style={{ margin: 8 }}>
           {rating.count > 0 && rating.avg != null && (
             <div style={{ background: '#fff', borderRadius: 16, padding: '16px', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
               <div style={{ fontSize: 32, fontWeight: 800, color: '#111' }}>{rating.avg.toFixed(1)}</div>

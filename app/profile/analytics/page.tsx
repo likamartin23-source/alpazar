@@ -69,6 +69,10 @@ export default function AnalyticsPage() {
 const [loadError, setLoadError] = useState(false)
   const [period, setPeriod]     = useState(30)
   const [showUpsell, setShowUpsell] = useState(false)
+  // Modaliteti "biznes" (spec: paneli i biznesit → Analitika PA referral). Referral-i është
+  // ekskluzivitet i llogarisë personale, s'transpozohet te biznesi. Lexohet nga ?biz=… (klient).
+  const [bizMode, setBizMode]   = useState(false)
+  useEffect(() => { try { if (new URLSearchParams(window.location.search).get('biz')) setBizMode(true) } catch {} }, [])
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -152,7 +156,7 @@ const [loadError, setLoadError] = useState(false)
         <button type="button" className="back-btn" aria-label="Kthehu në profil" onClick={() => window.location.href = '/profile'}>
           <i className="ti ti-arrow-left" style={{ fontSize: 16 }} aria-hidden="true" />
         </button>
-        <h1 style={{ fontWeight: 800, fontSize: 16, color: '#111', margin: 0 }}>Statistikat e Shpalljeve</h1>
+        <h1 style={{ fontWeight: 800, fontSize: 16, color: '#111', margin: 0 }}>{bizMode ? 'Analitika e biznesit' : 'Statistikat e Shpalljeve'}</h1>
       </div>
 
       {/* Period selector */}
@@ -303,14 +307,17 @@ const [loadError, setLoadError] = useState(false)
             ))}
           </div>
           {/* Referral i integruar (BLLOKU I PËRMIRËSUAR §10): CTA te programi ekzistues,
-              pa dyfishuar sistemin — thjesht hyrje nga analitika. */}
-          <div className="an-card">
-            <div className="an-title">Referral</div>
-            <button type="button" onClick={() => { window.location.href = '/referral' }}
-              style={{ width: '100%', minHeight: 48, background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842', border: 'none', borderRadius: 11, fontSize: 13, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-              <i className="ti ti-gift" aria-hidden="true" /> Fto miq — fito pikë & Premium →
-            </button>
-          </div>
+              pa dyfishuar sistemin — thjesht hyrje nga analitika. FSHIHET në modalitetin biznes
+              (spec: "Analitika pa referral"; referral-i është ekskluzivitet i llogarisë personale). */}
+          {!bizMode && (
+            <div className="an-card">
+              <div className="an-title">Referral</div>
+              <button type="button" onClick={() => { window.location.href = '/referral' }}
+                style={{ width: '100%', minHeight: 48, background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842', border: 'none', borderRadius: 11, fontSize: 13, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                <i className="ti ti-gift" aria-hidden="true" /> Fto miq — fito pikë & Premium →
+              </button>
+            </div>
+          )}
         </>
       )}
 
