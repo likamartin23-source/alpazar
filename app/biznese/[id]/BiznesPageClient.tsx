@@ -20,6 +20,13 @@ interface Biz {
   phone: string | null; website: string | null; hours: any; is_verified: boolean
   created_at: string; city: string | null; email: string | null
   nipt: string | null; withdrawal_days: number | null; updated_at: string | null
+  // Fushat e reja profesionale (FINAL §3.8) — opsionale; shfaqen kur plotësohen.
+  tagline?: string | null; founded_year?: number | null; whatsapp?: string | null
+  contact_person?: string | null; gallery?: string[] | null
+  socials?: { instagram?: string | null; facebook?: string | null; tiktok?: string | null } | null
+  service_area?: string | null; delivery?: { ka?: boolean; detaje?: string | null } | null
+  legal_form?: string | null; payment_methods?: string[] | null
+  return_policy?: string | null; warranty?: string | null
 }
 
 export default function BiznesPageClient({ params, initialBiz, initialListings, initialSubcats, initialIsOwner }: { params: { id: string }; initialBiz?: any; initialListings?: any[]; initialSubcats?: any[]; initialIsOwner?: boolean }) {
@@ -34,6 +41,10 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   const [loading, setLoading]       = useState(!initialBiz)
   const [loadError, setLoadError]   = useState(false)
   const [activeTab, setActiveTab]   = useState<'grid' | 'about'>('grid')
+  // FINAL — harmonizim vizitor-pronar (si rrjet social): pronari mund të kalojë te
+  // pamja publike ("Shiko si vizitor") dhe të kthehet te menaxhimi. Detektimi isOwner
+  // (SSR, anti-flaker) mbetet i paprekur; kjo vetëm fsheh panelin e pronarit lokalisht.
+  const [asVisitor, setAsVisitor]   = useState(false)
   const [userId, setUserId]         = useState<string | null>(null)
   const [isOwner, setIsOwner]       = useState(!!initialIsOwner)
   const [descExpanded, setDescExpanded] = useState(false)
@@ -400,11 +411,11 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               Vizitori sheh veprimet e kontaktit (Telefono/Mesazh/Ndiq). Veprimet drejt
               vetes (mesazh/telefono/ndiq) nuk i shfaqen pronarit — s'kanë kuptim. */}
           <div style={{ display: 'flex', gap: 8 }}>
-            {isOwner ? (
-              <button type="button" aria-label="Vepro si biznes — administro biznesin tënd"
-                onClick={() => { window.location.href = '/profile?tab=shop' }}
+            {isOwner && !asVisitor ? (
+              <button type="button" aria-label="Të dhënat e biznesit — menaxho biznesin"
+                onClick={() => { window.location.href = `/biznese/${biz.id}/edit` }}
                 className="action-btn" style={{ background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842' }}>
-                <i className="ti ti-briefcase" style={{ fontSize: 15 }} aria-hidden="true" /> Vepro si biznes
+                <i className="ti ti-settings" style={{ fontSize: 15 }} aria-hidden="true" /> Të dhënat e biznesit
               </button>
             ) : (
               <>
@@ -438,6 +449,41 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           </div>
         </div>
       </div>
+
+      {/* ── Paneli i brendshëm i pronarit (FINAL §3.6, profili_i_biznesit_pasqyre) ──
+          Shfaqet VETËM për pronarin. Butonat e biznesit; ekskluzivitetet e llogarisë
+          rrinë te profili personal. "Të dhënat e biznesit" (primar lart) → /edit që mban
+          formularin e plotë + fshirjen 3-shkallëshe. Këtu: shkurtoret e tjera. Shpalljet/
+          Vlerësimet/metrikat janë tashmë në këtë faqe (tabet + koka). */}
+      {isOwner && !asVisitor && (
+        <div style={{ background: '#fff', margin: '0 0 8px', padding: '12px 16px', display: 'flex', flexWrap: 'wrap', gap: 8, borderBottom: '1px solid #f0f0f0' }}>
+          <button type="button" onClick={() => { window.location.href = `/messages?biz=${biz.id}` }}
+            style={{ flex: '1 1 auto', minHeight: 40, background: '#fff', border: '1px solid #e5e5e5', borderRadius: 10, fontSize: 12.5, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', color: '#111', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            <i className="ti ti-message" aria-hidden="true" /> Mesazhet
+          </button>
+          <button type="button" onClick={() => { window.location.href = '/billing' }}
+            style={{ flex: '1 1 auto', minHeight: 40, background: '#fff', border: '1px solid #e5e5e5', borderRadius: 10, fontSize: 12.5, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', color: '#111', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            <i className="ti ti-crown" aria-hidden="true" /> Plani
+          </button>
+          <button type="button" onClick={() => setAsVisitor(true)}
+            style={{ flex: '1 1 auto', minHeight: 40, background: '#fff', border: '1px solid #e5e5e5', borderRadius: 10, fontSize: 12.5, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', color: '#111', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            <i className="ti ti-eye" aria-hidden="true" /> Shiko si vizitor
+          </button>
+          <button type="button" onClick={() => { window.location.href = '/profile' }}
+            style={{ flex: '1 1 auto', minHeight: 40, background: '#FFFBEA', border: '1px solid #F5C842', borderRadius: 10, fontSize: 12.5, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', color: '#7A4A00', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            <i className="ti ti-user" aria-hidden="true" /> Vepro si: Unë
+          </button>
+        </div>
+      )}
+      {isOwner && asVisitor && (
+        <div style={{ background: '#111', color: '#F5C842', margin: '0 0 8px', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, fontSize: 12.5, fontWeight: 700 }}>
+          <span><i className="ti ti-eye" aria-hidden="true" /> Po e shikon si vizitor</span>
+          <button type="button" onClick={() => setAsVisitor(false)}
+            style={{ background: '#F5C842', color: '#111', border: 'none', borderRadius: 8, padding: '6px 12px', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' }}>
+            Kthehu te menaxhimi
+          </button>
+        </div>
+      )}
 
       {/* ── Description preview ──────────────────────────────── */}
       {biz.description && (
@@ -597,9 +643,34 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
             </div>
           )}
 
-          {(biz.nipt || biz.withdrawal_days) && (
+          {/* FINAL §3.8 — Detajet e reja profesionale; secili rresht shfaqet vetëm kur plotësohet. */}
+          {(biz.founded_year || biz.contact_person || biz.service_area || biz.delivery?.ka || biz.socials?.instagram || biz.socials?.facebook || biz.socials?.tiktok) && (
+            <div className="card">
+              <h2 className="card-title"><i className="ti ti-building-store" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Detaje</h2>
+              {biz.founded_year ? <div className="info-row"><span className="info-icon" aria-hidden="true">📅</span><span className="info-text">Themeluar: <strong>{biz.founded_year}</strong></span></div> : null}
+              {biz.contact_person ? <div className="info-row"><span className="info-icon" aria-hidden="true">👤</span><span className="info-text">Kontakti: <strong>{biz.contact_person}</strong></span></div> : null}
+              {biz.service_area ? <div className="info-row"><span className="info-icon" aria-hidden="true">🗺️</span><span className="info-text">Zona e shërbimit: {biz.service_area}</span></div> : null}
+              {biz.delivery?.ka ? <div className="info-row"><span className="info-icon" aria-hidden="true">🚚</span><span className="info-text">Dorëzim: Po{biz.delivery.detaje ? ` — ${biz.delivery.detaje}` : ''}</span></div> : null}
+              {(biz.socials?.instagram || biz.socials?.facebook || biz.socials?.tiktok) && (
+                <div className="info-row" style={{ gap: 12 }}>
+                  <span className="info-icon" aria-hidden="true">🔗</span>
+                  <span className="info-text" style={{ display: 'inline-flex', gap: 12, flexWrap: 'wrap' }}>
+                    {biz.socials?.instagram && <a href={biz.socials.instagram.startsWith('http') ? biz.socials.instagram : `https://instagram.com/${biz.socials.instagram.replace('@','')}`} target="_blank" rel="noopener noreferrer" style={{ color: '#C42305', fontWeight: 700 }}>Instagram</a>}
+                    {biz.socials?.facebook && <a href={biz.socials.facebook.startsWith('http') ? biz.socials.facebook : `https://facebook.com/${biz.socials.facebook}`} target="_blank" rel="noopener noreferrer" style={{ color: '#C42305', fontWeight: 700 }}>Facebook</a>}
+                    {biz.socials?.tiktok && <a href={biz.socials.tiktok.startsWith('http') ? biz.socials.tiktok : `https://tiktok.com/@${biz.socials.tiktok.replace('@','')}`} target="_blank" rel="noopener noreferrer" style={{ color: '#C42305', fontWeight: 700 }}>TikTok</a>}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {(biz.nipt || biz.withdrawal_days || biz.legal_form || (biz.payment_methods && biz.payment_methods.length) || biz.return_policy || biz.warranty) && (
             <div className="card">
               <h2 className="card-title"><i className="ti ti-scale" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Informacion ligjor</h2>
+              {biz.legal_form ? <div className="info-row"><span className="info-icon" aria-hidden="true">🏢</span><span className="info-text">Forma ligjore: <strong>{biz.legal_form}</strong></span></div> : null}
+              {biz.payment_methods && biz.payment_methods.length > 0 ? <div className="info-row"><span className="info-icon" aria-hidden="true">💳</span><span className="info-text">Pagesa: {biz.payment_methods.join(' · ')}</span></div> : null}
+              {biz.return_policy ? <div className="info-row"><span className="info-icon" aria-hidden="true">↩️</span><span className="info-text">Kthimi: {biz.return_policy}</span></div> : null}
+              {biz.warranty ? <div className="info-row"><span className="info-icon" aria-hidden="true">🛡️</span><span className="info-text">Garancia: {biz.warranty}</span></div> : null}
               {biz.nipt && (
                 <div className="info-row">
                   <span className="info-icon" aria-hidden="true">🏛️</span>
