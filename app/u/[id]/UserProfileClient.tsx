@@ -120,7 +120,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
 
   const tabs = [
     { key: 'listings', label: `Shpalljet (${listings.length})` },
-    { key: 'about', label: 'Rreth' },
+    { key: 'about', label: 'Rreth & Vlerësime' },
   ]
 
   return (

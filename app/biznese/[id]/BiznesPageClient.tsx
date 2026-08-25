@@ -33,7 +33,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   const [listings, setListings]     = useState<any[]>(seedListings)
   const [loading, setLoading]       = useState(!initialBiz)
   const [loadError, setLoadError]   = useState(false)
-  const [activeTab, setActiveTab]   = useState<'grid' | 'info' | 'reviews'>('grid')
+  const [activeTab, setActiveTab]   = useState<'grid' | 'about'>('grid')
   const [userId, setUserId]         = useState<string | null>(null)
   const [isOwner, setIsOwner]       = useState(!!initialIsOwner)
   const [descExpanded, setDescExpanded] = useState(false)
@@ -487,11 +487,9 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
         <button id="tab-grid" type="button" role="tab" aria-selected={activeTab === 'grid'} aria-controls="tabpanel-grid" className={`biz-tab ${activeTab === 'grid' ? 'active' : ''}`} onClick={() => setActiveTab('grid')}>
           <i className="ti ti-layout-grid" style={{ fontSize: 14 }} aria-hidden="true" /> Shpalljet
         </button>
-        <button id="tab-info" type="button" role="tab" aria-selected={activeTab === 'info'} aria-controls="tabpanel-info" className={`biz-tab ${activeTab === 'info' ? 'active' : ''}`} onClick={() => setActiveTab('info')}>
-          <i className="ti ti-info-circle" style={{ fontSize: 14 }} aria-hidden="true" /> Info
-        </button>
-        <button id="tab-reviews" type="button" role="tab" aria-selected={activeTab === 'reviews'} aria-controls="tabpanel-reviews" className={`biz-tab ${activeTab === 'reviews' ? 'active' : ''}`} onClick={() => { setActiveTab('reviews'); if (biz && !reviewsLoaded) { setReviewsLoaded(true); supabase.rpc('business_reviews', { p_business: biz.id }).then(({ data }) => setReviews(data || [])) } }}>
-          <i className="ti ti-star" style={{ fontSize: 14 }} aria-hidden="true" /> Vlerësime{rating.count > 0 ? ` (${rating.count})` : ''}
+        {/* FINAL §3.7: Info + Vlerësime të bashkuara në një tab "Rreth & Vlerësime". */}
+        <button id="tab-about" type="button" role="tab" aria-selected={activeTab === 'about'} aria-controls="tabpanel-about" className={`biz-tab ${activeTab === 'about' ? 'active' : ''}`} onClick={() => { setActiveTab('about'); if (biz && !reviewsLoaded) { setReviewsLoaded(true); supabase.rpc('business_reviews', { p_business: biz.id }).then(({ data }) => setReviews(data || [])) } }}>
+          <i className="ti ti-info-circle" style={{ fontSize: 14 }} aria-hidden="true" /> Rreth &amp; Vlerësime{rating.count > 0 ? ` (${rating.count})` : ''}
         </button>
       </div>
 
@@ -523,8 +521,8 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
         </div>
       )}
 
-      {/* ── Info tab ─────────────────────────────────────────── */}
-      {activeTab === 'info' && (
+      {/* ── Rreth & Vlerësime (info) ─────────────────────────── */}
+      {activeTab === 'about' && (
         <div id="tabpanel-info" role="tabpanel" aria-labelledby="tab-info" style={{ padding: '8px 0' }}>
           <div className="card">
             <h2 className="card-title"><i className="ti ti-building-store" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Rreth biznesit</h2>
@@ -624,7 +622,8 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
       )}
 
       {/* ── Reviews tab ──────────────────────────────────────── */}
-      {activeTab === 'reviews' && (
+      {/* ── Rreth & Vlerësime (vlerësimet) ───────────────────── */}
+      {activeTab === 'about' && (
         <div id="tabpanel-reviews" role="tabpanel" aria-labelledby="tab-reviews" style={{ margin: 8 }}>
           {rating.count > 0 && rating.avg != null && (
             <div style={{ background: '#fff', borderRadius: 16, padding: '16px', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
