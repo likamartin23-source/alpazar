@@ -380,11 +380,15 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               personit çon te biznesi i tij (§4.5). */}
           {biz.owner_id && (
             <div style={{ marginBottom: 12 }}>
+              {/* ★ Pronari (BLLOKU I PËRMIRËSUAR §3, business_v5): kutizë e theksuar e
+                  identitetit të pronarit → profili i personit. Gjysma tjetër e çiftit
+                  (profil → biznes) rri te profili. Prekje ≥44px (Vendimi 8). */}
               <a
                 href={`/u/${biz.owner_id}`}
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#5a5a5a', textDecoration: 'none', minHeight: 36 }}>
-                <i className="ti ti-user" style={{ fontSize: 13 }} aria-hidden="true" />
-                Menaxhuar nga <span style={{ color: '#C42305', fontWeight: 700 }}>profili i pronarit →</span>
+                aria-label="Pronari — shiko profilin"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12.5, color: '#111', textDecoration: 'none', minHeight: 44, padding: '6px 12px', border: '1px solid #F5C842', background: '#FFFBEA', borderRadius: 999, fontWeight: 600 }}>
+                <span aria-hidden="true" style={{ color: '#E6A200', fontSize: 14, lineHeight: 1 }}>★</span>
+                Pronari <span style={{ color: '#C42305', fontWeight: 700 }}>— shiko profilin →</span>
               </a>
             </div>
           )}
