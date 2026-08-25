@@ -4,6 +4,8 @@
 // (Të dhënat e biznesit). 7 seksione; vetëm Tipi+Nënkategoritë+Emri të detyrueshme;
 // pjesa tjetër progresive (opsionale). Kolonat additive nga migrimi 20260825.
 // §3.9: fshirja 3-shkallëshe (vetëm te editimi, vetëm-pronar, RPC delete_own_business).
+// Nota: fushat opsionale ruhen si null kur bosh; hours ruan {days, schedule} për
+// pajtueshmëri me shfaqjen ekzistuese (hours.schedule).
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { MapPicker } from './MapPicker'
