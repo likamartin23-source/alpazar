@@ -79,7 +79,7 @@ export function PlansGrid({ plans, plan, sub, busy, act }: any) {
       </div>
       {tier === 'premium' && (
         <div className="muted" style={{ fontSize: 11, marginTop: 6 }}>
-          Do shikueshmëri maksimale? Shto <a href="/premium" style={{ color: '#C42B0F', fontWeight: 700 }}>Ekstra Boost VIP</a>.
+          Do shikueshmëri maksimale? Shto <a href="/premium" style={{ color: '#C42B0F', fontWeight: 700 }}>VIP Ekstra Boost</a>.
         </div>
       )}
     </div>
