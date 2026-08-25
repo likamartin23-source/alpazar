@@ -1283,30 +1283,44 @@ export default function ProfilePage() {
                       Gjendja 2: pa biznes → Krijo te /biznese/new (§1B).
                       Gjendja 3: me biznes → hap nën-panelin /biznese/[id] ("Vepro si"). */}
                   {myBiz ? (
+                    /* NËN-PANELI I BIZNESIT (BLLOKU I PËRMIRËSUAR §6, profili_i_biznesit_pasqyre):
+                       pasqyrë e panelit të profilit, por me VETËM butonat e biznesit — asnjë
+                       buton ekskluziv i llogarisë (siguri/GDPR/fshi/referral rrinë te profili
+                       personal). Pronari kalon këtu nga një buton dhe menaxhon biznesin te
+                       paneli i vet, duke ripërdorur rrugët ekzistuese. */
                     <div className="card" style={{ borderLeft: '3px solid #C42305' }}>
                       <div className="card-hdr">
-                        <span className="card-title"><span aria-hidden="true">🏢</span> Biznesi yt</span>
+                        <span className="card-title"><span aria-hidden="true">🏢</span> {myBiz.name}</span>
                         {myBiz.is_verified && <span style={{ fontSize: 11, fontWeight: 700, color: '#16a34a', background: '#dcfce7', padding: '2px 8px', borderRadius: 6 }}>✅ I verifikuar</span>}
                       </div>
-                      <div style={{ fontSize: 15, fontWeight: 800, color: '#111', margin: '4px 0 12px' }}>{myBiz.name}</div>
-                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                        {/* Ky panel (/profile → Biznesi im) ËSHTË administrimi i biznesit.
-                            Butoni çon te faqja PUBLIKE e biznesit (pamja vizitor); ndaj
-                            u riemërua "Shiko faqen e biznesit" — që të mos ketë dy butona
-                            "Vepro si biznes" në kahje të kundërta (faqja e biznesit ka
-                            "Vepro si biznes" që kthehet këtu). Zero mbivendosje. */}
-                        <button type="button" onClick={() => window.location.href = `/biznese/${myBiz.id}`}
-                          style={{ flex: 1, minWidth: 150, minHeight: 44, background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842', border: 'none', borderRadius: 11, fontSize: 13, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                          <i className="ti ti-eye" aria-hidden="true" /> Shiko faqen e biznesit →
-                        </button>
-                        <button type="button" onClick={() => window.location.href = `/biznese/${myBiz.id}/edit`}
-                          style={{ flex: '0 0 auto', minHeight: 44, background: '#f0f0f0', color: '#333', border: 'none', borderRadius: 11, padding: '0 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
-                          <span aria-hidden="true">✏️</span> Edito
-                        </button>
-                      </div>
-                      <p style={{ fontSize: 11, color: '#767676', marginTop: 10, lineHeight: 1.5 }}>
-                        Faqja e biznesit është nën-paneli yt: aty menaxhon shpalljet, vlerësimet dhe të dhënat si biznes. Identiteti dhe abonimi mbeten te llogaria jote personale.
+                      <p style={{ fontSize: 11.5, color: '#767676', margin: '2px 0 12px', lineHeight: 1.5 }}>
+                        Nën-paneli i biznesit tënd — menaxho biznesin këtu. Identiteti dhe abonimi mbeten te llogaria jote personale.
                       </p>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        {([
+                          { ike: 'ti-building-store', titull: 'Të dhënat e biznesit', nen: 'Emri, logo, kontakti, adresa, orari, kategoritë', vepro: () => { window.location.href = `/biznese/${myBiz.id}/edit` } },
+                          { ike: 'ti-photo',          titull: 'Logo & Kopertinë',      nen: 'Pamja e biznesit — logo dhe banner',              vepro: () => { window.location.href = `/biznese/${myBiz.id}/edit` } },
+                          { ike: 'ti-list-details',   titull: 'Shpalljet e biznesit',  nen: 'Shpalljet e lidhura me biznesin',                 vepro: () => { window.location.href = `/biznese/${myBiz.id}` } },
+                          { ike: 'ti-star',           titull: 'Vlerësimet',            nen: 'Vlerësimet për biznesin (subjekt = biznesi)',     vepro: () => { window.location.href = `/biznese/${myBiz.id}` } },
+                          { ike: 'ti-message',        titull: 'Mesazhet e biznesit',   nen: 'Bisedat e ardhura te biznesi',                    vepro: () => { window.location.href = `/messages?biz=${myBiz.id}` } },
+                          { ike: 'ti-chart-bar',      titull: 'Analitika e biznesit',  nen: 'Shikime, sytë live dhe metrikat e biznesit',      vepro: () => { window.location.href = `/biznese/${myBiz.id}` } },
+                          { ike: 'ti-crown',          titull: 'Plani (trashëgim)',     nen: 'Abonimi trashëgohet nga llogaria — shiko / menaxho', vepro: () => { window.location.href = profile?.is_premium ? '/billing' : '/premium' } },
+                        ] as const).map(b => (
+                          <button key={b.titull} type="button" onClick={b.vepro}
+                            style={{ width: '100%', background: '#fff', border: '1px solid #eee', borderRadius: 13, padding: '12px 14px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 10, color: '#111', minHeight: 48, textAlign: 'left' }}>
+                            <i className={`ti ${b.ike}`} style={{ fontSize: 20, color: '#C42B0F' }} aria-hidden="true" />
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div>{b.titull}</div>
+                              <div style={{ fontSize: 10, fontWeight: 500, color: '#767676', marginTop: 2 }}>{b.nen}</div>
+                            </div>
+                            <i className="ti ti-chevron-right" style={{ fontSize: 16, color: '#999' }} aria-hidden="true" />
+                          </button>
+                        ))}
+                      </div>
+                      <button type="button" onClick={() => window.location.href = `/biznese/${myBiz.id}`}
+                        style={{ width: '100%', marginTop: 10, minHeight: 44, background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842', border: 'none', borderRadius: 11, fontSize: 13, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                        <i className="ti ti-eye" aria-hidden="true" /> Shiko faqen publike të biznesit →
+                      </button>
                     </div>
                   ) : (
                     <div className="card" style={{ borderLeft: '3px solid #C42305' }}>
