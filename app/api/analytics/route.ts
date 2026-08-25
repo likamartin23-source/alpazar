@@ -32,6 +32,12 @@ export async function GET(req: NextRequest) {
   const days = Math.min(Math.max(Number.isFinite(_daysRaw) ? _daysRaw : 30, 1), 90)
   const since = new Date(Date.now() - days * 86400000).toISOString()
 
+  // Metrikat e reja të gjurmimit (impresione/reach/shares/kontakt-split/saves/
+  // followers) nga RPC-ja SECURITY DEFINER `analytics_extra` — agregim në SQL,
+  // i kufizuar te auth.uid(). Fail-soft: nëse mungon, thjesht s'shtohet.
+  const { data: extra } = await sb.rpc('analytics_extra', { p_days: days })
+  const extraObj = extra && typeof extra === 'object' ? extra : {}
+
   // 1. User's listings
   const { data: listings } = await sb
     .from('listings')
@@ -44,6 +50,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       views_by_day: [], top_listings: [], hourly: [],
       total_views: 0, total_contacts: 0,
+      ...extraObj,
     }, { headers: NO_STORE })
   }
 
@@ -113,5 +120,6 @@ export async function GET(req: NextRequest) {
     total_views: (rawViews ?? []).length,
     total_contacts: (msgCounts ?? []).length,
     period_days: days,
+    ...extraObj,
   }, { headers: NO_STORE })
 }

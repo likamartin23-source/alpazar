@@ -14,6 +14,7 @@ import { ImageCarousel } from '../../components/ImageCarousel'
 import Avatar, { tierNgaProfili } from '../../components/Avatar'
 import { useIsOnline } from '../../components/OnlinePresence'
 import ListingCard from '../../components/ListingCard'
+import { trackEvent } from '../../../lib/track'
 
 const MapDisplay = dynamic(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), { ssr: false })
 
@@ -833,7 +834,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
               <button
                 type="button"
                 aria-label={priceAlert ? 'Ndrysho alarmin e çmimit' : 'Vendos alarm çmimi'}
-                onClick={() => setAlertOpen(true)}
+                onClick={() => { trackEvent('notify', listing.id); setAlertOpen(true) }}
                 style={{
                   display: 'flex', alignItems: 'center', gap: 5,
                   background: priceAlert ? '#FFF8E1' : '#F0F7FF',
@@ -1183,6 +1184,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                   type="button"
                   aria-label="Ndaj shpalljen"
                   onClick={() => {
+                    trackEvent('share', listing.id)
                     const url = buildShareUrl(`/listing/${params.id}`, myRefCode)
                     if (navigator.share) {
                       navigator.share({ title: listing.title, url }).catch(() => {})
@@ -1399,6 +1401,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
               target="_blank"
               rel="noopener noreferrer"
               className="wa-btn"
+              onClick={() => trackEvent('contact_whatsapp', listing.id)}
               aria-label="Kontakto me WhatsApp">
               <i className="ti ti-brand-whatsapp" aria-hidden="true" />
             </a>
@@ -1409,6 +1412,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
               target="_blank"
               rel="noopener noreferrer"
               className="viber-btn"
+              onClick={() => trackEvent('contact_viber', listing.id)}
               aria-label="Kontakto me Viber">
               <i className="ti ti-phone" aria-hidden="true" />
             </a>

@@ -193,6 +193,71 @@ const [loadError, setLoadError] = useState(false)
             </div>
           </div>
 
+          {/* Shtrirja (BLLOKU I PËRMIRËSUAR — gjurmim i ri): impresione në feed,
+              reach (persona/pajisje unike), vizita (hapje shpalljeje). */}
+          <div className="an-card">
+            <div className="an-title">Shtrirja — {period} ditë</div>
+            <div className="stat-row">
+              <div className="stat-box">
+                <div className="stat-num">{(data.impressions ?? 0).toLocaleString()}</div>
+                <div className="stat-lbl"><span aria-hidden="true">📢</span> Impresione</div>
+              </div>
+              <div className="stat-box">
+                <div className="stat-num">{(data.reach ?? 0).toLocaleString()}</div>
+                <div className="stat-lbl"><span aria-hidden="true">👥</span> Arritje</div>
+              </div>
+              <div className="stat-box">
+                <div className="stat-num">{data.total_views.toLocaleString()}</div>
+                <div className="stat-lbl"><span aria-hidden="true">🔎</span> Vizita</div>
+              </div>
+            </div>
+            <div style={{ fontSize: 10.5, color: '#aaa', marginTop: 8, lineHeight: 1.5 }}>
+              Impresion = karta u pa në feed · Arritje = pajisje/persona unikë · Vizitë = shpallja u hap.
+            </div>
+          </div>
+
+          {/* Audienca: ndjekës, të ruajtura, ndarje. */}
+          <div className="an-card">
+            <div className="an-title">Audienca — {period} ditë</div>
+            <div className="stat-row">
+              <div className="stat-box">
+                <div className="stat-num">{(data.followers ?? 0).toLocaleString()}</div>
+                <div className="stat-lbl"><span aria-hidden="true">🫂</span> Ndjekës</div>
+              </div>
+              <div className="stat-box">
+                <div className="stat-num">{(data.saves ?? 0).toLocaleString()}</div>
+                <div className="stat-lbl"><span aria-hidden="true">🔖</span> Të ruajtura</div>
+              </div>
+              <div className="stat-box">
+                <div className="stat-num">{(data.shares ?? 0).toLocaleString()}</div>
+                <div className="stat-lbl"><span aria-hidden="true">↗️</span> Ndarje</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Kontakt i ndarë sipas kanalit. */}
+          <div className="an-card">
+            <div className="an-title">Kontakt sipas kanalit — {period} ditë</div>
+            <div className="stat-row">
+              <div className="stat-box">
+                <div className="stat-num">{(data.contacts_whatsapp ?? 0).toLocaleString()}</div>
+                <div className="stat-lbl"><span aria-hidden="true">🟢</span> WhatsApp</div>
+              </div>
+              <div className="stat-box">
+                <div className="stat-num">{(data.contacts_viber ?? 0).toLocaleString()}</div>
+                <div className="stat-lbl"><span aria-hidden="true">🟣</span> Viber</div>
+              </div>
+              <div className="stat-box">
+                <div className="stat-num">{(data.contacts_phone ?? 0).toLocaleString()}</div>
+                <div className="stat-lbl"><span aria-hidden="true">📞</span> Telefon</div>
+              </div>
+              <div className="stat-box">
+                <div className="stat-num">{(data.notify ?? 0).toLocaleString()}</div>
+                <div className="stat-lbl"><span aria-hidden="true">🔔</span> Njoftomë</div>
+              </div>
+            </div>
+          </div>
+
           {/* Views per day chart */}
           {data.views_by_day?.length > 0 && (
             <div className="an-card">

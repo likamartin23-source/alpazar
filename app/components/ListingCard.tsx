@@ -19,6 +19,7 @@ import Avatar, { tierNgaRankTier } from './Avatar'
 import { FavoriteButton } from './FavoriteButton'
 import { useIsOnline } from './OnlinePresence'
 import { useSyteLive } from './PremiumUpsell'
+import { trackEvent } from '../../lib/track'
 import { nf, dayMonth } from '../../lib/format'
 
 export type ListingCardAuthor = {
@@ -123,7 +124,12 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
     const el = cardRef.current
     if (!el || typeof IntersectionObserver === 'undefined') return
     const io = new IntersectionObserver(
-      ([e]) => setVisible(e.isIntersecting),
+      ([e]) => {
+        setVisible(e.isIntersecting)
+        // Impression (BLLOKU I PËRMIRËSUAR — gjurmim): numërohet 1×/sesion kur karta
+        // shfaqet realisht në ekran (jo thjesht e renderuar). Fire-and-forget.
+        if (e.isIntersecting) trackEvent('impression', l.id, { once: true })
+      },
       { rootMargin: '0px', threshold: 0.1 },
     )
     io.observe(el)
