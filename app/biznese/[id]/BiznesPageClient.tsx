@@ -70,6 +70,9 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   // pamja publike ("Shiko si vizitor") dhe të kthehet te menaxhimi. Detektimi isOwner
   // (SSR, anti-flaker) mbetet i paprekur; kjo vetëm fsheh panelin e pronarit lokalisht.
   const [asVisitor, setAsVisitor]   = useState(false)
+  // BP2 §B2 — paneli i brendshëm i biznesit = PASQYRË e panelit /profile (guaskë e veçantë
+  // biznesi, e pavarur; /profile s'preket). Tab-et e panelit të pronarit.
+  const [panelTab, setPanelTab]     = useState<'home' | 'listings' | 'reviews'>('home')
   const [userId, setUserId]         = useState<string | null>(null)
   const [isOwner, setIsOwner]       = useState(!!initialIsOwner)
   const [descExpanded, setDescExpanded] = useState(false)
@@ -268,6 +271,208 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   const descText  = descExpanded || !descShort ? biz.description : (biz.description || '').slice(0, 120) + '…'
   // "Hapur tani" — vetëm pas montimit (varet nga ora → pa mospërputhje SSR).
   const openNow   = mounted ? openNowFromHours(biz.hours) : null
+  const tier      = tierNgaProfili(pronari)
+  const tierLabel = tier === 'vip' ? 'VIP Ekstra Boost' : tier === 'premium' ? 'Premium' : null
+
+  // ── BP2 §B2 — PANELI I BRENDSHËM I BIZNESIT = PASQYRË e panelit /profile ──────────────
+  // Guaskë e veçantë biznesi (e pavarur; /profile s'preket). Pronari default sheh KËTË panel;
+  // "Shiko faqen publike" → pamja publike (asVisitor=true). Shiriti "Vepro si" (B3.1) lart.
+  if (isOwner && !asVisitor) {
+    return (
+      <div className="bizp">
+        <style dangerouslySetInnerHTML={{ __html: `
+          *{box-sizing:border-box;margin:0;padding:0;}
+          body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
+          .bizp{background:#f2f2f2;min-height:100vh;padding-bottom:70px;}
+          .bizp-shell{max-width:480px;margin:0 auto;}
+          .vs-bar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:8px;background:#111;color:#fff;padding:8px 12px;font-size:12px;font-weight:700;}
+          .vs-bar .vs-lbl{color:#bbb;}
+          .vs-seg{display:inline-flex;background:#000;border-radius:999px;padding:3px;gap:2px;margin-left:auto;}
+          .vs-seg button{border:none;background:none;color:#ccc;font-weight:800;font-size:12px;padding:6px 12px;border-radius:999px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;min-height:34px;}
+          .vs-seg button.on{background:#F5C842;color:#111;}
+          .bizp-cover{position:relative;aspect-ratio:16/7;overflow:hidden;background:linear-gradient(135deg,#F5C842,#E63312);}
+          .bizp-cover img{width:100%;height:100%;object-fit:cover;}
+          .cam{position:absolute;background:rgba(0,0,0,.55);border:none;border-radius:999px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;}
+          .bizp-card{background:#fff;border-radius:0 0 20px 20px;padding:0 16px 16px;margin-bottom:8px;}
+          .bizp-badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+          .bdg{font-size:11px;font-weight:800;padding:3px 9px;border-radius:8px;display:inline-flex;align-items:center;gap:4px;}
+          .bizp-stats{display:flex;border-top:1px solid #f0f0f0;padding-top:14px;}
+          .stat-pill{display:flex;flex-direction:column;align-items:center;flex:1;}
+          .stat-n{font-size:18px;font-weight:800;color:#111;}
+          .stat-l{font-size:10px;color:#888;font-weight:500;margin-top:1px;}
+          .bizp-tabs{position:sticky;top:50px;z-index:10;background:#fff;border-bottom:1px solid #eee;display:flex;overflow-x:auto;margin-bottom:2px;}
+          .bizp-tabs button{flex:1 0 auto;padding:12px 14px;font-size:12.5px;font-weight:700;border:none;background:none;cursor:pointer;border-bottom:2.5px solid transparent;color:#888;font-family:inherit;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:5px;}
+          .bizp-tabs button.on{color:#C42B0F;border-bottom-color:#E63312;}
+          .mcard{background:#fff;border-radius:14px;margin:8px 12px 0;padding:14px 16px;}
+          .mrow{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;background:#fff;border:1px solid #ececec;border-radius:12px;padding:10px 14px;cursor:pointer;font-family:inherit;text-align:left;margin-bottom:8px;}
+          .mrow:hover{background:#fafafa;border-color:#ddd;}
+          .mrow i.lead{font-size:19px;color:#C42B0F;width:24px;text-align:center;}
+          .mrow .mtxt{flex:1;min-width:0;}
+          .mrow .mtt{font-size:13.5px;font-weight:700;color:#111;}
+          .mrow .msub{font-size:11px;color:#888;margin-top:1px;}
+          .mrow i.arr{color:#bbb;font-size:16px;}
+        ` }} />
+        <div className="bizp-shell">
+          {/* B3.1 — Shiriti "Vepro si" (i qëndrueshëm; s'krijon inbox/analitikë të dytë) */}
+          <div className="vs-bar">
+            <span className="vs-lbl">Vepro si:</span>
+            <div className="vs-seg" role="tablist" aria-label="Vepro si">
+              <button type="button" className="on" aria-current="true"><i className="ti ti-building-store" aria-hidden="true" /> Biznesi</button>
+              <button type="button" onClick={() => { window.location.href = '/profile' }}><i className="ti ti-user" aria-hidden="true" /> Unë</button>
+            </div>
+          </div>
+
+          {/* Kopertinë + kamerë (→ /edit) */}
+          <div className="bizp-cover">
+            {biz.cover_url && <img src={biz.cover_url} alt="" loading="lazy" onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />}
+            <button type="button" className="cam" aria-label="Ndrysho kopertinën" style={{ top: 12, right: 12 }} onClick={() => { window.location.href = `/biznese/${biz.id}/edit` }}>
+              <i className="ti ti-camera" aria-hidden="true" style={{ fontSize: 16 }} />
+            </button>
+          </div>
+
+          <div className="bizp-card">
+            {/* Avatar unazë+🏢 (+kurorë kur VIP) + kamerë */}
+            <div style={{ position: 'relative', width: 84, marginTop: -42, marginBottom: 10 }}>
+              <Avatar src={biz.logo_url} name={biz.name} type="business" tier={tier} verified={biz.is_verified} size={84} />
+              <button type="button" className="cam" aria-label="Ndrysho logon" style={{ bottom: 0, right: -4, width: 30, height: 30 }} onClick={() => { window.location.href = `/biznese/${biz.id}/edit` }}>
+                <i className="ti ti-camera" aria-hidden="true" style={{ fontSize: 14 }} />
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+              <h1 style={{ fontSize: 21, fontWeight: 800, color: '#111', lineHeight: 1.2 }}>{biz.name}</h1>
+              {biz.is_verified && <span aria-hidden="true" style={{ fontSize: 17 }}>✅</span>}
+            </div>
+
+            {/* Bexhat (VIP Ekstra Boost / Premium · Biznes · I verifikuar) */}
+            <div className="bizp-badges">
+              {tierLabel && <span className="bdg" style={tier === 'vip' ? { background: '#F3E8FF', color: '#7C3AED' } : { background: '#FFF3D6', color: '#7A4A00' }}><span aria-hidden="true">👑</span> {tierLabel}</span>}
+              <span className="bdg" style={{ background: '#E7F0FF', color: '#1D4ED8' }}><span aria-hidden="true">🏢</span> Biznes</span>
+              {biz.is_verified && <span className="bdg" style={{ background: '#dcfce7', color: '#16a34a' }}>✅ I verifikuar</span>}
+            </div>
+
+            {/* Statistika (Shpallje · Të shitura · Ndjekës · Anëtar) */}
+            <div className="bizp-stats">
+              <div className="stat-pill"><span className="stat-n">{listings.length}</span><span className="stat-l">Shpallje</span></div>
+              <div style={{ width: 1, background: '#f0f0f0' }} />
+              <div className="stat-pill"><span className="stat-n" style={soldCount > 0 ? { color: '#0E7A35' } : undefined}>{soldCount}</span><span className="stat-l">Të shitura</span></div>
+              <div style={{ width: 1, background: '#f0f0f0' }} />
+              <div className="stat-pill"><span className="stat-n">{followers}</span><span className="stat-l">Ndjekës</span></div>
+              <div style={{ width: 1, background: '#f0f0f0' }} />
+              <div className="stat-pill"><span className="stat-n">{new Date(biz.created_at).getFullYear()}</span><span className="stat-l">Anëtar prej</span></div>
+            </div>
+
+            {/* Meta: 👁 · 🔴 · ⏱ · 🚫 0% komision */}
+            <div style={{ fontSize: 12, color: '#6B6B6B', marginTop: 12, display: 'flex', flexWrap: 'wrap', gap: 4, alignItems: 'center' }}>
+              {totalViews > 0 && <span><span aria-hidden="true">👁</span> {nf(totalViews)} shikime</span>}
+              {syteLive > 0 && <span style={{ color: '#C4230F', fontWeight: 700 }}><span style={{ color: '#ccc', margin: '0 4px' }}>·</span><span aria-hidden="true">🔴</span> {syteLive} tani</span>}
+              {respHrs != null && <span><span style={{ color: '#ccc', margin: '0 4px' }}>·</span><span aria-hidden="true">⏱️</span> Përgjigjet {fmtResp(respHrs)}</span>}
+              <span><span style={{ color: '#ccc', margin: '0 4px' }}>·</span><span aria-hidden="true">🚫</span> 0% komision</span>
+            </div>
+
+            {/* Shiko faqen publike */}
+            <button type="button" onClick={() => setAsVisitor(true)}
+              style={{ width: '100%', marginTop: 14, minHeight: 44, background: '#fff', border: '1.5px solid #e5e5e5', borderRadius: 11, fontSize: 13, fontWeight: 800, color: '#111', cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              <i className="ti ti-eye" aria-hidden="true" /> Shiko faqen publike
+            </button>
+          </div>
+
+          {/* Tabet e panelit (pasqyrë e /profile: Profili i biznesit · Shpalljet · Vlerësime · Mesazhe · Analitika) */}
+          <div className="bizp-tabs" role="tablist" aria-label="Paneli i biznesit">
+            <button type="button" className={panelTab === 'home' ? 'on' : ''} aria-selected={panelTab === 'home'} onClick={() => setPanelTab('home')}><i className="ti ti-building-store" aria-hidden="true" /> Profili i biznesit</button>
+            <button type="button" className={panelTab === 'listings' ? 'on' : ''} aria-selected={panelTab === 'listings'} onClick={() => setPanelTab('listings')}><i className="ti ti-layout-grid" aria-hidden="true" /> Shpalljet</button>
+            <button type="button" className={panelTab === 'reviews' ? 'on' : ''} aria-selected={panelTab === 'reviews'} onClick={() => { setPanelTab('reviews'); if (!reviewsLoaded) { setReviewsLoaded(true); supabase.rpc('business_reviews', { p_business: biz.id }).then(({ data }) => setReviews(data || [])) } }}><i className="ti ti-star" aria-hidden="true" /> Vlerësime</button>
+            <button type="button" onClick={() => { window.location.href = `/messages?biz=${biz.id}` }}><i className="ti ti-message" aria-hidden="true" /> Mesazhe</button>
+            <button type="button" onClick={() => { window.location.href = `/biznese/${biz.id}/analytics` }}><i className="ti ti-chart-bar" aria-hidden="true" /> Analitika</button>
+          </div>
+
+          {/* Tab: Profili i biznesit — kartat e menaxhimit (mision-biznesi; pa ekskluzivitete llogarie) */}
+          {panelTab === 'home' && (
+            <div className="mcard">
+              <button type="button" className="mrow" onClick={() => { window.location.href = `/biznese/${biz.id}/edit` }}>
+                <i className="ti ti-settings lead" aria-hidden="true" />
+                <span className="mtxt"><span className="mtt">Të dhënat e biznesit</span><span className="msub">Emri, përshkrimi, kontakti, orari, ligjore…</span></span>
+                <i className="ti ti-chevron-right arr" aria-hidden="true" />
+              </button>
+              <button type="button" className="mrow" onClick={() => { window.location.href = `/biznese/${biz.id}/edit` }}>
+                <i className="ti ti-photo lead" aria-hidden="true" />
+                <span className="mtxt"><span className="mtt">Logo &amp; Kopertinë</span><span className="msub">Identiteti vizual i biznesit</span></span>
+                <i className="ti ti-chevron-right arr" aria-hidden="true" />
+              </button>
+              <button type="button" className="mrow" onClick={() => { window.location.href = `/biznese/${biz.id}/analytics` }}>
+                <i className="ti ti-chart-bar lead" aria-hidden="true" />
+                <span className="mtxt"><span className="mtt">Analitika</span><span className="msub">Shikime, arritje, kontakte (pa referral)</span></span>
+                <i className="ti ti-chevron-right arr" aria-hidden="true" />
+              </button>
+              <button type="button" className="mrow" onClick={() => { window.location.href = `/messages?biz=${biz.id}` }}>
+                <i className="ti ti-message lead" aria-hidden="true" />
+                <span className="mtxt"><span className="mtt">Mesazhet</span><span className="msub">Një inbox — filtruar për biznesin</span></span>
+                <i className="ti ti-chevron-right arr" aria-hidden="true" />
+              </button>
+              {/* Plani (trashëgim) — reflektim i planit të llogarisë; menaxhimi mbetet te llogaria personale */}
+              <div className="mrow" style={{ cursor: 'default' }}>
+                <i className="ti ti-crown lead" aria-hidden="true" />
+                <span className="mtxt"><span className="mtt">Plani: {tierLabel || 'Falas'} <span style={{ fontSize: 10, fontWeight: 700, color: '#888' }}>· trashëgim</span></span><span className="msub">Trashëguar nga llogaria — menaxhohet te “Vepro si: Unë”</span></span>
+              </div>
+            </div>
+          )}
+
+          {/* Tab: Shpalljet */}
+          {panelTab === 'listings' && (
+            listings.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '48px 16px', color: '#aaa', background: '#fff', margin: '8px 12px 0', borderRadius: 14 }}>
+                <div style={{ fontSize: 44, marginBottom: 10 }} aria-hidden="true">🛍️</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: '#666', marginBottom: 8 }}>Asnjë shpallje ende</div>
+                <button type="button" onClick={() => { window.location.href = '/listing/new' }} style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 24px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: 13 }}>+ Shto shpallje</button>
+              </div>
+            ) : (
+              <div className="listings-grid" style={{ padding: 12 }}>
+                {listings.map((l, idx) => <ListingCard key={l.id} listing={l as any} index={idx} showSeller={false} mounted={mounted} />)}
+              </div>
+            )
+          )}
+
+          {/* Tab: Vlerësime (subjekt = biznes) */}
+          {panelTab === 'reviews' && (
+            <div style={{ margin: 8 }}>
+              {rating.count > 0 && rating.avg != null && (
+                <div style={{ background: '#fff', borderRadius: 16, padding: 16, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{ fontSize: 32, fontWeight: 800, color: '#111' }}>{rating.avg.toFixed(1)}</div>
+                  <div>
+                    <div style={{ color: '#F5C842', fontSize: 16 }} aria-hidden="true">{'★'.repeat(Math.round(rating.avg))}{'☆'.repeat(5 - Math.round(rating.avg))}</div>
+                    <div style={{ fontSize: 12, color: '#888' }}>{rating.count} vlerësim{rating.count !== 1 ? 'e' : ''}</div>
+                  </div>
+                </div>
+              )}
+              {reviews.length > 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {reviews.map(rv => (
+                    <div key={rv.id} style={{ background: '#fff', borderRadius: 14, padding: '12px 14px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                        <Avatar src={rv.reviewer_avatar} name={rv.reviewer_name} type="person" size={30} />
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: '#111' }}>{rv.reviewer_name}</div>
+                          <div style={{ fontSize: 10, color: '#aaa' }}>{new Date(rv.created_at).toLocaleDateString('sq-AL', { day: 'numeric', month: 'short', year: 'numeric' })}{rv.purchase_verified ? ' · ✅ Blerje e verifikuar' : ''}</div>
+                        </div>
+                        <div style={{ color: '#F5C842', fontSize: 13 }} aria-label={`${rv.rating} nga 5`}>{'★'.repeat(rv.rating)}{'☆'.repeat(5 - rv.rating)}</div>
+                      </div>
+                      {rv.comment && <div style={{ fontSize: 13, color: '#444', lineHeight: 1.5 }}>{rv.comment}</div>}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div style={{ background: '#fff', borderRadius: 16, padding: '40px 16px', textAlign: 'center' }}>
+                  <div style={{ fontSize: 44, marginBottom: 14 }} aria-hidden="true">⭐</div>
+                  <div style={{ fontSize: 15, fontWeight: 800, color: '#111', marginBottom: 6 }}>Ende pa vlerësime</div>
+                  <div style={{ fontSize: 12, color: '#888', lineHeight: 1.6 }}>Klientët që blejnë nga ky biznes do të mund të lënë vlerësimin këtu.</div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="biz-page">
@@ -457,39 +662,32 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               (/profile → Biznesi im), pa dublim, në sinkron me modalitetet ekzistuese.
               Vizitori sheh veprimet e kontaktit (Telefono/Mesazh/Ndiq). Veprimet drejt
               vetes (mesazh/telefono/ndiq) nuk i shfaqen pronarit — s'kanë kuptim. */}
+          {/* Veprimet e vizitorit (Telefono/Mesazh/Ndiq). Pronari e menaxhon biznesin te
+              paneli-pasqyrë (BP2 §B2); këtu, kur pronari është në "Shiko faqen publike",
+              sheh pikërisht pamjen e vizitorit — pa kontrolle pronari të përziera. */}
           <div style={{ display: 'flex', gap: 8 }}>
-            {isOwner && !asVisitor ? (
-              <button type="button" aria-label="Të dhënat e biznesit — menaxho biznesin"
-                onClick={() => { window.location.href = `/biznese/${biz.id}/edit` }}
-                className="action-btn" style={{ background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842' }}>
-                <i className="ti ti-settings" style={{ fontSize: 15 }} aria-hidden="true" /> Të dhënat e biznesit
-              </button>
-            ) : (
-              <>
-                {biz.phone && (
-                  <a href={`tel:${biz.phone}`} className="action-btn" style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff' }}>
-                    <i className="ti ti-phone" style={{ fontSize: 15 }} aria-hidden="true" /> Telefono
-                  </a>
-                )}
-                <button type="button" aria-label="Dërgo mesazh" onClick={() => { if (!userId) { window.location.href = '/auth/login'; return } window.location.href = `/messages?biz=${biz.id}` }}
-                  className="action-btn" style={{ background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842' }}>
-                  <i className="ti ti-message" style={{ fontSize: 15 }} aria-hidden="true" /> Mesazh
-                </button>
-                <button
-                  type="button"
-                  onClick={toggleFollow}
-                  disabled={followBusy}
-                  aria-pressed={following}
-                  aria-label={following ? 'Mos e ndiq më këtë biznes' : 'Ndiq këtë biznes'}
-                  className="action-btn"
-                  style={following
-                    ? { background: '#fff', color: '#C42305', border: '1.5px solid #C42305', boxShadow: 'none' }
-                    : { background: 'linear-gradient(135deg,#F8D24E,#F5C842)', color: '#111' }}>
-                  <i className={`ti ti-${following ? 'check' : 'plus'}`} style={{ fontSize: 15 }} aria-hidden="true" />
-                  {following ? 'Po ndjek' : 'Ndiq'}
-                </button>
-              </>
+            {biz.phone && (
+              <a href={`tel:${biz.phone}`} className="action-btn" style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff' }}>
+                <i className="ti ti-phone" style={{ fontSize: 15 }} aria-hidden="true" /> Telefono
+              </a>
             )}
+            <button type="button" aria-label="Dërgo mesazh" onClick={() => { if (!userId) { window.location.href = '/auth/login'; return } window.location.href = `/messages?biz=${biz.id}` }}
+              className="action-btn" style={{ background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842' }}>
+              <i className="ti ti-message" style={{ fontSize: 15 }} aria-hidden="true" /> Mesazh
+            </button>
+            <button
+              type="button"
+              onClick={toggleFollow}
+              disabled={followBusy}
+              aria-pressed={following}
+              aria-label={following ? 'Mos e ndiq më këtë biznes' : 'Ndiq këtë biznes'}
+              className="action-btn"
+              style={following
+                ? { background: '#fff', color: '#C42305', border: '1.5px solid #C42305', boxShadow: 'none' }
+                : { background: 'linear-gradient(135deg,#F8D24E,#F5C842)', color: '#111' }}>
+              <i className={`ti ti-${following ? 'check' : 'plus'}`} style={{ fontSize: 15 }} aria-hidden="true" />
+              {following ? 'Po ndjek' : 'Ndiq'}
+            </button>
             <button type="button" aria-label="Ndaj" onClick={share} className="action-btn" style={{ background: '#f0f0f0', color: '#333', flex: '0 0 48px' }}>
               <i className="ti ti-share-3" style={{ fontSize: 17 }} aria-hidden="true" />
             </button>
@@ -520,47 +718,15 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
         </div>
       </div>
 
-      {/* ── Paneli i brendshëm i pronarit (FINAL §3.6, profili_i_biznesit_pasqyre) ──
-          Shfaqet VETËM për pronarin. Butonat e biznesit; ekskluzivitetet e llogarisë
-          rrinë te profili personal. "Të dhënat e biznesit" (primar lart) → /edit që mban
-          formularin e plotë + fshirjen 3-shkallëshe. Këtu: shkurtoret e tjera. Shpalljet/
-          Vlerësimet/metrikat janë tashmë në këtë faqe (tabet + koka). */}
-      {isOwner && !asVisitor && (
-        // Paneli i brendshëm i biznesit: VETËM butona që i shërbejnë misionit të biznesit —
-        // Analitika (pa referral) · Vlerësime · Mesazhe(filtër biznes) · Logo & Kopertinë ·
-        // Shiko si vizitor. "Të dhënat e biznesit" (primar) rri te koka. Butonat e "përdoruesit
-        // si përdorues platforme" (të dhëna personale · siguri · GDPR · Abonimi/Plani · Fto miq/
-        // referral) NUK dublohen këtu — janë të llogarisë personale, arrihen me "Vepro si: Unë".
-        <div style={{ background: '#fff', margin: '0 0 8px', padding: '12px 16px', borderBottom: '1px solid #f0f0f0' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
-            <button type="button" onClick={() => { window.location.href = `/biznese/${biz.id}/analytics` }} className="biz-panel-btn">
-              <i className="ti ti-chart-bar" aria-hidden="true" /> Analitika
-            </button>
-            <button type="button" onClick={() => { setActiveTab('about'); if (!reviewsLoaded) { setReviewsLoaded(true); supabase.rpc('business_reviews', { p_business: biz.id }).then(({ data }) => setReviews(data || [])) } }} className="biz-panel-btn">
-              <i className="ti ti-star" aria-hidden="true" /> Vlerësime
-            </button>
-            <button type="button" onClick={() => { window.location.href = `/messages?biz=${biz.id}` }} className="biz-panel-btn">
-              <i className="ti ti-message" aria-hidden="true" /> Mesazhet
-            </button>
-            <button type="button" onClick={() => { window.location.href = `/biznese/${biz.id}/edit` }} className="biz-panel-btn">
-              <i className="ti ti-photo" aria-hidden="true" /> Logo &amp; Kopertinë
-            </button>
-            <button type="button" onClick={() => setAsVisitor(true)} className="biz-panel-btn">
-              <i className="ti ti-eye" aria-hidden="true" /> Shiko si vizitor
-            </button>
-          </div>
-          <button type="button" onClick={() => { window.location.href = '/profile' }}
-            style={{ width: '100%', marginTop: 8, minHeight: 40, background: '#FFFBEA', border: '1px solid #F5C842', borderRadius: 10, fontSize: 12.5, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', color: '#7A4A00', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-            <i className="ti ti-user" aria-hidden="true" /> Vepro si: Unë (llogaria personale)
-          </button>
-        </div>
-      )}
+      {/* BP2 §B2/B3.1 — Pronari e menaxhon biznesin te paneli-pasqyrë (default). Kjo pamje
+          publike i shfaqet pronarit VETËM kur ka shtypur "Shiko faqen publike" → banderolë
+          e qëndrueshme për t'u kthyer te menaxhimi ("Vepro si: Biznesi"). */}
       {isOwner && asVisitor && (
         <div style={{ background: '#111', color: '#F5C842', margin: '0 0 8px', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, fontSize: 12.5, fontWeight: 700 }}>
-          <span><i className="ti ti-eye" aria-hidden="true" /> Po e shikon si vizitor</span>
+          <span><i className="ti ti-eye" aria-hidden="true" /> Po e shikon faqen publike të biznesit</span>
           <button type="button" onClick={() => setAsVisitor(false)}
             style={{ background: '#F5C842', color: '#111', border: 'none', borderRadius: 8, padding: '6px 12px', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' }}>
-            Kthehu te menaxhimi
+            ← Kthehu te menaxhimi
           </button>
         </div>
       )}
