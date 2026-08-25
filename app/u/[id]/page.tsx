@@ -73,7 +73,7 @@ async function fetchProfileData(id: string) {
 
   const [{ data: listings }, { data: biz }] = await Promise.all([
     sb.from('listings')
-      .select('id,title,price,currency,images,city,created_at,is_premium,condition,rank_tier')
+      .select('id,title,price,currency,images,city,created_at,is_premium,condition,rank_tier,views_count')
       .eq('user_id', id)
       .is('business_id', null)
       .eq('is_active', true)

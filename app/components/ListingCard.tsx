@@ -14,9 +14,11 @@
 // layout-i ne cdo faqe, ndaj karta duket njesoj edhe atje ku faqja s'ka
 // stilet e veta.
 
+import { useEffect, useRef, useState } from 'react'
 import Avatar, { tierNgaRankTier } from './Avatar'
 import { FavoriteButton } from './FavoriteButton'
 import { useIsOnline } from './OnlinePresence'
+import { useSyteLive } from './PremiumUpsell'
 import { nf, dayMonth } from '../../lib/format'
 
 export type ListingCardAuthor = {
@@ -53,6 +55,9 @@ export type ListingCardItem = {
   business_id?: string | null
   business?: ListingCardBusiness | null
   status?: string | null
+  /** Numri i shikimeve nga sistemi ekzistues (`listings.views_count`). Kur
+   *  mungon te query-ja, `👁` thjesht s'shfaqet (fail-soft). */
+  views_count?: number | null
 }
 
 type Props = {
@@ -108,12 +113,30 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
   const tier = tierNgaRankTier(l.rank_tier)
   // Prania LIVE e shitësit-person (BLLOKU Imazhi 2: overlay unazë + online/offline).
   const authorOnline = useIsOnline(author?.id)
+  // 🔴 Sytë live për kartën (BLLOKU I PËRMIRËSUAR §2a): THROTTLE me IntersectionObserver
+  // — vetëm kartat e dukshme abonohen te presence-i (jo abonime masive për çdo kartë
+  // të gridit). Kur karta del nga ekrani, `visible=false` → `useSyteLive(undefined)`
+  // e mbyll kanalin. Prag: `🔴` shfaqet vetëm kur live>0.
+  const cardRef = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    const el = cardRef.current
+    if (!el || typeof IntersectionObserver === 'undefined') return
+    const io = new IntersectionObserver(
+      ([e]) => setVisible(e.isIntersecting),
+      { rootMargin: '0px', threshold: 0.1 },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+  const live = useSyteLive(visible ? l.id : undefined)
   const open = () => go(`/listing/${l.id}`)
 
   return (
     <div
+      ref={cardRef}
       className="listing-card"
-      style={{ animationDelay: `${Math.min(index * 45, 360)}ms` }}
+      style={{ ['--i' as string]: String(Math.min(index, 8)) } as React.CSSProperties}
       role="link"
       tabIndex={0}
       aria-label={`${l.title} — ${fmt(l.price, l.currency)}`}
@@ -208,6 +231,22 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
             {mounted && l.created_at ? timeAgo(l.created_at) : ''}
           </span>
         </div>
+        {/* Sytë (BLLOKU I PËRMIRËSUAR §2a): 👁 shikime (statik) · 🔴 live (throttle,
+            vetëm kur >0). Shfaqet vetëm kur ka të dhëna → pa rresht bosh. */}
+        {(l.views_count != null || (mounted && live > 0)) && (
+          <div className="card-stats">
+            {l.views_count != null && (
+              <span className="cs-eye" aria-label={`${nf(l.views_count)} shikime`}>
+                <span aria-hidden="true">👁</span> {nf(l.views_count)}
+              </span>
+            )}
+            {mounted && live > 0 && (
+              <span className="cs-live" aria-label={`${live} duke shikuar tani`}>
+                <span aria-hidden="true">🔴</span> {live}
+              </span>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

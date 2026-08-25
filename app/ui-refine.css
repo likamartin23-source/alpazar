@@ -142,9 +142,14 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
    faqe biznesi, profil. Raporti 70/30 — media 4/3 siper, te dhenat poshte.
    Vlerat jane te njejtat qe kishte kryefaqja; ndryshuar vetem vendi. */
 .listings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--sp-3);margin-bottom:var(--sp-4);}
-.listing-card{background:#fff;border:1px solid #eee;border-radius:var(--r-card);overflow:hidden;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 18px -12px rgba(0,0,0,.14);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;animation:card-in .45s cubic-bezier(.2,.8,.2,1) both;}
+.listing-card{background:#fff;border:1px solid #eee;border-radius:var(--r-card);overflow:hidden;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 18px -12px rgba(0,0,0,.14);transition:box-shadow .25s cubic-bezier(.2,.8,.2,1),border-color .25s;display:flex;flex-direction:column;will-change:transform;animation:card-in .45s cubic-bezier(.2,.8,.2,1) both,alpzCardFloat 6s ease-in-out infinite;animation-delay:calc(var(--i,0)*45ms),calc(700ms + var(--i,0)*140ms);}
 @keyframes card-in{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
-.listing-card:hover{transform:translateY(-3px);box-shadow:0 12px 28px -8px rgba(0,0,0,.22);border-color:#f2ded7;}
+/* Notimi i vazhdueshëm (BLLOKU I PËRMIRËSUAR §2b, homecards_v4): i lehtë, GPU-only.
+   Nis PAS animimit të hyrjes (delay > kohëzgjatja e card-in) → pa përplasje transform-i. */
+@keyframes alpzCardFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+/* Hover: ndalojmë notimin (gjendje e qëndrueshme) + hije/kufi më të fortë si feedback,
+   pa translateY (do të përplasej me animimin e transform-it). */
+.listing-card:hover{animation-play-state:paused;box-shadow:0 12px 28px -8px rgba(0,0,0,.22);border-color:#f2ded7;}
 .listing-card:hover .card-img img{transform:scale(1.05);}
 .listing-card:focus-visible{outline:2px solid var(--action-red);outline-offset:2px;}
 .listing-card:active{transform:scale(.97);}
@@ -164,6 +169,11 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
 .card-meta{display:flex;align-items:center;justify-content:space-between;}
 .card-loc{font-size:11px;color:#6B6B6B;display:flex;align-items:center;gap:3px;}
 .card-loc i{font-size:11px;}
+/* Rreshti i syve (BLLOKU I PËRMIRËSUAR §2a): 👁 shikime · 🔴 live. Kompakt, nën meta-n. */
+.card-stats{display:flex;align-items:center;gap:10px;margin-top:4px;}
+.card-stats .cs-eye{font-size:11px;color:#6B6B6B;display:flex;align-items:center;gap:3px;font-weight:600;}
+.card-stats .cs-live{font-size:11px;color:#C42B0F;display:flex;align-items:center;gap:3px;font-weight:700;}
+@media(min-width:1024px){.card-stats .cs-eye,.card-stats .cs-live{font-size:12px;}}
 @media (prefers-reduced-motion: reduce){
   .listing-card{animation:none;}
   .card-img img{transition:none;}
