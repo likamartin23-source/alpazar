@@ -9,18 +9,6 @@ import { SITE_URL } from '../../lib/siteConfig'
 import { getLevel, isNewMember } from '../components/Badges'
 import { SkeletonProfile, SkeletonList } from '../components/Skeleton'
 
-const SHOP_CATEGORIES = [
-  { id: '', label: '— Zgjidh kategorinë —' },
-  { id: 'elektronike', label: 'Elektronikë' },
-  { id: 'makina', label: 'Makina' },
-  { id: 'shtepi', label: 'Shtëpi & Kopsht' },
-  { id: 'veshje', label: 'Veshje & Aksesore' },
-  { id: 'sport', label: 'Sport & Outdoor' },
-  { id: 'sherbime', label: 'Shërbime' },
-  { id: 'femije', label: 'Fëmijë & Lodra' },
-  { id: 'bukuri', label: 'Bukuri & Shëndet' },
-]
-
 const FN_URL = 'https://sopafwfkrxpcdaljddoh.supabase.co/functions/v1'
 
 function BizUpsellBanner({ userId, isPremium }: { userId?: string; isPremium?: boolean }) {
@@ -73,15 +61,12 @@ export default function ProfilePage() {
   const [profSub, setProfSub] = useState<'menu'|'tedhena'|'siguri'>('menu')
   const [editing, setEditing] = useState(false)
   const [form, setForm] = useState({ full_name: '', username: '', city: '', bio: '' })
-  const [shopForm, setShopForm] = useState({ shop_name: '', shop_description: '', shop_category: '', shop_banner_url: '' })
   // FAZA 5 (BLLOKU Skema 2=A): biznesi REAL nga tabela `businesses` (jo legacy shop_*).
   // Butoni një hyrje, tri gjendje. Faqja /biznese/[id] është nën-paneli "Vepro si"
   // (BiznesPageClient ka tashmë kontrollet e pronarit). Krijimi te /biznese/new (§1B premium).
   const [myBiz, setMyBiz] = useState<{ id: string; name: string; is_verified: boolean } | null>(null)
   const [saving, setSaving] = useState(false)
-  const [savingShop, setSavingShop] = useState(false)
   const [msg, setMsg] = useState('')
-  const [shopMsg, setShopMsg] = useState('')
 
   // Email change
   const [newEmail, setNewEmail] = useState('')
@@ -169,7 +154,6 @@ export default function ProfilePage() {
       if (p) {
         setProfile(p)
         setForm({ full_name: p.full_name || '', username: p.username || '', city: p.city || '', bio: p.bio || '' })
-        setShopForm({ shop_name: p.shop_name || '', shop_description: p.shop_description || '', shop_category: p.shop_category || '', shop_banner_url: p.shop_banner_url || '' })
       }
       if (ls) setMyListings(ls)
       supabase.rpc('get_my_entitlements').then(({ data }) => {
@@ -296,18 +280,6 @@ export default function ProfilePage() {
     setSaving(false)
   }
 
-  async function saveShop() {
-    setSavingShop(true); setShopMsg('')
-    const { error } = await supabase.from('profiles').update({
-      shop_name: shopForm.shop_name.trim(),
-      shop_description: shopForm.shop_description.trim(),
-      shop_category: shopForm.shop_category,
-      shop_banner_url: shopForm.shop_banner_url.trim(),
-    }).eq('id', user.id)
-    if (error) setShopMsg(`err:${error.message}`)
-    else { setShopMsg('ok:Biznesi u ruajt me sukses!'); fetchProfile(user.id) }
-    setSavingShop(false)
-  }
 
   async function signOut() {
     await supabase.auth.signOut()
@@ -455,7 +427,6 @@ export default function ProfilePage() {
     cur === 'EUR' ? `${price.toLocaleString()} €` : `${price.toLocaleString()} L`
 
   const [mt, mm] = msg.split(/:(.+)/)
-  const [smt, smm] = shopMsg.split(/:(.+)/)
 
   if (loadError) return (
     <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
@@ -541,14 +512,6 @@ export default function ProfilePage() {
         .prem-card p{color:#777;font-size:11px;margin-bottom:16px;line-height:1.6;}
         .prem-cta{background:linear-gradient(135deg,#F8D24E,#F5C842);color:#111;border:none;border-radius:10px;padding:12px 26px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
         .admin-btn{background:linear-gradient(135deg,#7C3AED,#6d28d9);color:#fff;border:none;border-radius:10px;padding:11px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px;}
-        .shop-preview{background:linear-gradient(135deg,#10B98115,#10B98125);border:1px solid #10B981;border-radius:12px;padding:14px;margin-bottom:14px;display:flex;align-items:center;gap:12px;}
-        .shop-preview-icon{width:44px;height:44px;background:#10B981;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-        .shop-preview-icon i{font-size:22px;color:#fff;}
-        .shop-preview-text strong{font-size:12px;font-weight:700;color:#111;display:block;margin-bottom:3px;}
-        .shop-preview-text span{font-size:10px;color:#666;}
-        .shop-preview-btn{background:#10B981;color:#fff;border:none;border-radius:10px;padding:8px 13px;font-size:11px;font-weight:700;cursor:pointer;margin-left:auto;white-space:nowrap;font-family:inherit;}
-        .save-shop-btn{background:#10B981;color:#fff;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:8px;}
-        .save-shop-btn i{font-size:16px;}
         /* Messages inbox */
         .tab-badge{display:inline-flex;align-items:center;justify-content:center;background:#E63312;color:#fff;font-size:8px;font-weight:700;width:15px;height:15px;border-radius:50%;margin-left:3px;vertical-align:middle;}
         .conv-list{display:flex;flex-direction:column;gap:0;}
@@ -1268,8 +1231,6 @@ export default function ProfilePage() {
           {/* Shop Tab */}
           {activeTab === 'shop' && (
             <>
-              {shopMsg && <div className={`msg-box ${smt}`} role="alert">{smm}</div>}
-
               {!profile?.is_premium ? (
                 <div className="prem-card">
                   <h3><span aria-hidden="true">🏢</span> Hap Biznesin Tënd</h3>
@@ -1315,68 +1276,6 @@ export default function ProfilePage() {
                       </button>
                     </div>
                   )}
-
-                  {profile?.shop_name && (
-                    <div className="shop-preview">
-                      <div className="shop-preview-icon"><i className="ti ti-building-store" aria-hidden="true" /></div>
-                      <div className="shop-preview-text">
-                        <strong><span aria-hidden="true">🏪</span> {profile.shop_name}</strong>
-                        <span>{profile.shop_description?.slice(0, 60) || 'Biznes premium i verifikuar'}...</span>
-                      </div>
-                      <button type="button" className="shop-preview-btn" onClick={() => window.location.href = `/biznese/${user.id}`}>
-                        Shiko →
-                      </button>
-                    </div>
-                  )}
-
-                  <div className="card">
-                    <div className="card-hdr">
-                      <span className="card-title"><span aria-hidden="true">🏷️</span> Etiketa e vitrinës (profili)</span>
-                    </div>
-
-                    <label htmlFor="shop-name">Emri i biznesit *</label>
-                    <input
-                      id="shop-name"
-                      type="text"
-                      value={shopForm.shop_name}
-                      onChange={e => setShopForm(f => ({ ...f, shop_name: e.target.value }))}
-                      placeholder="p.sh. Elektronika Gjoka, Moda Alba..."
-                      maxLength={60}
-                    />
-
-                    <label htmlFor="shop-category">Kategoria kryesore</label>
-                    <select id="shop-category" value={shopForm.shop_category} onChange={e => setShopForm(f => ({ ...f, shop_category: e.target.value }))}>
-                      {SHOP_CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
-                    </select>
-
-                    <label htmlFor="shop-description">Përshkrimi i biznesit</label>
-                    <textarea
-                      id="shop-description"
-                      value={shopForm.shop_description}
-                      onChange={e => setShopForm(f => ({ ...f, shop_description: e.target.value }))}
-                      placeholder="Përshkruaj biznesin tënd — çfarë shet, ku je, si kontaktoni..."
-                      maxLength={300}
-                    />
-
-                    <label htmlFor="shop-banner-url">URL e bannerit (opsionale)</label>
-                    <input
-                      id="shop-banner-url"
-                      type="url"
-                      value={shopForm.shop_banner_url}
-                      onChange={e => setShopForm(f => ({ ...f, shop_banner_url: e.target.value }))}
-                      placeholder="https://..."
-                    />
-
-                    <button
-                      type="button"
-                      className="save-shop-btn"
-                      onClick={saveShop}
-                      disabled={savingShop || !shopForm.shop_name.trim()}
-                    >
-                      <i className="ti ti-device-floppy" aria-hidden="true" />
-                      {savingShop ? 'Duke ruajtur...' : 'Ruaj Biznesin'}
-                    </button>
-                  </div>
                 </>
               )}
             </>
