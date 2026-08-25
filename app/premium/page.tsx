@@ -84,14 +84,14 @@ export default function PremiumPage() {
 
           {owned && (
             <div className="note ok">
-              <b>{tier === 'premium' ? 'Premium' : 'Ekstra Boost'} është aktiv.</b>{' '}
+              <b>{tier === 'premium' ? 'Premium' : 'VIP Ekstra Boost'} është aktiv.</b>{' '}
               Menaxhoje te <a href="/billing">Plani im</a>.
             </div>
           )}
 
           {locked && (
             <div className="note">
-              <b>Ekstra Boost kërkon Premium aktiv.</b> Aktivizo së pari Premium — pastaj mund ta shtosh Boost-in.
+              <b>VIP Ekstra Boost kërkon Premium aktiv.</b> Aktivizo së pari Premium — pastaj mund ta shtosh Boost-in.
             </div>
           )}
 

@@ -21,7 +21,7 @@ export function TierTabs({ tier, onPick, pricing }: any) {
       </button>
       <button type="button" role="tab" aria-selected={tier === 'boost'}
         className={`tr boost ${tier === 'boost' ? 'on' : ''}`} onClick={() => onPick('boost')}>
-        <b>Ekstra Boost ⚡</b>
+        <b>VIP Ekstra Boost ⚡</b>
         <span>nga {L(pricing?.boost_from_all)} L/muaj</span>
       </button>
     </div>
@@ -37,7 +37,7 @@ export function Hero({ tier }: any) {
       <div className="hero-s">
         {tier === 'premium'
           ? 'Të gjithë përdoruesit Premium janë të barabartë — shpallje pa limit, vend i parë, profil biznesi dhe postime pa limit.'
-          : 'Ekstra Boost të ngre mbi të gjithë të tjerët: kreu absolut i listës, rrotullim në faqen kryesore dhe prioritet maksimal në kërkim.'}
+          : 'VIP Ekstra Boost të ngre mbi të gjithë të tjerët: vendi i parë absolut, rrotullim në faqen kryesore dhe prioritet maksimal në kërkim.'}
       </div>
     </div>
   )

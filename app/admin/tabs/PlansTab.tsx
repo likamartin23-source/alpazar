@@ -120,7 +120,7 @@ export function PlansTab() {
       )}
 
       {table(prem, 'Premium', 'Të gjithë përdoruesit Premium janë të barabartë — ndryshon vetëm periudha e faturimit. Kufijtë redaktohen te tab-i “Kufijtë”.')}
-      {table(boost, 'Ekstra Boost VIP', 'Produkt i veçantë, blihet vetëm nga përdorues që kanë Premium aktiv.')}
+      {table(boost, 'VIP Ekstra Boost', 'Produkt i veçantë, blihet vetëm nga përdorues që kanë Premium aktiv.')}
 
       <div className="card">
         <div className="ct">Sinkronizimi</div>

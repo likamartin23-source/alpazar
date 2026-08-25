@@ -720,9 +720,44 @@ export default function ProfilePage() {
                   Profili (BLLOKU I PËRMIRËSUAR §4) — biznesi hapet VETEM nga tab-i
                   "Biznes" (tab-shop), pa dyfishim. */}
               {profSub === 'menu' && (
+                <>
+                {/* FINAL §3.3 (alpazar_profili_brendshem_te_dhenat_direkt): Informacioni
+                    personal DIREKT te tab-i Profili — i hapur, i editueshëm, pa nën-buton
+                    ndërmjetës. Kartat e tjera (Fto miq/Analitika/Abonimi/Siguri) më poshtë. */}
+                <div className="card">
+                  <div className="card-hdr">
+                    <span className="card-title">Informacioni personal</span>
+                    {editing
+                      ? <button type="button" className="save-btn" onClick={saveProfile} disabled={saving}>{saving ? <><span aria-hidden="true">⏳</span> Duke ruajtur...</> : 'Ruaj'}</button>
+                      : <button type="button" className="edit-btn" onClick={() => setEditing(true)}><span aria-hidden="true">✏️</span> Ndrysho</button>
+                    }
+                  </div>
+                  {editing ? (
+                    <>
+                      <label htmlFor="prof-fullname">Emri i plotë</label>
+                      <input id="prof-fullname" type="text" value={form.full_name} onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))} placeholder="Emri Mbiemri" maxLength={80} autoComplete="name" />
+                      <label htmlFor="prof-username">Username</label>
+                      <input id="prof-username" type="text" value={form.username} onChange={e => setForm(f => ({ ...f, username: e.target.value }))} placeholder="username123" maxLength={30} autoComplete="username" />
+                      <label htmlFor="prof-city">Qyteti</label>
+                      <select id="prof-city" value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))}>
+                        <option value="">— Zgjidh —</option>
+                        {['Tiranë', 'Durrës', 'Vlorë', 'Shkodër', 'Elbasan', 'Fier', 'Korçë', 'Berat', 'Sarandë', 'Tjetër'].map(c => <option key={c} value={c}>{c}</option>)}
+                      </select>
+                      <label htmlFor="prof-bio">Bio</label>
+                      <textarea id="prof-bio" value={form.bio} onChange={e => setForm(f => ({ ...f, bio: e.target.value }))} placeholder="Pak fjalë rreth vetes..." maxLength={300} />
+                    </>
+                  ) : (
+                    <>
+                      <div className="info-row"><span className="info-label">Emri</span><span className="info-val">{profile?.full_name || '—'}</span></div>
+                      <div className="info-row"><span className="info-label">Username</span><span className="info-val">{profile?.username ? `@${profile.username}` : '—'}</span></div>
+                      <div className="info-row"><span className="info-label">Qyteti</span><span className="info-val">{profile?.city || '—'}</span></div>
+                      <div className="info-row"><span className="info-label">Bio</span><span className="info-val">{profile?.bio || '—'}</span></div>
+                      <div className="info-row"><span className="info-label">Anëtar që</span><span className="info-val">{new Date(profile?.created_at || Date.now()).toLocaleDateString('sq-AL')}</span></div>
+                    </>
+                  )}
+                </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
                   {([
-                    { ike: 'ti-user',           titull: 'Të dhënat e profilit', nen: 'Informacioni personal — emri, username, qyteti, bio', vepro: () => setProfSub('tedhena') },
                     { ike: 'ti-chart-bar',      titull: 'Analitika',            nen: 'Pamje, kontaktime (WhatsApp/Viber), CTR — 7 ose 30 ditë', vepro: () => { window.location.href = '/profile/analytics' } },
                     { ike: 'ti-crown',          titull: 'Abonimi im',           nen: profile?.is_premium ? 'Premium aktiv · shiko / menaxho / anulo' : 'Kalo në Premium — biznes online, VIP, pa limit', vepro: () => { window.location.href = profile?.is_premium ? '/billing' : '/premium' } },
                     { ike: 'ti-shield-lock',    titull: 'Siguri & privatësi',   nen: 'Fjalëkalimi, email-i, GDPR, Trust Score, Takedown, fshirja', vepro: () => setProfSub('siguri') },
@@ -742,6 +777,7 @@ export default function ProfilePage() {
                     </button>
                   ))}
                 </div>
+                </>
               )}
 
               {profSub !== 'menu' && (
@@ -751,42 +787,6 @@ export default function ProfilePage() {
                   style={{ background: 'none', border: 'none', color: '#C42305', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', padding: '4px 0', marginBottom: 8, minHeight: 44, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                   <i className="ti ti-arrow-left" style={{ fontSize: 16 }} aria-hidden="true" /> Kthehu te paneli
                 </button>
-              )}
-
-              {profSub === 'tedhena' && (
-              <div className="card">
-                <div className="card-hdr">
-                  <span className="card-title">Informacioni personal</span>
-                  {editing
-                    ? <button type="button" className="save-btn" onClick={saveProfile} disabled={saving}>{saving ? <><span aria-hidden="true">⏳</span> Duke ruajtur...</> : 'Ruaj'}</button>
-                    : <button type="button" className="edit-btn" onClick={() => setEditing(true)}><span aria-hidden="true">✏️</span> Ndrysho</button>
-                  }
-                </div>
-
-                {editing ? (
-                  <>
-                    <label htmlFor="prof-fullname">Emri i plotë</label>
-                    <input id="prof-fullname" type="text" value={form.full_name} onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))} placeholder="Emri Mbiemri" maxLength={80} autoComplete="name" />
-                    <label htmlFor="prof-username">Username</label>
-                    <input id="prof-username" type="text" value={form.username} onChange={e => setForm(f => ({ ...f, username: e.target.value }))} placeholder="username123" maxLength={30} autoComplete="username" />
-                    <label htmlFor="prof-city">Qyteti</label>
-                    <select id="prof-city" value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))}>
-                      <option value="">— Zgjidh —</option>
-                      {['Tiranë', 'Durrës', 'Vlorë', 'Shkodër', 'Elbasan', 'Fier', 'Korçë', 'Berat', 'Sarandë', 'Tjetër'].map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
-                    <label htmlFor="prof-bio">Bio</label>
-                    <textarea id="prof-bio" value={form.bio} onChange={e => setForm(f => ({ ...f, bio: e.target.value }))} placeholder="Pak fjalë rreth vetes..." maxLength={300} />
-                  </>
-                ) : (
-                  <>
-                    <div className="info-row"><span className="info-label">Emri</span><span className="info-val">{profile?.full_name || '—'}</span></div>
-                    <div className="info-row"><span className="info-label">Username</span><span className="info-val">{profile?.username ? `@${profile.username}` : '—'}</span></div>
-                    <div className="info-row"><span className="info-label">Qyteti</span><span className="info-val">{profile?.city || '—'}</span></div>
-                    <div className="info-row"><span className="info-label">Bio</span><span className="info-val">{profile?.bio || '—'}</span></div>
-                    <div className="info-row"><span className="info-label">Anëtar që</span><span className="info-val">{new Date(profile?.created_at || Date.now()).toLocaleDateString('sq-AL')}</span></div>
-                  </>
-                )}
-              </div>
               )}
 
               {profSub === 'menu' && !profile?.is_premium && (
