@@ -115,6 +115,18 @@ const VIP_PULSE_CSS = `
 @media (prefers-reduced-motion: reduce){.alpz-vip-ring{animation:none}}
 `
 
+/**
+ * Pulsimi i unazes PREMIUM (BLLOKU I PERMIRESUAR §1, `ring_matrix_v3_pulse_forte`).
+ * I njejti mekanizem si VIP-i, por me ngjyren premium (e verdha `#F5C842`) dhe
+ * ritem pak me te qete qe te dallohet nga VIP-i. Gradienti i unazes NUK ndryshon;
+ * ndryshon vetem glow-u pulsues. `prefers-reduced-motion` e fik (a11y).
+ */
+const PREMIUM_PULSE_CSS = `
+@keyframes alpzPremiumPulse{0%,100%{box-shadow:0 0 0 0 rgba(245,200,66,.55)}50%{box-shadow:0 0 0 6px rgba(245,200,66,0)}}
+.alpz-premium-ring{animation:alpzPremiumPulse 2.6s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.alpz-premium-ring{animation:none}}
+`
+
 export default function Avatar({
   src, name, type = 'person', tier = 'free', verified = false, online, size = 48, onClick,
 }: AvatarProps) {
@@ -136,7 +148,8 @@ export default function Avatar({
       style={{ position: 'relative', width: size, height: size, flexShrink: 0, cursor: onClick ? 'pointer' : 'default', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}
     >
       {tier === 'vip' && <style dangerouslySetInnerHTML={{ __html: VIP_PULSE_CSS }} />}
-      <div className={tier === 'vip' ? 'alpz-vip-ring' : undefined} style={{ width: size, height: size, borderRadius: '50%', padding: ring, boxSizing: 'border-box', ...ringStyle(tier), transition: 'transform .15s ease' }}>
+      {tier === 'premium' && <style dangerouslySetInnerHTML={{ __html: PREMIUM_PULSE_CSS }} />}
+      <div className={tier === 'vip' ? 'alpz-vip-ring' : tier === 'premium' ? 'alpz-premium-ring' : undefined} style={{ width: size, height: size, borderRadius: '50%', padding: ring, boxSizing: 'border-box', ...ringStyle(tier), transition: 'transform .15s ease' }}>
         <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: '#fff', padding: white, boxSizing: 'border-box' }}>
           {showImage ? (
             <img src={src as string} alt={name || 'avatar'} loading="lazy" onError={() => setBroken(true)} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', display: 'block' }} />
