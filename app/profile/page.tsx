@@ -715,8 +715,10 @@ export default function ProfilePage() {
                 </button>
               )}
 
-              {/* Nen-butonat (Imazhi 6a): Te dhenat / Analitika / Abonimi / Siguri / Fto miq / Biznesi im.
-                  Analitika, Abonimi, Fto miq dhe Biznesi im shkojne te sistemet EKZISTUESE. */}
+              {/* Nen-butonat (Imazhi 6a / panel_perdoruesit_korrigjuar): Te dhenat /
+                  Analitika / Abonimi / Siguri / Fto miq. "Biznesi im" U HOQ nga tab-i
+                  Profili (BLLOKU I PËRMIRËSUAR §4) — biznesi hapet VETEM nga tab-i
+                  "Biznes" (tab-shop), pa dyfishim. */}
               {profSub === 'menu' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
                   {([
@@ -725,7 +727,6 @@ export default function ProfilePage() {
                     { ike: 'ti-crown',          titull: 'Abonimi im',           nen: profile?.is_premium ? 'Premium aktiv · shiko / menaxho / anulo' : 'Kalo në Premium — biznes online, VIP, pa limit', vepro: () => { window.location.href = profile?.is_premium ? '/billing' : '/premium' } },
                     { ike: 'ti-shield-lock',    titull: 'Siguri & privatësi',   nen: 'Fjalëkalimi, email-i, GDPR, Trust Score, Takedown, fshirja', vepro: () => setProfSub('siguri') },
                     { ike: 'ti-gift',           titull: 'Fto miq',              nen: `50 pikë për çdo mik të regjistruar${(profile?.gamification_points ?? 0) > 0 ? ` · ke ${profile.gamification_points} pikë` : ''}`, vepro: () => { window.location.href = '/referral' } },
-                    { ike: 'ti-building-store', titull: 'Biznesi im',           nen: 'Faqja dhe shpalljet e biznesit tënd', vepro: () => setActiveTab('shop') },
                   ] as const).map(b => (
                     <button
                       key={b.titull}
