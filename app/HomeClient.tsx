@@ -634,7 +634,8 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         /* Kartat e bizneseve = madhësi e barabartë me kartat e shpalljeve: të njëjtat
            kolona responsive si .listings-grid (768→180px, 1024→220px) + media 4/3 e njëjtë. */
         @media(min-width:768px){.shops-grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));}}
-        @media(min-width:1024px){.shops-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));}}
+        @media(min-width:1024px){.shops-grid{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;}}
+        @media(min-width:1440px){.shops-grid{grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:24px;}}
         .shop-mini{background:#fff;border-radius:14px;overflow:hidden;cursor:pointer;border:1px solid #eee;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 18px -12px rgba(0,0,0,.14);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;}
         .shop-mini:hover{transform:translateY(-3px);box-shadow:0 10px 24px -8px rgba(0,0,0,.2);}
         .shop-mini:active{transform:scale(.96);}
@@ -711,15 +712,59 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         }
         @media(min-width:1024px){
           /* 100% full screen: wrap-i mbush gjithë gjerësinë e ekranit; padding-u
-             anësor rritet me viewport-in që përmbajtja të mos ngjitet te skajet.
-             Grid-et auto-fill shtojnë kolona kur ka hapësirë → asnjë kartë e tejzgjatur. */
+             anësor rritet me viewport-in. Rregull i artë (#4): gjithçka zmadhohet
+             NË SINKRON — header, kërkim, kategori, hero, tituj, karta, banner-a —
+             përndryshe do dukej si mobile e tejzgjatur nëpër ekran. */
           .wrap{max-width:100%;}
           .body{padding:0 clamp(32px,4vw,72px);}
-          .topbar{padding-left:clamp(32px,4vw,72px);padding-right:clamp(32px,4vw,72px);}
+          .topbar{padding:14px clamp(32px,4vw,72px);}
+          .searchbar{padding:0 clamp(32px,4vw,72px) 14px;}
+          .cat-scroll{padding:0 clamp(32px,4vw,72px) 14px;flex-wrap:wrap;}
+          /* Header */
+          .brand{font-size:24px;}
+          .icon-btn{width:40px;height:40px;}
+          .icon-btn i{font-size:20px;}
+          /* Kërkimi */
+          .search-wrap i{font-size:18px;}
+          .search-wrap input{font-size:15px;padding:14px 0;}
+          .search-btn{font-size:14px;padding:14px 24px;}
+          /* Kategoritë */
+          .cat-item{padding:9px 16px;}
+          .cat-item i{font-size:16px;}
+          .cat-item span{font-size:13px;}
+          /* Hero */
+          .hero{padding:26px 32px;border-radius:22px;margin-bottom:18px;}
+          .hero h2{font-size:24px;}
+          .hero p{font-size:14px;}
+          .stat{padding:0 22px;}
+          .stat-n{font-size:30px;}
+          .stat-l{font-size:10px;}
+          /* Tituj seksioni */
+          .section-hdr h3{font-size:18px;}
+          .section-hdr a{font-size:14px;}
+          /* Kartat e bizneseve — në sinkron me kartat e shpalljeve */
+          .shop-av{width:42px;height:42px;font-size:16px;}
+          .shop-nm{font-size:15px;}
+          .shop-ct{font-size:13px;}
+          .shop-info{min-height:80px;padding:12px 13px 13px;}
+          /* Banner-a & rreshta */
+          .no-ads{padding:10px 16px;} .no-ads i{font-size:16px;} .no-ads span{font-size:12px;}
+          .trust-card{padding:10px 12px;} .trust-card i{font-size:18px;} .trust-card span{font-size:11px;}
+          .filter-btn{font-size:13px;padding:8px 16px;}
+          .premium-cta{padding:14px 20px;border-radius:16px;}
+          .prem-icon{width:38px;height:38px;} .prem-icon i{font-size:19px;}
+          .prem-text strong{font-size:14px;} .prem-text span{font-size:12px;}
+          .prem-btn{font-size:13px;padding:11px 18px;}
         }
-        @media(min-width:1600px){
-          .body{padding:0 clamp(72px,6vw,140px);}
-          .topbar{padding-left:clamp(72px,6vw,140px);padding-right:clamp(72px,6vw,140px);}
+        @media(min-width:1440px){
+          .body{padding:0 clamp(56px,5vw,120px);}
+          .topbar{padding-left:clamp(56px,5vw,120px);padding-right:clamp(56px,5vw,120px);}
+          .searchbar{padding-left:clamp(56px,5vw,120px);padding-right:clamp(56px,5vw,120px);}
+          .cat-scroll{padding-left:clamp(56px,5vw,120px);padding-right:clamp(56px,5vw,120px);}
+          .brand{font-size:26px;}
+          .hero h2{font-size:27px;}
+          .stat-n{font-size:34px;}
+          .section-hdr h3{font-size:20px;}
         }
       ` }} />
 
