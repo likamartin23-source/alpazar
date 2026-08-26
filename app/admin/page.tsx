@@ -258,6 +258,8 @@ export default function Admin() {
   const [methods, setMethods] = useState<any[]>([])
   // Rrjeta e sigurisë (P4): transaksionet automatike + shëndeti i koherencës.
   const [txData, setTxData] = useState<any>(null)
+  // Statusi i lidhjes me ofruesin e pagesës (webhook) — gati të lidhet (Pika 1).
+  const [payStatus, setPayStatus] = useState<any>(null)
   const [authChecked, setAuthChecked] = useState(false)
   const [mfaRequired, setMfaRequired] = useState(false)
   const [mfaFactorId, setMfaFactorId] = useState('')
@@ -367,6 +369,8 @@ export default function Admin() {
     // Transaksionet automatike + shëndeti (P4) — rrjeta e sigurisë kur leximi auto dështon.
     const { data: tx } = await supabase.rpc('admin_list_transactions', { p_limit: 100 })
     if (tx && !(tx as any).error) setTxData(tx)
+    // Statusi i lidhjes së webhook-ut të pagesave (Pika 1) — fail-soft.
+    try { const r = await fetch('/api/payments/status'); if (r.ok) setPayStatus(await r.json()) } catch { /* ignore */ }
     setLoading(false)
   }, [])
 
@@ -759,7 +763,16 @@ export default function Admin() {
                       dhe vepron manualisht. Numëruesit duhet të jenë 0; të kuqtë kërkojnë veprim. */}
                   {txData && (
                     <>
-                      <div className="ph" style={{ marginTop: 18 }}><div className="pt"><span aria-hidden="true">🛟</span> Pagesat automatike & shëndeti</div></div>
+                      <div className="ph" style={{ marginTop: 18, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                        <div className="pt"><span aria-hidden="true">🛟</span> Pagesat automatike & shëndeti</div>
+                        {payStatus && (
+                          <span style={{ fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: payStatus.configured ? '#E7F6EC' : '#FFF6E5', color: payStatus.configured ? '#0E7A35' : '#8A5A00', border: `1px solid ${payStatus.configured ? '#9BD9B5' : '#F0C97A'}` }}>
+                            {payStatus.configured
+                              ? '🔌 Webhook i lidhur (auto + manual)'
+                              : '⚠️ Webhook i palidhur — aprovim manual aktiv'}
+                          </span>
+                        )}
+                      </div>
                       {(() => {
                         const h = txData.health || {}
                         const items: [string, number][] = [
