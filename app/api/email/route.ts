@@ -50,10 +50,14 @@ async function requireAdmin(req: NextRequest): Promise<boolean> {
   if (!token) return false
 
   try {
-    const db = createClient(SUPABASE_URL, SUPABASE_ANON)
-    const { data: { user }, error } = await db.auth.getUser(token)
+    // Token-i verifikohet me anon; por `is_admin` lexohet me SERVICE ROLE — pas forcimit
+    // të sigurisë, `is_admin` nuk lexohet më nga roli `anon` (mbrojtje kundër zbulimit
+    // të adminit nga kushdo me anon-key). Sig.: HIGH-1.
+    const anon = createClient(SUPABASE_URL, SUPABASE_ANON)
+    const { data: { user }, error } = await anon.auth.getUser(token)
     if (error || !user) return false
-    const { data: profile } = await db
+    const admin = getSupabaseAdmin()
+    const { data: profile } = await admin
       .from('profiles')
       .select('is_admin')
       .eq('id', user.id)

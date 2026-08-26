@@ -403,10 +403,11 @@ export default function Auth() {
 
         // Register / login: send a 6-digit CODE via our server (Resend).
         if (mode === 'register') {
+          // Siguri MEDIUM-1: NUK ruajmë fjalëkalimin në localStorage (plaintext). Fjalëkalimi
+          // vendoset server-side nga email-otp (createUser) dhe/ose nga verifyOtp (state regPass).
           localStorage.setItem('alpazar_reg_pending', JSON.stringify({
             full_name: fullName || null,
             age: parseInt(age) || null,
-            password: regPass || null,
           }))
         }
         const otpRes = await fetch('/api/email', {
