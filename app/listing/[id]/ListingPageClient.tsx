@@ -4,7 +4,7 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import { supabase } from '../../../lib/supabase'
 import { nf, dateShort, dayMonth, monthYear, clockTime } from '../../../lib/format'
-import { getLevel, isNewMember } from '../../components/Badges'
+import { isNewMember } from '../../components/Badges'
 import { SocialProofBar, SellerPremiumUpsell } from '../../components/PremiumUpsell'
 import { ReportSheet } from '../../components/ReportSheet'
 import { saveRefFromUrl, buildShareUrl } from '../../../lib/referral'
@@ -908,16 +908,12 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                   {seller.is_admin   && <span className="schip sch-admin"><span aria-hidden="true">🛡</span> Admin</span>}
                   {sellerTier !== 'free' && <span className="schip sch-prem"><span aria-hidden="true">👑</span> {sellerTier === 'vip' ? 'VIP Ekstra Boost' : 'Premium'}</span>}
                   {isBusinessListing && <span className="schip sch-shop"><span aria-hidden="true">🏢</span> Biznes</span>}
-                  {(() => { const l = getLevel(seller.gamification_points || 0); return <span className="schip" style={{ background: l.bg, color: l.color }}>{l.icon} {l.name}</span> })()}
                   {sellerCount > 0 && <span className="schip sch-seller"><span aria-hidden="true">📦</span> Shitës aktiv</span>}
                   {isNewMember(seller.created_at) && <span className="schip sch-new"><span aria-hidden="true">🆕</span> Anëtar i ri</span>}
                   {!isOwner && <span className="schip sch-priv"><span aria-hidden="true">🔒</span> Bisedë private</span>}
-                  {(seller.trust_score ?? 0) >= 60 && (
-                    <span className="schip" style={{ background: '#dcfce7', color: '#16a34a', fontWeight: 700 }}><span aria-hidden="true">✓</span> I verifikuar</span>
-                  )}
-                  {(seller.trust_score ?? 0) >= 75 && (
-                    <span className="schip" style={{ background: '#fef9c3', color: '#854d0e', fontWeight: 700 }}><span aria-hidden="true">⚡</span> Përgjigjet shpejt</span>
-                  )}
+                  {/* H1: "I verifikuar" hiqet — Avatar-i tashmë e shfaq vulën ✓ (verified) me të njëjtin
+                      prag. "Përgjigjet shpejt" hiqet — ishte proxy i rremë nga trust_score, jo kohë reale.
+                      Niveli i reputacionit shfaqet vetëm nga TrustBadge (një burim, poshtë). */}
                 </div>
 
                 {/* Stats */}
@@ -932,6 +928,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                 {seller.created_at && seller.trust_score_visible !== false && (
                   <div style={{ marginBottom: 8 }}>
                     <TrustBadge
+                      score={seller.trust_score ?? undefined}
                       createdAt={seller.created_at}
                       listingsActive={sellerCount}
                       gamificationPoints={seller.gamification_points || 0}

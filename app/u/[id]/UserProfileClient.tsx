@@ -6,6 +6,7 @@ import { useAlpazar } from '../../../lib/context'
 import Avatar, { tierNgaProfili } from '../../components/Avatar'
 import { useIsOnline } from '../../components/OnlinePresence'
 import ListingCard from '../../components/ListingCard'
+import { TrustBadge } from '../../components/TrustBadge'
 
 function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime()
@@ -321,12 +322,15 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
                 <span aria-hidden="true">⭐</span><span>{profile.reviews_count} vlerësime · mesatare {Number(profile.seller_rating).toFixed(1)}</span>
               </div>
             )}
-            {/* Besueshmëria u zhvendos ketu nga stats-row (matrica 4-kuti e bllokut);
-                respekton opt-out-in `trust_score_visible` (Ligji 124/2024). */}
+            {/* Besueshmëria: i njëjti komponent TrustBadge si te faqja e shpalljes (një burim,
+                një pamje kudo — H1). Ushqehet nga trust_score autoritativ; respekton opt-out-in
+                `trust_score_visible` (Ligji 124/2024). */}
             {(profile.trust_score_visible !== false) && (profile.trust_score ?? 0) > 0 && (
-              <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 14, color: '#333' }}>
-                <span aria-hidden="true">🛡️</span><span>Besueshmëri {profile.trust_score}%</span>
-              </div>
+              <TrustBadge
+                score={profile.trust_score}
+                createdAt={profile.created_at}
+                listingsActive={listings.length}
+              />
             )}
           </div>
         </div>
