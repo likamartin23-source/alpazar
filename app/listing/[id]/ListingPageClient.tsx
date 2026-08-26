@@ -594,10 +594,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
   const bizHref = listing?.business_id
     ? `/biznese/${listing.business_id}`
     : (hasShop && seller ? `/biznese/${seller.id}` : null)
-  // H3: rreshti i shitësit është PERSONI (njeriu pas shpalljes) → çon te /u/.
-  // Identiteti i biznesit jepet veçmas nga BusinessMiniCard (çon te /biznese). Kështu
-  // s'ka dy kartela biznesi as dy klikime te e njëjta faqe.
-  const sellerHref = seller ? `/u/${seller.id}` : '/'
+  const sellerHref = bizHref || (seller ? `/u/${seller.id}` : '/')
   const initials  = (seller?.shop_name || seller?.full_name || '?').slice(0, 2).toUpperCase()
   const groups    = buildGroups(chatMsgs)
   const showChatSheet = !isOwner
@@ -888,8 +885,8 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                 <div role="link" tabIndex={0} className="seller-av-row" onClick={() => window.location.href = sellerHref} onKeyDown={e => { if (e.key === 'Enter') window.location.href = sellerHref }} style={{ cursor: 'pointer' }}>
                   <Avatar
                     src={seller.avatar_url}
-                    name={isBusinessListing ? (seller.full_name || seller.username) : (seller.shop_name || seller.full_name || seller.username)}
-                    type="person"
+                    name={seller.shop_name || seller.full_name || seller.username}
+                    type={isBusinessListing ? 'business' : 'person'}
                     tier={tierNgaProfili(seller)}
                     verified={(seller.trust_score ?? 0) >= 60}
                     online={sellerOnline}
@@ -897,9 +894,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                   />
                   <div>
                     <div className="seller-name" style={{ textDecoration: 'underline', textDecorationColor: '#ddd' }}>
-                      {isBusinessListing
-                        ? (seller.full_name || seller.username || 'Shitës')
-                        : (seller.shop_name || seller.full_name || seller.username || 'Shitës')}
+                      {seller.shop_name || seller.full_name || seller.username || 'Shitës'}
                     </div>
                     <div className="seller-sub">
                       {seller.city && <><span aria-hidden='true'>📍</span> {seller.city}</>}
@@ -913,8 +908,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                 <div className="seller-chips">
                   {seller.is_admin   && <span className="schip sch-admin"><span aria-hidden="true">🛡</span> Admin</span>}
                   {sellerTier !== 'free' && <span className="schip sch-prem"><span aria-hidden="true">👑</span> {sellerTier === 'vip' ? 'VIP Ekstra Boost' : 'Premium'}</span>}
-                  {/* H3: chip-i "🏢 Biznes" hiqet — identiteti i biznesit jepet nga BusinessMiniCard
-                      (më poshtë), që rreshti i shitësit të mbetet pastër personi. */}
+                  {isBusinessListing && <span className="schip sch-shop"><span aria-hidden="true">🏢</span> Biznes</span>}
                   {sellerCount > 0 && <span className="schip sch-seller"><span aria-hidden="true">📦</span> Shitës aktiv</span>}
                   {isNewMember(seller.created_at) && <span className="schip sch-new"><span aria-hidden="true">🆕</span> Anëtar i ri</span>}
                   {!isOwner && <span className="schip sch-priv"><span aria-hidden="true">🔒</span> Bisedë private</span>}
@@ -948,10 +942,8 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                   <div className="seller-bio">{seller.bio || seller.shop_description}</div>
                 )}
 
-                {/* H3: "Shiko biznesin →" mbetet VETËM për dyqanet legacy (shop_name pa
-                    business_id) — ata s'kanë BusinessMiniCard. Për bizneset e vërteta,
-                    BusinessMiniCard më poshtë është lidhja e vetme te faqja e biznesit. */}
-                {!isOwner && bizHref && !listing.business_id && (
+                {/* Profile / Business button */}
+                {!isOwner && bizHref && (
                   <button type="button" className="view-profile-btn"
                     onClick={() => { window.location.href = bizHref }}>
                     <i className="ti ti-building-store" aria-hidden="true" />
