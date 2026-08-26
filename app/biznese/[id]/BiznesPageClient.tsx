@@ -37,6 +37,16 @@ function fmtResp(hrs: number): string {
   if (hrs < 24) return `~${Math.round(hrs)} orë`
   return `~${Math.round(hrs / 24)} ditë`
 }
+// Tipi i biznesit → etiketë e lexueshme (përputhje me sistemin e ri të regjistrimit —
+// BusinessForm.MAIN_TYPES). Pa këtë, shfaqej vlera e papërpunuar "Sherbime_produkte".
+function typeLabel(t: string | null | undefined): string {
+  switch ((t || '').toLowerCase()) {
+    case 'sherbime': return 'Shërbime'
+    case 'produkte': return 'Produkte'
+    case 'sherbime_produkte': return 'Shërbime & Produkte'
+    default: return (t || '').replace(/_/g, ' ')
+  }
+}
 
 interface Biz {
   id: string; owner_id: string; name: string; slug: string; type: string
@@ -393,14 +403,11 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           {/* Tab: Profili i biznesit — kartat e menaxhimit (mision-biznesi; pa ekskluzivitete llogarie) */}
           {panelTab === 'home' && (
             <div className="mcard">
+              {/* Një hyrje e vetme te editimi (pa përsëritje): "Të dhënat e biznesit" përfshin
+                  edhe logon & kopertinën — më parë ishin dy butona që hapnin të njëjtin /edit. */}
               <button type="button" className="mrow" onClick={() => { window.location.href = `/biznese/${biz.id}/edit` }}>
                 <i className="ti ti-settings lead" aria-hidden="true" />
-                <span className="mtxt"><span className="mtt">Të dhënat e biznesit</span><span className="msub">Emri, përshkrimi, kontakti, orari, ligjore…</span></span>
-                <i className="ti ti-chevron-right arr" aria-hidden="true" />
-              </button>
-              <button type="button" className="mrow" onClick={() => { window.location.href = `/biznese/${biz.id}/edit` }}>
-                <i className="ti ti-photo lead" aria-hidden="true" />
-                <span className="mtxt"><span className="mtt">Logo &amp; Kopertinë</span><span className="msub">Identiteti vizual i biznesit</span></span>
+                <span className="mtxt"><span className="mtt">Të dhënat e biznesit</span><span className="msub">Logo &amp; kopertinë, emri, kontakti, orari, ligjore…</span></span>
                 <i className="ti ti-chevron-right arr" aria-hidden="true" />
               </button>
               <button type="button" className="mrow" onClick={() => { window.location.href = `/biznese/${biz.id}/analytics` }}>
@@ -843,7 +850,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
             {biz.type && (
               <div className="info-row">
                 <span className="info-icon" aria-hidden="true">🏷️</span>
-                <span className="info-text" style={{ textTransform: 'capitalize' }}>{biz.type}</span>
+                <span className="info-text">{typeLabel(biz.type)}</span>
               </div>
             )}
           </div>
