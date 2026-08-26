@@ -969,33 +969,10 @@ export default function ProfilePage() {
               {/* Business upsell — shown only if user has no business */}
               <BizUpsellBanner userId={user?.id} isPremium={tierNgaProfili(profile) !== 'free'} />
 
-              <button
-                type="button"
-                style={{ width: '100%', background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 13, padding: '14px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}
-                onClick={() => window.location.href = '/profile/analytics'}
-              >
-                <i className="ti ti-chart-bar" style={{ fontSize: 20 }} aria-hidden="true" />
-                <div style={{ textAlign: 'left' }}>
-                  <div><span aria-hidden="true">📊</span> Statistikat e Shpalljeve</div>
-                  <div style={{ fontSize: 10, fontWeight: 500, opacity: 0.85, marginTop: 2 }}>Pamje, kontaktime, CTR — 7 ose 30 ditë</div>
-                </div>
-                <i className="ti ti-chevron-right" style={{ fontSize: 16, marginLeft: 'auto' }} aria-hidden="true" />
-              </button>
-
-              {/* Abonimi im — lidh me /billing (get_my_billing / cancel_my_subscription ekzistojne) */}
-              <button
-                type="button"
-                style={{ width: '100%', background: '#fff', border: '1px solid #eee', borderRadius: 13, padding: '12px 14px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, color: '#111' }}
-                onClick={() => window.location.href = profile?.is_premium ? '/billing' : '/premium'}
-              >
-                <i className="ti ti-crown" style={{ fontSize: 20, color: '#F5C842' }} aria-hidden="true" />
-                <div style={{ textAlign: 'left', flex: 1 }}>
-                  <div>Abonimi im</div>
-                  <div style={{ fontSize: 10, fontWeight: 500, color: '#888', marginTop: 2 }}>{profile?.is_premium ? 'Premium aktiv · shiko / menaxho / anulo' : 'Kalo në Premium — biznes online, VIP, pa limit'}</div>
-                </div>
-                <i className="ti ti-chevron-right" style={{ fontSize: 16 }} aria-hidden="true" />
-              </button>
-
+              {/* BP2 §B16 — HEQUR kartat-dublikatë "Statistikat e Shpalljeve" (dublonte Analitikën
+                  te tab-i Profili) + "Abonimi im" (dublonte kartën te Profili). Një sistem, një
+                  vend hyrjeje: Analitika & Abonimi qëndrojnë VETËM te tab-i "Profili". Këtu mbetet
+                  vetëm menaxhimi i shpalljeve (Skema 1: kuota/filtra/Rifresko/+Shto). */}
               <div className="card">
                 <div className="card-hdr">
                   <span className="card-title">

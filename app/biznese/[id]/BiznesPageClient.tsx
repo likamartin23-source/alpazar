@@ -298,10 +298,12 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           .bizp-card{background:#fff;border-radius:0 0 20px 20px;padding:0 16px 16px;margin-bottom:8px;}
           .bizp-badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
           .bdg{font-size:11px;font-weight:800;padding:3px 9px;border-radius:8px;display:inline-flex;align-items:center;gap:4px;}
-          .bizp-stats{display:flex;border-top:1px solid #f0f0f0;padding-top:14px;}
+          /* Shirit statistikash i zi — pasqyrë e panelit /profile (BP2: paneli identik në formë). */
+          .bizp-stats{display:flex;background:#111;border-radius:14px;padding:14px 6px;margin-top:12px;}
+          .bizp-stats .stat-div{width:1px;background:#333;}
           .stat-pill{display:flex;flex-direction:column;align-items:center;flex:1;}
-          .stat-n{font-size:18px;font-weight:800;color:#111;}
-          .stat-l{font-size:10px;color:#888;font-weight:500;margin-top:1px;}
+          .stat-n{font-size:18px;font-weight:800;color:#F5C842;}
+          .stat-l{font-size:10px;color:#bbb;font-weight:500;margin-top:1px;}
           .bizp-tabs{position:sticky;top:50px;z-index:10;background:#fff;border-bottom:1px solid #eee;display:flex;overflow-x:auto;margin-bottom:2px;}
           .bizp-tabs button{flex:1 0 auto;padding:12px 14px;font-size:12.5px;font-weight:700;border:none;background:none;cursor:pointer;border-bottom:2.5px solid transparent;color:#888;font-family:inherit;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:5px;}
           .bizp-tabs button.on{color:#C42B0F;border-bottom-color:#E63312;}
@@ -356,11 +358,11 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
             {/* Statistika (Shpallje · Të shitura · Ndjekës · Anëtar) */}
             <div className="bizp-stats">
               <div className="stat-pill"><span className="stat-n">{listings.length}</span><span className="stat-l">Shpallje</span></div>
-              <div style={{ width: 1, background: '#f0f0f0' }} />
-              <div className="stat-pill"><span className="stat-n" style={soldCount > 0 ? { color: '#0E7A35' } : undefined}>{soldCount}</span><span className="stat-l">Të shitura</span></div>
-              <div style={{ width: 1, background: '#f0f0f0' }} />
+              <div className="stat-div" />
+              <div className="stat-pill"><span className="stat-n" style={soldCount > 0 ? { color: '#4ADE80' } : undefined}>{soldCount}</span><span className="stat-l">Të shitura</span></div>
+              <div className="stat-div" />
               <div className="stat-pill"><span className="stat-n">{followers}</span><span className="stat-l">Ndjekës</span></div>
-              <div style={{ width: 1, background: '#f0f0f0' }} />
+              <div className="stat-div" />
               <div className="stat-pill"><span className="stat-n">{new Date(biz.created_at).getFullYear()}</span><span className="stat-l">Anëtar prej</span></div>
             </div>
 
@@ -379,13 +381,13 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
             </button>
           </div>
 
-          {/* Tabet e panelit (pasqyrë e /profile: Profili i biznesit · Shpalljet · Vlerësime · Mesazhe · Analitika) */}
+          {/* Tabet e panelit — VETËM ato me përmbajtje inline (Profili i biznesit · Shpalljet ·
+              Vlerësime). Analitika & Mesazhet janë sipërfaqe më vete → rrinë VETËM si karta te
+              "Profili i biznesit" (pa dublim tab+kartë; korrigjim nga verifikimi live). */}
           <div className="bizp-tabs" role="tablist" aria-label="Paneli i biznesit">
             <button type="button" className={panelTab === 'home' ? 'on' : ''} aria-selected={panelTab === 'home'} onClick={() => setPanelTab('home')}><i className="ti ti-building-store" aria-hidden="true" /> Profili i biznesit</button>
             <button type="button" className={panelTab === 'listings' ? 'on' : ''} aria-selected={panelTab === 'listings'} onClick={() => setPanelTab('listings')}><i className="ti ti-layout-grid" aria-hidden="true" /> Shpalljet</button>
             <button type="button" className={panelTab === 'reviews' ? 'on' : ''} aria-selected={panelTab === 'reviews'} onClick={() => { setPanelTab('reviews'); if (!reviewsLoaded) { setReviewsLoaded(true); supabase.rpc('business_reviews', { p_business: biz.id }).then(({ data }) => setReviews(data || [])) } }}><i className="ti ti-star" aria-hidden="true" /> Vlerësime</button>
-            <button type="button" onClick={() => { window.location.href = `/messages?biz=${biz.id}` }}><i className="ti ti-message" aria-hidden="true" /> Mesazhe</button>
-            <button type="button" onClick={() => { window.location.href = `/biznese/${biz.id}/analytics` }}><i className="ti ti-chart-bar" aria-hidden="true" /> Analitika</button>
           </div>
 
           {/* Tab: Profili i biznesit — kartat e menaxhimit (mision-biznesi; pa ekskluzivitete llogarie) */}
@@ -650,10 +652,10 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
                   (profil → biznes) rri te profili. Prekje ≥44px (Vendimi 8). */}
               <a
                 href={`/u/${biz.owner_id}`}
-                aria-label="Pronari — shiko profilin"
+                aria-label={isOwner ? 'Ti je pronari — shiko profilin tënd' : 'Pronari — shiko profilin'}
                 style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12.5, color: '#111', textDecoration: 'none', minHeight: 44, padding: '6px 12px', border: '1px solid #F5C842', background: '#FFFBEA', borderRadius: 999, fontWeight: 600 }}>
                 <span aria-hidden="true" style={{ color: '#E6A200', fontSize: 14, lineHeight: 1 }}>★</span>
-                Pronari <span style={{ color: '#C42305', fontWeight: 700 }}>— shiko profilin →</span>
+                {isOwner ? <>Ti je pronari <span style={{ color: '#C42305', fontWeight: 700 }}>— profili yt →</span></> : <>Pronari <span style={{ color: '#C42305', fontWeight: 700 }}>— shiko profilin →</span></>}
               </a>
             </div>
           )}
@@ -668,28 +670,39 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               paneli-pasqyrë (BP2 §B2); këtu, kur pronari është në "Shiko faqen publike",
               sheh pikërisht pamjen e vizitorit — pa kontrolle pronari të përziera. */}
           <div style={{ display: 'flex', gap: 8 }}>
-            {biz.phone && (
-              <a href={`tel:${biz.phone}`} className="action-btn" style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff' }}>
-                <i className="ti ti-phone" style={{ fontSize: 15 }} aria-hidden="true" /> Telefono
-              </a>
+            {isOwner ? (
+              /* Vizitor-pronar (i veçantë): platforma e njeh se je pronari — veprimet ndaj vetes
+                 (Telefono/Mesazh/Ndiq) s'kanë kuptim, ndaj s'shfaqen; shfaqet njohja + Ndaj. */
+              <div className="action-btn" style={{ background: '#FFF8E1', color: '#7A4A00', boxShadow: 'none', border: '1px solid #F5C84255', cursor: 'default', flexDirection: 'column', gap: 0, lineHeight: 1.3 }}>
+                <span style={{ fontWeight: 800 }}><span aria-hidden="true">👁</span> Kështu e sheh vizitori</span>
+                <span style={{ fontSize: 10.5, fontWeight: 600 }}>Ti je pronari — veprimet janë për vizitorët</span>
+              </div>
+            ) : (
+              <>
+                {biz.phone && (
+                  <a href={`tel:${biz.phone}`} className="action-btn" style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff' }}>
+                    <i className="ti ti-phone" style={{ fontSize: 15 }} aria-hidden="true" /> Telefono
+                  </a>
+                )}
+                <button type="button" aria-label="Dërgo mesazh" onClick={() => { if (!userId) { window.location.href = '/auth/login'; return } window.location.href = `/messages?biz=${biz.id}` }}
+                  className="action-btn" style={{ background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842' }}>
+                  <i className="ti ti-message" style={{ fontSize: 15 }} aria-hidden="true" /> Mesazh
+                </button>
+                <button
+                  type="button"
+                  onClick={toggleFollow}
+                  disabled={followBusy}
+                  aria-pressed={following}
+                  aria-label={following ? 'Mos e ndiq më këtë biznes' : 'Ndiq këtë biznes'}
+                  className="action-btn"
+                  style={following
+                    ? { background: '#fff', color: '#C42305', border: '1.5px solid #C42305', boxShadow: 'none' }
+                    : { background: 'linear-gradient(135deg,#F8D24E,#F5C842)', color: '#111' }}>
+                  <i className={`ti ti-${following ? 'check' : 'plus'}`} style={{ fontSize: 15 }} aria-hidden="true" />
+                  {following ? 'Po ndjek' : 'Ndiq'}
+                </button>
+              </>
             )}
-            <button type="button" aria-label="Dërgo mesazh" onClick={() => { if (!userId) { window.location.href = '/auth/login'; return } window.location.href = `/messages?biz=${biz.id}` }}
-              className="action-btn" style={{ background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842' }}>
-              <i className="ti ti-message" style={{ fontSize: 15 }} aria-hidden="true" /> Mesazh
-            </button>
-            <button
-              type="button"
-              onClick={toggleFollow}
-              disabled={followBusy}
-              aria-pressed={following}
-              aria-label={following ? 'Mos e ndiq më këtë biznes' : 'Ndiq këtë biznes'}
-              className="action-btn"
-              style={following
-                ? { background: '#fff', color: '#C42305', border: '1.5px solid #C42305', boxShadow: 'none' }
-                : { background: 'linear-gradient(135deg,#F8D24E,#F5C842)', color: '#111' }}>
-              <i className={`ti ti-${following ? 'check' : 'plus'}`} style={{ fontSize: 15 }} aria-hidden="true" />
-              {following ? 'Po ndjek' : 'Ndiq'}
-            </button>
             <button type="button" aria-label="Ndaj" onClick={share} className="action-btn" style={{ background: '#f0f0f0', color: '#333', flex: '0 0 48px' }}>
               <i className="ti ti-share-3" style={{ fontSize: 17 }} aria-hidden="true" />
             </button>
