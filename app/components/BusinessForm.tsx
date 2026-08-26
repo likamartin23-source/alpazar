@@ -6,7 +6,7 @@
 // §3.9: fshirja 3-shkallëshe (vetëm te editimi, vetëm-pronar, RPC delete_own_business).
 // Nota: fushat opsionale ruhen si null kur bosh; hours ruan {days, schedule} për
 // pajtueshmëri me shfaqjen ekzistuese (hours.schedule).
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { MapPicker } from './MapPicker'
 import { uploadSingleImage } from '../../lib/uploadImages'
@@ -78,14 +78,24 @@ export default function BusinessForm({ mode, initial, onSaved }: {
 
   const [logoFile, setLogoFile] = useState<File | null>(null)
   const [coverFile, setCoverFile] = useState<File | null>(null)
-  const [galleryFiles, setGalleryFiles] = useState<File[]>([])
   const [logoPrev, setLogoPrev] = useState(initial?.logo_url || '')
   const [coverPrev, setCoverPrev] = useState(initial?.cover_url || '')
-  const [gallery, setGallery] = useState<string[]>(initial?.gallery || [])
-  // Pamje paraprake për fotot E REJA të galerisë (para ngarkimit) — që pronari të shohë
-  // çfarë shtoi, jo vetëm një numërues. Revokohen kur ndryshon lista (pa rrjedhje memorjeje).
-  const galleryNewPrev = useMemo(() => galleryFiles.map(f => URL.createObjectURL(f)), [galleryFiles])
-  useEffect(() => () => { galleryNewPrev.forEach(u => URL.revokeObjectURL(u)) }, [galleryNewPrev])
+  // Galeria si NJË listë e vetme e renditur (foto ekzistuese + të reja) → modalitet i plotë:
+  // shto · fshi · rendit (e para = kryesore) · zëvendëso (fshi+shto). Rendi ruhet te "Ruaj".
+  type GalItem = { id: string; url?: string; file?: File; prev?: string }
+  const newId = () => (globalThis.crypto?.randomUUID?.() || 'g' + Math.random().toString(36).slice(2))
+  const [galleryItems, setGalleryItems] = useState<GalItem[]>(
+    (initial?.gallery || []).map(u => ({ id: newId(), url: u })),
+  )
+  function addGalleryFiles(files: File[]) {
+    setGalleryItems(items => [...items, ...files.map(f => ({ id: newId(), file: f, prev: URL.createObjectURL(f) }))])
+  }
+  function removeGalleryItem(id: string) {
+    setGalleryItems(items => { const it = items.find(x => x.id === id); if (it?.prev) URL.revokeObjectURL(it.prev); return items.filter(x => x.id !== id) })
+  }
+  function moveGalleryItem(id: string, dir: -1 | 1) {
+    setGalleryItems(items => { const i = items.findIndex(x => x.id === id); const j = i + dir; if (i < 0 || j < 0 || j >= items.length) return items; const cp = [...items];[cp[i], cp[j]] = [cp[j], cp[i]]; return cp })
+  }
 
   // Fshirja 3-shkallëshe (§3.9)
   const [delStage, setDelStage] = useState(0)      // 0 mbyllur · 1 paralajmërim · 2 shkruaj emrin · 3 duke fshirë
@@ -120,7 +130,7 @@ export default function BusinessForm({ mode, initial, onSaved }: {
     if (!f.name.trim()) { setMsg('err:Emri i biznesit është i detyrueshëm.'); return }
     if (!userId) return
     setSaving(true); setMsg(''); setUploading(true)
-    let logoUrl = logoPrev, coverUrl = coverPrev, gal = [...gallery]
+    let logoUrl = logoPrev, coverUrl = coverPrev; const gal: string[] = []
     try {
       if (logoFile) {
         const r = await uploadSingleImage(logoFile, 'avatars')
@@ -132,16 +142,20 @@ export default function BusinessForm({ mode, initial, onSaved }: {
         if (r.error || !r.url) throw new Error(r.error || 'ngarkimi i kopertinës dështoi')
         coverUrl = r.url
       }
-      for (let i = 0; i < galleryFiles.length; i++) {
-        const r = await uploadSingleImage(galleryFiles[i], 'listing-images')
-        if (r.error || !r.url) throw new Error(r.error || 'ngarkimi i galerisë dështoi')
-        gal.push(r.url)
+      // Ngarko sipas RENDIT të galerisë (e para = kryesore); foto ekzistuese ruhen si janë.
+      for (const it of galleryItems) {
+        if (it.url) { gal.push(it.url); continue }
+        if (it.file) {
+          const r = await uploadSingleImage(it.file, 'listing-images')
+          if (r.error || !r.url) throw new Error(r.error || 'ngarkimi i galerisë dështoi')
+          gal.push(r.url)
+        }
       }
     } catch (e: any) { setMsg(`err:Gabim gjatë ngarkimit: ${e.message}`); setSaving(false); setUploading(false); return }
     setUploading(false)
     // Pas ngarkimit të suksesshëm: pastro skedarët në pritje (parandalon ringarkim/dublime
     // te "Ruaj" i dytë — BUG #4) dhe përditëso preview-n e galerisë me URL-të e ruajtura.
-    setLogoFile(null); setCoverFile(null); setGalleryFiles([]); setGallery(gal)
+    setLogoFile(null); setCoverFile(null); setGalleryItems(gal.map(u => ({ id: newId(), url: u })))
 
     const payload: any = {
       name: f.name.trim(), type: mainType,
@@ -262,26 +276,31 @@ export default function BusinessForm({ mode, initial, onSaved }: {
       <label style={lbl}>Slogan / Moto</label>
       <input className="bf-input" value={f.tagline} onChange={e => setV('tagline', e.target.value)} placeholder="p.sh. Cilësi që i besohet" maxLength={120} />
       <label style={{ ...lbl, marginTop: 12 }}>Galeria (foto shtesë)</label>
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
-        {gallery.map((g, i) => (
-          <div key={g} style={{ position: 'relative', width: 64, height: 64 }}>
-            <img src={g} alt="" style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 8 }} />
-            <button type="button" aria-label="Hiq foton" onClick={() => setGallery(gallery.filter((_, x) => x !== i))} style={{ position: 'absolute', top: -6, right: -6, width: 20, height: 20, borderRadius: '50%', background: '#E63312', color: '#fff', border: '2px solid #fff', cursor: 'pointer', fontSize: 11, lineHeight: 1 }}>✕</button>
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 6 }}>
+        {galleryItems.map((it, i) => (
+          <div key={it.id} style={{ position: 'relative', width: 72 }}>
+            <div style={{ position: 'relative', width: 72, height: 72 }}>
+              <img src={it.file ? it.prev : it.url} alt="" style={{ width: 72, height: 72, objectFit: 'cover', borderRadius: 8, border: i === 0 ? '2px solid #F5C842' : '1px solid #eee' }} />
+              {i === 0 && <span style={{ position: 'absolute', top: 0, left: 0, background: '#F5C842', color: '#111', fontSize: 8, fontWeight: 800, padding: '1px 4px', borderRadius: '8px 0 6px 0' }} aria-hidden="true">KRYESORE</span>}
+              {it.file && <span style={{ position: 'absolute', bottom: 0, right: 0, background: 'rgba(14,122,53,.9)', color: '#fff', fontSize: 8, padding: '1px 4px', borderRadius: '6px 0 8px 0' }} aria-hidden="true">E re</span>}
+              <button type="button" aria-label="Fshi foton" onClick={() => removeGalleryItem(it.id)} style={{ position: 'absolute', top: -6, right: -6, width: 20, height: 20, borderRadius: '50%', background: '#E63312', color: '#fff', border: '2px solid #fff', cursor: 'pointer', fontSize: 11, lineHeight: 1 }}>✕</button>
+            </div>
+            {/* Rendit: ◀ ▶ (e para = kryesore) */}
+            <div style={{ display: 'flex', gap: 4, marginTop: 3, justifyContent: 'center' }}>
+              <button type="button" aria-label="Zhvendos majtas" disabled={i === 0} onClick={() => moveGalleryItem(it.id, -1)} style={{ flex: 1, border: '1px solid #ddd', background: i === 0 ? '#f5f5f5' : '#fff', borderRadius: 6, fontSize: 11, cursor: i === 0 ? 'default' : 'pointer', color: i === 0 ? '#ccc' : '#555', lineHeight: 1.6, fontFamily: 'inherit' }}>◀</button>
+              <button type="button" aria-label="Zhvendos djathtas" disabled={i === galleryItems.length - 1} onClick={() => moveGalleryItem(it.id, 1)} style={{ flex: 1, border: '1px solid #ddd', background: i === galleryItems.length - 1 ? '#f5f5f5' : '#fff', borderRadius: 6, fontSize: 11, cursor: i === galleryItems.length - 1 ? 'default' : 'pointer', color: i === galleryItems.length - 1 ? '#ccc' : '#555', lineHeight: 1.6, fontFamily: 'inherit' }}>▶</button>
+            </div>
           </div>
         ))}
-        {galleryFiles.map((_, i) => (
-          <div key={'new-' + i} style={{ position: 'relative', width: 64, height: 64 }}>
-            <img src={galleryNewPrev[i]} alt="" style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 8 }} />
-            <span style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(14,122,53,.85)', color: '#fff', fontSize: 8, textAlign: 'center', padding: '1px 0' }} aria-hidden="true">E re</span>
-            <button type="button" aria-label="Hiq foton e re" onClick={() => setGalleryFiles(p => p.filter((_, x) => x !== i))} style={{ position: 'absolute', top: -6, right: -6, width: 20, height: 20, borderRadius: '50%', background: '#E63312', color: '#fff', border: '2px solid #fff', cursor: 'pointer', fontSize: 11, lineHeight: 1 }}>✕</button>
-          </div>
-        ))}
-        <label style={{ width: 64, height: 64, borderRadius: 8, border: '1.5px dashed #ccc', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 22, color: '#aaa' }}>
+        <label style={{ width: 72, height: 72, borderRadius: 8, border: '1.5px dashed #ccc', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 24, color: '#aaa' }}>
           +
-          <input type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={e => { const fs = Array.from(e.target.files || []); setGalleryFiles(p => [...p, ...fs]); e.target.value = '' }} />
+          <input type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={e => { addGalleryFiles(Array.from(e.target.files || [])); e.target.value = '' }} />
         </label>
       </div>
-      {galleryFiles.length > 0 && <div style={{ fontSize: 11, color: '#0E7A35', fontWeight: 600 }}>{galleryFiles.length} foto të reja — ruhen kur shtyp “Ruaj”.</div>}
+      <div style={{ fontSize: 11, color: '#888' }}>
+        Shto (+) · fshi (✕) · rendit (◀ ▶). Foto e parë është <b>kryesore</b>.
+        {galleryItems.some(it => it.file) && <span style={{ color: '#0E7A35', fontWeight: 600 }}> Ndryshimet ruhen te “Ruaj”.</span>}
+      </div>
 
       {/* 3 · Informacion bazë */}
       <div style={sec}>3 · Informacion bazë</div>
