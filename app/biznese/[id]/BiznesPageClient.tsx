@@ -818,6 +818,9 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
         <div id="tabpanel-about" role="tabpanel" aria-labelledby="tab-about" style={{ padding: '8px 0' }}>
           <div className="card">
             <h2 className="card-title"><i className="ti ti-building-store" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Rreth biznesit</h2>
+            {biz.tagline && (
+              <p style={{ fontSize: 13.5, color: '#C42305', fontWeight: 700, fontStyle: 'italic', marginBottom: 10 }}>“{biz.tagline}”</p>
+            )}
             {biz.description
               ? <p style={{ fontSize: 13, color: '#444', lineHeight: 1.7, marginBottom: 12 }}>{biz.description}</p>
               : <p style={{ fontSize: 12, color: '#aaa', marginBottom: 12 }}>Nuk ka përshkrim.</p>
@@ -848,6 +851,18 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               <div className="info-row">
                 <span className="info-icon" aria-hidden="true">📞</span>
                 <span className="info-text"><a href={`tel:${biz.phone}`}>{biz.phone}</a></span>
+              </div>
+            )}
+            {biz.whatsapp && (
+              <div className="info-row">
+                <span className="info-icon" aria-hidden="true">💬</span>
+                <span className="info-text"><a href={`https://wa.me/${biz.whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer">WhatsApp: {biz.whatsapp}</a></span>
+              </div>
+            )}
+            {biz.contact_person && (
+              <div className="info-row">
+                <span className="info-icon" aria-hidden="true">👤</span>
+                <span className="info-text">Kontakti: {biz.contact_person}</span>
               </div>
             )}
             {biz.email && (
@@ -889,12 +904,26 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
             </div>
           )}
 
+          {/* BP2 §B5 — Galeria e biznesit (rrjet fotosh); shfaqet vetëm kur ka foto. */}
+          {Array.isArray(biz.gallery) && biz.gallery.length > 0 && (
+            <div className="card">
+              <h2 className="card-title"><i className="ti ti-photo" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Galeria</h2>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
+                {biz.gallery.filter(Boolean).slice(0, 12).map((url, i) => (
+                  <a key={i} href={url} target="_blank" rel="noopener noreferrer" style={{ display: 'block', aspectRatio: '1/1', borderRadius: 10, overflow: 'hidden', background: '#f2f2f2' }}>
+                    <img src={url} alt={`Foto ${i + 1} e biznesit ${biz.name}`} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      onError={e => { (e.currentTarget.parentElement as HTMLElement).style.display = 'none' }} />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* FINAL §3.8 — Detajet e reja profesionale; secili rresht shfaqet vetëm kur plotësohet. */}
-          {(biz.founded_year || biz.contact_person || biz.service_area || biz.delivery?.ka || biz.socials?.instagram || biz.socials?.facebook || biz.socials?.tiktok) && (
+          {(biz.founded_year || biz.service_area || biz.delivery?.ka || biz.socials?.instagram || biz.socials?.facebook || biz.socials?.tiktok) && (
             <div className="card">
               <h2 className="card-title"><i className="ti ti-building-store" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Detaje</h2>
               {biz.founded_year ? <div className="info-row"><span className="info-icon" aria-hidden="true">📅</span><span className="info-text">Themeluar: <strong>{biz.founded_year}</strong></span></div> : null}
-              {biz.contact_person ? <div className="info-row"><span className="info-icon" aria-hidden="true">👤</span><span className="info-text">Kontakti: <strong>{biz.contact_person}</strong></span></div> : null}
               {biz.service_area ? <div className="info-row"><span className="info-icon" aria-hidden="true">🗺️</span><span className="info-text">Zona e shërbimit: {biz.service_area}</span></div> : null}
               {biz.delivery?.ka ? <div className="info-row"><span className="info-icon" aria-hidden="true">🚚</span><span className="info-text">Dorëzim: Po{biz.delivery.detaje ? ` — ${biz.delivery.detaje}` : ''}</span></div> : null}
               {(biz.socials?.instagram || biz.socials?.facebook || biz.socials?.tiktok) && (
