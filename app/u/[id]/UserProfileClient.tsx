@@ -239,6 +239,24 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
         </div>
       </div>
 
+      {/* Rasti i paparashikuar në dizajn — "vizitori i profilit të vet": kur pronari sheh
+          profilin e tij nga jashtë (nga "Shiko publik" te /profile, ose "profili yt →" te
+          faqja e biznesit), njihet qartë + i jepet rrugë kthimi. Simetrike me banderolën e
+          biznesit (BiznesPageClient: "Po e shikon faqen publike ← Kthehu te menaxhimi"). */}
+      {isOwnProfile && (
+        <div style={{ background: '#111', color: '#F5C842', margin: '0 0 8px', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, fontSize: 12.5, fontWeight: 700 }}>
+          <span><span aria-hidden="true">👁</span> Po e shikon profilin tënd publik — kështu e shohin vizitorët</span>
+          <button
+            type="button"
+            onClick={() => window.location.href = '/profile'}
+            aria-label="Kthehu te profili im"
+            style={{ background: '#F5C842', color: '#111', border: 'none', borderRadius: 8, padding: '6px 12px', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}
+          >
+            ← Kthehu te profili
+          </button>
+        </div>
+      )}
+
       {/* Tab bar */}
       <div role="tablist" aria-label="Seksionet e profilit" style={{ background: '#fff', display: 'flex', borderBottom: '1px solid #eee', marginBottom: 8, position: 'sticky', top: 0, zIndex: 10 }}>
         {tabs.map(t => (
