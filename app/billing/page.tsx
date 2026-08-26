@@ -85,18 +85,27 @@ export default function BillingPage() {
                       : <>Periudha mbaron më <b>{new Date(sub.current_period_end).toLocaleDateString('sq-AL')}</b> ({daysLeft} ditë të mbetura).</>}
                   </div>
                   <div className="bar"><div className="fill" style={{ width: `${pct}%` }} /></div>
+                  {/* Rinovim automatik: 'nuk anulohet' = aktiv. Cron-i (auto_renew_run) e nis
+                      rinovimin para skadimit; me grace 24h aksesi s'ndërpritet menjëherë. */}
+                  <div className="note">
+                    {sub.cancel_at_period_end
+                      ? <>⏹ <b>Rinovim automatik: joaktiv</b> — aksesi mbaron në fund të periudhës.</>
+                      : <>🔄 <b>Rinovim automatik: aktiv</b> — nisim rinovimin para skadimit (24h afat mëshire).</>}
+                  </div>
                   {sub.pending_plan && (
                     <div className="note">Në rinovim kalon te plani <b>{sub.pending_plan.name}</b>.</div>
                   )}
                   <div className="btns">
+                    {/* Rinovim manual PARA skadimit — hap kërkesë rinovimi për planin aktual. */}
+                    <button type="button" className="btn primary" disabled={!!busy} onClick={() => act('renew_my_subscription')}>Rinovo tani</button>
                     {sub.cancel_at_period_end
-                      ? <button type="button" className="btn primary" disabled={!!busy} onClick={() => act('resume_my_subscription')}>Rikthe rinovimin</button>
+                      ? <button type="button" className="btn" disabled={!!busy} onClick={() => act('resume_my_subscription')}>Rikthe rinovimin automatik</button>
                       : confirmCancel
                         ? <>
-                            <button type="button" className="btn danger" disabled={!!busy} onClick={() => act('cancel_my_subscription')}>Po, anulo</button>
+                            <button type="button" className="btn danger" disabled={!!busy} onClick={() => act('cancel_my_subscription')}>Po, çaktivizo</button>
                             <button type="button" className="btn" onClick={() => setConfirmCancel(false)}>Jo</button>
                           </>
-                        : <button type="button" className="btn" disabled={!!busy} onClick={() => setConfirmCancel(true)}>Anulo abonimin</button>}
+                        : <button type="button" className="btn" disabled={!!busy} onClick={() => setConfirmCancel(true)}>Çaktivizo rinovimin</button>}
                   </div>
                   {confirmCancel && <div className="note warn">Mban aksesin deri më {new Date(sub.current_period_end).toLocaleDateString('sq-AL')}. Asnjë pagesë tjetër nuk kërkohet.</div>}
                 </>
