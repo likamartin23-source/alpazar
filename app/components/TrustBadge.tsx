@@ -42,6 +42,9 @@ function getLevel(score: number): { label: string; color: string; bg: string; ic
 export function TrustBadge({ score: scoreProp, createdAt, listingsActive = 0, gamificationPoints = 0, compact = false }: TrustBadgeProps) {
   // Burimi autoritativ (trust_score) prevalon; heuristika (moshë+shpallje+pikë) është fallback
   // vetëm kur s'ka score të ruajtur — deri sa sistemi i reviews ta mbushë plotësisht.
+  // KUJDES: `profiles.trust_score` ka DEFAULT 0 dhe s'është populluar ende, pra 0 = "e pavendosur"
+  // (sentinel), JO një zero autoritativ. Prandaj pragu është `> 0`: një 0 bie te heuristika.
+  // Mos e ndrysho në `>= 0` — do t'i shfaqte TË GJITHË shitësit "Fillestar 0" dhe do vriste heuristikën.
   const computed = createdAt ? calcTrustScore(createdAt, listingsActive, gamificationPoints) : 0
   const score = (typeof scoreProp === 'number' && scoreProp > 0) ? Math.min(100, Math.round(scoreProp)) : computed
   const level = getLevel(score)

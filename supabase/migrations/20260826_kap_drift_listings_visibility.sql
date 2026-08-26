@@ -17,6 +17,14 @@
 -- shohin gjithnje te vetat. Fikja/rikthimi i `is_visible` qeveriset nga cron-et e Premium-it
 -- (business_should_be_visible → p5_versionim_rank_visibility.sql / p7_cikli_plote_vip.sql).
 
+-- 0) Kolonat e dukshmerise te `businesses` — ekzistojne LIVE por asnje migrim i repo-s s'i
+--    krijon; pa to, ky funksion (dhe UPDATE-i i p5 mbi dimmed_at/dim_reason) deshton ne nje
+--    rindertim nga zero me "column ... does not exist" (check_function_bodies). Ky skedar renditet
+--    para `pagesa_p5` alfabetikisht, ndaj kolonat behen gati per te dyja. Idempotent (no-op live).
+alter table public.businesses add column if not exists is_visible boolean not null default true;
+alter table public.businesses add column if not exists dimmed_at timestamptz;
+alter table public.businesses add column if not exists dim_reason text;
+
 -- 1) Funksioni ndihmes i RLS-se (business_id NULL → true; perndryshe businesses.is_visible)
 create or replace function public.business_is_visible(p_business_id uuid)
  returns boolean

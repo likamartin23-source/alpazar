@@ -27,7 +27,7 @@ async function fetchHome(): Promise<{ listings: Listing[]; categories: Category[
         // pa `business_id` + join-in `business:...`, ListingCard e trajton shpalljen e
         // biznesit si personale (identiteti i pronarit ne vend te logos/emrit te biznesit)
         // — karta e biznesit "noton" te feed-i, por e maskuar. Identik me HomeClient.
-        .select('id,title,price,currency,condition,city,is_premium,images,category_id,created_at,user_id,business_id,author:user_id(id,full_name,username,avatar_url,is_premium,trust_score),business:business_id(id,name,logo_url,is_verified)')
+        .select('id,title,price,currency,condition,city,is_premium,rank_tier,images,category_id,created_at,user_id,business_id,views_count,author:user_id(id,full_name,username,avatar_url,is_premium,trust_score),business:business_id(id,name,logo_url,is_verified)')
         .eq('is_active', true)
         .order('rank_tier', { ascending: false })
         .order('last_bumped_at', { ascending: false })
