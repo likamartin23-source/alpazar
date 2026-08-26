@@ -62,6 +62,7 @@ const nextConfig = {
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
+      "frame-ancestors 'self'", // anti-clickjacking (ekuivalenti modern i X-Frame-Options: SAMEORIGIN)
       "worker-src blob:",
       "upgrade-insecure-requests",
     ].join('; ')
