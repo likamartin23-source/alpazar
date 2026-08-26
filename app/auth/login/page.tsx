@@ -788,7 +788,9 @@ export default function Auth() {
       : cType === 'phone'
         ? smsFailMode
           ? <p className="hint ok"><span aria-hidden="true">📧</span> Numri ruhet — kodi dërgohet me <strong>email</strong></p>
-          : <p className="hint ok"><span aria-hidden="true">📱</span> Kodi konfirmimit dërgohet me <strong>SMS</strong></p>
+          : /^\+355[^6]/.test(toE164(contact.trim()))
+            ? <p className="hint warn"><span aria-hidden="true">⚠️</span> Numri celular shqiptar fillon me <strong>6</strong> (067/068/069). SMS shkon vetëm te celularët — te fiksi jo. Përdor email nëse s&apos;e merr kodin.</p>
+            : <p className="hint ok"><span aria-hidden="true">📱</span> Kodi konfirmimit dërgohet me <strong>SMS</strong></p>
         : <p className="hint warn">Fut email (user@domain.com) ose nr. telefoni (+355, +1, +44...)</p>
     : <p className="hint"><span aria-hidden="true">📧</span> Email &nbsp;·&nbsp; <span aria-hidden="true">📱</span> Çdo numër telefoni bote (+355, +1, +44...)</p>
 
@@ -840,6 +842,15 @@ export default function Auth() {
       </div>
 
       {expired && <div className="msg warn" role="alert">Kodi ka skaduar. Klikoje &quot;Ridërgo&quot; për kod të ri.</div>}
+
+      {/* Dalje nga kurthi i SMS-së: kur kodi i telefonit skadon (SMS-ja s'mbërriti — p.sh.
+          numër fiks ose gateway i ngadaltë), përdoruesi kalon menjëherë te konfirmimi me
+          email (kanal i garantuar: Brevo→Resend). Pa këtë, ekrani ishte rrugë pa krye. */}
+      {expired && detectType(resolvedId) === 'phone' && mode !== 'login' && (
+        <button type="button" className="btn-yellow" onClick={() => { setOriginalPhone(resolvedId); setSmsFailMode(true); resetToForm() }}>
+          <span aria-hidden="true">📧</span> SMS-ja s&apos;erdhi? Konfirmo me email
+        </button>
+      )}
 
       <div className="otp-row" role="group" aria-label="Kodi i konfirmimit 6-shifror" onPaste={handleOtpPaste}>
         {otp.map((d, i) => (
@@ -1111,6 +1122,13 @@ export default function Auth() {
                   <button type="button" className="btn" onClick={sendOtp} disabled={loading}>
                     {loading ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : cType === 'email' ? <><span aria-hidden='true'>📨</span> Dërgo Linkun e Konfirmimit</> : <><span aria-hidden='true'>📨</span> Dërgo Kodin e Konfirmimit</>}
                   </button>
+                  {/* Alternativë e garantuar për numra telefoni: konfirmim me email pa pritur
+                      SMS-në (që mund të vonojë a të mos mbërrijë — p.sh. numër fiks). */}
+                  {cType === 'phone' && (
+                    <button type="button" className="btn-ghost" onClick={() => { setOriginalPhone(toE164(contact.trim())); setSmsFailMode(true); setMsg('') }}>
+                      <span aria-hidden="true">📧</span> SMS-ja vonon? Konfirmo me email
+                    </button>
+                  )}
                   <div className="sec-row">Ke llogari? &nbsp;<a role="button" tabIndex={0} onClick={() => switchMode('login')} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') switchMode('login') }} style={{ cursor: 'pointer' }}>Hyr →</a></div>
                   <p className="terms">
                     Duke u regjistruar pranon{' '}
@@ -1202,9 +1220,17 @@ export default function Auth() {
               </div>
 
               {!smsFailMode ? (
-                <button type="button" className="btn" onClick={sendOtp} disabled={loading}>
-                  {loading ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : cType === 'email' ? <><span aria-hidden='true'>📨</span> Dërgo Linkun e Rivendosjes</> : <><span aria-hidden='true'>📨</span> Dërgo Kodin e Konfirmimit</>}
-                </button>
+                <>
+                  <button type="button" className="btn" onClick={sendOtp} disabled={loading}>
+                    {loading ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : cType === 'email' ? <><span aria-hidden='true'>📨</span> Dërgo Linkun e Rivendosjes</> : <><span aria-hidden='true'>📨</span> Dërgo Kodin e Konfirmimit</>}
+                  </button>
+                  {/* Alternativë e garantuar për numra telefoni (SMS mund të vonojë/mos mbërrijë). */}
+                  {cType === 'phone' && (
+                    <button type="button" className="btn-ghost" onClick={() => { setOriginalPhone(toE164(contact.trim())); setSmsFailMode(true); setMsg('') }}>
+                      <span aria-hidden="true">📧</span> SMS-ja vonon? Rivendos me email
+                    </button>
+                  )}
+                </>
               ) : null}
 
               {smsFailMode && (
