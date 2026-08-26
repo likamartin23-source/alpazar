@@ -143,9 +143,9 @@ export default function BiznesAnalyticsPage() {
           <div className="an-card">
             <div className="an-title">Pasqyrë {period} ditë</div>
             <div className="stat-row">
-              <div className="stat-box"><div className="stat-num">{data.total_views}</div><div className="stat-lbl">Pamje</div></div>
-              <div className="stat-box"><div className="stat-num">{data.total_contacts}</div><div className="stat-lbl">Kontakte</div></div>
-              <div className="stat-box"><div className="stat-num">{data.top_listings.length}</div><div className="stat-lbl">Shpallje</div></div>
+              <div className="stat-box"><div style={{ fontSize: 16, marginBottom: 2 }} aria-hidden="true">👁</div><div className="stat-num" style={{ color: '#E63312' }}>{data.total_views}</div><div className="stat-lbl">Pamje</div></div>
+              <div className="stat-box"><div style={{ fontSize: 16, marginBottom: 2 }} aria-hidden="true">✉️</div><div className="stat-num" style={{ color: '#0E7A35' }}>{data.total_contacts}</div><div className="stat-lbl">Kontakte</div></div>
+              <div className="stat-box"><div style={{ fontSize: 16, marginBottom: 2 }} aria-hidden="true">🏷️</div><div className="stat-num">{data.top_listings.length}</div><div className="stat-lbl">Shpallje</div></div>
             </div>
           </div>
 
