@@ -1,8 +1,8 @@
 // Supabase Edge Function: `email-otp`
-// Gjeneron kod 6-shifror OTP (magiclink email_otp) me service_role që
-// injektohet automatikisht në Edge Functions — pa varësi nga Vercel env.
-// Dërgimi: Brevo (nëse `brevo_api_key` është vendosur në admin_settings —
-// dërgon te KUSHDO) → ndryshe Resend (sandbox: vetëm te email-i i pronarit).
+// Gjeneron kod OTP (email_otp nga generateLink magiclink) me service_role.
+// Dërgimi: Brevo (te kushdo) → Resend (fallback). Rregullim sigurie 26 gusht 2026 (MEDIUM-2):
+// register-i NUK krijon më llogari "squat" me fjalëkalimin e dërguesit — kontrollon ekzistencën
+// dhe krijon PA fjalëkalim; fjalëkalimin e vendos klienti PAS verifikimit të kodit (provë zotërimi).
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -71,12 +71,17 @@ Deno.serve(async (req: Request) => {
       if (!password || password.length < 6) {
         return json({ error: 'Fjalëkalimi duhet të paktën 6 karaktere.' }, 400)
       }
-      await admin.auth.admin.createUser({
-        email,
-        password,
-        email_confirm: false,
-        user_metadata: { ...(fullName ? { full_name: fullName } : {}), ...(age ? { age } : {}) },
-      }).catch(() => {})
+      // Siguri MEDIUM-2: mos krijo llogari "squat" me fjalëkalimin e dërguesit. Kontrollo
+      // ekzistencën; krijo VETËM nëse s'ekziston, dhe PA fjalëkalim. Fjalëkalimin e vendos
+      // klienti PAS verifikimit të kodit (updateUser) → asnjë fjalëkalim para provës së zotërimit.
+      const { data: existingUid } = await admin.rpc('auth_user_id_by_email', { p_email: email })
+      if (!existingUid) {
+        await admin.auth.admin.createUser({
+          email,
+          email_confirm: false,
+          user_metadata: { ...(fullName ? { full_name: fullName } : {}), ...(age ? { age } : {}) },
+        }).catch((e) => console.error('createUser error:', e))
+      }
     }
 
     const { data: linkData, error: linkErr } =

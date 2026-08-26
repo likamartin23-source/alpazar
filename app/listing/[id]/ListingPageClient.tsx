@@ -287,14 +287,21 @@ export default function ListingPageClient({ params, initialListing, initialSelle
       if (data.category_id) fetchSimilarListings(data.category_id, data.id, data.city, data.price)
       if (data.user_id) {
         const [{ data: p }, { count }] = await Promise.all([
-          // Siguri K2: kolona të sigurta (jo select('*')) — anon s'ka më SELECT tabelor te profiles.
-          // Telefoni mbetet (kontakt WhatsApp/Viber); PII private (moshë, datëlindje, referral…) s'lexohet.
-          supabase.from('profiles').select('id,username,full_name,avatar_url,phone,city,bio,is_premium,is_admin,premium_expires_at,gamification_points,gamification_level,created_at,shop_name,shop_description,shop_category,shop_banner_url,is_verified,last_seen,seller_rating,reviews_count,referral_code,cover_url,website,is_suspended,listings_count,total_sales,followers_count,following_count,response_rate,response_time_hrs,shop_is_open,total_saved,updated_at,trust_score,trust_score_visible,has_boost,boost_expires_at').eq('id', data.user_id).single(),
+          // Siguri HIGH-1: kolona të sigurta, PA `phone`/`is_admin`/`is_suspended` (PII/privilegj) —
+          // që të mos rrjedhin te vizitorët anonimë (anon-key publik). Telefoni merret veç më poshtë,
+          // vetëm kur përdoruesi është i loguar (kontakti mbetet për anëtarët; scraping-u anonim vdes).
+          supabase.from('profiles').select('id,username,full_name,avatar_url,city,bio,is_premium,premium_expires_at,gamification_points,gamification_level,created_at,shop_name,shop_description,shop_category,shop_banner_url,is_verified,last_seen,seller_rating,reviews_count,referral_code,cover_url,website,listings_count,total_sales,followers_count,following_count,response_rate,response_time_hrs,shop_is_open,total_saved,updated_at,trust_score,trust_score_visible,has_boost,boost_expires_at').eq('id', data.user_id).single(),
           supabase.from('listings').select('*', { count: 'exact', head: true })
             .eq('user_id', data.user_id).eq('is_active', true),
         ])
         if (p) { setSeller(p); sellerRef.current = p }
         if (count !== null) setSellerCount(count)
+        // Telefoni i shitësit: vetëm për përdorues të loguar (anon s'e lexon dot pas HIGH-1).
+        // Kështu butonat WhatsApp/Viber punojnë për anëtarët, por numri s'ekspozohet publikisht.
+        if (user?.id && data.user_id) {
+          const { data: ph } = await supabase.from('profiles').select('phone').eq('id', data.user_id).single()
+          if (ph?.phone) { setSeller((s: any) => s ? { ...s, phone: ph.phone } : s); if (sellerRef.current) sellerRef.current = { ...sellerRef.current, phone: ph.phone } }
+        }
       }
     }
   }
