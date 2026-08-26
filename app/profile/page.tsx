@@ -1229,57 +1229,86 @@ export default function ProfilePage() {
           )}
 
           {/* Shop Tab */}
-          {activeTab === 'shop' && (
-            <>
-              {!profile?.is_premium ? (
-                <div className="prem-card">
-                  <h3><span aria-hidden="true">🏢</span> Hap Biznesin Tënd</h3>
-                  <p>Biznesi online është i disponueshëm vetëm për anëtarët Premium. Merr badge ⭐ verifikimi, shpal produkte të pakufizuara dhe menaxho biznesin tënd!</p>
-                  <button type="button" className="prem-cta" onClick={() => window.location.href = '/premium'}><span aria-hidden="true">👑</span> Bëhu Premium</button>
+          {activeTab === 'shop' && (() => {
+            // BP2 §B3.2 — Butoni "Biznes" = një hyrje, TRE nën-butona/gjendje (kushtëzuar),
+            // të treja të dukshme si te specifikimi; vetëm njëra aktive sipas planit+biznesit.
+            //   G1 (!premium)          → Bëhu Premium → Planet
+            //   G2 (premium && !biznes)→ Krijo faqen e biznesit (/biznese/new); çaktivizohet kur ka biznes
+            //   G3 (premium && biznes) → Vepro si Biznes → /biznese/[id] (e vetmja rrugë brenda)
+            const premium = !!profile?.is_premium
+            const hasBiz = !!myBiz
+            const g1 = !premium, g2 = premium && !hasBiz, g3 = premium && hasBiz
+            const badge = (on: boolean, txtOn: string, txtOff: string) => (
+              <span style={{ fontSize: 10, fontWeight: 800, padding: '2px 8px', borderRadius: 6, background: on ? '#dcfce7' : '#f0f0f0', color: on ? '#16a34a' : '#999' }}>{on ? txtOn : txtOff}</span>
+            )
+            const cardStyle = (on: boolean): React.CSSProperties => ({ borderLeft: `3px solid ${on ? '#C42305' : '#ddd'}`, opacity: on ? 1 : 0.6 })
+            return (
+              <>
+                <div style={{ fontSize: 11.5, color: '#767676', margin: '2px 4px 10px', lineHeight: 1.5 }}>
+                  Butoni <b>Biznes</b> — një hyrje, <b>tri gjendje</b>. Vetëm njëra është aktive; nën-butonat e menaxhimit rrinë te profili i biznesit.
                 </div>
-              ) : (
-                <>
-                  {/* FAZA 5 (Imazhi 6a): biznesi REAL — një hyrje, tri gjendje.
-                      Gjendja 1 (jo premium) trajtohet më lart. Këtu: me plan.
-                      Gjendja 2: pa biznes → Krijo te /biznese/new (§1B).
-                      Gjendja 3: me biznes → hap nën-panelin /biznese/[id] ("Vepro si"). */}
-                  {myBiz ? (
-                    /* FINAL §3.2 — Gjendja 3: "Vepro si Biznes". E VETMJA rrugë te profili i
-                       brendshëm i biznesit = /biznese/[id], ku pronari menaxhon biznesin te
-                       paneli i tij (butonat e biznesit; §3.6). Pa nën-panel inline këtu → pa
-                       dyfishim; s'prek vizitor-pronar. */
-                    <div className="card" style={{ borderLeft: '3px solid #C42305' }}>
-                      <div className="card-hdr">
-                        <span className="card-title"><span aria-hidden="true">🏢</span> {myBiz.name}</span>
-                        {myBiz.is_verified && <span style={{ fontSize: 11, fontWeight: 700, color: '#16a34a', background: '#dcfce7', padding: '2px 8px', borderRadius: 6 }}>✅ I verifikuar</span>}
-                      </div>
+
+                {/* ── Gjendja 1 — Falas ─────────────────────────────── */}
+                <div className="card" style={cardStyle(g1)}>
+                  <div className="card-hdr">
+                    <span className="card-title"><span aria-hidden="true">①</span> Gjendja 1 — Falas</span>
+                    {badge(g1, 'aktive', 'ke Premium ✓')}
+                  </div>
+                  <p style={{ fontSize: 11.5, color: '#767676', margin: '2px 0 12px', lineHeight: 1.5 }}>
+                    S’ka biznes pa plan. Orientim automatik te <b>Planet</b> (gate në server/RLS).
+                  </p>
+                  <button type="button" disabled={!g1} onClick={() => { if (g1) window.location.href = '/premium' }}
+                    style={{ width: '100%', minHeight: 46, background: g1 ? 'linear-gradient(135deg,#F8D24E,#F5C842)' : '#f0f0f0', color: g1 ? '#111' : '#aaa', border: 'none', borderRadius: 11, fontSize: 13, fontWeight: 800, cursor: g1 ? 'pointer' : 'not-allowed', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                    <span aria-hidden="true">👑</span> Bëhu Premium → Shiko Planet
+                  </button>
+                </div>
+
+                {/* ── Gjendja 2 — Premium, pa biznes ────────────────── */}
+                <div className="card" style={cardStyle(g2)}>
+                  <div className="card-hdr">
+                    <span className="card-title"><span aria-hidden="true">②</span> Gjendja 2 — Premium, pa biznes</span>
+                    {badge(g2, 'aktive', hasBiz ? 'ke biznes' : 'kërkon Premium')}
+                  </div>
+                  <p style={{ fontSize: 11.5, color: '#767676', margin: '2px 0 12px', lineHeight: 1.5 }}>
+                    Regjistrimi për herë të parë — katalogu i plotë (Tipi → Nënkategoritë → Profili).
+                  </p>
+                  <button type="button" disabled={!g2} onClick={() => { if (g2) window.location.href = '/biznese/new' }}
+                    style={{ width: '100%', minHeight: 46, background: g2 ? 'linear-gradient(135deg,#E63312,#c42a0e)' : '#f0f0f0', color: g2 ? '#fff' : '#aaa', border: 'none', borderRadius: 11, fontSize: 13, fontWeight: 800, cursor: g2 ? 'pointer' : 'not-allowed', fontFamily: 'inherit' }}>
+                    + Krijo faqen e biznesit
+                  </button>
+                  {hasBiz && <p style={{ fontSize: 10.5, color: '#999', margin: '8px 0 0' }}>Ke tashmë një biznes → çaktivizohet (pa dublim).</p>}
+                </div>
+
+                {/* ── Gjendja 3 — Me biznes ─────────────────────────── */}
+                <div className="card" style={cardStyle(g3)}>
+                  <div className="card-hdr">
+                    <span className="card-title"><span aria-hidden="true">③</span> Gjendja 3 — Me biznes</span>
+                    {badge(g3, 'aktive', 'pa biznes')}
+                  </div>
+                  {g3 && myBiz ? (
+                    <>
                       <p style={{ fontSize: 11.5, color: '#767676', margin: '2px 0 12px', lineHeight: 1.5 }}>
-                        Menaxho biznesin te profili i tij i brendshëm. Identiteti dhe abonimi mbeten te llogaria jote personale.
+                        <b>{myBiz.name}</b>{myBiz.is_verified ? ' · ✅ i verifikuar' : ''} — menaxhoje te profili i tij i brendshëm. Identiteti dhe abonimi mbeten te llogaria jote personale.
                       </p>
                       <button type="button" aria-label="Vepro si biznes — hap profilin e brendshëm të biznesit"
                         onClick={() => { window.location.href = `/biznese/${myBiz.id}` }}
                         style={{ width: '100%', minHeight: 48, background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842', border: 'none', borderRadius: 11, fontSize: 14, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                        <i className="ti ti-briefcase" aria-hidden="true" /> Vepro si Biznes →
+                        <i className="ti ti-briefcase" aria-hidden="true" /> Vepro si Biznes → hap profilin
                       </button>
-                    </div>
+                      <button type="button" onClick={() => { window.location.href = `/biznese/${myBiz.id}?public=1` }}
+                        style={{ width: '100%', marginTop: 8, minHeight: 40, background: 'none', border: 'none', color: '#C42305', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
+                        <i className="ti ti-eye" aria-hidden="true" /> Shiko faqen publike të biznesit
+                      </button>
+                    </>
                   ) : (
-                    <div className="card" style={{ borderLeft: '3px solid #C42305' }}>
-                      <div className="card-hdr">
-                        <span className="card-title"><span aria-hidden="true">🏢</span> Krijo biznesin tënd</span>
-                      </div>
-                      <p style={{ fontSize: 12.5, color: '#555', lineHeight: 1.6, marginBottom: 12 }}>
-                        Ke Premium — mund të hapësh faqen tënde të biznesit: logo, kontakt, vendndodhje, vlerësime dhe shpallje të lidhura, me badge verifikimi.
-                      </p>
-                      <button type="button" onClick={() => window.location.href = '/biznese/new'}
-                        style={{ width: '100%', minHeight: 46, background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 11, fontSize: 13, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' }}>
-                        + Krijo faqen e biznesit
-                      </button>
-                    </div>
+                    <p style={{ fontSize: 11.5, color: '#999', margin: '2px 0 0', lineHeight: 1.5 }}>
+                      Kur të krijosh biznesin, këtu do të veprosh si biznes (hyrja te paneli i biznesit).
+                    </p>
                   )}
-                </>
-              )}
-            </>
-          )}
+                </div>
+              </>
+            )
+          })()}
         </div>
       </div>
     </>
