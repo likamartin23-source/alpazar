@@ -612,6 +612,13 @@ export default function ProfilePage() {
               <i className={`ti ti-${profileCopied ? 'check' : 'share-2'}`} aria-hidden="true" style={{ fontSize: 11 }} />
               {profileCopied ? 'Kopjuar!' : 'Ndaj'}
             </button>
+            {/* Shiko profilin nga JASHTË (si e sheh vizitori) — harmonizim me "Shiko faqen publike" te biznesi. */}
+            {profile?.id && (
+              <button type="button" aria-label="Shiko profilin publik" onClick={() => { window.location.href = `/u/${profile.id}` }}
+                style={{ background: '#111', color: '#F5C842', border: 'none', borderRadius: 6, padding: '3px 8px', fontSize: 10, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 3 }}>
+                <i className="ti ti-eye" aria-hidden="true" style={{ fontSize: 11 }} /> Shiko publik
+              </button>
+            )}
           </div>
           {profile?.city && <div style={{ fontSize: 11, color: '#888', marginBottom: 4 }}><span aria-hidden="true">📍</span> {profile.city}{profile?.created_at ? ` · Anëtar prej ${new Date(profile.created_at).getFullYear()}` : ''}</div>}
           <div className="email-row" style={{ justifyContent: 'flex-start' }}><i className="ti ti-mail" aria-hidden="true" />{user?.email}</div>
