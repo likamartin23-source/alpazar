@@ -170,7 +170,7 @@ export default function BiznesAnalyticsPage() {
                 <div className="listing-rank">{i + 1}</div>
                 <div className="listing-name">{l.title}</div>
                 <div className="listing-stats">
-                  <span>👁 {l.total_views}</span>
+                  <span>👁 {l.views}</span>
                   <span>✉ {l.contacts}</span>
                   {l.ctr > 0 && <span className="ctr-pill">{l.ctr}%</span>}
                 </div>

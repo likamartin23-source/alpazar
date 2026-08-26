@@ -77,10 +77,14 @@ const DAY_MAP: Record<string, string> = {
 }
 function toOpeningHours(hours: any): string[] {
   if (!hours || typeof hours !== 'object') return []
+  // BusinessForm shkruan { days: {mon..sun:{closed,open,close}}, schedule }. Përpara iterohej
+  // niveli i parë (çelësat 'days'/'schedule') → gjithmonë bosh, structured data pa orar.
+  // Tani iterohet hours.days (me përputhshmëri legacy kur orari ruhet i sheshtë).
+  const src = (hours.days && typeof hours.days === 'object') ? hours.days : hours
   const out: string[] = []
-  for (const [k, v] of Object.entries(hours as Record<string, any>)) {
+  for (const [k, v] of Object.entries(src as Record<string, any>)) {
     const day = DAY_MAP[String(k).toLowerCase().replace(/[^a-z]/g, '')]
-    if (!day || !v) continue
+    if (!day || !v || (v as any).closed) continue
     const open = (v as any).open || (v as any).nga
     const close = (v as any).close || (v as any).deri
     if (open && close) out.push(`${day} ${open}-${close}`)
