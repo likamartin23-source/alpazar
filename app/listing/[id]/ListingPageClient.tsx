@@ -290,7 +290,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
           // Siguri HIGH-1: kolona të sigurta, PA `phone`/`is_admin`/`is_suspended` (PII/privilegj) —
           // që të mos rrjedhin te vizitorët anonimë (anon-key publik). Telefoni merret veç më poshtë,
           // vetëm kur përdoruesi është i loguar (kontakti mbetet për anëtarët; scraping-u anonim vdes).
-          supabase.from('profiles').select('id,username,full_name,avatar_url,city,bio,is_premium,premium_expires_at,gamification_points,gamification_level,created_at,shop_name,shop_description,shop_category,shop_banner_url,is_verified,last_seen,seller_rating,reviews_count,referral_code,cover_url,website,listings_count,total_sales,followers_count,following_count,response_rate,response_time_hrs,shop_is_open,total_saved,updated_at,trust_score,trust_score_visible,has_boost,boost_expires_at').eq('id', data.user_id).single(),
+          supabase.from('profiles').select('id,username,full_name,avatar_url,city,bio,is_premium,premium_expires_at,gamification_points,gamification_level,created_at,shop_name,shop_description,shop_category,shop_banner_url,is_verified,last_seen,seller_rating,reviews_count,referral_code,cover_url,website,listings_count,total_sales,followers_count,following_count,shop_is_open,total_saved,updated_at,trust_score,trust_score_visible,has_boost,boost_expires_at').eq('id', data.user_id).single(),
           supabase.from('listings').select('*', { count: 'exact', head: true })
             .eq('user_id', data.user_id).eq('is_active', true),
         ])
