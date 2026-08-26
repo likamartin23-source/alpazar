@@ -11,6 +11,7 @@ import { TrustBadge } from '../../components/TrustBadge'
 import { useSyteLive } from '../../components/PremiumUpsell'
 import { useIsOnline } from '../../components/OnlinePresence'
 import { nf } from '../../../lib/format'
+import { uploadSingleImage } from '../../../lib/uploadImages'
 
 const MapDisplay = dynamicImport(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), { ssr: false })
 
@@ -117,6 +118,10 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   const [mounted, setMounted]       = useState(false)
   // Feedback i "Ndaj" në desktop (pa navigator.share): "Kopjuar!" (si /profile). BUG #11.
   const [copied, setCopied]         = useState(false)
+  // Ngarkim INLINE i kopertinës/logos te paneli-pasqyrë — harmonizuar me /profile (ngarkim
+  // i menjëhershëm, jo ridrejtim te /edit). Realtime (#137) + setBiz e pasqyrojnë menjëherë.
+  const [imgUp, setImgUp]           = useState<'logo' | 'cover' | null>(null)
+  const [imgErr, setImgErr]         = useState('')
   // Menaxhimi aktiv↔pasiv i shpalljeve te guaska e biznesit (i njëjti sistem si /profile,
   // por i mëvetësishëm — BP2 §B2). Ngarkohet me përtaci kur hapet tab-i "Shpalljet".
   const [mgmtListings, setMgmtListings] = useState<any[] | null>(null)
@@ -295,6 +300,20 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
     navigator.clipboard?.writeText(window.location.href).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1600) }).catch(() => {})
   }
 
+  // Ngarkim i menjëhershëm i kopertinës/logos (si /profile): uploadSingleImage (path unik →
+  // cache-bust, tip i saktë, EXIF) → update businesses → setBiz (realtime sinkronizon pjesën tjetër).
+  async function uploadBizImage(file: File, type: 'logo' | 'cover') {
+    if (!biz || imgUp) return
+    setImgUp(type); setImgErr('')
+    const r = await uploadSingleImage(file, type === 'cover' ? 'covers' : 'avatars')
+    if (r.error || !r.url) { setImgErr(r.error || 'Ngarkimi dështoi'); setImgUp(null); setTimeout(() => setImgErr(''), 3500); return }
+    const field = type === 'cover' ? 'cover_url' : 'logo_url'
+    const { error } = await supabase.from('businesses').update({ [field]: r.url }).eq('id', biz.id)
+    if (error) { setImgErr(error.message); setTimeout(() => setImgErr(''), 3500) }
+    else setBiz((b: any) => ({ ...b, [field]: r.url }))
+    setImgUp(null)
+  }
+
   // ── Menaxhimi i shpalljeve te guaska e biznesit (aktiv/pasiv) ──────────────────
   // Të gjitha shpalljet e biznesit (aktive+pauzuara+shitura), NDRYSHE nga `listings`
   // publike (vetëm aktive). Ngarkohet vetëm kur pronari hap tab-in "Shpalljet".
@@ -452,22 +471,25 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
             </div>
           </div>
 
-          {/* Kopertinë + kamerë (→ /edit) */}
+          {/* Kopertinë — ngarkim INLINE i menjëhershëm (harmonizuar me /profile) */}
           <div className="bizp-cover">
             {biz.cover_url && <img src={biz.cover_url} alt="" loading="lazy" onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />}
-            <button type="button" className="cam" aria-label="Ndrysho kopertinën" style={{ top: 12, right: 12 }} onClick={() => { window.location.href = `/biznese/${biz.id}/edit` }}>
-              <i className="ti ti-camera" aria-hidden="true" style={{ fontSize: 16 }} />
-            </button>
+            <label className="cam" aria-label="Ndrysho kopertinën" style={{ top: 12, right: 12, width: 'auto', padding: '0 12px', height: 34, gap: 6, fontSize: 12, fontWeight: 700 }}>
+              <span aria-hidden="true">{imgUp === 'cover' ? '⏳' : '📷'}</span> Kopertina
+              <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) uploadBizImage(f, 'cover'); e.currentTarget.value = '' }} />
+            </label>
           </div>
 
           <div className="bizp-card">
-            {/* Avatar unazë+🏢 (+kurorë kur VIP) + kamerë */}
+            {/* Avatar unazë+🏢 (+kurorë kur VIP) + kamerë INLINE */}
             <div style={{ position: 'relative', width: 84, marginTop: -42, marginBottom: 10 }}>
               <Avatar src={biz.logo_url} name={biz.name} type="business" tier={tier} verified={biz.is_verified} size={84} />
-              <button type="button" className="cam" aria-label="Ndrysho logon" style={{ bottom: 0, right: -4, width: 30, height: 30 }} onClick={() => { window.location.href = `/biznese/${biz.id}/edit` }}>
-                <i className="ti ti-camera" aria-hidden="true" style={{ fontSize: 14 }} />
-              </button>
+              <label className="cam" aria-label="Ndrysho logon" style={{ bottom: 0, right: -4, width: 30, height: 30 }}>
+                <span aria-hidden="true" style={{ fontSize: 13 }}>{imgUp === 'logo' ? '⏳' : '📷'}</span>
+                <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) uploadBizImage(f, 'logo'); e.currentTarget.value = '' }} />
+              </label>
             </div>
+            {imgErr && <div role="alert" style={{ fontSize: 11, color: '#C42305', marginBottom: 6 }}>{imgErr}</div>}
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
               <h1 style={{ fontSize: 21, fontWeight: 800, color: '#111', lineHeight: 1.2 }}>{biz.name}</h1>
