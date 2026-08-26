@@ -874,7 +874,8 @@ export default function ListingPageClient({ params, initialListing, initialSelle
             {listing.city && <div className="meta-item"><i className="ti ti-map-pin" aria-hidden="true" />{listing.city}</div>}
             {listing.created_at && <div className="meta-item"><i className="ti ti-calendar" aria-hidden="true" />{pubDate(listing.created_at)}</div>}
             {listing.category && <div className="meta-item"><i className="ti ti-tag" aria-hidden="true" />{CATEGORY_LABELS[listing.category] || listing.category}</div>}
-            {(listing.views_count || 0) > 0 && <div className="meta-item"><i className="ti ti-eye" aria-hidden="true" />{listing.views_count}</div>}
+            {/* H5: numri i shikimeve hiqet nga meta-rreshti — SocialProofBar (lart) e shfaq
+                tashmë me praninë live (👁 N · 🔴 M), pa e dyfishuar ~50px më poshtë. */}
           </div>
 
           {/* ── PROFILI I SHITËSIT — free-flowing ── */}

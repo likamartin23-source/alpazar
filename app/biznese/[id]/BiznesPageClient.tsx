@@ -808,11 +808,8 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
                 <span style={{ fontWeight: 600, color: '#9a7b2a' }}>({rating.count})</span>
               </span>
             )}
-            {soldCount > 0 && (
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#E7F6EC', color: '#0E7A35', border: '1px solid #0E7A3533', borderRadius: 9, padding: '3px 9px', fontSize: 12.5, fontWeight: 800 }}>
-                <span aria-hidden="true">✓</span> {soldCount} të shitura
-              </span>
-            )}
+            {/* H5: chip-i "N të shitura" hiqet — numri "Të shitura" është te matrica 4-kuti
+                më poshtë (një vend i vetëm në kartën e identitetit). */}
             <TrustBadge createdAt={biz.created_at} listingsActive={listings.length} gamificationPoints={0} compact />
           </div>
 
@@ -945,9 +942,8 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
                 <span aria-hidden="true">🕐</span> {openNow ? 'Hapur tani' : 'Mbyllur tani'}
               </span>
             )}
-            {biz.nipt && (
-              <span className="biz-chip"><span aria-hidden="true">🏛️</span> NIPT</span>
-            )}
+            {/* H5: chip-i "🏛️ NIPT" pa vlerë hiqet — NIPT-i real me numër shfaqet te rreshti
+                ligjor te tab-i "Rreth" (një vend i vetëm, me vlerën e vërtetë). */}
             <span className="biz-chip" style={{ background: '#E7F6EC', color: '#0E7A35', borderColor: '#0E7A3533' }}>
               <span aria-hidden="true">🚫</span> 0% komision
             </span>
