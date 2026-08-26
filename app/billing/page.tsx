@@ -121,6 +121,8 @@ export default function BillingPage() {
                       {bank.account_holder && <div><span>Përfituesi:</span> {bank.account_holder}</div>}
                       {bank.iban && <div><span>IBAN:</span> <code>{bank.iban}</code></div>}
                       {bank.swift && <div><span>SWIFT:</span> {bank.swift}</div>}
+                      {bank.paypal_email && <div><span>PayPal:</span> <code>{bank.paypal_email}</code></div>}
+                      {bank.paypal_link && <div><span>Link:</span> <a href={bank.paypal_link} target="_blank" rel="noopener noreferrer">{bank.paypal_link}</a></div>}
                       {bank.instructions && <div className="muted" style={{ marginTop: 6 }}>{bank.instructions}</div>}
                     </div>
                   )}

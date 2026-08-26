@@ -258,13 +258,15 @@ export default function Admin() {
   const [methods, setMethods] = useState<any[]>([])
   // Rrjeta e sigurisë (P4): transaksionet automatike + shëndeti i koherencës.
   const [txData, setTxData] = useState<any>(null)
+  // Statusi i lidhjes me ofruesin e pagesës (webhook) — gati të lidhet (Pika 1).
+  const [payStatus, setPayStatus] = useState<any>(null)
   const [authChecked, setAuthChecked] = useState(false)
   const [mfaRequired, setMfaRequired] = useState(false)
   const [mfaFactorId, setMfaFactorId] = useState('')
   const [totpCode, setTotpCode] = useState('')
   const [mfaError, setMfaError] = useState('')
   const [payMsg, setPayMsg] = useState('')
-  const [pmForm, setPmForm] = useState<{id?: string; name: string; type: string; is_active: boolean; sort_order: number; details: string} | null>(null)
+  const [pmForm, setPmForm] = useState<{id?: string; name: string; type: string; is_active: boolean; sort_order: number; description: string; config: Record<string, string>} | null>(null)
   const [loading, setLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState(new Date())
   const [liveStats, setLiveStats] = useState({ newListings: 0, newReports: 0 })
@@ -367,6 +369,8 @@ export default function Admin() {
     // Transaksionet automatike + shëndeti (P4) — rrjeta e sigurisë kur leximi auto dështon.
     const { data: tx } = await supabase.rpc('admin_list_transactions', { p_limit: 100 })
     if (tx && !(tx as any).error) setTxData(tx)
+    // Statusi i lidhjes së webhook-ut të pagesave (Pika 1) — fail-soft.
+    try { const r = await fetch('/api/payments/status'); if (r.ok) setPayStatus(await r.json()) } catch { /* ignore */ }
     setLoading(false)
   }, [])
 
@@ -759,7 +763,16 @@ export default function Admin() {
                       dhe vepron manualisht. Numëruesit duhet të jenë 0; të kuqtë kërkojnë veprim. */}
                   {txData && (
                     <>
-                      <div className="ph" style={{ marginTop: 18 }}><div className="pt"><span aria-hidden="true">🛟</span> Pagesat automatike & shëndeti</div></div>
+                      <div className="ph" style={{ marginTop: 18, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                        <div className="pt"><span aria-hidden="true">🛟</span> Pagesat automatike & shëndeti</div>
+                        {payStatus && (
+                          <span style={{ fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: payStatus.configured ? '#E7F6EC' : '#FFF6E5', color: payStatus.configured ? '#0E7A35' : '#8A5A00', border: `1px solid ${payStatus.configured ? '#9BD9B5' : '#F0C97A'}` }}>
+                            {payStatus.configured
+                              ? '🔌 Webhook i lidhur (auto + manual)'
+                              : '⚠️ Webhook i palidhur — aprovim manual aktiv'}
+                          </span>
+                        )}
+                      </div>
                       {(() => {
                         const h = txData.health || {}
                         const items: [string, number][] = [
@@ -812,7 +825,7 @@ export default function Admin() {
                   <div className="card">
                     <div className="ct">Aktivizo / Çaktivizo / Redakto</div>
                     {methods.map((m: any) => (
-                      <div key={m.id} className="pm-r" style={{ cursor: 'pointer' }} onClick={() => setPmForm({ id: m.id, name: m.name, type: m.type, is_active: m.is_active, sort_order: m.sort_order ?? 0, details: m.description ?? '' })}>
+                      <div key={m.id} className="pm-r" style={{ cursor: 'pointer' }} onClick={() => setPmForm({ id: m.id, name: m.name, type: m.type, is_active: m.is_active, sort_order: m.sort_order ?? 0, description: m.description ?? '', config: (m.config_json && typeof m.config_json === 'object') ? { ...m.config_json } : {} })}>
                         <div className="pm-inf">
                           <strong>{m.name}</strong>
                           <span>{m.type}</span>
@@ -826,7 +839,7 @@ export default function Admin() {
                       </div>
                     ))}
                     {methods.length === 0 && <p style={{ color:'#aaa', fontSize:12 }}>Nuk ka metoda pagese</p>}
-                    <button type="button" className="btn" style={{ marginTop: 12 }} onClick={() => setPmForm({ name: '', type: 'paypal', is_active: true, sort_order: methods.length, details: '' })}>
+                    <button type="button" className="btn" style={{ marginTop: 12 }} onClick={() => setPmForm({ name: '', type: 'bank', is_active: true, sort_order: methods.length, description: '', config: {} })}>
                       <span aria-hidden="true">+</span> Shto metodë
                     </button>
                   </div>
@@ -835,17 +848,34 @@ export default function Admin() {
                     <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,.45)', zIndex:999, display:'flex', alignItems:'center', justifyContent:'center', padding:16 }} role="dialog" aria-modal="true" aria-label="Forma metodës së pagesës" onClick={e => { if (e.target === e.currentTarget) setPmForm(null) }}>
                       <div style={{ background:'#fff', borderRadius:16, padding:24, width:'100%', maxWidth:360 }}>
                         <div style={{ fontWeight:700, marginBottom:16 }}>{pmForm.id ? 'Redakto metodën' : 'Shto metodë të re'}</div>
-                        {(['name','details'] as const).map(field => (
-                          <div key={field} style={{ marginBottom:10 }}>
-                            <label style={{ fontSize:11, fontWeight:600, color:'#555', display:'block', marginBottom:4 }}>{field === 'name' ? 'Emri' : 'Detaje (IBAN / numër)'}</label>
-                            <input type="text" value={(pmForm as any)[field]} onChange={e => setPmForm(f => f && ({ ...f, [field]: e.target.value }))} style={{ width:'100%', border:'1.5px solid #ddd', borderRadius:8, padding:'8px 10px', fontSize:13, boxSizing:'border-box' }} />
-                          </div>
-                        ))}
+                        <div style={{ marginBottom:10 }}>
+                          <label style={{ fontSize:11, fontWeight:600, color:'#555', display:'block', marginBottom:4 }}>Emri</label>
+                          <input type="text" value={pmForm.name} onChange={e => setPmForm(f => f && ({ ...f, name: e.target.value }))} style={{ width:'100%', border:'1.5px solid #ddd', borderRadius:8, padding:'8px 10px', fontSize:13, boxSizing:'border-box' }} />
+                        </div>
+                        <div style={{ marginBottom:10 }}>
+                          <label style={{ fontSize:11, fontWeight:600, color:'#555', display:'block', marginBottom:4 }}>Përshkrim i shkurtër (opsional)</label>
+                          <input type="text" value={pmForm.description} onChange={e => setPmForm(f => f && ({ ...f, description: e.target.value }))} placeholder="p.sh. Transfertë brenda 24 orësh" style={{ width:'100%', border:'1.5px solid #ddd', borderRadius:8, padding:'8px 10px', fontSize:13, boxSizing:'border-box' }} />
+                        </div>
                         <div style={{ marginBottom:10 }}>
                           <label style={{ fontSize:11, fontWeight:600, color:'#555', display:'block', marginBottom:4 }}>Tipi</label>
                           <input type="text" list="pm-types" value={pmForm.type} onChange={e => setPmForm(f => f && ({ ...f, type: e.target.value }))} placeholder="paypal, epara, easypay, paysera, card, bank..." style={{ width:'100%', border:'1.5px solid #ddd', borderRadius:8, padding:'8px 10px', fontSize:13, boxSizing:'border-box' }} />
                           <datalist id="pm-types"><option value="paypal" /><option value="epara" /><option value="easypay" /><option value="paysera" /><option value="card" /><option value="bank" /><option value="mobile" /><option value="wallet" /></datalist>
                         </div>
+                        {/* Koordinatat reale të pagesës (config_json) — që përdoruesi t'i shohë te faturimi. */}
+                        {(() => {
+                          const t = (pmForm.type || '').toLowerCase()
+                          const fields: [string, string][] = t === 'bank'
+                            ? [['bank_name', 'Banka'], ['account_holder', 'Përfituesi'], ['iban', 'IBAN'], ['swift', 'SWIFT/BIC'], ['instructions', 'Udhëzime']]
+                            : t === 'paypal'
+                            ? [['paypal_email', 'Email PayPal'], ['paypal_link', 'Link PayPal (opsional)'], ['instructions', 'Udhëzime']]
+                            : [['instructions', 'Udhëzime / koordinata pagese']]
+                          return fields.map(([k, lbl]) => (
+                            <div key={k} style={{ marginBottom: 10 }}>
+                              <label style={{ fontSize: 11, fontWeight: 600, color: '#555', display: 'block', marginBottom: 4 }}>{lbl}</label>
+                              <input type="text" value={pmForm.config[k] || ''} onChange={e => setPmForm(f => f && ({ ...f, config: { ...f.config, [k]: e.target.value } }))} style={{ width: '100%', border: '1.5px solid #ddd', borderRadius: 8, padding: '8px 10px', fontSize: 13, boxSizing: 'border-box' }} />
+                            </div>
+                          ))
+                        })()}
                         <div style={{ marginBottom:10 }}>
                           <label style={{ fontSize:11, fontWeight:600, color:'#555', display:'block', marginBottom:4 }}>Rend ({pmForm.sort_order})</label>
                           <input type="number" value={pmForm.sort_order} onChange={e => setPmForm(f => f && ({ ...f, sort_order: Number(e.target.value) }))} style={{ width:'100%', border:'1.5px solid #ddd', borderRadius:8, padding:'8px 10px', fontSize:13 }} />
@@ -857,7 +887,8 @@ export default function Admin() {
                         <div style={{ display:'flex', gap:8 }}>
                           <button type="button" className="btn" style={{ flex:1 }} onClick={async () => {
                             if (!pmForm.name.trim()) { setPayMsg('err:Emri është i detyrueshëm'); return }
-                            const { data: sv, error } = await supabase.rpc('admin_save_payment_method', { p_id: pmForm.id ?? null, p_name: pmForm.name.trim(), p_type: pmForm.type, p_description: pmForm.details.trim(), p_sort_order: pmForm.sort_order })
+                            const cfg = Object.fromEntries(Object.entries(pmForm.config).filter(([, v]) => (v || '').trim() !== ''))
+                            const { data: sv, error } = await supabase.rpc('admin_save_payment_method', { p_id: pmForm.id ?? null, p_name: pmForm.name.trim(), p_type: pmForm.type, p_description: pmForm.description.trim(), p_config: cfg, p_sort_order: pmForm.sort_order })
                             const sid = (sv as any)?.id
                             if (error || (sv as any)?.error) setPayMsg('Gabim: ' + (error?.message || (sv as any)?.error))
                             else {
