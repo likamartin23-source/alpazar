@@ -784,7 +784,9 @@ export default function Auth() {
 
   const contactHint = contact.length > 2
     ? cType === 'email'
-      ? <p className="hint ok"><span aria-hidden="true">📧</span> Lidhja e konfirmimit dërgohet me <strong>email</strong></p>
+      ? mode === 'forgot'
+        ? <p className="hint ok"><span aria-hidden="true">📧</span> Lidhja e rivendosjes dërgohet me <strong>email</strong></p>
+        : <p className="hint ok"><span aria-hidden="true">📧</span> Kodi 6-shifror dërgohet me <strong>email</strong></p>
       : cType === 'phone'
         ? smsFailMode
           ? <p className="hint ok"><span aria-hidden="true">📧</span> Numri ruhet — kodi dërgohet me <strong>email</strong></p>
@@ -1119,8 +1121,10 @@ export default function Auth() {
 
               {!smsFailMode ? (
                 <>
+                  {/* Regjistrimi përdor GJITHMONË kod 6-shifror (email → Brevo/Resend; telefon → SMS),
+                      jo link. Kështu fluksi është i njëjtë dhe i parashikueshëm. */}
                   <button type="button" className="btn" onClick={sendOtp} disabled={loading}>
-                    {loading ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : cType === 'email' ? <><span aria-hidden='true'>📨</span> Dërgo Linkun e Konfirmimit</> : <><span aria-hidden='true'>📨</span> Dërgo Kodin e Konfirmimit</>}
+                    {loading ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : <><span aria-hidden='true'>📨</span> Dërgo Kodin e Konfirmimit</>}
                   </button>
                   {/* Alternativë e garantuar për numra telefoni: konfirmim me email pa pritur
                       SMS-në (që mund të vonojë a të mos mbërrijë — p.sh. numër fiks). */}
