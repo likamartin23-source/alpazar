@@ -256,6 +256,8 @@ export default function Admin() {
   const [payments, setPayments] = useState<any[]>([])
   const [premiumRequests, setPremiumRequests] = useState<any[]>([])
   const [methods, setMethods] = useState<any[]>([])
+  // Rrjeta e sigurisë (P4): transaksionet automatike + shëndeti i koherencës.
+  const [txData, setTxData] = useState<any>(null)
   const [authChecked, setAuthChecked] = useState(false)
   const [mfaRequired, setMfaRequired] = useState(false)
   const [mfaFactorId, setMfaFactorId] = useState('')
@@ -362,6 +364,9 @@ export default function Admin() {
     setPayments(subsList)
     setMethods(mt || [])
     setPremiumRequests(preq || [])
+    // Transaksionet automatike + shëndeti (P4) — rrjeta e sigurisë kur leximi auto dështon.
+    const { data: tx } = await supabase.rpc('admin_list_transactions', { p_limit: 100 })
+    if (tx && !(tx as any).error) setTxData(tx)
     setLoading(false)
   }, [])
 
@@ -738,6 +743,55 @@ export default function Admin() {
                       </tbody>
                     </table>
                   </div>
+
+                  {/* RRJETA E SIGURISË (P4): pagesat automatike (transaksionet) + shëndeti.
+                      Kur leximi automatik dështon (review/grant_failed), admini i sheh këtu
+                      dhe vepron manualisht. Numëruesit duhet të jenë 0; të kuqtë kërkojnë veprim. */}
+                  {txData && (
+                    <>
+                      <div className="ph" style={{ marginTop: 18 }}><div className="pt"><span aria-hidden="true">🛟</span> Pagesat automatike & shëndeti</div></div>
+                      {(() => {
+                        const h = txData.health || {}
+                        const items: [string, number][] = [
+                          ['Ngecur (review/grant_failed)', h.stuck],
+                          ['Kërkesa premium në pritje', h.pending_requests],
+                          ['Premium i vjetruar (flag)', h.stale_premium],
+                          ['Boost i vjetruar (flag)', h.stale_boost],
+                          ['Biznes i dukshëm pa premium', h.visible_no_premium],
+                        ]
+                        return (
+                          <div className="card" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                            {items.map(([lbl, n]) => (
+                              <div key={lbl} style={{ flex: '1 1 140px', background: (n || 0) > 0 ? '#FFF0EE' : '#EAF7EF', border: `1px solid ${(n || 0) > 0 ? '#F09595' : '#9BD9B5'}`, borderRadius: 10, padding: '10px 12px' }}>
+                                <div style={{ fontSize: 20, fontWeight: 800, color: (n || 0) > 0 ? '#C42B0F' : '#0E7A35' }}>{n ?? 0}</div>
+                                <div style={{ fontSize: 11, color: '#555' }}>{lbl}</div>
+                              </div>
+                            ))}
+                          </div>
+                        )
+                      })()}
+                      <div className="card">
+                        <div className="ct">Transaksionet e fundit (nga webhook / reconcile)</div>
+                        <table>
+                          <thead><tr><th scope="col">Përdoruesi</th><th scope="col">Shuma</th><th scope="col">Ofruesi</th><th scope="col">Statusi</th><th scope="col">Shënim</th><th scope="col">Data</th></tr></thead>
+                          <tbody>
+                            {((txData.rows as any[]) || []).length === 0
+                              ? <tr><td colSpan={6} style={{ textAlign: 'center', color: '#aaa', padding: 20 }}>Ende asnjë transaksion automatik (webhook i palidhur ende)</td></tr>
+                              : (txData.rows as any[]).map(t => (
+                                <tr key={t.id}>
+                                  <td>{t.user_name || (t.user_id ? String(t.user_id).slice(0, 8) : '— i panjohur')}</td>
+                                  <td style={{ fontWeight: 700 }}>{t.amount} {t.currency}</td>
+                                  <td>{t.provider}</td>
+                                  <td><span className={`badge ${t.status === 'completed' ? 'ba' : (t.status === 'review' || t.status === 'grant_failed') ? 'bd' : 'bp'}`}>{t.status}</span></td>
+                                  <td style={{ fontSize: 11, color: '#888' }}>{t.review_reason || (t.grant_error ? 'grant_error' : '—')}</td>
+                                  <td style={{ color: '#888' }}>{new Date(t.created_at).toLocaleDateString('sq-AL')}</td>
+                                </tr>
+                              ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </>
+                  )}
                 </>
               )}
 
