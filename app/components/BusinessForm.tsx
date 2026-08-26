@@ -9,6 +9,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { MapPicker } from './MapPicker'
+import { uploadSingleImage } from '../../lib/uploadImages'
 
 const MAIN_TYPES = [
   { id: 'sherbime',          icon: '🛠️', label: 'Shërbime' },
@@ -105,28 +106,9 @@ export default function BusinessForm({ mode, initial, onSaved }: {
   function toggleSub(id: number) { setSelSubs(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]) }
   function togglePay(m: string) { setPay(p => p.includes(m) ? p.filter(x => x !== m) : [...p, m]) }
 
-  async function compress(file: File, maxW: number): Promise<Blob> {
-    if (file.size < 100 * 1024) return file
-    return new Promise(res => {
-      const img = new Image(), url = URL.createObjectURL(file)
-      img.onload = () => {
-        URL.revokeObjectURL(url)
-        const scale = Math.min(1, maxW / Math.max(img.naturalWidth, img.naturalHeight))
-        const c = document.createElement('canvas')
-        c.width = Math.round(img.naturalWidth * scale); c.height = Math.round(img.naturalHeight * scale)
-        c.getContext('2d')!.drawImage(img, 0, 0, c.width, c.height)
-        c.toBlob(b => res(b ?? file), 'image/jpeg', 0.82)
-      }
-      img.onerror = () => { URL.revokeObjectURL(url); res(file) }
-      img.src = url
-    })
-  }
-  async function up(file: File, path: string, maxW: number, bucket: string): Promise<string> {
-    const blob = await compress(file, maxW)
-    const { error } = await supabase.storage.from(bucket).upload(path, blob, { contentType: 'image/jpeg', upsert: true })
-    if (error) throw error
-    return supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl
-  }
+  // Ngarkimi i logos/kopertinës/galerisë përdor helper-in e vetëm `uploadSingleImage`
+  // (lib/uploadImages): path UNIK → cache-bust automatik (foto e re duket menjëherë) +
+  // zero përplasje mes bizneseve/rikrijueve; tip/extension i saktë; EXIF + webp; retry.
 
   async function save() {
     if (!mainType) { setMsg('err:Zgjidh llojin e biznesit.'); return }
@@ -136,13 +118,26 @@ export default function BusinessForm({ mode, initial, onSaved }: {
     setSaving(true); setMsg(''); setUploading(true)
     let logoUrl = logoPrev, coverUrl = coverPrev, gal = [...gallery]
     try {
-      if (logoFile) logoUrl = await up(logoFile, `${userId}/biz-logo.jpg`, 400, 'avatars')
-      if (coverFile) coverUrl = await up(coverFile, `${userId}/biz-cover.jpg`, 1920, 'covers')
+      if (logoFile) {
+        const r = await uploadSingleImage(logoFile, 'avatars')
+        if (r.error || !r.url) throw new Error(r.error || 'ngarkimi i logos dështoi')
+        logoUrl = r.url
+      }
+      if (coverFile) {
+        const r = await uploadSingleImage(coverFile, 'covers')
+        if (r.error || !r.url) throw new Error(r.error || 'ngarkimi i kopertinës dështoi')
+        coverUrl = r.url
+      }
       for (let i = 0; i < galleryFiles.length; i++) {
-        gal.push(await up(galleryFiles[i], `${userId}/biz-gal-${Date.now()}-${i}.jpg`, 1280, 'listing-images'))
+        const r = await uploadSingleImage(galleryFiles[i], 'listing-images')
+        if (r.error || !r.url) throw new Error(r.error || 'ngarkimi i galerisë dështoi')
+        gal.push(r.url)
       }
     } catch (e: any) { setMsg(`err:Gabim gjatë ngarkimit: ${e.message}`); setSaving(false); setUploading(false); return }
     setUploading(false)
+    // Pas ngarkimit të suksesshëm: pastro skedarët në pritje (parandalon ringarkim/dublime
+    // te "Ruaj" i dytë — BUG #4) dhe përditëso preview-n e galerisë me URL-të e ruajtura.
+    setLogoFile(null); setCoverFile(null); setGalleryFiles([]); setGallery(gal)
 
     const payload: any = {
       name: f.name.trim(), type: mainType,
@@ -156,7 +151,7 @@ export default function BusinessForm({ mode, initial, onSaved }: {
       service_area: f.service_area || null,
       delivery: f.delivery_ka ? { ka: true, detaje: f.delivery_detaje || null } : { ka: false },
       hours: { days: hours, schedule: hoursSummary(hours) },
-      nipt: f.nipt || null, legal_form: f.legal_form || null, withdrawal_days: f.withdrawal_days || 14,
+      nipt: f.nipt || null, legal_form: f.legal_form || null, withdrawal_days: Math.min(60, Math.max(14, Number(f.withdrawal_days) || 14)),
       payment_methods: pay.length ? pay : null, return_policy: f.return_policy || null, warranty: f.warranty || null,
     }
 

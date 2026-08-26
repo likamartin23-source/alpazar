@@ -101,6 +101,18 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   // Faqja renderohet edhe ne server (`initialBiz`). Koha relative e kartes
   // varet nga `Date.now()`, ndaj i jepet ListingCard-it vetem pas montimit.
   const [mounted, setMounted]       = useState(false)
+  // Feedback i "Ndaj" në desktop (pa navigator.share): "Kopjuar!" (si /profile). BUG #11.
+  const [copied, setCopied]         = useState(false)
+  // Menaxhimi aktiv↔pasiv i shpalljeve te guaska e biznesit (i njëjti sistem si /profile,
+  // por i mëvetësishëm — BP2 §B2). Ngarkohet me përtaci kur hapet tab-i "Shpalljet".
+  const [mgmtListings, setMgmtListings] = useState<any[] | null>(null)
+  const [mgmtLoaded, setMgmtLoaded]     = useState(false)
+  const [listFilter, setListFilter]     = useState<'active' | 'paused' | 'sold'>('active')
+  const [listErr, setListErr]           = useState('')
+  const [reactMsg, setReactMsg]         = useState('')
+  const [reactBusy, setReactBusy]       = useState<string | null>(null)
+  const [pendingSold, setPendingSold]   = useState<string | null>(null)
+  const [pendingDelete, setPendingDelete] = useState<string | null>(null)
 
   // Ndjekesit. Tabela `business_followers` ekzistonte ne baze me RLS te plote
   // (lexim publik; shto/hiq vetem rreshtin tend) por asnje ekran nuk e prekte.
@@ -249,8 +261,68 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   // server e ne shfletues (shih lib/format.ts). ListingCard perdor `nf()`.
 
   function share() {
-    if (navigator.share) navigator.share({ title: biz?.name, url: window.location.href })
-    else navigator.clipboard?.writeText(window.location.href)
+    if (navigator.share) { navigator.share({ title: biz?.name, url: window.location.href }).catch(() => {}); return }
+    // Desktop / pa Web Share: kopjo linkun dhe jep feedback "Kopjuar!" (jo no-op i heshtur).
+    navigator.clipboard?.writeText(window.location.href).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1600) }).catch(() => {})
+  }
+
+  // ── Menaxhimi i shpalljeve te guaska e biznesit (aktiv/pasiv) ──────────────────
+  // Të gjitha shpalljet e biznesit (aktive+pauzuara+shitura), NDRYSHE nga `listings`
+  // publike (vetëm aktive). Ngarkohet vetëm kur pronari hap tab-in "Shpalljet".
+  function loadMgmt() {
+    if (mgmtLoaded || !biz) return
+    setMgmtLoaded(true)
+    supabase.from('listings')
+      .select('id,title,price,currency,images,city,is_premium,views_count,is_active,status,last_bumped_at,created_at,rank_tier,author,business_id')
+      .eq('business_id', biz.id)
+      .order('created_at', { ascending: false })
+      .limit(200)
+      .then(({ data }) => setMgmtListings(data || []))
+  }
+  const bizFmt = (p: number, c: string) => !p ? 'Me marrëveshje' : c === 'EUR' ? `${nf(p)} €` : `${nf(p)} L`
+  function canBump(lastBumped: string | null): boolean {
+    if (!lastBumped) return true
+    return Date.now() - new Date(lastBumped).getTime() >= 7 * 24 * 60 * 60 * 1000
+  }
+  function bumpDaysLeft(lastBumped: string | null): number {
+    if (!lastBumped) return 0
+    const rem = 7 * 24 * 60 * 60 * 1000 - (Date.now() - new Date(lastBumped).getTime())
+    return Math.max(0, Math.ceil(rem / (24 * 60 * 60 * 1000)))
+  }
+  async function bizBump(id: string) {
+    const now = new Date().toISOString()
+    setMgmtListings(ls => (ls || []).map(l => l.id === id ? { ...l, created_at: now, last_bumped_at: now } : l))
+    const { error } = await supabase.from('listings').update({ created_at: now, last_bumped_at: now }).eq('id', id)
+    if (error) setListErr('Nuk u rifreskua dot. Provo sërish.')
+  }
+  async function bizReactivate(id: string) {
+    if (reactBusy) return
+    setReactBusy(id); setReactMsg('')
+    const { data, error } = await supabase.from('listings').update({ is_active: true, status: 'active' }).eq('id', id).select('id')
+    if (error || !data || data.length === 0) {
+      const m = (error?.message || '').includes('KUFI_SHPALLJESH')
+        ? 'Ke arritur kufirin e shpalljeve aktive. Pauzo një tjetër ose kalo në Premium.'
+        : (error?.message || 'Nuk u riaktivizua dot. Provo sërish.')
+      setReactMsg('err:' + m)
+    } else {
+      setMgmtListings(ls => (ls || []).map(l => l.id === id ? { ...l, is_active: true, status: 'active' } : l))
+      setReactMsg('ok:Shpallja u riaktivizua.')
+    }
+    setReactBusy(null); setTimeout(() => setReactMsg(''), 4000)
+  }
+  async function bizMarkSold(id: string) {
+    setListErr('')
+    const { data, error } = await supabase.from('listings').update({ status: 'sold', is_active: false }).eq('id', id).select('id')
+    if (error || !data || data.length === 0) { setListErr(error?.message || 'Nuk u shënua dot si e shitur. Provo sërish.'); return }
+    setMgmtListings(ls => (ls || []).map(l => l.id === id ? { ...l, status: 'sold', is_active: false } : l)); setPendingSold(null)
+  }
+  // "Hiq" = çaktivizim i butë (kalon te "Të pauzuara"; riaktivizohet kurdo). Zgjedhje e
+  // ndershme: s'është fshirje e vërtetë (si /profile), ndaj etiketa thotë "Hiq/pauzo".
+  async function bizDeactivate(id: string) {
+    setListErr('')
+    const { data, error } = await supabase.from('listings').update({ is_active: false }).eq('id', id).select('id')
+    if (error || !data || data.length === 0) { setListErr(error?.message || 'Nuk u hoq dot. Provo sërish.'); return }
+    setMgmtListings(ls => (ls || []).map(l => l.id === id ? { ...l, is_active: false } : l)); setPendingDelete(null)
   }
 
   if (loadError) return (
@@ -320,6 +392,21 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           .mcard{background:#fff;border-radius:14px;margin:8px 12px 0;padding:14px 16px;}
           .mrow{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;background:#fff;border:1px solid #ececec;border-radius:12px;padding:10px 14px;cursor:pointer;font-family:inherit;text-align:left;margin-bottom:8px;}
           .mrow:hover{background:#fafafa;border-color:#ddd;}
+          /* Menaxhimi i shpalljeve (aktiv/pasiv) — i njëjti sistem si /profile, i mëvetësishëm
+             te guaska e biznesit (BP2 §B2), i filtruar për business_id. */
+          .bl-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid #f5f5f0;}
+          .bl-row:last-child{border:none;}
+          .bl-thumb{width:52px;height:52px;border-radius:10px;background:#f9f5e0;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;cursor:pointer;}
+          .bl-thumb img{width:100%;height:100%;object-fit:cover;}
+          .bl-info{flex:1;min-width:0;cursor:pointer;}
+          .bl-title{font-size:12px;font-weight:700;color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+          .bl-price{font-size:13px;font-weight:800;color:#C42B0F;margin-top:2px;}
+          .bl-meta{font-size:10px;color:#aaa;margin-top:2px;}
+          .bl-edit{background:#FFFBEA;border:1px solid #e0b030;border-radius:10px;padding:6px 10px;font-size:12px;cursor:pointer;color:#856404;font-family:inherit;min-height:34px;}
+          .bl-edit:disabled{opacity:.6;cursor:not-allowed;}
+          .bl-del{background:#FFF0EE;border:none;border-radius:10px;padding:6px 10px;font-size:12px;cursor:pointer;color:#C42B0F;font-family:inherit;min-height:34px;}
+          .bl-filter{flex:1;min-height:40px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;border:1px solid #eee;background:#fff;color:#666;}
+          .bl-filter.on{border:1.5px solid #C42305;background:#FFF1EE;color:#C42305;}
           .mrow i.lead{font-size:19px;color:#C42B0F;width:24px;text-align:center;}
           .mrow .mtxt{flex:1;min-width:0;}
           .mrow .mtt{font-size:13.5px;font-weight:700;color:#111;}
@@ -376,13 +463,9 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               <div className="stat-pill"><span className="stat-n">{new Date(biz.created_at).getFullYear()}</span><span className="stat-l">Anëtar prej</span></div>
             </div>
 
-            {/* Meta: 👁 · 🔴 · ⏱ · 🚫 0% komision */}
-            <div style={{ fontSize: 12, color: '#6B6B6B', marginTop: 12, display: 'flex', flexWrap: 'wrap', gap: 4, alignItems: 'center' }}>
-              {totalViews > 0 && <span><span aria-hidden="true">👁</span> {nf(totalViews)} shikime</span>}
-              {syteLive > 0 && <span style={{ color: '#C4230F', fontWeight: 700 }}><span style={{ color: '#ccc', margin: '0 4px' }}>·</span><span aria-hidden="true">🔴</span> {syteLive} tani</span>}
-              {respHrs != null && <span><span style={{ color: '#ccc', margin: '0 4px' }}>·</span><span aria-hidden="true">⏱️</span> Përgjigjet {fmtResp(respHrs)}</span>}
-              <span><span style={{ color: '#ccc', margin: '0 4px' }}>·</span><span aria-hidden="true">🚫</span> 0% komision</span>
-            </div>
+            {/* Ana e BRENDSHME (menaxhimi) NUK shfaq shiritin publik 👁/🔴/0% — ato janë
+                sinjale trust/marketingu për vizitorin (rrinë vetëm te faqja publike, më poshtë);
+                pronari i sheh pamjet te "Analitika". (Vendim Martinel + verifikim live, 26 gusht.) */}
 
             {/* Shiko faqen publike */}
             <button type="button" onClick={() => setAsVisitor(true)}
@@ -395,14 +478,14 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               Vlerësime). Analitika & Mesazhet janë sipërfaqe më vete → rrinë VETËM si karta te
               "Profili i biznesit" (pa dublim tab+kartë; korrigjim nga verifikimi live). */}
           <div className="bizp-tabs" role="tablist" aria-label="Paneli i biznesit">
-            <button type="button" className={panelTab === 'home' ? 'on' : ''} aria-selected={panelTab === 'home'} onClick={() => setPanelTab('home')}><i className="ti ti-building-store" aria-hidden="true" /> Profili i biznesit</button>
-            <button type="button" className={panelTab === 'listings' ? 'on' : ''} aria-selected={panelTab === 'listings'} onClick={() => setPanelTab('listings')}><i className="ti ti-layout-grid" aria-hidden="true" /> Shpalljet</button>
-            <button type="button" className={panelTab === 'reviews' ? 'on' : ''} aria-selected={panelTab === 'reviews'} onClick={() => { setPanelTab('reviews'); if (!reviewsLoaded) { setReviewsLoaded(true); supabase.rpc('business_reviews', { p_business: biz.id }).then(({ data }) => setReviews(data || [])) } }}><i className="ti ti-star" aria-hidden="true" /> Vlerësime</button>
+            <button type="button" role="tab" id="tab-home" aria-controls="tabpanel-home" className={panelTab === 'home' ? 'on' : ''} aria-selected={panelTab === 'home'} onClick={() => setPanelTab('home')}><i className="ti ti-building-store" aria-hidden="true" /> Profili i biznesit</button>
+            <button type="button" role="tab" id="tab-listings" aria-controls="tabpanel-listings" className={panelTab === 'listings' ? 'on' : ''} aria-selected={panelTab === 'listings'} onClick={() => { setPanelTab('listings'); loadMgmt() }}><i className="ti ti-layout-grid" aria-hidden="true" /> Shpalljet</button>
+            <button type="button" role="tab" id="tab-reviews" aria-controls="tabpanel-reviews" className={panelTab === 'reviews' ? 'on' : ''} aria-selected={panelTab === 'reviews'} onClick={() => { setPanelTab('reviews'); if (!reviewsLoaded) { setReviewsLoaded(true); supabase.rpc('business_reviews', { p_business: biz.id }).then(({ data }) => setReviews(data || [])) } }}><i className="ti ti-star" aria-hidden="true" /> Vlerësime</button>
           </div>
 
           {/* Tab: Profili i biznesit — kartat e menaxhimit (mision-biznesi; pa ekskluzivitete llogarie) */}
           {panelTab === 'home' && (
-            <div className="mcard">
+            <div className="mcard" role="tabpanel" id="tabpanel-home" aria-labelledby="tab-home">
               {/* Një hyrje e vetme te editimi (pa përsëritje): "Të dhënat e biznesit" përfshin
                   edhe logon & kopertinën — më parë ishin dy butona që hapnin të njëjtin /edit. */}
               <button type="button" className="mrow" onClick={() => { window.location.href = `/biznese/${biz.id}/edit` }}>
@@ -415,9 +498,9 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
                 <span className="mtxt"><span className="mtt">Analitika</span><span className="msub">Shikime, arritje, kontakte (pa referral)</span></span>
                 <i className="ti ti-chevron-right arr" aria-hidden="true" />
               </button>
-              <button type="button" className="mrow" onClick={() => { window.location.href = `/messages?biz=${biz.id}` }}>
+              <button type="button" className="mrow" onClick={() => { window.location.href = `/messages` }}>
                 <i className="ti ti-message lead" aria-hidden="true" />
-                <span className="mtxt"><span className="mtt">Mesazhet</span><span className="msub">Një inbox — filtruar për biznesin</span></span>
+                <span className="mtxt"><span className="mtt">Mesazhet</span><span className="msub">Bisedat e tua — një inbox i vetëm</span></span>
                 <i className="ti ti-chevron-right arr" aria-hidden="true" />
               </button>
               {/* Plani (trashëgim) — reflektim i planit të llogarisë; menaxhimi mbetet te llogaria personale */}
@@ -428,24 +511,93 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
             </div>
           )}
 
-          {/* Tab: Shpalljet */}
+          {/* Tab: Shpalljet — MENAXHIM aktiv/pasiv (jo vetëm shfaqje). Sistemi i /profile,
+              i mëvetësishëm te guaska e biznesit (BP2 §B2), i filtruar për business_id:
+              filtra Aktive/Të pauzuara/Të shitura + ⬆️ rifresko · ♻️ riaktivizo · ✏️ ndrysho
+              · 💰 shitur · 🗑 hiq(pauzo). */}
           {panelTab === 'listings' && (
-            listings.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '48px 16px', color: '#aaa', background: '#fff', margin: '8px 12px 0', borderRadius: 14 }}>
-                <div style={{ fontSize: 44, marginBottom: 10 }} aria-hidden="true">🛍️</div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: '#666', marginBottom: 8 }}>Asnjë shpallje ende</div>
-                <button type="button" onClick={() => { window.location.href = '/listing/new' }} style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 24px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: 13 }}>+ Shto shpallje</button>
-              </div>
-            ) : (
-              <div className="listings-grid" style={{ padding: 12 }}>
-                {listings.map((l, idx) => <ListingCard key={l.id} listing={l as any} index={idx} showSeller={false} mounted={mounted} />)}
-              </div>
-            )
+            <div role="tabpanel" id="tabpanel-listings" aria-labelledby="tab-listings" style={{ background: '#fff', borderRadius: 14, margin: '8px 12px 0', padding: '14px 16px' }}>
+              {listErr && <div role="alert" style={{ background: '#FEECEC', color: '#B42318', border: '1px solid #F5C2C2', borderRadius: 8, padding: '8px 10px', fontSize: 12, marginBottom: 10 }}>{listErr}</div>}
+              {reactMsg && <div role="alert" style={{ background: reactMsg.startsWith('err:') ? '#FEECEC' : '#E7F6EC', color: reactMsg.startsWith('err:') ? '#B42318' : '#0E7A35', border: `1px solid ${reactMsg.startsWith('err:') ? '#F5C2C2' : '#8fd3a8'}`, borderRadius: 8, padding: '8px 10px', fontSize: 12, marginBottom: 10 }}>{reactMsg.split(/:(.+)/)[1]}</div>}
+              {mgmtListings === null ? (
+                <div style={{ textAlign: 'center', padding: '24px 0', color: '#aaa', fontSize: 12 }}>Duke ngarkuar…</div>
+              ) : mgmtListings.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '32px 16px', color: '#aaa' }}>
+                  <div style={{ fontSize: 44, marginBottom: 10 }} aria-hidden="true">🛍️</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: '#666', marginBottom: 8 }}>Asnjë shpallje ende</div>
+                  <button type="button" onClick={() => { window.location.href = '/listing/new' }} style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 24px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: 13 }}>+ Shto shpallje</button>
+                </div>
+              ) : (
+                <>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                    <span style={{ fontSize: 13, fontWeight: 800, color: '#111' }}>Shpalljet e biznesit</span>
+                    <button type="button" onClick={() => { window.location.href = '/listing/new' }} style={{ background: '#F5C842', border: 'none', borderRadius: 9, padding: '7px 14px', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', color: '#111' }}>+ Shto</button>
+                  </div>
+                  <div role="tablist" aria-label="Filtro shpalljet" style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
+                    {([['active', 'Aktive'], ['paused', 'Të pauzuara'], ['sold', 'Të shitura']] as const).map(([k, etiketa]) => {
+                      const n = k === 'active' ? mgmtListings.filter(l => l.is_active).length
+                              : k === 'sold' ? mgmtListings.filter(l => l.status === 'sold').length
+                              : mgmtListings.filter(l => !l.is_active && l.status !== 'sold').length
+                      return (
+                        <button key={k} type="button" role="tab" aria-selected={listFilter === k} className={`bl-filter ${listFilter === k ? 'on' : ''}`} onClick={() => setListFilter(k)}>{etiketa} ({n})</button>
+                      )
+                    })}
+                  </div>
+                  {(() => {
+                    const shown = listFilter === 'active' ? mgmtListings.filter(l => l.is_active)
+                                : listFilter === 'sold' ? mgmtListings.filter(l => l.status === 'sold')
+                                : mgmtListings.filter(l => !l.is_active && l.status !== 'sold')
+                    const bosh = listFilter === 'active' ? 'Nuk ke shpallje aktive.' : listFilter === 'sold' ? 'Ende asnjë shpallje e shitur.' : 'Asnjë shpallje e pauzuar.'
+                    return shown.length === 0 ? (
+                      <div style={{ textAlign: 'center', padding: '24px 0', color: '#aaa', fontSize: 12 }}>
+                        <i className="ti ti-package" style={{ fontSize: 36, display: 'block', marginBottom: 10, color: '#F5C842' }} aria-hidden="true" />{bosh}
+                      </div>
+                    ) : shown.map(l => (
+                      <div key={l.id} className="bl-row" style={!l.is_active ? { opacity: 0.72 } : undefined}>
+                        <div role="link" tabIndex={0} className="bl-thumb" onClick={() => { window.location.href = `/listing/${l.id}` }} onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/listing/${l.id}` }}>
+                          {l.images?.[0] ? <img src={l.images[0]} alt={l.title} loading="lazy" /> : <i className="ti ti-photo" style={{ color: '#ccc', fontSize: 20 }} aria-hidden="true" />}
+                        </div>
+                        <div role="link" tabIndex={0} className="bl-info" onClick={() => { window.location.href = `/listing/${l.id}` }} onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/listing/${l.id}` }}>
+                          <div className="bl-title">{l.title}</div>
+                          <div className="bl-price">{bizFmt(l.price, l.currency)}</div>
+                          <div className="bl-meta"><span aria-hidden="true">👁</span> {l.views_count || 0} · <span aria-hidden="true">📍</span> {l.city || 'Shqipëri'}{l.is_premium ? ' · ⭐ Premium' : ''}</div>
+                        </div>
+                        {l.is_active && (canBump(l.last_bumped_at) ? (
+                          <button type="button" className="bl-edit" onClick={() => bizBump(l.id)} aria-label="Rifresko shpalljen" style={{ fontSize: 13 }}><span aria-hidden="true">⬆️</span></button>
+                        ) : (
+                          <span title={`Mund ta rifreskosh pas ${bumpDaysLeft(l.last_bumped_at)} ditësh`} style={{ fontSize: 10, color: '#aaa', padding: '0 4px' }}>{bumpDaysLeft(l.last_bumped_at)}d</span>
+                        ))}
+                        {!l.is_active && l.status !== 'sold' && (
+                          <button type="button" className="bl-edit" disabled={reactBusy === l.id} onClick={() => bizReactivate(l.id)} aria-label="Riaktivizo shpalljen" title="Riaktivizo" style={{ fontSize: 13 }}><span aria-hidden="true">{reactBusy === l.id ? '⏳' : '♻️'}</span></button>
+                        )}
+                        <button type="button" className="bl-edit" onClick={() => { window.location.href = `/listing/${l.id}/edit` }} aria-label="Ndrysho">✏️</button>
+                        {l.is_active && (pendingSold === l.id ? (
+                          <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
+                            <button type="button" onClick={() => bizMarkSold(l.id)} style={{ background: 'linear-gradient(135deg,#0E7A35,#0b6a2e)', color: '#fff', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Shitur ✓</button>
+                            <button type="button" onClick={() => setPendingSold(null)} style={{ background: '#eee', color: '#555', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Jo</button>
+                          </div>
+                        ) : (
+                          <button type="button" className="bl-edit" onClick={() => setPendingSold(l.id)} aria-label="Shëno si të shitur" title="Shëno si të shitur"><span aria-hidden="true">💰</span></button>
+                        ))}
+                        {pendingDelete === l.id ? (
+                          <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
+                            <button type="button" onClick={() => bizDeactivate(l.id)} style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Hiq</button>
+                            <button type="button" onClick={() => setPendingDelete(null)} style={{ background: '#eee', color: '#555', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Jo</button>
+                          </div>
+                        ) : (
+                          <button type="button" className="bl-del" onClick={() => setPendingDelete(l.id)} aria-label="Hiq shpalljen (pauzo)"><span aria-hidden="true">🗑</span></button>
+                        )}
+                      </div>
+                    ))
+                  })()}
+                </>
+              )}
+            </div>
           )}
 
           {/* Tab: Vlerësime (subjekt = biznes) */}
           {panelTab === 'reviews' && (
-            <div style={{ margin: 8 }}>
+            <div style={{ margin: 8 }} role="tabpanel" id="tabpanel-reviews" aria-labelledby="tab-reviews">
               {rating.count > 0 && rating.avg != null && (
                 <div style={{ background: '#fff', borderRadius: 16, padding: 16, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
                   <div style={{ fontSize: 32, fontWeight: 800, color: '#111' }}>{rating.avg.toFixed(1)}</div>
@@ -691,7 +843,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
                     <i className="ti ti-phone" style={{ fontSize: 15 }} aria-hidden="true" /> Telefono
                   </a>
                 )}
-                <button type="button" aria-label="Dërgo mesazh" onClick={() => { if (!userId) { window.location.href = '/auth/login'; return } window.location.href = `/messages?biz=${biz.id}` }}
+                <button type="button" aria-label="Dërgo mesazh" onClick={() => { if (!userId) { window.location.href = '/auth/login'; return } window.location.href = `/messages?with=${biz.owner_id}` }}
                   className="action-btn" style={{ background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842' }}>
                   <i className="ti ti-message" style={{ fontSize: 15 }} aria-hidden="true" /> Mesazh
                 </button>
@@ -713,6 +865,11 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
             <button type="button" aria-label="Ndaj" onClick={share} className="action-btn" style={{ background: '#f0f0f0', color: '#333', flex: '0 0 48px' }}>
               <i className="ti ti-share-3" style={{ fontSize: 17 }} aria-hidden="true" />
             </button>
+            {copied && (
+              <div role="status" style={{ position: 'fixed', left: '50%', bottom: 24, transform: 'translateX(-50%)', background: '#111', color: '#fff', padding: '10px 18px', borderRadius: 999, fontSize: 13, fontWeight: 700, zIndex: 100, boxShadow: '0 4px 16px rgba(0,0,0,.25)' }}>
+                <i className="ti ti-check" aria-hidden="true" /> Kopjuar!
+              </div>
+            )}
           </div>
 
           {/* Chip-et e biznesit (spec — ana e jashtme): Harta · Hapur tani · NIPT · 0% komision.
