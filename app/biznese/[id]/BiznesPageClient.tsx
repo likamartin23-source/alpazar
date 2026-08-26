@@ -111,6 +111,8 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
 
   useEffect(() => {
     setMounted(true)
+    // ?public=1 (nga "Shiko faqen publike" te /profile) → hap pamjen publike edhe për pronarin.
+    try { if (new URLSearchParams(window.location.search).get('public') === '1') setAsVisitor(true) } catch {}
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) setUserId(session.user.id)
     })
