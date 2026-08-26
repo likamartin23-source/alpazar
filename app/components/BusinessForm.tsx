@@ -370,7 +370,7 @@ export default function BusinessForm({ mode, initial, onSaved }: {
               {delStage === 1 && (
                 <>
                   <p style={{ fontSize: 12, color: '#555', lineHeight: 1.6, marginBottom: 12 }}>
-                    Do të fshihet faqja e biznesit, kategoritë dhe ndjekësit. <b>Shpalljet nuk fshihen</b> — shkëputen nga biznesi dhe mbeten te profili yt personal. Llogaria jote mbetet.
+                    Do të fshihen <b>përfundimisht</b>: faqja e biznesit, <b>shpalljet e tij, vlerësimet, ndjekësit</b> dhe kategoritë. <b>Këto humbasin dhe nuk kthehen</b> — shpalljet e biznesit çaktivizohen dhe <b>nuk</b> kalojnë te profili yt personal. Llogaria jote personale dhe të dhënat e saj nuk preken.
                   </p>
                   <div style={{ display: 'flex', gap: 8 }}>
                     <button type="button" onClick={() => setDelStage(0)} style={{ flex: 1, background: '#fff', border: '1px solid #ccc', borderRadius: 10, padding: '10px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Anulo</button>
