@@ -158,6 +158,18 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
     fetchBiz()
   }, [])
 
+  // SINKRONIZIM LIVE: sapo ndryshon biznesi (edito → ruaj, foto e galerisë, çdo fushë),
+  // faqja e jashtme publike/pasqyra rifreskohet menjëherë (realtime). `businesses` është në
+  // publikimin supabase_realtime + politika `biz_public_read` → shikuesi merr ngjarjet.
+  useEffect(() => {
+    if (!biz?.id) return
+    const ch = supabase.channel('biz-live-' + biz.id)
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'businesses', filter: `id=eq.${biz.id}` }, () => { fetchBiz() })
+      .subscribe()
+    return () => { supabase.removeChannel(ch) }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [biz?.id])
+
   async function refreshFollow(bizId: string) {
     const { count } = await supabase
       .from('business_followers')
