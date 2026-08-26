@@ -95,18 +95,19 @@ Deno.serve(async (req: Request) => {
   const fullName     = [firstName, lastName].filter(Boolean).join(' ') || undefined;
 
   async function findUserId(): Promise<string | null> {
+    // SCALE-PROOF (miliona përdorues): kërkim O(1) nga email-i kanonik.
+    // auth.users.email është UNIK + i indeksuar; për telefon email-i = <numri>@sms.al.
+    // Zëvendëson paginimin listUsers (që kishte tavan 5000 → njohja dështonte mbi të).
+    try {
+      const { data: uid } = await admin.rpc('auth_user_id_by_email', { p_email: synthEmail });
+      if (uid) return uid as string;
+    } catch (e) { console.error('auth_user_id_by_email rpc error:', e); }
+    // Fallback për telefon (raste legacy): profiles.phone (indeks unik).
     if (isPhone) {
       const { data: p1 } = await admin.from('profiles').select('id').eq('phone', phoneE164).maybeSingle();
       if (p1?.id) return p1.id;
       const { data: p2 } = await admin.from('profiles').select('id').eq('phone', phoneRaw).maybeSingle();
       if (p2?.id) return p2.id;
-    }
-    // Email: kërkim me faqe (deri 5000) — mjaftueshëm i sigurt; profili mbahet i lidhur me phone më sipër.
-    for (let page = 1; page <= 5; page++) {
-      const { data: list } = await admin.auth.admin.listUsers({ perPage: 1000, page });
-      const found = list?.users?.find(u => u.email === synthEmail || u.email === identifier);
-      if (found?.id) return found.id;
-      if (!list?.users || list.users.length < 1000) break;
     }
     return null;
   }
