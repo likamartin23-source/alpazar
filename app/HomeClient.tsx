@@ -825,7 +825,9 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                       <span className="user-chip-txt">
                         <span className="user-chip-name">{nm}</span>
                         <span className="user-chip-lvl" style={{ color: lvl.color }}>
-                          {profile?.is_premium ? <><span aria-hidden='true'>👑</span> Premium</> : <><span aria-hidden='true'>{lvl.icon}</span> {lvl.name}</>}
+                          {(() => { const t = tierNgaProfili(profile); return t !== 'free'
+                            ? <><span aria-hidden='true'>👑</span> {t === 'vip' ? 'VIP Ekstra Boost' : 'Premium'}</>
+                            : <><span aria-hidden='true'>{lvl.icon}</span> {lvl.name}</> })()}
                         </span>
                       </span>
                     </button>
@@ -1111,7 +1113,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
       <ShareBox refCode={profile?.referral_code || profile?.username || undefined} />
       <InstallBanner />
       {/* Marketing: upsell modal per jo-premium */}
-      {authReady && user && !profile?.is_premium && <PremiumUpsellModal trigger="scroll" />}
+      {authReady && user && tierNgaProfili(profile) === 'free' && <PremiumUpsellModal trigger="scroll" />}
     </>
   )
 }

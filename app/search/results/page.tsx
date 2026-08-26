@@ -219,8 +219,10 @@ const [searchError, setSearchError] = useState(false)
     if (!premOnly) {
       let qb = supabase
         .from('profiles')
-        .select('id,full_name,username,avatar_url,city,bio,is_premium,shop_name,shop_description,shop_category,shop_banner_url')
+        .select('id,full_name,username,avatar_url,city,bio,is_premium,premium_expires_at,shop_name,shop_description,shop_category,shop_banner_url')
         .eq('is_premium', true)
+        // NDERO skadimin: përjashto premium-in e skaduar edhe para se cron-i ta fikë flamurin.
+        .or(`premium_expires_at.is.null,premium_expires_at.gt.${new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')}`)
         .order('created_at', { ascending: false })
         .limit(20)
 

@@ -165,7 +165,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
           {/* Name + badges */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
             <h1 style={{ fontSize: 22, fontWeight: 800, color: '#111', margin: 0, lineHeight: 1.2 }}>{name}</h1>
-            {profile.is_premium && <span title="Premium" role="img" aria-label="Premium" style={{ fontSize: 16 }}>👑</span>}
+            {(() => { const t = tierNgaProfili(profile); return t !== 'free' && <span title={t === 'vip' ? 'VIP Ekstra Boost' : 'Premium'} role="img" aria-label={t === 'vip' ? 'VIP Ekstra Boost' : 'Premium'} style={{ fontSize: 16 }}>👑</span> })()}
             {profile.is_verified && <span title="Verifikuar" role="img" aria-label="Verifikuar" style={{ fontSize: 16 }}>✅</span>}
             {isBusiness && <span style={{ background: '#111', color: '#F5C842', fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 12 }}><span aria-hidden="true">🏢</span> BIZNES</span>}
           </div>
