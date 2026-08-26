@@ -101,6 +101,8 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   // Faqja renderohet edhe ne server (`initialBiz`). Koha relative e kartes
   // varet nga `Date.now()`, ndaj i jepet ListingCard-it vetem pas montimit.
   const [mounted, setMounted]       = useState(false)
+  // Feedback i "Ndaj" në desktop (pa navigator.share): "Kopjuar!" (si /profile). BUG #11.
+  const [copied, setCopied]         = useState(false)
 
   // Ndjekesit. Tabela `business_followers` ekzistonte ne baze me RLS te plote
   // (lexim publik; shto/hiq vetem rreshtin tend) por asnje ekran nuk e prekte.
@@ -249,8 +251,9 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   // server e ne shfletues (shih lib/format.ts). ListingCard perdor `nf()`.
 
   function share() {
-    if (navigator.share) navigator.share({ title: biz?.name, url: window.location.href })
-    else navigator.clipboard?.writeText(window.location.href)
+    if (navigator.share) { navigator.share({ title: biz?.name, url: window.location.href }).catch(() => {}); return }
+    // Desktop / pa Web Share: kopjo linkun dhe jep feedback "Kopjuar!" (jo no-op i heshtur).
+    navigator.clipboard?.writeText(window.location.href).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1600) }).catch(() => {})
   }
 
   if (loadError) return (
@@ -376,13 +379,9 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               <div className="stat-pill"><span className="stat-n">{new Date(biz.created_at).getFullYear()}</span><span className="stat-l">Anëtar prej</span></div>
             </div>
 
-            {/* Meta: 👁 · 🔴 · ⏱ · 🚫 0% komision */}
-            <div style={{ fontSize: 12, color: '#6B6B6B', marginTop: 12, display: 'flex', flexWrap: 'wrap', gap: 4, alignItems: 'center' }}>
-              {totalViews > 0 && <span><span aria-hidden="true">👁</span> {nf(totalViews)} shikime</span>}
-              {syteLive > 0 && <span style={{ color: '#C4230F', fontWeight: 700 }}><span style={{ color: '#ccc', margin: '0 4px' }}>·</span><span aria-hidden="true">🔴</span> {syteLive} tani</span>}
-              {respHrs != null && <span><span style={{ color: '#ccc', margin: '0 4px' }}>·</span><span aria-hidden="true">⏱️</span> Përgjigjet {fmtResp(respHrs)}</span>}
-              <span><span style={{ color: '#ccc', margin: '0 4px' }}>·</span><span aria-hidden="true">🚫</span> 0% komision</span>
-            </div>
+            {/* Ana e BRENDSHME (menaxhimi) NUK shfaq shiritin publik 👁/🔴/0% — ato janë
+                sinjale trust/marketingu për vizitorin (rrinë vetëm te faqja publike, më poshtë);
+                pronari i sheh pamjet te "Analitika". (Vendim Martinel + verifikim live, 26 gusht.) */}
 
             {/* Shiko faqen publike */}
             <button type="button" onClick={() => setAsVisitor(true)}
@@ -415,9 +414,9 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
                 <span className="mtxt"><span className="mtt">Analitika</span><span className="msub">Shikime, arritje, kontakte (pa referral)</span></span>
                 <i className="ti ti-chevron-right arr" aria-hidden="true" />
               </button>
-              <button type="button" className="mrow" onClick={() => { window.location.href = `/messages?biz=${biz.id}` }}>
+              <button type="button" className="mrow" onClick={() => { window.location.href = `/messages` }}>
                 <i className="ti ti-message lead" aria-hidden="true" />
-                <span className="mtxt"><span className="mtt">Mesazhet</span><span className="msub">Një inbox — filtruar për biznesin</span></span>
+                <span className="mtxt"><span className="mtt">Mesazhet</span><span className="msub">Bisedat e tua — një inbox i vetëm</span></span>
                 <i className="ti ti-chevron-right arr" aria-hidden="true" />
               </button>
               {/* Plani (trashëgim) — reflektim i planit të llogarisë; menaxhimi mbetet te llogaria personale */}
@@ -691,7 +690,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
                     <i className="ti ti-phone" style={{ fontSize: 15 }} aria-hidden="true" /> Telefono
                   </a>
                 )}
-                <button type="button" aria-label="Dërgo mesazh" onClick={() => { if (!userId) { window.location.href = '/auth/login'; return } window.location.href = `/messages?biz=${biz.id}` }}
+                <button type="button" aria-label="Dërgo mesazh" onClick={() => { if (!userId) { window.location.href = '/auth/login'; return } window.location.href = `/messages?with=${biz.owner_id}` }}
                   className="action-btn" style={{ background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842' }}>
                   <i className="ti ti-message" style={{ fontSize: 15 }} aria-hidden="true" /> Mesazh
                 </button>
@@ -713,6 +712,11 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
             <button type="button" aria-label="Ndaj" onClick={share} className="action-btn" style={{ background: '#f0f0f0', color: '#333', flex: '0 0 48px' }}>
               <i className="ti ti-share-3" style={{ fontSize: 17 }} aria-hidden="true" />
             </button>
+            {copied && (
+              <div role="status" style={{ position: 'fixed', left: '50%', bottom: 24, transform: 'translateX(-50%)', background: '#111', color: '#fff', padding: '10px 18px', borderRadius: 999, fontSize: 13, fontWeight: 700, zIndex: 100, boxShadow: '0 4px 16px rgba(0,0,0,.25)' }}>
+                <i className="ti ti-check" aria-hidden="true" /> Kopjuar!
+              </div>
+            )}
           </div>
 
           {/* Chip-et e biznesit (spec — ana e jashtme): Harta · Hapur tani · NIPT · 0% komision.

@@ -219,6 +219,24 @@ export async function uploadImages(
   return { urls: results.filter((u): u is string => !!u), errors }
 }
 
+// Ngarkim i NJE imazhi te vetem ne nje bucket te dhene (logo/kopertine/galeri biznesi).
+// Rikthen URL me path UNIK (crypto.randomUUID) → cache-bust automatik + ZERO perplasje
+// mes bizneseve/rikrijueve; tip/extension i SAKTE nga blob-i real (jo jpeg i ngurtesuar);
+// EXIF-orientim + webp nga compress(); retry/resumable nga putObject().
+export async function uploadSingleImage(
+  file: File,
+  bucket: string,
+): Promise<{ url?: string; error?: string }> {
+  if (!file.type.startsWith('image/')) return { error: 'Skedari nuk eshte imazh.' }
+  const uid = await requireUid()
+  const blob: Blob = await withTimeout(compress(file).catch(() => file), 20_000, file)
+  const ext = blob.type === 'image/gif' ? 'gif' : blob.type === 'image/webp' ? 'webp' : blob.type === 'image/png' ? 'png' : 'jpg'
+  const path = `${uid}/${crypto.randomUUID()}.${ext}`
+  const err = await putObject(bucket, path, blob, 120000)
+  if (err) return { error: friendlyUploadError(err) }
+  return { url: supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl }
+}
+
 // ── VIDEO (pa kufi madhesie; resumable per skedare te medhenj) ────────────────
 export async function uploadVideo(
   file: File,
