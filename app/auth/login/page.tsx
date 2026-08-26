@@ -1268,7 +1268,12 @@ export default function Auth() {
               )}
 
               {!smsFailMode && (
-                <button type="button" className="btn-ghost" onClick={() => switchMode('login')}>← Kthehu te Hyrja</button>
+                <>
+                  {/* Nga screenshot-et: përdoruesit ngecnin te "Rikthe llogarinë" me një numër
+                      që s'kishte llogari → "nuk është i regjistruar". Rrugë e qartë te regjistrimi. */}
+                  <div className="sec-row" style={{ marginBottom: 8 }}>Nuk ke llogari? &nbsp;<a role="button" tabIndex={0} onClick={() => { const c = contact; switchMode('register'); setTimeout(() => setContact(c), 0) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { const c = contact; switchMode('register'); setTimeout(() => setContact(c), 0) } }} style={{ cursor: 'pointer' }}>Regjistrohu →</a></div>
+                  <button type="button" className="btn-ghost" onClick={() => switchMode('login')}>← Kthehu te Hyrja</button>
+                </>
               )}
             </>
           )}
