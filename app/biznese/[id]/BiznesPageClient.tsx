@@ -79,6 +79,48 @@ interface Biz {
   return_policy?: string | null; warranty?: string | null
 }
 
+// H6: vlerësimet e biznesit shfaqeshin me kod IDENTIK në dy vende (paneli i pronarit dhe
+// pamja publike "Rreth & Vlerësime"). Një komponent i vetëm → një burim, pa kopjim verbatim.
+// Kthen përmbajtjen; secili thirrës mban mbështjellësin e vet (role/id për a11y).
+function BizReviews({ rating, reviews }: { rating: { count: number; avg: number | null }; reviews: any[] }) {
+  return (
+    <>
+      {rating.count > 0 && rating.avg != null && (
+        <div style={{ background: '#fff', borderRadius: 16, padding: 16, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ fontSize: 32, fontWeight: 800, color: '#111' }}>{rating.avg.toFixed(1)}</div>
+          <div>
+            <div style={{ color: '#F5C842', fontSize: 16 }} aria-hidden="true">{'★'.repeat(Math.round(rating.avg))}{'☆'.repeat(5 - Math.round(rating.avg))}</div>
+            <div style={{ fontSize: 12, color: '#888' }}>{rating.count} vlerësim{rating.count !== 1 ? 'e' : ''}</div>
+          </div>
+        </div>
+      )}
+      {reviews.length > 0 ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {reviews.map(rv => (
+            <div key={rv.id} style={{ background: '#fff', borderRadius: 14, padding: '12px 14px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                <Avatar src={rv.reviewer_avatar} name={rv.reviewer_name} type="person" size={30} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: '#111' }}>{rv.reviewer_name}</div>
+                  <div style={{ fontSize: 10, color: '#aaa' }}>{new Date(rv.created_at).toLocaleDateString('sq-AL', { day: 'numeric', month: 'short', year: 'numeric' })}{rv.purchase_verified ? ' · ✅ Blerje e verifikuar' : ''}</div>
+                </div>
+                <div style={{ color: '#F5C842', fontSize: 13 }} aria-label={`${rv.rating} nga 5`}>{'★'.repeat(rv.rating)}{'☆'.repeat(5 - rv.rating)}</div>
+              </div>
+              {rv.comment && <div style={{ fontSize: 13, color: '#444', lineHeight: 1.5 }}>{rv.comment}</div>}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div style={{ background: '#fff', borderRadius: 16, padding: '40px 16px', textAlign: 'center' }}>
+          <div style={{ fontSize: 44, marginBottom: 14 }} aria-hidden="true">⭐</div>
+          <div style={{ fontSize: 16, fontWeight: 800, color: '#111', marginBottom: 6 }}>Ende pa vlerësime</div>
+          <div style={{ fontSize: 12, color: '#888', lineHeight: 1.6 }}>Klientët që blejnë nga ky biznes do të mund të lënë vlerësimin këtu.</div>
+        </div>
+      )}
+    </>
+  )
+}
+
 export default function BiznesPageClient({ params, initialBiz, initialListings, initialSubcats, initialIsOwner }: { params: { id: string }; initialBiz?: any; initialListings?: any[]; initialSubcats?: any[]; initialIsOwner?: boolean }) {
   const seedListings = Array.isArray(initialListings) ? initialListings : []
   const seedSubcats  = Array.isArray(initialSubcats) ? initialSubcats : []
@@ -655,38 +697,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           {/* Tab: Vlerësime (subjekt = biznes) */}
           {panelTab === 'reviews' && (
             <div style={{ margin: 8 }} role="tabpanel" id="tabpanel-reviews" aria-labelledby="tab-reviews">
-              {rating.count > 0 && rating.avg != null && (
-                <div style={{ background: '#fff', borderRadius: 16, padding: 16, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div style={{ fontSize: 32, fontWeight: 800, color: '#111' }}>{rating.avg.toFixed(1)}</div>
-                  <div>
-                    <div style={{ color: '#F5C842', fontSize: 16 }} aria-hidden="true">{'★'.repeat(Math.round(rating.avg))}{'☆'.repeat(5 - Math.round(rating.avg))}</div>
-                    <div style={{ fontSize: 12, color: '#888' }}>{rating.count} vlerësim{rating.count !== 1 ? 'e' : ''}</div>
-                  </div>
-                </div>
-              )}
-              {reviews.length > 0 ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {reviews.map(rv => (
-                    <div key={rv.id} style={{ background: '#fff', borderRadius: 14, padding: '12px 14px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                        <Avatar src={rv.reviewer_avatar} name={rv.reviewer_name} type="person" size={30} />
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontSize: 13, fontWeight: 700, color: '#111' }}>{rv.reviewer_name}</div>
-                          <div style={{ fontSize: 10, color: '#aaa' }}>{new Date(rv.created_at).toLocaleDateString('sq-AL', { day: 'numeric', month: 'short', year: 'numeric' })}{rv.purchase_verified ? ' · ✅ Blerje e verifikuar' : ''}</div>
-                        </div>
-                        <div style={{ color: '#F5C842', fontSize: 13 }} aria-label={`${rv.rating} nga 5`}>{'★'.repeat(rv.rating)}{'☆'.repeat(5 - rv.rating)}</div>
-                      </div>
-                      {rv.comment && <div style={{ fontSize: 13, color: '#444', lineHeight: 1.5 }}>{rv.comment}</div>}
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div style={{ background: '#fff', borderRadius: 16, padding: '40px 16px', textAlign: 'center' }}>
-                  <div style={{ fontSize: 44, marginBottom: 14 }} aria-hidden="true">⭐</div>
-                  <div style={{ fontSize: 15, fontWeight: 800, color: '#111', marginBottom: 6 }}>Ende pa vlerësime</div>
-                  <div style={{ fontSize: 12, color: '#888', lineHeight: 1.6 }}>Klientët që blejnë nga ky biznes do të mund të lënë vlerësimin këtu.</div>
-                </div>
-              )}
+              <BizReviews rating={rating} reviews={reviews} />
             </div>
           )}
         </div>
@@ -1204,38 +1215,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
       {/* ── Rreth & Vlerësime (vlerësimet) ───────────────────── */}
       {activeTab === 'about' && (
         <div style={{ margin: 8 }}>
-          {rating.count > 0 && rating.avg != null && (
-            <div style={{ background: '#fff', borderRadius: 16, padding: '16px', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ fontSize: 32, fontWeight: 800, color: '#111' }}>{rating.avg.toFixed(1)}</div>
-              <div>
-                <div style={{ color: '#F5C842', fontSize: 16 }} aria-hidden="true">{'★'.repeat(Math.round(rating.avg))}{'☆'.repeat(5 - Math.round(rating.avg))}</div>
-                <div style={{ fontSize: 12, color: '#888' }}>{rating.count} vlerësim{rating.count !== 1 ? 'e' : ''}</div>
-              </div>
-            </div>
-          )}
-          {reviews.length > 0 ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {reviews.map(rv => (
-                <div key={rv.id} style={{ background: '#fff', borderRadius: 14, padding: '12px 14px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                    <Avatar src={rv.reviewer_avatar} name={rv.reviewer_name} type="person" size={30} />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: '#111' }}>{rv.reviewer_name}</div>
-                      <div style={{ fontSize: 10, color: '#aaa' }}>{new Date(rv.created_at).toLocaleDateString('sq-AL', { day: 'numeric', month: 'short', year: 'numeric' })}{rv.purchase_verified ? ' · ✅ Blerje e verifikuar' : ''}</div>
-                    </div>
-                    <div style={{ color: '#F5C842', fontSize: 13 }} aria-label={`${rv.rating} nga 5`}>{'★'.repeat(rv.rating)}{'☆'.repeat(5 - rv.rating)}</div>
-                  </div>
-                  {rv.comment && <div style={{ fontSize: 13, color: '#444', lineHeight: 1.5 }}>{rv.comment}</div>}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div style={{ background: '#fff', borderRadius: 16, padding: '40px 16px', textAlign: 'center' }}>
-              <div style={{ fontSize: 44, marginBottom: 14 }} aria-hidden="true">⭐</div>
-              <div style={{ fontSize: 16, fontWeight: 800, color: '#111', marginBottom: 6 }}>Ende pa vlerësime</div>
-              <div style={{ fontSize: 12, color: '#888', lineHeight: 1.6 }}>Klientët që blejnë nga ky biznes do të mund<br />të lënë vlerësimin e tyre këtu.</div>
-            </div>
-          )}
+          <BizReviews rating={rating} reviews={reviews} />
         </div>
       )}
       </div>{/* /biz-right */}
