@@ -6,7 +6,7 @@
 // §3.9: fshirja 3-shkallëshe (vetëm te editimi, vetëm-pronar, RPC delete_own_business).
 // Nota: fushat opsionale ruhen si null kur bosh; hours ruan {days, schedule} për
 // pajtueshmëri me shfaqjen ekzistuese (hours.schedule).
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../../lib/supabase'
 import { MapPicker } from './MapPicker'
 import { uploadSingleImage } from '../../lib/uploadImages'
@@ -82,6 +82,10 @@ export default function BusinessForm({ mode, initial, onSaved }: {
   const [logoPrev, setLogoPrev] = useState(initial?.logo_url || '')
   const [coverPrev, setCoverPrev] = useState(initial?.cover_url || '')
   const [gallery, setGallery] = useState<string[]>(initial?.gallery || [])
+  // Pamje paraprake për fotot E REJA të galerisë (para ngarkimit) — që pronari të shohë
+  // çfarë shtoi, jo vetëm një numërues. Revokohen kur ndryshon lista (pa rrjedhje memorjeje).
+  const galleryNewPrev = useMemo(() => galleryFiles.map(f => URL.createObjectURL(f)), [galleryFiles])
+  useEffect(() => () => { galleryNewPrev.forEach(u => URL.revokeObjectURL(u)) }, [galleryNewPrev])
 
   // Fshirja 3-shkallëshe (§3.9)
   const [delStage, setDelStage] = useState(0)      // 0 mbyllur · 1 paralajmërim · 2 shkruaj emrin · 3 duke fshirë
@@ -206,23 +210,31 @@ export default function BusinessForm({ mode, initial, onSaved }: {
         </div>
       )}
 
-      {/* Kopertina + logo (ngarkim direkt, model rrjeti social) */}
-      <div style={{ position: 'relative', width: '100%', aspectRatio: '16/6', borderRadius: 12, overflow: 'hidden', marginBottom: 40, background: coverPrev ? 'transparent' : 'linear-gradient(135deg,#F5C842,#E63312)' }}>
-        {coverPrev && <img src={coverPrev} alt="Kopertinë" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
-        <label style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: coverPrev ? 'rgba(0,0,0,.25)' : 'none' }}>
-          <span style={{ background: 'rgba(0,0,0,.55)', color: '#fff', borderRadius: 10, padding: '8px 16px', fontSize: 12, fontWeight: 700 }}><span aria-hidden="true">📷</span> {coverPrev ? 'Ndrysho kopertinën' : 'Shto kopertinën'}</span>
-          <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const x = e.target.files?.[0]; if (x) { setCoverFile(x); setCoverPrev(URL.createObjectURL(x)) } }} />
-        </label>
-        <div style={{ position: 'absolute', bottom: -28, left: 16 }}>
-          <div style={{ position: 'relative', width: 56, height: 56 }}>
-            <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#fff', border: '3px solid #fff', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, boxShadow: '0 2px 8px rgba(0,0,0,.15)' }}>
-              {logoPrev ? <img src={logoPrev} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span aria-hidden="true">🏢</span>}
-            </div>
-            <label aria-label="Ndrysho logon" style={{ position: 'absolute', bottom: -2, right: -2, background: '#E63312', width: 20, height: 20, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, cursor: 'pointer', border: '2px solid #fff' }}>
-              <span aria-hidden="true">📷</span>
-              <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const x = e.target.files?.[0]; if (x) { setLogoFile(x); setLogoPrev(URL.createObjectURL(x)) } }} />
-            </label>
-          </div>
+      {/* Kopertina + logo. Avatar-i është SIBLING i kopertinës (jo brenda overflow:hidden) →
+          gjysma e poshtme + butoni i kamerës NUK priten dhe janë të kapshme (rregullim). */}
+      <div style={{ position: 'relative', width: '100%', marginBottom: 44 }}>
+        <div style={{ position: 'relative', width: '100%', aspectRatio: '16/6', borderRadius: 12, overflow: 'hidden', background: coverPrev ? 'transparent' : 'linear-gradient(135deg,#F5C842,#E63312)' }}>
+          {coverPrev && <img src={coverPrev} alt="Kopertinë" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+          <label style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: coverPrev ? 'rgba(0,0,0,.25)' : 'none' }}>
+            <span style={{ background: 'rgba(0,0,0,.55)', color: '#fff', borderRadius: 10, padding: '8px 16px', fontSize: 12, fontWeight: 700 }}><span aria-hidden="true">📷</span> {coverPrev ? 'Ndrysho kopertinën' : 'Shto kopertinën'}</span>
+            <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const x = e.target.files?.[0]; if (x) { setCoverFile(x); setCoverPrev(URL.createObjectURL(x)) } }} />
+          </label>
+          {coverPrev && (
+            <button type="button" aria-label="Hiq kopertinën" onClick={() => { setCoverFile(null); setCoverPrev('') }} style={{ position: 'absolute', top: 8, right: 8, width: 30, height: 30, borderRadius: '50%', background: 'rgba(0,0,0,.55)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: 14, lineHeight: 1 }}>✕</button>
+          )}
+        </div>
+        {/* Logo/avatar — jashtë overflow-it, i tërë tappable (≥44px), me badge kamere + hiq */}
+        <div style={{ position: 'absolute', bottom: -22, left: 16, width: 64, height: 64 }}>
+          <label aria-label={logoPrev ? 'Ndrysho logon' : 'Shto logon'} style={{ display: 'block', position: 'relative', width: 64, height: 64, borderRadius: '50%', background: '#fff', border: '3px solid #fff', overflow: 'hidden', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,.15)' }}>
+            {logoPrev
+              ? <img src={logoPrev} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              : <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }} aria-hidden="true">🏢</span>}
+            <span style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(0,0,0,.5)', color: '#fff', fontSize: 10, textAlign: 'center', padding: '1px 0' }} aria-hidden="true">📷</span>
+            <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const x = e.target.files?.[0]; if (x) { setLogoFile(x); setLogoPrev(URL.createObjectURL(x)) } }} />
+          </label>
+          {logoPrev && (
+            <button type="button" aria-label="Hiq logon" onClick={() => { setLogoFile(null); setLogoPrev('') }} style={{ position: 'absolute', top: -6, right: -6, width: 20, height: 20, borderRadius: '50%', background: '#E63312', color: '#fff', border: '2px solid #fff', cursor: 'pointer', fontSize: 11, lineHeight: 1 }}>✕</button>
+          )}
         </div>
       </div>
 
@@ -257,12 +269,19 @@ export default function BusinessForm({ mode, initial, onSaved }: {
             <button type="button" aria-label="Hiq foton" onClick={() => setGallery(gallery.filter((_, x) => x !== i))} style={{ position: 'absolute', top: -6, right: -6, width: 20, height: 20, borderRadius: '50%', background: '#E63312', color: '#fff', border: '2px solid #fff', cursor: 'pointer', fontSize: 11, lineHeight: 1 }}>✕</button>
           </div>
         ))}
+        {galleryFiles.map((_, i) => (
+          <div key={'new-' + i} style={{ position: 'relative', width: 64, height: 64 }}>
+            <img src={galleryNewPrev[i]} alt="" style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 8 }} />
+            <span style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(14,122,53,.85)', color: '#fff', fontSize: 8, textAlign: 'center', padding: '1px 0' }} aria-hidden="true">E re</span>
+            <button type="button" aria-label="Hiq foton e re" onClick={() => setGalleryFiles(p => p.filter((_, x) => x !== i))} style={{ position: 'absolute', top: -6, right: -6, width: 20, height: 20, borderRadius: '50%', background: '#E63312', color: '#fff', border: '2px solid #fff', cursor: 'pointer', fontSize: 11, lineHeight: 1 }}>✕</button>
+          </div>
+        ))}
         <label style={{ width: 64, height: 64, borderRadius: 8, border: '1.5px dashed #ccc', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 22, color: '#aaa' }}>
           +
-          <input type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={e => { const fs = Array.from(e.target.files || []); setGalleryFiles(p => [...p, ...fs]); }} />
+          <input type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={e => { const fs = Array.from(e.target.files || []); setGalleryFiles(p => [...p, ...fs]); e.target.value = '' }} />
         </label>
       </div>
-      {galleryFiles.length > 0 && <div style={{ fontSize: 11, color: '#888' }}>{galleryFiles.length} foto të reja për ngarkim</div>}
+      {galleryFiles.length > 0 && <div style={{ fontSize: 11, color: '#0E7A35', fontWeight: 600 }}>{galleryFiles.length} foto të reja — ruhen kur shtyp “Ruaj”.</div>}
 
       {/* 3 · Informacion bazë */}
       <div style={sec}>3 · Informacion bazë</div>
