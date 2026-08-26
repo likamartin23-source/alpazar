@@ -10,6 +10,11 @@ export interface Profile {
   full_name: string
   avatar_url: string
   is_premium: boolean
+  // Afatet + boost — të domosdoshme që tierNgaProfili të nderojë skadimin (pa to
+  // e trajton premium-in si të përhershëm → unazë/badge e gabuar pas skadimit).
+  premium_expires_at?: string | null
+  has_boost?: boolean | null
+  boost_expires_at?: string | null
   is_admin: boolean
   is_verified: boolean
   is_suspended: boolean
@@ -98,7 +103,7 @@ export function AlpazarProvider({ children }: { children: ReactNode }) {
   const loadProfile = useCallback(async (uid: string) => {
     const { data } = await supabase
       .from('profiles')
-      .select('id,username,full_name,avatar_url,is_premium,is_admin,is_verified,is_suspended,gamification_points,gamification_level,shop_name,shop_banner_url,seller_rating,reviews_count,referral_code')
+      .select('id,username,full_name,avatar_url,is_premium,premium_expires_at,has_boost,boost_expires_at,is_admin,is_verified,is_suspended,gamification_points,gamification_level,shop_name,shop_banner_url,seller_rating,reviews_count,referral_code')
       .eq('id', uid)
       .single()
     if (data) setProfile(data as Profile)

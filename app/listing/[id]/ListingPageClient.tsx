@@ -555,7 +555,9 @@ export default function ListingPageClient({ params, initialListing, initialSelle
 
   const images  = listing.images?.length ? listing.images : []
   const isOwner = user?.id === listing.user_id
-  const hasShop = seller?.is_premium && seller?.shop_name
+  // Tier-i i shitësit që NDERON skadimin (seller vjen me select('*') → ka afatet).
+  const sellerTier = tierNgaProfili(seller)
+  const hasShop = sellerTier !== 'free' && seller?.shop_name
 
   // A i perket kjo shpallje nje biznesi? Burimi i vertete eshte lidhja, jo
   // `profiles.shop_name`.
@@ -895,7 +897,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                 {/* Badges */}
                 <div className="seller-chips">
                   {seller.is_admin   && <span className="schip sch-admin"><span aria-hidden="true">🛡</span> Admin</span>}
-                  {seller.is_premium && <span className="schip sch-prem"><span aria-hidden="true">👑</span> Premium</span>}
+                  {sellerTier !== 'free' && <span className="schip sch-prem"><span aria-hidden="true">👑</span> {sellerTier === 'vip' ? 'VIP Ekstra Boost' : 'Premium'}</span>}
                   {isBusinessListing && <span className="schip sch-shop"><span aria-hidden="true">🏢</span> Biznes</span>}
                   {(() => { const l = getLevel(seller.gamification_points || 0); return <span className="schip" style={{ background: l.bg, color: l.color }}>{l.icon} {l.name}</span> })()}
                   {sellerCount > 0 && <span className="schip sch-seller"><span aria-hidden="true">📦</span> Shitës aktiv</span>}
@@ -1010,7 +1012,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
           )}
 
           {/* Marketing: upsell per pronarin jo-premium */}
-          {isOwner && !seller?.is_premium && (
+          {isOwner && sellerTier === 'free' && (
             <SellerPremiumUpsell isPremium={false} />
           )}
 

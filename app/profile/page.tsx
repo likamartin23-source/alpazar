@@ -254,7 +254,7 @@ export default function ProfilePage() {
     const otherIds = Array.from(threadsMap.keys())
     const { data: profiles } = await supabase
       .from('profiles')
-      .select('id,full_name,username,avatar_url,is_premium,shop_name')
+      .select('id,full_name,username,avatar_url,is_premium,premium_expires_at,has_boost,boost_expires_at,shop_name')
       .in('id', otherIds)
     const pm = new Map((profiles || []).map((p: any) => [p.id, p]))
 
@@ -618,7 +618,7 @@ export default function ProfilePage() {
           <div className="badges-row" style={{ justifyContent: 'flex-start', marginTop: 8 }}>
             {profile?.is_admin && <span className="badge b-admin"><span aria-hidden="true">🛡</span> Admin</span>}
             {(user?.email_confirmed_at || user?.phone_confirmed_at) && <span className="badge b-verif"><span aria-hidden="true">✓</span> Verifikuar</span>}
-            {profile?.is_premium && <span className="badge b-prem"><span aria-hidden="true">👑</span> Premium</span>}
+            {(() => { const t = tierNgaProfili(profile); return t !== 'free' && <span className="badge b-prem"><span aria-hidden="true">👑</span> {t === 'vip' ? 'VIP Ekstra Boost' : 'Premium'}</span> })()}
             {profile?.shop_name && <span className="badge b-shop"><span aria-hidden="true">🏢</span> Biznes</span>}
             {(() => { const l = getLevel(profile?.gamification_points || 0); return <span className="badge" style={{ background: l.bg, color: l.color }}><span aria-hidden="true">{l.icon}</span> {l.name}</span> })()}
             {myListings.some(l => l.is_active) && <span className="badge b-seller"><span aria-hidden="true">📦</span> Shitës aktiv</span>}
@@ -722,7 +722,7 @@ export default function ProfilePage() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
                   {([
                     { ike: 'ti-chart-bar',      titull: 'Analitika',            nen: 'Pamje, kontaktime (WhatsApp/Viber), CTR — 7 ose 30 ditë', vepro: () => { window.location.href = '/profile/analytics' } },
-                    { ike: 'ti-crown',          titull: 'Abonimi im',           nen: profile?.is_premium ? 'Premium aktiv · shiko / menaxho / anulo' : 'Kalo në Premium — biznes online, VIP, pa limit', vepro: () => { window.location.href = profile?.is_premium ? '/billing' : '/premium' } },
+                    { ike: 'ti-crown',          titull: 'Abonimi im',           nen: (() => { const t = tierNgaProfili(profile); return t === 'vip' ? 'VIP Ekstra Boost aktiv · shiko / menaxho' : t === 'premium' ? 'Premium aktiv · shiko / menaxho / anulo' : 'Kalo në Premium — biznes online, VIP, pa limit' })(), vepro: () => { window.location.href = tierNgaProfili(profile) !== 'free' ? '/billing' : '/premium' } },
                     { ike: 'ti-shield-lock',    titull: 'Siguri & privatësi',   nen: 'Fjalëkalimi, email-i, GDPR, Trust Score, Takedown, fshirja', vepro: () => setProfSub('siguri') },
                     { ike: 'ti-gift',           titull: 'Fto miq',              nen: `50 pikë për çdo mik të regjistruar${(profile?.gamification_points ?? 0) > 0 ? ` · ke ${profile.gamification_points} pikë` : ''}`, vepro: () => { window.location.href = '/referral' } },
                   ] as const).map(b => (
@@ -752,7 +752,7 @@ export default function ProfilePage() {
                 </button>
               )}
 
-              {profSub === 'menu' && !profile?.is_premium && (
+              {profSub === 'menu' && tierNgaProfili(profile) === 'free' && (
                 <div className="prem-card">
                   <h3><span aria-hidden="true">👑</span> Bëhu Premium</h3>
                   <p>Biznes online · Badge verifikimi · Shpallje të pakufizuara · Statistika të avancuara</p>
@@ -1180,7 +1180,7 @@ export default function ProfilePage() {
                           <div className="conv-body">
                             <div className="conv-name">
                               {name}
-                              {p?.is_premium && <span className="conv-prem" role="img" aria-label="Premium">⭐</span>}
+                              {tierNgaProfili(p) !== 'free' && <span className="conv-prem" role="img" aria-label="Premium">⭐</span>}
                             </div>
                             <div className={`conv-preview ${conv.unread > 0 ? 'unread' : ''}`}>
                               {preview}
@@ -1212,7 +1212,9 @@ export default function ProfilePage() {
             //   G1 (!premium)          → Bëhu Premium → Planet
             //   G2 (premium && !biznes)→ Krijo faqen e biznesit (/biznese/new); çaktivizohet kur ka biznes
             //   G3 (premium && biznes) → Vepro si Biznes → /biznese/[id] (e vetmja rrugë brenda)
-            const premium = !!profile?.is_premium
+            // NDERO skadimin: tierNgaProfili lexon premium_expires_at (jo is_premium raw) →
+            // përdorues me Premium të skaduar NUK sheh më "Krijo biznes" që RLS do ta refuzonte.
+            const premium = tierNgaProfili(profile) !== 'free'
             const hasBiz = !!myBiz
             const g1 = !premium, g2 = premium && !hasBiz, g3 = premium && hasBiz
             const badge = (on: boolean, txtOn: string, txtOff: string) => (
