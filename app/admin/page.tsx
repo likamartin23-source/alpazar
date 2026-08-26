@@ -421,6 +421,16 @@ export default function Admin() {
   const onPreq = useCallback(() => { fetchAll(); setLastUpdated(new Date()) }, [fetchAll])
   useRealtimeTable('premium_requests', null, onPreq, onPreq, onPreq)
 
+  // Realtime — çdo PAGESË (transaction) reflektohet menjëherë në panel, e renditur sipas
+  // orës së transaksionit (admin_list_transactions → order by created_at desc). RLS: tx_select
+  // lejon is_admin() → adminët marrin ngjarjet; tabela është në publikimin supabase_realtime.
+  const reloadTx = useCallback(async () => {
+    const { data: tx } = await supabase.rpc('admin_list_transactions', { p_limit: 100 })
+    if (tx && !(tx as any).error) setTxData(tx)
+    setLastUpdated(new Date())
+  }, [])
+  useRealtimeTable('transactions', null, reloadTx, reloadTx, reloadTx)
+
   // Realtime — listingje të reja
   useRealtimeTable(
     'listings',
