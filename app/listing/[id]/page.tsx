@@ -27,7 +27,8 @@ async function fetchSellerData(listing: any) {
   if (!listing?.user_id) return { seller: null, sellerCount: 0, biz: null }
   const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
   const [{ data: seller }, { count }, biz] = await Promise.all([
-    sb.from('profiles').select('*').eq('id', listing.user_id).single(),
+    // Siguri K2: kolona të sigurta (jo select('*')) — anon s'ka SELECT tabelor te profiles.
+    sb.from('profiles').select('id,username,full_name,avatar_url,phone,city,bio,is_premium,is_admin,premium_expires_at,gamification_points,gamification_level,created_at,shop_name,shop_description,shop_category,shop_banner_url,is_verified,last_seen,seller_rating,reviews_count,referral_code,cover_url,website,is_suspended,listings_count,total_sales,followers_count,following_count,response_rate,response_time_hrs,shop_is_open,total_saved,updated_at,trust_score,trust_score_visible,has_boost,boost_expires_at').eq('id', listing.user_id).single(),
     sb.from('listings').select('*', { count: 'exact', head: true })
       .eq('user_id', listing.user_id).eq('is_active', true),
     listing.business_id
