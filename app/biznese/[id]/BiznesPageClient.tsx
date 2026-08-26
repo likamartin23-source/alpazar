@@ -9,6 +9,7 @@ import Avatar, { tierNgaProfili } from '../../components/Avatar'
 import ListingCard from '../../components/ListingCard'
 import { TrustBadge } from '../../components/TrustBadge'
 import { useSyteLive } from '../../components/PremiumUpsell'
+import { useIsOnline } from '../../components/OnlinePresence'
 import { nf } from '../../../lib/format'
 
 const MapDisplay = dynamicImport(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), { ssr: false })
@@ -130,6 +131,9 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   // Syte live te faqja e biznesit (BLLOKU Imazhi 4: "👁+🔴") — e njejta presence
   // reale fail-soft si te shpallja; kanal i vecante 'biz-{id}'.
   const syteLive = useSyteLive(biz ? `biz-${biz.id}` : undefined)
+  // Prania LIVE e pronarit — e njëjta si te /u/[id] (Imazhi 5). Shfaqet vetëm te faqja
+  // PUBLIKE e biznesit (koherencë me profilin publik të personit); jo te paneli-pasqyrë.
+  const ownerOnline = useIsOnline(biz?.owner_id)
 
   useEffect(() => {
     setMounted(true)
@@ -452,6 +456,12 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               {biz.is_verified && <span className="bdg" style={{ background: '#dcfce7', color: '#16a34a' }}>✅ I verifikuar</span>}
             </div>
 
+            {/* Reputacioni (TrustBadge) — sistem i /profile; sillet edhe te koka e panelit-pasqyrë
+                (ishte vetëm te faqja publike). Kompakt; pikët nga gamification vijnë 0 këtu. */}
+            <div style={{ margin: '10px 0 2px' }}>
+              <TrustBadge createdAt={biz.created_at} listingsActive={listings.length} gamificationPoints={0} compact />
+            </div>
+
             {/* Statistika (Shpallje · Të shitura · Ndjekës · Anëtar) */}
             <div className="bizp-stats">
               <div className="stat-pill"><span className="stat-n">{listings.length}</span><span className="stat-l">Shpallje</span></div>
@@ -714,6 +724,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
             type="business"
             tier={tierNgaProfili(pronari)}
             verified={biz.is_verified}
+            online={ownerOnline}
             size={84}
           />
         </div>
