@@ -95,18 +95,19 @@ Deno.serve(async (req: Request) => {
   const fullName     = [firstName, lastName].filter(Boolean).join(' ') || undefined;
 
   async function findUserId(): Promise<string | null> {
+    // SCALE-PROOF (miliona përdorues): kërkim O(1) nga email-i kanonik.
+    // auth.users.email është UNIK + i indeksuar; për telefon email-i = <numri>@sms.al.
+    // Zëvendëson paginimin listUsers (që kishte tavan 5000 → njohja dështonte mbi të).
+    try {
+      const { data: uid } = await admin.rpc('auth_user_id_by_email', { p_email: synthEmail });
+      if (uid) return uid as string;
+    } catch (e) { console.error('auth_user_id_by_email rpc error:', e); }
+    // Fallback për telefon (raste legacy): profiles.phone (indeks unik).
     if (isPhone) {
       const { data: p1 } = await admin.from('profiles').select('id').eq('phone', phoneE164).maybeSingle();
       if (p1?.id) return p1.id;
       const { data: p2 } = await admin.from('profiles').select('id').eq('phone', phoneRaw).maybeSingle();
       if (p2?.id) return p2.id;
-    }
-    // Email: kërkim me faqe (deri 5000) — mjaftueshëm i sigurt; profili mbahet i lidhur me phone më sipër.
-    for (let page = 1; page <= 5; page++) {
-      const { data: list } = await admin.auth.admin.listUsers({ perPage: 1000, page });
-      const found = list?.users?.find(u => u.email === synthEmail || u.email === identifier);
-      if (found?.id) return found.id;
-      if (!list?.users || list.users.length < 1000) break;
     }
     return null;
   }
@@ -197,37 +198,20 @@ Deno.serve(async (req: Request) => {
   }
 
   // ── 4. FORGOT + LOGIN ───────────────────────────────────────────────────────
-  // RREGULL I ARTË (urdhër pronari): pas një kodi TË VLEFSHËM, platforma NJEH GJITHMONË
-  // përdoruesin — kurrë rrugë pa krye "nuk je i regjistruar". Kodi vërteton zotërimin e
-  // numrit/email-it; nëse llogaria s'ekziston (dikush shkoi te "Rikthe llogarinë" pa u
-  // regjistruar më parë), e KRIJOJMË automatikisht dhe e fusim (identike me register).
+  // KUFI I SIGURISË (urdhër pronari, 26 gusht 2026): Rikthimi/Hyrja NUK krijojnë KURRË
+  // llogari të re. Hyrja në llogari kërkon që llogaria të EKZISTOJË — përndryshe do të
+  // hapej një rrugë e re hyrjeje e pamiratuar dhe do cenoheshin të drejtat e aksesit.
+  // Krijimi bëhet VETËM te "Regjistrohu". Nëse llogaria nuk gjendet → mesazh i qartë që
+  // udhëzon drejt regjistrimit (klienti shfaq linkun "Nuk ke llogari? Regjistrohu →").
   {
-    let uid = await findUserId();
-    if (!uid) {
-      for (let attempt = 0; attempt < 2 && !uid; attempt++) {
-        const { data: created, error: createErr } = await admin.auth.admin.createUser({
-          email:         synthEmail,   // vetëm-email — i pavarur nga provideri i telefonit
-          email_confirm: true,
-          user_metadata: {
-            full_name:  fullName,
-            first_name: firstName ?? '',
-            last_name:  lastName  ?? '',
-            age:        age ?? null,
-          },
-        });
-        if (created?.user) { uid = created.user.id; break; }
-        const em = (createErr?.message || '').toLowerCase();
-        if (em.includes('already') || em.includes('registered') || em.includes('exist') || em.includes('duplicate')) {
-          uid = await findUserId();
-          break;
-        }
-        console.error(`forgot/login createUser attempt ${attempt} error:`, createErr);
-        await sleep(300);
-      }
+    const existingId = await findUserId();
+    if (!existingId) {
+      return json({ error: mode === 'forgot'
+        ? 'Ky email/numër telefoni nuk është i regjistruar. Regjistrohu fillimisht.'
+        : 'Ky numër/email nuk është i regjistruar. Regjistrohu fillimisht.' });
     }
-    if (!uid) return json({ error: 'S’u krijua/gjet llogaria për momentin. Provo sërish pas pak.' });
-    await ensureProfile(uid, true); // krijon/plotëson profilin gjithmonë
-    const result = await sessionFor(uid);
+    await ensureProfile(existingId, false); // vetë-shërim i profilit jetim (llogari EKZISTUESE)
+    const result = await sessionFor(existingId);
     return json(result);
   }
 });
