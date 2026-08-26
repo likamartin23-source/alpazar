@@ -197,37 +197,20 @@ Deno.serve(async (req: Request) => {
   }
 
   // ── 4. FORGOT + LOGIN ───────────────────────────────────────────────────────
-  // RREGULL I ARTË (urdhër pronari): pas një kodi TË VLEFSHËM, platforma NJEH GJITHMONË
-  // përdoruesin — kurrë rrugë pa krye "nuk je i regjistruar". Kodi vërteton zotërimin e
-  // numrit/email-it; nëse llogaria s'ekziston (dikush shkoi te "Rikthe llogarinë" pa u
-  // regjistruar më parë), e KRIJOJMË automatikisht dhe e fusim (identike me register).
+  // KUFI I SIGURISË (urdhër pronari, 26 gusht 2026): Rikthimi/Hyrja NUK krijojnë KURRË
+  // llogari të re. Hyrja në llogari kërkon që llogaria të EKZISTOJË — përndryshe do të
+  // hapej një rrugë e re hyrjeje e pamiratuar dhe do cenoheshin të drejtat e aksesit.
+  // Krijimi bëhet VETËM te "Regjistrohu". Nëse llogaria nuk gjendet → mesazh i qartë që
+  // udhëzon drejt regjistrimit (klienti shfaq linkun "Nuk ke llogari? Regjistrohu →").
   {
-    let uid = await findUserId();
-    if (!uid) {
-      for (let attempt = 0; attempt < 2 && !uid; attempt++) {
-        const { data: created, error: createErr } = await admin.auth.admin.createUser({
-          email:         synthEmail,   // vetëm-email — i pavarur nga provideri i telefonit
-          email_confirm: true,
-          user_metadata: {
-            full_name:  fullName,
-            first_name: firstName ?? '',
-            last_name:  lastName  ?? '',
-            age:        age ?? null,
-          },
-        });
-        if (created?.user) { uid = created.user.id; break; }
-        const em = (createErr?.message || '').toLowerCase();
-        if (em.includes('already') || em.includes('registered') || em.includes('exist') || em.includes('duplicate')) {
-          uid = await findUserId();
-          break;
-        }
-        console.error(`forgot/login createUser attempt ${attempt} error:`, createErr);
-        await sleep(300);
-      }
+    const existingId = await findUserId();
+    if (!existingId) {
+      return json({ error: mode === 'forgot'
+        ? 'Ky email/numër telefoni nuk është i regjistruar. Regjistrohu fillimisht.'
+        : 'Ky numër/email nuk është i regjistruar. Regjistrohu fillimisht.' });
     }
-    if (!uid) return json({ error: 'S’u krijua/gjet llogaria për momentin. Provo sërish pas pak.' });
-    await ensureProfile(uid, true); // krijon/plotëson profilin gjithmonë
-    const result = await sessionFor(uid);
+    await ensureProfile(existingId, false); // vetë-shërim i profilit jetim (llogari EKZISTUESE)
+    const result = await sessionFor(existingId);
     return json(result);
   }
 });
