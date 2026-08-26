@@ -115,8 +115,10 @@ export async function GET(req: NextRequest) {
       views: viewsPerListing[l.id] ?? 0,
       total_views: l.views_count ?? 0,
       contacts: contactMap[l.id] ?? 0,
-      ctr: l.views_count > 0
-        ? Math.round(((contactMap[l.id] ?? 0) / l.views_count) * 100)
+      // CTR koherent me zgjedhësin e periudhës: kontakte-periudhe ÷ pamje-periudhe
+      // (më parë pjesëtohej me views_count të GJITHË kohës → CTR i nënvlerësuar/jokoherent).
+      ctr: (viewsPerListing[l.id] ?? 0) > 0
+        ? Math.round(((contactMap[l.id] ?? 0) / (viewsPerListing[l.id] ?? 0)) * 100)
         : 0,
     }))
     .sort((a: any, b: any) => b.views - a.views)

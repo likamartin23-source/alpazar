@@ -21,15 +21,28 @@ const DAY_KEYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const
 function openNowFromHours(h: any): boolean | null {
   const days = h?.days
   if (!days || typeof days !== 'object') return null
-  const now = new Date()
-  const d = days[DAY_KEYS[now.getDay()]]
+  // Ora e SHQIPËRISË (Europe/Tirane), jo e pajisjes së vizitorit — orari i biznesit është
+  // lokal; një vizitor jashtë vendit (ose me orë të gabuar) përndryshe sheh gjendje të pasaktë.
+  let dayIdx: number, cur: number
+  try {
+    const p = Object.fromEntries(
+      new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Tirane', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
+        .formatToParts(new Date()).map(x => [x.type, x.value]),
+    )
+    const wd: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 }
+    dayIdx = wd[p.weekday as string] ?? new Date().getDay()
+    cur = Number(p.hour) * 60 + Number(p.minute)
+  } catch {
+    const n = new Date(); dayIdx = n.getDay(); cur = n.getHours() * 60 + n.getMinutes()
+  }
+  const d = days[DAY_KEYS[dayIdx]]
   if (!d) return null
   if (d.closed) return false
   if (!d.open || !d.close) return null
   const [oh, om] = String(d.open).split(':').map(Number)
   const [ch, cm] = String(d.close).split(':').map(Number)
   if ([oh, om, ch, cm].some(x => !Number.isFinite(x))) return null
-  const cur = now.getHours() * 60 + now.getMinutes(), o = oh * 60 + om, c = ch * 60 + cm
+  const o = oh * 60 + om, c = ch * 60 + cm
   return c <= o ? (cur >= o || cur < c) : (cur >= o && cur < c) // c<=o => kalon mesnatën
 }
 // "Përgjigjet ~N orë/ditë" nga business_response_time (median në orë).
