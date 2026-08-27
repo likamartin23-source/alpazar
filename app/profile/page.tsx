@@ -460,7 +460,7 @@ export default function ProfilePage() {
         .avatar{width:76px;height:76px;border-radius:50%;background:#F5C842;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 12px;border:3px solid #F5C842;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.3);}
         .avatar img{width:100%;height:100%;object-fit:cover;}
         .name{font-size:19px;font-weight:800;color:#1a1a1a;}
-        .handle{font-size:12px;color:#888;margin-top:4px;}
+        .handle{font-size:12px;color:#555;margin-top:4px;}
         .email-row{font-size:11px;color:#666;display:flex;align-items:center;gap:6px;margin-top:4px;justify-content:center;}
         .badges-row{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap;}
         .badge{font-size:10px;padding:4px 10px;border-radius:6px;font-weight:700;}
@@ -620,7 +620,7 @@ export default function ProfilePage() {
               </button>
             )}
           </div>
-          {profile?.city && <div style={{ fontSize: 11, color: '#888', marginBottom: 4 }}><span aria-hidden="true">📍</span> {profile.city}{profile?.created_at ? ` · Anëtar prej ${new Date(profile.created_at).getFullYear()}` : ''}</div>}
+          {profile?.city && <div style={{ fontSize: 11, color: '#555', marginBottom: 4 }}><span aria-hidden="true">📍</span> {profile.city}{profile?.created_at ? ` · Anëtar prej ${new Date(profile.created_at).getFullYear()}` : ''}</div>}
           <div className="email-row" style={{ justifyContent: 'flex-start' }}><i className="ti ti-mail" aria-hidden="true" />{user?.email}</div>
           <div className="badges-row" style={{ justifyContent: 'flex-start', marginTop: 8 }}>
             {profile?.is_admin && <span className="badge b-admin"><span aria-hidden="true">🛡</span> Admin</span>}
