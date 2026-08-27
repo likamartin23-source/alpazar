@@ -726,7 +726,7 @@ export default function MessagesPage() {
         .empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 24px;text-align:center;}
         .empty-emoji{font-size:62px;margin-bottom:16px;}
         .empty h3{font-size:16px;font-weight:700;color:#555;margin-bottom:8px;}
-        .empty p{font-size:12px;color:#aaa;line-height:1.8;margin-bottom:20px;}
+        .empty p{font-size:12px;color:#555;line-height:1.8;margin-bottom:20px;}
         .empty-cta{background:#111;color:#F5C842;border:none;border-radius:12px;padding:13px 26px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
 
         /* Chat area */
@@ -885,7 +885,7 @@ export default function MessagesPage() {
         /* Confirm */
         .confirm-card{background:#fff;border-radius:20px;padding:24px;max-width:340px;width:100%;animation:popIn .15s;text-align:center;}
         .confirm-title{font-size:16px;font-weight:700;color:#111;margin-bottom:8px;}
-        .confirm-desc{font-size:13px;color:#888;line-height:1.6;margin-bottom:20px;}
+        .confirm-desc{font-size:13px;color:#555;line-height:1.6;margin-bottom:20px;}
         .confirm-btns{display:flex;gap:10px;}
         .confirm-btn{flex:1;padding:13px;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;}
         .confirm-btn.cancel{background:#f5f5f0;color:#555;}
@@ -902,7 +902,7 @@ export default function MessagesPage() {
         .lightbox img{max-width:100%;max-height:90dvh;object-fit:contain;}
 
         /* Spinner */
-        .spin-center{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:#888;font-size:12px;}
+        .spin-center{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:#555;font-size:12px;}
         .spinner{width:26px;height:26px;border:3px solid #F5C842;border-top-color:#E63312;border-radius:50%;animation:spin .7s linear infinite;}
 
         @keyframes spin{to{transform:rotate(360deg)}}
@@ -1056,7 +1056,7 @@ export default function MessagesPage() {
             <div style={{ padding:'4px 20px 20px', textAlign:'center' }}>
               <div style={{ fontSize:52, marginBottom:10 }} aria-hidden="true">💬</div>
               <div style={{ fontWeight:700, fontSize:16, color:'#111', marginBottom:8 }}>Vazhdo në WhatsApp</div>
-              <div style={{ fontSize:13, color:'#888', lineHeight:1.7, marginBottom:20 }}>
+              <div style={{ fontSize:13, color:'#555', lineHeight:1.7, marginBottom:20 }}>
                 Do të hapësh WhatsApp me <strong>{displayName(selected.other)}</strong>.
               </div>
               <a href={waLink} target="_blank" rel="noopener noreferrer"
@@ -1079,7 +1079,7 @@ export default function MessagesPage() {
             <div style={{ padding:'4px 20px 20px', textAlign:'center' }}>
               <div style={{ fontSize:52, marginBottom:10 }} aria-hidden="true">📲</div>
               <div style={{ fontWeight:700, fontSize:16, color:'#111', marginBottom:8 }}>Vazhdo në Viber</div>
-              <div style={{ fontSize:13, color:'#888', lineHeight:1.7, marginBottom:20 }}>
+              <div style={{ fontSize:13, color:'#555', lineHeight:1.7, marginBottom:20 }}>
                 Do të hapësh Viber me <strong>{displayName(selected.other)}</strong>.
               </div>
               <a href={viberLink}
@@ -1171,7 +1171,7 @@ export default function MessagesPage() {
                     <div style={{ background:'rgba(255,255,255,.8)', borderRadius:16, padding:'20px 24px', display:'inline-block', maxWidth:280 }}>
                       <Avatar profile={selected.other} size={60} online={isOtherOnline} />
                       <div style={{ fontWeight:700, fontSize:14, color:'#111', marginTop:10 }}>{displayName(selected.other)}</div>
-                      <div style={{ fontSize:12, color:'#888', marginTop:4 }}>Mesazhet janë private dhe të sigurta <span aria-hidden="true">🔒</span></div>
+                      <div style={{ fontSize:12, color:'#555', marginTop:4 }}>Mesazhet janë private dhe të sigurta <span aria-hidden="true">🔒</span></div>
                     </div>
                   </div>
                 )}

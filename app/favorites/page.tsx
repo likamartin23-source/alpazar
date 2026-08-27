@@ -77,7 +77,7 @@ export default function FavoritesPage() {
         <div style={{ textAlign: 'center', padding: '60px 24px' }}>
           <div style={{ fontSize: 48, marginBottom: 16 }} aria-hidden="true">❤️</div>
           <div style={{ fontSize: 17, fontWeight: 700, color: '#111', marginBottom: 8 }}>Ende s'ke ruajtur asgjë</div>
-          <div style={{ fontSize: 13, color: '#888', marginBottom: 24 }}>Shfleto shpalljet dhe ruaj ato që të pëlqejnë</div>
+          <div style={{ fontSize: 13, color: '#555', marginBottom: 24 }}>Shfleto shpalljet dhe ruaj ato që të pëlqejnë</div>
           <button
             type="button"
             onClick={() => { window.location.href = '/search' }}

@@ -9,7 +9,7 @@ import { SharePanel } from '../components/SharePanel'
 import { SITE_URL as SITE } from '../../lib/siteConfig'
 
 const LEVELS = [
-  { name: 'Fillestar', icon: '🌱', min: 0,   max: 99,  color: '#888',    bg: '#f5f5f5' },
+  { name: 'Fillestar', icon: '🌱', min: 0,   max: 99,  color: '#555',    bg: '#f5f5f5' },
   { name: 'Tregtar',   icon: '⚡', min: 100, max: 399, color: '#185FA5', bg: '#EEF4FF' },
   { name: 'Ekspert',   icon: '🏆', min: 400, max: 999, color: '#856404', bg: '#FFF4E5' },
   { name: 'Master',    icon: '💎', min: 1000, max: Infinity, color: '#7C3AED', bg: '#F5F3FF' },
@@ -43,10 +43,10 @@ const CSS = `
   .stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:4px;}
   .stat{background:#FFFBEA;border-radius:12px;padding:14px 10px;text-align:center;}
   .stat-n{font-size:22px;font-weight:700;color:#C42B0F;}
-  .stat-l{font-size:10px;color:#888;margin-top:3px;}
+  .stat-l{font-size:10px;color:#555;margin-top:3px;}
   .ref-box{background:#f9f5e0;border:1.5px dashed #F5C842;border-radius:12px;padding:16px;margin-bottom:12px;text-align:center;}
   .ref-code{font-size:22px;font-weight:700;color:#111;letter-spacing:3px;margin-bottom:6px;font-family:monospace;}
-  .ref-url{font-size:11px;color:#888;word-break:break-all;margin-bottom:12px;}
+  .ref-url{font-size:11px;color:#555;word-break:break-all;margin-bottom:12px;}
   .share-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
   .share-btn{border:none;border-radius:12px;padding:11px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;transition:transform .15s ease,box-shadow .15s ease;}
   .share-btn:hover{transform:translateY(-1px);}
@@ -62,16 +62,16 @@ const CSS = `
   .reward-badge{width:38px;height:38px;border-radius:50%;background:#FFF0EE;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
   .reward-info{flex:1;}
   .reward-info strong{font-size:12px;font-weight:700;color:#111;display:block;}
-  .reward-info span{font-size:11px;color:#888;}
+  .reward-info span{font-size:11px;color:#555;}
   .reward-done{font-size:16px;flex-shrink:0;}
   .referral-list{display:flex;flex-direction:column;gap:8px;}
   .ref-row{display:flex;align-items:center;gap:10px;background:#f9f5e0;border-radius:12px;padding:10px 12px;}
   .ref-avatar{width:34px;height:34px;background:#F5C842;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#111;flex-shrink:0;}
   .ref-info{flex:1;}
   .ref-info strong{font-size:12px;font-weight:700;color:#111;display:block;}
-  .ref-info span{font-size:10px;color:#888;}
+  .ref-info span{font-size:10px;color:#555;}
   .ref-pts{font-size:11px;font-weight:700;color:#3B6D11;background:#EAF3DE;padding:3px 8px;border-radius:6px;}
-  .empty-ref{text-align:center;padding:24px;color:#bbb;font-size:12px;}
+  .empty-ref{text-align:center;padding:24px;color:#555;font-size:12px;}
   .login-cta{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;width:100%;font-family:inherit;margin-top:8px;box-shadow:0 4px 14px -3px rgba(230,51,18,.45);transition:transform .15s ease,box-shadow .15s ease;}
   .login-cta:hover{transform:translateY(-1px);box-shadow:0 7px 20px -4px rgba(230,51,18,.55);}
   .msg{padding:10px 14px;border-radius:12px;font-size:12px;font-weight:500;margin-bottom:10px;text-align:center;}
@@ -189,7 +189,7 @@ export default function ReferralPage() {
           ) : !user ? (
             <div className="card">
               <div className="card-title"><i className="ti ti-lock" aria-hidden="true" />Hyr për të parë referalet</div>
-              <p style={{ fontSize: 12, color: '#888', marginBottom: 14 }}>Krijo llogari falas dhe fillo të fitosh pikë duke ftuar miqtë.</p>
+              <p style={{ fontSize: 12, color: '#555', marginBottom: 14 }}>Krijo llogari falas dhe fillo të fitosh pikë duke ftuar miqtë.</p>
               <button type="button" className="login-cta" onClick={() => window.location.href = '/auth/login'}>
                 <span aria-hidden="true">🔑</span> Hyr / Regjistrohu
               </button>

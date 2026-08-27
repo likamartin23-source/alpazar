@@ -28,7 +28,7 @@ export const NEW_LISTING_CSS = `
         .img-zone{border:2px dashed #e0b030;border-radius:10px;padding:20px;text-align:center;cursor:pointer;background:#FFFBEA;}
         .img-zone input{display:none;}
         .img-zone i{font-size:32px;color:#e0b030;display:block;margin-bottom:8px;}
-        .img-zone p{font-size:12px;color:#888;}
+        .img-zone p{font-size:12px;color:#555;}
         .img-previews{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
         .img-prev{width:70px;height:70px;border-radius:8px;object-fit:cover;border:2px solid #F5C842;}
         .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}

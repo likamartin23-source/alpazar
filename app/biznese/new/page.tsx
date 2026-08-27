@@ -36,7 +36,7 @@ export default function BiznesNewPage() {
       </div>
       <div style={{ padding: '20px 16px' }}>
         {ok ? <BusinessForm mode="create" /> : (
-          <div style={{ textAlign: 'center', padding: 40, color: '#888', fontSize: 13 }}>Duke ngarkuar…</div>
+          <div style={{ textAlign: 'center', padding: 40, color: '#555', fontSize: 13 }}>Duke ngarkuar…</div>
         )}
       </div>
     </div>

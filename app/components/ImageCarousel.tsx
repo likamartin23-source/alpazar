@@ -175,7 +175,7 @@ export function ImageCarousel({ images, videos, poster, alt = '', aspectRatio = 
                       if (wrap && !wrap.querySelector('.img-err')) {
                         const d = document.createElement('div')
                         d.className = 'img-err'
-                        d.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#ccc;background:#F6F6F6;'
+                        d.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#555;background:#F6F6F6;'
                         d.innerHTML = '<i class="ti ti-photo" style="font-size:32px"></i><span style="font-size:11px;font-weight:600">Pa foto</span>'
                         wrap.appendChild(d)
                       }

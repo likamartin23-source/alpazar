@@ -134,7 +134,7 @@ export default function TeDhenatMiaPage() {
         {/* Who am I */}
         {profile && (
           <div style={{ background: '#fff', borderRadius: 14, padding: 16, boxShadow: '0 1px 6px rgba(0,0,0,.06)' }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>Identiteti juaj në Alpazar</div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: '#4A4A4A', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>Identiteti juaj në Alpazar</div>
             <div style={{ fontSize: 13, color: '#333', lineHeight: 2 }}>
               <div><span aria-hidden="true">👤</span> {profile.full_name || profile.username || 'Pa emër'}</div>
               {profile.city && <div><span aria-hidden="true">📍</span> {profile.city}</div>}
@@ -145,7 +145,7 @@ export default function TeDhenatMiaPage() {
 
         {/* Data rights */}
         <div style={{ background: '#fff', borderRadius: 14, padding: 16, boxShadow: '0 1px 6px rgba(0,0,0,.06)' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 }}><span aria-hidden="true">📋</span> Të drejtat tuaja (GDPR)</div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: '#4A4A4A', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 }}><span aria-hidden="true">📋</span> Të drejtat tuaja (GDPR)</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 12, color: '#555', lineHeight: 1.6, marginBottom: 14 }}>
             <div><span aria-hidden="true">🔍</span> <strong>Art.15</strong> — E drejta e aksesit (shko tek profili yt)</div>
             <div><span aria-hidden="true">✏️</span> <strong>Art.16</strong> — E drejta e korrigjimit (edito profilin)</div>
@@ -165,7 +165,7 @@ export default function TeDhenatMiaPage() {
 
         {/* Marketing opt-in */}
         <div style={{ background: '#fff', borderRadius: 14, padding: 16, boxShadow: '0 1px 6px rgba(0,0,0,.06)' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}><span aria-hidden="true">📢</span> Komunikim marketing</div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: '#4A4A4A', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}><span aria-hidden="true">📢</span> Komunikim marketing</div>
           <label style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer', padding: '4px 0' }}>
             <input
               type="checkbox"
@@ -176,7 +176,7 @@ export default function TeDhenatMiaPage() {
             />
             <div>
               <div style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>Pranoj njoftime marketingu</div>
-              <div style={{ fontSize: 11, color: '#888', marginTop: 2, lineHeight: 1.5 }}>Oferta speciale, lajme, këshilla. Mund ta heqësh kurdo. (GDPR Art.7 — konsensum i lirë)</div>
+              <div style={{ fontSize: 11, color: '#555', marginTop: 2, lineHeight: 1.5 }}>Oferta speciale, lajme, këshilla. Mund ta heqësh kurdo. (GDPR Art.7 — konsensum i lirë)</div>
             </div>
           </label>
         </div>
@@ -229,7 +229,7 @@ export default function TeDhenatMiaPage() {
           )}
         </div>
 
-        <div style={{ textAlign: 'center', fontSize: 11, color: '#888', lineHeight: 1.6, padding: '8px 0' }}>
+        <div style={{ textAlign: 'center', fontSize: 11, color: '#555', lineHeight: 1.6, padding: '8px 0' }}>
           Për çdo kërkesë tjetër GDPR kontaktoni: <a href="mailto:alpazarsuport@gmail.com" style={{ color: '#C42B0F' }}>alpazarsuport@gmail.com</a>
           <br />
           Rregullorja (EU) 2016/679 · Ligj 9887/2008 (Shqipëri)

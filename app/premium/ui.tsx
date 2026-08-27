@@ -11,7 +11,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA}
 .tiers{display:flex;gap:8px;margin-bottom:12px}
 .tr{flex:1;border:2px solid #eee;background:#fff;border-radius:12px;padding:10px 8px;cursor:pointer;font-family:inherit;text-align:center}
 .tr b{display:block;font-size:13px;font-weight:800;color:#111}
-.tr span{display:block;font-size:10px;color:#999;margin-top:2px}
+.tr span{display:block;font-size:10px;color:#555;margin-top:2px}
 .tr.on{border-color:#E63312;background:#FFFDF6}
 .tr.boost.on{border-color:#7C3AED;background:#F8F5FF}
 .hero{background:linear-gradient(135deg,#111,#2a2a2a);border-radius:14px;padding:18px 16px;margin-bottom:14px}
@@ -29,7 +29,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA}
 .p-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
 .p-name{font-size:15px;font-weight:800;color:#111}
 .tag{background:#F5C842;color:#111;font-size:8px;font-weight:800;padding:2px 6px;border-radius:5px;margin-left:6px;vertical-align:middle}
-.p-desc{font-size:11px;color:#888;margin-top:3px}
+.p-desc{font-size:11px;color:#555;margin-top:3px}
 .p-price{text-align:right;white-space:nowrap}
 .p-price b{display:block;font-size:19px;font-weight:800;color:#C42B0F}
 .p-price span{font-size:10px;color:#aaa}
@@ -46,7 +46,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA}
 .total b{font-size:17px;font-weight:800;color:#111}
 .cta{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px}
 .cta:disabled{opacity:.5;cursor:not-allowed}
-.center{text-align:center}.muted{color:#888;font-size:12px}.small{font-size:11px;margin-top:8px;text-align:center;line-height:1.5}
+.center{text-align:center}.muted{color:#555;font-size:12px}.small{font-size:11px;margin-top:8px;text-align:center;line-height:1.5}
 .note{background:#FFFBEA;border:.5px solid #F5C842;border-radius:9px;padding:10px 12px;font-size:12px;color:#5d4a00;margin-bottom:12px;line-height:1.5}
 .note.ok{background:#EAF3DE;border-color:#97C459;color:#3B6D11}
 .note a{color:#C42B0F;font-weight:700}

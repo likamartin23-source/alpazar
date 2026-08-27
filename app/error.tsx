@@ -35,7 +35,7 @@ export default function GlobalError({
             <h2 style={{ fontSize: 18, fontWeight: 700, color: '#111', margin: '0 0 8px' }}>
               Ndodhi një gabim
             </h2>
-            <p style={{ fontSize: 13, color: '#888', lineHeight: 1.6, margin: '0 0 24px' }}>
+            <p style={{ fontSize: 13, color: '#555', lineHeight: 1.6, margin: '0 0 24px' }}>
               {error?.message
                 ? error.message.slice(0, 200)
                 : 'Diçka nuk shkoi siç duhet. Provo të rifreskosh faqen.'}

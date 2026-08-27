@@ -65,7 +65,7 @@ export function ListingTop({ p }: any) {
                   <option value="EUR">€ (Euro)</option>
                 </select>
               </div>
-              <p style={{ fontSize: 10, color: '#aaa', marginTop: 4 }}>Lër bosh për "Çmim me marrëveshje"</p>
+              <p style={{ fontSize: 10, color: '#555', marginTop: 4 }}>Lër bosh për "Çmim me marrëveshje"</p>
               <button
                 type="button"
                 onClick={suggestPrice}

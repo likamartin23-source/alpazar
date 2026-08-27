@@ -116,7 +116,7 @@ export async function POST(req: NextRequest) {
               <hr style="border:none;border-top:1px solid #eee;margin:16px 0;">
               <p style="white-space:pre-wrap;">${esc(message)}</p>
             </div>
-            <p style="font-size:11px;color:#aaa;margin-top:12px;text-align:center;">
+            <p style="font-size:11px;color:#555;margin-top:12px;text-align:center;">
               Alpazar · Platformë e shpalljeve në Shqipëri
             </p>
           </div>`,
@@ -159,7 +159,7 @@ export async function POST(req: NextRequest) {
           <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;">
             <div style="background:#111;padding:24px;border-radius:12px 12px 0 0;text-align:center;">
               <h1 style="color:#F5C842;font-size:28px;letter-spacing:3px;margin:0;">ALPAZAR</h1>
-              <p style="color:#888;margin:8px 0 0;font-size:14px;">Platformë e shpalljeve në Shqipëri</p>
+              <p style="color:#555;margin:8px 0 0;font-size:14px;">Platformë e shpalljeve në Shqipëri</p>
             </div>
             <div style="background:#fff;border:1px solid #eee;border-top:none;padding:28px;border-radius:0 0 12px 12px;text-align:center;">
               <div style="font-size:48px;margin-bottom:16px;">🎉</div>
@@ -171,7 +171,7 @@ export async function POST(req: NextRequest) {
               <a href="${SITE_URL}" style="background:#E63312;color:#fff;text-decoration:none;padding:14px 32px;border-radius:10px;font-weight:700;font-size:15px;display:inline-block;">
                 Hap Alpazar →
               </a>
-              <p style="color:#aaa;font-size:12px;margin-top:24px;">
+              <p style="color:#555;font-size:12px;margin-top:24px;">
                 Nëse nuk e krijove ti këtë llogari, mund ta injorosh këtë email.
               </p>
             </div>

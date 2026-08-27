@@ -139,7 +139,7 @@ export function ReportSheet({
             <div style={{ fontWeight: 700, marginTop: 6 }}>
               {mbaroi === 'ligjor' ? 'Njoftimi u regjistrua' : 'Faleminderit'}
             </div>
-            <div style={{ fontSize: 12, color: '#888', marginTop: 6, lineHeight: 1.6 }}>
+            <div style={{ fontSize: 12, color: '#555', marginTop: 6, lineHeight: 1.6 }}>
               {mbaroi === 'ligjor'
                 ? 'Do të marrësh përgjigje me shkrim në email-in që dhe. Përmbajtja e paligjshme trajtohet menjëherë.'
                 : 'Raporti shkoi te moderimi. Nuk i tregohet shitësit se kush raportoi.'}
@@ -161,7 +161,7 @@ export function ReportSheet({
                   <span style={{ flex: 1 }}>
                     {a.etiketa}
                     {a.ndihme && (
-                      <span style={{ display: 'block', fontSize: 10.5, color: '#999', marginTop: 2 }}>
+                      <span style={{ display: 'block', fontSize: 10.5, color: '#555', marginTop: 2 }}>
                         {a.ndihme}
                       </span>
                     )}
@@ -175,7 +175,7 @@ export function ReportSheet({
 
             {ligjore.length > 0 && (
               <>
-                <div style={{ fontSize: 11, color: '#999', margin: '2px 0 7px', fontWeight: 600 }}>
+                <div style={{ fontSize: 11, color: '#555', margin: '2px 0 7px', fontWeight: 600 }}>
                   Njoftim ligjor — për mbajtësit e një të drejte
                 </div>
                 <div className="reason-list">
@@ -245,7 +245,7 @@ export function ReportSheet({
               {duke ? 'Duke dërguar…' : eshteLigjor ? 'Dërgo njoftimin ligjor' : 'Dërgo raportin'}
             </button>
 
-            <div style={{ fontSize: 10.5, color: '#bbb', textAlign: 'center', marginTop: 10, lineHeight: 1.6 }}>
+            <div style={{ fontSize: 10.5, color: '#555', textAlign: 'center', marginTop: 10, lineHeight: 1.6 }}>
               {eshteLigjor
                 ? 'Njoftimet për përmbajtje të paligjshme trajtohen brenda një ore.'
                 : 'Raportet shqyrtohen sipas rëndësisë. Identiteti yt nuk i tregohet shitësit.'}

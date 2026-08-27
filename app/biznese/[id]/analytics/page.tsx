@@ -91,7 +91,7 @@ export default function BiznesAnalyticsPage() {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: 12 }}>
       <div style={{ width: 36, height: 36, border: '3px solid #E63312', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
       <style dangerouslySetInnerHTML={{ __html: `@keyframes spin{to{transform:rotate(360deg)}}` }} />
-      <span style={{ fontSize: 13, color: '#888' }}>Duke ngarkuar analitikën…</span>
+      <span style={{ fontSize: 13, color: '#555' }}>Duke ngarkuar analitikën…</span>
     </div>
   )
 
@@ -101,11 +101,11 @@ export default function BiznesAnalyticsPage() {
     <div style={{ maxWidth: 480, margin: '0 auto', padding: '0 0 80px', fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif", background: '#f8f8f8', minHeight: '100vh' }}>
       <style dangerouslySetInnerHTML={{ __html: `
         .an-card{background:#fff;border-radius:14px;padding:16px;margin:10px 12px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
-        .an-title{font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;}
+        .an-title{font-size:13px;font-weight:700;color:#4A4A4A;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;}
         .stat-row{display:flex;gap:10px;}
         .stat-box{flex:1;background:#f8f8f8;border-radius:10px;padding:12px;text-align:center;}
         .stat-num{font-size:24px;font-weight:800;color:#111;}
-        .stat-lbl{font-size:11px;color:#888;margin-top:2px;}
+        .stat-lbl{font-size:11px;color:#555;margin-top:2px;}
         .period-row{display:flex;gap:6px;margin:12px 12px 0;}
         .period-btn{flex:1;padding:8px;border-radius:9px;border:1.5px solid #eee;background:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
         .period-btn.active{background:#E63312;color:#fff;border-color:#E63312;}
@@ -133,7 +133,7 @@ export default function BiznesAnalyticsPage() {
       </div>
 
       {!hasData ? (
-        <div className="an-card" style={{ textAlign: 'center', padding: '40px 20px', color: '#888' }}>
+        <div className="an-card" style={{ textAlign: 'center', padding: '40px 20px', color: '#555' }}>
           <div style={{ fontSize: 40, marginBottom: 10 }} aria-hidden="true">📊</div>
           <div style={{ fontSize: 14, fontWeight: 700, color: '#666', marginBottom: 4 }}>Ende pa të dhëna</div>
           <div style={{ fontSize: 12 }}>Statistikat shfaqen kur shpalljet e biznesit të marrin pamje dhe kontakte.</div>

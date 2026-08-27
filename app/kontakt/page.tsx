@@ -53,13 +53,13 @@ export default function Kontakt() {
     .hero{background:#111;padding:32px 20px;text-align:center;}
     .hero-icon{font-size:52px;display:block;margin-bottom:12px;}
     .hero h1{color:#F5C842;font-size:22px;font-weight:700;margin-bottom:8px;}
-    .hero p{color:#888;font-size:13px;line-height:1.6;}
+    .hero p{color:#555;font-size:13px;line-height:1.6;}
     .body{padding:20px 16px 40px;}
     .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
     .ccard{background:#fff;border-radius:12px;padding:18px;border:0.5px solid #eee;text-align:center;text-decoration:none;}
     .ccard i{font-size:28px;color:#C42B0F;display:block;margin-bottom:10px;}
     .ccard strong{font-size:13px;font-weight:700;color:#111;display:block;margin-bottom:4px;}
-    .ccard span{font-size:11px;color:#888;}
+    .ccard span{font-size:11px;color:#555;}
     .section{background:#fff;border-radius:12px;padding:18px;border:0.5px solid #eee;margin-bottom:14px;}
     .sec-title{font-size:13px;font-weight:700;color:#111;margin-bottom:14px;display:flex;align-items:center;gap:7px;}
     .sec-title i{font-size:16px;color:#C42B0F;}
@@ -72,7 +72,7 @@ export default function Kontakt() {
     .hours span:first-child{color:#555;}
     .hours span:last-child{color:#111;font-weight:600;}
     .ftr{display:flex;flex-wrap:wrap;gap:8px 16px;padding:20px;background:#f9f9f9;border-top:1px solid #eee;}
-    .ftr a{color:#888;font-size:11px;text-decoration:none;}
+    .ftr a{color:#555;font-size:11px;text-decoration:none;}
     .form-field{margin-bottom:12px;}
     .form-field label{font-size:11px;font-weight:600;color:#555;display:block;margin-bottom:4px;}
     .form-field input,.form-field textarea{width:100%;border:1.5px solid #ddd;border-radius:10px;padding:11px 13px;font-size:13px;font-family:inherit;outline:none;background:#fff;color:#111;transition:border .15s;}
@@ -187,7 +187,7 @@ export default function Kontakt() {
             <p style={{ fontSize: 13, color: '#444', lineHeight: 1.7 }}>
               Alpazar<br />
               Tiranë, Shqipëri<br />
-              <span style={{ fontSize: 11, color: '#888' }}>NIPT/QKB: (në regjistrim)</span>
+              <span style={{ fontSize: 11, color: '#555' }}>NIPT/QKB: (në regjistrim)</span>
             </p>
             <a
               href="https://www.google.com/maps/search/Tiranë,+Shqipëri"

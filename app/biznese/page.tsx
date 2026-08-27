@@ -148,7 +148,7 @@ export default function BiznestPage() {
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '48px 16px', color: '#888' }}>
+          <div style={{ textAlign: 'center', padding: '48px 16px', color: '#555' }}>
             <div style={{ fontSize: 40, marginBottom: 10 }} aria-hidden="true">🏢</div>
             <div style={{ fontSize: 14, fontWeight: 600 }}>{search || typeFilter ? 'Asnjë biznes nuk përputhet' : 'Asnjë biznes ende'}</div>
             {(search || typeFilter) && (
