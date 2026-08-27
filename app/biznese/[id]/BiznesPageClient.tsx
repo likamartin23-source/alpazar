@@ -816,17 +816,26 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
             </div>
           )}
 
-          {/* Reputacioni: TrustBadge (0-100 + nivel), si karta e shitesit.
-              BP2 C4: rating-u ★ shfaqet VETËM te tab-i "Vlerësime" — koka nuk mban chip ★
-              (kudo tjetër 👁+🔴). Chip-i i vjetër i rating-ut u hoq nga koka. "N të shitura"
-              është te matrica 4-kuti më poshtë (një vend i vetëm). */}
+          {/* Reputacioni (RESTAURIMI FINAL, dëshifrimi B — zëvendëson BP2 C4): koka publike e
+              biznesit shfaq ★ rating + "📦 Shitës aktiv" + "⚡ pikë" + TrustBadge unazë "X/100". */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
-            <TrustBadge createdAt={biz.created_at} listingsActive={listings.length} gamificationPoints={pronari?.gamification_points || 0} />
+            {rating.count > 0 && rating.avg != null && (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#FFF8E1', color: '#7B5000', border: '1px solid #F5C84255', borderRadius: 9, padding: '4px 10px', fontSize: 12.5, fontWeight: 800 }}>
+                <span aria-hidden="true">★</span> {rating.avg.toFixed(1)}
+                <span style={{ fontWeight: 600, color: '#9a7b2a' }}>({rating.count})</span>
+              </span>
+            )}
+            {listings.length > 0 && (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 700, color: '#0E7A35', background: '#E7F6EC', border: '1px solid #0E7A3533', borderRadius: 9, padding: '4px 10px' }}>
+                <span aria-hidden="true">📦</span> Shitës aktiv
+              </span>
+            )}
             {(pronari?.gamification_points || 0) > 0 && (
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 700, color: '#7A4A00', background: '#FFF8E1', border: '1px solid #F5C84255', borderRadius: 9, padding: '4px 10px' }}>
                 <span aria-hidden="true">⚡</span> {pronari?.gamification_points} pikë
               </span>
             )}
+            <TrustBadge createdAt={biz.created_at} listingsActive={listings.length} gamificationPoints={pronari?.gamification_points || 0} />
           </div>
 
           {/* Stats row — matrica e ngrire (BLLOKU Imazhi 4): Shpallje / Të shitura /
