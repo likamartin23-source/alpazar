@@ -90,11 +90,17 @@ async function compress(file: File): Promise<Blob> {
 
 function friendlyUploadError(msg: string): string {
   const m = String(msg || '')
-  // Mesazhe të NDERSHME — pa fajësuar WiFi-n kur s'e dimë. Timeout ≠ "rrjet i keq".
+  // Mesazhe të NDERSHME dhe GJITHMONË SHQIP (asnjë gabim i papërkthyer nga serveri).
+  if (/exceeded the maximum allowed size|maximum allowed size|payload too large|entity too large|413/i.test(m))
+    return 'Skedari është shumë i madh dhe tejkalon kufirin e ngarkimit. Shkurtoje ose ul cilësinë.'
   if (/timed? ?out/i.test(m))
-    return 'Ngarkimi zgjati shumë (skedar i madh ose server i ngadaltë) edhe pas disa provash. Provo sërish ose një foto pak më të vogël.'
+    return 'Ngarkimi zgjati shumë (skedar i madh ose server i ngadaltë) edhe pas disa provash. Provo sërish ose një skedar pak më të vogël.'
   if (/failed to fetch|network|load failed|connection|nderpre/i.test(m))
     return 'Ngarkimi u ndërpre edhe pas disa provash automatike. Provo sërish.'
+  if (/exceed|too large|limit/i.test(m))
+    return 'Skedari tejkalon kufirin e lejuar. Shkurtoje ose ul cilësinë.'
+  if (/permission|denied|unauthorized|forbidden|row-level|policy|jwt/i.test(m))
+    return 'Nuk u lejua ngarkimi. Dil e hyr sërish në llogari dhe provo prapë.'
   return m
 }
 
