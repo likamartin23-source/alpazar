@@ -146,6 +146,16 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
     return () => io.disconnect()
   }, [])
   const live = useSyteLive(visible ? l.id : undefined)
+  // Autoplay i besueshëm në feed: kur karta hyn në pamje, e nisim videon SHPRESHIMISHT (muted),
+  // sepse vetëm atributi `autoPlay` shpesh s'mjafton në Chrome-in celular. Fail-soft ndaj politikës.
+  const vref = useRef<HTMLVideoElement>(null)
+  useEffect(() => {
+    const v = vref.current
+    if (!v || !visible) return
+    v.muted = true
+    const p = v.play()
+    if (p && typeof (p as any).catch === 'function') (p as any).catch(() => { /* autoplay-policy: fail-soft */ })
+  }, [visible])
   const open = () => go(`/listing/${l.id}`)
 
   return (
@@ -166,9 +176,10 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
             Muted+playsInline → autoplay lejohet nga shfletuesit; preload='none' → pa kosto kur s'duket. */}
         {videoUrl && visible
           ? <video
+              ref={vref}
               src={videoUrl}
               poster={l.video_poster || undefined}
-              autoPlay muted loop playsInline preload="none"
+              autoPlay muted loop playsInline preload="metadata"
               aria-label={l.title}
               style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', background: '#0e0e0e' }}
             />
