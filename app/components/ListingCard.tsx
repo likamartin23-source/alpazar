@@ -51,6 +51,8 @@ export type ListingCardItem = {
   images?: string[] | null
   /** Poster i videos (thumbnail) — përdoret si kopertinë kur shpallja s'ka foto (video-only). */
   video_poster?: string | null
+  /** Videot e shpalljes — për autoplay në feed (vetëm-video). E para përdoret në kartë. */
+  videos?: { url: string; poster?: string | null; duration?: number | null }[] | null
   is_premium?: boolean | null
   rank_tier?: number | null
   created_at?: string | null
@@ -114,6 +116,12 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
   // qe mban vetem `is_premium`.
   const biz = l.business_id && l.business ? l.business : null
   const tier = tierNgaRankTier(l.rank_tier)
+  // Shpallje vetëm-video (pa foto) → luajmë videon në kartë kur hyn në pamje. Përndryshe kopertina
+  // mbetet foto/poster. URL-ja e videos vjen nga projeksioni i përbashkët (LISTING_SELECT.videos).
+  const videoUrl = (!l.images?.[0] && l.videos?.[0]?.url) ? l.videos[0].url : null
+  // Kopertina statike: foto e parë ose posteri i videos (kur s'ka foto). Përdoret jashtë pamjes
+  // dhe kur s'ka URL videoje në projeksion (p.sh. disa feed-e që s'kërkojnë `videos`).
+  const cover = l.images?.[0] || l.video_poster || null
   // Prania LIVE e shitësit-person (BLLOKU Imazhi 2: overlay unazë + online/offline).
   const authorOnline = useIsOnline(author?.id)
   // 🔴 Sytë live për kartën (BLLOKU I PËRMIRËSUAR §2a): THROTTLE me IntersectionObserver
@@ -153,25 +161,40 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
     >
       <div className="card-img">
         {/* Kopertina: foto e parë, ose posteri i videos kur shpallja është vetëm-video (pa foto).
-            Kështu shpalljet me video shfaqen edhe në kryefaqe/feed, jo si kuti bosh. */}
-        {(l.images?.[0] || l.video_poster)
-          ? <img
-              src={l.images?.[0] || l.video_poster || ''}
-              alt={l.title}
-              loading={index < 3 ? 'eager' : 'lazy'}
-              fetchPriority={index < 3 ? 'high' : 'auto'}
-              decoding="async"
-              width={400}
-              height={300}
-              onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+            Për shpalljet vetëm-video: kur karta hyn NË PAMJE (IntersectionObserver → `visible`),
+            luajmë videon vetë, pa zë, në lak (rrjedhshëm në feed); jashtë pamjes tregojmë posterin.
+            Muted+playsInline → autoplay lejohet nga shfletuesit; preload='none' → pa kosto kur s'duket. */}
+        {videoUrl && visible
+          ? <video
+              src={videoUrl}
+              poster={l.video_poster || undefined}
+              autoPlay muted loop playsInline preload="none"
+              aria-label={l.title}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', background: '#0e0e0e' }}
             />
-          : <i className="ti ti-photo" style={{ fontSize: 26, color: '#ccc' }} aria-hidden="true" />
+          : (cover
+              ? <img
+                  src={cover}
+                  alt={l.title}
+                  loading={index < 3 ? 'eager' : 'lazy'}
+                  fetchPriority={index < 3 ? 'high' : 'auto'}
+                  decoding="async"
+                  width={400}
+                  height={300}
+                  onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+                />
+              : <i className="ti ti-photo" style={{ fontSize: 26, color: '#ccc' }} aria-hidden="true" />
+            )
         }
-        {/* Tregues ▶ kur karta është video-only (asnjë foto, por ka poster videoje). */}
-        {!l.images?.[0] && l.video_poster && (
+        {/* Tregues ▶ vetëm kur karta video-only ende s'ka hyrë në pamje (tregon posterin). */}
+        {videoUrl && !visible && (
           <span aria-label="Video" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', zIndex: 2, width: 40, height: 40, borderRadius: '50%', background: 'rgba(0,0,0,.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
             <i className="ti ti-player-play-filled" style={{ fontSize: 18, color: '#fff' }} aria-hidden="true" />
           </span>
+        )}
+        {/* Distinktivi VIDEO kur karta është vetëm-video (sinjal i njohur, si te faqja e shpalljes). */}
+        {videoUrl && (
+          <span aria-hidden="true" style={{ position: 'absolute', top: 6, left: 6, zIndex: 3, background: 'rgba(230,51,18,.92)', color: '#fff', fontSize: 8.5, fontWeight: 800, padding: '2px 6px', borderRadius: 6, letterSpacing: '.4px' }}>VIDEO</span>
         )}
         {l.condition === 'i_ri' && <span className="badge-new">I ri</span>}
         {l.condition === 'i_perdorur' && <span className="badge-used">I përdorur</span>}
