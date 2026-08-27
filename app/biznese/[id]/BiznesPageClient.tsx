@@ -810,17 +810,11 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
             </div>
           )}
 
-          {/* Reputacioni: rating agregat (vetem kur ka reviews — Notion §5B/5) +
-              TrustBadge (0-100 + nivel), si karta e shitesit. */}
+          {/* Reputacioni: TrustBadge (0-100 + nivel), si karta e shitesit.
+              BP2 C4: rating-u ★ shfaqet VETËM te tab-i "Vlerësime" — koka nuk mban chip ★
+              (kudo tjetër 👁+🔴). Chip-i i vjetër i rating-ut u hoq nga koka. "N të shitura"
+              është te matrica 4-kuti më poshtë (një vend i vetëm). */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
-            {rating.count > 0 && rating.avg != null && (
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#FFF8E1', color: '#7B5000', border: '1px solid #F5C84255', borderRadius: 9, padding: '3px 9px', fontSize: 12.5, fontWeight: 800 }}>
-                <span aria-hidden="true">★</span> {rating.avg.toFixed(1)}
-                <span style={{ fontWeight: 600, color: '#9a7b2a' }}>({rating.count})</span>
-              </span>
-            )}
-            {/* H5: chip-i "N të shitura" hiqet — numri "Të shitura" është te matrica 4-kuti
-                më poshtë (një vend i vetëm në kartën e identitetit). */}
             <TrustBadge createdAt={biz.created_at} listingsActive={listings.length} gamificationPoints={0} compact />
           </div>
 
@@ -987,33 +981,9 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
         </div>
       )}
 
-      {/* ── Quick info strip ─────────────────────────────────── */}
-      <div style={{ background: '#fff', margin: '0 0 8px', padding: '4px 16px' }}>
-        {biz.address && (
-          <div className="info-row">
-            <span className="info-icon" aria-hidden="true">📍</span>
-            <span className="info-text">{biz.address}</span>
-          </div>
-        )}
-        {biz.phone && (
-          <div className="info-row">
-            <span className="info-icon" aria-hidden="true">📞</span>
-            <span className="info-text"><a href={`tel:${biz.phone}`}>{biz.phone}</a></span>
-          </div>
-        )}
-        {biz.website && (
-          <div className="info-row">
-            <span className="info-icon" aria-hidden="true">🌐</span>
-            <span className="info-text"><a href={biz.website} target="_blank" rel="noopener noreferrer">{biz.website.replace(/^https?:\/\//, '')}</a></span>
-          </div>
-        )}
-        {biz.hours?.schedule && (
-          <div className="info-row">
-            <span className="info-icon" aria-hidden="true">🕐</span>
-            <span className="info-text">{biz.hours.schedule}</span>
-          </div>
-        )}
-      </div>
+      {/* BP2 B5: "Quick info strip"-i u hoq — përsëriste adresë/telefon/website/orar që
+          shfaqen te tab-i "Rreth & Vlerësime" (kartela "Vendndodhja & Kontakti"). Një vend i
+          vetëm për kontaktin, pa dublim mes strip-it dhe tab-it. */}
 
       </div>{/* /biz-left */}
 

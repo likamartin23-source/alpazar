@@ -318,7 +318,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
     } catch { /* fallback më poshtë */ }
     let q = supabase
       .from('listings')
-      .select('id,title,price,currency,images,condition,city,is_premium,views_count')
+      .select('id,title,price,currency,images,condition,city,is_premium,views_count,rank_tier,created_at,status')
       .eq('category_id', categoryId)
       .eq('is_active', true)
       .neq('id', currentId)
@@ -340,7 +340,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
       // Fallback: broader search without city/price filters
       const { data: fallback } = await supabase
         .from('listings')
-        .select('id,title,price,currency,images,condition,city,is_premium,views_count')
+        .select('id,title,price,currency,images,condition,city,is_premium,views_count,rank_tier,created_at,status')
         .eq('category_id', categoryId)
         .eq('is_active', true)
         .neq('id', currentId)
