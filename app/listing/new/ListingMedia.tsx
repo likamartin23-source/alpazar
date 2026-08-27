@@ -58,7 +58,7 @@ export function ListingMedia({ p }: any) {
             <i className="ti ti-video" aria-hidden="true" />
             <p>Shto video të produktit</p>
             <p style={{ fontSize: 10, marginTop: 4, color: '#bbb' }}>
-              Deri në {vid.maxMin} minuta secila · pa kufi madhësie · max {vidCap} video
+              Deri në {vid.maxMin} minuta secila · deri {vid.maxMb}MB secila · max {vidCap} video
             </p>
           </label>
         )}

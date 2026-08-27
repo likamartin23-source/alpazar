@@ -112,7 +112,7 @@ export function useVideos(setMsg: (m: string) => void, setIsDirty: (b: boolean) 
 
   return {
     items, add, remove, uploadAll, pct, uploading,
-    maxVideos, maxImages, maxListings, maxSec, maxMin, isPremium,
+    maxVideos, maxImages, maxListings, maxSec, maxMin, maxMb, isPremium,
     ready: !!ent, count: items.length, total: reserved + items.length,
   }
 }
