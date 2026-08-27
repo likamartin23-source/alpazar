@@ -66,6 +66,12 @@ export function useVideos(setMsg: (m: string) => void, setIsDirty: (b: boolean) 
         continue
       }
       const d = await probeDuration(f)
+      // Nëse shfletuesi s'e dekodon dot (duration=0 → gabim ngarkimi metadatash), videoja NUK do
+      // të luhet te vizitorët (tipike për H.265/HEVC nga disa telefona). Mos e prano — shpjego qartë.
+      if (d <= 0) {
+        rejected.push(`${f.name}: kjo video s'mund të luhet në shfletues (ndoshta format H.265/HEVC). Regjistroje ose eksportoje si MP4 (H.264) dhe provo sërish.`)
+        continue
+      }
       if (d > maxSec) {
         rejected.push(`${f.name}: ${Math.round(d)}s — maksimumi ${maxMin} minuta`)
         continue

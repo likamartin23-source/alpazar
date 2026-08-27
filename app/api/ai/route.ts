@@ -4,6 +4,24 @@ import { getLiveContext, sanitizeConvo, gtranslate } from './context'
 import { tryGroqStream, tryGroqJSON } from './groq'
 import { NextRequest, NextResponse } from 'next/server'
 import { rateLimit, getClientIp } from '../../../lib/rateLimit'
+import { getSupabaseAdmin } from '../../../lib/supabase-admin'
+
+// Çelësi Anthropic + gjendja "ai_enabled" vijnë nga admin_settings (aty i vendos pronari),
+// jo nga env — kështu Albi punon pa pasur nevojë të dyfishohet çelësi te Vercel. Fallback te env.
+async function getAiConfig(): Promise<{ enabled: boolean; anthropicKey: string | null }> {
+  try {
+    const admin = getSupabaseAdmin()
+    const { data } = await admin.from('admin_settings').select('key, value').in('key', ['anthropic_api_key', 'ai_enabled'])
+    const m: Record<string, string> = {}
+    for (const r of (data ?? []) as { key: string; value: string }[]) m[r.key] = r.value ?? ''
+    return {
+      enabled: (m.ai_enabled ?? 'true') !== 'false',
+      anthropicKey: (m.anthropic_api_key || process.env.ANTHROPIC_API_KEY || '').trim() || null,
+    }
+  } catch {
+    return { enabled: true, anthropicKey: (process.env.ANTHROPIC_API_KEY || '').trim() || null }
+  }
+}
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -58,18 +76,15 @@ export async function POST(req: NextRequest) {
     if (groqReply) return NextResponse.json({ reply: groqReply })
   }
 
-  // 2. Anthropic Claude — fallback non-streaming.
-  //    Disabled by default: the Anthropic account has no credit, so calling it
-  //    only adds latency and pollutes runtime error tracking with 400 "credit
-  //    balance too low" entries. Re-enable instantly by setting the env var
-  //    ANTHROPIC_FALLBACK_ENABLED=true once credits are added.
-  const anthropicKey = process.env.ANTHROPIC_API_KEY
-  if (anthropicKey && process.env.ANTHROPIC_FALLBACK_ENABLED === 'true') {
+  // 2. Anthropic Claude — fallback (çelësi nga admin_settings; aktiv kur ai_enabled + çelës present).
+  //    Nëse llogaria s'ka kredit, gabimi kapet butë dhe shërbehet FAQ (pa ndotur error-tracking).
+  const { enabled: aiEnabled, anthropicKey } = await getAiConfig()
+  if (aiEnabled && anthropicKey) {
     try {
       const client = new Anthropic({ apiKey: anthropicKey, timeout: 25000 })
       const response = await client.messages.create({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 2048,
+        model: 'claude-haiku-4-5-20251001', // i shpejtë e i lirë për sugjerime të shkurtra
+        max_tokens: 1500,
         system: systemPrompt,
         messages: convo,
       })
@@ -77,9 +92,8 @@ export async function POST(req: NextRequest) {
       if (reply) return NextResponse.json({ reply })
     } catch (err: any) {
       const msg = err?.message ?? String(err)
-      // Known/expected when the account is out of credit — keep it out of error tracking.
       if (err?.status === 400 && /credit balance/i.test(msg)) {
-        console.warn('Anthropic fallback skipped (no credit) — serving FAQ')
+        console.warn('Anthropic skipped (no credit) — serving FAQ')
       } else {
         console.error('Anthropic error:', err?.status, msg)
       }
