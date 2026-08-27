@@ -171,11 +171,42 @@ const [searchError, setSearchError] = useState(false)
     setActiveFilterCount(n)
   }, [catFilter, condFilter, cityFilter, priceMin, priceMax, premiumOnly, sortBy])
 
-  // Realtime: update/remove premium + regular listings
+  // Ref-i i filtrave aktualë — që handler-i realtime i INSERT-it të lexojë gjendjen e tanishme
+  // (jo atë të kapur në closure kur u abonua). Përditësohet në çdo render.
+  const filtersRef = useRef({ q, catFilter, condFilter, cityFilter, priceMin, priceMax, premiumOnly, sortBy })
+  filtersRef.current = { q, catFilter, condFilter, cityFilter, priceMin, priceMax, premiumOnly, sortBy }
+
+  // A i përshtatet një shpallje e re filtrave aktualë? Konservativ: kthen false kur s'jemi të
+  // sigurt (p.sh. filtër kategorie i vendosur — shmang përputhje id/slug të gabuar). Zero false-pozitive.
+  function matchesCurrentSearch(r: any): boolean {
+    const f = filtersRef.current
+    if (!r || r.is_active === false) return false
+    if (f.sortBy !== 'newest') return false          // pozicioni i saktë s'dihet pa rirenditje
+    if (f.catFilter) return false                    // shmang paqartësinë id↔slug — del në refresh
+    const qq = (f.q || '').trim().toLowerCase()
+    if (qq && !String(r.title || '').toLowerCase().includes(qq)) return false
+    if (f.condFilter && r.condition !== f.condFilter) return false
+    if (f.cityFilter && !String(r.city || '').toLowerCase().includes(f.cityFilter.trim().toLowerCase())) return false
+    if (f.priceMin && Number(r.price) < Number(f.priceMin)) return false
+    if (f.priceMax && Number(r.price) > Number(f.priceMax)) return false
+    if (f.premiumOnly && !r.is_premium) return false
+    return true
+  }
+
+  // Realtime: shto (INSERT) + përditëso/hiq (UPDATE/DELETE) premium + regular
   useEffect(() => {
     if (!premium.length && !regular.length) return
     const ch = supabase
       .channel('results-rt')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'listings' }, async (payload) => {
+        const row = payload.new as any
+        if (!matchesCurrentSearch(row)) return
+        // Merr projeksionin e plotë (payload-i s'ka join biznes/autor) pastaj vëre në krye.
+        let full: any = row
+        try { const { data } = await supabase.from('listings').select(LISTING_SELECT).eq('id', row.id).maybeSingle(); if (data) full = data } catch { /* fail-soft */ }
+        if (full.is_premium) setPremium(prev => prev.some(l => l.id === full.id) ? prev : [full, ...prev])
+        else setRegular(prev => prev.some(l => l.id === full.id) ? prev : [full, ...prev])
+      })
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'listings' }, (payload) => {
         const n = payload.new as any
         if (!n.is_active) {
