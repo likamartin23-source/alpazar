@@ -85,7 +85,7 @@ export function useVideos(setMsg: (m: string) => void, setIsDirty: (b: boolean) 
       // të luhet te vizitorët (tipike për H.265/HEVC nga disa telefona). E refuzojmë VETËM kur
       // transkodimi automatik është fikur; kur është ndezur, ofruesi e shndërron në H.264 → e lëmë.
       if (d <= 0 && !transcode) {
-        rejected.push(`${f.name}: kjo video s'mund të luhet në shfletues (ndoshta format H.265/HEVC). Regjistroje ose eksportoje si MP4 (H.264) dhe provo sërish.`)
+        rejected.push(`${f.name}: kjo video është format H.265/HEVC dhe s'luhet dot në shfletues. Zgjidhje e shpejtë e falas: te kamera e telefonit → Cilësimet → "Video codec" (ose "Formati i videos") → zgjidh "I përputhshëm / H.264" në vend të "Efikasitet i lartë (HEVC)"; pastaj regjistroje sërish. Ose eksportoje si MP4 (H.264).`)
         continue
       }
       if (d > 0 && d > maxSec) {
