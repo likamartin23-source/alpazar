@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
+import { useRealtimeTable } from '../../hooks/useRealtimeTable'
 import { SkeletonGrid } from '../components/Skeleton'
 import ListingCard from '../components/ListingCard'
 
@@ -17,26 +18,39 @@ export default function FavoritesPage() {
 
   useEffect(() => { setMounted(true) }, [])
 
-  useEffect(() => {
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (!session) { window.location.href = '/auth/login'; return }
-      try {
-        // Join biznesi/personi + rank_tier + status: karta e njesuar shfaq
-        // identitetin (biznes/person), unazen VIP dhe overlay-n "SHITUR".
-        const { data } = await supabase
-          .from('favorites')
-          .select('listing_id, created_at, listings(id,title,price,currency,city,images,condition,is_active,is_premium,created_at,rank_tier,status,business_id,views_count,business:business_id(id,name,logo_url,is_verified),author:user_id(id,full_name,username,avatar_url,is_premium,trust_score))')
-          .eq('user_id', session.user.id)
-          .order('created_at', { ascending: false })
-          .limit(50)
-        setListings((data || []).map((f: any) => f.listings).filter(Boolean))
-      } catch {
-        setLoadError(true)
-      } finally {
-        setLoading(false)
-      }
-    }).catch(() => { setLoadError(true); setLoading(false) })
-  }, [])
+  async function load(silent = false) {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) { window.location.href = '/auth/login'; return }
+    try {
+      // Join biznesi/personi + rank_tier + status: karta e njesuar shfaq
+      // identitetin (biznes/person), unazen VIP dhe overlay-n "SHITUR".
+      const { data } = await supabase
+        .from('favorites')
+        .select('listing_id, created_at, listings(id,title,price,currency,city,images,video_poster,condition,is_active,is_premium,created_at,rank_tier,status,business_id,views_count,business:business_id(id,name,logo_url,is_verified),author:user_id(id,full_name,username,avatar_url,is_premium,trust_score))')
+        .eq('user_id', session.user.id)
+        .order('created_at', { ascending: false })
+        .limit(50)
+      setListings((data || []).map((f: any) => f.listings).filter((l: any) => l && l.is_active !== false))
+    } catch {
+      if (!silent) setLoadError(true)
+    } finally {
+      if (!silent) setLoading(false)
+    }
+  }
+
+  useEffect(() => { load() }, [])
+
+  // Realtime: një të preferuar që i ulet çmimi, shitet, ose hiqet përditësohet LIVE. Patch/heqje
+  // vetëm për shpalljet që janë tashmë në listë (filtri null → handler-i injoron të tjerat).
+  useRealtimeTable<any>(
+    'listings',
+    null,
+    undefined,
+    (row) => setListings(prev => prev.some(l => l.id === row.id)
+      ? (row.is_active === false ? prev.filter(l => l.id !== row.id) : prev.map(l => l.id === row.id ? { ...l, ...row } : l))
+      : prev),
+    (row) => setListings(prev => prev.filter(l => l.id !== row.id)),
+  )
 
   return (
     <div style={{ maxWidth: 480, margin: '0 auto', padding: '16px 0 80px' }}>

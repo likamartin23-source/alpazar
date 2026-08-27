@@ -213,6 +213,9 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
     if (!biz?.id) return
     const ch = supabase.channel('biz-live-' + biz.id)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'businesses', filter: `id=eq.${biz.id}` }, () => { fetchBiz() })
+      // Shpalljet e biznesit LIVE (mungonte): shto/hiq/shit një shpallje të biznesit → vitrina
+      // publike + pasqyra e pronarit rifreskohen menjëherë, si kryefaqja/profili. fetchBiz() rimerr listën.
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'listings', filter: `business_id=eq.${biz.id}` }, () => { fetchBiz() })
       .subscribe()
     return () => { supabase.removeChannel(ch) }
     // eslint-disable-next-line react-hooks/exhaustive-deps
