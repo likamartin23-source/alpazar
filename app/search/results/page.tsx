@@ -6,6 +6,7 @@ import { useEffect, useState, useRef } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { SkeletonGrid } from '../../components/Skeleton'
 import ListingCard from '../../components/ListingCard'
+import { LISTING_SELECT } from '../../../lib/listingSelect'
 
 const CITIES = ['Tiranë', 'Durrës', 'Vlorë', 'Shkodër', 'Elbasan', 'Fier', 'Korçë', 'Berat', 'Lushnjë', 'Kavajë', 'Gjirokastër', 'Sarandë', 'Lezhë', 'Kukës', 'Pogradec', 'Peshkopi', 'Tropojë', 'Përmet', 'Tepelenë', 'Tjetër']
 
@@ -23,7 +24,7 @@ const SHOP_CATEGORIES = [
 // Select-i i vetem per listat e shpalljeve — i njejti te kerkimi fillestar
 // (buildQb) dhe te "Shiko me shume" (loadMore), qe kartat te mos divergjojne
 // brenda te njejtes liste (badge VIP, overlay SHITUR, chip biznes/person).
-const LISTING_SELECT = 'id,title,price,currency,condition,city,is_premium,images,created_at,views_count,category_id,rank_tier,status,business_id,business:business_id(id,name,logo_url,is_verified),author:user_id(id,full_name,username,avatar_url,is_premium,trust_score)'
+// LISTING_SELECT vjen nga lib/listingSelect (një projeksion identiteti për të gjitha feed-et).
 
 function ShopCard({ shop }: { shop: any }) {
   const initials = (shop.shop_name || shop.full_name || '?').slice(0, 2).toUpperCase()

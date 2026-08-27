@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase'
 import { useRealtimeTable } from '../hooks/useRealtimeTable'
 import { useDraggable } from '../hooks/useDraggable'
 import type { Category, Listing } from '../lib/types'
+import { LISTING_SELECT } from '../lib/listingSelect'
 import { SkeletonGrid } from './components/Skeleton'
 import Avatar, { tierNgaProfili } from './components/Avatar'
 import ListingCard from './components/ListingCard'
@@ -459,7 +460,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
     if (!opts?.silent) setLoading(true) // poll/visibility: mos rifut skeleton-in
     let query = supabase
       .from('listings')
-      .select('id,title,price,currency,condition,city,is_premium,rank_tier,images,category_id,created_at,user_id,business_id,views_count,author:user_id(id,full_name,username,avatar_url,is_premium,trust_score),business:business_id(id,name,logo_url,is_verified)')
+      .select(LISTING_SELECT)
       .eq('is_active', true)
       .order('rank_tier', { ascending: false })
       .order('created_at', { ascending: false })
