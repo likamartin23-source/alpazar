@@ -110,7 +110,7 @@ export default function NewListing() {
         }
       }
 
-      const { data, error } = await supabase.from('listings').insert({
+      const payload = {
         user_id: user.id,
         title: form.title.trim(),
         description: form.description.trim() || null,
@@ -127,7 +127,23 @@ export default function NewListing() {
         latitude: form.latitude,
         longitude: form.longitude,
         location_address: form.location_address || null,
-      }).select().single()
+      }
+      // GARANCI publikimi: riprovim me backoff për ndërprerje KALIMTARE (rrjet/timeout),
+      // që një blip i rrjetit të mos e humbasë postimin. Gabimet JO-kalimtare (kuota, RLS/leje,
+      // validim/constraint) nuk riprovohen — dalin menjëherë me mesazh. Fotot janë ngarkuar tashmë,
+      // ndaj riprovimi nuk i ringarkon (payload i njëjtë).
+      let data: any = null, error: any = null
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        const res = await supabase.from('listings').insert(payload).select().single()
+        data = res.data; error = res.error
+        if (!error) break
+        const m = (error.message || '').toLowerCase()
+        const code = String(error.code || '')
+        const jokalimtar = m.includes('kufi_shpalljesh') || m.includes('permission') || m.includes('policy')
+          || m.includes('row-level') || /^(22|23|42|P0001)/.test(code)
+        if (jokalimtar || attempt === 3) break
+        await new Promise(r => setTimeout(r, attempt * 800))
+      }
 
       if (error) { setMsg(`err:${error.message}`); setLoading(false); return }
       try { localStorage.removeItem('alpazar_listing_draft') } catch { /* ignore */ }

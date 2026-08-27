@@ -362,7 +362,17 @@ export default function HomeClient({ initialListings = [], initialCategories = [
     null,
     (row) => {
       if (!row.is_active) return
-      setListings(prev => prev.find(l => l.id === row.id) ? prev : [row, ...prev].slice(0, 20))
+      // Garanci "del në homepage në kohë reale, e njohur": payload-i realtime s'ka join-in e
+      // biznesit/autorit → karta do dilte e maskuar. Marrim projeksionin e plotë (LISTING_SELECT)
+      // për rreshtin e ri, pastaj e vëmë në krye. Fail-soft: nëse fetch-i s'del, përdorim rreshtin bruto.
+      ;(async () => {
+        let full: any = row
+        try {
+          const { data } = await supabase.from('listings').select(LISTING_SELECT).eq('id', row.id).maybeSingle()
+          if (data) full = data
+        } catch { /* fail-soft: mbaj rreshtin bruto */ }
+        setListings(prev => prev.find(l => l.id === full.id) ? prev : [full as Listing, ...prev].slice(0, 20))
+      })()
       setListingCount(c => c + 1)
       setNewListingBadge(true)
       setTimeout(() => setNewListingBadge(false), 4000)
