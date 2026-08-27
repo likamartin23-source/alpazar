@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../../../lib/supabase'
+import { useRealtimeTable } from '../../../hooks/useRealtimeTable'
 import { useAlpazar } from '../../../lib/context'
 import Avatar, { tierNgaProfili } from '../../components/Avatar'
 import { useIsOnline } from '../../components/OnlinePresence'
@@ -40,6 +41,34 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
   // kutia e 4-te e matrices se ngrire (BLLOKU Imazhi 5), identike me biznesin.
   const [followers, setFollowers] = useState(0)
 
+  // Shpalljet personale — një burim i vetëm fetch-i, i ripërdorur nga ngarkimi fillestar dhe
+  // nga realtime. `condition`/`rank_tier`/`video_poster` për ListingCard (shenjat + kopertina video).
+  const reloadListings = useCallback(async (keepSeedOnEmpty = false) => {
+    const { data: ls } = await supabase
+      .from('listings')
+      .select('id,title,price,currency,images,video_poster,city,created_at,is_premium,condition,rank_tier,views_count')
+      .eq('user_id', params.id)
+      .is('business_id', null)   // vetem shpallje personale — ato te biznesit rrine te faqja e biznesit (Vendimi 7, pa dyfishim)
+      .eq('is_active', true)
+      .order('rank_tier', { ascending: false })
+      .order('last_bumped_at', { ascending: false })
+      .limit(60)
+    // Ngarkimi fillestar: mbaj seed-in SSR kur bosh (kurrë flash 0). Realtime: lejo edhe bosh
+    // (p.sh. u fshi/çaktivizua shpallja e fundit) → pasqyron gjendjen reale menjëherë.
+    if (ls && (ls.length || !keepSeedOnEmpty)) setListings(ls)
+  }, [params.id])
+
+  // Live si te kryefaqja (Cowork — përditësimi realtime i /u/[id]): çdo insert/update/delete i
+  // shpalljeve të këtij përdoruesi rifreskon listën. "Fshirja" në app është soft (is_active=false →
+  // UPDATE), ndaj filtri user_id e kap; reload-i e heq sepse query-ja kërkon is_active=true.
+  useRealtimeTable(
+    'listings',
+    `user_id=eq.${params.id}`,
+    () => { reloadListings() },
+    () => { reloadListings() },
+    () => { reloadListings() },
+  )
+
   useEffect(() => {
     async function load() {
       const { data: p } = await supabase
@@ -51,21 +80,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
       if (!p) { setNotFound(true); setLoading(false); return }
       setProfile(p)
 
-      // `condition` dhe `rank_tier` u shtuan per ListingCard (shenjat
-      // "I ri"/"I perdorur" dhe VIP).
-      const { data: ls } = await supabase
-        .from('listings')
-        .select('id,title,price,currency,images,city,created_at,is_premium,condition,rank_tier,views_count')
-        .eq('user_id', params.id)
-        .is('business_id', null)   // vetem shpallje personale — ato te biznesit rrine te faqja e biznesit (Vendimi 7, pa dyfishim)
-        .eq('is_active', true)
-        .order('rank_tier', { ascending: false })
-        .order('last_bumped_at', { ascending: false })
-        .limit(60)
-
-      // Rifreskim i heshtur: zevendeso VETEM kur kthehen te dhena reale; nese bosh
-      // (race/rrjet), mbaj seed-in SSR => kurre flash 0. Bosh legjitim vjen nga SSR.
-      if (ls && ls.length) setListings(ls)
+      await reloadListings(true)
 
       // Biznesi i ketij personi — lidhja person → dyqan (§4.5). Merret nga
       // tabela `businesses`, jo nga `profiles.shop_name`: ai i fundit tregon
