@@ -6,6 +6,7 @@ import { useAlpazar } from '../../../lib/context'
 import Avatar, { tierNgaProfili } from '../../components/Avatar'
 import { useIsOnline } from '../../components/OnlinePresence'
 import ListingCard from '../../components/ListingCard'
+import { TrustBadge } from '../../components/TrustBadge'
 
 function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime()
@@ -43,7 +44,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
     async function load() {
       const { data: p } = await supabase
         .from('profiles')
-        .select('id,full_name,username,avatar_url,cover_url,bio,city,is_premium,premium_expires_at,has_boost,boost_expires_at,is_verified,trust_score,trust_score_visible,created_at,shop_name,seller_rating,reviews_count')
+        .select('id,full_name,username,avatar_url,cover_url,bio,city,is_premium,premium_expires_at,has_boost,boost_expires_at,is_verified,trust_score,trust_score_visible,created_at,shop_name,seller_rating,reviews_count,gamification_points,gamification_level')
         .eq('id', params.id)
         .single()
 
@@ -199,6 +200,24 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
               <div style={{ fontSize: 11, color: '#888' }}>Anëtar</div>
             </div>
           </div>
+
+          {/* Reputacioni (GAP 3+4 — mbyllja e lakut): TrustBadge i plotë (unazë "X/100") +
+              "⚡ N pikë" reale. Pikët fitohen e njoftohen por s'shfaqeshin te profili — tani po.
+              Respekton opt-out-in `trust_score_visible` (Ligji 124/2024). */}
+          {profile.trust_score_visible !== false && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
+              <TrustBadge
+                createdAt={profile.created_at}
+                listingsActive={listings.length}
+                gamificationPoints={profile.gamification_points || 0}
+              />
+              {(profile.gamification_points || 0) > 0 && (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 700, color: '#7A4A00', background: '#FFF8E1', border: '1px solid #F5C84255', borderRadius: 9, padding: '4px 10px' }}>
+                  <span aria-hidden="true">⚡</span> {profile.gamification_points} pikë
+                </span>
+              )}
+            </div>
+          )}
 
           {/* Action buttons */}
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>

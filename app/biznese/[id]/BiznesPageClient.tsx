@@ -186,6 +186,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   const [pronari, setPronari]       = useState<{
     is_premium?: boolean | null; premium_expires_at?: string | null
     has_boost?: boolean | null; boost_expires_at?: string | null
+    gamification_points?: number | null
   } | null>(null)
 
   // Syte live te faqja e biznesit (BLLOKU Imazhi 4: "👁+🔴") — e njejta presence
@@ -274,7 +275,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
       // Profili i pronarit — vetem fushat e tier-it, per unazen e avatarit.
       const { data: pr } = await supabase
         .from('profiles')
-        .select('is_premium,premium_expires_at,has_boost,boost_expires_at')
+        .select('is_premium,premium_expires_at,has_boost,boost_expires_at,gamification_points')
         .eq('id', b.owner_id)
         .maybeSingle()
       setPronari(pr)
@@ -545,10 +546,15 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               {biz.is_verified && <span className="bdg" style={{ background: '#dcfce7', color: '#16a34a' }}>✅ I verifikuar</span>}
             </div>
 
-            {/* Reputacioni (TrustBadge) — sistem i /profile; sillet edhe te koka e panelit-pasqyrë
-                (ishte vetëm te faqja publike). Kompakt; pikët nga gamification vijnë 0 këtu. */}
-            <div style={{ margin: '10px 0 2px' }}>
-              <TrustBadge createdAt={biz.created_at} listingsActive={listings.length} gamificationPoints={0} compact />
+            {/* Reputacioni (GAP 3+4 — mbyllja e lakut): TrustBadge i plotë (unazë "X/100") +
+                "⚡ N pikë" reale të pronarit; pikët fitohen e njoftohen por s'shfaqeshin këtu. */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', margin: '10px 0 2px' }}>
+              <TrustBadge createdAt={biz.created_at} listingsActive={listings.length} gamificationPoints={pronari?.gamification_points || 0} />
+              {(pronari?.gamification_points || 0) > 0 && (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 700, color: '#7A4A00', background: '#FFF8E1', border: '1px solid #F5C84255', borderRadius: 9, padding: '4px 10px' }}>
+                  <span aria-hidden="true">⚡</span> {pronari?.gamification_points} pikë
+                </span>
+              )}
             </div>
 
             {/* Statistika (Shpallje · Të shitura · Ndjekës · Anëtar) */}
@@ -814,8 +820,13 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               BP2 C4: rating-u ★ shfaqet VETËM te tab-i "Vlerësime" — koka nuk mban chip ★
               (kudo tjetër 👁+🔴). Chip-i i vjetër i rating-ut u hoq nga koka. "N të shitura"
               është te matrica 4-kuti më poshtë (një vend i vetëm). */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
-            <TrustBadge createdAt={biz.created_at} listingsActive={listings.length} gamificationPoints={0} compact />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
+            <TrustBadge createdAt={biz.created_at} listingsActive={listings.length} gamificationPoints={pronari?.gamification_points || 0} />
+            {(pronari?.gamification_points || 0) > 0 && (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 700, color: '#7A4A00', background: '#FFF8E1', border: '1px solid #F5C84255', borderRadius: 9, padding: '4px 10px' }}>
+                <span aria-hidden="true">⚡</span> {pronari?.gamification_points} pikë
+              </span>
+            )}
           </div>
 
           {/* Stats row — matrica e ngrire (BLLOKU Imazhi 4): Shpallje / Të shitura /
