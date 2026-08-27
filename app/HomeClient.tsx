@@ -411,7 +411,16 @@ export default function HomeClient({ initialListings = [], initialCategories = [
     saveRefFromUrl()
     // Seeded from SSR: listings + categories already present; only fetch the
     // extras (counts, shops) on mount. Otherwise do the full initial load.
-    if (skipMountFetch.current) { fetchCounts(); fetchShops() } else { fetchAll() }
+    // F1 (DIAGNOZA KAUZALE, 27 gusht): SSR-seed-i i kryefaqes vjen nga CDN me
+    // s-maxage=60 + stale-while-revalidate=120 → mund të jetë deri ~1–3 min i vjetër,
+    // pra PA shpalljen e sapo-publikuar. Realtime nuk e mbulon këtë rast (INSERT-i
+    // ndodhi PARA se kryefaqja të abonohej) dhe tick-u i parë i poll-it është në +60s.
+    // Një refetch i HESHTUR në mount e mbyll dritaren nga ~60–180s në ~1–2s.
+    // keepSeedOnEmpty: kurrë flash 0 — seed-i mbahet nëse query-ja kthehet bosh.
+    if (skipMountFetch.current) {
+      fetchListings(activeCategory, activeFilter, { silent: true, keepSeedOnEmpty: true })
+      fetchCounts(); fetchShops()
+    } else { fetchAll() }
 
     // Rilexo kur tab bëhet aktiv sërish
     const onVisible = () => {
@@ -465,7 +474,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
     if (data) setShops(data)
   }
 
-  async function fetchListings(catSlug = activeCategory, filter = activeFilter, opts?: { silent?: boolean }) {
+  async function fetchListings(catSlug = activeCategory, filter = activeFilter, opts?: { silent?: boolean; keepSeedOnEmpty?: boolean }) {
     const reqId = ++listingsReqId.current
     if (!opts?.silent) setLoading(true) // poll/visibility: mos rifut skeleton-in
     let query = supabase
@@ -487,7 +496,9 @@ export default function HomeClient({ initialListings = [], initialCategories = [
     const { data } = await query
     // Guard kundër race: apliko vetëm nëse ky është kërkimi më i fundit.
     if (reqId !== listingsReqId.current) return
-    if (data) setListings(data as unknown as Listing[])
+    // keepSeedOnEmpty (vetëm refetch-i i mount-it): mos e zëvendëso seed-in SSR me
+    // listë bosh — zëvendëso vetëm kur kthehen të dhëna reale.
+    if (data && (data.length || !opts?.keepSeedOnEmpty)) setListings(data as unknown as Listing[])
     if (!opts?.silent) setLoading(false)
   }
 
