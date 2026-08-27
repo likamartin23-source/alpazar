@@ -13,7 +13,11 @@ const nextConfig = {
   generateBuildId: async () => BUILD_ID,
   env: { NEXT_PUBLIC_BUILD_ID: BUILD_ID },
 
-  typescript: { ignoreBuildErrors: true },
+  // R1 (AUTOPSI 27 gusht): fail-closed ndaj gabimeve te tipit. Pa preview,
+  // build-i (Vercel-native + CI) eshte i vetmi rrjet sigurie qe ndalon nje
+  // gabim tipi te zbrese live. `tsc --noEmit` eshte i paster, ndaj eshte i sigurt.
+  // eslint: mbetet i anashkaluar — s'ka konfigurim ESLint ne repo.
+  typescript: { ignoreBuildErrors: false },
   eslint: { ignoreDuringBuilds: true },
 
   // Google Maps API key must be set in Vercel env vars, NOT here (git-exposed)
