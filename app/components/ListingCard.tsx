@@ -118,9 +118,14 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
   const tier = tierNgaRankTier(l.rank_tier)
   // Shpallje vetëm-video (pa foto) → luajmë videon në kartë kur hyn në pamje. Përndryshe kopertina
   // mbetet foto/poster. URL-ja e videos vjen nga projeksioni i përbashkët (LISTING_SELECT.videos).
-  const videoUrl = (!l.images?.[0] && l.videos?.[0]?.url) ? l.videos[0].url : null
+  // Shpallje vetëm-video (pa foto). URL-të Cloudflare Stream janë faqe iframe, JO skedar mp4 →
+  // s'luhen dot te <video>; për to tregojmë poster + ▶ (hapja luan). Autoplay vetëm mp4 direkte
+  // (Cloudinary f_mp4 / Supabase). hasVideo → distinktivi VIDEO/▶ pavarësisht ofruesit.
+  const rawVideo = (!l.images?.[0] && l.videos?.[0]?.url) ? l.videos[0].url : null
+  const hasVideo = !!rawVideo
+  const videoUrl = (rawVideo && !rawVideo.includes('cloudflarestream.com')) ? rawVideo : null
   // Kopertina statike: foto e parë ose posteri i videos (kur s'ka foto). Përdoret jashtë pamjes
-  // dhe kur s'ka URL videoje në projeksion (p.sh. disa feed-e që s'kërkojnë `videos`).
+  // dhe kur s'ka URL mp4 direkte (Stream ose feed pa `videos`).
   const cover = l.images?.[0] || l.video_poster || null
   // Prania LIVE e shitësit-person (BLLOKU Imazhi 2: overlay unazë + online/offline).
   const authorOnline = useIsOnline(author?.id)
@@ -197,14 +202,14 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
               : <i className="ti ti-photo" style={{ fontSize: 26, color: '#ccc' }} aria-hidden="true" />
             )
         }
-        {/* Tregues ▶ vetëm kur karta video-only ende s'ka hyrë në pamje (tregon posterin). */}
-        {videoUrl && !visible && (
+        {/* Tregues ▶ kur karta është video-only por s'po luhet aktivisht (Stream, ose mp4 jashtë pamjes). */}
+        {hasVideo && !(videoUrl && visible) && (
           <span aria-label="Video" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', zIndex: 2, width: 40, height: 40, borderRadius: '50%', background: 'rgba(0,0,0,.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
             <i className="ti ti-player-play-filled" style={{ fontSize: 18, color: '#fff' }} aria-hidden="true" />
           </span>
         )}
         {/* Distinktivi VIDEO kur karta është vetëm-video (sinjal i njohur, si te faqja e shpalljes). */}
-        {videoUrl && (
+        {hasVideo && (
           <span aria-hidden="true" style={{ position: 'absolute', top: 6, left: 6, zIndex: 3, background: 'rgba(230,51,18,.92)', color: '#fff', fontSize: 8.5, fontWeight: 800, padding: '2px 6px', borderRadius: 6, letterSpacing: '.4px' }}>VIDEO</span>
         )}
         {l.condition === 'i_ri' && <span className="badge-new">I ri</span>}

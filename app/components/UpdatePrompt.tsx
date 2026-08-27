@@ -41,7 +41,9 @@ export default function UpdatePrompt() {
 
     async function check() {
       try {
-        const r = await fetch('/api/health', { cache: 'no-store' })
+        // /api/version (edge, i lehtë) në vend të /api/health (nodejs + ping DB + ping realtime):
+        // poll-i çdo 30s për çdo klient s'duhet të godasë DB-në/realtime-in. I njëjti NEXT_PUBLIC_BUILD_ID.
+        const r = await fetch('/api/version', { cache: 'no-store' })
         if (!r.ok) return
         const j = await r.json()
         const b = j?.build
@@ -97,10 +99,9 @@ export default function UpdatePrompt() {
         await Promise.all(keys.map(k => caches.delete(k).catch(() => false)))
       }
     } catch { /* ignore */ }
-    // Navigim te /rifresko (header Clear-Site-Data nga rrjeti) në vend të thjesht reload:
-    // reload-i mund të interceptohej ende nga një SW i vjetër; /rifresko është rrugë e re që
-    // SW-ja e vjetër s'e ka në cache → kërkesa shkon te rrjeti → reset i plotë i garantuar.
-    try { location.href = '/rifresko' } catch { try { location.reload() } catch { /* ignore */ } }
+    // Reload i thjeshtë pas çregjistrimit — RUAN sesionin (pa Clear-Site-Data → pa dalje nga llogaria).
+    // Për pajisje kokëforta (rrallë, iOS PWA) mbetet rruga manuale /rifresko (reset i plotë me vullnet).
+    try { location.reload() } catch { /* ignore */ }
   }
 
   return (

@@ -53,9 +53,12 @@ export function ImageCarousel({ images, videos, poster, alt = '', aspectRatio = 
     const track = trackRef.current
     if (!track) return
     const reduce = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
-    const vids = track.querySelectorAll('video')
-    vids.forEach((v, idx) => {
-      const slideIdx = imgCount + idx // videot vijnë pas imazheve te `slides`
+    // Hartim sipas POZICIONIT REAL të slajdit (jo sipas indeksit te NodeList-i `video`): disa slajde
+    // video renderohen si <iframe> (Cloudflare Stream) → do të prishnin numërimin nëse ndërthureshin
+    // me <video> direkte. Iterojmë fëmijët e track-ut; luajmë atë të slajdit aktual, ndalim të tjerët.
+    Array.from(track.children).forEach((child, slideIdx) => {
+      const v = child.querySelector('video')
+      if (!v) return
       if (slideIdx === current && !reduce) {
         if (v.paused) {
           v.muted = true

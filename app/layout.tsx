@@ -207,20 +207,32 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{__html: `
           (function(){
             try {
-              // AUTO-SHPËTIM: app-i NUK regjistron asnjë SW. Nëse një SW po e KONTROLLON këtë faqe
-              // (controller != null), është një SW i vjetër i ngecur që shërben versionin e vjetër —
-              // shkaku i "platforma u bllokua / s'përditësohet". E dërgojmë NJË herë te /rifresko
-              // (header Clear-Site-Data) që e fshin plotësisht. Mbrojtje ndaj cikleve: sessionStorage
-              // + s'ridrejtojmë kur jemi te /rifresko ose sapo u kthyem prej saj (?fresh=).
-              if ('serviceWorker' in navigator && navigator.serviceWorker.controller
-                  && location.pathname !== '/rifresko' && location.search.indexOf('fresh=') < 0) {
-                var rescued = false;
-                try { rescued = !!sessionStorage.getItem('_alpz_swr'); } catch(e){}
-                if (!rescued) {
+              // AUTO-SHPËTIM I HESHTUR (RUAN SESIONIN): app-i NUK regjistron asnjë SW. Nëse një SW
+              // i vjetër po e KONTROLLON faqen (controller != null), e çregjistrojmë + fshijmë cache-t
+              // dhe bëjmë NJË reload — pa Clear-Site-Data, pra pa e nxjerrë përdoruesin nga llogaria.
+              // Rojtar kundër ciklit: sessionStorage _alpz_swr (mbijeton një reload të thjeshtë).
+              // Nuk e detyrojmë kurrë /rifresko automatikisht (ai fshin sesionin — vetëm me klik të
+              // përdoruesit, §2). Rasti kokëfortë (iOS PWA) zgjidhet nga butoni manual "Rifresko".
+              if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                var tried = false;
+                try { tried = !!sessionStorage.getItem('_alpz_swr'); } catch(e){}
+                if (!tried) {
                   try { sessionStorage.setItem('_alpz_swr','1'); } catch(e){}
-                  location.replace('/rifresko');
+                  var done=false; var go=function(){ if(done) return; done=true; try{ location.reload(); }catch(e){} };
+                  var tasks=[];
+                  tasks.push(navigator.serviceWorker.getRegistrations().then(function(rs){
+                    return Promise.all(rs.map(function(r){ return r.unregister().catch(function(){}); }));
+                  }).catch(function(){}));
+                  if (window.caches && caches.keys) {
+                    tasks.push(caches.keys().then(function(ks){
+                      return Promise.all(ks.map(function(k){ return caches.delete(k).catch(function(){}); }));
+                    }).catch(function(){}));
+                  }
+                  Promise.all(tasks).then(go, go);
+                  setTimeout(go, 1500);
                   return;
                 }
+                // Provuam njëherë e SW-ja ende kontrollon (tipike iOS): NUK dalim nga llogaria automatikisht.
               }
               if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.getRegistrations().then(function(rs){
