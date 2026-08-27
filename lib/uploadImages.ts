@@ -430,7 +430,7 @@ export async function transcodingEnabled(): Promise<boolean> {
 
 function uploadVideoCloudinary(
   file: File, cfg: { cloud: string; preset: string }, onProgress?: (p: UploadProgress) => void,
-): Promise<{ url?: string; error?: string; duration?: number }> {
+): Promise<{ url?: string; error?: string; duration?: number; poster?: string }> {
   return new Promise(resolve => {
     try {
       const xhr = new XMLHttpRequest()
@@ -443,10 +443,15 @@ function uploadVideoCloudinary(
         try {
           if (xhr.status >= 200 && xhr.status < 300) {
             const j = JSON.parse(xhr.responseText)
-            const pid = String(j.public_id || '')
-            // URL delivery e detyruar në mp4/H.264 → luhet në çdo shfletues, pavarësisht burimit.
-            const url = `https://res.cloudinary.com/${cfg.cloud}/video/upload/f_mp4/${encodeURIComponent(pid)}.mp4`
-            resolve({ url, duration: typeof j.duration === 'number' ? Math.round(j.duration) : undefined })
+            const pid = String(j.public_id || '') // p.sh. "alpazar/abc" — slash-i MBETET (jo encode)
+            // URL delivery e detyruar në mp4 + H.264 (vc_h264) + q_auto → luhet në ÇDO shfletues,
+            // pavarësisht kodekut të burimit (verifikuar empirikisht: HEVC→H.264 me këtë transformim).
+            const base = `https://res.cloudinary.com/${cfg.cloud}/video/upload`
+            resolve({
+              url: `${base}/f_mp4,vc_h264,q_auto/${pid}.mp4`,
+              poster: `${base}/so_1/${pid}.jpg`,
+              duration: typeof j.duration === 'number' ? Math.round(j.duration) : undefined,
+            })
           } else {
             let msg = 'cloudinary_' + xhr.status
             try { msg = JSON.parse(xhr.responseText)?.error?.message || msg } catch { /* keep code */ }
