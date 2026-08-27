@@ -106,31 +106,68 @@ async function requireUid(): Promise<string> {
 
 function b64(s: string): string { return btoa(unescape(encodeURIComponent(s))) }
 
-// Ngarkim RESUMABLE (TUS 1.0) — per skedare te medhenj, ne copeza 6MB, i vazhdueshem.
-async function resumableUpload(bucket: string, path: string, data: Blob, onFrac?: (f: number) => void): Promise<string | null> {
+// Ngarkim RESUMABLE (TUS 1.0) — per skedare te medhenj, ne copeza, I GARANTUAR:
+// pas cdo ndERprerjeje rrjeti, rimerr offset-in real te serverit (HEAD) dhe RIFILLON nga aty,
+// me riprovim + backoff. Nje blip rrjeti NUK e humb ngarkimin — vazhdon aty ku mbeti.
+const tusSleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms))
+
+async function tusHeadOffset(location: string, token: string): Promise<number | null> {
   try {
-    const { data: { session } } = await supabase.auth.getSession()
-    const token = session?.access_token || SUPABASE_ANON_KEY
-    const contentType = data.type || 'application/octet-stream'
-    const createRes = await fetch(`${SUPABASE_URL}/storage/v1/upload/resumable`, {
-      method: 'POST',
-      headers: {
-        'Tus-Resumable': '1.0.0',
-        'Upload-Length': String(data.size),
-        'Upload-Metadata': `bucketName ${b64(bucket)},objectName ${b64(path)},contentType ${b64(contentType)},cacheControl ${b64('3600')}`,
-        Authorization: `Bearer ${token}`,
-        apikey: SUPABASE_ANON_KEY,
-        'x-upsert': 'true',
-      },
+    const r = await fetch(location, {
+      method: 'HEAD',
+      headers: { 'Tus-Resumable': '1.0.0', Authorization: `Bearer ${token}`, apikey: SUPABASE_ANON_KEY },
     })
-    if (createRes.status !== 201) return 'resumable_create_' + createRes.status
-    let location = createRes.headers.get('Location') || createRes.headers.get('location')
-    if (!location) return 'resumable_no_location'
-    if (location.startsWith('/')) location = `${SUPABASE_URL}${location}`
-    let offset = 0
-    while (offset < data.size) {
-      const end = Math.min(offset + CHUNK, data.size)
-      const chunk = data.slice(offset, end)
+    if (r.status === 200 || r.status === 204) {
+      const o = parseInt(r.headers.get('Upload-Offset') || '', 10)
+      return Number.isNaN(o) ? null : o
+    }
+  } catch { /* fail-soft */ }
+  return null
+}
+
+async function resumableUpload(bucket: string, path: string, data: Blob, onFrac?: (f: number) => void): Promise<string | null> {
+  const { data: { session } } = await supabase.auth.getSession()
+  const token = session?.access_token || SUPABASE_ANON_KEY
+  const contentType = data.type || 'application/octet-stream'
+
+  // 1) CREATE — me riprovim per krijim (deri 4 here)
+  let location: string | null = null
+  for (let a = 0; a < 4 && !location; a++) {
+    try {
+      const createRes = await fetch(`${SUPABASE_URL}/storage/v1/upload/resumable`, {
+        method: 'POST',
+        headers: {
+          'Tus-Resumable': '1.0.0',
+          'Upload-Length': String(data.size),
+          'Upload-Metadata': `bucketName ${b64(bucket)},objectName ${b64(path)},contentType ${b64(contentType)},cacheControl ${b64('3600')}`,
+          Authorization: `Bearer ${token}`,
+          apikey: SUPABASE_ANON_KEY,
+          'x-upsert': 'true',
+        },
+      })
+      if (createRes.status === 201) {
+        let loc = createRes.headers.get('Location') || createRes.headers.get('location')
+        if (!loc) return 'resumable_no_location'
+        if (loc.startsWith('/')) loc = `${SUPABASE_URL}${loc}`
+        location = loc
+      } else if (a === 3) {
+        return 'resumable_create_' + createRes.status
+      }
+    } catch (e: any) {
+      if (a === 3) return 'resumable_' + String(e?.message ?? 'create_error')
+    }
+    if (!location) await tusSleep(1000 * (a + 1))
+  }
+  if (!location) return 'resumable_no_location'
+
+  // 2) PATCH copeza — I GARANTUAR: pas ndERprerjeje, prit, rimerr offset-in real, rifillo.
+  let offset = 0
+  let stalls = 0
+  const MAX_STALLS = 8 // toleron shume ndErprerje para se te dorEzohet
+  while (offset < data.size) {
+    const end = Math.min(offset + CHUNK, data.size)
+    const chunk = data.slice(offset, end)
+    try {
       const patchRes = await fetch(location, {
         method: 'PATCH',
         headers: {
@@ -142,15 +179,29 @@ async function resumableUpload(bucket: string, path: string, data: Blob, onFrac?
         },
         body: chunk,
       })
-      if (patchRes.status !== 204) return 'resumable_patch_' + patchRes.status
-      const no = parseInt(patchRes.headers.get('Upload-Offset') || String(end), 10)
-      offset = Number.isNaN(no) ? end : no
-      onFrac?.(offset / data.size)
+      if (patchRes.status === 204) {
+        const no = parseInt(patchRes.headers.get('Upload-Offset') || String(end), 10)
+        offset = Number.isNaN(no) ? end : no
+        onFrac?.(offset / data.size)
+        stalls = 0
+        continue
+      }
+      // Jo-204 (p.sh. 409/460 offset-mismatch, 5xx): rimerr offset-in real dhe rifillo
+      const srv = await tusHeadOffset(location, token)
+      if (srv != null && srv > offset) { offset = srv; onFrac?.(offset / data.size); stalls = 0; continue }
+      stalls++
+      if (stalls >= MAX_STALLS) return 'resumable_patch_' + patchRes.status
+      await tusSleep(1200 * Math.min(stalls, 6))
+    } catch (e: any) {
+      // NDERPRERJE RRJETI: prit, rimerr offset-in real nga serveri, rifillo nga aty
+      stalls++
+      if (stalls >= MAX_STALLS) return 'resumable_' + String(e?.message ?? 'network')
+      await tusSleep(1200 * Math.min(stalls, 6))
+      const srv = await tusHeadOffset(location, token)
+      if (srv != null) { offset = srv; onFrac?.(offset / data.size) }
     }
-    return null
-  } catch (e: any) {
-    return 'resumable_' + String(e?.message ?? 'error')
   }
+  return null
 }
 
 async function standardUpload(bucket: string, path: string, blob: Blob, timeoutMs: number, attempts = 4): Promise<string | null> {
