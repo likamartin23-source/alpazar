@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../../../lib/supabase'
 import dynamicImport from 'next/dynamic'
 import Avatar, { tierNgaProfili } from '../../components/Avatar'
@@ -130,6 +130,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   // pa kërcim pas hidratimit. Refetch-i ne klient eshte vetem "rifreskim i heshtur".
   const [subcats, setSubcats]       = useState<any[]>(seedSubcats)
   const [listings, setListings]     = useState<any[]>(seedListings)
+  const bizRtDebounce = useRef<ReturnType<typeof setTimeout> | null>(null) // debounce për realtime-in e shpalljeve
   const [loading, setLoading]       = useState(!initialBiz)
   const [loadError, setLoadError]   = useState(false)
   const [activeTab, setActiveTab]   = useState<'grid' | 'about'>('grid')
@@ -213,11 +214,18 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
     if (!biz?.id) return
     const ch = supabase.channel('biz-live-' + biz.id)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'businesses', filter: `id=eq.${biz.id}` }, () => { fetchBiz() })
-      // Shpalljet e biznesit LIVE (mungonte): shto/hiq/shit një shpallje të biznesit → vitrina
-      // publike + pasqyra e pronarit rifreskohen menjëherë, si kryefaqja/profili. fetchBiz() rimerr listën.
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'listings', filter: `business_id=eq.${biz.id}` }, () => { fetchBiz() })
+      // Shpalljet e biznesit LIVE (mungonte): shto/hiq/shit një shpallje → vitrina rifreskohet.
+      // DEBOUNCE: `increment_listing_views` bën UPDATE në listings në ÇDO shikim (kurthi #7); pa
+      // debounce, fetchBiz() (~10 query) do thirrej për çdo shikim. Grumbullojmë ngjarjet në 1.5s.
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'listings', filter: `business_id=eq.${biz.id}` }, () => {
+        if (bizRtDebounce.current) clearTimeout(bizRtDebounce.current)
+        bizRtDebounce.current = setTimeout(() => { fetchBiz() }, 1500)
+      })
       .subscribe()
-    return () => { supabase.removeChannel(ch) }
+    return () => {
+      if (bizRtDebounce.current) clearTimeout(bizRtDebounce.current)
+      supabase.removeChannel(ch)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [biz?.id])
 
