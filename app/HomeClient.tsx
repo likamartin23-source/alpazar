@@ -101,7 +101,7 @@ function InstallBanner() {
           <button
             type="button"
             onClick={() => setShowGuide(false)}
-            style={{ position: 'absolute', top: 6, right: 8, background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: 13, lineHeight: 1 }}
+            style={{ position: 'absolute', top: 6, right: 8, background: 'none', border: 'none', color: '#6b6b6b', cursor: 'pointer', fontSize: 13, lineHeight: 1 }}
             aria-label="Mbyll udhëzimet"
           >✕</button>
         </div>
@@ -1030,7 +1030,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
             <div style={{ marginBottom: 12 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px', marginBottom: 10 }}>
                 <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: '#111' }}><span aria-hidden="true">👁</span> Rishikimet e fundit</h3>
-                <button type="button" onClick={() => { localStorage.removeItem('_alpazar_rv'); setRecentlyViewed([]) }} style={{ background: 'none', border: 'none', fontSize: 10, color: '#aaa', cursor: 'pointer', fontFamily: 'inherit' }}>Pastro</button>
+                <button type="button" onClick={() => { localStorage.removeItem('_alpazar_rv'); setRecentlyViewed([]) }} style={{ background: 'none', border: 'none', fontSize: 10, color: '#6b6b6b', cursor: 'pointer', fontFamily: 'inherit' }}>Pastro</button>
               </div>
               <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, scrollbarWidth: 'none' }}>
                 {recentUnique.map(item => {
