@@ -620,7 +620,8 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         .cond-new{background:#FFF0EE;color:#C42B0F;font-weight:700;}
         .cond-used{background:#F0F0F0;color:#555;font-weight:700;}
         .divider{height:1px;background:#f0f0f0;margin:10px 0;}
-        .sec-label{font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+        .sec-label{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:800;color:#4A4A4A;text-transform:uppercase;letter-spacing:.6px;margin-bottom:9px;}
+        .sec-label::before{content:'';flex:0 0 auto;width:3px;height:13px;border-radius:2px;background:linear-gradient(180deg,#F5C842,#E63312);}
         .desc{font-size:13px;color:#555;line-height:1.7;}
 
         /* Seller section — free-flowing */
