@@ -56,9 +56,12 @@ const nextConfig = {
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://va.vercel-scripts.com https://vercel.live https://accounts.google.com",
       "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com",
       "font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https://*.supabase.co https://*.supabase.in https://lh3.googleusercontent.com https://avatars.githubusercontent.com https://nominatim.openstreetmap.org https://*.tile.openstreetmap.org",
-      "connect-src 'self' https://*.supabase.co https://*.supabase.in wss://*.supabase.co https://va.vercel-scripts.com https://vitals.vercel-insights.com https://nominatim.openstreetmap.org https://*.sentry.io https://de.sentry.io https://accounts.google.com",
-      "frame-src 'self' https://www.openstreetmap.org https://accounts.google.com",
+      "img-src 'self' data: blob: https://*.supabase.co https://*.supabase.in https://res.cloudinary.com https://lh3.googleusercontent.com https://avatars.githubusercontent.com https://nominatim.openstreetmap.org https://*.tile.openstreetmap.org",
+      // media-src: pa kete, videot (edhe nga Supabase) binin te default-src 'self' → bllokoheshin.
+      // Perfshin transkoderat: Cloudinary (mp4 H.264) dhe Cloudflare Stream (HLS), + blob per preview lokal.
+      "media-src 'self' blob: https://*.supabase.co https://*.supabase.in https://res.cloudinary.com https://*.cloudflarestream.com",
+      "connect-src 'self' https://*.supabase.co https://*.supabase.in wss://*.supabase.co https://api.cloudinary.com https://res.cloudinary.com https://*.cloudflarestream.com https://upload.videodelivery.net https://va.vercel-scripts.com https://vitals.vercel-insights.com https://nominatim.openstreetmap.org https://*.sentry.io https://de.sentry.io https://accounts.google.com",
+      "frame-src 'self' https://www.openstreetmap.org https://accounts.google.com https://*.cloudflarestream.com https://iframe.videodelivery.net",
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
