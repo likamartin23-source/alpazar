@@ -318,13 +318,85 @@ export async function uploadSingleImage(
   return { url: supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl }
 }
 
-// ── VIDEO (pa kufi madhesie; resumable per skedare te medhenj) ────────────────
+// ── Transkodim automatik (Cloudinary) — GATI-por-në-gjumë ─────────────────────
+// Aktivizohet VETËM kur `app_config` ka `cloudinary_cloud_name` + `cloudinary_upload_preset`
+// (të dyja PUBLIKE, jo sekrete — kjo është "unsigned upload", e menduar për klientin; §2.7).
+// Deri atëherë rri fjetur dhe përdoret ruajtja standarde te Supabase Storage — asgjë s'prishet.
+// Kur aktiv: ÇDO kodek (edhe H.265/HEVC nga telefonat) shndërrohet automatikisht në H.264 mp4
+// që luhet KUDO — garancia "videoja luhet gjithmonë".
+let _cldCfg: { cloud: string; preset: string } | null | undefined
+async function getCloudinary(): Promise<{ cloud: string; preset: string } | null> {
+  if (_cldCfg !== undefined) return _cldCfg
+  try {
+    const { data } = await supabase.from('app_config').select('key,value')
+      .in('key', ['cloudinary_cloud_name', 'cloudinary_upload_preset'])
+    const m: Record<string, string> = {}
+    for (const r of (data ?? []) as { key: string; value: string }[]) m[r.key] = (r.value ?? '').trim()
+    _cldCfg = (m.cloudinary_cloud_name && m.cloudinary_upload_preset)
+      ? { cloud: m.cloudinary_cloud_name, preset: m.cloudinary_upload_preset } : null
+  } catch { _cldCfg = null }
+  return _cldCfg
+}
+
+// A është ndezur transkodimi automatik? (e lexon UI-ja që të mos refuzojë H.265 kur s'ka nevojë)
+export async function transcodingEnabled(): Promise<boolean> {
+  return !!(await getCloudinary())
+}
+
+function uploadVideoCloudinary(
+  file: File, cfg: { cloud: string; preset: string }, onProgress?: (p: UploadProgress) => void,
+): Promise<{ url?: string; error?: string; duration?: number }> {
+  return new Promise(resolve => {
+    try {
+      const xhr = new XMLHttpRequest()
+      xhr.open('POST', `https://api.cloudinary.com/v1_1/${cfg.cloud}/video/upload`)
+      xhr.timeout = 600000
+      xhr.upload.onprogress = e => {
+        if (e.lengthComputable) onProgress?.({ done: Math.round((e.loaded / e.total) * 100), total: 100, currentName: file.name })
+      }
+      xhr.onload = () => {
+        try {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            const j = JSON.parse(xhr.responseText)
+            const pid = String(j.public_id || '')
+            // URL delivery e detyruar në mp4/H.264 → luhet në çdo shfletues, pavarësisht burimit.
+            const url = `https://res.cloudinary.com/${cfg.cloud}/video/upload/f_mp4/${encodeURIComponent(pid)}.mp4`
+            resolve({ url, duration: typeof j.duration === 'number' ? Math.round(j.duration) : undefined })
+          } else {
+            let msg = 'cloudinary_' + xhr.status
+            try { msg = JSON.parse(xhr.responseText)?.error?.message || msg } catch { /* keep code */ }
+            resolve({ error: friendlyUploadError(msg) })
+          }
+        } catch (e: any) { resolve({ error: friendlyUploadError(String(e?.message ?? 'cloudinary_parse')) }) }
+      }
+      xhr.onerror = () => resolve({ error: friendlyUploadError('network') })
+      xhr.ontimeout = () => resolve({ error: friendlyUploadError('timed out') })
+      const fd = new FormData()
+      fd.append('file', file)
+      fd.append('upload_preset', cfg.preset)
+      xhr.send(fd)
+    } catch (e: any) { resolve({ error: friendlyUploadError(String(e?.message ?? 'cloudinary')) }) }
+  })
+}
+
+// ── VIDEO (pa kufi artificial; resumable per skedare te medhenj) ──────────────
 export async function uploadVideo(
   file: File,
   onProgress?: (p: UploadProgress) => void,
-): Promise<{ url?: string; error?: string }> {
+): Promise<{ url?: string; error?: string; duration?: number }> {
   if (!file.type.startsWith('video/')) return { error: 'Skedari nuk eshte video.' }
   onProgress?.({ done: 0, total: 100, currentName: file.name })
+
+  // Transkodim automatik nëse është ndezur (çdo kodek → H.264 i luajtshëm). Në dështim kthen
+  // gabim të qartë (NUK ruajmë video të padekodueshme në heshtje) — garancia mbetet e paprekur.
+  const cld = await getCloudinary()
+  if (cld) {
+    const r = await uploadVideoCloudinary(file, cld, onProgress)
+    onProgress?.({ done: 100, total: 100 })
+    return r
+  }
+
+  // Përndryshe: ruajtje standarde te Supabase Storage (burimi duhet H.264 — guardi e siguron).
   const uid = await requireUid()
   const map: Record<string, string> = { 'video/webm': 'webm', 'video/ogg': 'ogv', 'video/quicktime': 'mov', 'video/mp4': 'mp4' }
   const ext = map[file.type] || (file.name.split('.').pop() || 'mp4')

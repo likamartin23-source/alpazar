@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabase'
-import { uploadVideo, generateVideoPoster } from '../../../lib/uploadImages'
+import { uploadVideo, generateVideoPoster, transcodingEnabled } from '../../../lib/uploadImages'
 
 export type VidItem = { file: File; preview: string; duration: number }
 
@@ -27,14 +27,29 @@ export function useVideos(setMsg: (m: string) => void, setIsDirty: (b: boolean) 
   const [items, setItems] = useState<VidItem[]>([])
   const [pct, setPct] = useState(0)
   const [uploading, setUploading] = useState(false)
-  // Kufiri i madhësisë së videos (MB) — nga app_config (jo i ngurtësuar; §2.9). Duhet të përputhet
-  // me kufirin global të ngarkimit te Supabase (përndryshe serveri e refuzon me "exceeded max size").
+  // Kufiri i madhësisë së videos (MB) — nga app_config (jo i ngurtësuar; §2.9). Kur transkodimi
+  // është fikur, duhet të përputhet me kufirin e Supabase (përndryshe "exceeded max size"); kur
+  // transkodimi është ndezur, kufiri vjen nga ofruesi (Cloudinary) → cloudinary_max_mb.
   const [maxMb, setMaxMb] = useState(50)
+  // A është ndezur transkodimi automatik (çdo kodek → H.264 i luajtshëm)? Nëse po, NUK refuzojmë
+  // videot e padekodueshme në shfletues (H.265) — ofruesi i shndërron.
+  const [transcode, setTranscode] = useState(false)
 
   useEffect(() => {
     supabase.rpc('get_my_entitlements').then(({ data }) => setEnt(data), () => {})
-    supabase.from('app_config').select('value').eq('key', 'video_max_mb').maybeSingle()
-      .then(({ data }) => { const n = parseInt(data?.value ?? '', 10); if (!Number.isNaN(n) && n > 0) setMaxMb(n) }, () => {})
+    // Fillimisht mësojmë nëse transkodimi është ndezur, PASTAJ zgjedhim kufirin e duhur
+    // (dy leximet duhen zinxhir, jo garë — përndryshe kufiri do zgjidhej me flamur të papërcaktuar).
+    transcodingEnabled().then(on => {
+      setTranscode(on)
+      supabase.from('app_config').select('key,value').in('key', ['video_max_mb', 'cloudinary_max_mb'])
+        .then(({ data }) => {
+          const m: Record<string, string> = {}
+          for (const r of (data ?? []) as { key: string; value: string }[]) m[r.key] = r.value ?? ''
+          const n = parseInt(m[on ? 'cloudinary_max_mb' : 'video_max_mb'] ?? '', 10)
+          if (!Number.isNaN(n) && n > 0) setMaxMb(n)
+          else if (on) setMaxMb(100) // Cloudinary Free ≈ 100MB
+        }, () => { if (on) setMaxMb(100) })
+    }, () => {})
   }, [])
 
   const maxVideos: number = ent?.max_videos ?? 5
@@ -67,12 +82,13 @@ export function useVideos(setMsg: (m: string) => void, setIsDirty: (b: boolean) 
       }
       const d = await probeDuration(f)
       // Nëse shfletuesi s'e dekodon dot (duration=0 → gabim ngarkimi metadatash), videoja NUK do
-      // të luhet te vizitorët (tipike për H.265/HEVC nga disa telefona). Mos e prano — shpjego qartë.
-      if (d <= 0) {
+      // të luhet te vizitorët (tipike për H.265/HEVC nga disa telefona). E refuzojmë VETËM kur
+      // transkodimi automatik është fikur; kur është ndezur, ofruesi e shndërron në H.264 → e lëmë.
+      if (d <= 0 && !transcode) {
         rejected.push(`${f.name}: kjo video s'mund të luhet në shfletues (ndoshta format H.265/HEVC). Regjistroje ose eksportoje si MP4 (H.264) dhe provo sërish.`)
         continue
       }
-      if (d > maxSec) {
+      if (d > 0 && d > maxSec) {
         rejected.push(`${f.name}: ${Math.round(d)}s — maksimumi ${maxMin} minuta`)
         continue
       }
@@ -107,7 +123,8 @@ export function useVideos(setMsg: (m: string) => void, setIsDirty: (b: boolean) 
         setPct(Math.round(((i + frac) / items.length) * 100))
       })
       if (r.error) { setUploading(false); return { videos: out, poster: null, error: r.error } }
-      if (r.url) out.push({ url: r.url, duration: Math.round(items[i].duration) })
+      // Kohëzgjatja: nga transkoderi (i saktë edhe kur shfletuesi s'e dekodoi dot burimin), përndryshe nga proba.
+      if (r.url) out.push({ url: r.url, duration: r.duration ?? Math.round(items[i].duration) })
     }
     setPct(100)
     setUploading(false)
