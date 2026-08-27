@@ -8,7 +8,7 @@ function dur(s: number) {
 }
 
 export function ListingMedia({ p }: any) {
-  const { uploadProgress, vid, handleImages, imagePreviews, maxImages, loading, submit } = p
+  const { uploadProgress, vid, handleImages, imagePreviews, maxImages, loading, submit, mt, mm } = p
   const imgCap = maxImages < 0 ? '∞' : maxImages
   const vidCap = vid.maxVideos < 0 ? '∞' : vid.maxVideos
   const full = vid.maxVideos >= 0 && vid.count >= vid.maxVideos
@@ -99,6 +99,13 @@ export function ListingMedia({ p }: any) {
           </div>
         )}
       </div>
+
+      {/* Mesazhi i gabimit/statusit shfaqet EDHE këtu te butoni — më parë dilte vetëm në krye
+          (ListingTop), ndaj kur validimi dështonte (p.sh. titull/kategori/qytet bosh) përdoruesi
+          poshtë te butoni s'e shihte dhe dukej sikur "butoni nuk punon". */}
+      {mm && (
+        <div className={`msg-box ${mt}`} role="alert" style={{ marginBottom: 10 }}>{mm}</div>
+      )}
 
       <button type="submit" className="submit-btn" onClick={submit} disabled={loading}>
         {vid.uploading
