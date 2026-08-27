@@ -27,9 +27,14 @@ export function useVideos(setMsg: (m: string) => void, setIsDirty: (b: boolean) 
   const [items, setItems] = useState<VidItem[]>([])
   const [pct, setPct] = useState(0)
   const [uploading, setUploading] = useState(false)
+  // Kufiri i madhësisë së videos (MB) — nga app_config (jo i ngurtësuar; §2.9). Duhet të përputhet
+  // me kufirin global të ngarkimit te Supabase (përndryshe serveri e refuzon me "exceeded max size").
+  const [maxMb, setMaxMb] = useState(50)
 
   useEffect(() => {
     supabase.rpc('get_my_entitlements').then(({ data }) => setEnt(data), () => {})
+    supabase.from('app_config').select('value').eq('key', 'video_max_mb').maybeSingle()
+      .then(({ data }) => { const n = parseInt(data?.value ?? '', 10); if (!Number.isNaN(n) && n > 0) setMaxMb(n) }, () => {})
   }, [])
 
   const maxVideos: number = ent?.max_videos ?? 5
@@ -54,6 +59,12 @@ export function useVideos(setMsg: (m: string) => void, setIsDirty: (b: boolean) 
     const rejected: string[] = []
     for (const f of files.slice(0, room)) {
       if (!f.type.startsWith('video/')) { rejected.push(`${f.name}: nuk është video`); continue }
+      // Kontroll madhësie PARA ngarkimit — që të mos presësh kot dhe pastaj të dështojë me
+      // "exceeded max size". Kufiri vjen nga app_config (video_max_mb) = kufiri i serverit.
+      if (f.size > maxMb * 1024 * 1024) {
+        rejected.push(`${f.name}: ${(f.size / 1048576).toFixed(0)}MB — maksimumi ${maxMb}MB. Shkurtoje ose ul cilësinë e videos.`)
+        continue
+      }
       const d = await probeDuration(f)
       if (d > maxSec) {
         rejected.push(`${f.name}: ${Math.round(d)}s — maksimumi ${maxMin} minuta`)

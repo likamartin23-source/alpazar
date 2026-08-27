@@ -89,9 +89,13 @@ async function compress(file: File): Promise<Blob> {
 }
 
 function friendlyUploadError(msg: string): string {
-  if (/failed to fetch|network|timed? ?out|load failed|connection/i.test(msg))
-    return 'Rrjeti u nderpre gjate ngarkimit. Provo me Wi-Fi ose provo serish.'
-  return msg
+  const m = String(msg || '')
+  // Mesazhe të NDERSHME — pa fajësuar WiFi-n kur s'e dimë. Timeout ≠ "rrjet i keq".
+  if (/timed? ?out/i.test(m))
+    return 'Ngarkimi zgjati shumë (skedar i madh ose server i ngadaltë) edhe pas disa provash. Provo sërish ose një foto pak më të vogël.'
+  if (/failed to fetch|network|load failed|connection|nderpre/i.test(m))
+    return 'Ngarkimi u ndërpre edhe pas disa provash automatike. Provo sërish.'
+  return m
 }
 
 async function requireUid(): Promise<string> {
@@ -241,10 +245,23 @@ export async function uploadImages(
   onProgress?.({ done: 0, total: files.length })
   const uid = await requireUid()
 
-  const errors: string[] = []
   const results: (string | null)[] = new Array(files.length).fill(null)
+  const errBy: (string | null)[] = new Array(files.length).fill(null) // gabimi për indeks
   let done = 0
   let cursor = 0
+
+  const extOf = (b: Blob) => b.type === 'image/gif' ? 'gif' : b.type === 'image/webp' ? 'webp' : b.type === 'image/png' ? 'png' : 'jpg'
+
+  async function attempt(idx: number, timeoutMs: number): Promise<boolean> {
+    const file = files[idx]
+    const blob: Blob = await withTimeout(compress(file).catch(() => file), 20_000, file)
+    const path = `${uid}/${crypto.randomUUID()}.${extOf(blob)}`
+    const err = await putObject('listing-images', path, blob, timeoutMs)
+    if (err) { errBy[idx] = err; return false }
+    results[idx] = supabase.storage.from('listing-images').getPublicUrl(path).data.publicUrl
+    errBy[idx] = null
+    return true
+  }
 
   async function worker() {
     while (true) {
@@ -252,21 +269,28 @@ export async function uploadImages(
       if (idx >= files.length) return
       const file = files[idx]
       if (!file.type.startsWith('image/')) {
-        errors.push(`${file.name}: Nuk eshte imazh.`)
+        errBy[idx] = 'Nuk eshte imazh.'
         done++; onProgress?.({ done, total: files.length }); continue
       }
       onProgress?.({ done, total: files.length, currentName: file.name })
-      const blob: Blob = await withTimeout(compress(file).catch(() => file), 20_000, file)
-      const ext = blob.type === 'image/gif' ? 'gif' : blob.type === 'image/webp' ? 'webp' : blob.type === 'image/png' ? 'png' : 'jpg'
-      const path = `${uid}/${crypto.randomUUID()}.${ext}`
-      const err = await putObject('listing-images', path, blob, 120000)
+      await attempt(idx, 120000)
       done++; onProgress?.({ done, total: files.length })
-      if (err) errors.push(`${file.name}: ${err}`)
-      else results[idx] = supabase.storage.from('listing-images').getPublicUrl(path).data.publicUrl
     }
   }
 
   await Promise.all(Array.from({ length: Math.min(IMG_CONCURRENCY, files.length) }, worker))
+
+  // GARANCI: riprovim FINAL sekuencial (një nga një → pa kontanie rrjeti) me timeout më të gjatë,
+  // për skedaret që dështuan në valën paralele. Shpesh një foto e vetme dështon kur 3 ngarkohen njëkohësisht.
+  const failed = results.map((u, i) => (u ? -1 : i)).filter(i => i >= 0 && files[i].type.startsWith('image/'))
+  for (const idx of failed) {
+    onProgress?.({ done, total: files.length, currentName: files[idx].name })
+    await attempt(idx, 180000)
+  }
+
+  const errors = errBy
+    .map((e, i) => (e && !results[i]) ? `${files[i].name}: ${friendlyUploadError(e)}` : null)
+    .filter((e): e is string => !!e)
   return { urls: results.filter((u): u is string => !!u), errors }
 }
 
