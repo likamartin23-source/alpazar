@@ -187,7 +187,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
           </div>
 
           {profile.username && (
-            <div style={{ color: '#888', fontSize: 13, marginBottom: 4 }}>@{profile.username}</div>
+            <div style={{ color: '#6b6b6b', fontSize: 13, marginBottom: 4 }}>@{profile.username}</div>
           )}
 
           {profile.city && (
@@ -200,19 +200,19 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
           <div style={{ display: 'flex', gap: 20, marginBottom: 12 }}>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontWeight: 800, fontSize: 17, color: '#111' }}>{listings.length}</div>
-              <div style={{ fontSize: 11, color: '#888' }}>Shpallje</div>
+              <div style={{ fontSize: 11, color: '#6b6b6b' }}>Shpallje</div>
             </div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontWeight: 800, fontSize: 17, color: soldCount > 0 ? '#0E7A35' : '#111' }}>{soldCount}</div>
-              <div style={{ fontSize: 11, color: '#888' }}>Të shitura</div>
+              <div style={{ fontSize: 11, color: '#6b6b6b' }}>Të shitura</div>
             </div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontWeight: 800, fontSize: 17, color: '#111' }}>{followers}</div>
-              <div style={{ fontSize: 11, color: '#888' }}>Ndjekës</div>
+              <div style={{ fontSize: 11, color: '#6b6b6b' }}>Ndjekës</div>
             </div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontWeight: 800, fontSize: 17, color: '#111' }}>{memberSince}</div>
-              <div style={{ fontSize: 11, color: '#888' }}>Anëtar</div>
+              <div style={{ fontSize: 11, color: '#6b6b6b' }}>Anëtar</div>
             </div>
           </div>
 
@@ -313,7 +313,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
       {activeTab === 'listings' && (
         <div id="tabpanel-listings" role="tabpanel" aria-labelledby="tab-listings" style={{ padding: '0 2px' }}>
           {listings.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '48px 16px', color: '#888', fontSize: 14 }}>
+            <div style={{ textAlign: 'center', padding: '48px 16px', color: '#6b6b6b', fontSize: 14 }}>
               <div style={{ fontSize: 36, marginBottom: 8 }} aria-hidden="true">📭</div>
               Nuk ka shpallje aktive
             </div>
@@ -336,12 +336,12 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
         <div id="tabpanel-about" role="tabpanel" aria-labelledby="tab-about" style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
           {profile.bio && (
             <div style={{ background: '#fff', borderRadius: 14, padding: 16, boxShadow: '0 1px 6px rgba(0,0,0,.06)' }}>
-              <div style={{ fontWeight: 700, fontSize: 13, color: '#888', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5 }}>Për Mua</div>
+              <div style={{ fontWeight: 700, fontSize: 13, color: '#6b6b6b', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5 }}>Për Mua</div>
               <div style={{ fontSize: 14, color: '#333', lineHeight: 1.6 }}>{profile.bio}</div>
             </div>
           )}
           <div style={{ background: '#fff', borderRadius: 14, padding: 16, boxShadow: '0 1px 6px rgba(0,0,0,.06)', display: 'flex', flexDirection: 'column', gap: 10 }}>
-            <div style={{ fontWeight: 700, fontSize: 13, color: '#888', textTransform: 'uppercase', letterSpacing: 0.5 }}>Informacion</div>
+            <div style={{ fontWeight: 700, fontSize: 13, color: '#6b6b6b', textTransform: 'uppercase', letterSpacing: 0.5 }}>Informacion</div>
             {profile.city && (
               <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 14, color: '#333' }}>
                 <span aria-hidden="true">📍</span><span>{profile.city}</span>

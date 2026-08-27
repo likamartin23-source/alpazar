@@ -15,6 +15,7 @@
 // stilet e veta.
 
 import { useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
 import Avatar, { tierNgaRankTier } from './Avatar'
 import { FavoriteButton } from './FavoriteButton'
 import { useIsOnline } from './OnlinePresence'
@@ -194,14 +195,13 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
               style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', background: '#0e0e0e' }}
             />
           : (cover
-              ? <img
+              ? <Image
                   src={cover}
                   alt={l.title}
-                  loading={index < 3 ? 'eager' : 'lazy'}
-                  fetchPriority={index < 3 ? 'high' : 'auto'}
-                  decoding="async"
-                  width={400}
-                  height={300}
+                  fill
+                  sizes="(max-width: 640px) 50vw, 300px"
+                  priority={index < 3}
+                  style={{ objectFit: 'cover' }}
                   onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
                 />
               : <i className="ti ti-photo" style={{ fontSize: 26, color: '#ccc' }} aria-hidden="true" />

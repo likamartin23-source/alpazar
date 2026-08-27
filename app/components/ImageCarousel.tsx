@@ -251,12 +251,12 @@ export function ImageCarousel({ images, videos, poster, alt = '', aspectRatio = 
       )}
 
       {count > 1 && (
-        <div style={{ fontSize: 13.2, color: '#9a9a9a', textAlign: 'center', marginTop: 6 }}>
+        <div style={{ fontSize: 13.2, color: '#6b6b6b', textAlign: 'center', marginTop: 6 }}>
           <span aria-hidden="true">↔</span> Rrëshkit për të parë të tjerat
         </div>
       )}
       {vidList.length > 0 && (
-        <div style={{ fontSize: 11, color: '#9a9a9a', textAlign: 'center', marginTop: 6 }}>
+        <div style={{ fontSize: 11, color: '#6b6b6b', textAlign: 'center', marginTop: 6 }}>
           <span aria-hidden="true">🎬</span> Videot ndihmojnë shpalljen të shitet deri në 3× më shpejt.
         </div>
       )}
