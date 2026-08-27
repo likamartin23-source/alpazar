@@ -8,6 +8,14 @@
     "test": "vitest run",
     "test:e2e": "playwright test"
   },
+  "browserslist": [
+    "chrome >= 90",
+    "edge >= 90",
+    "firefox >= 90",
+    "safari >= 14",
+    "ios_saf >= 14",
+    "not dead"
+  ],
   "dependencies": {
     "@anthropic-ai/sdk": "^0.98.0",
     "@react-google-maps/api": "^2.20.8",
