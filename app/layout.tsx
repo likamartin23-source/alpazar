@@ -8,6 +8,10 @@ import { SITE_URL } from '../lib/siteConfig'
 import { LanguageProvider } from '../lib/i18n'
 import { SiteFooter } from './components/SiteFooter'
 import { OnlinePresenceProvider } from './components/OnlinePresence'
+// AgeGate mbështjell TË GJITHA `children`. I ngarkuar në mënyrë statike (jo `dynamic`) që përmbajtja
+// të mos presë një chunk të veçantë — përndryshe në Slow-4G LCP-ja vonohet (overlay-i i moshës del si
+// elementi LCP ~7s). Është 'use client' + SSR-safe (overlay vetëm pas mount), ndaj importi statik s'prish gjë.
+import { AgeGate } from './components/AgeGate'
 import {
   AiFloat, UpdatePrompt, NotificationToast,
   MaintenanceBanner, AnnouncementBar,
@@ -18,7 +22,6 @@ import {
 // ./components/ChromeClient, qe eshte modul klient. Sjellja s'ndryshon.
 const AlpazarProviderDyn     = dynamic(() => import('../lib/context').then(m => ({ default: m.AlpazarProvider })))
 const GlobalErrorBoundaryDyn = dynamic(() => import('../lib/error-handler').then(m => ({ default: m.GlobalErrorBoundary })))
-const AgeGateDyn             = dynamic(() => import('./components/AgeGate').then(m => ({ default: m.AgeGate })))
 
 export const metadata: Metadata = {
   title: 'ALPAZAR — Shit · Bli · Bëj Pazrin Tënd',
@@ -255,7 +258,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <MaintenanceBanner />
           <AnnouncementBar />
           <NotificationToast />
-          <AgeGateDyn><main id="main-content">{children}</main></AgeGateDyn>
+          <AgeGate><main id="main-content">{children}</main></AgeGate>
           <AiFloat />
           <UpdatePrompt />
           <CookieBannerDyn />
