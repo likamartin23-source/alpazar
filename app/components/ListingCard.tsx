@@ -135,32 +135,37 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
   // e mbyll kanalin. Prag: `🔴` shfaqet vetëm kur live>0.
   const cardRef = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
+  // `videoVisible` (≥50% në ekran) është më i rreptë se `visible` (≥10%): autoplay-i i videos niset
+  // VETËM kur karta është kryesisht në pamje → shumë më pak video shkarkohen/luhen njëkohësisht në
+  // feed (ul payload-in ~8MB dhe punën e main-thread), pa e prekur pamjen. Presence/impression rrinë 10%.
+  const [videoVisible, setVideoVisible] = useState(false)
   useEffect(() => {
     const el = cardRef.current
     if (!el || typeof IntersectionObserver === 'undefined') return
     const io = new IntersectionObserver(
       ([e]) => {
         setVisible(e.isIntersecting)
+        setVideoVisible(e.isIntersecting && e.intersectionRatio >= 0.5)
         // Impression (BLLOKU I PËRMIRËSUAR — gjurmim): numërohet 1×/sesion kur karta
         // shfaqet realisht në ekran (jo thjesht e renderuar). Fire-and-forget.
         if (e.isIntersecting) trackEvent('impression', l.id, { once: true })
       },
-      { rootMargin: '0px', threshold: 0.1 },
+      { rootMargin: '0px', threshold: [0, 0.5] },
     )
     io.observe(el)
     return () => io.disconnect()
   }, [])
   const live = useSyteLive(visible ? l.id : undefined)
-  // Autoplay i besueshëm në feed: kur karta hyn në pamje, e nisim videon SHPRESHIMISHT (muted),
-  // sepse vetëm atributi `autoPlay` shpesh s'mjafton në Chrome-in celular. Fail-soft ndaj politikës.
+  // Autoplay i besueshëm në feed: kur karta është kryesisht në pamje, e nisim videon SHPREHIMISHT
+  // (muted), sepse vetëm atributi `autoPlay` shpesh s'mjafton në Chrome-in celular. Fail-soft.
   const vref = useRef<HTMLVideoElement>(null)
   useEffect(() => {
     const v = vref.current
-    if (!v || !visible) return
+    if (!v || !videoVisible) return
     v.muted = true
     const p = v.play()
     if (p && typeof (p as any).catch === 'function') (p as any).catch(() => { /* autoplay-policy: fail-soft */ })
-  }, [visible])
+  }, [videoVisible])
   const open = () => go(`/listing/${l.id}`)
 
   return (
@@ -178,8 +183,8 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
         {/* Kopertina: foto e parë, ose posteri i videos kur shpallja është vetëm-video (pa foto).
             Për shpalljet vetëm-video: kur karta hyn NË PAMJE (IntersectionObserver → `visible`),
             luajmë videon vetë, pa zë, në lak (rrjedhshëm në feed); jashtë pamjes tregojmë posterin.
-            Muted+playsInline → autoplay lejohet nga shfletuesit; preload='none' → pa kosto kur s'duket. */}
-        {videoUrl && visible
+            Muted+playsInline → autoplay lejohet; preload='metadata' → pak kosto; mbushet vetëm kur ≥50% në pamje. */}
+        {videoUrl && videoVisible
           ? <video
               ref={vref}
               src={videoUrl}
@@ -203,7 +208,7 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
             )
         }
         {/* Tregues ▶ kur karta është video-only por s'po luhet aktivisht (Stream, ose mp4 jashtë pamjes). */}
-        {hasVideo && !(videoUrl && visible) && (
+        {hasVideo && !(videoUrl && videoVisible) && (
           <span aria-label="Video" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', zIndex: 2, width: 40, height: 40, borderRadius: '50%', background: 'rgba(0,0,0,.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
             <i className="ti ti-player-play-filled" style={{ fontSize: 18, color: '#fff' }} aria-hidden="true" />
           </span>
