@@ -57,12 +57,17 @@ export async function POST(req: NextRequest) {
   }
 
   // Callers can opt out of SSE streaming (stream:false) to get a single JSON
-  // { reply } — used by the new-listing AI helpers (price / description).
+  // { reply } — used by the new-listing AI helpers (price / description / category).
   const wantStream = body?.stream !== false
+  // Ndihmësit e shpalljes dërgojnë `task` (description/price/category). Për ta, kur asnjë ofrues
+  // AI real s'kthen përgjigje, NUK duhet shërbyer teksti bisedor i FAQ-së (do të futej si përshkrim
+  // i pasaktë ose s'do të përputhej kurrë me një kategori). Kthejmë reply:null → klienti përdor
+  // fallback-un e vet lokal (p.sh. përputhje kategorie lokale, shabllon përshkrimi).
+  const isTask = typeof body?.task === 'string' && body.task.length > 0 && body.task.length < 40
 
   const lastUserMsg: string = [...messages].reverse().find((m: any) => m.role === 'user')?.content ?? ''
   const convo = sanitizeConvo(messages)
-  if (convo.length === 0) return NextResponse.json({ reply: await gtranslate(localFallback(lastUserMsg), lang) })
+  if (convo.length === 0) return NextResponse.json(isTask ? { reply: null, ai: false } : { reply: await gtranslate(localFallback(lastUserMsg), lang) })
 
   const liveCtx = await getLiveContext(lastUserMsg)
   const systemPrompt = buildSystemPrompt(liveCtx, lang)
@@ -100,6 +105,8 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // 3. FAQ fallback (lokalizuar ne gjuhen e perdoruesit)
+  // 3. FAQ fallback (lokalizuar ne gjuhen e perdoruesit) — vetëm për bisedën e Albit.
+  //    Për thirrjet e ndihmësit (task) kthejmë null që klienti të përdorë fallback-un lokal.
+  if (isTask) return NextResponse.json({ reply: null, ai: false })
   return NextResponse.json({ reply: await gtranslate(localFallback(lastUserMsg), lang) })
 }
