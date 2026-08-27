@@ -5,7 +5,8 @@ import {
   fetchCategoryBySlug, fetchCategoryListings,
   CITIES, citySlug,
 } from '../../../lib/seoTaxonomy'
-import { ListingGrid, LANDING_CSS } from '../_shared'
+import { LANDING_CSS } from '../_shared'
+import { ListingGrid } from '../CategoryGrid'
 
 // SSR DINAMIK (jo ISR) — konsistencë build-i cross-route + verifikueshmëri (Cowork §12).
 // ISR-ja shërbente prerender të deploy-eve të vjetra nga edge-i (staleness) dhe s'jepte

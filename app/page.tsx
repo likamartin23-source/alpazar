@@ -4,6 +4,7 @@ import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../lib/supabase'
 import { SITE_URL } from '../lib/siteConfig'
 import type { Listing, Category } from '../lib/types'
 import HomeClient from './HomeClient'
+import { LISTING_SELECT } from '../lib/listingSelect'
 
 // SSR DINAMIK (jo ISR). Crawler-at vazhdojnë të marrin përmbajtje reale në HTML-in
 // fillestar (SEO i ruajtur), POR pa `stale-while-revalidate`-in ~1-vjeçar që Next-i
@@ -23,7 +24,10 @@ async function fetchHome(): Promise<{ listings: Listing[]; categories: Category[
     const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
     const [{ data: listings }, { data: categories }] = await Promise.all([
       sb.from('listings')
-        .select('id,title,price,currency,condition,city,is_premium,images,category_id,created_at,user_id,author:user_id(id,full_name,username,avatar_url,is_premium,trust_score)')
+        // Një projeksion i vetëm identiteti (lib/listingSelect) — pa join-in e biznesit,
+        // ListingCard e trajton shpalljen e biznesit si personale (maskim). Identik me HomeClient
+        // dhe kërkimin: karta e biznesit "noton" e njohur qysh te render-i i parë SSR.
+        .select(LISTING_SELECT)
         .eq('is_active', true)
         .order('rank_tier', { ascending: false })
         .order('last_bumped_at', { ascending: false })

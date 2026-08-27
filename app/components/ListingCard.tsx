@@ -166,10 +166,12 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
         {l.condition === 'i_ri' && <span className="badge-new">I ri</span>}
         {l.condition === 'i_perdorur' && <span className="badge-used">I përdorur</span>}
         {/* Vulat sipas matrices se ngrire (BLLOKU Imazhi 2): 👑 VIP mbi ari→kuqe ·
-            ★ premium · falas asgje. E njejta teme si unaza e Avatar-it (ari→kuqe). */}
-        {l.rank_tier === 2
+            ★ premium · falas asgje. E njejta teme si unaza e Avatar-it (ari→kuqe).
+            H2: TË DYJA vulat nga i njëjti burim `tier` (=tierNgaRankTier(rank_tier)) si unaza —
+            më parë ★ lexonte `is_premium` bruto, ndaj mund të mospërputhej me unazën. */}
+        {tier === 'vip'
           ? <span className="badge-premium" role="img" aria-label="VIP" style={{ background: 'linear-gradient(135deg,#D4AF37,#E63312)', color: '#fff' }}><span aria-hidden="true">👑</span> VIP</span>
-          : l.is_premium && <span className="badge-premium" role="img" aria-label="Premium"><span aria-hidden="true">★</span></span>}
+          : tier === 'premium' && <span className="badge-premium" role="img" aria-label="Premium"><span aria-hidden="true">★</span></span>}
         {showSeller && biz && (
           <div
             className="card-seller-ov"

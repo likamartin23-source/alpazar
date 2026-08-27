@@ -4,7 +4,8 @@ import { SITE_URL } from '../../../../lib/siteConfig'
 import {
   fetchCategoryBySlug, fetchCategoryListings, cityFromSlug, citySlug, CITIES,
 } from '../../../../lib/seoTaxonomy'
-import { ListingGrid, LANDING_CSS } from '../../_shared'
+import { LANDING_CSS } from '../../_shared'
+import { ListingGrid } from '../../CategoryGrid'
 
 // SSR DINAMIK (jo ISR) — konsistencë build-i cross-route + verifikueshmëri (Cowork §12).
 // Hapësira kombinatorike qytet×kategori s'para-ndërtohej gjithsesi; tani renderon me

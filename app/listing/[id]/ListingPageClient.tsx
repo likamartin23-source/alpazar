@@ -4,7 +4,7 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import { supabase } from '../../../lib/supabase'
 import { nf, dateShort, dayMonth, monthYear, clockTime } from '../../../lib/format'
-import { getLevel, isNewMember } from '../../components/Badges'
+import { isNewMember } from '../../components/Badges'
 import { SocialProofBar, SellerPremiumUpsell } from '../../components/PremiumUpsell'
 import { ReportSheet } from '../../components/ReportSheet'
 import { saveRefFromUrl, buildShareUrl } from '../../../lib/referral'
@@ -34,27 +34,6 @@ function dayLabel(d: string) {
   if (dt.toDateString() === yes.toDateString()) return 'Dje'
   return dayMonth(d)
 }
-// §12/task#18: `initialBiz` mbjell gjendjen nga serveri → karta e biznesit del ne
-// HTML-in e serverit (SSR), jo vetem pas fetch-it ne klient.
-function BusinessMiniCard({ bizId, initialBiz }: { bizId: string; initialBiz?: any }) {
-  const [biz, setBiz] = useState<any>(initialBiz ?? null)
-  useEffect(() => {
-    supabase.from('businesses').select('id,name,logo_url,is_verified').eq('id', bizId).single().then(({ data }) => { if (data) setBiz(data) })
-  }, [bizId])
-  if (!biz) return null
-  return (
-    <div role="link" tabIndex={0} style={{ margin: '0 0 12px', padding: '10px 12px', background: '#F5F5F5', borderRadius: 12, display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => window.location.href = `/biznese/${biz.id}`} onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/biznese/${biz.id}` }}>
-      <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#fff', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, border: '1px solid #eee', flexShrink: 0 }}>
-        {biz.logo_url ? <img src={biz.logo_url} alt={biz.name} loading="lazy" width={36} height={36} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span aria-hidden="true">🏢</span>}
-      </div>
-      <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 12, fontWeight: 700, color: '#111' }}>{biz.name} {biz.is_verified && <span style={{ color: '#16a34a' }} aria-label="Biznes i verifikuar"><span aria-hidden="true">✓</span> Biznes</span>}</div>
-        <div style={{ fontSize: 10, color: '#888' }}>Shfaq faqen e biznesit →</div>
-      </div>
-    </div>
-  )
-}
-
 function pubDate(d: string) {
   return dateShort(d)
 }
@@ -290,7 +269,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
           // Siguri HIGH-1: kolona të sigurta, PA `phone`/`is_admin`/`is_suspended` (PII/privilegj) —
           // që të mos rrjedhin te vizitorët anonimë (anon-key publik). Telefoni merret veç më poshtë,
           // vetëm kur përdoruesi është i loguar (kontakti mbetet për anëtarët; scraping-u anonim vdes).
-          supabase.from('profiles').select('id,username,full_name,avatar_url,city,bio,is_premium,premium_expires_at,gamification_points,gamification_level,created_at,shop_name,shop_description,shop_category,shop_banner_url,is_verified,last_seen,seller_rating,reviews_count,referral_code,cover_url,website,listings_count,total_sales,followers_count,following_count,response_rate,response_time_hrs,shop_is_open,total_saved,updated_at,trust_score,trust_score_visible,has_boost,boost_expires_at').eq('id', data.user_id).single(),
+          supabase.from('profiles').select('id,username,full_name,avatar_url,city,bio,is_premium,premium_expires_at,gamification_points,gamification_level,created_at,shop_name,shop_description,shop_category,shop_banner_url,is_verified,last_seen,seller_rating,reviews_count,referral_code,cover_url,website,listings_count,total_sales,followers_count,following_count,shop_is_open,total_saved,updated_at,trust_score,trust_score_visible,has_boost,boost_expires_at').eq('id', data.user_id).single(),
           supabase.from('listings').select('*', { count: 'exact', head: true })
             .eq('user_id', data.user_id).eq('is_active', true),
         ])
@@ -318,7 +297,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
     } catch { /* fallback më poshtë */ }
     let q = supabase
       .from('listings')
-      .select('id,title,price,currency,images,condition,city,is_premium,views_count')
+      .select('id,title,price,currency,images,condition,city,is_premium,views_count,rank_tier,created_at,status')
       .eq('category_id', categoryId)
       .eq('is_active', true)
       .neq('id', currentId)
@@ -340,7 +319,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
       // Fallback: broader search without city/price filters
       const { data: fallback } = await supabase
         .from('listings')
-        .select('id,title,price,currency,images,condition,city,is_premium,views_count')
+        .select('id,title,price,currency,images,condition,city,is_premium,views_count,rank_tier,created_at,status')
         .eq('category_id', categoryId)
         .eq('is_active', true)
         .neq('id', currentId)
@@ -871,7 +850,8 @@ export default function ListingPageClient({ params, initialListing, initialSelle
             {listing.city && <div className="meta-item"><i className="ti ti-map-pin" aria-hidden="true" />{listing.city}</div>}
             {listing.created_at && <div className="meta-item"><i className="ti ti-calendar" aria-hidden="true" />{pubDate(listing.created_at)}</div>}
             {listing.category && <div className="meta-item"><i className="ti ti-tag" aria-hidden="true" />{CATEGORY_LABELS[listing.category] || listing.category}</div>}
-            {(listing.views_count || 0) > 0 && <div className="meta-item"><i className="ti ti-eye" aria-hidden="true" />{listing.views_count}</div>}
+            {/* H5: numri i shikimeve hiqet nga meta-rreshti — SocialProofBar (lart) e shfaq
+                tashmë me praninë live (👁 N · 🔴 M), pa e dyfishuar ~50px më poshtë. */}
           </div>
 
           {/* ── PROFILI I SHITËSIT — free-flowing ── */}
@@ -908,16 +888,12 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                   {seller.is_admin   && <span className="schip sch-admin"><span aria-hidden="true">🛡</span> Admin</span>}
                   {sellerTier !== 'free' && <span className="schip sch-prem"><span aria-hidden="true">👑</span> {sellerTier === 'vip' ? 'VIP Ekstra Boost' : 'Premium'}</span>}
                   {isBusinessListing && <span className="schip sch-shop"><span aria-hidden="true">🏢</span> Biznes</span>}
-                  {(() => { const l = getLevel(seller.gamification_points || 0); return <span className="schip" style={{ background: l.bg, color: l.color }}>{l.icon} {l.name}</span> })()}
                   {sellerCount > 0 && <span className="schip sch-seller"><span aria-hidden="true">📦</span> Shitës aktiv</span>}
                   {isNewMember(seller.created_at) && <span className="schip sch-new"><span aria-hidden="true">🆕</span> Anëtar i ri</span>}
                   {!isOwner && <span className="schip sch-priv"><span aria-hidden="true">🔒</span> Bisedë private</span>}
-                  {(seller.trust_score ?? 0) >= 60 && (
-                    <span className="schip" style={{ background: '#dcfce7', color: '#16a34a', fontWeight: 700 }}><span aria-hidden="true">✓</span> I verifikuar</span>
-                  )}
-                  {(seller.trust_score ?? 0) >= 75 && (
-                    <span className="schip" style={{ background: '#fef9c3', color: '#854d0e', fontWeight: 700 }}><span aria-hidden="true">⚡</span> Përgjigjet shpejt</span>
-                  )}
+                  {/* H1: "I verifikuar" hiqet — Avatar-i tashmë e shfaq vulën ✓ (verified) me të njëjtin
+                      prag. "Përgjigjet shpejt" hiqet — ishte proxy i rremë nga trust_score, jo kohë reale.
+                      Niveli i reputacionit shfaqet vetëm nga TrustBadge (një burim, poshtë). */}
                 </div>
 
                 {/* Stats */}
@@ -932,6 +908,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                 {seller.created_at && seller.trust_score_visible !== false && (
                   <div style={{ marginBottom: 8 }}>
                     <TrustBadge
+                      score={seller.trust_score ?? undefined}
                       createdAt={seller.created_at}
                       listingsActive={sellerCount}
                       gamificationPoints={seller.gamification_points || 0}
@@ -981,10 +958,9 @@ export default function ListingPageClient({ params, initialListing, initialSelle
             </>
           )}
 
-          {/* Business mini-card — shown when listing belongs to a business */}
-          {listing.business_id && (
-            <BusinessMiniCard bizId={listing.business_id} initialBiz={initialBiz} />
-          )}
+          {/* GAP 5 (RESTAURIMI FINAL): BusinessMiniCard u hoq — dublonte lidhjen e biznesit
+              që jepet tashmë nga butoni "Shiko biznesin →" te blloku i shitësit (një lidhje e
+              vetme biznesi, pa dy kartela për të njëjtin biznes). */}
 
           {listing.description && (
             <>

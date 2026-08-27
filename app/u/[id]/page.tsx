@@ -66,7 +66,7 @@ async function fetchProfileData(id: string) {
   const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
   const { data: profile } = await sb
     .from('profiles')
-    .select('id,full_name,username,avatar_url,cover_url,bio,city,is_premium,premium_expires_at,has_boost,boost_expires_at,is_verified,trust_score,trust_score_visible,created_at,shop_name,seller_rating,reviews_count')
+    .select('id,full_name,username,avatar_url,cover_url,bio,city,is_premium,premium_expires_at,has_boost,boost_expires_at,is_verified,trust_score,trust_score_visible,created_at,shop_name,seller_rating,reviews_count,gamification_points,gamification_level')
     .eq('id', id)
     .single()
   if (!profile) return { profile: null, listings: [], biz: null }
