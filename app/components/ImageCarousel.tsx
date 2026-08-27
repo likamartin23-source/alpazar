@@ -251,8 +251,8 @@ export function ImageCarousel({ images, videos, poster, alt = '', aspectRatio = 
       )}
 
       {count > 1 && (
-        <div style={{ fontSize: 11, color: '#9a9a9a', textAlign: 'center', marginTop: 6 }}>
-          <span aria-hidden="true">↔</span> Rrëshkit për të kaluar te të tjerat
+        <div style={{ fontSize: 13.2, color: '#9a9a9a', textAlign: 'center', marginTop: 6 }}>
+          <span aria-hidden="true">↔</span> Rrëshkit për të parë të tjerat
         </div>
       )}
       {vidList.length > 0 && (
