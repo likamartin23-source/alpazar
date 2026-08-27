@@ -1,3 +1,10 @@
+// Modeli Groq — I KONFIGURUESHËM nga env (pa deploy), me default të garantuar-aktiv.
+// Auditi ditor (Cowork, 21/24/25 gusht): `llama-3.3-70b-versatile` kthente 404 "does not exist
+// or you do not have access" për këtë çelës → shtegu parësor binte te fallback-u. `llama-3.1-8b-instant`
+// është model prodhimi i qëndrueshëm dhe i disponueshëm te tier-i falas. Pronari mund ta ngrejë te
+// një model më i fuqishëm duke vendosur GROQ_MODEL te Vercel, pa prekur kodin.
+const GROQ_MODEL = process.env.GROQ_MODEL || 'llama-3.1-8b-instant'
+
 /* ── Groq streaming (SSE) — provider parësor, falas 100K/ditë ─────── */
 export async function tryGroqStream(
   convo: any[],
@@ -15,7 +22,7 @@ export async function tryGroqStream(
         Authorization: `Bearer ${groqKey}`,
       },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
+        model: GROQ_MODEL,
         messages: [{ role: 'system', content: systemPrompt }, ...convo],
         max_tokens: 1500,
         temperature: 0.7,
@@ -93,7 +100,7 @@ export async function tryGroqJSON(convo: any[], systemPrompt: string): Promise<s
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${groqKey}` },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
+        model: GROQ_MODEL,
         messages: [{ role: 'system', content: systemPrompt }, ...convo],
         max_tokens: 1500,
         temperature: 0.7,
