@@ -74,22 +74,22 @@ const nextConfig = {
 
     return [
       {
-        // Faqet PUBLIKE — edge-cache i shkurtër + stale-while-revalidate. HTML-ja e serverit është
-        // E NJËJTA për të gjithë (autentikimi 100% në klient), ndaj cache-i në CDN është i sigurt e
-        // i shpejtë (pa cold-start në çdo vizitë → FCP/LCP shumë më i mirë, PageSpeed s'ngec në ngarkim).
-        // Freskia: Vercel e PASTRON CDN-in automatikisht në çdo deploy; brenda 60s SWR mban shpejtësinë.
-        // Asetet janë hashed dhe s'ka Service Worker → s'ka rrezik "kthimi te versioni i vjetër".
+        // SHËNIM: cache-i real i këtyre rrugëve KONTROLLOHET nga middleware.ts (që vendos
+        // Vercel-CDN-Cache-Control me përparësinë më të lartë). Header-at këtu janë dytësorë;
+        // mos u mbështet te ta për cache. Freskia (no-store) vendoset qëllimisht te middleware.
         source: '/',
         headers: [
-          { key: 'Cache-Control', value: 'public, s-maxage=60, stale-while-revalidate=300' },
-          { key: 'CDN-Cache-Control', value: 'public, s-maxage=60, stale-while-revalidate=300' },
+          { key: 'Cache-Control', value: 'no-store, must-revalidate' },
+          { key: 'CDN-Cache-Control', value: 'no-store' },
+          { key: 'Vercel-CDN-Cache-Control', value: 'no-store' },
         ],
       },
       {
         source: '/listing/:id',
         headers: [
-          { key: 'Cache-Control', value: 'public, s-maxage=60, stale-while-revalidate=300' },
-          { key: 'CDN-Cache-Control', value: 'public, s-maxage=60, stale-while-revalidate=300' },
+          { key: 'Cache-Control', value: 'no-store, must-revalidate' },
+          { key: 'CDN-Cache-Control', value: 'no-store' },
+          { key: 'Vercel-CDN-Cache-Control', value: 'no-store' },
         ],
       },
       {

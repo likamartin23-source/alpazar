@@ -30,7 +30,9 @@ export default function FavoritesPage() {
         .eq('user_id', session.user.id)
         .order('created_at', { ascending: false })
         .limit(50)
-      setListings((data || []).map((f: any) => f.listings).filter((l: any) => l && l.is_active !== false))
+      // Mbaj të shiturat (Vendimi 3: "Shitur" = social proof me overlay, jo fshehje); largo vetëm
+      // ato të pauzuara (joaktive dhe JO të shitura).
+      setListings((data || []).map((f: any) => f.listings).filter((l: any) => l && (l.is_active !== false || l.status === 'sold')))
     } catch {
       if (!silent) setLoadError(true)
     } finally {
@@ -47,7 +49,9 @@ export default function FavoritesPage() {
     null,
     undefined,
     (row) => setListings(prev => prev.some(l => l.id === row.id)
-      ? (row.is_active === false ? prev.filter(l => l.id !== row.id) : prev.map(l => l.id === row.id ? { ...l, ...row } : l))
+      // "Shitur" (is_active=false + status='sold') MBETET me overlay (Vendimi 3); vetëm pauzimi (joaktive
+      // e jo e shitur) e heq. Përndryshe patch në vend.
+      ? ((row.is_active === false && row.status !== 'sold') ? prev.filter(l => l.id !== row.id) : prev.map(l => l.id === row.id ? { ...l, ...row } : l))
       : prev),
     (row) => setListings(prev => prev.filter(l => l.id !== row.id)),
   )

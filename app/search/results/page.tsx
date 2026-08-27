@@ -209,23 +209,23 @@ const [searchError, setSearchError] = useState(false)
       })
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'listings' }, (payload) => {
         const n = payload.new as any
-        if (!n.is_active) {
-          setPremium(prev => prev.filter(l => l.id !== n.id))
-          setRegular(prev => prev.filter(l => l.id !== n.id))
-          return
+        // Kanali s'ka filter → ndizet për ÇDO UPDATE të listings site-wide (përfshi increment_listing_views
+        // në çdo hapje shpalljeje, kurthi #7). GUARD brenda updater-it: kthe TË NJËJTIN prev kur rreshti
+        // s'është në listë → React bën bail-out, pa re-render të faqes. (Pa closure të vjetruar.)
+        const patch = (prev: any[], keep: boolean) => {
+          const i = prev.findIndex(l => l.id === n.id)
+          if (i < 0) return prev                                   // jashtë listës → pa ndryshim
+          if (!keep) return prev.filter(l => l.id !== n.id)        // joaktive, ose kaloi te lista tjetër
+          return prev.map(l => l.id === n.id ? { ...l, ...n } : l) // patch në vend
         }
-        if (n.is_premium) {
-          setPremium(prev => prev.map(l => l.id === n.id ? { ...l, ...n } : l))
-          setRegular(prev => prev.filter(l => l.id !== n.id))
-        } else {
-          setRegular(prev => prev.map(l => l.id === n.id ? { ...l, ...n } : l))
-          setPremium(prev => prev.filter(l => l.id !== n.id))
-        }
+        const active = !!n.is_active
+        setPremium(prev => patch(prev, active && !!n.is_premium))
+        setRegular(prev => patch(prev, active && !n.is_premium))
       })
       .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'listings' }, (payload) => {
         const id = (payload.old as any).id
-        setPremium(prev => prev.filter(l => l.id !== id))
-        setRegular(prev => prev.filter(l => l.id !== id))
+        setPremium(prev => prev.findIndex(l => l.id === id) < 0 ? prev : prev.filter(l => l.id !== id))
+        setRegular(prev => prev.findIndex(l => l.id === id) < 0 ? prev : prev.filter(l => l.id !== id))
       })
       .subscribe()
     return () => { supabase.removeChannel(ch) }
