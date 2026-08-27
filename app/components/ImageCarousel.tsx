@@ -179,6 +179,22 @@ export function ImageCarousel({ images, videos, poster, alt = '', aspectRatio = 
                     }}
                   />
                 </>
+              ) : s.src.includes('cloudflarestream.com') ? (
+                <>
+                  {/* Video e transkoduar (Cloudflare Stream): luhet KUDO (edhe H.265→H.264), adaptiv,
+                      me player-in e vetë që mban zërin/kontrollet — pa varësi shtesë në klient. */}
+                  <iframe
+                    src={s.src}
+                    loading="lazy"
+                    allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+                    allowFullScreen
+                    title={`Video ${i + 1}`}
+                    style={{ position: 'relative', zIndex: 2, width: '100%', height: '100%', border: 'none', display: 'block', background: '#0e0e0e' }}
+                  />
+                  <span aria-hidden="true" style={{ position: 'absolute', top: 10, left: 10, zIndex: 3, display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(230,51,18,.92)', color: '#fff', fontSize: 10, fontWeight: 800, padding: '3px 7px', borderRadius: 7, letterSpacing: '.4px', pointerEvents: 'none' }}>
+                    <i className="ti ti-player-play-filled" style={{ fontSize: 11 }} /> VIDEO
+                  </span>
+                </>
               ) : (
                 <>
                   <video

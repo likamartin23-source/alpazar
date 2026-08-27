@@ -112,24 +112,30 @@ export function useVideos(setMsg: (m: string) => void, setIsDirty: (b: boolean) 
     setIsDirty(true)
   }
 
-  async function uploadAll(): Promise<{ videos: any[]; poster: File | null; error?: string }> {
+  async function uploadAll(): Promise<{ videos: any[]; poster: File | string | null; error?: string }> {
     if (items.length === 0) return { videos: [], poster: null }
     setUploading(true)
     setPct(0)
     const out: any[] = []
+    let firstStreamPoster: string | null = null
     for (let i = 0; i < items.length; i++) {
       const r = await uploadVideo(items[i].file, (p: any) => {
         const frac = p && p.total ? p.done / p.total : 0
         setPct(Math.round(((i + frac) / items.length) * 100))
-      })
+      }, { maxSeconds: maxSec })
       if (r.error) { setUploading(false); return { videos: out, poster: null, error: r.error } }
       // Kohëzgjatja: nga transkoderi (i saktë edhe kur shfletuesi s'e dekodoi dot burimin), përndryshe nga proba.
-      if (r.url) out.push({ url: r.url, duration: r.duration ?? Math.round(items[i].duration) })
+      // Poster-i: nga transkoderi (thumbnail) kur ekziston, përndryshe gjenerohet nga burimi më poshtë.
+      if (r.url) {
+        out.push({ url: r.url, duration: r.duration ?? Math.round(items[i].duration), ...(r.poster ? { poster: r.poster } : {}) })
+        if (i === 0 && r.poster) firstStreamPoster = r.poster
+      }
     }
     setPct(100)
     setUploading(false)
-    let poster: File | null = null
-    try { poster = await generateVideoPoster(items[0].file) } catch { /* opsionale */ }
+    // Poster-i i shpalljes: nga transkoderi kur e kthen; përndryshe kap një kuadër nga burimi (kur dekodohet).
+    let poster: File | string | null = firstStreamPoster
+    if (!poster) { try { poster = await generateVideoPoster(items[0].file) } catch { /* opsionale */ } }
     return { videos: out, poster }
   }
 

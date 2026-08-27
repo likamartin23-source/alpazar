@@ -36,6 +36,7 @@ const VIDEO_CSS = `
 .alp-vid-h .lv{background:#E63312;color:#fff;font-size:8px;font-weight:800;padding:2px 6px;border-radius:4px;letter-spacing:.5px}
 .alp-vid-st{position:relative;border-radius:14px;overflow:hidden;background:#000;line-height:0}
 .alp-vid-st video{width:100%;max-height:70vh;display:block;background:#000}
+.alp-vid-st iframe{width:100%;height:70vh;max-height:70vh;border:none;display:block;background:#000}
 .alp-vid-dur{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.72);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;pointer-events:none;line-height:1.6}
 .alp-vid-tabs{display:flex;gap:8px;overflow-x:auto;margin-top:10px;padding-bottom:2px;-webkit-overflow-scrolling:touch}
 .alp-vid-tabs::-webkit-scrollbar{display:none}
@@ -104,21 +105,35 @@ export default function ListingVideos({ videos, legacy, poster, images }: any) {
       </div>
 
       <div className="alp-vid-st">
-        <video
-          ref={vref}
-          key={cur.url}
-          src={cur.url}
-          poster={fallbackPoster}
-          controls
-          playsInline
-          preload="metadata"
-          controlsList="nodownload"
-          onLoadedMetadata={e => {
-            const d = (e.currentTarget as HTMLVideoElement).duration
-            if (d && isFinite(d)) setDurs(p => ({ ...p, [idx]: d }))
-          }}
-        />
-        {!!mmss(shownDur) && <span className="alp-vid-dur">{mmss(shownDur)}</span>}
+        {cur.url.includes('cloudflarestream.com') ? (
+          // Video e transkoduar (Cloudflare Stream): luhet KUDO (edhe H.265→H.264), adaptiv, me
+          // player-in e vet që mban zërin/kontrollet — pa varësi shtesë.
+          <iframe
+            key={cur.url}
+            src={cur.url}
+            allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+            allowFullScreen
+            title="Video e shpalljes"
+          />
+        ) : (
+          <>
+            <video
+              ref={vref}
+              key={cur.url}
+              src={cur.url}
+              poster={fallbackPoster}
+              controls
+              playsInline
+              preload="metadata"
+              controlsList="nodownload"
+              onLoadedMetadata={e => {
+                const d = (e.currentTarget as HTMLVideoElement).duration
+                if (d && isFinite(d)) setDurs(p => ({ ...p, [idx]: d }))
+              }}
+            />
+            {!!mmss(shownDur) && <span className="alp-vid-dur">{mmss(shownDur)}</span>}
+          </>
+        )}
       </div>
 
       {list.length > 1 && (

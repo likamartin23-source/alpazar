@@ -318,6 +318,89 @@ export async function uploadSingleImage(
   return { url: supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl }
 }
 
+// ── Cloudflare Stream (transkodim H.264 + streaming adaptiv) — GATI-por-në-gjumë ──
+// Rekomandimi kryesor: çdo video (edhe H.265/HEVC) shndërrohet automatikisht dhe luhet KUDO,
+// e rrjedhshme, me zë e pa zë. Aktivizohet kur app_config ka `cf_stream_customer_code` (PUBLIK,
+// pjesë e çdo URL-je luajtjeje) DHE serveri ka çelësin (admin_settings: cf_account_id + cf_stream_token).
+// Ngarkimi bëhet me tus (i njëjti protokoll i garantuar që përdorim) drejt Cloudflare-it — skedari
+// s'kalon nga serveri ynë; çelësi rri vetëm në server. Deri sa të konfigurohet, rri fjetur.
+let _cfCode: string | null | undefined
+async function getStreamCode(): Promise<string | null> {
+  if (_cfCode !== undefined) return _cfCode
+  try {
+    const { data } = await supabase.from('app_config').select('value').eq('key', 'cf_stream_customer_code').maybeSingle()
+    const c = (data?.value ?? '').trim()
+    _cfCode = c || null
+  } catch { _cfCode = null }
+  return _cfCode
+}
+
+// tus PATCH drejt një URL-je të krijuar tashmë (Cloudflare direct creator upload) — pa header-a
+// Supabase. I njëjti rifillim i garantuar: pas ndërprerjeje, rimerr offset-in real (HEAD) dhe vazhdon.
+async function tusUploadToUrl(location: string, data: Blob, onFrac?: (f: number) => void): Promise<string | null> {
+  let offset = 0
+  let stalls = 0
+  const MAX_STALLS = 8
+  const headOffset = async (): Promise<number | null> => {
+    try {
+      const r = await fetch(location, { method: 'HEAD', headers: { 'Tus-Resumable': '1.0.0' } })
+      if (r.status === 200 || r.status === 204) { const o = parseInt(r.headers.get('Upload-Offset') || '', 10); return Number.isNaN(o) ? null : o }
+    } catch { /* fail-soft */ }
+    return null
+  }
+  while (offset < data.size) {
+    const end = Math.min(offset + CHUNK, data.size)
+    try {
+      const patchRes = await fetch(location, {
+        method: 'PATCH',
+        headers: { 'Tus-Resumable': '1.0.0', 'Upload-Offset': String(offset), 'Content-Type': 'application/offset+octet-stream' },
+        body: data.slice(offset, end),
+      })
+      if (patchRes.status === 204 || patchRes.status === 200) {
+        const no = parseInt(patchRes.headers.get('Upload-Offset') || String(end), 10)
+        offset = Number.isNaN(no) ? end : no
+        onFrac?.(offset / data.size); stalls = 0; continue
+      }
+      const srv = await headOffset()
+      if (srv != null && srv > offset) { offset = srv; onFrac?.(offset / data.size); stalls = 0; continue }
+      stalls++; if (stalls >= MAX_STALLS) return 'stream_patch_' + patchRes.status
+      await tusSleep(1200 * Math.min(stalls, 6))
+    } catch (e: any) {
+      stalls++; if (stalls >= MAX_STALLS) return 'stream_' + String(e?.message ?? 'network')
+      await tusSleep(1200 * Math.min(stalls, 6))
+      const srv = await headOffset(); if (srv != null) { offset = srv; onFrac?.(offset / data.size) }
+    }
+  }
+  return null
+}
+
+async function uploadVideoStream(
+  file: File, code: string, maxSeconds: number, onProgress?: (p: UploadProgress) => void,
+): Promise<{ url?: string; error?: string; poster?: string; duration?: number }> {
+  // 1) Serveri krijon URL-në një-përdorimëshe (çelësi rri në server).
+  let created: { uploadURL?: string; uid?: string; error?: string }
+  try {
+    const r = await fetch('/api/video/stream-upload', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ size: file.size, maxSeconds, name: file.name }),
+    })
+    created = await r.json().catch(() => ({}))
+    if (!r.ok || !created.uploadURL || !created.uid) return { error: friendlyUploadError(created?.error || 'stream_init') }
+  } catch (e: any) { return { error: friendlyUploadError(String(e?.message ?? 'stream_init')) } }
+
+  // 2) Ngarkim tus i garantuar drejt Cloudflare-it.
+  const err = await tusUploadToUrl(created.uploadURL!, file, f => onProgress?.({ done: Math.round(f * 100), total: 100, currentName: file.name }))
+  onProgress?.({ done: 100, total: 100 })
+  if (err) return { error: friendlyUploadError(err) }
+
+  // 3) URL-të e luajtjes (Cloudflare shndërron async; iframe/HLS punojnë sapo bëhet gati).
+  const uid = created.uid!
+  return {
+    url: `https://customer-${code}.cloudflarestream.com/${uid}/iframe`,
+    poster: `https://customer-${code}.cloudflarestream.com/${uid}/thumbnails/thumbnail.jpg`,
+  }
+}
+
 // ── Transkodim automatik (Cloudinary) — GATI-por-në-gjumë ─────────────────────
 // Aktivizohet VETËM kur `app_config` ka `cloudinary_cloud_name` + `cloudinary_upload_preset`
 // (të dyja PUBLIKE, jo sekrete — kjo është "unsigned upload", e menduar për klientin; §2.7).
@@ -338,9 +421,11 @@ async function getCloudinary(): Promise<{ cloud: string; preset: string } | null
   return _cldCfg
 }
 
-// A është ndezur transkodimi automatik? (e lexon UI-ja që të mos refuzojë H.265 kur s'ka nevojë)
+// A është ndezur transkodimi automatik? (Cloudflare Stream OSE Cloudinary). E lexon UI-ja që të
+// mos refuzojë videot e padekodueshme (H.265) kur ofruesi i shndërron gjithsesi.
 export async function transcodingEnabled(): Promise<boolean> {
-  return !!(await getCloudinary())
+  const [code, cld] = await Promise.all([getStreamCode(), getCloudinary()])
+  return !!(code || cld)
 }
 
 function uploadVideoCloudinary(
@@ -383,12 +468,21 @@ function uploadVideoCloudinary(
 export async function uploadVideo(
   file: File,
   onProgress?: (p: UploadProgress) => void,
-): Promise<{ url?: string; error?: string; duration?: number }> {
+  opts?: { maxSeconds?: number },
+): Promise<{ url?: string; error?: string; duration?: number; poster?: string }> {
   if (!file.type.startsWith('video/')) return { error: 'Skedari nuk eshte video.' }
   onProgress?.({ done: 0, total: 100, currentName: file.name })
 
-  // Transkodim automatik nëse është ndezur (çdo kodek → H.264 i luajtshëm). Në dështim kthen
-  // gabim të qartë (NUK ruajmë video të padekodueshme në heshtje) — garancia mbetet e paprekur.
+  // Prioriteti: Cloudflare Stream (rekomandimi kryesor) → Cloudinary → Supabase Storage.
+  // Të dy të parët transkodojnë çdo kodek në H.264 që luhet kudo. Në dështim kthejnë gabim të
+  // qartë (NUK ruajmë video të padekodueshme në heshtje) — garancia mbetet e paprekur.
+  const code = await getStreamCode()
+  if (code) {
+    const r = await uploadVideoStream(file, code, opts?.maxSeconds ?? 600, onProgress)
+    onProgress?.({ done: 100, total: 100 })
+    return r
+  }
+
   const cld = await getCloudinary()
   if (cld) {
     const r = await uploadVideoCloudinary(file, cld, onProgress)

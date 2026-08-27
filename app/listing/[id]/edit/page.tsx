@@ -404,8 +404,13 @@ export default function EditListing() {
               <div style={{ display: 'grid', gap: 8, marginBottom: 10 }}>
                 {existingVideos.map((v: any, i: number) => (
                   <div key={i} style={{ position: 'relative' }}>
-                    <video src={v?.url || v} controls playsInline preload="metadata"
-                      style={{ width: '100%', maxHeight: 200, borderRadius: 12, background: '#000', display: 'block' }} />
+                    {String(v?.url || v).includes('cloudflarestream.com') ? (
+                      <iframe src={String(v?.url || v)} allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" allowFullScreen
+                        title={`Video ${i + 1}`} style={{ width: '100%', height: 200, border: 'none', borderRadius: 12, background: '#000', display: 'block' }} />
+                    ) : (
+                      <video src={v?.url || v} controls playsInline preload="metadata"
+                        style={{ width: '100%', maxHeight: 200, borderRadius: 12, background: '#000', display: 'block' }} />
+                    )}
                     <button type="button" aria-label={`Hiq videon ${i + 1}`} onClick={() => removeExistingVideo(i)}
                       style={{ position: 'absolute', top: 8, right: 8, background: 'rgba(0,0,0,.62)', color: '#fff', border: 'none', borderRadius: 999, width: 30, height: 30, cursor: 'pointer', fontSize: 16, lineHeight: 1 }}>
                       ×
