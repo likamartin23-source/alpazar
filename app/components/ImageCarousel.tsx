@@ -45,9 +45,10 @@ export function ImageCarousel({ images, videos, poster, alt = '', aspectRatio = 
   const count = slides.length
   const imgCount = imgList.length
 
-  // Instagram-model: video-ja që është NË PAMJE luan vetë (pa zë, në lak); të tjerat ndalen.
-  // Muted → lejohet autoplay; controls mbeten që përdoruesi të heqë heshtjen/kërcejë.
-  // Respekton `prefers-reduced-motion`. VENDOSUR PARA return-it të hershëm (Rules of Hooks).
+  // Video-ja që është NË PAMJE nis vetë (në lak); të tjerat ndalen. Shfletuesit lejojnë autoplay
+  // vetëm kur është pa zë, ndaj e nisim pa zë — POR mutojmë VETËM kur nis nga gjendja e ndalur.
+  // Kështu, kur përdoruesi heq heshtjen nga controls, NUK e rimutojmë (luhet me zë e pa zë sipas tij).
+  // Respekton `prefers-reduced-motion`. PARA return-it të hershëm (Rules of Hooks).
   useEffect(() => {
     const track = trackRef.current
     if (!track) return
@@ -56,9 +57,11 @@ export function ImageCarousel({ images, videos, poster, alt = '', aspectRatio = 
     vids.forEach((v, idx) => {
       const slideIdx = imgCount + idx // videot vijnë pas imazheve te `slides`
       if (slideIdx === current && !reduce) {
-        v.muted = true
-        const p = v.play()
-        if (p && typeof (p as any).catch === 'function') (p as any).catch(() => { /* autoplay-policy: fail-soft */ })
+        if (v.paused) {
+          v.muted = true
+          const p = v.play()
+          if (p && typeof (p as any).catch === 'function') (p as any).catch(() => { /* autoplay-policy: fail-soft */ })
+        }
       } else {
         try { v.pause() } catch { /* ignore */ }
       }
@@ -183,7 +186,6 @@ export function ImageCarousel({ images, videos, poster, alt = '', aspectRatio = 
                     poster={s.poster}
                     controls
                     playsInline
-                    muted
                     loop
                     preload="metadata"
                     controlsList="nodownload"
@@ -229,6 +231,11 @@ export function ImageCarousel({ images, videos, poster, alt = '', aspectRatio = 
         </div>
       )}
 
+      {count > 1 && (
+        <div style={{ fontSize: 11, color: '#9a9a9a', textAlign: 'center', marginTop: 6 }}>
+          <span aria-hidden="true">↔</span> Rrëshkit për të kaluar te të tjerat
+        </div>
+      )}
       {vidList.length > 0 && (
         <div style={{ fontSize: 11, color: '#9a9a9a', textAlign: 'center', marginTop: 6 }}>
           <span aria-hidden="true">🎬</span> Videot ndihmojnë shpalljen të shitet deri në 3× më shpejt.
