@@ -97,7 +97,10 @@ export default function UpdatePrompt() {
         await Promise.all(keys.map(k => caches.delete(k).catch(() => false)))
       }
     } catch { /* ignore */ }
-    try { location.reload() } catch { /* ignore */ }
+    // Navigim te /rifresko (header Clear-Site-Data nga rrjeti) në vend të thjesht reload:
+    // reload-i mund të interceptohej ende nga një SW i vjetër; /rifresko është rrugë e re që
+    // SW-ja e vjetër s'e ka në cache → kërkesa shkon te rrjeti → reset i plotë i garantuar.
+    try { location.href = '/rifresko' } catch { try { location.reload() } catch { /* ignore */ } }
   }
 
   return (

@@ -207,6 +207,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{__html: `
           (function(){
             try {
+              // AUTO-SHPËTIM: app-i NUK regjistron asnjë SW. Nëse një SW po e KONTROLLON këtë faqe
+              // (controller != null), është një SW i vjetër i ngecur që shërben versionin e vjetër —
+              // shkaku i "platforma u bllokua / s'përditësohet". E dërgojmë NJË herë te /rifresko
+              // (header Clear-Site-Data) që e fshin plotësisht. Mbrojtje ndaj cikleve: sessionStorage
+              // + s'ridrejtojmë kur jemi te /rifresko ose sapo u kthyem prej saj (?fresh=).
+              if ('serviceWorker' in navigator && navigator.serviceWorker.controller
+                  && location.pathname !== '/rifresko' && location.search.indexOf('fresh=') < 0) {
+                var rescued = false;
+                try { rescued = !!sessionStorage.getItem('_alpz_swr'); } catch(e){}
+                if (!rescued) {
+                  try { sessionStorage.setItem('_alpz_swr','1'); } catch(e){}
+                  location.replace('/rifresko');
+                  return;
+                }
+              }
               if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.getRegistrations().then(function(rs){
                   rs.forEach(function(r){ r.unregister().catch(function(){}); });
