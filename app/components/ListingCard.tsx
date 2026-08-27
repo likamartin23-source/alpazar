@@ -49,6 +49,8 @@ export type ListingCardItem = {
   city?: string | null
   condition?: string | null
   images?: string[] | null
+  /** Poster i videos (thumbnail) — përdoret si kopertinë kur shpallja s'ka foto (video-only). */
+  video_poster?: string | null
   is_premium?: boolean | null
   rank_tier?: number | null
   created_at?: string | null
@@ -150,9 +152,11 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
       onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') open() }}
     >
       <div className="card-img">
-        {l.images?.[0]
+        {/* Kopertina: foto e parë, ose posteri i videos kur shpallja është vetëm-video (pa foto).
+            Kështu shpalljet me video shfaqen edhe në kryefaqe/feed, jo si kuti bosh. */}
+        {(l.images?.[0] || l.video_poster)
           ? <img
-              src={l.images[0]}
+              src={l.images?.[0] || l.video_poster || ''}
               alt={l.title}
               loading={index < 3 ? 'eager' : 'lazy'}
               fetchPriority={index < 3 ? 'high' : 'auto'}
@@ -163,6 +167,12 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
             />
           : <i className="ti ti-photo" style={{ fontSize: 26, color: '#ccc' }} aria-hidden="true" />
         }
+        {/* Tregues ▶ kur karta është video-only (asnjë foto, por ka poster videoje). */}
+        {!l.images?.[0] && l.video_poster && (
+          <span aria-label="Video" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', zIndex: 2, width: 40, height: 40, borderRadius: '50%', background: 'rgba(0,0,0,.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+            <i className="ti ti-player-play-filled" style={{ fontSize: 18, color: '#fff' }} aria-hidden="true" />
+          </span>
+        )}
         {l.condition === 'i_ri' && <span className="badge-new">I ri</span>}
         {l.condition === 'i_perdorur' && <span className="badge-used">I përdorur</span>}
         {/* Vulat sipas matrices se ngrire (BLLOKU Imazhi 2): 👑 VIP mbi ari→kuqe ·

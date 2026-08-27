@@ -66,7 +66,9 @@ const nextConfig = {
       "base-uri 'self'",
       "form-action 'self'",
       "frame-ancestors 'self'", // anti-clickjacking (ekuivalenti modern i X-Frame-Options: SAMEORIGIN)
-      "worker-src blob:",
+      // 'self' është i nevojshëm që `sw.js` (kill-switch-i që pastron SW-të e vjetër të ngecur)
+      // të regjistrohet — pa të, worker-i nga origjina bllokohej dhe pajisjet mbeteshin te versioni i vjetër.
+      "worker-src 'self' blob:",
       "upgrade-insecure-requests",
     ].join('; ')
 
