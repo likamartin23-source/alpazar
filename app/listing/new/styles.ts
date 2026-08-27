@@ -36,6 +36,6 @@ export const NEW_LISTING_CSS = `
         .cat-btn i{font-size:18px;color:#aaa;}
         .cat-btn.active{border-color:#F5C842;background:#FFFBEA;color:#111;}
         .cat-btn.active i{color:#C42B0F;}
-        .submit-btn{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px -3px rgba(230,51,18,.45);transition:transform .15s ease,box-shadow .15s ease;} .submit-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 7px 20px -4px rgba(230,51,18,.55);}
+        .submit-btn{width:100%;min-height:52px;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:800;letter-spacing:.3px;cursor:pointer;font-family:inherit;box-shadow:0 6px 18px -3px rgba(230,51,18,.5);transition:transform .15s ease,box-shadow .15s ease;} .submit-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 9px 24px -4px rgba(230,51,18,.6);}
         .submit-btn:disabled{opacity:.6;cursor:not-allowed;}
       `
