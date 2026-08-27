@@ -45,6 +45,26 @@ export function ImageCarousel({ images, videos, poster, alt = '', aspectRatio = 
   const count = slides.length
   const imgCount = imgList.length
 
+  // Instagram-model: video-ja që është NË PAMJE luan vetë (pa zë, në lak); të tjerat ndalen.
+  // Muted → lejohet autoplay; controls mbeten që përdoruesi të heqë heshtjen/kërcejë.
+  // Respekton `prefers-reduced-motion`. VENDOSUR PARA return-it të hershëm (Rules of Hooks).
+  useEffect(() => {
+    const track = trackRef.current
+    if (!track) return
+    const reduce = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
+    const vids = track.querySelectorAll('video')
+    vids.forEach((v, idx) => {
+      const slideIdx = imgCount + idx // videot vijnë pas imazheve te `slides`
+      if (slideIdx === current && !reduce) {
+        v.muted = true
+        const p = v.play()
+        if (p && typeof (p as any).catch === 'function') (p as any).catch(() => { /* autoplay-policy: fail-soft */ })
+      } else {
+        try { v.pause() } catch { /* ignore */ }
+      }
+    })
+  }, [current, imgCount, count])
+
   if (count === 0) return (
     <div style={{ width: '100%', aspectRatio, background: 'linear-gradient(135deg,#FBF7E8,#F2EAD0)', borderRadius: rounded ? 16 : 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <i className="ti ti-photo" style={{ fontSize: 44, color: '#d8cfa8' }} aria-hidden="true" />
@@ -163,6 +183,8 @@ export function ImageCarousel({ images, videos, poster, alt = '', aspectRatio = 
                     poster={s.poster}
                     controls
                     playsInline
+                    muted
+                    loop
                     preload="metadata"
                     controlsList="nodownload"
                     style={{ position: 'relative', zIndex: 2, width: '100%', height: '100%', objectFit: 'contain', display: 'block', background: '#0e0e0e' }}
