@@ -70,6 +70,8 @@ export default function NewListing() {
   }
 
   async function submit() {
+    // Guard: pa sesion të ngarkuar, `user.id` më poshtë do të hidhte gabim në heshtje.
+    if (!user?.id) { setMsg('err:Duhet të kesh hyrë në llogari për të publikuar. Po të çojmë te hyrja…'); setTimeout(() => { window.location.href = '/auth/login?next=/listing/new' }, 1600); return }
     if (!form.title.trim()) { setMsg('err:Titulli është i detyrueshëm!'); return }
     if (!form.category_id) { setMsg('err:Zgjidh kategorinë!'); return }
     if (!form.city) { setMsg('err:Shkruaj qytetin!'); return }
