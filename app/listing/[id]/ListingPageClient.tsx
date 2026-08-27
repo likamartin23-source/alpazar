@@ -34,27 +34,6 @@ function dayLabel(d: string) {
   if (dt.toDateString() === yes.toDateString()) return 'Dje'
   return dayMonth(d)
 }
-// §12/task#18: `initialBiz` mbjell gjendjen nga serveri → karta e biznesit del ne
-// HTML-in e serverit (SSR), jo vetem pas fetch-it ne klient.
-function BusinessMiniCard({ bizId, initialBiz }: { bizId: string; initialBiz?: any }) {
-  const [biz, setBiz] = useState<any>(initialBiz ?? null)
-  useEffect(() => {
-    supabase.from('businesses').select('id,name,logo_url,is_verified').eq('id', bizId).single().then(({ data }) => { if (data) setBiz(data) })
-  }, [bizId])
-  if (!biz) return null
-  return (
-    <div role="link" tabIndex={0} style={{ margin: '0 0 12px', padding: '10px 12px', background: '#F5F5F5', borderRadius: 12, display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => window.location.href = `/biznese/${biz.id}`} onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/biznese/${biz.id}` }}>
-      <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#fff', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, border: '1px solid #eee', flexShrink: 0 }}>
-        {biz.logo_url ? <img src={biz.logo_url} alt={biz.name} loading="lazy" width={36} height={36} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span aria-hidden="true">🏢</span>}
-      </div>
-      <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 12, fontWeight: 700, color: '#111' }}>{biz.name} {biz.is_verified && <span style={{ color: '#16a34a' }} aria-label="Biznes i verifikuar"><span aria-hidden="true">✓</span> Biznes</span>}</div>
-        <div style={{ fontSize: 10, color: '#888' }}>Shfaq faqen e biznesit →</div>
-      </div>
-    </div>
-  )
-}
-
 function pubDate(d: string) {
   return dateShort(d)
 }
@@ -979,10 +958,9 @@ export default function ListingPageClient({ params, initialListing, initialSelle
             </>
           )}
 
-          {/* Business mini-card — shown when listing belongs to a business */}
-          {listing.business_id && (
-            <BusinessMiniCard bizId={listing.business_id} initialBiz={initialBiz} />
-          )}
+          {/* GAP 5 (RESTAURIMI FINAL): BusinessMiniCard u hoq — dublonte lidhjen e biznesit
+              që jepet tashmë nga butoni "Shiko biznesin →" te blloku i shitësit (një lidhje e
+              vetme biznesi, pa dy kartela për të njëjtin biznes). */}
 
           {listing.description && (
             <>
