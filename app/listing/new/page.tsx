@@ -105,8 +105,13 @@ export default function NewListing() {
         if (r.error) { setMsg(`err:Video: ${r.error}`); setLoading(false); return }
         videos = r.videos
         if (uploadedUrls.length === 0 && r.poster) {
-          const pr = await uploadImages([r.poster])
-          if (pr.urls[0]) uploadedUrls = [pr.urls[0]]
+          if (typeof r.poster === 'string') {
+            // Poster nga transkoderi (URL thumbnail-i) — përdoret drejtpërdrejt si kopertinë, pa ringarkim.
+            uploadedUrls = [r.poster]
+          } else {
+            const pr = await uploadImages([r.poster])
+            if (pr.urls[0]) uploadedUrls = [pr.urls[0]]
+          }
         }
       }
 
