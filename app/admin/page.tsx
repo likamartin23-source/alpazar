@@ -170,9 +170,17 @@ const SECRETS_SCHEMA: { key: string; label: string; desc: string; secret?: boole
 async function callAdminAction(action: string, params: Record<string, unknown>): Promise<{ ok: boolean; error?: string }> {
   const pin = (() => { try { return sessionStorage.getItem('alpazar_admin_pin') || '' } catch { return '' } })()
   try {
+    /*  Sesioni dergohet bashke me PIN-in. Rruga `/api/admin/action` delegon te
+        nje Edge Function me `service_role`, i cili kalon RLS-ne dhe matricen e
+        lejeve; deri me 31 gusht 2026 porta e vetme ishte PIN-i. Tani serveri
+        kerkon te DYJA (shih `lib/adminGuard.ts`), ndaj koka duhet te vije. */
+    const { data: { session } } = await supabase.auth.getSession()
     const res = await fetch('/api/admin/action', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+      },
       body: JSON.stringify({ pin, action, params }),
     })
     return await res.json().catch(() => ({ ok: false, error: 'Përgjigje e pavlefshme' }))
