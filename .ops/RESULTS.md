@@ -74,3 +74,108 @@ Per krahasim, `/biznese/<id>` e ka sakte: `Cdn-Cache-Control: no-store`.
 → Zgjidhja eshte konfigurim, jo kod: ose `no-store` per `/` si te `/biznese`,
 ose guaske vertet neutrale qe s'ka as "Hyr" as numra, e mbushur ne klient.
 
+
+### [O1.2] · SHTESE — pyetja e dates u mbyll, NUK ka bug
+Pas rihapjes se `/profile` mbi te njejtin build: tregon tani
+**`Anëtar që: gusht 2026`** (dje tregonte `26/08/2026`). Pra unifikimi PUNOI.
+Prandaj: `/profile` = `gusht 2026` (llogaria ime, krijuar 26/08/2026) dhe
+`/listing/<id>` = `qershor 2026` (llogaria e shitesit) jane **te dyja te sakta** —
+formati eshte i njejti "muaj vit", vlerat ndryshojne sepse perdoruesit ndryshojne.
+Bug #3 eshte i mbyllur. Mos harxho kohe ne baze per te.
+Anesore e re: te `/profile` u shfaq nje ze i ri **"Ofertat"** (oferta cmimi te
+marra/derguara) qe dje s'ekzistonte.
+
+## [O2] · done · Grid-i "i thyer" — NUK eshte defekt CSS, eshte `auto-fill`
+
+**Riprodhuar dhe matur** (jo me sy — me `getBoundingClientRect` + `getComputedStyle`).
+
+- Dritarja: **1536 × 730 px** (viewport), rruga: `/`
+- Ena: `.listings-grid`, gjeresi **1372 px**, `display: grid`, `gap: 24px`
+- `grid-template-columns` i llogaritur: **`255.2px 255.2px 255.2px 255.2px 255.2px`**
+  → **5 shtylla**
+- Femije realë: **2** (`.listing-card`, 250×407 px, x=79 dhe x=359)
+- **Priten 5 vende, dalin 2 karta** → 3 shtylla boshe djathtas
+  (3 × 255.2 + 2 × 24 ≈ **814 px** hapesire e zbrazet)
+
+**Shkaku rrenjesor** — rregulla e CSS-se, e nxjerre nga `document.styleSheets`:
+
+    @media (min-width: 768px)  .listings-grid { grid-template-columns: repeat(auto-fill, minmax(180px,1fr)) }
+    @media (min-width: 1024px) .listings-grid { grid-template-columns: repeat(auto-fill, minmax(230px,1fr)); gap: var(--sp-4) }
+    @media (min-width: 1440px) .listings-grid { grid-template-columns: repeat(auto-fill, minmax(250px,1fr)); gap: 24px }
+
+`auto-fill` **krijon shtylla bosh** kur artikujt jane me pak se vendet.
+`auto-fit` i **palos** ato dhe i lejon kartat te zgjaten. Kjo eshte e gjithe
+diferenca — nje fjale.
+
+**Rrjedhimisht raporti im #6 i 31 gushtit ("layout i thyer") ishte i gabuar si
+diagnoze.** Sjellja eshte e sakte per `auto-fill`; ajo qe duket keq eshte
+KOMBINIMI i `auto-fill` me nje baze qe ka vetem 2 shpallje. Me 10+ shpallje
+s'do ta vinte re askush. Vendimi eshte i yti:
+  (a) `auto-fit` — 2 kartat zgjaten dhe mbushin rreshtin (ndryshim 1-fjaleësh);
+  (b) `auto-fill` + `justify-content: start` me gjeresi te fiksuar kartash — grid
+      me i qendrueshem vizualisht kur baza mbushet;
+  (c) mos e prek — vetezgjidhet sapo te kete shpallje reale.
+
+Screenshot: `.ops/shot/O2-grid-1536x730.jpg` (grid-i me 2 karta + 814px bosh)
+            `.ops/shot/O2-biznese-1536x730.jpg` (i njejti model te "Biznese Online")
+(JPEG, jo PNG — ky eshte formati qe nxjerr vertet vegla; s'e riemertova per te
+mos genjyer permbajtjen.)
+
+## [O3] · done PJESERISHT · Tri nga kater punojne; nje s'provohet dot
+
+| Rruga | Rezultati | Verejtje |
+|---|---|---|
+| `/profile` | **PUNON** | Renderohet i plote, `my_profile()` kthen te dhena, 0 gabime konsole |
+| `/messages` | **PUNON** | Hapet pa gabim: "Nuk ke mesazhe akoma" (llogaria ime ka 0 biseda) |
+| Paneli i bisedes | **PUNON** | Te `/listing/<id>` hapet paneli "Fillo bisedën me shitësin" me kompozues aktiv (`Shkruaj mesazhin tënd...`), `🔒 Private`. **Nuk dergova asgje** — verifikova vetem renderimin |
+| `/admin` | **RIDREJTON te `/`** | Shih me poshte |
+| Butoni WhatsApp | **S'EKZISTON te kjo shpallje** | Shih me poshte |
+
+Statuset HTTP (anonim, nga terminali): `/profile` 200 · `/messages` 200 ·
+`/admin` 307 → `/auth/login`.
+Konsola te `/listing/<id>` pas rifreskimi te plote: **0 gabime, 0 perjashtime**.
+Asnje `permission denied` / `PGRST` / `row-level security` ne HTML-ne e faqeve.
+
+### `/admin` — mos e lexo si "punon", por as si regresion
+Me llogarine time te kycur (`355688536458@sms.al`), `/admin` **ridrejton ne `/`**.
+Ky eshte SAKTESISHT simptomi i §0-bis te CLAUDE.md ("paneli i adminit qe
+ridrejtonte te `/` — pronari mbetej jashte"), ndaj po e shenoj me ze te larte.
+**POR nuk e dallova dot** nese eshte:
+  (a) porta e ligjshme jo-admin — kjo llogari mund te mos kete `admin_role`, ose
+  (b) regresion i leximit te `profiles`.
+Argument qe anon nga (a): `/profile` renderon te plote, pra leximi i profilit
+tim NUK eshte i prishur; nje regresion i tipit §0-bis do t'i rrezonte te dyja.
+Gjithashtu 0 gabime konsole gjate ridrejtimit.
+**Vendos ti me nje pyetje te vetme ne baze:**
+`select admin_role from profiles where id = <uid i Martinel Likaj>`.
+Nese eshte NULL → sjellje e sakte, O3 kalon. Nese ka rol → regresion, mos apliko
+migrimet.
+
+### Butoni WhatsApp — kontrolli s'ekzekutohet dot me keto te dhena
+Te `/listing/39bb6642…` nuk ka asnje buton WhatsApp: `whatsapp` nuk shfaqet fare
+ne HTML-ne e faqes, dhe s'ka asnje lidhje `wa.me` / `tel:`. Butonat e pranishem
+jane vetem: `Njoftomë`, `Shiko biznesin`, `Shiko profilin`, `Dërgo ofertën`,
+`Dërgo vlerësimin`, `Raporto`, `Ndaj`.
+Sipas §4.6-bis butonat varen nga kolona e gjeneruar `has_phone`. Shpjegimi me i
+mundshem: shitesi (`Administratori Alpazar`) **nuk ka telefon** ne profil, ndaj
+butoni fshihet — sjellje e sakte. **Nuk e quaj as te kaluar as te deshtuar:**
+s'kishte cfare te klikohej. Per ta provuar vertet duhet nje shpallje ku shitesi
+ka numer. Nese do, vendos nje numer prove te njera nga llogarite dhe une e klikoj
+`listing_contact()` dhe mas edhe kufirin `contact_reveals_per_hour`.
+
+### PERFUNDIM PER MIGRIMET
+`profiles_ngushtimi_pas_deploy` dhe `bashkengjitjet_private`: **mos i apliko ende.**
+Dy nga kater kontrollet e O3 nuk dhane pergjigje binare (`/admin` i pashpjeguar,
+WhatsApp i paprovueshem). Me jep (1) `admin_role` te llogarise time dhe
+(2) nje shpallje me shites qe ka telefon — i mbyll te dyja brenda nje cikli.
+
+## [O4] · pyetje e percuar pronarit · 404-at si rruge te ndashme
+
+Konfirmuar mbi build-in live, me status reale HTTP (jo vetem klient):
+`/profile/security` → **404** · `/profile/subscription` → **404**.
+Jane tabe te brendshem te `/profile`, pa rruge te vetat.
+
+Ia percolla pyetjen Martinelit ne terminal dhe po pres pergjigjen e tij —
+nuk vendos une ne emer te tij. Do ta shkruaj ketu si `[O4] · done` sapo te
+pergjigjet.
+
