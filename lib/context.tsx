@@ -1,5 +1,6 @@
 'use client'
 
+import { saveRefFromUrl } from './referral'
 import { createContext, useContext, useEffect, useState, useCallback, useRef, ReactNode } from 'react'
 import { supabase } from './supabase'
 
@@ -66,6 +67,16 @@ export function useAlpazar() {
 
 // ─── Provider ──────────────────────────────────────────────
 export function AlpazarProvider({ children }: { children: ReactNode }) {
+  /*  Kapja e kodit te referimit behet KETU, ne rrenje te aplikacionit.
+   *
+   *  Deri me 31 gusht 2026 `saveRefFromUrl()` thirrej vetem nga dy faqe:
+   *  kryefaqja dhe faqja e shpalljes. Te dyja lidhjet qe aplikacioni gjeneron
+   *  sot bien pikerisht aty, ndaj asgje nuk humbte — e verifikova. Por lidhja
+   *  qenderohej te dy faqe: mjafton qe dikush te ndaje `/premium?ref=...` ose
+   *  `/kategori/automjete?ref=...` dhe kodi humbet ne heshtje, pa asnje shenje.
+   *  Nje thirrje ne rrenje e mbulon cdo rruge, sot dhe neser.  */
+  useEffect(() => { saveRefFromUrl() }, [])
+
   const [user,    setUser]    = useState<any>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [authReady, setAuthReady] = useState(false)

@@ -224,6 +224,17 @@ Deri atehere `fiscal_status='not_required'` dhe asgje nuk prishet.
   jo me kohen.** Klasat e detyrueshme: shfletues (desktop DHE telefon) · konsole
   e rrjet · axe-core · performance nen ngadalesim · `npm audit` · LOGJIKA e RLS-se
   · vija DB↔kod · prove SHKRIMI (kjo e fundit mbetet ende e pabere).
+- **Nje tabele me politika nuk do te thote vecori e gjalle.** Matur me 31 gusht
+  2026: nga 69 tabelat, TRE sisteme kane DY zbatime — nje model i pasur ne baze
+  qe s'e prek asnje rresht kodi, dhe nje zbatim me i thjeshte qe eshte ai real:
+  `conversations` kunder `messages` te grupuar ne klient · `badges`/`user_badges`
+  (10 rreshta te mbjella) kunder `buildBadges(profile)` · `referrals`/
+  `referral_rewards` kunder `profiles.referred_by`. Dhe nente tabela te tjera
+  kane politika te plota pa asnje nderfaqe (`posts`, `offers`, `orders`,
+  `disputes`, `listing_comments`, `push_tokens`, `verification_requests`…).
+  PASOJE E MATUR: `messages.conversation_id` nuk shkruhet kurre, ndaj
+  `typing_indicators` dhe `message_reactions` — qe varen prej tij — nuk mund te
+  punojne KURRE. Shih `docs/AUDITI-I-SISTEMEVE.md`.
 - **Perpara se te ndertosh dicka, kerko a EKZISTON ne baze.** Rregulli i pare i
   kesaj kujtese e thote per tabelat; me 31 gusht 2026 u mat se vlen njesoj per
   FUNKSIONET. Krahasimi i te 88 RPC-ve te thirrshme nga `authenticated` me cdo
