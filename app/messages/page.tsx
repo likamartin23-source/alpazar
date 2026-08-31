@@ -3,6 +3,7 @@
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState, useRef, useCallback } from 'react'
+import { lidhjaEFirmosur, rrugaNgaUrl } from '../../lib/attachments'
 import { supabase } from '../../lib/supabase'
 import { useAlpazar } from '../../lib/context'
 import AlpazarAvatar, { tierNgaProfili } from '../components/Avatar'
@@ -151,6 +152,14 @@ export default function MessagesPage() {
    *  shpeshtesine dhe e shenon zbulimin. Butonat varen nga flamuri jo-
    *  identifikues `has_phone`; numri kerkohet vetem kur hapet fleta.  */
   const [otherHasPhone,  setOtherHasPhone]  = useState(false)
+  /*  Lidhjet e firmosura per bashkengjitjet. Derisa bucket-i eshte publik, kjo
+   *  harte rri bosh dhe `srcBashkengjitje()` kthen lidhjen e ruajtur — pra
+   *  asgje nuk ndryshon. Kur bucket-i behet privat, e njejta funksion kthen
+   *  lidhjen e firmosur. Rendi eshte i qellimshem: klienti meson te firmose
+   *  PARA se bucket-i te mbyllet (shih `lib/attachments.ts`).  */
+  const [firmat, setFirmat] = useState<Record<string, string>>({})
+  const srcBashkengjitje = (u?: string | null) => (u ? (firmat[u] || u) : '')
+
   const [kontaktGabim,   setKontaktGabim]   = useState<string|null>(null)
   const [kontaktDuke,    setKontaktDuke]    = useState(false)
   const [showInfo,       setShowInfo]       = useState(false)
@@ -692,6 +701,28 @@ export default function MessagesPage() {
     setKontaktDuke(false)
   }
 
+  /*  Firmos cdo bashkengjitje te dukshme qe s'e kemi firmosur ende. Behet ne
+   *  nje efekt te vetem mbi listen e mesazheve: pa kete, cdo <img> do te
+   *  kerkonte firmen e vet dhe do te binte ne nje varg kerkesash.  */
+  useEffect(() => {
+    const urls = new Set<string>()
+    for (const m of messages) {
+      for (const u of [m?.attachment_url, m?.reply_msg?.attachment_url]) {
+        if (typeof u === 'string' && rrugaNgaUrl(u) && !firmat[u]) urls.add(u)
+      }
+    }
+    if (urls.size === 0) return
+    let gjalle = true
+    ;(async () => {
+      const cifte = await Promise.all([...urls].map(async u => [u, await lidhjaEFirmosur(u)] as const))
+      if (!gjalle) return
+      const te_reja: Record<string, string> = {}
+      for (const [u, f] of cifte) if (f) te_reja[u] = f
+      if (Object.keys(te_reja).length) setFirmat(p => ({ ...p, ...te_reja }))
+    })()
+    return () => { gjalle = false }
+  }, [messages, firmat])
+
   const isBlocked       = selected ? blockedIds.has(selected.otherId) : false
   const filteredThreads = threads.filter(t => !search.trim() || displayName(t.other).toLowerCase().includes(search.toLowerCase()))
   const totalUnread     = threads.reduce((s, t) => s + t.unread, 0)
@@ -1000,7 +1031,7 @@ export default function MessagesPage() {
             )}
 
             {ctxMenu.msg.type === 'image' && ctxMenu.msg.attachment_url && (
-              <div role="button" tabIndex={0} className="mi" onClick={() => { setLightbox(ctxMenu.msg.attachment_url); setCtxMenu(null) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setLightbox(ctxMenu.msg.attachment_url); setCtxMenu(null) } }}>
+              <div role="button" tabIndex={0} className="mi" onClick={() => { setLightbox(srcBashkengjitje(ctxMenu.msg.attachment_url)); setCtxMenu(null) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setLightbox(srcBashkengjitje(ctxMenu.msg.attachment_url)); setCtxMenu(null) } }}>
                 <i className="ti ti-photo" style={{ color:'#F5C842' }} aria-hidden="true" />
                 <span>Shiko foton</span>
               </div>
@@ -1284,7 +1315,7 @@ export default function MessagesPage() {
                                       )}
                                     </div>
                                     {m.reply_msg.type === 'image' && m.reply_msg.attachment_url && (
-                                      <img className="rp-img" src={m.reply_msg.attachment_url} alt="Imazh i thënë" loading="lazy" />
+                                      <img className="rp-img" src={srcBashkengjitje(m.reply_msg.attachment_url)} alt="Imazh i thënë" loading="lazy" />
                                     )}
                                   </div>
                                 </div>
@@ -1298,14 +1329,14 @@ export default function MessagesPage() {
                               ) : m.type === 'image' && m.attachment_url ? (
                                 <img
                                   className="bubble-img"
-                                  src={m.attachment_url}
+                                  src={srcBashkengjitje(m.attachment_url)}
                                   alt="Imazh i mesazhit"
                                   loading="lazy"
-                                  onClick={e => { e.stopPropagation(); setLightbox(m.attachment_url) }}
+                                  onClick={e => { e.stopPropagation(); setLightbox(srcBashkengjitje(m.attachment_url)) }}
                                   style={{ marginBottom: m.content ? 6 : 0 }}
                                 />
                               ) : m.type === 'audio' && m.attachment_url ? (
-                                <AudioPlayer url={m.attachment_url} mine={mine} />
+                                <AudioPlayer url={srcBashkengjitje(m.attachment_url)} mine={mine} />
                               ) : (
                                 <span style={{ whiteSpace:'pre-wrap' }}>{m.content}</span>
                               )}
@@ -1381,7 +1412,7 @@ export default function MessagesPage() {
                         )}
                       </div>
                       {replyTo.type === 'image' && replyTo.attachment_url && (
-                        <img className="rs-img" src={replyTo.attachment_url} alt="Imazh i thënë" loading="lazy" width={40} height={40} />
+                        <img className="rs-img" src={srcBashkengjitje(replyTo.attachment_url)} alt="Imazh i thënë" loading="lazy" width={40} height={40} />
                       )}
                       <button type="button" aria-label="Anulo përgjigjen" onClick={() => setReplyTo(null)} style={{ background:'none', border:'none', color:'#bbb', fontSize:20, cursor:'pointer', padding:0, lineHeight:1, flexShrink:0 }}>✕</button>
                     </div>

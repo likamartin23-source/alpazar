@@ -56,6 +56,24 @@ export default function OfertatPage() {
 
   useEffect(() => { ngarko() }, [ngarko])
 
+  /*  KOHË REALE. `offers` është në publikimin `supabase_realtime` me
+   *  `replica identity full` — plumbing-u ekzistonte, por kjo faqe nuk
+   *  abonohej: një shitës me faqen hapur nuk e shihte ofertën e re derisa ta
+   *  rifreskonte. Pikërisht modeli që kujtesa e projektit e quan "tabelë me
+   *  politika pa veçori të gjallë" — dhe sapo e kisha krijuar vetë.
+   *
+   *  KANALI NUK KA FILTER me qëllim: RLS-ja e `offers` lejon vetëm blerësin,
+   *  shitësin dhe adminin, ndaj realtime-i dërgon VETËM rreshtat që kam të
+   *  drejtë t'i shoh. Një filter i vetëm `eq` nuk do t'i mbulonte dot të dy
+   *  drejtimet; filtrimi në server është edhe më i saktë, edhe më i sigurt.  */
+  useEffect(() => {
+    const kanali = supabase
+      .channel('oferta-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'offers' }, () => ngarko())
+      .subscribe()
+    return () => { supabase.removeChannel(kanali) }
+  }, [ngarko])
+
   async function vendos(id: string, status: 'accepted' | 'rejected' | 'withdrawn') {
     setGabim(''); setPune(id)
     const { error } = await supabase.from('offers').update({ status }).eq('id', id)
