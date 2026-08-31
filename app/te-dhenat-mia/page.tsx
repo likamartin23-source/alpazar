@@ -39,22 +39,27 @@ export default function TeDhenatMiaPage() {
     setExporting(true)
     setMsg('')
     try {
-      const [profileRes, listingsRes, favoritesRes, messagesRes] = await Promise.all([
-        supabase.from('profiles').select('*').eq('id', userId).single(),
-        supabase.from('listings').select('id,title,price,currency,city,created_at,is_active').eq('user_id', userId),
-        supabase.from('favorites').select('listing_id,created_at').eq('user_id', userId),
-        supabase.from('messages').select('id,content,created_at,read').or(`sender_id.eq.${userId},receiver_id.eq.${userId}`).limit(200),
-      ])
+      /*  Eksporti vjen nga `export_my_data()` — nje funksion i vetem ne baze qe
+          mbledh TE GJITHA te dhenat e personit: profili, preferencat, shpalljet,
+          blerjet, te preferuarat, kerkimet e ruajtura, njoftimet e cmimit,
+          ndarjet, mesazhet e derguara DHE te marra, njoftimet — me bazen ligjore
+          dhe shenimin e ruajtjes se faturave.
 
-      const exportObj = {
-        exported_at: new Date().toISOString(),
-        platform: 'ALPAZAR — alpazar.vercel.app',
-        gdpr_basis: 'GDPR Art.20 — E drejta e portabilitetit të të dhënave',
-        profile: profileRes.data,
-        listings: listingsRes.data || [],
-        favorites: favoritesRes.data || [],
-        messages_count: messagesRes.data?.length || 0,
-      }
+          Me pare kjo faqe e ndertonte vete eksportin me kater query, dhe rezultati
+          ishte i mangët ne menyre qe shkelte vete te drejten qe pretendonte te
+          plotesonte (neni 24, ligji 124/2024 — subjekti merr TE GJITHA te dhenat
+          qe lidhen me te):
+            · mesazhet nuk eksportoheshin fare — shkruhej vetem `messages_count`,
+              dhe ai numer ishte i cunguar ne 200;
+            · mungonin preferencat, blerjet, kerkimet e ruajtura, njoftimet e
+              cmimit, ndarjet dhe njoftimet.
+          Gjetur me 31 gusht 2026: funksioni ekzistonte ne baze prej kohesh dhe
+          asnje rresht i nderfaqes nuk e therriste.  */
+      const { data: eksporti, error: gabimEksporti } = await supabase.rpc('export_my_data')
+      if (gabimEksporti) throw new Error(gabimEksporti.message)
+      if ((eksporti as any)?.error) throw new Error((eksporti as any).error)
+
+      const exportObj = eksporti
 
       const blob = new Blob([JSON.stringify(exportObj, null, 2)], { type: 'application/json' })
       const url = URL.createObjectURL(blob)
