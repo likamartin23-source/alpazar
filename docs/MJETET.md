@@ -8,10 +8,10 @@ Gjendja më 18 gusht 2026, e numëruar dhe e matur — jo e kujtuar.
 
 | Shtresa | Sasia | Ku jeton |
 |---|---|---|
-| Skills | **110** | `.claude/skills/` — në repo, pra vlejnë në **çdo** sesion |
-| Servera MCP | 4 | `.mcp.json` — ishin 7; tre ishin dublikatë konektorësh |
+| Skills | **178** + 7 | `.claude/skills/` — 178 drejtori në repo; 7 të tjera (`caveman*`, `cavecrew`) janë **symlink-e** te `.agents/skills/`, ndaj hook-i i sesionit numëron 178 ndërsa një `ls */` jep 185. Të dyja janë të vlefshme; jetojnë në dy vende |
+| Servera MCP | 6 | `.mcp.json` — playwright, firecrawl, sequential-thinking, omniroute, higgsfield, perplexity |
 | Plugin-e | 7 | `.claude/settings.json` |
-| Workflow-e | 14 | `.github/workflows/` |
+| Workflow-e | 17 | `.github/workflows/` |
 | Next.js | **15.5** | ishte 14 (EOL) deri më 18 gusht |
 | Konektorë Cowork | ~25 | claude.ai → Settings → Connectors |
 
