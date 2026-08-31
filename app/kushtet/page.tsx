@@ -10,7 +10,7 @@ export default function Kushtet() {
     .back i{font-size:18px;color:#111;}
     .topbar-title{font-size:15px;font-weight:700;color:#111;}
     .content{padding:24px 20px 40px;}
-    .ver{font-size:11px;color:#888;margin-bottom:20px;background:#FFFBEA;padding:8px 12px;border-radius:8px;display:inline-block;}
+    .ver{font-size:11px;color:#6E6E6E;margin-bottom:20px;background:#FFFBEA;padding:8px 12px;border-radius:8px;display:inline-block;}
     h1{font-size:22px;font-weight:700;color:#111;margin-bottom:8px;}
     h2{font-size:14px;font-weight:700;color:#111;margin:22px 0 8px;padding-bottom:5px;border-bottom:2px solid #F5C842;}
     p{font-size:13px;color:#444;line-height:1.85;margin-bottom:10px;}
@@ -78,7 +78,16 @@ export default function Kushtet() {
           <div className="note">Shkeljet penale raportohen edhe pa kërkesën e viktimës. Platforma bashkëpunon plotësisht me autoritetet hetimore.</div>
 
           <h2>6. Shërbimi Premium</h2>
-          <p>Shërbimi Premium ofrohet me tarifa mujore ose vjetore të publikuara në platformë. Pagesa konfirmohet brenda 24 orësh pune. Anulimi bëhet duke kontaktuar administratorët. Rimbursimi nuk ofrohet për periudha të shfrytëzuara plotësisht, por mund të merret parasysh rast pas rasti sipas ligjit të konsumatorëve (Ligji Nr. 9902/2008, Neni 35).</p>
+          <p>Shërbimi Premium ofrohet me tarifa mujore ose vjetore të publikuara në platformë, <strong>në lekë</strong>. Pagesa konfirmohet brenda 24 orësh pune. Abonimi anulohet kurdo te <a href="/billing" style={{ color: '#C42B0F' }}>Plani im</a> ose duke kontaktuar administratën; pas anulimit përfitimet vazhdojnë deri në fund të periudhës së paguar.</p>
+
+          <h2>6-a. E drejta e heqjes dorë brenda 14 ditëve</h2>
+          <p>Abonimi Premium blihet nga distanca, ndaj ti ke <strong>të drejtën ligjore ta heqësh dorë brenda 14 ditëve kalendarike</strong> nga dita e lidhjes së kontratës, <strong>pa dhënë asnjë arsye dhe pa asnjë penalitet</strong> <span className="law">(Ligji Nr. 9902/2008 "Për mbrojtjen e konsumatorëve", nenet 37/1–37/8)</span>.</p>
+          <ul>
+            <li><strong>Si bëhet:</strong> mjafton një njoftim i qartë — nga <a href="/kontakt" style={{ color: '#C42B0F' }}>faqja e kontaktit</a> ose me email te <a href="mailto:info@alpazar.al" style={{ color: '#C42B0F' }}>info@alpazar.al</a>. Nuk kërkohet formular i posaçëm dhe nuk kërkohet arsye.</li>
+            <li><strong>Sa kthehet:</strong> shuma e paguar kthehet brenda <strong>14 ditëve</strong> nga marrja e njoftimit, me të njëjtën mënyrë pagese. Nëse ke kërkuar shprehimisht që shërbimi të nisë menjëherë, mbahet vetëm pjesa <strong>në raport me ditët e shfrytëzuara</strong> deri në njoftim — jo më shumë.</li>
+            <li><strong>Kur nuk zbatohet:</strong> e drejta shuhet nëse shërbimi është përmbushur <em>plotësisht</em> brenda afatit me pëlqimin tënd paraprak të shprehur dhe me pranimin se e humb këtë të drejtë <span className="law">(neni 37/8)</span>.</li>
+          </ul>
+          <div className="note">Kjo është e drejtë e dhënë nga ligji, jo mirësjellje e platformës: nuk mund të kufizohet me kushte, as nga ky dokument. Nëse ndonjë tekst tjetër i këtyre kushteve duket se e ngushton, mbizotëron ligji.</div>
 
           <h2>7. Mbrojtja e të Dhënave Personale</h2>
           <p>Mbledhja, ruajtja dhe përpunimi i të dhënave personale kryhet në përputhje me <strong>Ligjin Nr. 124/2024 "Për mbrojtjen e të dhënave personale"</strong> (hyrë në fuqi 1 Janar 2025), i cili harmonizoi legjislacionin shqiptar me Rregulloren GDPR 2016/679 të BE-së.</p>
