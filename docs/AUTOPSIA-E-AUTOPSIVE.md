@@ -70,12 +70,12 @@ Të jem i drejtë edhe me atë që funksionoi, përndryshe mësimi del i shtremb
 
 | Zona | Pse ka rëndësi | Pse s'u bë |
 |---|---|---|
-| **Asnjë veprim shkrimi nuk u provua** — krijim shpalljeje, dërgim mesazhi, ngarkim fotoje | Verifikimi me shikim nuk është verifikim me përdorim | Dyfishi im lexon mirë, shkruan keq |
-| Validimi i hyrjeve te `/api/*` | Injektim, IDOR | Kërkon prova sulmuese, jo shikim |
+| ~~Asnjë veprim shkrimi nuk u provua~~ — **kryer pjesërisht 31 gusht:** forma e ankimit u plotësua dhe u dërgua vërtet; arsyeja e shkurtër u ndalua nga UI-ja me zero kërkesa, arsyeja e vlefshme dërgoi saktësisht një kërkesë me argumentet e duhura. Mbeten: krijim shpalljeje, dërgim mesazhi, ngarkim fotoje | Verifikimi me shikim nuk është verifikim me përdorim | Dyfishi shkruan tani, por jo për rrjedhat me skedarë |
+| ~~Validimi i hyrjeve te `/api/*`~~ — **kryer 31 gusht:** nxori gjetjen më të rëndë të gjithë auditimit (rruga e privilegjuar me PIN të vetëm) | Injektim, IDOR | — |
 | Sistemi i postimeve (`posts`) | Përmbajtje e përdoruesit | Nuk u prek fare |
-| Rrjedhja e mesazheve: bllokimi, raportimi, bashkëngjitjet | Siguria e përdoruesit | Vetëm u render-ua, s'u ushtrua |
-| Navigimi me tastierë dhe rendi i fokusit | Aksesueshmëri përtej ngjyrës | axe-core nuk e mbulon plotësisht |
-| Prompt-injection te Albi | Rrjedhje të dhënash përmes AI-së | Kërkon prova me qëllim të keq |
+| ~~Mesazhet, postimet, bllokimi, raportimet~~ — **kryer 31 gusht: i pastër.** Çdo politikë u lexua; `reports` është vetëm-shkrim për raportuesin | Siguria e përdoruesit | — |
+| ~~Navigimi me tastierë~~ — **kryer 31 gusht:** pa kurthe, rend nga lart-poshtë, skip-link i parë. Rregulli global i fokusit u zgjerua te elementet amtare | Aksesueshmëri përtej ngjyrës | — |
+| ~~Prompt-injection te Albi~~ — **kryer 31 gusht: i pastër.** Rruga e validon `role`, gjatësinë dhe numrin e mesazheve para se t'i dërgojë | Rrjedhje të dhënash përmes AI-së | — |
 | Sjellja reale në prodhim | Gjithçka këtu është matur në një dyfish | Dalja te `*.supabase.co` është 403 |
 
 ---
