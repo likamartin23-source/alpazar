@@ -166,7 +166,7 @@ export function TodayTab({ stats, trends }: { stats?: any; trends?: any }) {
       {stats && (
         <div className="stats">
           <div className="sc"><div className="sn">{Number(stats.users || 0).toLocaleString('sq-AL')}</div><div className="sl">Përdorues</div></div>
-          <div className="sc"><div className="sn">{stats.premium ?? 0}</div><div className="sl">Me plan aktiv</div></div>
+          <div className="sc"><div className="sn">{Number(stats.premium || 0).toLocaleString('sq-AL')}</div><div className="sl">Me plan aktiv</div></div>
           <div className="sc"><div className="sn">{Number(stats.listings || 0).toLocaleString('sq-AL')}</div><div className="sl">Shpallje aktive</div></div>
           <div className="sc"><div className="sn">{Number(stats.messages || 0).toLocaleString('sq-AL')}</div><div className="sl">Mesazhe</div></div>
         </div>

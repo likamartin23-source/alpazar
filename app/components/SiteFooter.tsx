@@ -1,5 +1,6 @@
 'use client'
 /** Footer i përkthyeshëm — nxjerrë nga layout.tsx që të përdorë useT() + LanguageSwitcher. */
+import { usePathname } from 'next/navigation'
 import { useT } from '../../lib/i18n'
 import { LanguageSwitcher } from './LanguageSwitcher'
 
@@ -14,6 +15,11 @@ const soc = [
 
 export function SiteFooter() {
   const { t } = useT()
+  const pathname = usePathname()
+  // Paneli i administrimit ka navigimin e vet dhe nuk eshte faqe publike:
+  // fundi i faqes me lidhjet e marketingut, rrjetet sociale dhe nje kontroll
+  // gjuhe te dyte vetem shton zhurme atje (pare me sy me 31 gusht 2026).
+  if (pathname?.startsWith('/admin')) return null
   const link: React.CSSProperties = { color: '#666', fontSize: 11, textDecoration: 'none' }
   return (
     <footer style={{ background: '#111', padding: '22px 16px 28px', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>

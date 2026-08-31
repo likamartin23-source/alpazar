@@ -354,12 +354,15 @@ export default function Admin() {
     if (st && !(st as any).error) {
       const s: any = st
       setStats({
-        users: s.users_total ?? u ?? 0,
-        premium: s.users_premium ?? pr ?? 0,
+        // `??` e kalon NaN-in me tutje (NaN s'eshte null/undefined), ndaj nje
+        // agregat i munguar shfaqej te paneli si "NaN". `Number(x) || 0` e kap,
+        // sepse NaN eshte falsy. Pare me sy te kutia "Me plan aktiv", 31 gusht 2026.
+        users: Number(s.users_total ?? u) || 0,
+        premium: Number(s.users_premium ?? pr) || 0,
         revenue: Number(s.mrr_eur ?? rev) || 0,
-        listings: s.listings_active ?? l ?? 0,
-        messages: s.messages_total ?? msgs ?? 0,
-        reports: s.reports_pending ?? reps ?? 0,
+        listings: Number(s.listings_active ?? l) || 0,
+        messages: Number(s.messages_total ?? msgs) || 0,
+        reports: Number(s.reports_pending ?? reps) || 0,
       })
     } else {
       setStats({ users: u||0, premium: pr||0, revenue: rev, listings: l||0, messages: msgs||0, reports: reps||0 })

@@ -3,7 +3,12 @@ import { useState, useEffect } from 'react'
 import { useDraggable } from '../../hooks/useDraggable'
 import AlbiChat from './AlbiChat'
 
-const OWN_ASSISTANT = ['/asistent']
+// Rruget ku butoni lundrues i Albit nuk shfaqet:
+//  /asistent — faqja e ka asistentin e vet, dy do te ishin dyfishim;
+//  /admin    — paneli eshte mjet pune i brendshem; asistenti konsumator
+//              rri mbi butonat e veprimit dhe s'i sherben asnje pyetjeje
+//              te operatorit (pare me sy me 31 gusht 2026).
+const PA_ALBI = ['/asistent', '/admin']
 
 export default function AiFloat() {
   const [showTip, setShowTip] = useState(false)
@@ -23,7 +28,7 @@ export default function AiFloat() {
 
   useEffect(() => {
     const path = window.location.pathname
-    if (OWN_ASSISTANT.some(p => path.startsWith(p))) { setHidden(true); return }
+    if (PA_ALBI.some(p => path.startsWith(p))) { setHidden(true); return }
     const t = setTimeout(() => setShowTip(true), 2500)
     return () => clearTimeout(t)
   }, [])
