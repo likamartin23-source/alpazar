@@ -3,19 +3,11 @@ import { createClient } from '@supabase/supabase-js'
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://sopafwfkrxpcdaljddoh.supabase.co'
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 
-// Perkthim pa celes per lokalizimin e pergjigjeve FAQ (kur LLM bie).
-export async function gtranslate(text: string, target: string): Promise<string> {
-  if (target === 'sq' || !text) return text
-  try {
-    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=sq&tl=${encodeURIComponent(target)}&dt=t&q=${encodeURIComponent(text)}`
-    const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' }, signal: AbortSignal.timeout(8000) })
-    if (!res.ok) return text
-    const data = await res.json()
-    if (!Array.isArray(data) || !Array.isArray(data[0])) return text
-    const out = data[0].map((seg: any) => (Array.isArray(seg) ? seg[0] : '')).join('')
-    return (typeof out === 'string' && out.trim().length > 0) ? out : text
-  } catch { return text }
-}
+// `gtranslate()` u HOQ me 31 gusht 2026. Dergonte nje kerkese te
+// `translate.googleapis.com` per te perkthyer pergjigjet e gatshme te FAQ-se —
+// pra transferim i IP-se se vizitorit jashte BE-se pa instrument transferimi,
+// per nje pune qe e ben shtresa jone e perkthimit (`lib/i18n.tsx` →
+// funksioni `translate` te Supabase eu-west-1). Mos e rikthe.
 
 export function sanitizeConvo(messages: any[]): any[] {
   let convo = messages.slice(-20)

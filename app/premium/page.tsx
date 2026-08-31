@@ -9,7 +9,7 @@ import { PREMIUM_CSS } from './ui'
 import { TierTabs, Hero, PeriodSeg, PlanCard, PayBox } from './parts'
 
 export default function PremiumPage() {
-  const { user, authReady } = useAlpazar()
+  const { user, authReady, cfg } = useAlpazar()
   const [pricing, setPricing] = useState<any>(null)
   const [ent, setEnt] = useState<any>(null)
   const [tier, setTier] = useState<'premium' | 'boost'>('premium')
@@ -48,6 +48,24 @@ export default function PremiumPage() {
   const owned = tier === 'boost' ? !!ent?.has_boost : isPremium
   const sel = plans.find((p: any) => p.id === planId)
 
+  /*  PELQIMI I NENIT 37/8 — I NDERTUAR, I FIKUR.
+   *
+   *  Ligji lejon qe tregtari te mbaje pjesen ne raport me ditet e shfrytezuara
+   *  VETEM nese konsumatori ka kerkuar shprehimisht nisje te menjehershme DHE ka
+   *  njohur se e humb te drejten pas permbushjes se plote (neni 37/8, ligji
+   *  9902/2008). Ne baze `record_withdrawal_consent()` e pret kete prej kohesh.
+   *
+   *  Pa ate pelqim, `my_withdrawal_right()` jep rimbursim TE PLOTE — qendrimi
+   *  me i sigurt ligjerisht, dhe ai qe eshte sot ne fuqi.
+   *
+   *  Prandaj mekanizmi rri gati POR i fikur pas nje celesi konfigurimi:
+   *  `app_config.withdrawal_consent_at_checkout`. Derisa te jete 'true', arka
+   *  nuk ndryshon fare dhe rimbursimet mbeten te plota. Ndezja eshte vendim
+   *  tregtar i pronarit, jo teknik — dhe kutia nuk eshte KURRE e parazgjedhur,
+   *  sepse nje pelqim i nenkuptuar nuk vlen dhe e kthen kushtin ne te padrejte.  */
+  const kerkoPelqim = String(cfg?.('withdrawal_consent_at_checkout', 'false') ?? 'false') === 'true'
+  const [pranoiNisje, setPranoiNisje] = useState(false)
+
   async function subscribe() {
     if (!user) { window.location.href = '/auth/login'; return }
     if (!planId) { setMsg('err:Zgjidh një plan.'); return }
@@ -60,6 +78,16 @@ export default function PremiumPage() {
     if (error || data?.error) {
       setMsg('err:' + (data?.message || error?.message || data?.error))
       return
+    }
+    // Pelqimi regjistrohet VETEM kur flamuri eshte ndezur DHE perdoruesi e ka
+    // shenuar vete. Deshtimi ketu nuk e prish blerjen: pa pelqim, rimbursimi
+    // mbetet i plote — pra gabimi bie gjithmone ne anen e konsumatorit.
+    if (kerkoPelqim && pranoiNisje) {
+      try {
+        await supabase.rpc('record_withdrawal_consent', {
+          p_immediate_start: true, p_waiver_ack: true,
+        })
+      } catch { /* pa pelqim, rimbursimi mbetet i plote — gabimi bie ne anen e konsumatorit */ }
     }
     setMsg('ok:Kërkesa u dërgua! Përfitimet aktivizohen menjëherë pas konfirmimit.')
     setTimeout(() => { window.location.href = '/billing' }, 1600)
@@ -104,10 +132,31 @@ export default function PremiumPage() {
           ))}
 
           {plans.length > 0 && !locked && (
+            <>
+            {kerkoPelqim && (
+              <div className="card" style={{ marginTop: 12 }}>
+                <label style={{ display: 'flex', gap: 10, alignItems: 'flex-start', cursor: 'pointer' }}>
+                  <input type="checkbox" checked={pranoiNisje}
+                    onChange={e => setPranoiNisje(e.target.checked)}
+                    style={{ marginTop: 3, width: 18, height: 18, flexShrink: 0 }} />
+                  <span style={{ fontSize: 12.5, lineHeight: 1.6 }}>
+                    Kërkoj që shërbimi të <strong>nisë menjëherë</strong>, para se të mbarojnë
+                    14 ditët e heqjes dorë. E kuptoj se, nëse heq dorë brenda afatit, mbahet
+                    vetëm pjesa në raport me ditët e shfrytëzuara{' '}
+                    <span style={{ color: '#555' }}>(neni 37/8, ligji 9902/2008)</span>.
+                  </span>
+                </label>
+                <div style={{ fontSize: 11, color: '#555', marginTop: 8, lineHeight: 1.55 }}>
+                  Nëse nuk e shënon, shërbimi nis njësoj dhe rimbursimi mbetet{' '}
+                  <strong>i plotë</strong> brenda 14 ditëve. Kjo kuti nuk është e detyrueshme.
+                </div>
+              </div>
+            )}
             <PayBox
               methods={methods} methodId={methodId} setMethodId={setMethodId}
               sel={sel} busy={busy} planId={planId} owned={owned} onSubmit={subscribe}
             />
+            </>
           )}
         </div>
       </div>

@@ -1,6 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { LANG_NAMES, buildSystemPrompt, localFallback } from './kb'
-import { getLiveContext, sanitizeConvo, gtranslate } from './context'
+import { getLiveContext, sanitizeConvo } from './context'
 import { tryGroqStream, tryGroqJSON } from './groq'
 import { tryPerplexityStream, tryPerplexityJSON } from './perplexity'
 import { NextRequest, NextResponse } from 'next/server'
@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
 
   const lastUserMsg: string = [...messages].reverse().find((m: any) => m.role === 'user')?.content ?? ''
   const convo = sanitizeConvo(messages)
-  if (convo.length === 0) return NextResponse.json(isTask ? { reply: null, ai: false } : { reply: await gtranslate(localFallback(lastUserMsg), lang) })
+  if (convo.length === 0) return NextResponse.json(isTask ? { reply: null, ai: false } : { reply: localFallback(lastUserMsg) })
 
   const liveCtx = await getLiveContext(lastUserMsg)
   const systemPrompt = buildSystemPrompt(liveCtx, lang)
@@ -121,5 +121,18 @@ export async function POST(req: NextRequest) {
   // 4. FAQ fallback (lokalizuar ne gjuhen e perdoruesit) — vetëm për bisedën e Albit.
   //    Për thirrjet e ndihmësit (task) kthejmë null që klienti të përdorë fallback-un lokal.
   if (isTask) return NextResponse.json({ reply: null, ai: false })
-  return NextResponse.json({ reply: await gtranslate(localFallback(lastUserMsg), lang) })
+  /*  Perkthimi i pergjigjes rezerve NUK kalon me te Google.
+   *
+   *  Deri me 31 gusht 2026 kjo rreshti therriste `gtranslate()` →
+   *  `translate.googleapis.com`. KORRIGJIM I MATJES SIME TE MEPARSHME: raportova
+   *  se ajo dergonte "tekst te lire te perdoruesit"; nuk eshte e vertete —
+   *  dergonte nje nga gjashtembedhjete pergjigjet e gatshme te FAQ-se. Por
+   *  kerkesa mbante gjithsesi IP-ne e vizitorit, pra ishte transferim i te
+   *  dhenave personale jashte BE-se pa instrument (nenet 26, 39-42, ligji
+   *  124/2024) — per nje perkthim qe e bejme dot vete.
+   *
+   *  Teksti kthehet shqip; shtresa e perkthimit e nderfaqes (`lib/i18n.tsx`) e
+   *  perkthen ne DOM permes funksionit TONE `translate`, qe rri te Supabase
+   *  eu-west-1. Nje marres me pak, brenda BE-se.  */
+  return NextResponse.json({ reply: localFallback(lastUserMsg) })
 }

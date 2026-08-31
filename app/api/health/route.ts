@@ -67,6 +67,53 @@ function kontrolloEnv() {
   }
 }
 
+/*  A eshte i ndezur transkodimi i videove?
+ *
+ *  `getCloudinary()` te `lib/uploadImages.ts` kerkon DY celesa:
+ *  `cloudinary_cloud_name` DHE `cloudinary_upload_preset`. Nese njeri mungon,
+ *  transkodimi bie i fikur ne heshtje dhe pasojat i sheh vetem perdoruesi:
+ *  kufiri i madhesise bie ne `video_max_mb` (50 MB) ndersa platforma premton
+ *  `video_max_seconds` (5 minuta), dhe videot H.265/HEVC — formati i
+ *  parazgjedhur i iPhone-it — refuzohen.
+ *
+ *  Matur me 31 gusht 2026: ne prodhim ka vetem `cloudinary_cloud_name`.
+ *  Ky kontroll e ben gjendjen te dukshme me nje hapje faqeje, qe ndezja te jete
+ *  nje celes konfigurimi dhe jo nje zbulim i rastesishem. Kurre nuk kthen vlera.
+ */
+async function kontrolloMedian(client: any) {
+  try {
+    const { data } = await client
+      .from('app_config')
+      .select('key,value')
+      .in('key', ['cloudinary_cloud_name', 'cloudinary_upload_preset',
+                  'cf_stream_customer_code', 'video_max_mb', 'video_max_seconds'])
+      .abortSignal(AbortSignal.timeout(5000))
+    const m: Record<string, string> = {}
+    for (const r of (data ?? []) as { key: string; value: string }[]) m[r.key] = (r.value ?? '').trim()
+
+    const cloudinary = !!(m.cloudinary_cloud_name && m.cloudinary_upload_preset)
+    const stream = !!m.cf_stream_customer_code
+    const transkodim = cloudinary || stream
+    const mungon: string[] = []
+    if (!cloudinary) {
+      if (!m.cloudinary_cloud_name) mungon.push('cloudinary_cloud_name')
+      if (!m.cloudinary_upload_preset) mungon.push('cloudinary_upload_preset')
+    }
+    return {
+      ok: transkodim,
+      transkodim,
+      mungon,
+      kufi_mb: transkodim ? 100 : Number(m.video_max_mb || 50),
+      premtohen_sekonda: Number(m.video_max_seconds || 300),
+      pasoja: transkodim ? null
+        : 'Transkodimi eshte i fikur: kufiri i madhesise bie ne video_max_mb dhe videot HEVC refuzohen.',
+    }
+  } catch (e: any) {
+    return { ok: false, transkodim: false, mungon: [], kufi_mb: null,
+             premtohen_sekonda: null, pasoja: String(e?.message || e) }
+  }
+}
+
 async function checkDb(client: any): Promise<Check> {
   const start = Date.now()
   try {
@@ -114,9 +161,10 @@ export async function GET() {
     realtime: { params: { eventsPerSecond: 1 } },
   })
 
-  const [db, realtime] = await Promise.all([
+  const [db, realtime, media] = await Promise.all([
     checkDb(client),
     checkRealtime(client),
+    kontrolloMedian(client),
   ])
 
   const env = kontrolloEnv()
@@ -129,7 +177,7 @@ export async function GET() {
     ok,
     build: BUILD,
     at: Date.now(),
-    checks: { db, realtime, env },
+    checks: { db, realtime, env, media },
   }
 
   return NextResponse.json(body, {
