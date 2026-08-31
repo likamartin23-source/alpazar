@@ -154,16 +154,16 @@
 <div class="wrap">
 
 <header>
-  <p class="eyebrow">Alpazar · 31 gusht 2026 · gjashtë kalime</p>
+  <p class="eyebrow">Alpazar · 31 gusht – 1 shtator 2026 · tetë kalime</p>
   <h1>Regjistri i Autopsive</h1>
-  <p class="standfirst">Gjashtë kalime auditimi mbi platformën, në një ditë. Çdo gjetje këtu është <strong>e matur</strong>, jo e vlerësuar me sy — numri, mjeti dhe mënyra e matjes janë shkruar bashkë me të. Aty ku gabova, edhe kjo është shkruar.</p>
+  <p class="standfirst">Tetë kalime auditimi mbi platformën. Çdo gjetje këtu është <strong>e matur</strong>, jo e vlerësuar me sy — numri, mjeti dhe mënyra e matjes janë shkruar bashkë me të. Aty ku gabova, edhe kjo është shkruar.</p>
 
   <div class="tally">
-    <div><b>31</b><span>ndryshime të dërguara</span></div>
+    <div><b>43</b><span>ndryshime të dërguara</span></div>
     <div><b>78→0</b><span>elemente nën pragun WCAG</span></div>
-    <div><b>10→3</b><span>cenueshmëri varësish</span></div>
-    <div><b>21</b><span>funksione të varrosura</span></div>
-    <div><b>1</b><span>portë e privilegjuar e mbyllur</span></div>
+    <div><b>10→5</b><span>cenueshmëri varësish</span></div>
+    <div><b>18</b><span>fusha të falsifikueshme, të mbyllura</span></div>
+    <div><b>0,333→0</b><span>zhvendosja më e madhe e pamjes</span></div>
   </div>
 </header>
 
@@ -224,11 +224,65 @@
       <span class="instrument">lista e mangësive të mia</span>
     </div>
   </div>
+
+  <div class="pass">
+    <div class="roman">VII</div>
+    <div>
+      <h3>Prova e shkrimit</h3>
+      <p>Vesha rolin e një përdoruesi të zakonshëm dhe provova të shkruaj drejtpërdrejt, si nga shfletuesi. Tetë fusha kaluan — mes tyre një veçori e paguar dhe vetëmiratimi i përmbajtjes. Bashkë me të: axe-core dhe matja e zhvendosjes së pamjes në dhjetë rrugë, në telefon dhe në desktop.</p>
+      <span class="instrument">shkrim i vërtetë, në transaksion që kthehet mbrapsht</span>
+    </div>
+  </div>
+
+  <div class="pass">
+    <div class="roman">VIII</div>
+    <div>
+      <h3>Si e sheh platformën një vizitor pa llogari</h3>
+      <p>Këshilluesi nxori 21 funksione të privilegjuara të hapura për këdo pa sesion. Aty doli se mbrojtja e kalimit të shtatë kishte një anë të pambuluar — dhe u audituan për herë të parë ruajtja e skedarëve dhe të njëzet e tri rrugët API.</p>
+      <span class="instrument">roli <code>anon</code>, pa asnjë sesion</span>
+    </div>
+  </div>
 </section>
 
 <section>
   <h2>Gjetjet që peshojnë më shumë</h2>
   <p class="sub">Të renditura sipas asaj që i kushton më shumë përdoruesit ose ty, jo sipas radhës së zbulimit.</p>
+
+  <div class="find">
+    <div class="find-top">
+      <h3>Numri i telefonit merrej në çdo hapje faqeje</h3>
+      <span class="chip c-ok">rregulluar</span>
+    </div>
+    <p>Te bisedat numri merrej pasi kishe folur me dikë — kontekst i ligjshëm. Te faqja e shpalljes merrej <strong>sapo faqja ngarkohej</strong>. Pra një llogari e vetme plus një skript nxirrte numrin e çdo shitësi në platformë, pa asnjë veprim njerëzor. Vrima nuk ishte butoni WhatsApp; ishte automatizmi.</p>
+    <div class="measure"><span class="was">merrej në ngarkim</span><span class="arrow">→</span><span class="now">veprim i shprehur · 30/orë · i regjistruar</span></div>
+    <p style="margin-top:12px">Butoni mbeti aty. Tani hap një fletë që tregon kë po kontakton dhe numrin, dhe shitësi merr metrikën «sa kontakte reale gjeneroi kjo shpallje».</p>
+  </div>
+
+  <div class="find">
+    <div class="find-top">
+      <h3>Një shitës mund t'i shkruante vetë shikimet, pëlqimet dhe boost-in</h3>
+      <span class="chip c-ok">rregulluar</span>
+    </div>
+    <p>Tetë fusha ishin të shkrueshme drejtpërdrejt nga vetë përdoruesi. Mes tyre <em>«Interes real për këtë shpallje»</em> — numri që i thotë blerësit se sa i kërkuar është sendi — dhe <code>is_boost_active</code>, që është veçori e paguar. Dhe <code>moderation_status = «e miratuar»</code>: vetëmiratim i përmbajtjes.</p>
+    <div class="measure"><span class="was">999999 shikime, boost falas</span><span class="arrow">→</span><span class="now">leje e mohuar · redaktimi i paprekur</span></div>
+  </div>
+
+  <div class="find">
+    <div class="find-top">
+      <h3>Harta e plotë e skemës i jepej kujtdo pa llogari</h3>
+      <span class="chip c-ok">mbyllur</span>
+    </div>
+    <p>Një funksion auditimi i brendshëm kthente 71 tabela me <strong>të gjitha</strong> kolonat — përfshirë telefonin, rolin e adminit, pëlqimin GDPR, arsyen e pezullimit — plus emrat e 351 funksioneve. Askush s'i kishte vënë kufi, sepse ishte shkruar si vegël për ne.</p>
+  </div>
+
+  <div class="find">
+    <div class="find-top">
+      <h3>Dhënia automatike e Premium-it me email nuk punoi kurrë</h3>
+      <span class="chip c-ok">rregulluar</span>
+    </div>
+    <p>Webhook-u i pagesave kërkonte përdoruesin te një kolonë <code>email</code> që <strong>nuk ekziston</strong> — email-i rri diku tjetër. Baza kthente gabim, kërkimi dilte bosh, dhe pagesa binte gjithmonë te «për shqyrtim». <em>Paraja nuk humbi asnjëherë</em> — dhe pikërisht kjo e fshehu: rrjeta e sigurisë punoi aq mirë sa askush s'e vuri re që rruga kryesore ishte e vdekur.</p>
+    <p style="margin-top:12px">Kontrolli automatik i kontratës nuk e kapte dot, sepse shihte vetëm kolonat brenda kërkesave të ndërvarura. U zgjerua, me gjashtë teste të vetat.</p>
+  </div>
 
   <div class="find">
     <div class="find-top">
@@ -302,8 +356,8 @@
 </section>
 
 <section>
-  <h2>Katër verbëritë</h2>
-  <p class="sub">Kjo është pjesa që kërkove: autopsia e asaj që nuk bëra. Të katërta janë i njëjti gabim — besova një abstraksion në vend që të mas gjënë vetë.</p>
+  <h2>Verbëritë</h2>
+  <p class="sub">Kjo është pjesa që kërkove: autopsia e asaj që nuk bëra. Katër të parat janë i njëjti gabim — besova një abstraksion në vend që të mas gjënë vetë. Të tjerat dolën në kalimet e fundit.</p>
 
   <div class="blind">
     <h3>Këshilluesin, në vend të politikës</h3>
@@ -326,6 +380,27 @@
   </div>
 
   <blockquote>Kur një mjet të thotë “në rregull”, pyet çfarë mat saktësisht. Zakonisht mat diçka më të ngushtë nga ajo që po pyet ti.</blockquote>
+
+  <div class="blind">
+    <h3>Mbrojta fushën, jo rrugën që e shkruan</h3>
+    <p>Kalimi i shtatë mbylli kolonat. Kalimi i tetë gjeti se funksionet e privilegjuara i shkruajnë ato njësoj, dhe njëzet e një prej tyre janë të hapura për këdo. Mbylla derën dhe lashë dritaren e anës.</p>
+  </div>
+
+  <div class="blind">
+    <h3>Audituar atë që thërret aplikacioni, jo atë që lejon çelësi</h3>
+    <p>Sipërfaqja reale nuk është kodi ynë — është lista e lejeve. Një funksion i arritshëm me çelësin publik është publik edhe nëse asnjë faqe s'e përdor.</p>
+  </div>
+
+  <div class="blind">
+    <h3>Nuk e provova mekanizmin e rregullimit tim</h3>
+    <p>Ndërtova një mbrojtje mbi një supozim që dukej i saktë dhe ishte krejt i gabuar — porta nuk mbyllej kurrë. Nuk e kapi as përpiluesi, as testet, as ndërtimi, as leximi. E kapi vetëm prova që riprovoi sulmin <em>pas</em> rregullimit.</p>
+    <p style="margin-top:10px"><strong>Një rregullim i pandodhur është më i keq se defekti</strong>, sepse mbi të mbështetesh.</p>
+  </div>
+
+  <div class="blind">
+    <h3>Gjashtë herë gënjeu instrumenti, jo sistemi</h3>
+    <p>Numërova rreshta ende brenda rolit që po provoja dhe mbrojtja m'i fshehu; koha e ngrirë në transaksion e bëri një provë të kalojë falsisht; matja e ngjyrës ra në mes të një animacioni; serveri lokal fliste me vendin e gabuar. Kur një matje të befason, pyet së pari çfarë mat <em>saktësisht</em> ai instrument.</p>
+  </div>
 
   <h2 style="margin-top:52px">Çfarë doli e shëndetshme</h2>
   <p class="sub">E raportoj me të njëjtën siguri si defektet, sepse edhe kjo është matje.</p>
@@ -371,9 +446,11 @@
         <tr><td>PIN-i i administrimit — urgjente</td><td>Ndryshoje vlerën në diçka të rastësishme dhe të gjatë. Nuk ke nevojë ta mbash mend: paneli nuk e kërkon më. E ngurtësova rrugën me sesion, por një nga dy faktorët nuk duhet të jetë i dobët.</td></tr>
         <tr><td>Transkodimi i videove</td><td>Shto <code>cloudinary_upload_preset</code> te konfigurimi. Emrin e preset-it e di vetëm ti — po ta shpikja, ngarkimet do të dështonin.</td></tr>
         <tr><td>Pëlqimi i nenit 37/8</td><td>Sot çdo rimbursim del i plotë. Nëse do të mbahet pjesa e shfrytëzuar, duhet tekst i qartë në arkë dhe kutia kurrë e parazgjedhur.</td></tr>
-        <tr><td>Kontratat SCC/DPA</td><td>Gjashtë marrës jashtë BE-së pa instrument. Më i rëndi është përkthimi i Google-it, që merr tekst të lirë të përdoruesit — hiqe, zëvendësoje, ose nënshkruaj.</td></tr>
-        <tr><td>Kalimi te Next 16</td><td>Tri cenueshmëri të mbetura e kërkojnë. Të tria janë mjete ndërtimi, jo hyrje përdoruesi — rrezik praktik i ulët.</td></tr>
+        <tr><td>Kontratat SCC/DPA</td><td>Marrës jashtë BE-së pa instrument. Përkthimi i Google-it — më i rëndi, sepse merrte tekst të lirë të përdoruesit — u hoq. Për të tjerët duhet ose nënshkrim, ose zëvendësim.</td></tr>
+        <tr><td><s>Kalimi te Next 16</s> — <strong>nuk u desh</strong></td><td>Matja e ndryshoi përgjigjen: versioni i rregulluar i bibliotekës ishte tashmë i disponueshëm, dhe një rresht konfigurimi e mbylli. Mbeten vetëm mjete testimi, që nuk shkojnë kurrë te përdoruesi.</td></tr>
         <tr><td>Fjalëkalimet e komprometuara</td><td>Supabase → Auth → ndize kontrollin. Një çelës, pa kod.</td></tr>
+        <tr><td>Bashkëngjitjet e bisedave</td><td>Fotot dhe audiot e mesazheve rrinë në një hapësirë publike: kush ka lidhjen i hap edhe pa llogari. Listimin e mbylla — kjo e vret rrugën praktike. Privatësimi i plotë kërkon lidhje të firmosura dhe zhvendosje të të dhënave ekzistuese; është ndryshim me pasoja, ndaj e le për ty.</td></tr>
+        <tr><td>Sa shpesh mund të rifreskohet një shpallje</td><td>E lashë 7 ditë për llogaritë pa pagesë — sjellja jote e sotme. Premium 24 orë, VIP 6. Vlerat rrinë te konfigurimi; ndryshoji nga paneli kur të duash, sepse janë vendim tregtar, jo teknik.</td></tr>
         <tr><td>DPO-ja</td><td>Ose caktohet, ose dokumentohet me shkrim arsyeja pse jo.</td></tr>
         <tr><td>Kontakti i sigurisë</td><td>Faqja publike jep një Gmail personal. Zëvendësoje me një adresë të platformës.</td></tr>
         <tr><td>Butonat-ikonë në telefon</td><td>32–34px kundrejt 44px të standardit tënd. Rrinë në shirita të ngushtë; rritja kërkon sy mbi pajisje reale.</td></tr>
@@ -383,7 +460,7 @@
 </section>
 
 <footer>
-  Miratimet me hapat e sakta: <code>docs/MIRATIMET-E-NEVOJSHME.md</code> · Regjistri i plotë: <code>docs/MEGAAUTOPSIA-2026-08-31.md</code> · Analiza e metodës: <code>docs/AUTOPSIA-E-AUTOPSIVE.md</code> · Metoda e verifikimit vizual: <code>docs/VERIFIKIMI-VIZUAL.md</code> · Të gjitha ndryshimet janë në degën <code>claude/loving-wright-kBMgT</code>, secili me tsc, teste dhe ndërtim të gjelbër.
+  Miratimet me hapat e sakta: <code>docs/MIRATIMET-E-NEVOJSHME.md</code> · Regjistri i plotë: <code>docs/MEGAAUTOPSIA-2026-08-31.md</code> dhe <code>-B.md</code> · Analiza e metodës: <code>docs/AUTOPSIA-E-AUTOPSIVE.md</code> dhe <code>docs/SUPERAUTOPSIA.md</code> · Metoda e verifikimit vizual: <code>docs/VERIFIKIMI-VIZUAL.md</code> · Të gjitha ndryshimet janë në degën <code>claude/loving-wright-kBMgT</code>, secili me tsc, teste dhe ndërtim të gjelbër.
 </footer>
 
 </div>

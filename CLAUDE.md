@@ -434,3 +434,76 @@ drejt `alpazar.vercel.app` dhe `*.supabase.co` eshte e bllokuar nga politika e
 mjedisit (shih `docs/RRJETI.md`). Pra hapi "sy live" e kryen pronari; agjenti
 raporton cfare mati dhe cfare nuk e verifikoi dot — kurre nuk e paraqet si te
 verifikuar.
+
+---
+
+## 9. TAKSONOMIA E FSHEHJES — si mbijeton nje defekt shtate auditime
+
+> Nxjerre nga tete kalime mbi te njejtin aplikacion (`docs/SUPERAUTOPSIA.md`).
+> Cdo forme ka nje defekt real pas vetes. Perdore si liste kontrolli, jo lexim.
+>
+> **Fakti themelor:** asnje kalim nuk gjeti gje te re me instrumentin e kalimit
+> te meparshem. "Auditova edhe nje here" nuk prodhon asgje; "auditova me nje
+> mjet tjeter" prodhon gjithmone.
+
+### 9.1 Shtate format e fshehjes
+
+- **F1 · Boshlleku midis shtresave.** E ndertuar plotesisht ne baze, e paprekur
+  plotesisht nga kodi. Te dy auditimet thone "ne rregull".
+  → *Krahaso dy inventare* (RPC ↔ referenca kodi).
+- **F2 · Mbrojtja te fusha, jo te rruga.** Kolona u mbyll; nje SECURITY DEFINER
+  i thirrshem nga `anon` e shkruan me te drejtat e PRONARIT.
+  → *Numero SHKRUESIT e nje fushe, jo fushen.*
+- **F3 · Siperfaqja eshte lista e GRANT-eve, jo kodi.** Nje funksion i arritshem
+  nga anon-key eshte publik edhe nese aplikacioni s'e therret kurre.
+  → *Listo cdo funksion te thirrshem nga `anon`/`authenticated`.*
+- **F4 · Pretendimi rri ne koment.** "Raporti 70/30" ishte shkruar qe ne fillim;
+  i matur ishte 56/43.
+  → *Mat pohimin; mos e lexo.*
+- **F5 · Mekanizmi i sakte, njesia e gabuar.** `flex-basis` mbi kutine e
+  permbajtjes; `count` qe vjen NaN dhe `?? 0` nuk e kap.
+  → *Mat rezultatin, jo formulen.*
+- **F6 · Vegla e brendshme mbetet e hapur.** Nje funksion auditimi qe nxjerr
+  gjithe skemen, i thirrshem pa sesion.
+  → *Per cdo mjet: "kush tjeter mund ta therrase?"*
+- **F7 · Rrjeta e sigurise e fsheh defektin.** Pagesa binte te 'review' ne vend
+  qe te humbte, ndaj askush s'e pa qe dhenia automatike s'punoi KURRE.
+  → *Krahaso skemen me cdo emer kolone te perdorur ne kod.*
+
+### 9.2 Gjashte menyrat si te genjen instrumenti
+
+Kjo klase kushton me shume se defektet: prodhon **fiksion te raportuar me siguri**.
+Kur nje matje te befason, pyet **cfare mat SAKTESISHT** para se te pyesesh
+cfare ka sistemi. Gjashte here nga gjashte, faji ishte i instrumentit.
+
+- Numero **jashte** rolit qe po provon — perndryshe RLS-ja i fsheh rreshtat dhe
+  del nje zero e rreme.
+- `now()` eshte koha e TRANSAKSIONIT. Per sjellje kohore perdor `clock_timestamp()`.
+- Prit derisa animacionet te qetesohen para axe-core; **ngjyra te perziera** ne
+  nje shkelje kontrasti = matje ne fluturim.
+- Verifiko KU po flet aplikacioni para se te raportosh gabime rrjeti.
+- Kurre `next build` mbi nje `.next` qe `next dev` po e sherben.
+- `layout-shift` emerton te ZHVENDOSURIT, jo shkaktarin — ndiq zinxhirin lart.
+
+### 9.3 Verberia e tete — mos i beso mekanizmit te rregullimit tend
+
+Nje roje u ndertua mbi `current_user` brenda nje trigeri, duke u mbeshtetur te
+§1.5. Arsyetimi i rregullt, zbatimi krejt i gabuar: brenda nje SECURITY DEFINER
+`current_user` eshte GJITHMONE pronari, edhe brenda vete trigerit — porta nuk
+mbyllej kurre. Nuk e kapi as tsc, as testet, as build-i, as leximi.
+
+**Cdo mbrojtje e re duhet te perballet me sulmin qe pretendon se ndalon — PAS
+aplikimit, jo para.** Nje rregullim i pandodhur eshte me i keq se defekti, sepse
+mbi te mbeshtetesh.
+
+### 9.4 Matrica: asnje instrument nuk mbulon dy klasa
+
+Pamje e prishur → sy · kontrast/prekje → axe · zhvendosje → PerformanceObserver ·
+varesi → `npm audit` · politike e gjere → logjika RLS · vecori e paarritshme →
+DB↔kod · fushe e falsifikueshme → **prove shkrimi** · rruge e privilegjuar
+publike → **prove si `anon`**.
+
+Asnje kolone nuk mbulon dy rreshta. Prandaj klasat e instrumenteve nuk jane
+liste deshirash — jane te gjitha te detyrueshme.
+
+---
