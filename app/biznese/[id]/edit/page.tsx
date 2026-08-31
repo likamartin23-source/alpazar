@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { supabase } from '../../../../lib/supabase'
 import BusinessForm, { BusinessInitial } from '../../../components/BusinessForm'
+import VerificationBox from '../../../components/VerificationBox'
 
 // BLLOKU PËRFUNDIMTAR §3.8 — Editimi përdor TË NJËJTIN komponent BusinessForm si
 // krijimi (një burim i vetëm). Vetëm-pronar (kontroll owner===viewer para ngarkimit).
@@ -49,7 +50,13 @@ export default function BiznesEditPage() {
         {loading || !initial ? (
           <div style={{ textAlign: 'center', padding: 40, color: '#555', fontSize: 13 }}>Duke ngarkuar…</div>
         ) : (
-          <BusinessForm mode="edit" initial={initial} onSaved={() => { window.location.href = `/biznese/${params.id}` }} />
+          <>
+            <BusinessForm mode="edit" initial={initial} onSaved={() => { window.location.href = `/biznese/${params.id}` }} />
+            {/* Kerkesa per verifikim rri KETU, bashke me te dhenat e biznesit:
+                verifikimi krahason pikerisht keto te dhena me regjistrin e QKB-se,
+                ndaj nje ekran i vetem i pergjigjet nje pyetjeje te vetme (§6). */}
+            <VerificationBox businessId={params.id} nipt={initial.nipt} />
+          </>
         )}
       </div>
     </div>

@@ -55,18 +55,23 @@ export function QueueTab() {
   const [arsyetimi, setArsyetimi] = useState('')
   const [dosja, setDosja] = useState('')
   const [ankime, setAnkime] = useState<any[]>([])
+  const [verifikime, setVerifikime] = useState<any[]>([])
 
   const load = useCallback(async () => {
-    const [q, t, a] = await Promise.all([
+    const [q, t, a, v] = await Promise.all([
       supabase.rpc('admin_moderation_queue', { p_status: 'pending', p_limit: 200 }),
       supabase.rpc('admin_list_takedowns', { p_status: 'pending', p_limit: 100 }),
       supabase.rpc('admin_list_appeals', { p_status: 'pending', p_limit: 100 }),
+      // Verifikimet rrine ne TE NJEJTIN ekran: te tria i pergjigjen te njejtes
+      // pyetje te operatorit — "cfare pret vendimin tim?" (§6 e KUJTESES).
+      supabase.rpc('admin_list_verifications', { p_status: 'pending', p_limit: 100 }),
     ])
     if (q.error || (q.data as any)?.error) { setErr(q.error?.message || (q.data as any)?.error); return }
     setRadha(((q.data as any)?.queue || []) as any[])
     setPermbledhje((q.data as any)?.permbledhje || {})
     if (!t.error && !(t.data as any)?.error) setNjoftime(((t.data as any)?.njoftime || []) as any[])
     if (!a.error && Array.isArray(a.data)) setAnkime(a.data as any[])
+    if (!v.error && Array.isArray(v.data)) setVerifikime(v.data as any[])
     setErr('')
   }, [])
 
@@ -105,6 +110,25 @@ export function QueueTab() {
   // §2.4: ankimin nuk e shqyrton kush mori vendimin e pare. Baza e refuzon
   // gjithsesi (konflikt_interesi); ketu bllokohet edhe ne UI qe moderatori te
   // mos e provoje kot dhe ta kuptoje pse.
+  async function vendosVerifikimin(id: string, prano: boolean) {
+    if (arsyetimi.trim().length < 10) {
+      setErr('Arsyetimi është i detyrueshëm — të paktën 10 karaktere.')
+      return
+    }
+    setBusy(id); setErr('')
+    const { data, error } = await supabase.rpc('admin_review_verification', {
+      p_request_id: id, p_approve: prano, p_notes: arsyetimi.trim(),
+    })
+    setBusy('')
+    if (error || (data as any)?.error) {
+      setErr((data as any)?.error === 'forbidden'
+        ? 'Nuk ke lejen `business.moderate`.'
+        : (error?.message || (data as any)?.error))
+      return
+    }
+    setHap(''); setArsyetimi(''); load()
+  }
+
   async function vendosAnkimin(id: string, prano: boolean) {
     if (arsyetimi.trim().length < 10) {
       setErr('Arsyetimi është i detyrueshëm — përdoruesi merr përgjigje me shkrim.')
@@ -344,6 +368,51 @@ export function QueueTab() {
                   </div>
                 </div>
               )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {verifikime.length > 0 && (
+        <div className="card">
+          <div className="ct"><span aria-hidden="true">✓</span> Verifikime ({verifikime.length})</div>
+          <div style={{ fontSize: 11, color: '#555', marginBottom: 8, lineHeight: 1.55 }}>
+            Verifikimi krahason të dhënat e deklaruara me <strong>regjistrin publik të QKB-së</strong>.
+            Vendimi shoqërohet gjithmonë me arsye — ajo i shkon kërkuesit si njoftim.
+          </div>
+          {verifikime.map(v => (
+            <div key={v.id} style={{ borderTop: '1px solid #f0e6c0', padding: '10px 0' }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#111' }}>
+                {v.biznesi || v.kerkuesi}
+              </div>
+              <div style={{ fontSize: 11, color: '#555', marginTop: 4 }}>
+                Kërkuesi: {v.kerkuesi}
+                {v.nipt ? <> · NIPT <strong>{v.nipt}</strong></> : <> · <em>pa NIPT të deklaruar</em></>}
+                {' '}· bazë: {v.lloji}
+              </div>
+              <div style={{ fontSize: 10.5, color: '#555', marginTop: 3 }}>
+                Dërguar më {v.derguar_me ? new Date(v.derguar_me).toLocaleDateString('sq-AL') : '—'}
+                {v.ka_dokument ? ' · ka dokument të bashkëngjitur' : ''}
+              </div>
+              <div style={{ marginTop: 6 }}>
+                <button type="button" className="edit-btn"
+                  onClick={() => { setHap(hap === v.id ? '' : v.id); setArsyetimi(''); setErr('') }}>
+                  {hap === v.id ? 'Mbyll' : 'Vendos'}
+                </button>
+                {hap === v.id && (
+                  <div style={{ marginTop: 8 }}>
+                    <input className="finput" value={arsyetimi} aria-label="Arsyetimi i verifikimit"
+                      placeholder="Arsyetimi (i detyrueshëm) — p.sh. NIPT-i përputhet me QKB"
+                      onChange={e => { setArsyetimi(e.target.value); setErr('') }} />
+                    <div style={{ marginTop: 8, display: 'flex', gap: 6 }}>
+                      <button type="button" className="btn btn-green" disabled={busy === v.id}
+                        onClick={() => vendosVerifikimin(v.id, true)}>Mirato</button>
+                      <button type="button" className="btn btn-orange" disabled={busy === v.id}
+                        onClick={() => vendosVerifikimin(v.id, false)}>Refuzo</button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           ))}
         </div>
