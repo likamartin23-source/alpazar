@@ -115,7 +115,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               { not: { href_matches: [
                 '/api/*', '/admin*', '/auth/*', '/messages*', '/notifications*',
                 '/profile*', '/dashboard*', '/favorites*', '/saved-searches*',
-                '/te-dhenat-mia*', '/listing/new', '/biznese/new',
+                '/te-dhenat-mia*', '/oferta*', '/listing/new', '/biznese/new',
                 '/listing/*/edit', '/biznese/*/edit',
               ] } },
             ] },

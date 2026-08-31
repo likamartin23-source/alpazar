@@ -728,6 +728,7 @@ export default function ProfilePage() {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
                   {([
+                    { ike: 'ti-hand-click',     titull: 'Ofertat',              nen: 'Oferta çmimi të marra dhe të dërguara · prano, refuzo ose tërhiq', vepro: () => { window.location.href = '/oferta' } },
                     { ike: 'ti-chart-bar',      titull: 'Analitika',            nen: 'Pamje, kontaktime (WhatsApp/Viber), CTR — 7 ose 30 ditë', vepro: () => { window.location.href = '/profile/analytics' } },
                     { ike: 'ti-crown',          titull: 'Abonimi im',           nen: (() => { const t = tierNgaProfili(profile); return t === 'vip' ? 'VIP Ekstra Boost aktiv · shiko / menaxho' : t === 'premium' ? 'Premium aktiv · shiko / menaxho / anulo' : 'Kalo në Premium — biznes online, VIP, pa limit' })(), vepro: () => { window.location.href = tierNgaProfili(profile) !== 'free' ? '/billing' : '/premium' } },
                     { ike: 'ti-shield-lock',    titull: 'Siguri & privatësi',   nen: 'Fjalëkalimi, email-i, GDPR, Trust Score, Takedown, fshirja', vepro: () => setProfSub('siguri') },

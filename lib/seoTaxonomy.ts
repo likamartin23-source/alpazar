@@ -3,6 +3,7 @@
 // the /kategori/* routes and the sitemap. Kept dependency-free (relative imports only).
 
 import { createClient } from '@supabase/supabase-js'
+import { priceLabel } from './format'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from './supabase'
 
 export type SeoCategory = { id: string; name: string; slug: string; icon: string | null }
@@ -99,7 +100,9 @@ export async function fetchCategoryListings(
   }
 }
 
+// `toLocaleString()` varej nga ICU-ja e mjedisit dhe jepte `1,450,000` në vend
+// të konventës shqipe `1.450.000` — mospërputhje me çdo sipërfaqe tjetër, dhe
+// rrezik hidratimi SSR↔klient. Tani i njëjti burim si kudo tjetër.
 export function fmtPrice(price: number, cur: string): string {
-  if (!price) return 'Me marrëveshje'
-  return cur === 'EUR' ? `${price.toLocaleString()} €` : `${price.toLocaleString()} L`
+  return priceLabel(price, cur)
 }

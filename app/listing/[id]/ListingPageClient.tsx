@@ -3,8 +3,9 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import { supabase } from '../../../lib/supabase'
-import { nf, dateShort, dayMonth, monthYear, clockTime } from '../../../lib/format'
+import { nf, dateShort, dayMonth, monthYear, clockTime, priceLabel } from '../../../lib/format'
 import { isNewMember } from '../../components/Badges'
+import OfferBox from '../../components/OfferBox'
 import { SocialProofBar, SellerPremiumUpsell } from '../../components/PremiumUpsell'
 import { ReportSheet } from '../../components/ReportSheet'
 import { saveRefFromUrl, buildShareUrl } from '../../../lib/referral'
@@ -501,9 +502,8 @@ export default function ListingPageClient({ params, initialListing, initialSelle
     channelRef.current?.send({ type: 'broadcast', event: 'typing', payload: { userId: user.id } })
   }
 
-  const fmt = (price: number, cur: string) =>
-    !price ? 'Çmim me marrëveshje' :
-    cur === 'EUR' ? `${nf(price)} €` : `${nf(price)} L`
+  // Burim i vetëm: `lib/format.ts`. Këtu mbetet vetëm fjala e kësaj sipërfaqeje.
+  const fmt = (price: number, cur: string) => priceLabel(price, cur, 'Çmim me marrëveshje')
 
   const memberSince = (d: string) => monthYear(d)
 
@@ -1000,6 +1000,12 @@ export default function ListingPageClient({ params, initialListing, initialSelle
               )}
             </>
           )}
+
+          {/* Oferta — mbyllja e qarkut te `offers`. Vjen PAS pershkrimit dhe
+              vendndodhjes: bleresi vendos per cmimin pasi e ka kuptuar sendin.
+              Komponenti vetefshihet kur ofertat jane te fikura nga `app_config`,
+              kur shpallja s'eshte aktive, ose kur s'ka asgje per te thene. */}
+          <OfferBox listingId={params.id} isOwner={isOwner} />
 
           {/* Marketing: upsell per pronarin jo-premium */}
           {isOwner && sellerTier === 'free' && (

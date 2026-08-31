@@ -21,7 +21,7 @@ import { FavoriteButton } from './FavoriteButton'
 import { useIsOnline } from './OnlinePresence'
 import { useSyteLive } from './PremiumUpsell'
 import { trackEvent } from '../../lib/track'
-import { nf, dayMonth } from '../../lib/format'
+import { nf, dayMonth, priceLabel } from '../../lib/format'
 
 export type ListingCardAuthor = {
   id: string
@@ -89,9 +89,9 @@ type Props = {
   onUnfavorite?: () => void
 }
 
-const fmt = (price: number, cur: string) =>
-  !price ? 'Çmim me marrëveshje' :
-  cur === 'EUR' ? `${nf(price)} €` : `${nf(price)} L`
+// Formula e çmimit rri te `lib/format.ts` (burim i vetëm); këtu mbetet vetëm
+// fjala që kjo sipërfaqe përdor për çmimin bosh.
+const fmt = (price: number, cur: string) => priceLabel(price, cur, 'Çmim me marrëveshje')
 
 function timeAgo(iso: string): string {
   const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000)

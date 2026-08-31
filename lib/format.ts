@@ -20,9 +20,23 @@ export function nf(n: number | null | undefined): string {
   return (neg ? '-' : '') + s.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
 }
 
-/** Çmim i plotë me monedhë. Bosh/0 → "Me marrëveshje". */
-export function priceLabel(price: number | null | undefined, currency?: string | null): string {
-  if (!price) return 'Me marrëveshje'
+/**
+ * Çmim i plotë me monedhë. Bosh/0 → `zeroLabel`.
+ *
+ * BURIMI I VETËM. Deri më 31 gusht 2026 i njëjti llogaritje jetonte në KATËR
+ * vende — `ListingCard`, `ListingPageClient`, `seoTaxonomy.fmtPrice` dhe këtu —
+ * dhe kishin nisur të ndryshonin: `fmtPrice` përdorte `toLocaleString()`, që
+ * varet nga ICU-ja e mjedisit dhe jep `1,450,000` në vend të `1.450.000`.
+ * `zeroLabel` ekziston pikërisht që unifikimi të mos i detyrojë të gjitha
+ * sipërfaqet në të njëjtin tekst: karta thotë "Çmim me marrëveshje", SEO-ja
+ * thotë "Me marrëveshje". Formula është një; fjala mbetet e sipërfaqes.
+ */
+export function priceLabel(
+  price: number | null | undefined,
+  currency?: string | null,
+  zeroLabel: string = 'Me marrëveshje',
+): string {
+  if (!price) return zeroLabel
   return currency === 'EUR' ? `${nf(price)} €` : `${nf(price)} L`
 }
 
