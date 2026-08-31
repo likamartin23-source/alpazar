@@ -14,6 +14,7 @@ import { TodayTab } from './tabs/TodayTab'
 import { InvoicesTab } from './tabs/InvoicesTab'
 import { BroadcastTab } from './tabs/BroadcastTab'
 import { RolesTab } from './tabs/RolesTab'
+import { LanguageSwitcher } from '../components/LanguageSwitcher'
 
 /* ─── Styles ───────────────────────────────────────────────── */
 const CSS = `
@@ -608,6 +609,16 @@ export default function Admin() {
                 <><span aria-hidden="true">🔧</span> MIRËMBAJTJE</>
               </div>
             )}
+
+            {/* Zgjedhja e gjuhes BRENDA panelit.
+                `detect()` te lib/i18n.tsx e nis panelin gjithmone shqip kur
+                administratori nuk ka zgjedhur kurre nje gjuhe — me qellim, qe
+                nje panel me veprime shkaterruese te mos perkthehet vetvetiu nga
+                gjuha e shfletuesit. Por i vetmi kontroll gjuhe ndodhej te fundi
+                i faqes publike, ndaj brenda panelit gjuha dukej "e ngrire".
+                Kontrolli eshte ky, i njejti komponent; zgjedhja ruhet dhe
+                nderron menjehere, pa rifreskim. */}
+            <div style={{ marginTop: 10 }}><LanguageSwitcher tone="dark" /></div>
           </div>
 
           {groups.map(([gname, items]) => (
