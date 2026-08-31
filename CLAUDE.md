@@ -165,6 +165,8 @@ Deri atehere `fiscal_status='not_required'` dhe asgje nuk prishet.
 - **`/api/health` raporton edhe variablat e mjedisit** (`checks.env`) — vetem
   praninë, kurre vleren. Pese kritike, dymbedhjete te vecorive. Kjo eshte rruga
   e vetme qe ka pronari per te pare cfare i mungon te Vercel.
+- **Autopsia e autopsive:** `docs/AUTOPSIA-E-AUTOPSIVE.md` — pse cdo kalim
+  zbuloi nje klase te re defektesh, dhe cilat ishin kater verberite sistematike.
 - **Regjistri i autopsive:** `docs/MEGAAUTOPSIA-2026-08-31.md` — kater kalime,
   cdo gjetje me maten dhe me mjetin, perfshire gabimet e mia.
 - **Ekranet e autentikuara SHIHEN me nje dyfish lokal** — `docs/VERIFIKIMI-VIZUAL.md`.
@@ -206,6 +208,22 @@ Deri atehere `fiscal_status='not_required'` dhe asgje nuk prishet.
   pyetje, ato jane nje ekran.
 - **Cdo veprim shkaterrues me arsye te detyrueshme dhe gjurme.**
 - **Mos e zgjidh me kod ate qe zgjidhet me konfigurim.**
+- **Kur nje mjet te thote "ne rregull", pyet cfare mat SAKTESISHT.** Zakonisht
+  mat dicka me te ngushte nga ajo qe po pyet ti. Kater verberi te matura me 31
+  gusht 2026, te gjitha i njejti gabim — besimi i nje abstraksioni ne vend te
+  matjes se gjese vete:
+  · keshilluesi i Supabase-it mat nese RLS eshte NDEZUR, jo kushtin e politikes —
+    tri politika `using (true)` ekspozonin gjurme sjelljeje;
+  · Playwright-i nis ne desktop nese s'i thua ndryshe — telefoni, ku eshte
+    perdoruesi shqiptar, nuk u pa per kater kalime;
+  · `npm audit` zgjat tre sekonda dhe nuk u ekzekutua kurre — 10 cenueshmeri,
+    nje kritike;
+  · auditimi shtrese-per-shtrese nuk e sheh dot VIJEN midis tyre — dy te drejta
+    ligjore ishin te ndertuara ne baze dhe te paprekura nga kodi.
+  **Nje auditim matet me numrin e INSTRUMENTEVE te ndryshem qe ke vene ne pune,
+  jo me kohen.** Klasat e detyrueshme: shfletues (desktop DHE telefon) · konsole
+  e rrjet · axe-core · performance nen ngadalesim · `npm audit` · LOGJIKA e RLS-se
+  · vija DB↔kod · prove SHKRIMI (kjo e fundit mbetet ende e pabere).
 - **Perpara se te ndertosh dicka, kerko a EKZISTON ne baze.** Rregulli i pare i
   kesaj kujtese e thote per tabelat; me 31 gusht 2026 u mat se vlen njesoj per
   FUNKSIONET. Krahasimi i te 88 RPC-ve te thirrshme nga `authenticated` me cdo
