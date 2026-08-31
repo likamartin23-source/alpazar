@@ -3,6 +3,9 @@
 import { useEffect } from 'react'
 import { reportError } from '../lib/monitor'
 
+// Si te `not-found.tsx`: kjo faqe render-ohet BRENDA layout-it rrenje, ndaj
+// etiketat rrenje te vetat prishnin hidratimin. Ato i takojne vetem
+// `global-error.tsx`, qe zevendeson layout-in kur deshton vete rrenja.
 export default function GlobalError({
   error,
   reset,
@@ -13,10 +16,9 @@ export default function GlobalError({
   useEffect(() => { console.error('[App Error]', error); reportError(error, 'route') }, [error])
 
   return (
-    <html lang="sq">
-      <body style={{ margin: 0, fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", background: '#FFFBEA' }}>
+    <div style={{ background: '#FFFBEA' }}>
         <div style={{
-          minHeight: '100vh', display: 'flex', flexDirection: 'column',
+          minHeight: '58vh', display: 'flex', flexDirection: 'column',
           alignItems: 'center', justifyContent: 'center', padding: 24, gap: 16,
         }}>
           <div style={{
@@ -70,7 +72,6 @@ export default function GlobalError({
             )}
           </div>
         </div>
-      </body>
-    </html>
+    </div>
   )
 }

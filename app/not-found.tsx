@@ -1,9 +1,17 @@
+// Kjo faqe render-ohet BRENDA layout-it rrenje, ndaj nuk guxon te nxjerre
+// etiketat e veta rrenje (html/body). Kete e ben VETEM `global-error.tsx`,
+// qe zevendeson layout-in. Deri me 31 gusht 2026 kjo faqe (dhe `error.tsx`)
+// nxirrnin nje cift te dyte; matur ne shfletues, cdo 404 jepte tri gabime:
+//   'cannot contain a nested html'
+//   'In HTML, main cannot be a child of html. This will cause a hydration error.'
+//   'You are mounting a new html component when a previous one has not first unmounted.'
+// Parsuesi i HTML-se i hidhte etiketat e brendshme, por pema e React-it i
+// mbante — ndaj hidratimi deshtonte ne CDO faqe 404.
 export default function NotFound() {
   return (
-    <html lang="sq">
-      <body style={{ margin: 0, fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", background: '#FFFBEA' }}>
+    <div style={{ background: '#FFFBEA' }}>
         <div style={{
-          minHeight: '100vh', display: 'flex', flexDirection: 'column',
+          minHeight: '58vh', display: 'flex', flexDirection: 'column',
           alignItems: 'center', justifyContent: 'center', padding: 24, gap: 16,
         }}>
           <div style={{
@@ -55,7 +63,6 @@ export default function NotFound() {
             </div>
           </div>
         </div>
-      </body>
-    </html>
+    </div>
   )
 }
