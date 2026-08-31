@@ -43,7 +43,10 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA}
 .note.warn{background:#FFF0EE;border-color:#F09595;color:#a02515}
 .btns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
 .btn{border:1.5px solid #ddd;background:#fff;border-radius:10px;padding:9px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;color:#333}
-.btn.primary{background:#E63312;border-color:#E63312;color:#fff}
+/* #E63312 jep 4,33:1 me te bardhen — humbje per pak (matur me axe-core,
+   31 gusht 2026). Ngjyra --action-red-deep #C42305, tashme token i projektit
+   per pikerisht kete arsye, jep 5,85:1. */
+.btn.primary{background:#C42305;border-color:#C42305;color:#fff}
 .btn.danger{background:#fff;border-color:#E63312;color:#C42B0F}
 .btn.small{padding:7px 10px;font-size:11px;width:100%}
 .btn:disabled{opacity:.5;cursor:not-allowed}

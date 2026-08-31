@@ -32,9 +32,14 @@ const ETIKETA: Record<string, { tekst: string; sfond: string; kufi: string; ngjy
   expired:   { tekst: 'Skaduar',    sfond: '#F3F3F3', kufi: '#ddd',    ngjyre: '#555' },
 }
 
-export default function OfferBox({ listingId, isOwner }: { listingId: string; isOwner: boolean }) {
-  const [gj, setGj]         = useState<any>(null)
-  const [duke, setDuke]     = useState(true)
+export default function OfferBox({ listingId, isOwner, initial }:
+  { listingId: string; isOwner: boolean; initial?: any }) {
+  /*  `initial` vjen nga faqja prind, e marre NE TE NJEJTIN hap me shpalljen.
+   *  Pa te, blloku shfaqej pas nje thirrjeje te dyte dhe i shtynte 244px poshte
+   *  seksionet nen te (CLS 0,076 i matur). Thirrja e brendshme mbetet per
+   *  rifreskim pas nje veprimi, dhe si rezerve nese prindi s'e jep.  */
+  const [gj, setGj]         = useState<any>(initial ?? null)
+  const [duke, setDuke]     = useState(!initial)
   const [shuma, setShuma]   = useState('')
   const [mesazhi, setMesazhi] = useState('')
   const [pune, setPune]     = useState('')
@@ -48,7 +53,15 @@ export default function OfferBox({ listingId, isOwner }: { listingId: string; is
     setDuke(false)
   }, [listingId])
 
-  useEffect(() => { ngarko() }, [ngarko])
+  /*  Prindi e sjell gjendjen pak pas montimit (thirrja niset paralel me
+   *  shpalljen). Kur mberrin, e marrim ate dhe NUK bejme kerkese te dyte.
+   *  Vetem nese prindi nuk e jep fare — p.sh. nje perdorim tjeter i
+   *  komponentit — bie ne thirrjen e vet si rezerve.  */
+  useEffect(() => {
+    if (initial) { setGj(initial); setDuke(false); return }
+    const t = setTimeout(() => { if (duke) ngarko() }, 1200)
+    return () => clearTimeout(t)
+  }, [initial, ngarko, duke])
 
   async function dergo() {
     setGabim(''); setPune('dergon')
@@ -80,6 +93,20 @@ export default function OfferBox({ listingId, isOwner }: { listingId: string; is
     setPune(''); ngarko()
   }
 
+  /*  HAPESIRE E REZERVUAR — me lartesine e MATUR, jo te hamendesuar.
+   *
+   *  Vlera e pare qe provova ketu ishte 244px, marre nga zhvendosja qe
+   *  raportonte `layout-shift`. Ishte e gabuar: ajo zhvendosje vinte nga folea
+   *  e hartes me siper (0 → 235px), dhe textarea e ketij blloku ishte thjesht
+   *  nje element I ZHVENDOSUR, jo shkaktari. Pasi harta mori vend-mbajtesin e
+   *  vet, u rimat pa asnje rezervim ketu: CLS 0,014, me nje zhvendosje 576→895
+   *  = 319px. AJO eshte lartesia reale e ketij blloku. Me 319px: CLS 0,008.
+   *
+   *  Rezervohet VETEM per jo-pronaret: pronari sheh ose asgje ose nje shirit
+   *  te vogel, ndaj nje bllok bosh do te ishte vrime ne faqen e vet.  */
+  if (duke && !isOwner) {
+    return <div aria-hidden="true" style={{ height: 319 }} />
+  }
   if (duke || !gj || gj.error) return null
   if (!gj.aktive) return null
 

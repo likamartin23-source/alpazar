@@ -66,7 +66,11 @@ button:active{transform:scale(.97);}
     mbi #111 duhet me e ndritur se ~#7F7F7F, mbi kremin me e erret se
     ~#767676 — kufij qe perjashtojne njeri-tjetrin. Prandaj siperfaqja e
     erret shenohet dhe merr vleren e vet.  */
-.stat-dark .stat-l{color:#9A9A9A !important;}
+/* `.stats-row` e profilit ka `background:#1a1a1a` por NUK mban klasen
+   `.stat-dark`, ndaj rregulli i mesiperm nuk e prekte kurre: matur me
+   axe-core 31 gusht 2026 — #757575 mbi #1a1a1a = 3,77:1. Selektori tani
+   e mbulon edhe bllokun real. */
+.stat-dark .stat-l, .stats-row .stat-l{color:#9A9A9A !important;}
 
 .header{
   background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%) !important;

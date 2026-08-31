@@ -112,10 +112,26 @@ export default function TeDhenatMiaPage() {
     }
   }
 
+  /*  Gjendja e ngarkimit mban TE NJEJTIN skelet si faqja e ngarkuar.
+   *  Me pare ishte nje rrotullues i centruar ne `100vh` me flex; kur permbajtja
+   *  mberrinte, dokumenti kalonte nga nje kuti e centruar ne nje kolone 1080px
+   *  dhe Chrome-i e numeronte si nje zhvendosje te vetme. Matur me 31 gusht
+   *  2026: CLS = 0,333 ne desktop — mbi trefishin e pragut 0,1, nga NJE ngjarje
+   *  e vetme ne 1447ms. Koka (55px) dhe kolona (480px) tani jane te pranishme
+   *  qe ne fillim; skeleti mbulon trupin e matur (~1025px).  */
   if (loading) return (
-    <div style={{ minHeight: '100vh', background: '#FFFBEA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ width: 36, height: 36, border: '3px solid #F5C842', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-      <style dangerouslySetInnerHTML={{ __html: `@keyframes spin{to{transform:rotate(360deg)}}` }} />
+    <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh', paddingBottom: 80, fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
+      <div style={{ background: 'linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%)', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10, position: 'sticky', top: 0, zIndex: 10 }}>
+        <button type="button" aria-label="Kthehu mbrapa" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+          <i className="ti ti-arrow-left" aria-hidden="true" style={{ fontSize: 22, color: '#111' }} />
+        </button>
+        <h1 style={{ fontSize: 16, fontWeight: 800, color: '#111', margin: 0 }}>Të dhënat e mia</h1>
+      </div>
+      <div style={{ padding: 16 }} aria-busy="true" aria-label="Duke ngarkuar të dhënat">
+        {[210, 150, 260, 190, 170].map((h, i) => (
+          <div key={i} style={{ height: h, borderRadius: 14, background: '#f2ead0', opacity: 0.45, marginBottom: 12 }} />
+        ))}
+      </div>
     </div>
   )
 
@@ -196,13 +212,13 @@ export default function TeDhenatMiaPage() {
             <button
               type="button"
               onClick={() => setConfirmDelete(true)}
-              style={{ width: '100%', background: 'transparent', color: '#dc2626', border: '1.5px solid #dc2626', borderRadius: 11, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+              style={{ width: '100%', background: 'transparent', color: '#C42305', border: '1.5px solid #C42305', borderRadius: 11, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
             >
               <><span aria-hidden="true">🗑️</span> Fshi llogarinë time</>
             </button>
           ) : (
             <div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: '#dc2626', marginBottom: 10 }}>Jeni i sigurt? Ky veprim NUK mund të kthehet!</div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#C42305', marginBottom: 10 }}>Jeni i sigurt? Ky veprim NUK mund të kthehet!</div>
               <input
                 id="delete-confirm-password"
                 type="password"
@@ -211,7 +227,7 @@ export default function TeDhenatMiaPage() {
                 placeholder="Shkruaj fjalëkalimin për të konfirmuar"
                 aria-label="Fjalëkalimi për konfirmim fshirjeje"
                 autoComplete="current-password"
-                style={{ width: '100%', border: '1.5px solid #dc2626', borderRadius: 10, padding: '10px 12px', fontSize: 13, marginBottom: 10, fontFamily: 'inherit', boxSizing: 'border-box', outline: 'none' }}
+                style={{ width: '100%', border: '1.5px solid #C42305', borderRadius: 10, padding: '10px 12px', fontSize: 13, marginBottom: 10, fontFamily: 'inherit', boxSizing: 'border-box', outline: 'none' }}
               />
               <div style={{ display: 'flex', gap: 8 }}>
                 <button
@@ -225,7 +241,7 @@ export default function TeDhenatMiaPage() {
                   type="button"
                   onClick={deleteAccount}
                   disabled={deleting}
-                  style={{ flex: 1, background: '#dc2626', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: deleting ? 'not-allowed' : 'pointer', opacity: deleting ? 0.7 : 1, fontFamily: 'inherit' }}
+                  style={{ flex: 1, background: '#C42305', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: deleting ? 'not-allowed' : 'pointer', opacity: deleting ? 0.7 : 1, fontFamily: 'inherit' }}
                 >
                   {deleting ? <><span aria-hidden='true'>⏳</span> Duke fshirë...</> : 'Po, fshi!'}
                 </button>

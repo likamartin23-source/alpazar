@@ -110,9 +110,13 @@ export default function OfertatPage() {
             style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
         </div>
       ) : duke ? (
-        <div style={{ padding: 16 }}>
+        /*  Lartesia e skeletit NUK eshte e zgjedhur me sy: karta reale u mat
+            ne shfletues (~268px me kokën, shiritin e shpalljes, cmimin dhe
+            butonat). Me 96px, CLS-ja e matur ishte 0,148 ne telefon — mbi
+            pragun 0,1 — sepse cdo karte qe mberrinte e shtynte faqen poshte.  */
+        <div style={{ padding: '14px 16px 0' }}>
           {[0, 1].map(i => (
-            <div key={i} style={{ height: 96, borderRadius: 14, background: '#f2ead0', opacity: 0.5, marginBottom: 12 }} />
+            <div key={i} style={{ height: 268, borderRadius: 14, background: '#f2ead0', opacity: 0.45, marginBottom: 12 }} />
           ))}
         </div>
       ) : lista.length === 0 ? (
@@ -147,7 +151,7 @@ export default function OfertatPage() {
                     <div style={{ fontSize: 13, fontWeight: 700, color: '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {o.pala?.emri || 'Përdorues'}
                     </div>
-                    <div style={{ fontSize: 11, color: '#777' }}>{dateShort(o.krijuar)}</div>
+                    <div style={{ fontSize: 11, color: '#6B6B6B' }}>{dateShort(o.krijuar)}</div>
                   </div>
                   <span style={{
                     fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 999,
@@ -167,7 +171,7 @@ export default function OfertatPage() {
                     <div style={{ fontSize: 12.5, fontWeight: 700, color: '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {o.shpallja?.titulli || 'Shpallje'}
                     </div>
-                    <div style={{ fontSize: 11, color: '#777' }}>Kërkohet {priceLabel(o.shpallja?.cmimi, o.monedha)}</div>
+                    <div style={{ fontSize: 11, color: '#6B6B6B' }}>Kërkohet {priceLabel(o.shpallja?.cmimi, o.monedha)}</div>
                   </div>
                 </a>
 
@@ -178,7 +182,7 @@ export default function OfertatPage() {
                   <div style={{ fontSize: 12.5, color: '#555', lineHeight: 1.6, marginTop: 6 }}>„{o.mesazhi}"</div>
                 )}
                 {iHapur && o.skadon && (
-                  <div style={{ fontSize: 11, color: '#777', marginTop: 6 }}>Skadon më {dateShort(o.skadon)}</div>
+                  <div style={{ fontSize: 11, color: '#6B6B6B', marginTop: 6 }}>Skadon më {dateShort(o.skadon)}</div>
                 )}
 
                 {iHapur && drejtimi === 'marra' && (

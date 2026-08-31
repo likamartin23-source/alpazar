@@ -17,7 +17,24 @@ import { useIsOnline } from '../../components/OnlinePresence'
 import ListingCard from '../../components/ListingCard'
 import { trackEvent } from '../../../lib/track'
 
-const MapDisplay = dynamic(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), { ssr: false })
+/*  `loading` NUK eshte zbukurim — eshte i vetmi rregullim i CLS-se ne kete faqe.
+ *  Matur me 31 gusht 2026: pa te, folea e hartes eshte nje <template> me
+ *  lartesi 0 deri ne ~900ms, pastaj behet nje DIV 235px. Rritja i shtynte
+ *  244px poshte TE GJITHA seksionet nen te — dhe deshmia ishte mashtruese,
+ *  sepse burimet e raportuara nga `layout-shift` ishin elementet e ZHVENDOSUR
+ *  (textarea e ofertes, butonat e sigurise), jo shkaktari. CLS 0,076 te
+ *  desktop-i vinte i teri prej ketej. Lartesia 235px eshte e MATUR nga harta
+ *  reale, jo e hamendesuar. */
+const MapDisplay = dynamic(
+  () => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })),
+  {
+    ssr: false,
+    loading: () => (
+      <div aria-hidden="true"
+        style={{ height: 235, borderRadius: 12, background: 'linear-gradient(135deg,#FBF7E8,#F2EAD0)' }} />
+    ),
+  },
+)
 
 const CATEGORY_LABELS: Record<string, string> = {
   elektronike: 'Elektronikë', makina: 'Makina', shtepi: 'Shtëpi & Mobilje',
@@ -48,6 +65,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
   const sellerOnline = useIsOnline(seller?.id) // prania LIVE e shitësit (BLLOKU Imazhi 3)
   const [loading, setLoading]         = useState(!initialListing)
   const [loadError, setLoadError]     = useState(false)
+  const [offerState, setOfferState] = useState<any>(null)
   const [similar, setSimilar]         = useState<any[]>([])
   const [user, setUser]               = useState<any>(null)
   const [liked, setLiked]             = useState(false)
@@ -246,6 +264,15 @@ export default function ListingPageClient({ params, initialListing, initialSelle
 
   async function fetchListing() {
     let data: any = initialListing ?? null
+
+    /*  Gjendja e ofertes nisret MENJEHERE, jashte deges se meposhtme.
+     *  Ishte brenda saj dhe kjo ishte gabim: kur faqja vjen me `initialListing`
+     *  nga SSR-ja, ajo dege NUK ekzekutohet — pra thirrja s'behej kurre dhe
+     *  `OfferBox` binte prapa te thirrja e vet. Matur: zhvendosja thjesht u
+     *  shty nga 1857ms ne 5181ms, me te njejtin CLS 0,076.  */
+    supabase.rpc('listing_offer_state', { p_listing_id: params.id })
+      .then(({ data: od }) => setOfferState(od ?? null), () => {})
+
     if (!data) {
       const res = await supabase.from('listings').select('*').eq('id', params.id).single()
       if (res.error && res.error.code !== 'PGRST116') { setLoadError(true); setLoading(false); return }
@@ -1005,7 +1032,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
               vendndodhjes: bleresi vendos per cmimin pasi e ka kuptuar sendin.
               Komponenti vetefshihet kur ofertat jane te fikura nga `app_config`,
               kur shpallja s'eshte aktive, ose kur s'ka asgje per te thene. */}
-          <OfferBox listingId={params.id} isOwner={isOwner} />
+          <OfferBox listingId={params.id} isOwner={isOwner} initial={offerState} />
 
           {/* Marketing: upsell per pronarin jo-premium */}
           {isOwner && sellerTier === 'free' && (
