@@ -51,7 +51,21 @@ export default function NewListing() {
     const uid = user?.id
     if (!uid) return
     supabase.from('businesses').select('id,name').eq('owner_id', uid).order('name')
-      .then(({ data }) => setMyBusinesses(data || []))
+      .then(({ data }) => {
+        setMyBusinesses(data || [])
+        /*  ATRIBUIM AUTOMATIK (bug #2, vendim i pronarit 1 shtator 2026):
+         *  nje pronar biznesi qe hap nje shpallje, e parazgjedh te biznesi i tij.
+         *  Me pare parazgjedhja ishte "Vetja ime" → shpalljet mbeteshin pa
+         *  `business_id` dhe faqja e biznesit tregonte "0 Shpallje" perballe
+         *  "2 aktive" te faqja e shpalljes. Perdoruesi mund ta ndryshoje ende te
+         *  "Posto si". Nuk e prek nje draft te rikthyer as nje zgjedhje te bere:
+         *  vetem kur fusha eshte bosh. `setForm` direkt, JO `set()`, qe te mos e
+         *  shenoje formularin si te ndryshuar (perndryshe do te ndizte rojen e
+         *  "ndryshimeve te paruajtura" pa asnje veprim njeriu).  */
+        if (data && data.length > 0) {
+          setForm(f => f.business_id ? f : { ...f, business_id: data[0].id })
+        }
+      })
   }, [user?.id])
 
   function set(k: string, v: string) { setIsDirty(true); setForm(f => ({ ...f, [k]: v })) }

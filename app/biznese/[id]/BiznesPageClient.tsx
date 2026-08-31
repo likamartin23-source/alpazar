@@ -10,7 +10,7 @@ import ListingCard from '../../components/ListingCard'
 import { TrustBadge } from '../../components/TrustBadge'
 import { useSyteLive } from '../../components/PremiumUpsell'
 import { useIsOnline } from '../../components/OnlinePresence'
-import { nf } from '../../../lib/format'
+import { nf, monthYear } from '../../../lib/format'
 import { uploadSingleImage } from '../../../lib/uploadImages'
 
 const MapDisplay = dynamicImport(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), { ssr: false })
@@ -1215,7 +1215,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           )}
 
           <div style={{ textAlign: 'center', padding: '20px 0', fontSize: 11, color: '#bbb' }}>
-            Anëtar që nga {new Date(biz.created_at).toLocaleDateString('sq-AL', { month: 'long', year: 'numeric' })}
+            Anëtar që nga {monthYear(biz.created_at)}
           </div>
         </div>
       )}

@@ -7,6 +7,7 @@ import Avatar, { tierNgaProfili } from '../components/Avatar'
 import { supabase } from '../../lib/supabase'
 import { SITE_URL } from '../../lib/siteConfig'
 import { getLevel, isNewMember } from '../components/Badges'
+import { monthYear } from '../../lib/format'
 import { SkeletonProfile, SkeletonList } from '../components/Skeleton'
 
 const FN_URL = 'https://sopafwfkrxpcdaljddoh.supabase.co/functions/v1'
@@ -651,7 +652,7 @@ export default function ProfilePage() {
               </button>
             )}
           </div>
-          {profile?.city && <div style={{ fontSize: 11, color: '#555', marginBottom: 4 }}><span aria-hidden="true">📍</span> {profile.city}{profile?.created_at ? ` · Anëtar prej ${new Date(profile.created_at).getFullYear()}` : ''}</div>}
+          {profile?.city && <div style={{ fontSize: 11, color: '#555', marginBottom: 4 }}><span aria-hidden="true">📍</span> {profile.city}{profile?.created_at ? ` · Anëtar që nga ${monthYear(profile.created_at)}` : ''}</div>}
           <div className="email-row" style={{ justifyContent: 'flex-start' }}><i className="ti ti-mail" aria-hidden="true" />{user?.email}</div>
           <div className="badges-row" style={{ justifyContent: 'flex-start', marginTop: 8 }}>
             {profile?.is_admin && <span className="badge b-admin"><span aria-hidden="true">🛡</span> Admin</span>}
@@ -753,7 +754,7 @@ export default function ProfilePage() {
                       <div className="info-row"><span className="info-label">Username</span><span className="info-val">{profile?.username ? `@${profile.username}` : '—'}</span></div>
                       <div className="info-row"><span className="info-label">Qyteti</span><span className="info-val">{profile?.city || '—'}</span></div>
                       <div className="info-row"><span className="info-label">Bio</span><span className="info-val">{profile?.bio || '—'}</span></div>
-                      <div className="info-row"><span className="info-label">Anëtar që</span><span className="info-val">{new Date(profile?.created_at || Date.now()).toLocaleDateString('sq-AL')}</span></div>
+                      <div className="info-row"><span className="info-label">Anëtar që</span><span className="info-val">{monthYear(profile?.created_at || Date.now())}</span></div>
                     </>
                   )}
                 </div>
