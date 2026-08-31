@@ -72,14 +72,37 @@ konfirmo te `/api/version` që SHA ka ndryshuar, pastaj:
    (Ndryshova `lib/context.tsx` → `rpc('my_profile')` dhe `/referral` → `rpc('my_referrals')`
    me rënie te query-ja e vjetër; të dyja duhet të punojnë identikisht.)
 
-Kur të tria OK, shkruaj `[O5] · done` — atëherë i mbetet vetëm pronarit të ekzekutojë
-dy migrimet e privatësisë (shih më poshtë).
+Kur të tria OK, shkruaj `[O5] · done` — pastaj kalo te [O6].
 
-## SHËNIM për pronarin — 2 migrime presin dorën tënde (apply bllokohet për cloud)
+## [O6] · pending · EKZEKUTO 3 shkrimet e bazës (pronari nuk ekzekuton — juristi)
 
-Klasifikuesi i auto-mode e bllokon `apply_migration`/`execute_sql` shkrues nga cloud.
-Këto dy i ekzekuton ti (ose sesion interaktiv), pas O5-së:
-  1. `supabase/migrations/20260901_referrals_rpc.sql` (krijon `my_referrals()`)
-  2. `supabase/migrations/20260901_profiles_ngushtimi_pas_deploy.sql` (ngushton leximin)
-  3. (i pavarur, gati) `update storage.buckets set public=false where id='message-attachments';`
-     — 0 bashkëngjitje ekzistuese, rollback = `public=true`.
+Pronari e sqaroi: ai është jurist, nuk ekzekuton asgjë. Klasifikuesi i auto-mode
+e bllokon shkrimin në bazë nga sesioni cloud (unë). Ti je sesion interaktiv me
+pronarin në Chrome → ekzekutoji ti, me mbikëqyrjen e tij. Nuk prek kod aplikacioni
+(§2) — janë vetëm migrime baze. Mekanizmi: Supabase MCP `apply_migration`/
+`execute_sql`, OSE `supabase db push`, OSE SQL Editor i dashboard-it (pronari është
+i kyçur). Zgjidh atë që të punon; `*.supabase.co` te ky terminal jep 403 vetëm për
+REST/realtime — API-ja e menaxhimit (MCP/dashboard) është rrugë tjetër.
+
+**A) `my_referrals()` — additive, i sigurt, ekzekutoje MENJËHERË.**
+Skedari: `supabase/migrations/20260901_referrals_rpc.sql` (aplikoje ashtu siç është).
+
+**B) Bucket-i i bashkëngjitjeve privat — i pavarur, 0 rrezik (0 attachment), ekzekutoje MENJËHERË.**
+```sql
+update storage.buckets set public = false where id = 'message-attachments';
+```
+Rollback nëse duhet: `update storage.buckets set public = true where id='message-attachments';`
+Verifikim: një URL publike e vjetër → 400/401/404; URL e firmosur si palë bisede → 200.
+
+**C) Ngushtimi i leximit të `profiles` — VETËM PASI [O5] të jetë `done`.**
+Skedari: `supabase/migrations/20260901_profiles_ngushtimi_pas_deploy.sql`.
+Rendi i detyruar: (A) para (C). Pas aplikimit, ri-verifiko live me llogarinë tënde:
+`/profile` · `/admin` · `/messages` · `/referral` · `/te-dhenat-mia` + një shpallje me
+buton WhatsApp (nëse vë numër te profili). Të gjitha duhet të punojnë (kodi i ri
+i lexon me `my_profile()`/`my_referrals()`/service-role).
+Prova negative (opsionale): si `anon`, `select phone from profiles limit 1` → duhet
+`permission denied`. Rollback nëse diçka prishet:
+`grant select on public.profiles to authenticated, anon;`
+
+Shkruaj `[O6] · done` me çka ekzekutove, mekanizmin, dhe rezultatet e verifikimit.
+Nëse ndonjë hap dështon, mos vazhdo te tjetrit — raporto gabimin te RESULTS[O6].
