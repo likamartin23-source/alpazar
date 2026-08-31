@@ -60,3 +60,8 @@ Kjo lista ndertohet me lexim, jo me grep.
   pranueshem, por dije se ekziston.
 - **`browse`, `make-pdf`, `cso`** permendin `GITHUB_TOKEN` / `~/.ssh` vetem ne
   komente qe **parandalojne** rrjedhjen. Te lexuara, jo te supozuara.
+| `greensock/gsap-skills` | `aed9cfd3277740755f6bfc1155c7aa645403b760` | `skills` |
+| `CloudAI-X/threejs-skills` | `b1c623076c661fc9b03dac19292e825a5d106823` | `skills` |
+| `lottiefiles/motion-design-skill` | `f9a8a041b85185ee4881b3471d3415e939aac772` | `skills` |
+| `Leonxlnx/taste-skill` | `ccbc15639c97057cbfcf32ecebc38ef716e4bb37` | `skills` |
+| `AgriciDaniel/claude-seo` | `a1480c7e590b16001bd9dc1627eacdcd44d580f9` | `.` |
