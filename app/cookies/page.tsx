@@ -120,7 +120,8 @@ export default function Cookies() {
 
           <div className="cookie-card">
             <strong>Cookie Marketingu dhe Reklamimit <span className="badge badge-req">Nuk përdoren</span></strong>
-            <span>Alpazar <strong>nuk përdor</strong> asnjë cookie reklamimi, tracker nga palë të treta (Meta Pixel, Google Analytics, TikTok Pixel, Hotjar etj.) dhe nuk ndan të dhëna me platformat reklamuese. Zero re-targeting. Zero profilizim.</span>
+            <span>Alpazar <strong>nuk përdor</strong> cookie reklamimi, nuk bën re-targeting, nuk profilizon dhe nuk ndan të dhëna me platforma reklamuese. Nuk kemi Meta Pixel, Google Analytics, TikTok Pixel apo Hotjar.<br /><br />
+            Për ndershmëri të plotë: përdorim dy shërbime <strong>jo-reklamuese</strong> të palëve të treta, dhe të dyja ngarkohen <strong>vetëm pasi ti pranon</strong> te banneri i cookies — <strong>Vercel Analytics</strong> (statistika trafiku, SHBA) dhe <strong>Sentry</strong> (diagnostikë gabimesh dhe regjistrim sesioni me tekst të maskuar, BE). Nëse zgjedh «Vetëm thelbësoret», asnjëra nuk niset.</span>
           </div>
 
           <h2>3. Baza Ligjore</h2>

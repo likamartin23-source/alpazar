@@ -59,8 +59,8 @@ const nextConfig = {
     const csp = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://va.vercel-scripts.com https://vercel.live https://accounts.google.com",
-      "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com",
-      "font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com",
+      "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
+      "font-src 'self' https://cdn.jsdelivr.net",
       "img-src 'self' data: blob: https://*.supabase.co https://*.supabase.in https://res.cloudinary.com https://lh3.googleusercontent.com https://avatars.githubusercontent.com https://nominatim.openstreetmap.org https://*.tile.openstreetmap.org",
       // media-src: pa kete, videot (edhe nga Supabase) binin te default-src 'self' → bllokoheshin.
       // Perfshin transkoderat: Cloudinary (mp4 H.264) dhe Cloudflare Stream (HLS), + blob per preview lokal.

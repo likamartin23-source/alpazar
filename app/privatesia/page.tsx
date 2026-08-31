@@ -131,14 +131,21 @@ export default function Privatesia() {
           <h2>5. Ndarja me Palë të Treta</h2>
           <p>Alpazar <strong>nuk shet dhe nuk tregton</strong> të dhënat tuaja. Aksesi i kufizuar lejohet vetëm tek:</p>
           <ul>
-            <li><strong>Supabase Inc.</strong> — ruajtja e bazës së të dhënave dhe autentikimi (Data Processing Agreement aktiv)</li>
-            <li><strong>Vercel Inc.</strong> — infrastruktura e hosting-ut (DPA aktiv)</li>
-            <li><strong>Vercel Analytics</strong> — statistika anonime të vizitorëve (pa cookies, GDPR-compliant)</li>
+            <li><strong>Supabase Inc.</strong> — baza e të dhënave dhe autentikimi (BE, Frankfurt)</li>
+            <li><strong>Vercel Inc.</strong> — hosting (SHBA)</li>
+            <li><strong>Vercel Analytics</strong> — statistika trafiku (SHBA) — <em>vetëm me pëlqimin tënd</em></li>
+            <li><strong>Sentry</strong> — diagnostikë gabimesh, regjistrim sesioni me tekst të maskuar (BE, Frankfurt) — <em>regjistrimi vetëm me pëlqimin tënd</em></li>
+            <li><strong>Groq Inc.</strong> — modeli i asistentit Albi; merr bisedën që ti shkruan (SHBA)</li>
+            <li><strong>Anthropic PBC</strong> — modeli rezervë i Albit; merr bisedën që ti shkruan (SHBA)</li>
+            <li><strong>Cloudinary</strong> — ruajtje dhe shpërndarje e videove që ngarkon (SHBA)</li>
+            <li><strong>OpenStreetMap / Nominatim</strong> — kërkim adresash në hartë (BE)</li>
             <li><strong>Autoritetet kompetente shqiptare</strong> — vetëm me urdhër gjykate ose kërkesë ligjore</li>
           </ul>
 
           <h2>6. Transferimi Ndërkombëtar</h2>
-          <p>Të dhënat përpunohen brenda Bashkimit Europian (Frankfurt, Gjermani). Nëse bëhet transferim jashtë BE-së, ai realizohet me <strong>Klauzolat Standarde Kontraktuale (SCCs)</strong> të miratuara nga Komisioni Europian, sipas Nenit 46 të GDPR.</p>
+          <p>Baza e të dhënave dhe diagnostika ndodhen brenda <strong>Bashkimit Europian</strong> (Frankfurt, Gjermani).</p>
+          <p><strong>Një pjesë e përpunimit ndodh në Shtetet e Bashkuara</strong> — hosting-u (Vercel), modelet e asistentit Albi (Groq, Anthropic) dhe ruajtja e videove (Cloudinary). Kur bisedon me Albin ose ngarkon një video, ato të dhëna dalin jashtë BE-së.</p>
+          <p>Jemi në proces të plotësimit të <strong>Klauzolave Standarde Kontraktuale (SCC)</strong> me këta përpunues, sipas neneve 39–42 të ligjit 124/2024 dhe nenit 46 të GDPR. Deri në përfundimin e tyre, ky transferim <strong>nuk ka ende instrument të plotë ligjor</strong> dhe po e deklarojmë hapur në vend që ta fshehim. Nëse nuk dëshiron që biseda jote të dalë jashtë BE-së, mos e përdor asistentin Albi.</p>
 
           <h2>7. Të Drejtat Tuaja</h2>
           <div className="right-box">

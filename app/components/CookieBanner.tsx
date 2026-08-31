@@ -1,29 +1,25 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-
-const STORAGE_KEY = 'alpazar_cookie_consent'
+import { getConsent, setConsent, CONSENT_EVENT } from '../../lib/consent'
 
 export function CookieBanner() {
   const [visible, setVisible] = useState(false)
   const [detail, setDetail]   = useState(false)
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY)
-      if (!stored) setVisible(true)
-    } catch {}
+    if (!getConsent()) setVisible(true)
+    // Kur pëlqimi tërhiqet diku tjetër (p.sh. te /cookies), banneri rikthehet.
+    const sync = () => setVisible(!getConsent())
+    window.addEventListener(CONSENT_EVENT, sync)
+    return () => window.removeEventListener(CONSENT_EVENT, sync)
   }, [])
 
-  function accept() {
-    try { localStorage.setItem(STORAGE_KEY, 'accepted') } catch {}
-    setVisible(false)
-  }
-
-  function decline() {
-    try { localStorage.setItem(STORAGE_KEY, 'declined') } catch {}
-    setVisible(false)
-  }
+  // Të dy butonat tani kanë PASOJË TË NDRYSHME: `setConsent` njofton Analytics-in
+  // dhe Sentry-n përmes eventit, ndaj 'declined' i mban të çmontuar. Më parë të
+  // dy shkruanin një varg që s'e lexonte askush.
+  function accept()  { setConsent('accepted'); setVisible(false) }
+  function decline() { setConsent('declined'); setVisible(false) }
 
   if (!visible) return null
 
@@ -53,8 +49,9 @@ export function CookieBanner() {
           {detail && (
             <div style={{ marginTop: 10, fontSize: 11, color: '#ccc', lineHeight: 1.7 }}>
               <div style={{ marginBottom: 4 }}><span aria-hidden="true">📌</span> <strong>Thelbësore</strong> — sesioni, autentifikimi, preferencat (gjithmonë aktiv)</div>
-              <div style={{ marginBottom: 4 }}><span aria-hidden="true">📊</span> <strong>Analytics</strong> — Vercel Analytics — të dhëna anonime të trafikut</div>
-              <div><span aria-hidden="true">🔒</span> Nuk shesim të dhëna. Nuk përdorim cookies të palëve të treta për reklama. <a href="/privatesia" style={{ color: '#F5C842' }}>Politika e Privatësisë</a></div>
+              <div style={{ marginBottom: 4 }}><span aria-hidden="true">📊</span> <strong>Analytics</strong> — Vercel Analytics (SHBA): të dhëna trafiku. Ngarkohet <strong>vetëm</strong> nëse pranon.</div>
+              <div style={{ marginBottom: 4 }}><span aria-hidden="true">🎥</span> <strong>Diagnostikë</strong> — Sentry (BE): regjistrim sesioni me tekst të maskuar. Vetëm nëse pranon.</div>
+              <div><span aria-hidden="true">🔒</span> Nuk shesim të dhëna dhe nuk përdorim cookies reklamash. <a href="/privatesia" style={{ color: '#F5C842' }}>Politika e Privatësisë</a></div>
             </div>
           )}
         </div>

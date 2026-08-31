@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import dynamic from 'next/dynamic'
-import { Analytics } from '@vercel/analytics/next'
+import { ConsentedAnalytics } from './components/ConsentedAnalytics'
 import './tabler-icons-subset.css'
 import './fonts.css'
 import './ui-refine.css'
@@ -262,7 +262,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <AiFloat />
           <UpdatePrompt />
           <CookieBannerDyn />
-          <Analytics />
+          <ConsentedAnalytics />
           <SiteFooter />
           </OnlinePresenceProvider>
           </GlobalErrorBoundaryDyn>
