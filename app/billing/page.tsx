@@ -15,10 +15,21 @@ export default function BillingPage() {
   const [busy, setBusy] = useState('')
   const [msg, setMsg] = useState('')
   const [confirmCancel, setConfirmCancel] = useState(false)
+  const [heqja, setHeqja] = useState<any>(null)
+  const [konfirmoHeqjen, setKonfirmoHeqjen] = useState(false)
+  const [arsyeHeqjeje, setArsyeHeqjeje] = useState('')
 
   const load = useCallback(async () => {
-    const { data: d, error } = await supabase.rpc('get_my_billing')
+    // Dy leximet bashke: faturimi dhe gjendja e te drejtes 14-ditore. E dyta
+    // ekzistonte e plote ne baze (my_withdrawal_right / withdraw_from_subscription /
+    // _issue_credit_note) por ASNJE rresht i nderfaqes nuk e prekte — pra nje e
+    // drejte ligjore e ndertuar dhe e paarritshme. Gjetur me 31 gusht 2026.
+    const [{ data: d, error }, { data: w }] = await Promise.all([
+      supabase.rpc('get_my_billing'),
+      supabase.rpc('my_withdrawal_right'),
+    ])
     if (!error) setData(d)
+    setHeqja((w as any) ?? null)
   }, [])
 
   useEffect(() => {
@@ -116,6 +127,58 @@ export default function BillingPage() {
                         : <button type="button" className="btn" disabled={!!busy} onClick={() => setConfirmCancel(true)}>Çaktivizo rinovimin</button>}
                   </div>
                   {confirmCancel && <div className="note warn">Mban aksesin deri më {dataOse(sub.current_period_end)}. Asnjë pagesë tjetër nuk kërkohet.</div>}
+
+                  {/* ── E DREJTA 14-DITORE E HEQJES DORE (neni 37, ligji 9902/2008) ──
+                      Kjo NUK eshte anulim. Anulimi ndal rinovimin dhe aksesi vazhdon
+                      deri ne fund te periudhes se paguar; heqja dore e nderpret
+                      kontraten dhe kthen parate. Te dyja duhen te dukshme dhe te
+                      ndara, perndryshe perdoruesi zgjedh te gabuaren. */}
+                  {heqja?.ka_abonim && (
+                    heqja.brenda_afatit ? (
+                      <div className="note" style={{ marginTop: 12 }}>
+                        <div style={{ fontWeight: 700, marginBottom: 4 }}>
+                          ⏱ Heqje dorë brenda 14 ditëve — pa arsye, pa penalitet
+                        </div>
+                        <div>
+                          Afati skadon më <b>{dataOse(heqja.afati_skadon)}</b>
+                          {heqja.dite_te_mbetura != null ? <> ({heqja.dite_te_mbetura} ditë të mbetura)</> : null}.
+                          {' '}Kthehen <b>{moneyDec(heqja.rimbursim_i_pritshem)} {heqja.monedha || 'ALL'}</b>
+                          {heqja.perpjesetim_i_zbatuar
+                            ? <> — pjesa në raport me ditët e shfrytëzuara mbahet, sipas pëlqimit që ke dhënë për nisje të menjëhershme.</>
+                            : <> — e plotë.</>}
+                        </div>
+                        <div style={{ fontSize: 11, marginTop: 6 }}>{heqja.shenim_rimbursimi}</div>
+                        {!konfirmoHeqjen ? (
+                          <div className="btns" style={{ marginTop: 10 }}>
+                            <button type="button" className="btn" disabled={!!busy}
+                              onClick={() => setKonfirmoHeqjen(true)}>Hiq dorë dhe kthe pagesën</button>
+                          </div>
+                        ) : (
+                          <div style={{ marginTop: 10 }}>
+                            <label htmlFor="arsye-heqjeje" style={{ fontSize: 12, display: 'block', marginBottom: 4 }}>
+                              Arsyeja (jo e detyrueshme — ligji nuk të kërkon të japësh arsye)
+                            </label>
+                            <input id="arsye-heqjeje" type="text" value={arsyeHeqjeje}
+                              onChange={e => setArsyeHeqjeje(e.target.value)}
+                              placeholder="Nuk kërkohet arsye"
+                              style={{ width: '100%', padding: '9px 11px', borderRadius: 8, border: '1.5px solid #ddd', fontSize: 13, fontFamily: 'inherit', boxSizing: 'border-box' }} />
+                            <div className="btns" style={{ marginTop: 8 }}>
+                              <button type="button" className="btn danger" disabled={!!busy}
+                                onClick={() => act('withdraw_from_subscription', { p_reason: arsyeHeqjeje.trim() || null })}>
+                                Po, hiq dorë
+                              </button>
+                              <button type="button" className="btn" onClick={() => setKonfirmoHeqjen(false)}>Jo</button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="note" style={{ marginTop: 12, fontSize: 11.5 }}>
+                        Afati 14-ditor i heqjes dorë ka kaluar më {dataOse(heqja.afati_skadon)}.
+                        Mund ta çaktivizosh rinovimin që abonimi të mos vazhdojë më tej.
+                      </div>
+                    )
+                  )}
                 </>
               )}
 

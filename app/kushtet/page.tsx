@@ -83,7 +83,7 @@ export default function Kushtet() {
           <h2>6-a. E drejta e heqjes dorë brenda 14 ditëve</h2>
           <p>Abonimi Premium blihet nga distanca, ndaj ti ke <strong>të drejtën ligjore ta heqësh dorë brenda 14 ditëve kalendarike</strong> nga dita e lidhjes së kontratës, <strong>pa dhënë asnjë arsye dhe pa asnjë penalitet</strong> <span className="law">(Ligji Nr. 9902/2008 "Për mbrojtjen e konsumatorëve", nenet 37/1–37/8)</span>.</p>
           <ul>
-            <li><strong>Si bëhet:</strong> mjafton një njoftim i qartë — nga <a href="/kontakt" style={{ color: '#C42B0F' }}>faqja e kontaktit</a> ose me email te <a href="mailto:info@alpazar.al" style={{ color: '#C42B0F' }}>info@alpazar.al</a>. Nuk kërkohet formular i posaçëm dhe nuk kërkohet arsye.</li>
+            <li><strong>Si bëhet:</strong> me një klikim te <a href="/billing" style={{ color: '#C42B0F' }}>Plani im</a> — butoni „Hiq dorë dhe kthe pagesën", ku shfaqen afati, ditët e mbetura dhe shuma që kthehet. Ose me një njoftim të qartë nga <a href="/kontakt" style={{ color: '#C42B0F' }}>faqja e kontaktit</a>. Nuk kërkohet formular i posaçëm dhe nuk kërkohet arsye.</li>
             <li><strong>Sa kthehet:</strong> shuma e paguar kthehet brenda <strong>14 ditëve</strong> nga marrja e njoftimit, me të njëjtën mënyrë pagese. Nëse ke kërkuar shprehimisht që shërbimi të nisë menjëherë, mbahet vetëm pjesa <strong>në raport me ditët e shfrytëzuara</strong> deri në njoftim — jo më shumë.</li>
             <li><strong>Kur nuk zbatohet:</strong> e drejta shuhet nëse shërbimi është përmbushur <em>plotësisht</em> brenda afatit me pëlqimin tënd paraprak të shprehur dhe me pranimin se e humb këtë të drejtë <span className="law">(neni 37/8)</span>.</li>
           </ul>
