@@ -1,0 +1,12 @@
+-- Leximi i rastit nga PRONARI + lista e ankimeve per PANELIN.
+--
+-- PSE duhej: RLS e `moderation_queue` eshte admin-only (mod_queue_admin:
+-- has_perm('content.moderate')). Pra pronari NUK e lexon dot rastin e vet —
+-- pa keto funksione, faqja e arsyetimit do te dilte bosh dhe njoftimi qe
+-- shton migrimi i meparshem do te ishte lidhje e vdekur.
+--
+-- my_moderation_case  — SECURITY DEFINER me kontroll pronesie brenda.
+--   NUK kthen `resolved_by`: identiteti i moderatorit nuk i takon perdoruesit.
+-- admin_list_appeals  — kthen edhe `konflikt`, qe paneli te bllokoje ne UI
+--   ankimet ku moderatori i loguar mori vendimin e pare (§2.4). Baza e ndalon
+--   gjithsesi; UI-ja e shpjegon perpara se te provohet.

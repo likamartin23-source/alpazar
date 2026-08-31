@@ -54,16 +54,19 @@ export function QueueTab() {
   const [hap, setHap] = useState('')
   const [arsyetimi, setArsyetimi] = useState('')
   const [dosja, setDosja] = useState('')
+  const [ankime, setAnkime] = useState<any[]>([])
 
   const load = useCallback(async () => {
-    const [q, t] = await Promise.all([
+    const [q, t, a] = await Promise.all([
       supabase.rpc('admin_moderation_queue', { p_status: 'pending', p_limit: 200 }),
       supabase.rpc('admin_list_takedowns', { p_status: 'pending', p_limit: 100 }),
+      supabase.rpc('admin_list_appeals', { p_status: 'pending', p_limit: 100 }),
     ])
     if (q.error || (q.data as any)?.error) { setErr(q.error?.message || (q.data as any)?.error); return }
     setRadha(((q.data as any)?.queue || []) as any[])
     setPermbledhje((q.data as any)?.permbledhje || {})
     if (!t.error && !(t.data as any)?.error) setNjoftime(((t.data as any)?.njoftime || []) as any[])
+    if (!a.error && Array.isArray(a.data)) setAnkime(a.data as any[])
     setErr('')
   }, [])
 
@@ -96,6 +99,27 @@ export function QueueTab() {
     mesazh(veprimi === 'hiq'
       ? 'Shpallja u hoq. Raportet dhe njoftimet u mbyllën njëherësh.'
       : 'Rasti u mbyll pa shkelje.')
+    load()
+  }
+
+  // §2.4: ankimin nuk e shqyrton kush mori vendimin e pare. Baza e refuzon
+  // gjithsesi (konflikt_interesi); ketu bllokohet edhe ne UI qe moderatori te
+  // mos e provoje kot dhe ta kuptoje pse.
+  async function vendosAnkimin(id: string, prano: boolean) {
+    if (arsyetimi.trim().length < 10) {
+      setErr('Arsyetimi është i detyrueshëm — përdoruesi merr përgjigje me shkrim.')
+      return
+    }
+    setBusy(id); setErr('')
+    const { data, error } = await supabase.rpc('admin_resolve_appeal', {
+      p_id: id, p_accept: prano, p_note: arsyetimi.trim(),
+    })
+    setBusy('')
+    if (error || (data as any)?.error) {
+      setErr((data as any)?.mesazh || error?.message || (data as any)?.error); return
+    }
+    setHap(''); setArsyetimi('')
+    mesazh(prano ? 'Ankimi u pranua — shpallja u rikthye.' : 'Ankimi u refuzua.')
     load()
   }
 
@@ -318,6 +342,54 @@ export function QueueTab() {
                     <button type="button" className="btn btn-orange" disabled={busy === n.id}
                       onClick={() => vendosNjoftimin(n.id, false)}>Refuzo</button>
                   </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {ankime.length > 0 && (
+        <div className="card">
+          <div className="ct"><span aria-hidden="true">⚖️</span> Ankime ({ankime.length})</div>
+          <div style={{ fontSize: 11, color: '#555', marginBottom: 8, lineHeight: 1.55 }}>
+            Përdoruesi ka kundërshtuar një vendim moderimi. Ankimin <strong>nuk e shqyrton
+            kush mori vendimin e parë</strong> — kufi i zbatuar edhe në bazë.
+          </div>
+          {ankime.map(a => (
+            <div key={a.id} style={{ borderTop: '1px solid #f0e6c0', padding: '10px 0' }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#111' }}>
+                {a.listing_titull || '(shpallje e fshirë)'}
+              </div>
+              <div style={{ fontSize: 11, color: '#555', marginTop: 4 }}>
+                <strong>Vendimi i parë:</strong> „{a.arsyetimi_fillestar || '—'}"
+              </div>
+              <div style={{ fontSize: 11, color: '#111', marginTop: 4 }}>
+                <strong>Ankimi:</strong> „{a.arsyeja}"
+              </div>
+              {a.konflikt ? (
+                <div role="note" style={{ marginTop: 8, background: '#FFF8E1', border: '1px solid #FFB74D', borderRadius: 8, padding: '8px 10px', fontSize: 11, color: '#E65100', lineHeight: 1.5 }}>
+                  Vendimin e parë e more ti. Këtë ankim duhet ta shqyrtojë një moderator tjetër.
+                </div>
+              ) : (
+                <div style={{ marginTop: 6 }}>
+                  <button type="button" className="edit-btn"
+                    onClick={() => { setHap(hap === a.id ? '' : a.id); setArsyetimi(''); setErr('') }}>
+                    {hap === a.id ? 'Mbyll' : 'Vendos'}
+                  </button>
+                  {hap === a.id && (
+                    <div style={{ marginTop: 8 }}>
+                      <input className="finput" value={arsyetimi} aria-label="Arsyetimi i ankimit"
+                        placeholder="Arsyetimi (i detyrueshëm)"
+                        onChange={e => { setArsyetimi(e.target.value); setErr('') }} />
+                      <div style={{ marginTop: 8, display: 'flex', gap: 6 }}>
+                        <button type="button" className="btn btn-green" disabled={busy === a.id}
+                          onClick={() => vendosAnkimin(a.id, true)}>Prano — riktheje</button>
+                        <button type="button" className="btn btn-orange" disabled={busy === a.id}
+                          onClick={() => vendosAnkimin(a.id, false)}>Refuzo</button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
