@@ -30,6 +30,13 @@ Puna e vlefshme ketu eshte **auditim dhe konsolidim**, jo ndertim.
 1. **`revoke ... from anon` nuk ka efekt** kur e drejta vjen nga `PUBLIC`.
    Gjithmone: `revoke ... from public` → pastaj `grant` shprehimisht.
    Verifiko me `has_function_privilege('anon', oid, 'EXECUTE')`, jo me sy.
+   **Por kjo mbulon vetem gjysmen** (matur 31 gusht 2026): `authenticated` e
+   mban shpesh te drejten si GRANT TE SHPREHUR, nga `alter default privileges`
+   i Supabase-it, ndaj heqja nga PUBLIC nuk e prek. Duhen te dyja, dhe prova
+   eshte `proacl` — modeli i pastër eshte `{postgres=X, service_role=X}`.
+   **Funksionet e trigerit (`returns trigger`) nuk duhen kurre te thirrshme nga
+   PostgREST.** Heqja e EXECUTE nuk i prish: Postgres-i e kontrollon EXECUTE ne
+   krijimin e trigerit, jo ne ndezje (provuar ne transaksion te kthyer mbrapsht).
 2. **`has_perm()` dhe `is_admin()` nuk u hiqet kurre EXECUTE** nga `anon`/
    `authenticated` — thirren brenda politikave RLS; heqja rrezon aplikacionin.
 3. **`audit()` nuk ekziston.** Gjurma shkruhet me `admin_log()` → `admin_logs`.
@@ -94,25 +101,50 @@ Deri atehere `fiscal_status='not_required'` dhe asgje nuk prishet.
 
 ## 4. Shkeljet ligjore aktive
 
-1. Cmimi shprehet **vetem ne leke** — neni 9/4, ligji 9902/2008. `price_eur`
-   shfaqet si cmim.
+1. Cmimi shprehet **vetem ne leke** — neni 9/4, ligji 9902/2008.
+   **Rimatur 31 gusht 2026:** cmimet e VETE Alpazar-it (`premium_plans`) tashme
+   shfaqen ne leke si cmim kryesor (`price_all` me te trashe), me euron si rresht
+   dytesor — kjo eshte e ligjshme. Mbetet e hapur vetem monedha e zgjedhur nga
+   shitesi per shpalljen e vet (opsioni EUR te `/listing/new`), qe kerkon nje
+   vendim per kursin e kembimit — burimi duhet `app_config`, kurre i ngurtesuar.
 2. **E drejta 14-ditore e heqjes dore** nga Premium — nenet 37/1–37/8.
    (`businesses.withdrawal_days` tregon se ishte menduar.)
 3. **Etiketa “E promovuar”** te VIP Boost — neni 17/A.11 + neni 8, ligji 10128.
 4. **Transferim nderkombetar pa instrument** — nenet 26, 39–42, ligji 124/2024.
    Sidomos `gtranslate()` te `app/api/ai/context.ts`, qe dergon tekst te Google.
+   **KORRIGJIM (31 gusht 2026):** me 30 gusht raportova gabimisht se Google Fonts
+   ishte "vetem nje leje e vdekur ne CSP" — perfundim i nxjerre nga nje kontroll
+   i pjesshem. Rreshti i pare i `app/ui-refine.css` (skedar qe `layout.tsx` e
+   ngarkon ne CDO faqe) kishte `@import url(fonts.googleapis.com…)` per Fraunces.
+   Ishte transferim i vertete ne cdo hapje faqeje. **I zgjidhur:** fonti u
+   vetestreh te `/public/fonts/fraunces-600-*.woff2` (OFL 1.1 bashkelidhur).
+   Matur pas: 0 kerkesa drejt fonts.googleapis.com/gstatic.com, 0 gabime CSP.
 5. Mungon regjistri i veprimtarive (neni 27) dhe procedura 72-oreshe e cenimit
    (neni 29), ligji 124/2024.
 6. DPO ka gjasa i detyrueshem — neni 33/1/c (te dhena penale ne shkalle te gjere).
 7. **NIPT-i “(ne regjistrim)”** — neni 7, ligji 10128.
 8. Mekanizmi i pelqimit per cookie — neni 123/6, ligji 9918/2008.
-9. **Arsyetimi i vendimit nuk i dergohet perdoruesit** dhe **nuk ka rruge ankimi**.
-   `moderation_queue.resolution` ekziston, por ai tekst nuk shkon askund.
+9. ~~**Arsyetimi i vendimit nuk i dergohet perdoruesit** dhe **nuk ka rruge ankimi**.~~
+   **I MBYLLUR 31 gusht 2026.** Zinxhiri i plote: trigeri
+   `tg_moderation_notify_owner` → njoftim te PRONARI me arsyetimin faktik dhe
+   lidhjen `/moderimi/<queue_id>` → faqja `app/moderimi/[id]` (lexon me
+   `my_moderation_case()`, sepse RLS e `moderation_queue` eshte vetem-admin) →
+   `submit_appeal()` → seksioni "Ankime" te `QueueTab`. Kufiri i §2.4 zbatohet
+   ne BAZE (`admin_resolve_appeal` refuzon me `konflikt_interesi` kur
+   `moderation_queue.resolved_by = auth.uid()`), jo ne nderfaqe.
 
 ---
 
 ## 5. Infrastruktura
 
+- **Politika e daljes eshte LISTE HOSTESH, jo bllokim i pergjithshem** (matur
+  31 gusht 2026): `fonts.googleapis.com`, `fonts.gstatic.com`, `github.com`,
+  `raw.githubusercontent.com` **kalojne**; `alpazar.vercel.app` dhe
+  `*.supabase.co` japin **403 ne CONNECT**. Prandaj puna me rrjetin qe deshton
+  ketu nuk do te thote qe deshton ne prodhim. `/api/health` e emerton sakte
+  shkakun: "Host not in allowlist: sopafwfkrxpcdaljddoh.supabase.co. Add this
+  host to your network egress settings." Kjo eshte pikerisht ajo qe duhet hapur
+  qe agjenti te beje verifikim live me sy (Rregulli 11).
 - **Supabase** `sopafwfkrxpcdaljddoh` — PG 17.6.
 - **Vercel:** vetem `alpazar` (`prj_KNCEtuUDGNCA6ulHomdKniNAZEuX`) eshte real.
   Tre projekte jane lidhur me te njejten depo dhe marrin cdo push (vendosje me
@@ -139,6 +171,27 @@ Deri atehere `fiscal_status='not_required'` dhe asgje nuk prishet.
   pyetje, ato jane nje ekran.
 - **Cdo veprim shkaterrues me arsye te detyrueshme dhe gjurme.**
 - **Mos e zgjidh me kod ate qe zgjidhet me konfigurim.**
+
+### Higjiena e matjes (mesuar me 31 gusht 2026, me kosto)
+
+- **Kurre mos e nis `next build` nderkohe qe `next dev` sherben** nga i njejti
+  `.next`. Build-i e zevendeson direktorine nen kembet e dev-serverit; cdo faqe
+  fillon te kthejë 404 per `_next/static/*` me MIME `text/plain`. Nje fshese e
+  plote raportoi "0/37 rruge te pastra" — te 37 ishin artefakt. Nese duhen te dyja:
+  ndal dev-in, `rm -rf .next`, build, pastaj rinis dev-in.
+- **Nje CTE qe modifikon te dhena nuk duket nga pjeset e tjera te te NJEJTIT
+  deklarim** (i njejti snapshot). Nje prove trigeri e shkruar si nje `with … select`
+  kthen bosh edhe kur trigeri ka punuar. Ndaje ne hapa brenda nje bllloku `do $$`,
+  dhe nxirre matjen me `raise exception 'MATJA=%'` qe transaksioni te kthehet.
+- **Chromium-i i ketij kontejneri ka ICU te cunguar:** `Intl` nuk e njeh `sq-AL`
+  dhe daton anglisht. Node-i e njeh (`29 gush 2026`). Pra data ne shqip qe duket
+  "e prishur" ne nje screenshot ketu **nuk eshte defekt** — eshte instrumenti.
+- **Nje detektues "komponente pa reference" qe nuk kupton `dynamic(() => import(…))`
+  jep 100% pozitive te rreme.** Te 7 "te pareferencuarit" ishin te gjalle.
+- **Mos shpik URL prove.** `/kategori/makina` jep 404 sepse slug-u eshte
+  `automjete`; kategori te sakta: arsim, automjete, biznese, elektronike, gaming,
+  kafshë, mobilje, prona, pune, shendet, sherbime, sport, te-tjera, turizem,
+  ushqim, veshje.
 
 ---
 
