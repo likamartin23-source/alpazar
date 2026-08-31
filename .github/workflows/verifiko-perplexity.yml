@@ -1,0 +1,101 @@
+name: Verifiko Perplexity Router
+
+# PSE ekziston: kontejneri i sesionit e ka daljen drejt api.perplexity.ai dhe
+# docs.perplexity.ai të bllokuar nga politika e egress-it (proxy-ja përgjigjet 403
+# te CONNECT — tuneli nuk hapet, kërkesa nuk niset, çelësi nuk transmetohet kurrë).
+# Runner-i i GitHub-ut e ka daljen e plotë. I njëjti model si `install-skills.yml`.
+#
+# SIGURIA: çelësi vjen VETËM nga `secrets.PERPLEXITY_API_KEY`. Nuk printohet kurrë —
+# dalja mban vetëm kodin HTTP, id-të e modeleve dhe formën e përgjigjes.
+
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: 'Slug për smoke-test (bosh = i pari nga katalogu i çelësit)'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  verifiko:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PPLX: ${{ secrets.PERPLEXITY_API_KEY }}
+      BASE: https://api.perplexity.ai/router
+
+    steps:
+      # ── 1. Dokumentet: a përputhen konstantet e mia me burimin? ──────────
+      - name: Dokumentet — nxirr baseURL dhe endpoint-et
+        continue-on-error: true   # dokumentet s'duhet ta rrëzojnë verifikimin e API-t
+        run: |
+          for p in docs/gateway/quickstart docs/gateway/models \
+                   api-reference/gateway-chat-completions-post \
+                   api-reference/gateway-messages-post; do
+            echo "── https://docs.perplexity.ai/$p"
+            curl -sS --max-time 25 "https://docs.perplexity.ai/$p" \
+              | sed -e 's/<[^>]*>//g' \
+              | grep -iE 'api\.perplexity\.ai|/router|/chat/completions|/v1/messages|base[_ ]?url' \
+              | head -12 || echo "  (asnjë përputhje)"
+            echo
+          done
+
+      - name: A ka çelës?
+        id: guard
+        run: |
+          if [ -n "$PPLX" ]; then
+            echo "ka=po" >> "$GITHUB_OUTPUT"
+            echo "::notice::Çelësi u gjet te secrets — vazhdoj me thirrjet reale."
+          else
+            echo "ka=jo" >> "$GITHUB_OUTPUT"
+            echo "::notice::PERPLEXITY_API_KEY mungon te Settings → Secrets → Actions. Hapat e rrjetit u anashkaluan."
+          fi
+
+      # ── 2. Katalogu REAL i çelësit: tier-aware, pra edhe allowlist ───────
+      - name: GET /router/v1/models — katalogu i çelësit
+        if: steps.guard.outputs.ka == 'po'
+        run: |
+          code=$(curl -sS --max-time 30 -o /tmp/models.json -w '%{http_code}' \
+            -H "Authorization: Bearer $PPLX" "$BASE/v1/models")
+          echo "HTTP $code"
+          [ "$code" = "200" ] || { echo "::error::models u përgjigj $code (401=çelës, 402=tier, 429=kufizim)"; exit 1; }
+          echo "── Modelet e lejuara për këtë çelës:"
+          jq -r '.data[].id' /tmp/models.json | sort | tee /tmp/slugs.txt
+          echo "── Gjithsej: $(wc -l < /tmp/slugs.txt)"
+
+      # ── 3. Smoke-test: skema Messages, e njëjta që përdor app/api/ai/perplexity.ts ──
+      - name: POST /v1/messages — smoke-test
+        if: steps.guard.outputs.ka == 'po'
+        run: |
+          MODEL="${{ inputs.model }}"
+          [ -n "$MODEL" ] || MODEL=$(head -1 /tmp/slugs.txt)
+          echo "Modeli i provuar: $MODEL"
+          grep -qx "$MODEL" /tmp/slugs.txt || echo "::warning::'$MODEL' s'është në katalogun e çelësit — pritet 400/402."
+
+          code=$(curl -sS --max-time 40 -o /tmp/resp.json -w '%{http_code}' \
+            -X POST "$BASE/v1/messages" \
+            -H "Authorization: Bearer $PPLX" \
+            -H 'Content-Type: application/json' \
+            -d "$(jq -nc --arg m "$MODEL" '{
+                  model: $m, max_tokens: 32,
+                  system: "Përgjigju shkurt, në shqip.",
+                  messages: [{role:"user", content:"Thuaj vetëm: dakord."}]
+                }')")
+          echo "HTTP $code"
+          if [ "$code" = "429" ]; then
+            echo "::warning::429 — kufizim ose mbingarkesë e përkohshme e modelit. Retry-After duhet nderuar."
+          fi
+          [ "$code" = "200" ] || { echo "::error::smoke-test dështoi me $code"; exit 1; }
+
+          echo "── Forma e përgjigjes (pa përmbajtje):"
+          jq '{type, role, model, stop_reason,
+               content_types: [.content[].type],
+               usage: (.usage | {input_tokens, output_tokens,
+                                 cache_creation_input_tokens, cache_read_input_tokens})}' /tmp/resp.json
+          echo "── Kontroll skeme: Messages NUK duhet të ketë 'choices'."
+          jq -e 'has("choices") | not' /tmp/resp.json >/dev/null \
+            && echo "✓ pa 'choices' — skema Messages e konfirmuar" \
+            || echo "::error::u gjet 'choices' — përgjigjja s'është skema Messages"
