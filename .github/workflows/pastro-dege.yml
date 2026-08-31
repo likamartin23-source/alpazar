@@ -1,8 +1,15 @@
 name: Pastro degët e bashkuara
 
-# Fshin degë PUNE që janë tashmë në `main`. I sigurt për squash-merge:
-# `--merged` nuk vlen aty (SHA i ri), ndaj kriteri është krahasim PËRMBAJTJEJE —
-# çdo blob i degës duhet të ekzistojë identik në main. Ndryshe, dega ruhet.
+# Fshin degë PUNE që kanë hyrë tashmë në `main`. I sigurt për squash-merge:
+# `--merged` nuk vlen aty (SHA i ri pas squash-it).
+#
+# KRITERI: jo "a është dega identike me main" — ai ishte gabimi i versionit të
+# parë, sepse degët mbajnë versione të vjetruara të skedarëve që main-i i ka
+# ndryshuar më pas. Kriteri i saktë është KONTRIBUTI:
+#   • skedarët që dega SHTOI (A) duhet të jenë në main me të njëjtin blob;
+#   • skedarët që dega MODIFIKOI (M) mjafton të ekzistojnë — përmbajtja e tyre
+#     ka evoluar më pas në main, çka është normale.
+# Nëse qoftë edhe një skedar i shtuar mungon, dega RUHET.
 
 on:
   workflow_dispatch:
@@ -49,23 +56,34 @@ jobs:
             [ "$match" = yes ] || continue
             echo "$b" | grep -qE "^($MBROJTUR)" && { echo "⛔ $b — e mbrojtur"; continue; }
 
-            # Kriteri i sigurisë: çdo skedar i degës ekziston IDENTIK në main.
-            ndryshe=0
-            while read -r mode type sha path; do
-              [ "$type" = blob ] || continue
-              msha=$(git rev-parse "origin/main:$path" 2>/dev/null || echo MUNGON)
-              [ "$msha" = "$sha" ] || { ndryshe=$((ndryshe+1)); [ $ndryshe -le 3 ] && echo "     ≠ $path"; }
-            done < <(git ls-tree -r "origin/$b")
+            base=$(git merge-base origin/main "origin/$b" 2>/dev/null || echo "")
+            if [ -z "$base" ]; then echo "🛡️ $b — RUHET (pa merge-base)"; ruajtura=$((ruajtura+1)); continue; fi
 
-            if [ "$ndryshe" -eq 0 ]; then
+            mungon=0; shtuar=0
+            while IFS=$'\t' read -r st path; do
+              case "$st" in
+                A*)
+                  shtuar=$((shtuar+1))
+                  bsha=$(git rev-parse "origin/$b:$path" 2>/dev/null || echo X)
+                  msha=$(git rev-parse "origin/main:$path" 2>/dev/null || echo MUNGON)
+                  if [ "$msha" != "$bsha" ]; then
+                    mungon=$((mungon+1)); [ $mungon -le 3 ] && echo "     ✗ shtuar por s'është në main: $path"
+                  fi ;;
+                M*)
+                  git cat-file -e "origin/main:$path" 2>/dev/null || {
+                    mungon=$((mungon+1)); [ $mungon -le 3 ] && echo "     ✗ i modifikuar dhe mungon: $path"; } ;;
+              esac
+            done < <(git diff --name-status "$base" "origin/$b")
+
+            if [ "$mungon" -eq 0 ]; then
               if [ "$DRY" = "true" ]; then
-                echo "🔎 $b — do të fshihej (gjithë përmbajtja në main)"
+                echo "🔎 $b — do të fshihej ($shtuar skedarë të shtuar, të gjithë në main)"
               else
                 git push -q origin --delete "$b" && echo "✅ $b — u fshi" || echo "❌ $b — dështoi"
               fi
               fshira=$((fshira+1))
             else
-              echo "🛡️ $b — RUHET ($ndryshe skedarë s'janë në main)"
+              echo "🛡️ $b — RUHET ($mungon kontribute s'janë në main)"
               ruajtura=$((ruajtura+1))
             fi
           done
