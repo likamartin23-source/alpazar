@@ -231,6 +231,25 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
         {tier === 'vip'
           ? <span className="badge-premium" role="img" aria-label="VIP" style={{ background: 'linear-gradient(135deg,#D4AF37,#E63312)', color: '#fff' }}><span aria-hidden="true">👑</span> VIP</span>
           : tier === 'premium' && <span className="badge-premium" role="img" aria-label="Premium"><span aria-hidden="true">★</span></span>}
+        {/* ZBULIM I DETYRUESHËM (neni 17/A.11 + neni 8, ligji 10128): renditja e kësaj
+            shpalljeje është e paguar — feed-i renditet me `.order('rank_tier', desc)` dhe
+            `rank_tier` vjen nga pagesa (owner_rank_tier → tg_propagate_rank_to_listings).
+            Kurora dhe ylli janë dekor statusi, JO zbulim: konsumatori nuk e kupton prej tyre
+            se pozicioni është blerë. Prandaj duhet TEKST i qartë, i lexueshëm, jo emoji.
+            Shfaqet sa herë tier-i vjen nga pagesa (premium ose vip). */}
+        {(tier === 'vip' || tier === 'premium') && (
+          <span
+            title="Pozicioni i kësaj shpalljeje në listë është i paguar."
+            style={{
+              position: 'absolute', bottom: 6, left: 6, zIndex: 3,
+              background: 'rgba(17,17,17,.82)', color: '#fff',
+              fontSize: 8.5, fontWeight: 700, padding: '2px 6px',
+              borderRadius: 6, letterSpacing: '.3px',
+            }}
+          >
+            E promovuar
+          </span>
+        )}
         {showSeller && biz && (
           <div
             className="card-seller-ov"

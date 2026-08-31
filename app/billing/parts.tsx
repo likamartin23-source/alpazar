@@ -114,7 +114,11 @@ export function MyInvoices() {
           </div>
           <div style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
             <div style={{ fontSize: 13, fontWeight: 800, color: '#111' }}>
-              {L(i.total)} {i.currency || 'EUR'}
+              {/* Fallback-u ishte 'EUR': një faturë pa monedhë të caktuar shfaqej në euro
+                  te një treg shqiptar. Neni 9/4, ligji 9902/2008 — çmimi ndaj konsumatorit
+                  shqiptar shprehet në lekë. Vlera nuk konvertohet; ndryshon vetëm etiketa
+                  e monedhës kur baza s'e ka caktuar. */}
+              {L(i.total)} {i.currency || 'ALL'}
             </div>
             {i.file_url
               ? <a href={i.file_url} target="_blank" rel="noopener noreferrer"
