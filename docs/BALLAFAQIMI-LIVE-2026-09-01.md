@@ -95,3 +95,39 @@ Po — katër gjëra, të renditura sipas kujt i takojnë:
 
 Asnjë nga këto nuk e bllokon platformën sot; janë hapat e fundit drejt
 garancisë së plotë.
+
+---
+
+## SHTOJCË — verifikimi live i terminalit (O1), me korrigjime
+
+Terminali (i loguar në Chrome) verifikoi live dhe solli tri korrigjime dhe dy
+gjetje të reja. Çdo pikë e kryqëzuar me matje.
+
+- **#2 (biznesi) — E KONFIRMUAR live:** `/biznese/<id>` tregon tani `2 Shpallje`,
+  edhe në SSR. Rregullimi zuri.
+- **GJETJE E RE #2b:** `/u/<id>` (profili PUBLIK i të njëjtit përdorues) tregon
+  ende `0 Shpallje`. Pasojë e drejtpërdrejtë e atribuimit: pasi shpalljet u
+  bënë të biznesit, profili personal (që numëron `business_id IS NULL`)
+  legjitimisht del bosh. Teknikisht korrekt, por ngatërrues — kërkon vendim:
+  a duhet `/u/<id>` të tregojë shpalljet e biznesit, apo një lidhje "Shet përmes
+  biznesit X →"? **Vendim yti.**
+- **GJETJE E RE — rrugëzimi me username:** `/u/likamartin23` → "Profili nuk u
+  gjet"; vetëm `/u/<uuid>` zgjidhet. Bug i vërtetë, i pavarur.
+- **#3 (data) — S'ËSHTË BUG:** baza tregon `created_at = 13 qershor 2026`, pra
+  `/listing` që thotë "qershor 2026" është i saktë. Pritja ime "gusht" ishte
+  gabim. Krahasimi im i 31 gushtit ishte i pavlefshëm (dy përdorues të ndryshëm).
+- **#7 (shikimet) — S'ËSHTË BUG:** të palëvizshme në 5 matje; 3→4 ishte një
+  inkrement i vetëm real.
+- **#6 (flash "Hyr"→2/2) — SHKAK RRËNJËSOR I GJETUR, jo hidratim:** `/` shërbehet
+  nga CDN-ja (`s-maxage=60, SWR=120`) PA `Vary: Cookie`, pra edhe përdoruesve të
+  kyçur u jepet guaska ANONIME nga skaji deri 180s. **Sqarim i rëndësishëm:**
+  edhe pa cache, SSR-i i `/` është gjithnjë anonim (middleware-i s'e ndez
+  Supabase-in për `/`), ndaj `no-store` vetëm heq vjetërsimin, JO flash-in. Fix-i
+  i vërtetë: **guaskë vërtet neutrale** për `/` — as "Hyr", as "0" në render-in e
+  parë; mbushet në klient pasi zgjidhet sesioni. (Kod, imi — hapi tjetër.)
+
+### Rirenditja e mbetur pas O1
+1. **Guaska neutrale e `/`** (fix real i #6) — kod, imi.
+2. **`/u/<id>` + rrugëzimi me username** (#2b) — kod, imi; pjesa e parë me vendimin tënd.
+3. Dy migrimet e privatësisë — pas [O3] të terminalit.
+4. Çelësat e mjedisit + preset-i i Cloudinary — ti.
