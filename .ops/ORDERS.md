@@ -3,6 +3,15 @@
 > Terminali: lexo `.ops/PROTOKOLLI.md`. Ekzekuto çdo urdhër `pending` që s'ka
 > përgjigje te `.ops/RESULTS.md`, pastaj shkruaj përgjigjen atje dhe bëj push.
 
+## [O0] · pending · HANDSHAKE (test i kanalit — bëje të parën, është e shpejtë)
+
+Ky është thjesht një provë se kanali punon nga fundi në fund. Shkruaj te
+`.ops/RESULTS.md` një bllok `## [O0] · done` që përmban:
+- SHA-në e build-it live nga `alpazar.vercel.app/api/version`
+- orën aktuale
+- një rresht: "kanali punon, jam në lak"
+Pastaj `git add .ops && git commit -m "results: O0" && git push origin main`.
+
 ## [O1] · pending · Ri-verifikim mbi build-in e ri (4127ba0+)
 
 Rifresko fort `alpazar.vercel.app` dhe konfirmo mbi build-in e fundit:
