@@ -1,0 +1,75 @@
+name: Pastro degët e bashkuara
+
+# Fshin degë PUNE që janë tashmë në `main`. I sigurt për squash-merge:
+# `--merged` nuk vlen aty (SHA i ri), ndaj kriteri është krahasim PËRMBAJTJEJE —
+# çdo blob i degës duhet të ekzistojë identik në main. Ndryshe, dega ruhet.
+
+on:
+  workflow_dispatch:
+    inputs:
+      pattern:
+        description: 'Prefikse degësh, të ndara me presje'
+        required: true
+        default: 'skills/,mcp/,ci/'
+        type: string
+      dry_run:
+        description: 'Vetëm trego (pa fshirë)'
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  pastro:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - name: Gjej dhe fshi
+        env:
+          PATTERN: ${{ inputs.pattern }}
+          DRY: ${{ inputs.dry_run }}
+        run: |
+          set -u
+          git fetch -q origin '+refs/heads/*:refs/remotes/origin/*'
+          MBROJTUR='main|master|claude/|feat/harmonize'
+          fshira=0; ruajtura=0
+
+          IFS=',' read -ra PREFS <<< "$PATTERN"
+          for b in $(git branch -r --format='%(refname:short)' | sed 's|^origin/||' | sort -u); do
+            match=no
+            for p in "${PREFS[@]}"; do
+              p="$(echo "$p" | xargs)"
+              [ -n "$p" ] && case "$b" in "$p"*) match=yes ;; esac
+            done
+            [ "$match" = yes ] || continue
+            echo "$b" | grep -qE "^($MBROJTUR)" && { echo "⛔ $b — e mbrojtur"; continue; }
+
+            # Kriteri i sigurisë: çdo skedar i degës ekziston IDENTIK në main.
+            ndryshe=0
+            while read -r mode type sha path; do
+              [ "$type" = blob ] || continue
+              msha=$(git rev-parse "origin/main:$path" 2>/dev/null || echo MUNGON)
+              [ "$msha" = "$sha" ] || { ndryshe=$((ndryshe+1)); [ $ndryshe -le 3 ] && echo "     ≠ $path"; }
+            done < <(git ls-tree -r "origin/$b")
+
+            if [ "$ndryshe" -eq 0 ]; then
+              if [ "$DRY" = "true" ]; then
+                echo "🔎 $b — do të fshihej (gjithë përmbajtja në main)"
+              else
+                git push -q origin --delete "$b" && echo "✅ $b — u fshi" || echo "❌ $b — dështoi"
+              fi
+              fshira=$((fshira+1))
+            else
+              echo "🛡️ $b — RUHET ($ndryshe skedarë s'janë në main)"
+              ruajtura=$((ruajtura+1))
+            fi
+          done
+
+          echo
+          echo "── Përmbledhje: $fshira për fshirje · $ruajtura të ruajtura"
+          [ "$DRY" = "true" ] && echo "::notice::dry_run=true — asgjë nuk u prek."
