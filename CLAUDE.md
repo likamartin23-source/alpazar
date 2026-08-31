@@ -51,6 +51,19 @@ Puna e vlefshme ketu eshte **auditim dhe konsolidim**, jo ndertim.
 5. **`current_user` brenda `SECURITY DEFINER` eshte PRONARI, jo thirresi.**
    Per rolin e vertete perdor `auth.role()`; `session_user` nuk vlen sepse
    PostgREST lidhet si `authenticator` dhe ben `SET ROLE`.
+   **PASOJE E MATUR (31 gusht 2026):** kjo do te thote qe NJE TRIGER nuk e
+   dallon dot "shkrim i drejtperdrejte i klientit" nga "shkrim permes nje
+   funksioni te besuar" — brenda trigerit `current_user` eshte gjithmone
+   `postgres`, dhe `current_setting('role')` mbetet `authenticated` edhe
+   brenda nje DEFINER-i te thirrur nga i njejti kerkese. Nje roje e ndertuar
+   mbi kete kusht nuk ndizet KURRE. Instrumenti i sakte jane **TE DREJTAT E
+   KOLONAVE**: klienti kontrollohet me te drejtat e `authenticated`, ndersa
+   brenda DEFINER-it vlejne te drejtat e pronarit — pra rruget legjitime
+   punojne pa asnje ndryshim kodi.
+   **Dhe kujdes:** heqja e nje kolone nuk ka efekt kur roli e ka te drejten
+   TABELARE (`arwdDxtm`, nga `alter default privileges` i Supabase-it) — i
+   njejti kurth si §1.1. Duhet `revoke update on <tabela>` pastaj
+   `grant update (kolonat)`.
 6. **`UPDATE OF kolona` ndizet edhe kur vlera nuk ndryshon** — mjafton qe kolona
    te permendet te `SET`. Krahaso `OLD`/`NEW` brenda trigerit.
 7. **`listings` shkruhet ne cdo hapje faqeje** (`increment_listing_views` rrit
@@ -169,6 +182,9 @@ Deri atehere `fiscal_status='not_required'` dhe asgje nuk prishet.
   zbuloi nje klase te re defektesh, dhe cilat ishin kater verberite sistematike.
 - **Regjistri i autopsive:** `docs/MEGAAUTOPSIA-2026-08-31.md` — kater kalime,
   cdo gjetje me maten dhe me mjetin, perfshire gabimet e mia.
+  `docs/MEGAAUTOPSIA-2026-08-31-B.md` — kalimi i shtate: prova e shkrimit (tete
+  kolona te falsifikueshme, tani te mbyllura), fshesa e leximit nder-perdorues
+  mbi te 68 tabelat, `npm audit`, axe-core dhe CLS ne 10 rruge × 2 pamje.
 - **Ekranet e autentikuara SHIHEN me nje dyfish lokal** — `docs/VERIFIKIMI-VIZUAL.md`.
   Aplikacioni drejtohet me `NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321`
   te nje server dyfish; pa DNS, pa certifikata, pa anashkalim politike.
@@ -223,7 +239,14 @@ Deri atehere `fiscal_status='not_required'` dhe asgje nuk prishet.
   **Nje auditim matet me numrin e INSTRUMENTEVE te ndryshem qe ke vene ne pune,
   jo me kohen.** Klasat e detyrueshme: shfletues (desktop DHE telefon) · konsole
   e rrjet · axe-core · performance nen ngadalesim · `npm audit` · LOGJIKA e RLS-se
-  · vija DB↔kod · prove SHKRIMI (kjo e fundit mbetet ende e pabere).
+  · vija DB↔kod · **prove SHKRIMI**.
+  Prova e shkrimit u be me 31 gusht 2026 dhe nxori tete kolona te
+  falsifikueshme nga vete perdoruesi — mes tyre `is_boost_active` (vecori e
+  paguar) dhe `moderation_status='approved'` (vetemiratim). Menyra: vish rolin
+  me `set local role authenticated` + `set_config('request.jwt.claims', …)`,
+  shkruaj, mat, pastaj `raise exception` qe transaksioni te kthehet. Bej
+  GJITHMONE edhe kontrollin negativ — kolonat qe DUHET te bllokohen — perndryshe
+  s'e di nese porta ekziston apo thjesht s'e provove dot.
 - **Nje tabele me politika nuk do te thote vecori e gjalle.** Matur me 31 gusht
   2026: nga 69 tabelat, TRE sisteme kane DY zbatime — nje model i pasur ne baze
   qe s'e prek asnje rresht kodi, dhe nje zbatim me i thjeshte qe eshte ai real:
@@ -266,6 +289,22 @@ Deri atehere `fiscal_status='not_required'` dhe asgje nuk prishet.
 - **`count` i supabase-js vjen nga `content-range`; kur ai mungon jep NaN.**
   `count !== null` dhe `count ?? 0` NUK e kapin. Perdor `Number.isFinite`.
   I njejti gabim ne familje: `??` nuk e kap NaN-in (NaN s'eshte null).
+- **`layout-shift` i emerton elementet e ZHVENDOSUR, jo shkaktarin.** Matur me
+  31 gusht 2026: te `/listing` raportoheshin textarea dhe butoni i bllokut te
+  ofertes; ata ishin viktimat — rritja vinte nga folea e `MapDisplay` mbi ta
+  (nje `<template>` 0px deri ~900ms, pastaj DIV 235px). Nje vend-mbajtes i
+  vendosur mbi elementin e raportuar e mbulon simptomen dhe e fsheh shkakun.
+  Ndiq zinxhirin lart, dhe jepi cdo `dynamic(..., {ssr:false})` nje `loading`
+  me lartesi TE MATUR.
+- **Nje dyfish qe s'eshte ndezur eshte me i keq se asnje.** Po ate dite, nje
+  fshese raportoi 18–25 gabime konsole per rruge; ishin te gjitha
+  `ERR_TUNNEL_CONNECTION_FAILED` sepse `next dev` ishte rinisur PA
+  `NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321`. Perpara se te raportosh
+  gabime rrjeti, verifiko ku po flet aplikacioni.
+- **axe-core mat DOM-in ne castin qe e therret.** Nje shkelje kontrasti me
+  ngjyra te PERZIERA (p.sh. `#d5b55d` mbi `#635e5d` kur CSS-ja thote
+  `#111`/`#F5C842`) do te thote qe matja ra ne mes te nje animacioni fade.
+  Prit derisa animacionet te qetesohen, perndryshe raporton pozitiva te rreme.
 - **Mos shpik URL prove.** `/kategori/makina` jep 404 sepse slug-u eshte
   `automjete`; kategori te sakta: arsim, automjete, biznese, elektronike, gaming,
   kafshë, mobilje, prona, pune, shendet, sherbime, sport, te-tjera, turizem,
