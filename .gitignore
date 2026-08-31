@@ -33,3 +33,6 @@ playwright-report/
 # Python cache nga skill CLIs
 __pycache__/
 *.pyc
+
+# Rruge harness per verifikim vizual — kurre ne prodhim
+app/verifikim-vizual/

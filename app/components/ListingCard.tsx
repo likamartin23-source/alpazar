@@ -89,9 +89,15 @@ type Props = {
   onUnfavorite?: () => void
 }
 
-// Formula e çmimit rri te `lib/format.ts` (burim i vetëm); këtu mbetet vetëm
-// fjala që kjo sipërfaqe përdor për çmimin bosh.
-const fmt = (price: number, cur: string) => priceLabel(price, cur, 'Çmim me marrëveshje')
+/*  Formula e çmimit rri te `lib/format.ts` — burim i vetëm.
+ *
+ *  Fjala për çmimin bosh U SHKURTUA më 31 gusht 2026, dhe jo për shije:
+ *  pasi trupi i kartës mori lartësi të caktuar (raporti 70/30 strukturor),
+ *  "Çmim me marrëveshje" me 14px/800 nuk hyn në një rresht brenda një kolone
+ *  169px — matur: përmbajtja 114px kundrejt 98px të dukshme, pra pritej.
+ *  "Me marrëveshje" hyn, dhe është e njëjta fjalë që përdorin SEO-ja dhe çdo
+ *  sipërfaqe tjetër — pra shkurtimi e UNIFIKON, s'e ndan. */
+const fmt = (price: number, cur: string) => priceLabel(price, cur)
 
 function timeAgo(iso: string): string {
   const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000)

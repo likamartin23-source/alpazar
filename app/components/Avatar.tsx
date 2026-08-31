@@ -110,8 +110,11 @@ function ringStyle(tier: AvatarTier): React.CSSProperties {
  * e fik — leviza e vazhdueshme s'i imponohet kujt qe e ka refuzuar (a11y).
  */
 const VIP_PULSE_CSS = `
-@keyframes alpzVipPulse{0%,100%{box-shadow:0 0 0 0 rgba(212,175,55,.55)}50%{box-shadow:0 0 0 6px rgba(212,175,55,0)}}
-.alpz-vip-ring{animation:alpzVipPulse 2.2s ease-in-out infinite}
+@keyframes alpzVipPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(212,175,55,.75)}
+  50%    {box-shadow:0 0 0 var(--alpz-pulse,10px) rgba(212,175,55,0)}
+}
+.alpz-vip-ring{animation:alpzVipPulse 1.9s ease-in-out infinite}
 @media (prefers-reduced-motion: reduce){.alpz-vip-ring{animation:none}}
 `
 
@@ -122,8 +125,11 @@ const VIP_PULSE_CSS = `
  * ndryshon vetem glow-u pulsues. `prefers-reduced-motion` e fik (a11y).
  */
 const PREMIUM_PULSE_CSS = `
-@keyframes alpzPremiumPulse{0%,100%{box-shadow:0 0 0 0 rgba(245,200,66,.55)}50%{box-shadow:0 0 0 6px rgba(245,200,66,0)}}
-.alpz-premium-ring{animation:alpzPremiumPulse 2.6s ease-in-out infinite}
+@keyframes alpzPremiumPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(245,200,66,.75)}
+  50%    {box-shadow:0 0 0 var(--alpz-pulse,10px) rgba(245,200,66,0)}
+}
+.alpz-premium-ring{animation:alpzPremiumPulse 2.3s ease-in-out infinite}
 @media (prefers-reduced-motion: reduce){.alpz-premium-ring{animation:none}}
 `
 
@@ -133,6 +139,13 @@ export default function Avatar({
   const [broken, setBroken] = useState(false)
   const showImage = src && !broken
   const ring = Math.max(2, Math.round(size * 0.07))
+  /*  PERHAPJA E PULSIT, PROPORCIONALE ME AVATARIN.
+   *  Deri me 31 gusht 2026 ishte 6px FIKSE per cdo madhesi: mbi nje avatar 64px
+   *  (profil, karte shitesi) dukej i zbete — 9% e diametrit — ndersa mbi nje
+   *  avatar 20px brenda kartes ishte joproporcionalisht i madh. Matur ne
+   *  shfletues, jo me sy. Tani 19% e diametrit, me nje dysheme prej 5px qe
+   *  avataret e vegjel te mos e humbasin fare. */
+  const pulse = Math.max(5, Math.round(size * 0.19))
   const white = Math.max(1, Math.round(size * 0.04))
   const inner = size - ring * 2 - white * 2
   const badge = Math.round(size * 0.34)
@@ -149,7 +162,7 @@ export default function Avatar({
     >
       {tier === 'vip' && <style dangerouslySetInnerHTML={{ __html: VIP_PULSE_CSS }} />}
       {tier === 'premium' && <style dangerouslySetInnerHTML={{ __html: PREMIUM_PULSE_CSS }} />}
-      <div className={tier === 'vip' ? 'alpz-vip-ring' : tier === 'premium' ? 'alpz-premium-ring' : undefined} style={{ width: size, height: size, borderRadius: '50%', padding: ring, boxSizing: 'border-box', ...ringStyle(tier), transition: 'transform .15s ease' }}>
+      <div className={tier === 'vip' ? 'alpz-vip-ring' : tier === 'premium' ? 'alpz-premium-ring' : undefined} style={{ width: size, height: size, borderRadius: '50%', padding: ring, boxSizing: 'border-box', ...ringStyle(tier), transition: 'transform .15s ease', ['--alpz-pulse' as any]: `${pulse}px` }}>
         <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: '#fff', padding: white, boxSizing: 'border-box' }}>
           {showImage ? (
             <img src={src as string} alt={name || 'avatar'} loading="lazy" onError={() => setBroken(true)} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', display: 'block' }} />
