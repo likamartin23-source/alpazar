@@ -122,7 +122,12 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
   // Shpallje vetëm-video (pa foto). URL-të Cloudflare Stream janë faqe iframe, JO skedar mp4 →
   // s'luhen dot te <video>; për to tregojmë poster + ▶ (hapja luan). Autoplay vetëm mp4 direkte
   // (Cloudinary f_mp4 / Supabase). hasVideo → distinktivi VIDEO/▶ pavarësisht ofruesit.
-  const rawVideo = (!l.images?.[0] && l.videos?.[0]?.url) ? l.videos[0].url : null
+  // Videoja shfaqet SA HERË që ekziston — jo vetëm kur mungojnë fotot. Kushti i vjetër
+  // (`!l.images?.[0] &&`) e fshihte tërësisht videon te çdo shpallje që kishte foto:
+  // pa distinktiv VIDEO, pa ▶, pa autoplay. Matur në prodhim (27 gusht): shpallja me
+  // 9 foto + video nuk shfaqte asnjë shenjë videoje. Kopertina mbetet fotoja (më poshtë),
+  // por prania e videos tani nderohet gjithmonë.
+  const rawVideo = l.videos?.[0]?.url || null
   const hasVideo = !!rawVideo
   const videoUrl = (rawVideo && !rawVideo.includes('cloudflarestream.com')) ? rawVideo : null
   // Kopertina statike: foto e parë ose posteri i videos (kur s'ka foto). Përdoret jashtë pamjes
