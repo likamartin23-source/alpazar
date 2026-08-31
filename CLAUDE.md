@@ -110,9 +110,15 @@ Deri atehere `fiscal_status='not_required'` dhe asgje nuk prishet.
 2. ~~**E drejta 14-ditore e heqjes dore** nga Premium — nenet 37/1–37/8.~~
    **E DEKLARUAR 31 gusht 2026:** `/kushtet` §6-a e thote saktesisht (afati, si
    behet, kthimi pro-rata, perjashtimi i nenit 37/8) dhe shprehimisht qe kushtet
-   nuk e kufizojne dot. §6 nuk e paraqet me si mireservi. **MBETET:** rrjedha
-   operative e rimbursimit — berthama e pagesave nuk u prek me qellim; ajo eshte
-   vendim dhe veprim i pronarit.
+   nuk e kufizojne dot. §6 nuk e paraqet me si mireservi.
+   **KORRIGJIM I TE NJEJTES DITE:** shkrimi im se "rrjedha operative mbetet vendim
+   i pronarit" ishte i pasakte. Ajo ekzistonte E PLOTE ne baze —
+   `my_withdrawal_right`, `withdraw_from_subscription`, `record_withdrawal_consent`,
+   `_issue_credit_note`, `next_credit_note_number`, `admin_refund_invoice` — dhe
+   asnje rresht i nderfaqes nuk e prekte. Tani `/billing` e lexon dhe e ushtron.
+   Pa `record_withdrawal_consent` (qe asnje rruge nuk e therret) rimbursimi del
+   GJITHMONE i plote — qendrimi me i sigurt ligjerisht. Kapja e atij pelqimi gjate
+   blerjes eshte vendim tregtar i pronarit.
 3. **Etiketa “E promovuar”** te VIP Boost — neni 17/A.11 + neni 8, ligji 10128.
 4. **Transferim nderkombetar pa instrument** — nenet 26, 39–42, ligji 124/2024.
    Sidomos `gtranslate()` te `app/api/ai/context.ts`, qe dergon tekst te Google.
@@ -156,6 +162,11 @@ Deri atehere `fiscal_status='not_required'` dhe asgje nuk prishet.
   shkakun: "Host not in allowlist: sopafwfkrxpcdaljddoh.supabase.co. Add this
   host to your network egress settings." Kjo eshte pikerisht ajo qe duhet hapur
   qe agjenti te beje verifikim live me sy (Rregulli 11).
+- **`/api/health` raporton edhe variablat e mjedisit** (`checks.env`) — vetem
+  praninë, kurre vleren. Pese kritike, dymbedhjete te vecorive. Kjo eshte rruga
+  e vetme qe ka pronari per te pare cfare i mungon te Vercel.
+- **Regjistri i autopsive:** `docs/MEGAAUTOPSIA-2026-08-31.md` — kater kalime,
+  cdo gjetje me maten dhe me mjetin, perfshire gabimet e mia.
 - **Ekranet e autentikuara SHIHEN me nje dyfish lokal** — `docs/VERIFIKIMI-VIZUAL.md`.
   Aplikacioni drejtohet me `NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321`
   te nje server dyfish; pa DNS, pa certifikata, pa anashkalim politike.
@@ -177,8 +188,12 @@ Deri atehere `fiscal_status='not_required'` dhe asgje nuk prishet.
   `health_events` shtepiak paralel; zgjidh njerin), **Cloudflare**, **Semrush**.
 - **Brevo:** plan falas, **300 email/dite**. Ne volum, email-et ligjore humbasin
   bashke me marketingun — duhet radhe me prioritet.
-- **Cloudinary:** Free, video **max 100 MB**, ndersa `video_max_seconds = 300`.
-  Nje video 5-minuteshe nuk ngarkohet dot.
+- **Cloudinary:** Free, video max 100 MB. **Matur 31 gusht 2026:** transkodimi
+  eshte FIKUR ne prodhim — `getCloudinary()` kerkon `cloudinary_cloud_name` DHE
+  `cloudinary_upload_preset`; i dyti mungon, dhe `cf_stream_customer_code`
+  gjithashtu. Pasoja: kufiri bie ne **50 MB** ndersa premtohen 5 minuta, dhe
+  **videot HEVC refuzohen** — formati i parazgjedhur i iPhone-it. Zgjidhja eshte
+  nje celes konfigurimi, jo kod.
 
 ---
 
@@ -191,6 +206,13 @@ Deri atehere `fiscal_status='not_required'` dhe asgje nuk prishet.
   pyetje, ato jane nje ekran.
 - **Cdo veprim shkaterrues me arsye te detyrueshme dhe gjurme.**
 - **Mos e zgjidh me kod ate qe zgjidhet me konfigurim.**
+- **Perpara se te ndertosh dicka, kerko a EKZISTON ne baze.** Rregulli i pare i
+  kesaj kujtese e thote per tabelat; me 31 gusht 2026 u mat se vlen njesoj per
+  FUNKSIONET. Krahasimi i te 88 RPC-ve te thirrshme nga `authenticated` me cdo
+  reference ne `app/` dhe `lib/` nxori 21 qe nuk i therret asnje rresht — mes tyre
+  e drejta 14-ditore e heqjes dore dhe eksporti i plote i te dhenave, te dyja te
+  ndertuara, te sakta dhe te paarritshme per perdoruesin. Bej kete PARA se te
+  shkruash nje vecori te re, dhe periodikisht si auditim.
 
 ### Higjiena e matjes (mesuar me 31 gusht 2026, me kosto)
 

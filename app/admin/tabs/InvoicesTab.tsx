@@ -204,7 +204,9 @@ export function InvoicesTab() {
         <div className="sc"><div className="sn">{st.sent}</div><div className="sl">Dërguar</div></div>
         <div className="sc"><div className="sn">{L(st.bruto)}</div><div className="sl">Faturuar bruto</div></div>
         <div className="sc">
-          <div className="sn" style={{ color: st.rimb > 0 ? '#E63312' : undefined }}>−{L(st.rimb)}</div>
+          {/* Shenja minus vetem kur ka vertet rimbursim — perndryshe kutia
+              shfaqte "−0", qe e ben operatorin te ndalet e te pyese pa arsye. */}
+          <div className="sn" style={{ color: st.rimb > 0 ? '#E63312' : undefined }}>{st.rimb > 0 ? '−' : ''}{L(st.rimb)}</div>
           <div className="sl">Rimbursuar</div>
         </div>
       </div>
