@@ -1,0 +1,352 @@
+<title>Regjistri i Autopsive</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --ink:#12100C; --paper:#FBF9F4; --card:#FFFFFF; --rule:#DED8CA;
+    --muted:#5F594D; --accent:#B3341A; --signal:#7A5F00; --ok:#3B6D11;
+    --chip-ok-bg:#EAF1E0; --chip-open-bg:#FBEFD4; --chip-dec-bg:#F1ECFB; --chip-dec-fg:#4B3B7A;
+    --shadow:0 1px 2px rgba(18,16,12,.05), 0 8px 24px -18px rgba(18,16,12,.35);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#EDE8DC; --paper:#141210; --card:#1C1A16; --rule:#332F27;
+      --muted:#A49B8A; --accent:#E8785C; --signal:#D9B44A; --ok:#8FC05A;
+      --chip-ok-bg:#22301A; --chip-open-bg:#332A14; --chip-dec-bg:#241F33; --chip-dec-fg:#B9A6E8;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -20px rgba(0,0,0,.9);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#EDE8DC; --paper:#141210; --card:#1C1A16; --rule:#332F27;
+    --muted:#A49B8A; --accent:#E8785C; --signal:#D9B44A; --ok:#8FC05A;
+    --chip-ok-bg:#22301A; --chip-open-bg:#332A14; --chip-dec-bg:#241F33; --chip-dec-fg:#B9A6E8;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -20px rgba(0,0,0,.9);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    font-size:16px; line-height:1.65; margin:0;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px; margin:0 auto; padding:0 24px 96px}
+
+  /* ── Koka ───────────────────────────────────────────── */
+  header{padding:72px 0 40px; border-bottom:1px solid var(--rule)}
+  .eyebrow{
+    font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:11.5px;
+    letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin:0 0 18px;
+  }
+  h1{
+    font-family:Fraunces,Georgia,"Times New Roman",serif; font-weight:600;
+    font-size:clamp(38px,6vw,62px); line-height:1.04; letter-spacing:-.015em;
+    margin:0 0 20px; text-wrap:balance;
+  }
+  .standfirst{font-size:19px; line-height:1.6; color:var(--muted); max-width:62ch; margin:0}
+  .standfirst strong{color:var(--ink); font-weight:600}
+
+  /* ── Shiriti i numrave ──────────────────────────────── */
+  .tally{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:1px; background:var(--rule); border:1px solid var(--rule);
+    border-radius:10px; overflow:hidden; margin:40px 0 0;
+  }
+  .tally div{background:var(--card); padding:18px 20px}
+  .tally b{
+    display:block; font-family:"IBM Plex Mono",monospace; font-size:30px;
+    font-weight:500; line-height:1.1; font-variant-numeric:tabular-nums; letter-spacing:-.02em;
+  }
+  .tally span{display:block; font-size:12.5px; color:var(--muted); margin-top:5px}
+
+  /* ── Seksionet ──────────────────────────────────────── */
+  section{padding:56px 0 0}
+  h2{
+    font-family:Fraunces,Georgia,serif; font-weight:600;
+    font-size:clamp(25px,3.4vw,33px); line-height:1.18; letter-spacing:-.01em;
+    margin:0 0 8px; text-wrap:balance;
+  }
+  .sub{color:var(--muted); font-size:15.5px; margin:0 0 28px; max-width:66ch}
+  p{max-width:68ch}
+  a{color:var(--accent)}
+
+  /* ── Kalimet (sekuence e vertete → numerim i vertete) ─ */
+  .pass{
+    display:grid; grid-template-columns:64px 1fr; gap:22px;
+    padding:22px 0; border-top:1px solid var(--rule);
+  }
+  .pass:last-of-type{border-bottom:1px solid var(--rule)}
+  .roman{
+    font-family:Fraunces,Georgia,serif; font-size:27px; font-weight:400;
+    color:var(--accent); line-height:1.1; padding-top:2px;
+  }
+  .pass h3{font-size:17px; font-weight:600; margin:0 0 4px; line-height:1.35}
+  .pass p{margin:0; color:var(--muted); font-size:15px}
+  .instrument{
+    display:inline-block; margin-top:10px; font-family:"IBM Plex Mono",monospace;
+    font-size:11.5px; letter-spacing:.04em; color:var(--ink);
+    background:var(--chip-dec-bg); color:var(--chip-dec-fg);
+    padding:4px 9px; border-radius:5px;
+  }
+
+  /* ── Regjistri i gjetjeve ───────────────────────────── */
+  .find{
+    background:var(--card); border:1px solid var(--rule); border-radius:10px;
+    padding:20px 22px; margin-bottom:12px; box-shadow:var(--shadow);
+  }
+  .find-top{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:8px}
+  .find h3{font-size:17px; font-weight:600; margin:0; line-height:1.35; flex:1 1 260px}
+  .find p{margin:0; font-size:15px; color:var(--muted); max-width:70ch}
+  .chip{
+    font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.08em;
+    text-transform:uppercase; padding:4px 9px; border-radius:99px; white-space:nowrap; font-weight:500;
+  }
+  .c-ok{background:var(--chip-ok-bg); color:var(--ok)}
+  .c-open{background:var(--chip-open-bg); color:var(--signal)}
+  .c-dec{background:var(--chip-dec-bg); color:var(--chip-dec-fg)}
+  .measure{
+    display:inline-flex; align-items:center; gap:9px; margin-top:12px;
+    font-family:"IBM Plex Mono",monospace; font-size:13.5px; font-variant-numeric:tabular-nums;
+    border:1px solid var(--rule); border-radius:7px; padding:6px 11px; background:var(--paper);
+  }
+  .measure .was{color:var(--muted); text-decoration:line-through; text-decoration-thickness:1px}
+  .measure .arrow{color:var(--accent)}
+  .measure .now{font-weight:500}
+
+  /* ── Verberite ──────────────────────────────────────── */
+  .blind{
+    border-left:3px solid var(--accent); padding:2px 0 2px 20px; margin:0 0 26px;
+  }
+  .blind h3{font-size:17px; font-weight:600; margin:0 0 6px}
+  .blind p{margin:0; color:var(--muted); font-size:15px}
+
+  /* ── Tabela e mbetjeve ──────────────────────────────── */
+  .tablewrap{overflow-x:auto; border:1px solid var(--rule); border-radius:10px; background:var(--card)}
+  table{border-collapse:collapse; width:100%; min-width:520px; font-size:15px}
+  th,td{text-align:left; padding:13px 18px; border-bottom:1px solid var(--rule); vertical-align:top}
+  th{
+    font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--muted); font-weight:500;
+  }
+  tr:last-child td{border-bottom:none}
+  td:first-child{font-weight:500; width:34%}
+
+  blockquote{
+    margin:34px 0 0; padding:26px 30px; background:var(--card);
+    border:1px solid var(--rule); border-radius:10px;
+    font-family:Fraunces,Georgia,serif; font-size:20px; line-height:1.5; color:var(--ink);
+  }
+  footer{
+    margin-top:64px; padding-top:22px; border-top:1px solid var(--rule);
+    font-size:13px; color:var(--muted);
+  }
+  code{
+    font-family:"IBM Plex Mono",monospace; font-size:.88em;
+    background:var(--chip-open-bg); color:var(--ink); padding:1px 5px; border-radius:4px;
+  }
+  :focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:3px}
+  @media (max-width:560px){
+    .pass{grid-template-columns:44px 1fr; gap:14px}
+    .wrap{padding:0 18px 72px}
+    header{padding:48px 0 32px}
+  }
+</style>
+
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Alpazar · 31 gusht 2026 · pesë kalime</p>
+  <h1>Regjistri i Autopsive</h1>
+  <p class="standfirst">Pesë kalime auditimi mbi platformën, në një ditë. Çdo gjetje këtu është <strong>e matur</strong>, jo e vlerësuar me sy — numri, mjeti dhe mënyra e matjes janë shkruar bashkë me të. Aty ku gabova, edhe kjo është shkruar.</p>
+
+  <div class="tally">
+    <div><b>26</b><span>ndryshime të dërguara</span></div>
+    <div><b>78→0</b><span>elemente nën pragun WCAG</span></div>
+    <div><b>10→3</b><span>cenueshmëri varësish</span></div>
+    <div><b>21</b><span>funksione të varrosura</span></div>
+    <div><b>2</b><span>të drejta ligjore të rikthyera</span></div>
+  </div>
+</header>
+
+<section>
+  <h2>Si u zhvillua</h2>
+  <p class="sub">Vëreje formën, sepse ajo është gjetja më e rëndësishme e gjithë ditës: çdo kalim zbuloi një klasë të re defektesh jo sepse u përpoqa më shumë, por sepse mora një <em>instrument</em> të ri.</p>
+
+  <div class="pass">
+    <div class="roman">I</div>
+    <div>
+      <h3>Leximi i kodit</h3>
+      <p>Arsyetimi i moderimit që nuk i shkonte pronarit, pëlqimi i cookie-ve që ishte vetëm njoftim, og:image që mungonte në nëntë faqe.</p>
+      <span class="instrument">burimi + kërkesa jote</span>
+    </div>
+  </div>
+
+  <div class="pass">
+    <div class="roman">II</div>
+    <div>
+      <h3>Hapja e faqes në shfletues</h3>
+      <p>Google Fonts doli transferim i vërtetë në çdo faqe — jo “leje e vdekur në CSP”, siç kisha raportuar gabimisht një ditë më parë. Bashkë me të: çdo faqe 404 me hidratim të prishur, dhe kontrasti.</p>
+      <span class="instrument">konsola e shfletuesit</span>
+    </div>
+  </div>
+
+  <div class="pass">
+    <div class="roman">III</div>
+    <div>
+      <h3>Ekranet e autentikuara</h3>
+      <p>Paneli i kontrollit u pa për herë të parë. Aty dolën <code>NaN</code>-et, <code>Invalid Date</code> te faturimi, një migrim bosh që e kisha shkruar vetë, dhe LCP-ja e kryefaqes.</p>
+      <span class="instrument">dyfish lokal i bazës</span>
+    </div>
+  </div>
+
+  <div class="pass">
+    <div class="roman">IV</div>
+    <div>
+      <h3>Vija midis shtresave</h3>
+      <p>Krahasova të 88 funksionet që baza u ofron përdoruesve me çdo referencë në kod. Njëzet e një nuk i thërret asnjë rresht — mes tyre dy të drejta ligjore, të ndërtuara plotësisht dhe të paarritshme.</p>
+      <span class="instrument">bazë ↔ kod</span>
+    </div>
+  </div>
+
+  <div class="pass">
+    <div class="roman">V</div>
+    <div>
+      <h3>Ajo që kalimet e mëparshme e besuan</h3>
+      <p>Politikat RLS të lexuara një nga një, varësitë e auditura për herë të parë, dhe faqja e parë në telefon — jo në desktop.</p>
+      <span class="instrument">mosbesim ndaj vetes</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Gjetjet që peshojnë më shumë</h2>
+  <p class="sub">Të renditura sipas asaj që i kushton më shumë përdoruesit ose ty, jo sipas radhës së zbulimit.</p>
+
+  <div class="find">
+    <div class="find-top">
+      <h3>E drejta 14-ditore ishte e ndërtuar dhe e paarritshme</h3>
+      <span class="chip c-ok">rregulluar</span>
+    </div>
+    <p>Në bazë ekzistonte një nënsistem i tërë — llogaritja e afatit, shuma që kthehet, notat e kreditit, njoftimi me citim të nenit 37/5. Kërkimi për secilin në kod kthente zero rezultate. Një e drejtë që ligji e jep, e ndërtuar saktë, dhe që asnjë përdorues nuk mund ta ushtronte. Tani te <em>Plani im</em>, ndarë qartë nga anulimi i rinovimit.</p>
+  </div>
+
+  <div class="find">
+    <div class="find-top">
+      <h3>Gjurmët e sjelljes ishin publike</h3>
+      <span class="chip c-ok">rregulluar</span>
+    </div>
+    <p>Kushdo, edhe i palogaruar, mund të merrte regjistrin e shikimeve me identitetin e shikuesit — pra të mësonte cili përdorues pa cilën shpallje dhe kur. E njëjta gjë për treguesin e shtypjes: kush po i shkruan kujt, në kohë reale. Këshilluesi i sigurisë jepte 0 gabime, sepse ai mat nëse mbrojtja është ndezur, jo çfarë thotë ajo.</p>
+    <div class="measure"><span class="was">publike</span><span class="arrow">→</span><span class="now">pronari 16 · tjetër 0 · anon 0</span></div>
+  </div>
+
+  <div class="find">
+    <div class="find-top">
+      <h3>Eksporti i të dhënave ishte i mangët</h3>
+      <span class="chip c-ok">rregulluar</span>
+    </div>
+    <p>Faqja premtonte të drejtën e portabilitetit dhe jepte një skedar pa asnjë mesazh — vetëm një numër, i cunguar në 200. Mungonin edhe preferencat, blerjet, kërkimet e ruajtura dhe njoftimet. Funksioni i plotë ekzistonte prej kohësh në bazë.</p>
+  </div>
+
+  <div class="find">
+    <div class="find-top">
+      <h3>Kryefaqja në telefon</h3>
+      <span class="chip c-ok">rregulluar</span>
+    </div>
+    <p>Vitrina e bizneseve hynte 256px mbi rreshtin e filtrave pasi mbaronte ngarkimi, duke shtyrë poshtë gjithçka ndërsa lexoje. Tani vjen nga serveri.</p>
+    <div class="measure"><span class="was">3908 ms</span><span class="arrow">→</span><span class="now">952 ms</span></div>
+    <div class="measure" style="margin-left:8px"><span class="was">CLS 0.207</span><span class="arrow">→</span><span class="now">0.053</span></div>
+  </div>
+
+  <div class="find">
+    <div class="find-top">
+      <h3>Shkrimet e zbehta — ankesa jote e parë, tani e matur</h3>
+      <span class="chip c-ok">rregulluar</span>
+    </div>
+    <p>Shkaku ishte një rregull i vetëm me <code>!important</code> te fleta globale, që i anashkalonte rregullimet e bëra faqe më faqe. Asnjë gri e vetme s'i kalon të dy sfondet — kufijtë përjashtojnë njëri-tjetrin — prandaj sipërfaqja e errët merr vlerën e vet.</p>
+    <div class="measure"><span class="was">78 elemente</span><span class="arrow">→</span><span class="now">0</span></div>
+  </div>
+
+  <div class="find">
+    <div class="find-top">
+      <h3>Transkodimi i videos është i fikur</h3>
+      <span class="chip c-open">kërkon një çelës</span>
+    </div>
+    <p>Mungon <code>cloudinary_upload_preset</code>. Pasoja: kufiri bie në 50 MB ndërsa platforma premton 5 minuta video, dhe videot HEVC — formati i parazgjedhur i iPhone-it — refuzohen. Emri i preset-it vjen nga llogaria jote; nuk e shpika.</p>
+  </div>
+
+  <div class="find">
+    <div class="find-top">
+      <h3>Variablat e Vercel-it</h3>
+      <span class="chip c-open">shih /api/health</span>
+    </div>
+    <p>Nuk kam mjet për t'i lexuar. E bëra mungesën të dukshme: <code>/api/health</code> raporton tani shtatëmbëdhjetë variabla — vetëm praninë, kurrë vlerën. Pa <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code>, faqet publike punojnë ndërsa çdo hyrje në panel ridrejtohet pa asnjë shpjegim; atë shkak e hoqa.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Katër verbëritë</h2>
+  <p class="sub">Kjo është pjesa që kërkove: autopsia e asaj që nuk bëra. Të katërta janë i njëjti gabim — besova një abstraksion në vend që të mas gjënë vetë.</p>
+
+  <div class="blind">
+    <h3>Këshilluesin, në vend të politikës</h3>
+    <p>Katër kalime lexova “0 gabime” si “mbrojtja është në rregull”. Ai mat nëse mbrojtja është ndezur; nuk e lexon kurrë kushtin.</p>
+  </div>
+
+  <div class="blind">
+    <h3>Desktopin, në vend të telefonit</h3>
+    <p>Playwright-i nis në 1280px nëse nuk i thua ndryshe. Zgjodha dritaren që më leverdiste, jo atë që ka përdoruesi. Në 390px dolën 23–50 objektiva prekjeje nën standardin që vetë projekti e ka vendosur.</p>
+  </div>
+
+  <div class="blind">
+    <h3>Ekranin, në vend të varësive</h3>
+    <p><code>npm audit</code> zgjat tre sekonda dhe nuk u ekzekutua kurrë në katër kalime. Jepte dhjetë cenueshmëri, një kritike. Nuk e bëra sepse metoda ime ishte “shiko ekranin”, dhe një varësi nuk ka ekran.</p>
+  </div>
+
+  <div class="blind">
+    <h3>Shtresën, në vend të vijës midis shtresave</h3>
+    <p>Audituam bazën ose kodin, kurrë boshllëkun. Dy të drejta ligjore jetonin plotësisht në njërën anë dhe fare në tjetrën. Asnjë auditim i një shtrese të vetme nuk mund t'i shohë.</p>
+  </div>
+
+  <blockquote>Kur një mjet të thotë “në rregull”, pyet çfarë mat saktësisht. Zakonisht mat diçka më të ngushtë nga ajo që po pyet ti.</blockquote>
+</section>
+
+<section>
+  <h2>Ajo që ende nuk është audituar</h2>
+  <p class="sub">E deklaruar, jo e fshehur. Një auditim që heshtë për kufijtë e vet nuk vlen.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Zona</th><th>Pse ka rëndësi</th></tr></thead>
+      <tbody>
+        <tr><td>Asnjë veprim shkrimi nuk u provua</td><td>Krijim shpalljeje, dërgim mesazhi, ngarkim fotoje. Verifikimi me shikim nuk është verifikim me përdorim.</td></tr>
+        <tr><td>Validimi i hyrjeve te API-të</td><td>Kërkon prova me qëllim të keq, jo shikim.</td></tr>
+        <tr><td>Sistemi i postimeve</td><td>Përmbajtje e përdoruesit që nuk u prek fare.</td></tr>
+        <tr><td>Bllokimi dhe raportimi te mesazhet</td><td>U render-ua, nuk u ushtrua.</td></tr>
+        <tr><td>Navigimi me tastierë</td><td>Aksesueshmëri përtej ngjyrës; mjeti automatik nuk e mbulon.</td></tr>
+        <tr><td>Sjellja reale në prodhim</td><td>Gjithçka këtu u mat në një dyfish lokal — dalja te baza e vërtetë është e bllokuar nga politika e mjedisit.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Vendimet që janë tuajat</h2>
+  <p class="sub">Nuk i mora unë, me qëllim.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Çështja</th><th>Pse pret ty</th></tr></thead>
+      <tbody>
+        <tr><td>Pëlqimi i nenit 37/8 gjatë blerjes</td><td>Sot çdo rimbursim del i plotë — qëndrimi më i sigurt ligjërisht. Kapja e atij pëlqimi e ul rimbursimin: vendim tregtar.</td></tr>
+        <tr><td>Kalimi te Next 16</td><td>Tri cenueshmëri të mbetura e kërkojnë. Të tria janë mjete ndërtimi, jo hyrje përdoruesi. Ndryshim madhor.</td></tr>
+        <tr><td>Kontratat SCC/DPA</td><td>Cloudinary, Resend, Groq, Anthropic, Perplexity dhe përkthimi i Google-it marrin tekst pa instrument transferimi.</td></tr>
+        <tr><td>DPO-ja</td><td>Neni 33/1/c — ka gjasa i detyrueshëm.</td></tr>
+        <tr><td>Kontakti i sigurisë</td><td>Faqja publike e sigurisë jep një Gmail personal.</td></tr>
+        <tr><td>Butonat-ikonë në telefon</td><td>Kthimi dhe njoftimet janë 32–34px. Rrinë në shirita të ngushtë; rritja kërkon sy mbi pajisje reale.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer>
+  Regjistri i plotë me çdo matje: <code>docs/MEGAAUTOPSIA-2026-08-31.md</code> · Analiza e metodës: <code>docs/AUTOPSIA-E-AUTOPSIVE.md</code> · Metoda e verifikimit vizual: <code>docs/VERIFIKIMI-VIZUAL.md</code> · Të gjitha ndryshimet janë në degën <code>claude/loving-wright-kBMgT</code>, secili me tsc, teste dhe ndërtim të gjelbër.
+</footer>
+
+</div>
