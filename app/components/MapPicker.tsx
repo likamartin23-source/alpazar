@@ -115,7 +115,7 @@ export function MapPicker({ lat, lng, address, onChange, onCityChange }: MapPick
         <div style={{ marginTop: 6, fontSize: 11, color: '#C42B0F' }}>{error}</div>
       )}
 
-      <div style={{ marginTop: 6, fontSize: 11, color: '#aaa', display: 'flex', alignItems: 'center', gap: 5 }}>
+      <div style={{ marginTop: 6, fontSize: 11, color: '#555', display: 'flex', alignItems: 'center', gap: 5 }}>
         <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="#aaa" style={{ flexShrink: 0 }}>
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
         </svg>

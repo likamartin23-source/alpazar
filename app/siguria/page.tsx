@@ -33,7 +33,7 @@ export default function Siguria() {
     .tip-text span{font-size:11px;color:#666;line-height:1.6;}
     .red-btn{display:block;background:#E63312;color:#fff;text-align:center;border-radius:10px;padding:13px;font-size:14px;font-weight:700;text-decoration:none;margin-top:4px;}
     .ftr{display:flex;flex-wrap:wrap;gap:8px 16px;padding:20px;background:#f9f9f9;border-top:1px solid #eee;}
-    .ftr a{color:#888;font-size:11px;text-decoration:none;}
+    .ftr a{color:#555;font-size:11px;text-decoration:none;}
   `
   return (
     <>

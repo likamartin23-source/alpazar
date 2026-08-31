@@ -297,7 +297,7 @@ export default function BusinessForm({ mode, initial, onSaved }: {
           <input type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={e => { addGalleryFiles(Array.from(e.target.files || [])); e.target.value = '' }} />
         </label>
       </div>
-      <div style={{ fontSize: 11, color: '#888' }}>
+      <div style={{ fontSize: 11, color: '#555' }}>
         Shto (+) · fshi (✕) · rendit (◀ ▶). Foto e parë është <b>kryesore</b>.
         {galleryItems.some(it => it.file) && <span style={{ color: '#0E7A35', fontWeight: 600 }}> Ndryshimet ruhen te “Ruaj”.</span>}
       </div>
@@ -349,7 +349,7 @@ export default function BusinessForm({ mode, initial, onSaved }: {
         {DAYS.map(([k, l]) => (
           <div key={k} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ width: 64, fontSize: 12, fontWeight: 600, color: '#555' }}>{l}</span>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: '#888', cursor: 'pointer' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: '#555', cursor: 'pointer' }}>
               <input type="checkbox" checked={hours[k].closed} onChange={e => setHours(h => ({ ...h, [k]: { ...h[k], closed: e.target.checked } }))} /> Mbyllur
             </label>
             {!hours[k].closed && (

@@ -23,14 +23,14 @@ export default function Cookies() {
     .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;margin-left:6px;}
     .badge-req{background:#EAF3DE;color:#3B6D11;}
     .badge-opt{background:#EEF4FF;color:#185FA5;}
-    .law{font-size:11px;color:#aaa;font-style:italic;}
+    .law{font-size:11px;color:#555;font-style:italic;}
     .table-wrap{overflow-x:auto;margin:10px 0;}
     table{width:100%;border-collapse:collapse;font-size:12px;}
     th{background:#FFFBEA;padding:8px 10px;text-align:left;font-weight:700;color:#111;border:1px solid #eee;}
     td{padding:8px 10px;color:#444;border:1px solid #eee;vertical-align:top;}
     code{background:#f0f0f0;padding:1px 5px;border-radius:3px;font-size:11px;font-family:monospace;}
     .ftr{display:flex;flex-wrap:wrap;gap:8px 16px;padding:20px;background:#f9f9f9;border-top:1px solid #eee;margin-top:10px;}
-    .ftr a{color:#888;font-size:11px;text-decoration:none;}
+    .ftr a{color:#555;font-size:11px;text-decoration:none;}
   `
   return (
     <>

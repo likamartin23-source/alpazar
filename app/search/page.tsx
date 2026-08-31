@@ -164,7 +164,7 @@ export default function SearchPage() {
         .filter-inner{padding:14px 12px 6px;}
 
         .fp-section{margin-bottom:14px;}
-        .fp-label{display:block;font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;}
+        .fp-label{display:block;font-size:10px;font-weight:700;color:#4A4A4A;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;}
 
         /* City dropdown */
         .fp-select{width:100%;border:1.5px solid #e0e0e0;border-radius:12px;padding:10px 13px;font-size:13px;font-family:inherit;outline:none;background:#fff;color:#111;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;transition:border-color .15s ease,box-shadow .15s ease;}
@@ -187,7 +187,7 @@ export default function SearchPage() {
         .premium-toggle{display:flex;align-items:center;justify-content:space-between;border:1.5px solid #e0e0e0;border-radius:12px;padding:11px 14px;cursor:pointer;transition:border-color .15s ease,background .15s ease;}
         .premium-toggle.on{border-color:#e0b030;background:#FFFBEA;}
         .premium-toggle-label{font-size:13px;font-weight:700;color:#111;}
-        .premium-toggle-sub{font-size:10px;color:#888;margin-top:2px;}
+        .premium-toggle-sub{font-size:10px;color:#555;margin-top:2px;}
         .toggle-track{width:42px;height:24px;border-radius:12px;position:relative;transition:background .2s;flex-shrink:0;}
         .toggle-thumb{width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:3px;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.2);}
 
@@ -206,7 +206,7 @@ export default function SearchPage() {
         .initial{text-align:center;padding:50px 20px;}
         .initial i{font-size:50px;color:#e0b030;display:block;margin-bottom:14px;}
         .initial h1{font-size:15px;font-weight:700;color:#1a1a1a;margin-bottom:6px;}
-        .initial p{font-size:12px;color:#888;}
+        .initial p{font-size:12px;color:#555;}
       ` }} />
 
       <div className="wrap">

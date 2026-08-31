@@ -119,7 +119,7 @@ export function PremiumUpsellModal({
         .ups-close{position:absolute;top:14px;right:16px;width:30px;height:30px;background:#eee;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:#555;}
         .ups-crown{font-size:44px;display:block;text-align:center;margin-bottom:10px;}
         .ups-h{font-size:19px;font-weight:800;color:#111;text-align:center;margin-bottom:6px;}
-        .ups-sub{font-size:12px;color:#888;text-align:center;margin-bottom:14px;line-height:1.6;}
+        .ups-sub{font-size:12px;color:#555;text-align:center;margin-bottom:14px;line-height:1.6;}
         .ups-feats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
         .ups-feat{background:#fff;border:0.5px solid #eee;border-radius:10px;padding:10px 11px;display:flex;align-items:center;gap:7px;}
         .ups-feat i{font-size:14px;color:#C42B0F;}
@@ -131,7 +131,7 @@ export function PremiumUpsellModal({
         .ups-timer-n{color:#fff;font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;}
         .ups-timer-l{color:rgba(255,255,255,.7);font-size:9px;}
         .ups-cta{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:15px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:10px;box-shadow:0 4px 16px rgba(230,51,18,.4);}
-        .ups-skip{width:100%;background:none;border:none;color:#aaa;font-size:12px;cursor:pointer;font-family:inherit;padding:4px;}
+        .ups-skip{width:100%;background:none;border:none;color:#555;font-size:12px;cursor:pointer;font-family:inherit;padding:4px;}
       ` }} />
       <div className="ups-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative' }}>
         <button type="button" className="ups-close" aria-label="Mbyll" onClick={close}><span aria-hidden="true">✕</span></button>
@@ -221,7 +221,7 @@ export function SellerPremiumUpsell({ isPremium, price }: { isPremium: boolean; 
         <div style={{ color: '#F5C842', fontSize: 12, fontWeight: 800, marginBottom: 3 }}>
           Shpallja jote shihet 5× më shumë me Premium
         </div>
-        <div style={{ color: '#888', fontSize: 10, lineHeight: 1.5 }}>
+        <div style={{ color: '#555', fontSize: 10, lineHeight: 1.5 }}>
           Shfaqet e para · Badge verifikimi · Biznes online
         </div>
       </div>
@@ -278,7 +278,7 @@ export function FreeTierBanner({
         }} />
       </div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: 10, color: '#888', lineHeight: 1.5 }}>
+        <span style={{ fontSize: 10, color: '#555', lineHeight: 1.5 }}>
           Premium → shpallje të pakufizuara + biznes online
         </span>
         <button

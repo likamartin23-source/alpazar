@@ -59,7 +59,7 @@ export function ListingMid({ p }: any) {
               />
             </div>
             <div className="field">
-              <label>Adresa e saktë <span style={{ fontWeight: 400, color: '#aaa' }}>(opsional — mund të vendoset me GPS)</span></label>
+              <label>Adresa e saktë <span style={{ fontWeight: 400, color: '#555' }}>(opsional — mund të vendoset me GPS)</span></label>
               <MapPicker
                 lat={form.latitude}
                 lng={form.longitude}

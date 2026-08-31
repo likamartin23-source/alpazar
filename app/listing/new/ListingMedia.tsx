@@ -26,7 +26,7 @@ export function ListingMedia({ p }: any) {
           <input id="img-input" type="file" accept="image/*" multiple onChange={handleImages} />
           <i className="ti ti-cloud-upload" aria-hidden="true" />
           <p>Kliko për të ngarkuar fotot</p>
-          <p style={{ fontSize: 10, marginTop: 4, color: '#bbb' }}>Cdo format · pa kufi madhesie · kompresim automatik</p>
+          <p style={{ fontSize: 10, marginTop: 4, color: '#555' }}>Cdo format · pa kufi madhesie · kompresim automatik</p>
         </label>
         {imagePreviews.length > 0 && (
           <div className="img-previews">
@@ -57,7 +57,7 @@ export function ListingMedia({ p }: any) {
             <input id="vid-input" type="file" accept="video/*" multiple onChange={vid.add} />
             <i className="ti ti-video" aria-hidden="true" />
             <p>Shto video të produktit</p>
-            <p style={{ fontSize: 10, marginTop: 4, color: '#bbb' }}>
+            <p style={{ fontSize: 10, marginTop: 4, color: '#555' }}>
               Deri në {vid.maxMin} minuta secila · deri {vid.maxMb}MB secila · max {vidCap} video
             </p>
           </label>

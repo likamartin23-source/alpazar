@@ -93,7 +93,7 @@ export function TrustBadge({ score: scoreProp, createdAt, listingsActive = 0, ga
         <div style={{ fontSize: 11, fontWeight: 700, color: level.color }}>
           <span aria-hidden="true">{level.icon}</span> {level.label}
         </div>
-        <div style={{ fontSize: 10, color: '#888', marginTop: 2 }}>
+        <div style={{ fontSize: 10, color: '#555', marginTop: 2 }}>
           Trust Score {score}/100
         </div>
       </div>

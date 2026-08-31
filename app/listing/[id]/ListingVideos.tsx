@@ -45,7 +45,7 @@ const VIDEO_CSS = `
 .alp-vid-tb img{width:100%;height:100%;object-fit:cover;display:block;opacity:.75}
 .alp-vid-tb.on img{opacity:1}
 .alp-vid-tb .ix{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:800;text-shadow:0 1px 3px rgba(0,0,0,.8)}
-.alp-vid-note{font-size:10.5px;color:#aaa;margin-top:8px;text-align:center}
+.alp-vid-note{font-size:11px;font-weight:600;color:#555;margin-top:8px;text-align:center}
 `
 
 export default function ListingVideos({ videos, legacy, poster, images }: any) {

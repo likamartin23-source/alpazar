@@ -27,7 +27,7 @@ export default function NotFound() {
             <h2 style={{ fontSize: 18, fontWeight: 700, color: '#111', margin: '0 0 8px' }}>
               Faqja nuk u gjet
             </h2>
-            <p style={{ fontSize: 13, color: '#888', lineHeight: 1.6, margin: '0 0 24px' }}>
+            <p style={{ fontSize: 13, color: '#555', lineHeight: 1.6, margin: '0 0 24px' }}>
               Faqja që kërkove nuk ekziston ose është zhvendosur.
               Mund të jetë fshirë ose të kesh shtypur adresën gabim.
             </p>

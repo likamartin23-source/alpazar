@@ -127,7 +127,10 @@ export default function NewListing() {
         city: form.city,
         images: uploadedUrls,
         videos,
-        video_poster: uploadedUrls[0] || null,
+        // Poster VETËM kur ka vërtet video. Më parë vendosej gjithmonë fotoja e parë,
+        // ndaj shpallje pa asnjë video mbanin `video_poster` (matur: 39bb6642 → 0 video,
+        // poster i vendosur). Të dhëna të pakuptimta që ngatërrojnë çdo lexues.
+        video_poster: videos.length ? (uploadedUrls[0] || null) : null,
         is_active: true,
         latitude: form.latitude,
         longitude: form.longitude,

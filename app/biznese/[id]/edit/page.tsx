@@ -47,7 +47,7 @@ export default function BiznesEditPage() {
       </div>
       <div style={{ padding: '20px 16px' }}>
         {loading || !initial ? (
-          <div style={{ textAlign: 'center', padding: 40, color: '#888', fontSize: 13 }}>Duke ngarkuar…</div>
+          <div style={{ textAlign: 'center', padding: 40, color: '#555', fontSize: 13 }}>Duke ngarkuar…</div>
         ) : (
           <BusinessForm mode="edit" initial={initial} onSaved={() => { window.location.href = `/biznese/${params.id}` }} />
         )}

@@ -72,12 +72,12 @@ export default function SavedSearchesPage() {
             <button type="button" onClick={() => { setLoadError(false); setLoading(true); window.location.reload() }} style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
           </div>
         ) : loading ? (
-          <div style={{ color: '#888', textAlign: 'center', padding: 40 }}>Duke ngarkuar...</div>
+          <div style={{ color: '#555', textAlign: 'center', padding: 40 }}>Duke ngarkuar...</div>
         ) : searches.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px 24px' }}>
             <div style={{ fontSize: 48, marginBottom: 16 }} aria-hidden="true">🔔</div>
             <div style={{ fontSize: 17, fontWeight: 700, color: '#111', marginBottom: 8 }}>Ende s'ke kërkime të ruajtura</div>
-            <div style={{ fontSize: 13, color: '#888', marginBottom: 24 }}>Ruaj filtrat e kërkimit dhe njoftohu kur dalin shpallje të reja</div>
+            <div style={{ fontSize: 13, color: '#555', marginBottom: 24 }}>Ruaj filtrat e kërkimit dhe njoftohu kur dalin shpallje të reja</div>
             <button
               type="button"
               onClick={() => { window.location.href = '/search' }}

@@ -20,14 +20,14 @@ const CSS = `
   .logo{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:20px;}
   .brand{font-size:24px;font-weight:700;color:#111;letter-spacing:2px;}
   h2{font-size:17px;font-weight:700;color:#111;margin-bottom:5px;text-align:center;}
-  .sub{font-size:12px;color:#888;text-align:center;margin-bottom:18px;line-height:1.6;}
+  .sub{font-size:12px;color:#555;text-align:center;margin-bottom:18px;line-height:1.6;}
   .sub strong{color:#111;}
   .row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   .field{margin-bottom:12px;}
   label{font-size:11px;font-weight:600;color:#555;display:block;margin-bottom:4px;}
   input[type=text],input[type=email],input[type=tel],input[type=number],input[type=password]{width:100%;border:1.5px solid #ddd;border-radius:8px;padding:11px 13px;font-size:13px;font-family:inherit;outline:none;transition:border .15s;background:#fff;color:#111;}
   input:focus{border-color:#F5C842;}
-  .hint{font-size:10px;color:#aaa;margin-top:4px;line-height:1.5;}
+  .hint{font-size:10px;color:#555;margin-top:4px;line-height:1.5;}
   .hint.ok{color:#3B6D11;}
   .hint.warn{color:#A05000;}
   .btn{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px;box-shadow:0 4px 14px -3px rgba(230,51,18,.45);transition:transform .15s ease,box-shadow .15s ease;}
@@ -44,7 +44,7 @@ const CSS = `
   .warn{background:#FFF8EE;color:#A05000;border:0.5px solid #F5C842;}
   .divider{display:flex;align-items:center;gap:10px;margin:12px 0;color:#ccc;font-size:12px;}
   .divider::before,.divider::after{content:'';flex:1;border-top:1px solid #eee;}
-  .back{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:14px;color:#888;font-size:12px;cursor:pointer;}
+  .back{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:14px;color:#555;font-size:12px;cursor:pointer;}
   .back:hover{color:#C42B0F;}
   .otp-row{display:flex;gap:8px;justify-content:center;margin-bottom:16px;}
   .otp-input{width:46px;height:54px;border:2px solid #e0e0e0;border-radius:12px;font-size:22px;font-weight:700;text-align:center;color:#111;outline:none;transition:border-color .15s ease,box-shadow .15s ease;background:#fff;}
@@ -63,20 +63,20 @@ const CSS = `
   .step-dot{width:8px;height:8px;border-radius:50%;background:#eee;}
   .step-dot.active{background:#E63312;width:20px;border-radius:4px;}
   .step-dot.done{background:#97C459;}
-  .terms{font-size:10px;color:#aaa;text-align:center;margin-top:10px;line-height:1.6;}
-  .terms a{color:#888;text-decoration:underline;}
+  .terms{font-size:10px;color:#555;text-align:center;margin-top:10px;line-height:1.6;}
+  .terms a{color:#555;text-decoration:underline;}
   .pass-wrap{position:relative;}
   .pass-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#aaa;font-size:13px;padding:4px;}
   .contact-wrap{position:relative;}
   .contact-type{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;}
-  .forgot-link{display:block;text-align:center;font-size:11px;color:#aaa;cursor:pointer;margin-top:4px;}
+  .forgot-link{display:block;text-align:center;font-size:11px;color:#555;cursor:pointer;margin-top:4px;}
   .forgot-link:hover{color:#C42B0F;text-decoration:underline;}
   .sms-fail-box{background:#FFF8EE;border:1.5px solid #F5C842;border-radius:12px;padding:14px;margin-bottom:10px;}
   .sms-fail-header{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;}
   .sms-fail-header span{font-size:22px;flex-shrink:0;}
   .sms-fail-header strong{font-size:13px;font-weight:700;color:#111;display:block;margin-bottom:3px;}
-  .sms-fail-header p{font-size:11px;color:#888;margin:0;line-height:1.5;}
-  .sec-row{text-align:center;font-size:12px;color:#888;margin-top:6px;}
+  .sms-fail-header p{font-size:11px;color:#555;margin:0;line-height:1.5;}
+  .sec-row{text-align:center;font-size:12px;color:#555;margin-top:6px;}
   .sec-row a{color:#C42B0F;font-weight:700;cursor:pointer;text-decoration:none;}
   .sec-row a:hover{text-decoration:underline;}
 `
@@ -824,12 +824,12 @@ export default function Auth() {
         Kodi 6-shifror u dërgua te<br />
         <strong>{resolvedId}</strong><br />
         {detectType(resolvedId) === 'email' && (
-          <span style={{ fontSize: 10, color: '#aaa' }}>Nëse nuk e gjen, kontrollo Spam / Junk</span>
+          <span style={{ fontSize: 10, color: '#555' }}>Nëse nuk e gjen, kontrollo Spam / Junk</span>
         )}
       </p>
 
       <div className="countdown">
-        <span style={{ fontSize: 12, color: '#888' }}>{expired ? 'Kodi skadoi' : 'Skadon në:'}</span>
+        <span style={{ fontSize: 12, color: '#555' }}>{expired ? 'Kodi skadoi' : 'Skadon në:'}</span>
         <span className={`countdown-time ${expired ? 'err-c' : timeClass}`}>
           {expired ? '0:00' : `${mins}:${fmt2(secs)}`}
         </span>
@@ -1182,7 +1182,7 @@ export default function Auth() {
               <p className="sub">
                 Dërguam {mode === 'forgot' ? 'link rivendosjeje' : 'link konfirmimi'} te<br />
                 <strong>{resolvedId}</strong><br />
-                <span style={{ fontSize: 10, color: '#aaa' }}>Kontrollo Spam/Junk nëse nuk e gjen</span>
+                <span style={{ fontSize: 10, color: '#555' }}>Kontrollo Spam/Junk nëse nuk e gjen</span>
               </p>
               <div style={{ background: '#EAF3DE', border: '0.5px solid #97C459', borderRadius: 10, padding: '14px 16px', marginBottom: 14, textAlign: 'center' }}>
                 <span aria-hidden="true" style={{ fontSize: 28, display: 'block', marginBottom: 6 }}>📬</span>

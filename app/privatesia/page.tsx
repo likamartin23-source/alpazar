@@ -20,13 +20,13 @@ export default function Privatesia() {
     .right-box{background:#EAF3DE;border:0.5px solid #97C459;border-radius:10px;padding:12px 16px;margin:12px 0;}
     .right-box strong{font-size:12px;font-weight:700;color:#3B6D11;display:block;margin-bottom:6px;}
     .right-box ul{color:#3B6D11;font-size:12px;margin:0;}
-    .law{font-size:11px;color:#aaa;font-style:italic;}
+    .law{font-size:11px;color:#555;font-style:italic;}
     .table-wrap{overflow-x:auto;margin:10px 0;}
     table{width:100%;border-collapse:collapse;font-size:12px;}
     th{background:#FFFBEA;padding:8px 10px;text-align:left;font-weight:700;color:#111;border:1px solid #eee;}
     td{padding:8px 10px;color:#444;border:1px solid #eee;vertical-align:top;}
     .ftr{display:flex;flex-wrap:wrap;gap:8px 16px;padding:20px;background:#f9f9f9;border-top:1px solid #eee;margin-top:10px;}
-    .ftr a{color:#888;font-size:11px;text-decoration:none;}
+    .ftr a{color:#555;font-size:11px;text-decoration:none;}
   `
   return (
     <>

@@ -33,7 +33,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA}
 .tt{font-size:15px;font-weight:700;color:#111}
 .body{padding:14px}
 .card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;border:.5px solid #eee}
-.center{text-align:center}.muted{color:#888;font-size:12px}
+.center{text-align:center}.muted{color:#555;font-size:12px}
 .row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
 .plan-name{font-size:17px;font-weight:800;color:#111}
 .badge{font-size:11px;font-weight:700;border:1.5px solid;border-radius:999px;padding:3px 10px;white-space:nowrap}
@@ -56,7 +56,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA}
 .cur-tag{font-size:11px;font-weight:700;color:#8a6d00;margin-top:8px}
 .bank{background:#f8f9fb;border:.5px solid #e3e7ee;border-radius:9px;padding:11px 12px;font-size:12px;color:#333;margin-top:10px;display:flex;flex-direction:column;gap:4px}
 .bank-t{font-weight:700;color:#111;margin-bottom:2px}
-.bank span{color:#888}
+.bank span{color:#555}
 .bank code{background:#eef1f6;border-radius:5px;padding:1px 6px;font-size:11px}
 .ev{display:flex;justify-content:space-between;font-size:12px;padding:7px 0;border-bottom:.5px solid #f2f2f2}
 .ev:last-child{border-bottom:none}

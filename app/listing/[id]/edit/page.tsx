@@ -227,7 +227,7 @@ export default function EditListing() {
         .img-zone{border:2px dashed #e0b030;border-radius:10px;padding:20px;text-align:center;cursor:pointer;background:#FFFBEA;}
         .img-zone input{display:none;}
         .img-zone i{font-size:32px;color:#e0b030;display:block;margin-bottom:8px;}
-        .img-zone p{font-size:12px;color:#888;}
+        .img-zone p{font-size:12px;color:#555;}
         .img-previews{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
         .img-prev-wrap{position:relative;}
         .img-prev{width:70px;height:70px;border-radius:8px;object-fit:cover;border:2px solid #F5C842;}
@@ -237,7 +237,7 @@ export default function EditListing() {
         .cat-btn i{font-size:18px;color:#aaa;}
         .cat-btn.active{border-color:#F5C842;background:#FFFBEA;color:#111;}
         .cat-btn.active i{color:#C42B0F;}
-        .submit-btn{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px -3px rgba(230,51,18,.45);transition:transform .15s ease,box-shadow .15s ease;} .submit-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 7px 20px -4px rgba(230,51,18,.55);}
+        .submit-btn{width:100%;min-height:52px;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:800;letter-spacing:.3px;cursor:pointer;font-family:inherit;box-shadow:0 6px 18px -3px rgba(230,51,18,.5);transition:transform .15s ease,box-shadow .15s ease;} .submit-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 9px 24px -4px rgba(230,51,18,.6);}
         .submit-btn:disabled{opacity:.6;cursor:not-allowed;}
       ` }} />
 
@@ -335,7 +335,7 @@ export default function EditListing() {
               />
             </div>
             <div className="field">
-              <label>Adresa e saktë <span style={{ fontWeight: 400, color: '#aaa' }}>(opsional — mund të vendoset me GPS)</span></label>
+              <label>Adresa e saktë <span style={{ fontWeight: 400, color: '#555' }}>(opsional — mund të vendoset me GPS)</span></label>
               <MapPicker
                 lat={form.latitude}
                 lng={form.longitude}
@@ -351,7 +351,7 @@ export default function EditListing() {
 
             {existingImages.length > 0 && (
               <div style={{ marginBottom: 12 }}>
-                <p style={{ fontSize: 11, color: '#888', marginBottom: 8 }}>Fotot aktuale (kliko <span aria-hidden="true">✕</span> për të hequr):</p>
+                <p style={{ fontSize: 11, color: '#555', marginBottom: 8 }}>Fotot aktuale (kliko <span aria-hidden="true">✕</span> për të hequr):</p>
                 <div className="img-previews">
                   {existingImages.map((url, i) => (
                     <div key={i} className="img-prev-wrap">
@@ -372,7 +372,7 @@ export default function EditListing() {
               <input id="img-input" type="file" accept="image/*" multiple onChange={handleImages} />
               <i className="ti ti-cloud-upload" aria-hidden="true" />
               <p>Kliko për të shtuar foto të reja</p>
-              <p style={{ fontSize: 10, marginTop: 4, color: '#bbb' }}>JPG, PNG, WebP · max 10MB secila</p>
+              <p style={{ fontSize: 10, marginTop: 4, color: '#555' }}>JPG, PNG, WebP · max 10MB secila</p>
             </label>
 
             {imagePreviews.length > 0 && (
@@ -425,7 +425,7 @@ export default function EditListing() {
                 <input id="vid-input" type="file" accept="video/*" multiple onChange={vid.add} />
                 <i className="ti ti-video" aria-hidden="true" />
                 <p>Kliko për të shtuar video</p>
-                <p style={{ fontSize: 10, marginTop: 4, color: '#bbb' }}>
+                <p style={{ fontSize: 10, marginTop: 4, color: '#555' }}>
                   Deri në {vid.maxMin} minuta secila · max {vid.maxVideos < 0 ? '∞' : vid.maxVideos} video
                 </p>
               </label>

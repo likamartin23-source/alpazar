@@ -114,7 +114,7 @@ function BizReviews({ rating, reviews }: { rating: { count: number; avg: number 
         <div style={{ background: '#fff', borderRadius: 16, padding: '40px 16px', textAlign: 'center' }}>
           <div style={{ fontSize: 44, marginBottom: 14 }} aria-hidden="true">⭐</div>
           <div style={{ fontSize: 16, fontWeight: 800, color: '#111', marginBottom: 6 }}>Ende pa vlerësime</div>
-          <div style={{ fontSize: 12, color: '#888', lineHeight: 1.6 }}>Klientët që blejnë nga ky biznes do të mund të lënë vlerësimin këtu.</div>
+          <div style={{ fontSize: 12, color: '#555', lineHeight: 1.6 }}>Klientët që blejnë nga ky biznes do të mund të lënë vlerësimin këtu.</div>
         </div>
       )}
     </>
@@ -487,7 +487,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           .bizp-stats .stat-div{width:1px;background:#333;}
           .stat-pill{display:flex;flex-direction:column;align-items:center;flex:1;}
           .stat-n{font-size:18px;font-weight:800;color:#F5C842;}
-          .stat-l{font-size:10px;color:#bbb;font-weight:500;margin-top:1px;}
+          .stat-l{font-size:10px;color:#555;font-weight:500;margin-top:1px;}
           .bizp-tabs{position:sticky;top:50px;z-index:10;background:#fff;border-bottom:1px solid #eee;display:flex;overflow-x:auto;margin-bottom:2px;}
           .bizp-tabs button{flex:1 0 auto;padding:12px 14px;font-size:12.5px;font-weight:700;border:none;background:none;cursor:pointer;border-bottom:2.5px solid transparent;color:#888;font-family:inherit;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:5px;}
           .bizp-tabs button.on{color:#C42B0F;border-bottom-color:#E63312;}
@@ -512,7 +512,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           .mrow i.lead{font-size:19px;color:#C42B0F;width:24px;text-align:center;}
           .mrow .mtxt{flex:1;min-width:0;}
           .mrow .mtt{font-size:13.5px;font-weight:700;color:#111;}
-          .mrow .msub{font-size:11px;color:#888;margin-top:1px;}
+          .mrow .msub{font-size:11px;color:#555;margin-top:1px;}
           .mrow i.arr{color:#bbb;font-size:16px;}
         ` }} />
         <div className="bizp-shell">
@@ -636,7 +636,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               {listErr && <div role="alert" style={{ background: '#FEECEC', color: '#B42318', border: '1px solid #F5C2C2', borderRadius: 8, padding: '8px 10px', fontSize: 12, marginBottom: 10 }}>{listErr}</div>}
               {reactMsg && <div role="alert" style={{ background: reactMsg.startsWith('err:') ? '#FEECEC' : '#E7F6EC', color: reactMsg.startsWith('err:') ? '#B42318' : '#0E7A35', border: `1px solid ${reactMsg.startsWith('err:') ? '#F5C2C2' : '#8fd3a8'}`, borderRadius: 8, padding: '8px 10px', fontSize: 12, marginBottom: 10 }}>{reactMsg.split(/:(.+)/)[1]}</div>}
               {mgmtListings === null ? (
-                <div style={{ textAlign: 'center', padding: '24px 0', color: '#aaa', fontSize: 12 }}>Duke ngarkuar…</div>
+                <div style={{ textAlign: 'center', padding: '24px 0', color: '#555', fontSize: 12 }}>Duke ngarkuar…</div>
               ) : mgmtListings.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '32px 16px', color: '#aaa' }}>
                   <div style={{ fontSize: 44, marginBottom: 10 }} aria-hidden="true">🛍️</div>
@@ -665,7 +665,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
                                 : mgmtListings.filter(l => !l.is_active && l.status !== 'sold')
                     const bosh = listFilter === 'active' ? 'Nuk ke shpallje aktive.' : listFilter === 'sold' ? 'Ende asnjë shpallje e shitur.' : 'Asnjë shpallje e pauzuar.'
                     return shown.length === 0 ? (
-                      <div style={{ textAlign: 'center', padding: '24px 0', color: '#aaa', fontSize: 12 }}>
+                      <div style={{ textAlign: 'center', padding: '24px 0', color: '#555', fontSize: 12 }}>
                         <i className="ti ti-package" style={{ fontSize: 36, display: 'block', marginBottom: 10, color: '#F5C842' }} aria-hidden="true" />{bosh}
                       </div>
                     ) : shown.map(l => (
@@ -755,7 +755,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
         .info-text a{color:#C42B0F;font-weight:700;text-decoration:none;}
         .stat-pill{display:flex;flex-direction:column;align-items:center;flex:1;}
         .stat-n{font-size:18px;font-weight:800;color:#111;}
-        .stat-l{font-size:10px;color:#888;font-weight:500;margin-top:1px;}
+        .stat-l{font-size:10px;color:#555;font-weight:500;margin-top:1px;}
         .card{background:#fff;border-radius:16px;margin:8px 12px 0;padding:16px;}
         .card-title{font-size:13px;font-weight:800;color:#111;margin-bottom:14px;display:flex;align-items:center;gap:6px;}
         .biz-chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:#444;background:#f4f4f4;border:1px solid #e2e2e2;border-radius:999px;padding:6px 11px;min-height:32px;text-decoration:none;cursor:default;}
@@ -1068,7 +1068,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
             )}
             {biz.description
               ? <p style={{ fontSize: 13, color: '#444', lineHeight: 1.7, marginBottom: 12 }}>{biz.description}</p>
-              : <p style={{ fontSize: 12, color: '#aaa', marginBottom: 12 }}>Nuk ka përshkrim.</p>
+              : <p style={{ fontSize: 12, color: '#555', marginBottom: 12 }}>Nuk ka përshkrim.</p>
             }
             {biz.type && (
               <div className="info-row">

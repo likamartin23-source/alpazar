@@ -13,7 +13,7 @@ export default function RrethNesh() {
     .hero::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#E63312,#F5C842);}
     .hero-logo{font-size:56px;display:block;margin-bottom:14px;}
     .hero h1{color:#F5C842;font-size:24px;font-weight:700;letter-spacing:2px;margin-bottom:8px;}
-    .hero p{color:#888;font-size:13px;line-height:1.7;}
+    .hero p{color:#555;font-size:13px;line-height:1.7;}
     .body{padding:20px 16px 40px;}
     .section{background:#fff;border-radius:12px;padding:20px;border:0.5px solid #eee;margin-bottom:14px;}
     .sec-title{font-size:15px;font-weight:700;color:#111;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
@@ -37,7 +37,7 @@ export default function RrethNesh() {
     .tl-date{font-size:11px;font-weight:700;color:#C42B0F;margin-bottom:3px;}
     .tl-text{font-size:12px;color:#555;line-height:1.6;}
     .ftr{display:flex;flex-wrap:wrap;gap:8px 16px;padding:20px;background:#f9f9f9;border-top:1px solid #eee;}
-    .ftr a{color:#888;font-size:11px;text-decoration:none;}
+    .ftr a{color:#555;font-size:11px;text-decoration:none;}
   `
   return (
     <>

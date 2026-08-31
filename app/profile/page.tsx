@@ -31,7 +31,7 @@ function BizUpsellBanner({ userId, isPremium }: { userId?: string; isPremium?: b
       <span style={{ fontSize: 28 }} aria-hidden="true">🏢</span>
       <div style={{ flex: 1 }}>
         <div style={{ fontSize: 13, fontWeight: 800, color: '#F5C842', marginBottom: 3 }}>Krijo Biznes Online</div>
-        <div style={{ fontSize: 11, color: '#aaa', lineHeight: 1.5 }}>{isPremium
+        <div style={{ fontSize: 11, color: '#555', lineHeight: 1.5 }}>{isPremium
           ? <>Faqe e dedikuar · Shpallje pa limit · Badge <span aria-hidden="true">✓</span> Biznes</>
           : <><span aria-hidden="true">👑</span> Veçori Premium · Faqe e dedikuar · Badge <span aria-hidden="true">✓</span> Biznes</>}</div>
       </div>
@@ -460,7 +460,7 @@ export default function ProfilePage() {
         .avatar{width:76px;height:76px;border-radius:50%;background:#F5C842;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 12px;border:3px solid #F5C842;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.3);}
         .avatar img{width:100%;height:100%;object-fit:cover;}
         .name{font-size:19px;font-weight:800;color:#1a1a1a;}
-        .handle{font-size:12px;color:#888;margin-top:4px;}
+        .handle{font-size:12px;color:#555;margin-top:4px;}
         .email-row{font-size:11px;color:#666;display:flex;align-items:center;gap:6px;margin-top:4px;justify-content:center;}
         .badges-row{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap;}
         .badge{font-size:10px;padding:4px 10px;border-radius:6px;font-weight:700;}
@@ -491,7 +491,7 @@ export default function ProfilePage() {
         .save-btn{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:10px;padding:6px 13px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(230,51,18,.4);transition:all .15s ease;}
         .info-row{display:flex;align-items:flex-start;padding:8px 0;border-bottom:0.5px solid #f5f5f0;}
         .info-row:last-child{border:none;}
-        .info-label{font-size:10px;color:#999;width:90px;flex-shrink:0;margin-top:2px;}
+        .info-label{font-size:10px;color:#4A4A4A;width:90px;flex-shrink:0;margin-top:2px;}
         .info-val{font-size:12px;color:#111;flex:1;}
         label{font-size:11px;font-weight:600;color:#555;display:block;margin-bottom:4px;margin-top:10px;}
         input,textarea,select{width:100%;border:1.5px solid #ddd;border-radius:12px;padding:10px 13px;font-size:13px;font-family:inherit;outline:none;background:#fff;transition:border-color .15s ease,box-shadow .15s ease;}
@@ -531,7 +531,7 @@ export default function ProfilePage() {
         .conv-badge{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:999px;min-width:18px;text-align:center;}
         .inbox-empty{text-align:center;padding:40px 20px;}
         .inbox-empty i{font-size:44px;color:#F5C842;display:block;margin-bottom:12px;}
-        .inbox-empty p{font-size:12px;color:#aaa;margin-bottom:16px;line-height:1.6;}
+        .inbox-empty p{font-size:12px;color:#555;margin-bottom:16px;line-height:1.6;}
         .inbox-empty-btn{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:10px;padding:11px 22px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(230,51,18,.4);}
         .open-msgs-btn{width:100%;background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;transition:all .15s ease;}
         .open-msgs-btn i{font-size:17px;}
@@ -542,7 +542,7 @@ export default function ProfilePage() {
         .sec-btn:disabled{opacity:.6;cursor:not-allowed;}
         .danger-zone{background:#FFF0EE;border:1px solid #F09595;border-radius:12px;padding:16px;margin-bottom:12px;}
         .danger-title{font-size:13px;font-weight:700;color:#C42B0F;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
-        .danger-desc{font-size:11px;color:#888;line-height:1.6;margin-bottom:12px;}
+        .danger-desc{font-size:11px;color:#555;line-height:1.6;margin-bottom:12px;}
         .delete-btn{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(230,51,18,.4);transition:all .15s ease;}
         .delete-btn:disabled{opacity:.6;cursor:not-allowed;}
         .delete-confirm{background:#fff;border:1.5px solid #E63312;border-radius:12px;padding:14px;margin-top:10px;text-align:center;}
@@ -620,7 +620,7 @@ export default function ProfilePage() {
               </button>
             )}
           </div>
-          {profile?.city && <div style={{ fontSize: 11, color: '#888', marginBottom: 4 }}><span aria-hidden="true">📍</span> {profile.city}{profile?.created_at ? ` · Anëtar prej ${new Date(profile.created_at).getFullYear()}` : ''}</div>}
+          {profile?.city && <div style={{ fontSize: 11, color: '#555', marginBottom: 4 }}><span aria-hidden="true">📍</span> {profile.city}{profile?.created_at ? ` · Anëtar prej ${new Date(profile.created_at).getFullYear()}` : ''}</div>}
           <div className="email-row" style={{ justifyContent: 'flex-start' }}><i className="ti ti-mail" aria-hidden="true" />{user?.email}</div>
           <div className="badges-row" style={{ justifyContent: 'flex-start', marginTop: 8 }}>
             {profile?.is_admin && <span className="badge b-admin"><span aria-hidden="true">🛡</span> Admin</span>}
@@ -1025,7 +1025,7 @@ export default function ProfilePage() {
                              : listFilter === 'sold'   ? 'Ende asnjë shpallje e shitur.'
                              : 'Asnjë shpallje e pauzuar.'
                   return shown.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '24px 0', color: '#aaa', fontSize: 12 }}>
+                  <div style={{ textAlign: 'center', padding: '24px 0', color: '#555', fontSize: 12 }}>
                     <i className="ti ti-package" style={{ fontSize: 36, display: 'block', marginBottom: 10, color: '#F5C842' }} aria-hidden="true" />
                     {bosh}{listFilter === 'active' ? <><br />Shto tani falas!</> : null}
                   </div>
@@ -1086,7 +1086,7 @@ export default function ProfilePage() {
                 <span className="card-title"><span aria-hidden="true">❤️</span> Shpalljet e ruajtura ({savedListings.length})</span>
               </div>
               {savedListings.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '24px 0', color: '#aaa', fontSize: 12 }}>
+                <div style={{ textAlign: 'center', padding: '24px 0', color: '#555', fontSize: 12 }}>
                   <i className="ti ti-heart" style={{ fontSize: 36, display: 'block', marginBottom: 10, color: '#F5C842' }} aria-hidden="true" />
                   Nuk ke shpallje të ruajtura.<br />Hap zemrën <i className="ti ti-heart" style={{ fontSize: 11 }} aria-hidden="true" /> në çdo shpallje!
                 </div>
@@ -1262,7 +1262,7 @@ export default function ProfilePage() {
                     style={{ width: '100%', minHeight: 46, background: g2 ? 'linear-gradient(135deg,#E63312,#c42a0e)' : '#f0f0f0', color: g2 ? '#fff' : '#aaa', border: 'none', borderRadius: 11, fontSize: 13, fontWeight: 800, cursor: g2 ? 'pointer' : 'not-allowed', fontFamily: 'inherit' }}>
                     + Krijo faqen e biznesit
                   </button>
-                  {hasBiz && <p style={{ fontSize: 10.5, color: '#999', margin: '8px 0 0' }}>Ke tashmë një biznes → çaktivizohet (pa dublim).</p>}
+                  {hasBiz && <p style={{ fontSize: 10.5, color: '#555', margin: '8px 0 0' }}>Ke tashmë një biznes → çaktivizohet (pa dublim).</p>}
                 </div>
 
                 {/* ── Gjendja 3 — Me biznes ─────────────────────────── */}
@@ -1287,7 +1287,7 @@ export default function ProfilePage() {
                       </button>
                     </>
                   ) : (
-                    <p style={{ fontSize: 11.5, color: '#999', margin: '2px 0 0', lineHeight: 1.5 }}>
+                    <p style={{ fontSize: 11.5, color: '#555', margin: '2px 0 0', lineHeight: 1.5 }}>
                       Kur të krijosh biznesin, këtu do të veprosh si biznes (hyrja te paneli i biznesit).
                     </p>
                   )}

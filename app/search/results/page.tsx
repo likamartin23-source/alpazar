@@ -493,7 +493,7 @@ const [searchError, setSearchError] = useState(false)
            te mos divergjoje me kryefaqen/profilin/biznesin. Grid-i i njesuar. */
 
         /* Empty state per section */
-        .section-empty{text-align:center;padding:16px;background:#f9f9f7;border-radius:10px;color:#aaa;font-size:11px;}
+        .section-empty{text-align:center;padding:16px;background:#f9f9f7;border-radius:10px;color:#555;font-size:11px;}
 
         /* Global loading */
         .loading{text-align:center;padding:50px 20px;}

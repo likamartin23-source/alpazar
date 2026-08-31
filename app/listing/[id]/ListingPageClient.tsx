@@ -620,7 +620,8 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         .cond-new{background:#FFF0EE;color:#C42B0F;font-weight:700;}
         .cond-used{background:#F0F0F0;color:#555;font-weight:700;}
         .divider{height:1px;background:#f0f0f0;margin:10px 0;}
-        .sec-label{font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+        .sec-label{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:800;color:#4A4A4A;text-transform:uppercase;letter-spacing:.6px;margin-bottom:9px;}
+        .sec-label::before{content:'';flex:0 0 auto;width:3px;height:13px;border-radius:2px;background:linear-gradient(180deg,#F5C842,#E63312);}
         .desc{font-size:13px;color:#555;line-height:1.7;}
 
         /* Seller section — free-flowing */
@@ -629,7 +630,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         .seller-av{width:44px;height:44px;border-radius:50%;background:#F5C842;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#111;flex-shrink:0;overflow:hidden;border:2.5px solid #F5C842;}
         .seller-av img{width:100%;height:100%;object-fit:cover;}
         .seller-name{font-size:14px;font-weight:700;color:#111;}
-        .seller-sub{font-size:11px;color:#888;margin-top:2px;}
+        .seller-sub{font-size:11px;color:#555;margin-top:2px;}
         .seller-chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px;}
         .schip{font-size:9.5px;font-weight:700;padding:3px 8px;border-radius:6px;}
         .sch-prem{background:linear-gradient(135deg,#F8D24E,#F5C842);color:#111;box-shadow:0 1px 4px rgba(245,200,66,.45);}
@@ -647,7 +648,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         .shop-link-row{display:flex;align-items:center;gap:9px;background:#f8f6f0;border:0.5px solid #ececec;border-radius:12px;padding:9px 12px;margin-top:8px;cursor:pointer;text-decoration:none;transition:background .15s ease;}
         .shop-link-row:hover{background:#f2efe6;}
         .shop-link-row span{font-size:12px;font-weight:700;color:#111;}
-        .shop-link-row small{font-size:10px;color:#aaa;display:block;margin-top:1px;}
+        .shop-link-row small{font-size:10px;color:#555;display:block;margin-top:1px;}
 
         /* ── CHAT BOTTOM SHEET ── */
         .cs-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:190;animation:fadeIn .2s;}
@@ -680,7 +681,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         .theirs .bubble{background:#fff;color:#111;border-bottom-left-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,.07);}
         .btime{font-size:9px;color:rgba(0,0,0,.3);margin-top:2px;text-align:right;}
         .theirs .btime{text-align:left;color:#bbb;}
-        .empty-chat{text-align:center;padding:20px 16px;color:#bbb;}
+        .empty-chat{text-align:center;padding:20px 16px;color:#555;}
         .empty-chat-icon{font-size:30px;margin-bottom:6px;}
         .empty-chat-txt{font-size:12px;line-height:1.6;}
         .typing-row{display:flex;align-items:flex-end;gap:6px;margin-bottom:4px;}
@@ -705,7 +706,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         /* Bottom bar */
         .bottom-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid #eee;padding:10px 12px;display:flex;gap:8px;align-items:center;z-index:100;box-shadow:0 -6px 20px rgba(0,0,0,.06);}
         .bb-price{display:flex;flex-direction:column;justify-content:center;flex-shrink:0;max-width:112px;padding-right:2px;}
-        .bb-price-l{font-size:9px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:.3px;line-height:1;}
+        .bb-price-l{font-size:9px;font-weight:600;color:#4A4A4A;text-transform:uppercase;letter-spacing:.3px;line-height:1;}
         .bb-price-n{font-size:16px;font-weight:800;color:#C42B0F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.3px;line-height:1.2;}
         .main-chat-btn{flex:1;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 12px rgba(230,51,18,.3);}
         .main-chat-btn i{font-size:16px;}
@@ -723,7 +724,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         .alert-panel{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-radius:18px 18px 0 0;z-index:310;padding:20px 18px 36px;box-shadow:0 -4px 24px rgba(0,0,0,.15);}
         .alert-handle{width:36px;height:4px;background:#ddd;border-radius:4px;margin:0 auto 16px;}
         .alert-title{font-size:16px;font-weight:800;color:#111;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
-        .alert-sub{font-size:12px;color:#888;margin-bottom:16px;}
+        .alert-sub{font-size:12px;color:#555;margin-bottom:16px;}
         .alert-input{width:100%;border:1.5px solid #ddd;border-radius:11px;padding:12px 14px;font-size:15px;font-weight:700;color:#111;box-sizing:border-box;font-family:inherit;outline:none;}
         .alert-input:focus{border-color:#E63312;}
         .alert-btn-row{display:flex;gap:8px;margin-top:14px;}
@@ -739,14 +740,14 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         .report-panel{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-radius:18px 18px 0 0;z-index:310;padding:18px 16px 32px;box-shadow:0 -4px 24px rgba(0,0,0,.15);}
         .report-handle{width:36px;height:4px;background:#ddd;border-radius:4px;margin:0 auto 14px;}
         .report-title{font-size:15px;font-weight:700;color:#111;margin-bottom:4px;}
-        .report-sub{font-size:12px;color:#888;margin-bottom:14px;}
+        .report-sub{font-size:12px;color:#555;margin-bottom:14px;}
         .reason-list{display:flex;flex-direction:column;gap:7px;margin-bottom:16px;}
         .reason-btn{display:flex;align-items:center;gap:10px;border:1.5px solid #eee;border-radius:10px;padding:11px 13px;background:#fff;font-family:inherit;font-size:13px;color:#333;cursor:pointer;text-align:left;}
         .reason-btn.sel{border-color:#E63312;background:#FFF0EE;color:#C42B0F;font-weight:600;}
         .report-submit{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:11px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
         .report-submit:disabled{opacity:.5;cursor:not-allowed;}
         .report-success{text-align:center;padding:18px 0;}
-        .report-link{display:block;text-align:center;font-size:11px;color:#bbb;margin-top:14px;cursor:pointer;}
+        .report-link{display:block;text-align:center;font-size:11px;color:#555;margin-top:14px;cursor:pointer;}
         .report-link:hover{color:#C42B0F;}
         @keyframes ai-fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
       ` }} />
@@ -1077,7 +1078,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
           {!isOwner && user && seller && (
             <div style={{ padding: '0 13px 14px' }}>
               <div className="divider" style={{ marginBottom: 12 }} />
-              <div style={{ fontSize: 11, fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '.5px', marginBottom: 10 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#4A4A4A', textTransform: 'uppercase', letterSpacing: '.5px', marginBottom: 10 }}>
                 Vlerëso shitësin
               </div>
 
@@ -1214,7 +1215,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                 </span>
               )}
             </div>
-            <div style={{ fontSize: 12, color: '#888', marginBottom: 8 }}>
+            <div style={{ fontSize: 12, color: '#555', marginBottom: 8 }}>
               Çmimi aktual: <strong style={{ color: '#111' }}>{fmt(listing?.price, listing?.currency)}</strong>
             </div>
             <input

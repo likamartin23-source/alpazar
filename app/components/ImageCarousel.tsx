@@ -175,7 +175,7 @@ export function ImageCarousel({ images, videos, poster, alt = '', aspectRatio = 
                       if (wrap && !wrap.querySelector('.img-err')) {
                         const d = document.createElement('div')
                         d.className = 'img-err'
-                        d.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#ccc;background:#F6F6F6;'
+                        d.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#555;background:#F6F6F6;'
                         d.innerHTML = '<i class="ti ti-photo" style="font-size:32px"></i><span style="font-size:11px;font-weight:600">Pa foto</span>'
                         wrap.appendChild(d)
                       }
@@ -251,12 +251,12 @@ export function ImageCarousel({ images, videos, poster, alt = '', aspectRatio = 
       )}
 
       {count > 1 && (
-        <div style={{ fontSize: 13.2, color: '#6b6b6b', textAlign: 'center', marginTop: 6 }}>
+        <div style={{ fontSize: 13.2, fontWeight: 600, color: '#555', letterSpacing: .2, textAlign: 'center', marginTop: 8 }}>
           <span aria-hidden="true">↔</span> Rrëshkit për të parë të tjerat
         </div>
       )}
       {vidList.length > 0 && (
-        <div style={{ fontSize: 11, color: '#6b6b6b', textAlign: 'center', marginTop: 6 }}>
+        <div style={{ fontSize: 11.5, fontWeight: 600, color: '#555', textAlign: 'center', marginTop: 6 }}>
           <span aria-hidden="true">🎬</span> Videot ndihmojnë shpalljen të shitet deri në 3× më shpejt.
         </div>
       )}

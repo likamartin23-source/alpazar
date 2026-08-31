@@ -364,7 +364,7 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
 
       {/* Hint for copy-based platforms */}
       {PLATFORMS.some(p => noApi(p)) && (
-        <div style={{ fontSize: 9.5, color: '#aaa', textAlign: 'center', lineHeight: 1.5 }}>
+        <div style={{ fontSize: 9.5, color: '#555', textAlign: 'center', lineHeight: 1.5 }}>
           <><span aria-hidden="true">📋</span> Instagram &amp; TikTok: linku kopjohet automatikisht, pastaj hapet aplikacioni</>
         </div>
       )}
