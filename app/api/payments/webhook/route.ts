@@ -60,8 +60,15 @@ export async function POST(req: NextRequest) {
     // e regjistron pagesen si 'review' (paraja nuk humbet).
     let userId: string | null = body.user_id || null
     if (!userId && body.email) {
-      const { data } = await db.from('profiles').select('id').eq('email', String(body.email)).maybeSingle()
-      userId = (data as any)?.id || null
+      /*  `profiles` NUK ka kolone `email` — u mat me 1 shtator 2026 (email-i rri
+       *  te `auth.users`). Kerkesa e vjeter `.eq('email', …)` kthente gabimin
+       *  PostgREST 42703 ne heshtje: `data` mbetej null, `userId` null, dhe
+       *  pagesa binte gjithmone te 'review'. Paraja s'humbte — kjo eshte merite
+       *  e `process_payment_event` — por dhenia automatike me email nuk punonte
+       *  KURRE. `auth_user_id_by_email()` eshte SECURITY DEFINER dhe i
+       *  thirrshem VETEM nga `service_role`, pikerisht per kete rruge.  */
+      const { data } = await db.rpc('auth_user_id_by_email', { p_email: String(body.email) })
+      userId = (typeof data === 'string' && data) ? data : null
     }
 
     // Zgjidh planin (plan_id ose plan_slug).

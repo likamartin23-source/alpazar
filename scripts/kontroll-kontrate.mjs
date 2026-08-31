@@ -17,9 +17,16 @@
  */
 import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join, extname, basename } from 'node:path'
+import { kolonaTeGabuara } from './lib/kolonat.mjs'
 
 const URL_BAZA = process.env.NEXT_PUBLIC_SUPABASE_URL
-const CELESI = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+/*  `contract_manifest()` nxjerr TË GJITHA tabelat me të gjitha kolonat dhe
+ *  emrat e të gjitha funksioneve. Deri më 1 shtator 2026 ishte i thirrshëm nga
+ *  `anon` — pra kushdo, pa sesion, merrte hartën e plotë të skemës, përfshirë
+ *  `phone`, `admin_role`, `gdpr_consent`. U mbyll. Ky skript është vegël e
+ *  brendshme, ndaj kërkon çelësin e shërbimit; nëse s'e ka, kalon te anon dhe
+ *  ANASHKALOHET me njoftim — kurrë nuk e rrëzon CI-në për një leje që i mungon. */
+const CELESI = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 if (!URL_BAZA || !CELESI) {
   console.log('::notice::Mungojnë kredencialet e bazës — kontrolli anashkalohet.')
@@ -45,12 +52,25 @@ async function thirr(fn) {
     headers: { apikey: CELESI, Authorization: `Bearer ${CELESI}`, 'Content-Type': 'application/json' },
     body: '{}',
   })
+  if (p.status === 401 || p.status === 403) {
+    const e = new Error(`${fn}: pa leje`); e.paLeje = true; throw e
+  }
   if (!p.ok) throw new Error(`${fn}: ${p.status} ${await p.text()}`)
   return p.json()
 }
 
-const manifesti = await thirr('contract_manifest')
-const vetekontrolli = await thirr('contract_self_check')
+let manifesti, vetekontrolli
+try {
+  manifesti = await thirr('contract_manifest')
+  vetekontrolli = await thirr('contract_self_check')
+} catch (e) {
+  if (e.paLeje) {
+    console.log('::notice::Kontrata kërkon SUPABASE_SERVICE_ROLE_KEY (funksionet e '
+      + 'manifestit nuk janë më publike). Kontrolli anashkalohet.')
+    process.exit(0)
+  }
+  throw e
+}
 
 const rpcEkzistuese = new Set(manifesti.rpc || [])
 const tabela = manifesti.tabela || {}
@@ -88,6 +108,14 @@ for (const skedari of gjithe) {
           gabime.push({ rel, n: i + 1, lloji: `KOLONË ${t}.`, emri: k })
     }
   })
+
+  /*  5 — kolona te FILTRAT: `.eq('email', …)` mbi nje tabele qe s'e ka.
+   *  U shtua me 1 shtator 2026, sepse pikerisht kjo i kishte shpetuar: webhook-u
+   *  i pagesave filtronte `profiles.email`, kolone qe s'ekziston, dhe dhenia
+   *  automatike e Premium-it me email nuk punoi kurre — ne heshtje.
+   *  Logjika rri te `scripts/lib/kolonat.mjs` dhe ka teste te vetat.  */
+  for (const g of kolonaTeGabuara(rreshtat.join('\n'), tabela))
+    gabime.push({ rel, n: g.rresht, lloji: `FILTËR ${g.tabela}.`, emri: g.kolona })
 }
 
 // 4 — komponentë në depo që nuk i thërret askush
