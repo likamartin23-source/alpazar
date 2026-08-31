@@ -16,6 +16,9 @@
     "ios_saf >= 14",
     "not dead"
   ],
+  "overrides": {
+    "postcss": "^8.5.26"
+  },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.98.0",
     "@react-google-maps/api": "^2.20.8",

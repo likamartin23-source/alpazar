@@ -144,6 +144,15 @@ export default function MessagesPage() {
   const [showScrollBtn,  setShowScrollBtn]  = useState(false)
   const [reactionMsg,    setReactionMsg]    = useState<string|null>(null)
   const [otherPhone,     setOtherPhone]     = useState<string|null>(null)
+  /*  Numri NUK merret me kur hapet biseda. Deri me 31 gusht 2026 lexohej
+   *  drejtperdrejt nga `profiles.phone`, cka do te thoshte qe cdo anetar mund
+   *  ta nxirrte numrin e kujtdo. Tani vjen nga `conversation_contact()`, i
+   *  cili e jep VETEM kur ekziston nje bisede reale mes te dyve, e kufizon
+   *  shpeshtesine dhe e shenon zbulimin. Butonat varen nga flamuri jo-
+   *  identifikues `has_phone`; numri kerkohet vetem kur hapet fleta.  */
+  const [otherHasPhone,  setOtherHasPhone]  = useState(false)
+  const [kontaktGabim,   setKontaktGabim]   = useState<string|null>(null)
+  const [kontaktDuke,    setKontaktDuke]    = useState(false)
   const [showInfo,       setShowInfo]       = useState(false)
   const [showWhatsApp,   setShowWhatsApp]   = useState(false)
   const [showViber,      setShowViber]      = useState(false)
@@ -317,7 +326,7 @@ export default function MessagesPage() {
   }
 
   async function openThreadById(otherId: string, uid: string) {
-    const { data } = await supabase.from('profiles').select('id,full_name,username,avatar_url').eq('id', otherId).single()
+    const { data } = await supabase.from('profiles').select('id,full_name,username,avatar_url,has_phone').eq('id', otherId).single()
     if (data) openThread({ otherId, other: data, lastMsg: null, unread: 0 }, uid)
   }
 
@@ -338,14 +347,15 @@ export default function MessagesPage() {
         .select('*,reply_msg:reply_to_id(id,content,sender_id,type,attachment_url)')
         .or(`and(sender_id.eq.${myId},receiver_id.eq.${thread.otherId}),and(sender_id.eq.${thread.otherId},receiver_id.eq.${myId})`)
         .order('created_at', { ascending: true }),
-      supabase.from('profiles').select('phone').eq('id', thread.otherId).single(),
+      supabase.from('profiles').select('has_phone').eq('id', thread.otherId).single(),
     ])
 
     // Guard kundër race: nëse përdoruesi ndërroi bisedë gjatë await-it, mos shfaq
     // mesazhet e bisedës së gabuar.
     if (selectedRef.current?.otherId !== thread.otherId) return
     if (msgs) { setMessages(msgs); prevMsgCount.current = msgs.length; setTimeout(() => scrollBottom(false), 50) }
-    if (pData?.phone) setOtherPhone(pData.phone)
+    setOtherPhone(null); setKontaktGabim(null)
+    setOtherHasPhone(!!pData?.has_phone)
     const now = new Date().toISOString()
     await Promise.all([
       supabase.from('messages').update({ read: true })
@@ -669,6 +679,19 @@ export default function MessagesPage() {
   }
 
   // ── Derived ───────────────────────────────────────────────────────────────
+  /*  Zbulimi i kontaktit: nje veprim i vetem, i kufizuar dhe i regjistruar.
+   *  Therritet kur hapet fleta e konfirmimit — jo ne ngarkim.  */
+  async function hapKontaktin() {
+    if (!selected || otherPhone || kontaktDuke) return
+    setKontaktDuke(true); setKontaktGabim(null)
+    try {
+      const { data } = await supabase.rpc('conversation_contact', { p_other_id: selected.otherId })
+      if (data?.numri) setOtherPhone(data.numri)
+      else setKontaktGabim(data?.mesazhi || 'Kontakti nuk u hap dot.')
+    } catch { setKontaktGabim('Kontakti nuk u hap dot.') }
+    setKontaktDuke(false)
+  }
+
   const isBlocked       = selected ? blockedIds.has(selected.otherId) : false
   const filteredThreads = threads.filter(t => !search.trim() || displayName(t.other).toLowerCase().includes(search.toLowerCase()))
   const totalUnread     = threads.reduce((s, t) => s + t.unread, 0)
@@ -1022,14 +1045,14 @@ export default function MessagesPage() {
               <i className="ti ti-bell" aria-hidden="true" />
               <span>Njoftimet e mia</span>
             </div>
-            {waLink && (
-              <div role="button" tabIndex={0} className="mi wa" onClick={() => { setShowInfo(false); setShowWhatsApp(true) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setShowInfo(false); setShowWhatsApp(true) } }}>
+            {otherHasPhone && (
+              <div role="button" tabIndex={0} className="mi wa" onClick={() => { setShowInfo(false); setShowWhatsApp(true); hapKontaktin() }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setShowInfo(false); setShowWhatsApp(true) } }}>
                 <i className="ti ti-brand-whatsapp" aria-hidden="true" />
                 <span>Vazhdo në WhatsApp</span>
               </div>
             )}
-            {viberLink && (
-              <div role="button" tabIndex={0} className="mi" style={{ '--mi-accent': '#7360F2' } as any} onClick={() => { setShowInfo(false); setShowViber(true) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setShowInfo(false); setShowViber(true) } }}>
+            {otherHasPhone && (
+              <div role="button" tabIndex={0} className="mi" style={{ '--mi-accent': '#7360F2' } as any} onClick={() => { setShowInfo(false); setShowViber(true); hapKontaktin() }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setShowInfo(false); setShowViber(true) } }}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="#7360F2" style={{display:'inline-block',verticalAlign:'middle',flexShrink:0}} aria-hidden="true"><path d="M11.5 1C5.7 1.1 1.1 5.7 1 11.5c-.04 2.1.55 4 1.53 5.65L1 23l6.09-1.5c1.57.9 3.4 1.41 5.27 1.45C18.1 23.02 23 18.1 23 12c0-6.07-5.1-11.09-11.5-11zm4.55 15.9c-.31.85-1.5 1.58-2.26 1.6-.77.05-1.51-.16-4.45-1.4C6.08 15.6 3.83 12.17 3.63 11.9c-.2-.28-1.63-2.16-1.63-4.13 0-1.96.85-2.95 1.18-3.37.33-.42.64-.62.9-.64.32 0 .62 0 .9.02.3.02.7-.11.97.74.32.94 1.08 3.26 1.18 3.49.1.24.16.5.03.8-.12.3-.18.48-.36.74-.18.26-.38.57-.55.76-.18.2-.36.42-.16.83.2.4.9 1.48 1.93 2.4 1.33 1.19 2.45 1.56 2.8 1.74.34.18.55.15.75-.08.2-.22.87-1.02 1.1-1.37.23-.34.46-.28.78-.17.33.11 2.07.98 2.43 1.16.35.18.58.27.67.42.09.15.09.85-.22 1.62z"/></svg>
                 <span>Vazhdo në Viber</span>
               </div>
@@ -1049,7 +1072,7 @@ export default function MessagesPage() {
       )}
 
       {/* WhatsApp handoff */}
-      {showWhatsApp && selected && waLink && (
+      {showWhatsApp && selected && (
         <div className="overlay" onClick={() => setShowWhatsApp(false)}>
           <div role="dialog" aria-modal="true" aria-label="Vazhdo në WhatsApp" className="sheet" onClick={e => e.stopPropagation()}>
             <div className="handle" />
@@ -1059,11 +1082,28 @@ export default function MessagesPage() {
               <div style={{ fontSize:13, color:'#555', lineHeight:1.7, marginBottom:20 }}>
                 Do të hapësh WhatsApp me <strong>{displayName(selected.other)}</strong>.
               </div>
-              <a href={waLink} target="_blank" rel="noopener noreferrer"
-                style={{ display:'block', background:'#25D366', color:'#fff', textDecoration:'none', padding:'14px', borderRadius:14, fontWeight:700, fontSize:15, marginBottom:10 }}
-                onClick={() => setShowWhatsApp(false)}>
-                <i className="ti ti-brand-whatsapp" style={{ marginRight:8 }} aria-hidden="true" />Hap WhatsApp
-              </a>
+              {/*  Tri gjendje: numri po hapet · nuk u hap dot · gati.
+                   Numri shfaqet SHPREHIMISHT — perdoruesi e sheh cfare po merr,
+                   dhe kjo eshte edhe zbulim i ndershem edhe rruge e dyte kur
+                   aplikacioni nuk hapet dot.  */}
+              {kontaktDuke ? (
+                <div role="status" style={{ padding:'14px', borderRadius:14, background:'#f5f5f0', fontSize:14, fontWeight:600, color:'#555', marginBottom:10 }}>
+                  Duke hapur kontaktin…
+                </div>
+              ) : kontaktGabim ? (
+                <div role="alert" style={{ padding:'12px 14px', borderRadius:14, background:'#FFF0EE', border:'1px solid #F09595', fontSize:13, fontWeight:600, color:'#C42305', marginBottom:10, lineHeight:1.6 }}>
+                  {kontaktGabim}
+                </div>
+              ) : waLink ? (
+                <>
+                  <div style={{ fontSize:15, fontWeight:800, color:'#111', letterSpacing:'.3px', marginBottom:12 }}>{otherPhone}</div>
+                  <a href={waLink} target="_blank" rel="noopener noreferrer"
+                    style={{ display:'block', background:'#25D366', color:'#fff', textDecoration:'none', padding:'14px', borderRadius:14, fontWeight:700, fontSize:15, marginBottom:10 }}
+                    onClick={() => setShowWhatsApp(false)}>
+                    <i className="ti ti-brand-whatsapp" style={{ marginRight:8 }} aria-hidden="true" />Hap WhatsApp
+                  </a>
+                </>
+              ) : null}
               <button type="button" style={{ width:'100%', padding:'13px', background:'#f5f5f0', border:'none', borderRadius:14, fontWeight:600, fontSize:14, cursor:'pointer', color:'#555', fontFamily:'inherit' }}
                 onClick={() => setShowWhatsApp(false)}>Anulo</button>
             </div>
@@ -1072,7 +1112,7 @@ export default function MessagesPage() {
       )}
 
       {/* Viber handoff */}
-      {showViber && selected && viberLink && (
+      {showViber && selected && (
         <div className="overlay" onClick={() => setShowViber(false)}>
           <div role="dialog" aria-modal="true" aria-label="Vazhdo në Viber" className="sheet" onClick={e => e.stopPropagation()}>
             <div className="handle" />
@@ -1082,11 +1122,26 @@ export default function MessagesPage() {
               <div style={{ fontSize:13, color:'#555', lineHeight:1.7, marginBottom:20 }}>
                 Do të hapësh Viber me <strong>{displayName(selected.other)}</strong>.
               </div>
-              <a href={viberLink}
-                style={{ display:'block', background:'#7360F2', color:'#fff', textDecoration:'none', padding:'14px', borderRadius:14, fontWeight:700, fontSize:15, marginBottom:10 }}
-                onClick={() => setShowViber(false)}>
+              {/*  I njejti zinxhir tri-gjendjesh si te WhatsApp-i — i njejti
+                   fjalor, qe fleta te mos duket si dy komponente te ndryshem.  */}
+              {kontaktDuke ? (
+                <div role="status" style={{ padding:'14px', borderRadius:14, background:'#f5f5f0', fontSize:14, fontWeight:600, color:'#555', marginBottom:10 }}>
+                  Duke hapur kontaktin…
+                </div>
+              ) : kontaktGabim ? (
+                <div role="alert" style={{ padding:'12px 14px', borderRadius:14, background:'#FFF0EE', border:'1px solid #F09595', fontSize:13, fontWeight:600, color:'#C42305', marginBottom:10, lineHeight:1.6 }}>
+                  {kontaktGabim}
+                </div>
+              ) : viberLink ? (
+                <>
+                  <div style={{ fontSize:15, fontWeight:800, color:'#111', letterSpacing:'.3px', marginBottom:12 }}>{otherPhone}</div>
+                  <a href={viberLink}
+                    style={{ display:'block', background:'#7360F2', color:'#fff', textDecoration:'none', padding:'14px', borderRadius:14, fontWeight:700, fontSize:15, marginBottom:10 }}
+                    onClick={() => setShowViber(false)}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" style={{display:'inline-block',verticalAlign:'middle',marginRight:8}} aria-hidden="true"><path d="M11.5 1C5.7 1.1 1.1 5.7 1 11.5c-.04 2.1.55 4 1.53 5.65L1 23l6.09-1.5c1.57.9 3.4 1.41 5.27 1.45C18.1 23.02 23 18.1 23 12c0-6.07-5.1-11.09-11.5-11zm4.55 15.9c-.31.85-1.5 1.58-2.26 1.6-.77.05-1.51-.16-4.45-1.4C6.08 15.6 3.83 12.17 3.63 11.9c-.2-.28-1.63-2.16-1.63-4.13 0-1.96.85-2.95 1.18-3.37.33-.42.64-.62.9-.64.32 0 .62 0 .9.02.3.02.7-.11.97.74.32.94 1.08 3.26 1.18 3.49.1.24.16.5.03.8-.12.3-.18.48-.36.74-.18.26-.38.57-.55.76-.18.2-.36.42-.16.83.2.4.9 1.48 1.93 2.4 1.33 1.19 2.45 1.56 2.8 1.74.34.18.55.15.75-.08.2-.22.87-1.02 1.1-1.37.23-.34.46-.28.78-.17.33.11 2.07.98 2.43 1.16.35.18.58.27.67.42.09.15.09.85-.22 1.62z"/></svg>Hap Viber
-              </a>
+                  </a>
+                </>
+              ) : null}
               <button type="button" style={{ width:'100%', padding:'13px', background:'#f5f5f0', border:'none', borderRadius:14, fontWeight:600, fontSize:14, cursor:'pointer', color:'#555', fontFamily:'inherit' }}
                 onClick={() => setShowViber(false)}>Anulo</button>
             </div>
@@ -1141,13 +1196,13 @@ export default function MessagesPage() {
                   </div>
                 </div>
                 <div className="t-actions">
-                  {waLink && (
-                    <button type="button" className="t-action-btn" aria-label="Hap WhatsApp" onClick={() => setShowWhatsApp(true)}>
+                  {otherHasPhone && (
+                    <button type="button" className="t-action-btn" aria-label="Hap WhatsApp" onClick={() => { setShowWhatsApp(true); hapKontaktin() }}>
                       <i className="ti ti-brand-whatsapp" style={{ color:'#25D366' }} aria-hidden="true" />
                     </button>
                   )}
-                  {viberLink && (
-                    <button type="button" className="t-action-btn" aria-label="Hap Viber" onClick={() => setShowViber(true)}>
+                  {otherHasPhone && (
+                    <button type="button" className="t-action-btn" aria-label="Hap Viber" onClick={() => { setShowViber(true); hapKontaktin() }}>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="#7360F2" style={{display:'block'}} aria-hidden="true"><path d="M11.5 1C5.7 1.1 1.1 5.7 1 11.5c-.04 2.1.55 4 1.53 5.65L1 23l6.09-1.5c1.57.9 3.4 1.41 5.27 1.45C18.1 23.02 23 18.1 23 12c0-6.07-5.1-11.09-11.5-11zm4.55 15.9c-.31.85-1.5 1.58-2.26 1.6-.77.05-1.51-.16-4.45-1.4C6.08 15.6 3.83 12.17 3.63 11.9c-.2-.28-1.63-2.16-1.63-4.13 0-1.96.85-2.95 1.18-3.37.33-.42.64-.62.9-.64.32 0 .62 0 .9.02.3.02.7-.11.97.74.32.94 1.08 3.26 1.18 3.49.1.24.16.5.03.8-.12.3-.18.48-.36.74-.18.26-.38.57-.55.76-.18.2-.36.42-.16.83.2.4.9 1.48 1.93 2.4 1.33 1.19 2.45 1.56 2.8 1.74.34.18.55.15.75-.08.2-.22.87-1.02 1.1-1.37.23-.34.46-.28.78-.17.33.11 2.07.98 2.43 1.16.35.18.58.27.67.42.09.15.09.85-.22 1.62z"/></svg>
                     </button>
                   )}

@@ -27,9 +27,12 @@ async function fetchSellerData(listing: any) {
   if (!listing?.user_id) return { seller: null, sellerCount: 0, biz: null }
   const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
   const [{ data: seller }, { count }, biz] = await Promise.all([
-    // Siguri HIGH-1: SSR është ANON → PA `phone`/`is_admin`/`is_suspended` (PII/privilegj).
-    // Telefoni i shitësit merret vetëm nga klienti kur përdoruesi është i loguar.
-    sb.from('profiles').select('id,username,full_name,avatar_url,city,bio,is_premium,premium_expires_at,gamification_points,gamification_level,created_at,shop_name,shop_description,shop_category,shop_banner_url,is_verified,last_seen,seller_rating,reviews_count,referral_code,cover_url,website,listings_count,total_sales,followers_count,following_count,response_rate,response_time_hrs,shop_is_open,total_saved,updated_at,trust_score,trust_score_visible,has_boost,boost_expires_at').eq('id', listing.user_id).single(),
+    /*  Siguri HIGH-1: SSR është ANON → PA `phone`/`is_admin`/`is_suspended`.
+     *  `has_phone` është flamur i gjeneruar, jo-identifikues: thotë vetëm A KA
+     *  numër, që butonat e kontaktit të dinë nëse duhen shfaqur. Vetë numri
+     *  vjen nga `listing_contact()` kur përdoruesi klikon — një veprim i
+     *  shprehur, i kufizuar në shpeshtësi dhe i regjistruar (31 gusht 2026). */
+    sb.from('profiles').select('id,username,full_name,avatar_url,city,bio,is_premium,premium_expires_at,gamification_points,gamification_level,created_at,shop_name,shop_description,shop_category,shop_banner_url,is_verified,last_seen,seller_rating,reviews_count,referral_code,cover_url,website,listings_count,total_sales,followers_count,following_count,response_rate,response_time_hrs,shop_is_open,total_saved,updated_at,trust_score,trust_score_visible,has_boost,boost_expires_at,has_phone').eq('id', listing.user_id).single(),
     sb.from('listings').select('*', { count: 'exact', head: true })
       .eq('user_id', listing.user_id).eq('is_active', true),
     listing.business_id

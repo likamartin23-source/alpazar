@@ -48,6 +48,10 @@ export default function ProfilePage() {
   // ne kod — vjen nga get_my_entitlements → app_config). -1 = pa limit (premium).
   const [listFilter, setListFilter] = useState<'active'|'paused'|'sold'>('active')
   const [maxListings, setMaxListings] = useState<number | null>(null)
+  // 168 ore = 7 dite: sjellja e derisotme si vlere rezerve, qe nje deshtim
+  // rrjeti te mos e beje ftohjen me te lire nga sa eshte vendosur.
+  const [bumpOre, setBumpOre] = useState(168)
+  const [bumpMsg, setBumpMsg] = useState('')
   const [reactBusy, setReactBusy] = useState<string | null>(null)
   const [reactMsg, setReactMsg] = useState('')
   const [savedListings, setSavedListings] = useState<any[]>([])
@@ -148,7 +152,11 @@ export default function ProfilePage() {
   async function fetchProfile(uid: string) {
     try {
       const [{ data: p }, { data: ls }] = await Promise.all([
-        supabase.from('profiles').select('*').eq('id', uid).single(),
+        // `my_profile()` ne vend te `select('*')`: kolonat e ndjeshme
+        // (telefon, gdpr_consent, admin_role…) nuk lexohen me nga klienti, por
+        // MBI VETEN perdoruesi i sheh te gjitha — RPC-ja pergjigjet vetem per
+        // `auth.uid()`.
+        supabase.rpc('my_profile'),
         supabase.from('listings').select('*').eq('user_id', uid).order('created_at', { ascending: false }),
       ])
       if (p) {
@@ -159,6 +167,10 @@ export default function ProfilePage() {
       supabase.rpc('get_my_entitlements').then(({ data }) => {
         const m = Number((data as any)?.max_listings)
         if (Number.isFinite(m)) setMaxListings(m)
+        // Ftohja e rifreskimit vjen nga I NJEJTI burim si kufiri i trigerit
+        // (`app_config`), jo nga nje numer i ngurtesuar ketu.
+        const b = Number((data as any)?.bump_min_hours)
+        if (Number.isFinite(b)) setBumpOre(b)
       })
       // FAZA 5: biznesi real (nëse ekziston). maybeSingle — fail-soft, pa hedhur.
       supabase.from('businesses').select('id,name,is_verified').eq('owner_id', uid).maybeSingle()
@@ -399,26 +411,45 @@ export default function ProfilePage() {
     setTimeout(() => setReactMsg(''), 4000)
   }
 
+  /*  FTOHJA E RIFRESKIMIT — nje burim i vetem.
+   *  Deri me 31 gusht 2026 ketu qendronin 7 dite TE NGURTESUARA (§2.9 e
+   *  shkelur), faqja e biznesit s'kishte asnje kufi, dhe baza s'kishte asnje —
+   *  tre numra te ndryshem per te njejten gje. Tani vlera vjen nga
+   *  `get_my_entitlements().bump_min_hours`, qe e lexon nga `app_config`, dhe
+   *  te njejtin celes e lexon edhe trigeri `guard_listing_bump`. Nese pronari
+   *  e ndryshon vleren, ndryshojne te dyja njekohesisht.
+   *  Vlera rezerve mbetet 168 ore = sjellja e derisotme, qe nje deshtim i
+   *  rrjetit te mos e beje me te lire aksidentalisht.  */
   function canBump(lastBumped: string | null): boolean {
     if (!lastBumped) return true
     const diff = Date.now() - new Date(lastBumped).getTime()
-    return diff >= 7 * 24 * 60 * 60 * 1000
+    return diff >= bumpOre * 60 * 60 * 1000
   }
 
-  function bumpDaysLeft(lastBumped: string | null): number {
-    if (!lastBumped) return 0
-    const diff = Date.now() - new Date(lastBumped).getTime()
-    const remaining = 7 * 24 * 60 * 60 * 1000 - diff
-    return Math.max(0, Math.ceil(remaining / (24 * 60 * 60 * 1000)))
+  /** Sa mbetet, ne njesine qe i pershtatet: ore nen dy dite, perndryshe dite. */
+  function bumpMbetur(lastBumped: string | null): { n: number; njesia: 'ore' | 'dite' } {
+    if (!lastBumped) return { n: 0, njesia: 'ore' }
+    const mbetur = bumpOre * 3600e3 - (Date.now() - new Date(lastBumped).getTime())
+    if (mbetur <= 0) return { n: 0, njesia: 'ore' }
+    const ore = Math.ceil(mbetur / 3600e3)
+    return ore >= 48 ? { n: Math.ceil(ore / 24), njesia: 'dite' } : { n: ore, njesia: 'ore' }
   }
 
   async function bumpListing(id: string) {
     const now = new Date().toISOString()
+    const para = myListings.find(l => l.id === id)
     setMyListings(ls => ls.map(l => l.id === id ? { ...l, created_at: now, last_bumped_at: now } : l))
     const { error } = await supabase.from('listings').update({ created_at: now, last_bumped_at: now }).eq('id', id)
     if (error) {
-      // rollback
-      setMyListings(ls => ls.map(l => l.id === id ? { ...l, created_at: l.created_at, last_bumped_at: l.last_bumped_at } : l))
+      /*  Kthimi mbrapsht i vertete: rreshti i mesiperm e kishte humbur vleren e
+       *  vjeter (lexonte `l.created_at` te rreshtit TASHME te ndryshuar), ndaj
+       *  "rollback"-u nuk kthente asgje. Ruhet gjendja e meparshme para prekjes.
+       *  Dhe mesazhi i bazes i tregohet perdoruesit: trigeri e shkruan ne shqip
+       *  ("Provo perseri pas N ore"), pra fshehja e tij ishte humbje e vetem
+       *  informacionit qe ndihmon.  */
+      if (para) setMyListings(ls => ls.map(l => l.id === id ? para : l))
+      setBumpMsg(error.message || 'Nuk u rifreskua dot.')
+      setTimeout(() => setBumpMsg(''), 6000)
     }
   }
 
@@ -994,6 +1025,13 @@ export default function ProfilePage() {
                 {listErr && (
                   <div role="alert" style={{ background: '#FEECEC', color: '#B42318', border: '1px solid #F5C2C2', borderRadius: 8, padding: '8px 10px', fontSize: 12, marginBottom: 10 }}>{listErr}</div>
                 )}
+                {bumpMsg && (
+                  /*  Mesazhi vjen nga trigeri i bazes dhe eshte tashme ne shqip
+                      ("Provo perseri pas N ore"). Tregohet ashtu sic eshte: ai
+                      di saktesisht sa mbetet, ndersa nje tekst i pergjithshem
+                      ne klient do te ishte me pak i sakte.  */
+                  <div role="alert" style={{ background: '#FFF8E1', color: '#8A6D00', border: '1px solid #FFB74D', borderRadius: 10, padding: '9px 12px', fontSize: 12.5, fontWeight: 600, marginBottom: 10, lineHeight: 1.6 }}>{bumpMsg}</div>
+                )}
                 {reactMsg && (
                   <div role="alert" className={`msg-box msg-sm ${reactMsg.split(':')[0]}`} style={{ marginBottom: 10 }}>{reactMsg.split(/:(.+)/)[1]}</div>
                 )}
@@ -1050,7 +1088,12 @@ export default function ProfilePage() {
                           style={{ fontSize: 13 }}
                         ><span aria-hidden="true">⬆️</span></button>
                       ) : (
-                        <span title={`Mund ta rifreskosh pas ${bumpDaysLeft(l.last_bumped_at)} ditësh`} style={{ fontSize: 10, color: '#aaa', padding: '0 4px', cursor: 'default' }}>{bumpDaysLeft(l.last_bumped_at)}d</span>
+                        (() => { const m = bumpMbetur(l.last_bumped_at); return (
+                          <span title={`Mund ta rifreskosh pas ${m.n} ${m.njesia === 'ore' ? 'orësh' : 'ditësh'}`}
+                            style={{ fontSize: 10, color: '#6B6B6B', padding: '0 4px', cursor: 'default' }}>
+                            {m.n}{m.njesia === 'ore' ? 'h' : 'd'}
+                          </span>
+                        ) })()
                       ))}
                       {!l.is_active && l.status !== 'sold' && (
                         <button type="button" className="edit-listing-btn" disabled={reactBusy === l.id} onClick={() => reactivateListing(l.id)} aria-label="Riaktivizo shpalljen" title="Riaktivizo" style={{ fontSize: 13 }}><span aria-hidden="true">{reactBusy === l.id ? '⏳' : '♻️'}</span></button>

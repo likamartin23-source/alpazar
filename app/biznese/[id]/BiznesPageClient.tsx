@@ -393,9 +393,17 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   }
   async function bizBump(id: string) {
     const now = new Date().toISOString()
+    const para = (mgmtListings || []).find(l => l.id === id)
     setMgmtListings(ls => (ls || []).map(l => l.id === id ? { ...l, created_at: now, last_bumped_at: now } : l))
     const { error } = await supabase.from('listings').update({ created_at: now, last_bumped_at: now }).eq('id', id)
-    if (error) setListErr('Nuk u rifreskua dot. Provo sërish.')
+    if (error) {
+      /*  Kthim mbrapsht i vertete + mesazhi i sakte i bazes. "Provo sërish" ishte
+       *  keshille e gabuar: rifreskimi nuk deshtoi rastesisht, por sepse ende
+       *  s'ka ardhur koha — dhe trigeri e thote saktesisht sa mbetet, ne shqip.  */
+      if (para) setMgmtListings(ls => (ls || []).map(l => l.id === id ? para : l))
+      setListErr(error.message || 'Nuk u rifreskua dot.')
+      setTimeout(() => setListErr(''), 6000)
+    }
   }
   async function bizReactivate(id: string) {
     if (reactBusy) return

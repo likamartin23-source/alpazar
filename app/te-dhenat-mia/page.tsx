@@ -21,11 +21,9 @@ export default function TeDhenatMiaPage() {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/auth/login'; return }
       setUserId(session.user.id)
-      const { data: p } = await supabase
-        .from('profiles')
-        .select('full_name,username,city,created_at,marketing_opt_in')
-        .eq('id', session.user.id)
-        .single()
+      // `marketing_opt_in` eshte mbyllur per leximin nder-perdorues; mbi veten
+      // vjen i teri nga `my_profile()`.
+      const { data: p } = await supabase.rpc('my_profile')
       if (p) {
         setProfile({ ...p, email: session.user.email })
         setMarketingOpt(p.marketing_opt_in ?? false)

@@ -42,15 +42,14 @@ export async function kerkoAdmin(req: Request): Promise<NextResponse | null> {
     return NextResponse.json({ ok: false, error: 'Sesioni nuk është i vlefshëm.' }, { status: 401 })
   }
 
-  // Leximi behet me token-in e vete perdoruesit, pra RLS-ja zbatohet: nuk
-  // mjafton te dish nje `id`, duhet te jesh ai person.
-  const { data: profil } = await sb
-    .from('profiles')
-    .select('is_admin')
-    .eq('id', user.id)
-    .single()
+  /*  `is_admin()` eshte RPC `SECURITY DEFINER` qe lexon `auth.uid()` — pra
+   *  pergjigjet vetem per KETE perdorues, dhe kolona `profiles.is_admin` nuk
+   *  ka pse te jete e lexueshme nga klienti. Deri me 31 gusht 2026 lexohej
+   *  drejtperdrejt, dhe kjo do te thoshte qe cdo anetar mund t'i numeronte
+   *  adminet e platformes. Kolona tani eshte e mbyllur; funksioni jo. */
+  const { data: eshteAdmin } = await sb.rpc('is_admin')
 
-  if (!profil?.is_admin) {
+  if (!eshteAdmin) {
     return NextResponse.json({ ok: false, error: 'Nuk ke të drejta administrimi.' }, { status: 403 })
   }
   return null

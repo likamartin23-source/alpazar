@@ -95,9 +95,10 @@ function ReferralTab() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    supabase.from('profiles').select('id,username,full_name,referred_by,created_at')
-      .not('referred_by', 'is', null).order('created_at', { ascending: false }).limit(100)
-      .then(({ data }) => { setRefs(data || []); setLoading(false) })
+    // `referred_by` eshte graf social: nuk lexohet me nga klienti. RPC-ja e
+    // kthen te njejten liste, por vetem per ata qe kane `users.manage`.
+    supabase.rpc('admin_referral_list', { p_limit: 100 })
+      .then(({ data }) => { setRefs(Array.isArray(data) ? data : []); setLoading(false) })
   }, [])
 
   const byRef = refs.reduce((acc: Record<string, any>, r: any) => {
@@ -286,8 +287,11 @@ export default function Admin() {
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/auth/login'; return }
-      const { data: p } = await supabase.from('profiles').select('is_admin').eq('id', session.user.id).single()
-      if (!p?.is_admin) { window.location.href = '/'; return }
+      // RPC ne vend te kolones: `profiles.is_admin` nuk lexohet me nga klienti
+      // (perndryshe cdo anetar i numeron adminet). `is_admin()` pergjigjet
+      // vetem per thirresin.
+      const { data: eshteAdmin } = await supabase.rpc('is_admin')
+      if (!eshteAdmin) { window.location.href = '/'; return }
       const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
       if (aal?.nextLevel === 'aal2' && aal.currentLevel !== 'aal2') {
         const { data: factors } = await supabase.auth.mfa.listFactors()
@@ -343,8 +347,10 @@ export default function Admin() {
       { count: msgs }, { count: reps },
       { data: pm }, { data: mt }, { data: preq },
     ] = await Promise.all([
-      supabase.from('profiles').select('*', { count: 'exact', head: true }),
-      supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('is_premium', true),
+      // `select('*')` do te kerkonte edhe kolonat e mbyllura (telefon, admin_role…)
+      // dhe do te kthente "permission denied". Numerimi s'ka nevoje per to.
+      supabase.from('profiles').select('id', { count: 'exact', head: true }),
+      supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('is_premium', true),
       supabase.from('listings').select('*', { count: 'exact', head: true }).eq('is_active', true),
       supabase.from('messages').select('*', { count: 'exact', head: true }).is('deleted_at', null),
       supabase.from('reports').select('*', { count: 'exact', head: true }).eq('status', 'pending'),

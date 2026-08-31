@@ -66,6 +66,26 @@ export default function ListingPageClient({ params, initialListing, initialSelle
   const [loading, setLoading]         = useState(!initialListing)
   const [loadError, setLoadError]     = useState(false)
   const [offerState, setOfferState] = useState<any>(null)
+  /*  Kontakti: `kontakti` mban kanalin e zgjedhur (wa/viber) dhe njekohesisht
+   *  hap fleten; numri mbahet vecmas sepse vjen nga nje RPC dhe NUK duhet te
+   *  jetoje te objekti i shitesit (perndryshe do te rrinte ne memorie edhe pa
+   *  u kerkuar dhe do te ishte i lehte per t'u ri-ekspozuar).  */
+  const [kontakti,     setKontakti]     = useState<'wa' | 'viber' | null>(null)
+  const [sellerPhone,  setSellerPhone]  = useState<string | null>(null)
+  const [kontaktDuke,  setKontaktDuke]  = useState(false)
+  const [kontaktGabim, setKontaktGabim] = useState<string | null>(null)
+
+  async function hapKontaktin() {
+    if (sellerPhone || kontaktDuke) return
+    if (!user) { window.location.href = '/auth/login'; return }
+    setKontaktDuke(true); setKontaktGabim(null)
+    try {
+      const { data } = await supabase.rpc('listing_contact', { p_listing_id: params.id })
+      if (data?.numri) setSellerPhone(data.numri)
+      else setKontaktGabim(data?.mesazhi || 'Kontakti nuk u hap dot.')
+    } catch { setKontaktGabim('Kontakti nuk u hap dot.') }
+    setKontaktDuke(false)
+  }
   const [similar, setSimilar]         = useState<any[]>([])
   const [user, setUser]               = useState<any>(null)
   const [liked, setLiked]             = useState(false)
@@ -297,7 +317,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
           // Siguri HIGH-1: kolona të sigurta, PA `phone`/`is_admin`/`is_suspended` (PII/privilegj) —
           // që të mos rrjedhin te vizitorët anonimë (anon-key publik). Telefoni merret veç më poshtë,
           // vetëm kur përdoruesi është i loguar (kontakti mbetet për anëtarët; scraping-u anonim vdes).
-          supabase.from('profiles').select('id,username,full_name,avatar_url,city,bio,is_premium,premium_expires_at,gamification_points,gamification_level,created_at,shop_name,shop_description,shop_category,shop_banner_url,is_verified,last_seen,seller_rating,reviews_count,referral_code,cover_url,website,listings_count,total_sales,followers_count,following_count,shop_is_open,total_saved,updated_at,trust_score,trust_score_visible,has_boost,boost_expires_at').eq('id', data.user_id).single(),
+          supabase.from('profiles').select('id,username,full_name,avatar_url,city,bio,is_premium,premium_expires_at,gamification_points,gamification_level,created_at,shop_name,shop_description,shop_category,shop_banner_url,is_verified,last_seen,seller_rating,reviews_count,referral_code,cover_url,website,listings_count,total_sales,followers_count,following_count,shop_is_open,total_saved,updated_at,trust_score,trust_score_visible,has_boost,boost_expires_at,has_phone').eq('id', data.user_id).single(),
           supabase.from('listings').select('*', { count: 'exact', head: true })
             .eq('user_id', data.user_id).eq('is_active', true),
         ])
@@ -307,12 +327,15 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         // e shpalljes shfaqte 'NaN shpallje aktive' te blloku i shitesit.
         // Pare me sy me 31 gusht 2026.
         if (Number.isFinite(count as number)) setSellerCount(count as number)
-        // Telefoni i shitësit: vetëm për përdorues të loguar (anon s'e lexon dot pas HIGH-1).
-        // Kështu butonat WhatsApp/Viber punojnë për anëtarët, por numri s'ekspozohet publikisht.
-        if (user?.id && data.user_id) {
-          const { data: ph } = await supabase.from('profiles').select('phone').eq('id', data.user_id).single()
-          if (ph?.phone) { setSeller((s: any) => s ? { ...s, phone: ph.phone } : s); if (sellerRef.current) sellerRef.current = { ...sellerRef.current, phone: ph.phone } }
-        }
+        /*  TELEFONI NUK MERRET ME NE NGARKIM TE FAQES.
+         *  Kufizimi i meparshem ishte "vetem per te loguar" — por kjo do te
+         *  thoshte qe nje llogari e vetme plus nje skript nxirrte numrin e cdo
+         *  shitesi ne platforme, pa asnje veprim njerezor. Matur dhe provuar me
+         *  31 gusht 2026. Tani numri vjen nga `listing_contact()` VETEM kur
+         *  perdoruesi klikon kontaktin: nje veprim i shprehur, i kufizuar ne
+         *  shpeshtesi dhe i regjistruar (`contact_reveal_log` + metrika
+         *  `contact_phone` qe shitesi e sheh te analitika e vet).
+         *  Butonat varen nga flamuri jo-identifikues `has_phone`.  */
       }
     }
   }
@@ -1420,28 +1443,77 @@ export default function ListingPageClient({ params, initialListing, initialSelle
             <i className="ti ti-messages" aria-hidden="true" />
             {user ? <><span aria-hidden='true'>💬</span> Fillo bisedën</> : <><span aria-hidden='true'>🔑</span> Hyr për të biseduar</>}
           </button>
-          {seller.phone && (
-            <a
-              href={`https://wa.me/${seller.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Përshëndetje! Jam i interesuar/e për: "${listing.title}"`)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="wa-btn"
-              onClick={() => trackEvent('contact_whatsapp', listing.id)}
-              aria-label="Kontakto me WhatsApp">
+          {/*  BUTONA, JO LIDHJE: numri nuk ekziston ne faqe derisa perdoruesi
+               ta kerkoje. Fleta e konfirmimit perdor te njejtin fjalor si ajo
+               te `/messages` — i njejti veprim duhet te duket i njejte.  */}
+          {seller.has_phone && (
+            <button type="button" className="wa-btn" aria-label="Kontakto me WhatsApp"
+              onClick={() => { setKontakti('wa'); hapKontaktin() }}>
               <i className="ti ti-brand-whatsapp" aria-hidden="true" />
-            </a>
+            </button>
           )}
-          {seller.phone && (
-            <a
-              href={`viber://chat?number=%2B${seller.phone.replace(/\D/g, '')}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="viber-btn"
-              onClick={() => trackEvent('contact_viber', listing.id)}
-              aria-label="Kontakto me Viber">
+          {seller.has_phone && (
+            <button type="button" className="viber-btn" aria-label="Kontakto me Viber"
+              onClick={() => { setKontakti('viber'); hapKontaktin() }}>
               <i className="ti ti-phone" aria-hidden="true" />
-            </a>
+            </button>
           )}
+        </div>
+      )}
+
+      {/*  FLETA E KONTAKTIT — i njejti model si te `/messages`: emoji, titull,
+           fjali shpjeguese, numri i shfaqur SHPREHIMISHT, veprimi kryesor,
+           anulimi. Numri tregohet sepse perdoruesi duhet te shohe cfare po
+           merr; eshte edhe zbulim i ndershem edhe rruge e dyte kur aplikacioni
+           nuk hapet dot.
+           z-index 300 = i njejti nivel si `.overlay` e `/messages`, JO nje numer
+           i ri: me 120 flluska e Albit (z-index 200) dilte MBI fleten modale dhe
+           mbulonte fjaline — pare me sy me 31 gusht 2026.  */}
+      {kontakti && seller && (
+        <div onClick={() => setKontakti(null)}
+          style={{ position:'fixed', inset:0, background:'rgba(0,0,0,.55)', zIndex:300, display:'flex', alignItems:'flex-end', justifyContent:'center' }}>
+          <div role="dialog" aria-modal="true"
+            aria-label={kontakti === 'wa' ? 'Vazhdo në WhatsApp' : 'Vazhdo në Viber'}
+            onClick={e => e.stopPropagation()}
+            style={{ width:'100%', maxWidth:480, background:'#fff', borderRadius:'20px 20px 0 0', padding:'10px 20px 24px', textAlign:'center' }}>
+            <div style={{ width:38, height:4, borderRadius:2, background:'#e0e0e0', margin:'0 auto 14px' }} aria-hidden="true" />
+            <div style={{ fontSize:52, marginBottom:10 }} aria-hidden="true">{kontakti === 'wa' ? '💬' : '📲'}</div>
+            <div style={{ fontWeight:700, fontSize:16, color:'#111', marginBottom:8 }}>
+              {kontakti === 'wa' ? 'Vazhdo në WhatsApp' : 'Vazhdo në Viber'}
+            </div>
+            <div style={{ fontSize:13, color:'#555', lineHeight:1.7, marginBottom:18 }}>
+              Do të kontaktosh <strong>{seller.shop_name || seller.full_name || seller.username || 'shitësin'}</strong> jashtë Alpazar-it.
+            </div>
+
+            {kontaktDuke ? (
+              <div role="status" style={{ padding:14, borderRadius:14, background:'#f5f3eb', fontSize:14, fontWeight:600, color:'#555', marginBottom:10 }}>
+                Duke hapur kontaktin…
+              </div>
+            ) : kontaktGabim ? (
+              <div role="alert" style={{ padding:'12px 14px', borderRadius:14, background:'#FFF0EE', border:'1px solid #F09595', fontSize:13, fontWeight:600, color:'#C42305', marginBottom:10, lineHeight:1.6 }}>
+                {kontaktGabim}
+              </div>
+            ) : sellerPhone ? (
+              <>
+                <div style={{ fontSize:15, fontWeight:800, color:'#111', letterSpacing:'.3px', marginBottom:12 }}>{sellerPhone}</div>
+                <a
+                  href={kontakti === 'wa'
+                    ? `https://wa.me/${sellerPhone.replace(/\D/g, '')}?text=${encodeURIComponent(`Përshëndetje! Jam i interesuar/e për: "${listing.title}"`)}`
+                    : `viber://chat?number=%2B${sellerPhone.replace(/\D/g, '')}`}
+                  target={kontakti === 'wa' ? '_blank' : undefined}
+                  rel={kontakti === 'wa' ? 'noopener noreferrer' : undefined}
+                  onClick={() => { trackEvent(kontakti === 'wa' ? 'contact_whatsapp' : 'contact_viber', listing.id); setKontakti(null) }}
+                  style={{ display:'block', background: kontakti === 'wa' ? '#25D366' : '#7360F2', color:'#fff', textDecoration:'none', padding:14, borderRadius:14, fontWeight:700, fontSize:15, marginBottom:10 }}>
+                  {kontakti === 'wa' ? 'Hap WhatsApp' : 'Hap Viber'}
+                </a>
+              </>
+            ) : null}
+
+            <button type="button" onClick={() => setKontakti(null)}
+              style={{ width:'100%', padding:13, background:'#f5f3eb', border:'none', borderRadius:14, fontWeight:600, fontSize:14, cursor:'pointer', color:'#555', fontFamily:'inherit' }}>
+              Anulo
+            </button>
+          </div>
         </div>
       )}
 

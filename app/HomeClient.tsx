@@ -505,7 +505,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
   async function fetchCounts() {
     const [{ count: lc }, { count: uc }] = await Promise.all([
       supabase.from('listings').select('*', { count: 'exact', head: true }).eq('is_active', true),
-      supabase.from('profiles').select('*', { count: 'exact', head: true }),
+      supabase.from('profiles').select('id', { count: 'exact', head: true }),
     ])
     if (lc) setListingCount(lc)
     if (uc) setUserCount(uc)
