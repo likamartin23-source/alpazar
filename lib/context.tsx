@@ -1,5 +1,6 @@
 'use client'
 
+import { saveRefFromUrl } from './referral'
 import { createContext, useContext, useEffect, useState, useCallback, useRef, ReactNode } from 'react'
 import { supabase } from './supabase'
 
@@ -10,6 +11,11 @@ export interface Profile {
   full_name: string
   avatar_url: string
   is_premium: boolean
+  // Afatet + boost — të domosdoshme që tierNgaProfili të nderojë skadimin (pa to
+  // e trajton premium-in si të përhershëm → unazë/badge e gabuar pas skadimit).
+  premium_expires_at?: string | null
+  has_boost?: boolean | null
+  boost_expires_at?: string | null
   is_admin: boolean
   is_verified: boolean
   is_suspended: boolean
@@ -61,6 +67,16 @@ export function useAlpazar() {
 
 // ─── Provider ──────────────────────────────────────────────
 export function AlpazarProvider({ children }: { children: ReactNode }) {
+  /*  Kapja e kodit te referimit behet KETU, ne rrenje te aplikacionit.
+   *
+   *  Deri me 31 gusht 2026 `saveRefFromUrl()` thirrej vetem nga dy faqe:
+   *  kryefaqja dhe faqja e shpalljes. Te dyja lidhjet qe aplikacioni gjeneron
+   *  sot bien pikerisht aty, ndaj asgje nuk humbte — e verifikova. Por lidhja
+   *  qenderohej te dy faqe: mjafton qe dikush te ndaje `/premium?ref=...` ose
+   *  `/kategori/automjete?ref=...` dhe kodi humbet ne heshtje, pa asnje shenje.
+   *  Nje thirrje ne rrenje e mbulon cdo rruge, sot dhe neser.  */
+  useEffect(() => { saveRefFromUrl() }, [])
+
   const [user,    setUser]    = useState<any>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [authReady, setAuthReady] = useState(false)
@@ -98,7 +114,7 @@ export function AlpazarProvider({ children }: { children: ReactNode }) {
   const loadProfile = useCallback(async (uid: string) => {
     const { data } = await supabase
       .from('profiles')
-      .select('id,username,full_name,avatar_url,is_premium,is_admin,is_verified,is_suspended,gamification_points,gamification_level,shop_name,shop_banner_url,seller_rating,reviews_count,referral_code')
+      .select('id,username,full_name,avatar_url,is_premium,premium_expires_at,has_boost,boost_expires_at,is_admin,is_verified,is_suspended,gamification_points,gamification_level,shop_name,shop_banner_url,seller_rating,reviews_count,referral_code')
       .eq('id', uid)
       .single()
     if (data) setProfile(data as Profile)
@@ -177,7 +193,10 @@ export function AlpazarProvider({ children }: { children: ReactNode }) {
       .subscribe()
 
     return () => { supabase.removeChannel(ch) }
-  }, [user, loadUnread])
+    // Deps me user?.id (jo objektin user) — refresh-i i token-it s'ri-abonon
+    // kanalin me të njëjtin topic (shmang 'cannot add postgres_changes after
+    // subscribe' + badge-in që ngec). loadUnread është useCallback stabil.
+  }, [user?.id, loadUnread])
 
   const refreshUnread = useCallback(async (uid?: string) => {
     const id = uid ?? user?.id

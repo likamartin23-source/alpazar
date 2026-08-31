@@ -47,5 +47,17 @@
     "code-review@claude-code-plugins": true,
     "security-guidance@claude-code-plugins": true,
     "impeccable@impeccable": true
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $CLAUDE_PROJECT_DIR/.claude/hooks/session-start.sh"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { rateLimit, getClientIp } from '../../../../lib/rateLimit'
+import { kerkoAdmin } from '../../../../lib/adminGuard'
 import { SUPABASE_URL, SUPABASE_ANON_KEY as SUPABASE_ANON } from '../../../../lib/supabase'
 
 export const runtime = 'nodejs'
@@ -15,6 +16,15 @@ export async function POST(req: NextRequest) {
   if (!rl.allowed) {
     return NextResponse.json({ ok: false, error: 'Shumë kërkesa.' }, { status: 429 })
   }
+
+  /*  MBROJTJE NE THELLESI (31 gusht 2026). Kjo rruge delegon te nje Edge
+      Function me `service_role`, i cili kalon RLS-ne, matricen e lejeve dhe
+      trigerin e privilegjeve. Deri sot porta e vetme ishte nje PIN
+      gjashtevendesh — ndersa paneli vete kishte kaluar te sesioni + is_admin +
+      MFA dhe as nuk e kerkonte me ate PIN. Tani duhen te DYJA: sesion i
+      vertete admini DHE PIN-i. */
+  const ndalese = await kerkoAdmin(req)
+  if (ndalese) return ndalese
 
   const body = await req.json().catch(() => ({}))
   const pin = typeof body.pin === 'string' ? body.pin : ''

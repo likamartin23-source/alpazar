@@ -10,6 +10,11 @@ export default function robots(): MetadataRoute.Robots {
         disallow: [
           '/admin',
           '/api/',
+          // Navigim me faseta: `/search` prodhon URL të pafundme me të njëjtën
+          // përmbajtje si faqet /kategori/*. Faqet e kategorive janë sipërfaqja
+          // jonë e indeksueshme; kërkimi është vegël përdoruesi, jo faqe.
+          // https://developers.google.com/search/docs/crawling-indexing/crawling-managing-faceted-navigation
+          '/search',
           '/auth/',
           '/dashboard',
           '/messages',
@@ -18,7 +23,6 @@ export default function robots(): MetadataRoute.Robots {
           '/saved-searches',
           '/profile',
           '/te-dhenat-mia',
-          '/referral',
           '/listing/new',
           '/listing/*/edit',
           '/biznese/new',

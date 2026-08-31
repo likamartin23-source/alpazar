@@ -11,8 +11,12 @@ const PERIODS = [
   { label: '30 ditë', days: 30 },
 ]
 
-function fmt(n: number, cur = 'ALL') {
-  return n >= 1000 ? `${(n / 1000).toFixed(1)}K ${cur}` : `${n} ${cur}`
+function fmt(n: number | null | undefined, cur?: string | null) {
+  // BLLOKU I PËRMIRËSUAR §10 (rregullim i bug-ut "null ALL"): çmimi bosh/0 → tekst
+  // marrëveshjeje; monedha bosh → "L" (jo kodi i papërpunuar "ALL"/"null").
+  if (n == null || n === 0) return 'Çmim me marrëveshje'
+  const sym = cur === 'EUR' ? '€' : 'L'
+  return n >= 1000 ? `${(n / 1000).toFixed(1)}K ${sym}` : `${n} ${sym}`
 }
 
 function BarChart({ data, color = '#E63312' }: { data: { date: string; count: number }[]; color?: string }) {
@@ -112,7 +116,7 @@ const [loadError, setLoadError] = useState(false)
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: 12 }}>
       <div style={{ width: 36, height: 36, border: '3px solid #E63312', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
       <style dangerouslySetInnerHTML={{ __html: `@keyframes spin{to{transform:rotate(360deg)}}` }} />
-      <span style={{ fontSize: 13, color: '#888' }}>Duke ngarkuar analytics...</span>
+      <span style={{ fontSize: 13, color: '#555' }}>Duke ngarkuar analytics...</span>
     </div>
   )
 
@@ -122,22 +126,22 @@ const [loadError, setLoadError] = useState(false)
     <div style={{ maxWidth: 480, margin: '0 auto', padding: '0 0 80px', fontFamily: "'Segoe UI',sans-serif", background: '#f8f8f8', minHeight: '100vh' }}>
       <style dangerouslySetInnerHTML={{ __html: `
         .an-card{background:#fff;border-radius:14px;padding:16px;margin:10px 12px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
-        .an-title{font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;}
+        .an-title{font-size:13px;font-weight:700;color:#4A4A4A;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;}
         .stat-row{display:flex;gap:10px;}
         .stat-box{flex:1;background:#f8f8f8;border-radius:10px;padding:12px;text-align:center;}
         .stat-num{font-size:24px;font-weight:800;color:#111;}
-        .stat-lbl{font-size:11px;color:#888;margin-top:2px;}
+        .stat-lbl{font-size:11px;color:#555;margin-top:2px;}
         .period-row{display:flex;gap:6px;margin:12px 12px 0;}
         .period-btn{flex:1;padding:8px;border-radius:9px;border:1.5px solid #eee;background:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
         .period-btn.active{background:#E63312;color:#fff;border-color:#E63312;}
         .listing-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f0f0f0;}
         .listing-row:last-child{border-bottom:none;}
-        .listing-rank{width:22px;height:22px;border-radius:50%;background:#FFF0EE;color:#E63312;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .listing-rank{width:22px;height:22px;border-radius:50%;background:#FFF0EE;color:#C42B0F;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
         .listing-name{flex:1;font-size:13px;font-weight:600;color:#111;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
         .listing-stats{display:flex;gap:8px;font-size:11px;color:#888;flex-shrink:0;}
         .listing-stat{display:flex;align-items:center;gap:3px;}
         .ctr-pill{background:#E8F5E9;color:#2e7d32;border-radius:6px;padding:2px 6px;font-size:10px;font-weight:700;}
-        .empty-state{text-align:center;padding:40px 20px;color:#888;}
+        .empty-state{text-align:center;padding:40px 20px;color:#555;}
         .topbar{display:flex;align-items:center;gap:10px;padding:14px 12px 10px;background:#fff;position:sticky;top:0;z-index:10;border-bottom:1px solid #f0f0f0;}
         .back-btn{width:34px;height:34px;border:none;background:#f5f5f5;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
       ` }} />
@@ -189,6 +193,71 @@ const [loadError, setLoadError] = useState(false)
             </div>
           </div>
 
+          {/* Shtrirja (BLLOKU I PËRMIRËSUAR — gjurmim i ri): impresione në feed,
+              reach (persona/pajisje unike), vizita (hapje shpalljeje). */}
+          <div className="an-card">
+            <div className="an-title">Shtrirja — {period} ditë</div>
+            <div className="stat-row">
+              <div className="stat-box">
+                <div className="stat-num">{(data.impressions ?? 0).toLocaleString()}</div>
+                <div className="stat-lbl"><span aria-hidden="true">📢</span> Impresione</div>
+              </div>
+              <div className="stat-box">
+                <div className="stat-num">{(data.reach ?? 0).toLocaleString()}</div>
+                <div className="stat-lbl"><span aria-hidden="true">👥</span> Arritje</div>
+              </div>
+              <div className="stat-box">
+                <div className="stat-num">{data.total_views.toLocaleString()}</div>
+                <div className="stat-lbl"><span aria-hidden="true">🔎</span> Vizita</div>
+              </div>
+            </div>
+            <div style={{ fontSize: 10.5, color: '#555', marginTop: 8, lineHeight: 1.5 }}>
+              Impresion = karta u pa në feed · Arritje = pajisje/persona unikë · Vizitë = shpallja u hap.
+            </div>
+          </div>
+
+          {/* Audienca: ndjekës, të ruajtura, ndarje. */}
+          <div className="an-card">
+            <div className="an-title">Audienca — {period} ditë</div>
+            <div className="stat-row">
+              <div className="stat-box">
+                <div className="stat-num">{(data.followers ?? 0).toLocaleString()}</div>
+                <div className="stat-lbl"><span aria-hidden="true">🫂</span> Ndjekës</div>
+              </div>
+              <div className="stat-box">
+                <div className="stat-num">{(data.saves ?? 0).toLocaleString()}</div>
+                <div className="stat-lbl"><span aria-hidden="true">🔖</span> Të ruajtura</div>
+              </div>
+              <div className="stat-box">
+                <div className="stat-num">{(data.shares ?? 0).toLocaleString()}</div>
+                <div className="stat-lbl"><span aria-hidden="true">↗️</span> Ndarje</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Kontakt i ndarë sipas kanalit. */}
+          <div className="an-card">
+            <div className="an-title">Kontakt sipas kanalit — {period} ditë</div>
+            <div className="stat-row">
+              <div className="stat-box">
+                <div className="stat-num">{(data.contacts_whatsapp ?? 0).toLocaleString()}</div>
+                <div className="stat-lbl"><span aria-hidden="true">🟢</span> WhatsApp</div>
+              </div>
+              <div className="stat-box">
+                <div className="stat-num">{(data.contacts_viber ?? 0).toLocaleString()}</div>
+                <div className="stat-lbl"><span aria-hidden="true">🟣</span> Viber</div>
+              </div>
+              <div className="stat-box">
+                <div className="stat-num">{(data.contacts_phone ?? 0).toLocaleString()}</div>
+                <div className="stat-lbl"><span aria-hidden="true">📞</span> Telefon</div>
+              </div>
+              <div className="stat-box">
+                <div className="stat-num">{(data.notify ?? 0).toLocaleString()}</div>
+                <div className="stat-lbl"><span aria-hidden="true">🔔</span> Njoftomë</div>
+              </div>
+            </div>
+          </div>
+
           {/* Views per day chart */}
           {data.views_by_day?.length > 0 && (
             <div className="an-card">
@@ -217,7 +286,7 @@ const [loadError, setLoadError] = useState(false)
                 <div className="listing-rank">{i + 1}</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="listing-name">{l.title}</div>
-                  <div style={{ fontSize: 11, color: '#E63312', fontWeight: 700 }}>{fmt(l.price, l.currency)}</div>
+                  <div style={{ fontSize: 11, color: '#C42B0F', fontWeight: 700 }}>{fmt(l.price, l.currency)}</div>
                 </div>
                 <div className="listing-stats">
                   <div className="listing-stat">
@@ -232,6 +301,15 @@ const [loadError, setLoadError] = useState(false)
                 </div>
               </div>
             ))}
+          </div>
+          {/* Referral i integruar (BLLOKU I PËRMIRËSUAR §10): CTA te programi ekzistues,
+              pa dyfishuar sistemin — thjesht hyrje nga analitika. */}
+          <div className="an-card">
+            <div className="an-title">Referral</div>
+            <button type="button" onClick={() => { window.location.href = '/referral' }}
+              style={{ width: '100%', minHeight: 48, background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842', border: 'none', borderRadius: 11, fontSize: 13, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              <i className="ti ti-gift" aria-hidden="true" /> Fto miq — fito pikë & Premium →
+            </button>
           </div>
         </>
       )}

@@ -1,0 +1,45 @@
+name: Verifiko deploy-in live
+
+# GARANCIA E DEPLOY-IT: pas çdo push-i në main, provo EMPIRIKISHT se prodhimi
+# (alpazar.vercel.app) po shërben pikërisht këtë commit. /api/version kthen
+# NEXT_PUBLIC_BUILD_ID = VERCEL_GIT_COMMIT_SHA me `Cache-Control: no-store`, ndaj
+# krahasimi është i saktë dhe në kohë reale. Nëse pas afatit prodhimi s'e shërben
+# commit-in (build i dështuar/ngecur), ky job DËSHTON dukshëm dhe njofton pronarin
+# — asnjë deploy i dështuar nuk kalon në heshtje. Pa sekrete: pikë publike.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verifiko-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verifiko:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Prit derisa prodhimi të shërbejë këtë commit
+        env:
+          SHA: ${{ github.sha }}
+          URL: https://alpazar.vercel.app/api/version
+        run: |
+          echo "Pritet që $URL të kthejë build=$SHA"
+          live=""
+          for i in $(seq 1 50); do
+            body="$(curl -fsS --max-time 15 -H 'Cache-Control: no-cache' "$URL" 2>/dev/null || true)"
+            live="$(printf '%s' "$body" | sed -n 's/.*"build":"\([A-Za-z0-9]*\)".*/\1/p')"
+            echo "[$i/50] live=$live"
+            if [ -n "$live" ] && [ "$live" = "$SHA" ]; then
+              echo "✓ Prodhimi shërben $SHA — deploy i verifikuar LIVE."
+              exit 0
+            fi
+            sleep 12
+          done
+          echo "::error::Pas ~10 min, prodhimi NUK shërben $SHA (live=$live). Deploy i dështuar ose i ngecur — kontrollo Vercel."
+          exit 1

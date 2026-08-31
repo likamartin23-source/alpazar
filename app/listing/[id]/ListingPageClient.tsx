@@ -3,15 +3,38 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import { supabase } from '../../../lib/supabase'
-import { getLevel, isNewMember } from '../../components/Badges'
+import { nf, dateShort, dayMonth, monthYear, clockTime, priceLabel } from '../../../lib/format'
+import { isNewMember } from '../../components/Badges'
+import OfferBox from '../../components/OfferBox'
 import { SocialProofBar, SellerPremiumUpsell } from '../../components/PremiumUpsell'
+import { ReportSheet } from '../../components/ReportSheet'
 import { saveRefFromUrl, buildShareUrl } from '../../../lib/referral'
 import { TrustBadge } from '../../components/TrustBadge'
 import { SharePanel } from '../../components/SharePanel'
 import { ImageCarousel } from '../../components/ImageCarousel'
-import Avatar from '../../components/Avatar'
+import Avatar, { tierNgaProfili } from '../../components/Avatar'
+import { useIsOnline } from '../../components/OnlinePresence'
+import ListingCard from '../../components/ListingCard'
+import { trackEvent } from '../../../lib/track'
 
-const MapDisplay = dynamic(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), { ssr: false })
+/*  `loading` NUK eshte zbukurim — eshte i vetmi rregullim i CLS-se ne kete faqe.
+ *  Matur me 31 gusht 2026: pa te, folea e hartes eshte nje <template> me
+ *  lartesi 0 deri ne ~900ms, pastaj behet nje DIV 235px. Rritja i shtynte
+ *  244px poshte TE GJITHA seksionet nen te — dhe deshmia ishte mashtruese,
+ *  sepse burimet e raportuara nga `layout-shift` ishin elementet e ZHVENDOSUR
+ *  (textarea e ofertes, butonat e sigurise), jo shkaktari. CLS 0,076 te
+ *  desktop-i vinte i teri prej ketej. Lartesia 235px eshte e MATUR nga harta
+ *  reale, jo e hamendesuar. */
+const MapDisplay = dynamic(
+  () => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })),
+  {
+    ssr: false,
+    loading: () => (
+      <div aria-hidden="true"
+        style={{ height: 235, borderRadius: 12, background: 'linear-gradient(135deg,#FBF7E8,#F2EAD0)' }} />
+    ),
+  },
+)
 
 const CATEGORY_LABELS: Record<string, string> = {
   elektronike: 'Elektronikë', makina: 'Makina', shtepi: 'Shtëpi & Mobilje',
@@ -20,45 +43,49 @@ const CATEGORY_LABELS: Record<string, string> = {
 }
 
 function fullTime(d: string) {
-  return new Date(d).toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit' })
+  return clockTime(d)
 }
 function dayLabel(d: string) {
   const dt = new Date(d), now = new Date()
   if (dt.toDateString() === now.toDateString()) return 'Sot'
   const yes = new Date(); yes.setDate(now.getDate() - 1)
   if (dt.toDateString() === yes.toDateString()) return 'Dje'
-  return dt.toLocaleDateString('sq-AL', { day: '2-digit', month: 'long' })
+  return dayMonth(d)
 }
-function BusinessMiniCard({ bizId }: { bizId: string }) {
-  const [biz, setBiz] = useState<any>(null)
-  useEffect(() => {
-    supabase.from('businesses').select('id,name,logo_url,is_verified').eq('id', bizId).single().then(({ data }) => { if (data) setBiz(data) })
-  }, [bizId])
-  if (!biz) return null
-  return (
-    <div role="link" tabIndex={0} style={{ margin: '0 0 12px', padding: '10px 12px', background: '#F5F5F5', borderRadius: 12, display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => window.location.href = `/biznese/${biz.id}`} onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/biznese/${biz.id}` }}>
-      <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#fff', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, border: '1px solid #eee', flexShrink: 0 }}>
-        {biz.logo_url ? <img src={biz.logo_url} alt={biz.name} loading="lazy" width={36} height={36} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span aria-hidden="true">🏢</span>}
-      </div>
-      <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 12, fontWeight: 700, color: '#111' }}>{biz.name} {biz.is_verified && <span style={{ color: '#16a34a' }} aria-label="Biznes i verifikuar"><span aria-hidden="true">✓</span> Biznes</span>}</div>
-        <div style={{ fontSize: 10, color: '#888' }}>Shfaq faqen e biznesit →</div>
-      </div>
-    </div>
-  )
-}
-
 function pubDate(d: string) {
-  if (!d) return ''
-  return new Date(d).toLocaleDateString('sq-AL', { day: '2-digit', month: 'short', year: 'numeric' })
+  return dateShort(d)
 }
 
-export default function ListingPageClient({ params, initialListing }: { params: { id: string }; initialListing?: any }) {
+export default function ListingPageClient({ params, initialListing, initialSeller, initialSellerCount, initialBiz }: { params: { id: string }; initialListing?: any; initialSeller?: any; initialSellerCount?: number; initialBiz?: any }) {
   const [listing, setListing]         = useState<any>(initialListing ?? null)
-  const [seller, setSeller]           = useState<any>(null)
-  const [sellerCount, setSellerCount] = useState(0)
+  // §12/task#18: shitesi + numri + biznesi vijne nga serveri (initial*) → blloku i
+  // shitesit/biznesit + kontakti render-ohen ne SSR; useEffect vetem i freskon.
+  const [seller, setSeller]           = useState<any>(initialSeller ?? null)
+  const [sellerCount, setSellerCount] = useState(initialSellerCount ?? 0)
+  const sellerOnline = useIsOnline(seller?.id) // prania LIVE e shitësit (BLLOKU Imazhi 3)
   const [loading, setLoading]         = useState(!initialListing)
   const [loadError, setLoadError]     = useState(false)
+  const [offerState, setOfferState] = useState<any>(null)
+  /*  Kontakti: `kontakti` mban kanalin e zgjedhur (wa/viber) dhe njekohesisht
+   *  hap fleten; numri mbahet vecmas sepse vjen nga nje RPC dhe NUK duhet te
+   *  jetoje te objekti i shitesit (perndryshe do te rrinte ne memorie edhe pa
+   *  u kerkuar dhe do te ishte i lehte per t'u ri-ekspozuar).  */
+  const [kontakti,     setKontakti]     = useState<'wa' | 'viber' | null>(null)
+  const [sellerPhone,  setSellerPhone]  = useState<string | null>(null)
+  const [kontaktDuke,  setKontaktDuke]  = useState(false)
+  const [kontaktGabim, setKontaktGabim] = useState<string | null>(null)
+
+  async function hapKontaktin() {
+    if (sellerPhone || kontaktDuke) return
+    if (!user) { window.location.href = '/auth/login'; return }
+    setKontaktDuke(true); setKontaktGabim(null)
+    try {
+      const { data } = await supabase.rpc('listing_contact', { p_listing_id: params.id })
+      if (data?.numri) setSellerPhone(data.numri)
+      else setKontaktGabim(data?.mesazhi || 'Kontakti nuk u hap dot.')
+    } catch { setKontaktGabim('Kontakti nuk u hap dot.') }
+    setKontaktDuke(false)
+  }
   const [similar, setSimilar]         = useState<any[]>([])
   const [user, setUser]               = useState<any>(null)
   const [liked, setLiked]             = useState(false)
@@ -86,19 +113,12 @@ export default function ListingPageClient({ params, initialListing }: { params: 
 
   // Report
   const [reportOpen, setReportOpen]   = useState(false)
-  const [reportReason, setReportReason] = useState('')
-  const [reportSent, setReportSent]   = useState(false)
-  const [reportLoading, setReportLoading] = useState(false)
-  const [reportErr, setReportErr]     = useState('')
 
-  const REPORT_REASONS = [
-    'Shpallje mashtruese / e rreme',
-    'Çmim i dyshimtë',
-    'Produkt i ndaluar',
-    'Foto / informacion i vjedhur',
-    'Kontakt i rremë',
-    'Tjetër',
-  ]
+  // Fshirja e shpalljes nga pronari — dy hapa: klikimi i pare kerkon konfirmim.
+  const [delConfirm, setDelConfirm]   = useState(false)
+  const [delLoading, setDelLoading]   = useState(false)
+  const [delMsg, setDelMsg]           = useState('')
+
 
   async function submitReview() {
     if (!user || !seller || reviewStars === 0) return
@@ -132,25 +152,6 @@ export default function ListingPageClient({ params, initialListing }: { params: 
     setReviewSaving(false)
   }
 
-  async function submitReport() {
-    if (!reportReason) return
-    setReportLoading(true); setReportErr('')
-    const { error } = await supabase.from('reports').insert({
-      listing_id: params.id,
-      reporter_id: user?.id || null,
-      reason: reportReason,
-      status: 'pending',
-    })
-    setReportLoading(false)
-    if (!error) {
-      setReportSent(true)
-      setTimeout(() => setReportOpen(false), 1800)
-    } else {
-      setReportErr(/row-level security|permission|denied/i.test(error.message)
-        ? 'Duhet të kyçesh për të raportuar. Hyr dhe provo sërish.'
-        : 'Raporti nuk u dërgua. Provo sërish.')
-    }
-  }
 
   // Chat bottom sheet
   const [chatOpen, setChatOpen]   = useState(false)
@@ -165,7 +166,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
   const channelRef   = useRef<any>(null)
   const typingTimer  = useRef<any>(null)
   const userRef      = useRef<any>(null)
-  const sellerRef    = useRef<any>(null)
+  const sellerRef    = useRef<any>(initialSeller ?? null)
   const listingRef   = useRef<any>(initialListing ?? null)
   const autoOpenDone = useRef(false)
 
@@ -247,19 +248,51 @@ export default function ListingPageClient({ params, initialListing }: { params: 
     if (bumpLoading) return
     setBumpLoading(true)
     const now = new Date().toISOString()
-    const { error } = await supabase.from('listings').update({ created_at: now, last_bumped_at: now }).eq('id', params.id)
+    const { error } = await supabase.from('listings').update({ last_bumped_at: now }).eq('id', params.id)
     if (error) {
       setBumpMsg('err:Gabim gjatë ngritjes.')
     } else {
-      setListing((l: any) => l ? { ...l, last_bumped_at: now, created_at: now } : l)
+      setListing((l: any) => l ? { ...l, last_bumped_at: now } : l)
       setBumpMsg('ok:Shpallja u ngrit në krye! ⬆️')
       setTimeout(() => setBumpMsg(''), 3000)
     }
     setBumpLoading(false)
   }
 
+  // Fshirje e BUTE — rreshti mbetet ne baze, vetem shenohet.
+  //
+  // `is_active:false` nuk eshte dekor: politika `listings_select` e lejon
+  // publikun te lexoje rreshtin kur `is_active = true`, dhe asnje triger nuk e
+  // sinkronizon `status` me `is_active`. Po te vendosnim vetem `deleted_at`
+  // dhe `status='deleted'`, shpallja do te vazhdonte te dukej per te gjithe —
+  // pra fshirja do te ishte vetem e dukshme per pronarin, jo reale.
+  async function doDelete() {
+    if (delLoading) return
+    setDelLoading(true); setDelMsg('')
+    const { error } = await supabase
+      .from('listings')
+      .update({ deleted_at: new Date().toISOString(), status: 'deleted', is_active: false })
+      .eq('id', params.id)
+    if (error) {
+      setDelMsg('Fshirja deshtoi: ' + error.message)
+      setDelLoading(false)
+      setDelConfirm(false)
+      return
+    }
+    window.location.href = '/'
+  }
+
   async function fetchListing() {
     let data: any = initialListing ?? null
+
+    /*  Gjendja e ofertes nisret MENJEHERE, jashte deges se meposhtme.
+     *  Ishte brenda saj dhe kjo ishte gabim: kur faqja vjen me `initialListing`
+     *  nga SSR-ja, ajo dege NUK ekzekutohet — pra thirrja s'behej kurre dhe
+     *  `OfferBox` binte prapa te thirrja e vet. Matur: zhvendosja thjesht u
+     *  shty nga 1857ms ne 5181ms, me te njejtin CLS 0,076.  */
+    supabase.rpc('listing_offer_state', { p_listing_id: params.id })
+      .then(({ data: od }) => setOfferState(od ?? null), () => {})
+
     if (!data) {
       const res = await supabase.from('listings').select('*').eq('id', params.id).single()
       if (res.error && res.error.code !== 'PGRST116') { setLoadError(true); setLoading(false); return }
@@ -281,20 +314,45 @@ export default function ListingPageClient({ params, initialListing }: { params: 
       if (data.category_id) fetchSimilarListings(data.category_id, data.id, data.city, data.price)
       if (data.user_id) {
         const [{ data: p }, { count }] = await Promise.all([
-          supabase.from('profiles').select('*').eq('id', data.user_id).single(),
+          // Siguri HIGH-1: kolona të sigurta, PA `phone`/`is_admin`/`is_suspended` (PII/privilegj) —
+          // që të mos rrjedhin te vizitorët anonimë (anon-key publik). Telefoni merret veç më poshtë,
+          // vetëm kur përdoruesi është i loguar (kontakti mbetet për anëtarët; scraping-u anonim vdes).
+          supabase.from('profiles').select('id,username,full_name,avatar_url,city,bio,is_premium,premium_expires_at,gamification_points,gamification_level,created_at,shop_name,shop_description,shop_category,shop_banner_url,is_verified,last_seen,seller_rating,reviews_count,referral_code,cover_url,website,listings_count,total_sales,followers_count,following_count,shop_is_open,total_saved,updated_at,trust_score,trust_score_visible,has_boost,boost_expires_at,has_phone').eq('id', data.user_id).single(),
           supabase.from('listings').select('*', { count: 'exact', head: true })
             .eq('user_id', data.user_id).eq('is_active', true),
         ])
         if (p) { setSeller(p); sellerRef.current = p }
-        if (count !== null) setSellerCount(count)
+        // `count` vjen nga header-i `content-range`. Kur ai mungon ose vjen i
+        // cunguar, supabase-js jep NaN — dhe `!== null` NUK e kap: faqja publike
+        // e shpalljes shfaqte 'NaN shpallje aktive' te blloku i shitesit.
+        // Pare me sy me 31 gusht 2026.
+        if (Number.isFinite(count as number)) setSellerCount(count as number)
+        /*  TELEFONI NUK MERRET ME NE NGARKIM TE FAQES.
+         *  Kufizimi i meparshem ishte "vetem per te loguar" — por kjo do te
+         *  thoshte qe nje llogari e vetme plus nje skript nxirrte numrin e cdo
+         *  shitesi ne platforme, pa asnje veprim njerezor. Matur dhe provuar me
+         *  31 gusht 2026. Tani numri vjen nga `listing_contact()` VETEM kur
+         *  perdoruesi klikon kontaktin: nje veprim i shprehur, i kufizuar ne
+         *  shpeshtesi dhe i regjistruar (`contact_reveal_log` + metrika
+         *  `contact_phone` qe shitesi e sheh te analitika e vet).
+         *  Butonat varen nga flamuri jo-identifikues `has_phone`.  */
       }
     }
   }
 
   async function fetchSimilarListings(categoryId: string, currentId: string, city?: string, price?: number) {
+    // Semantike së pari (pgvector /api/similar): shpallje të ngjashme sipas KUPTIMIT.
+    // Bie te përputhja sipas kategori/qytet/çmim si fallback nëse s'ka mjaftueshëm.
+    try {
+      const r = await fetch(`/api/similar?id=${currentId}`)
+      if (r.ok) {
+        const j = await r.json()
+        if (Array.isArray(j.results) && j.results.length >= 3) { setSimilar(j.results); return }
+      }
+    } catch { /* fallback më poshtë */ }
     let q = supabase
       .from('listings')
-      .select('id,title,price,currency,images,condition,city,is_premium,views_count')
+      .select('id,title,price,currency,images,condition,city,is_premium,views_count,rank_tier,created_at,status')
       .eq('category_id', categoryId)
       .eq('is_active', true)
       .neq('id', currentId)
@@ -302,6 +360,13 @@ export default function ListingPageClient({ params, initialListing }: { params: 
     if (price && price > 0) {
       q = q.gte('price', price * 0.7).lte('price', price * 1.3)
     }
+    // Fillimisht rekomandimi semantik (pgvector). Nese s'ka embedding ende,
+    // biem butesisht te logjika e meparshme sipas kategorise dhe shikimeve.
+    try {
+      const { data: sim } = await supabase.rpc('recommend_similar', { p_listing_id: currentId, p_k: 4 })
+      if (Array.isArray(sim) && sim.length > 0) { setSimilar(sim as any); return }
+    } catch { /* pa embedding — vazhdo me rezerven */ }
+
     const { data } = await q.order('views_count', { ascending: false }).limit(4)
     if (data && data.length > 0) {
       setSimilar(data)
@@ -309,7 +374,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
       // Fallback: broader search without city/price filters
       const { data: fallback } = await supabase
         .from('listings')
-        .select('id,title,price,currency,images,condition,city,is_premium,views_count')
+        .select('id,title,price,currency,images,condition,city,is_premium,views_count,rank_tier,created_at,status')
         .eq('category_id', categoryId)
         .eq('is_active', true)
         .neq('id', currentId)
@@ -419,7 +484,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
     setChatReady(true)
 
     if (!data || data.length === 0) {
-      const fmt = (p: number, c: string) => !p ? '' : c === 'EUR' ? ` — ${p.toLocaleString('sq-AL')} €` : ` — ${p.toLocaleString('sq-AL')} L`
+      const fmt = (p: number, c: string) => !p ? '' : c === 'EUR' ? ` — ${nf(p)} €` : ` — ${nf(p)} L`
       setDraft(`Përshëndetje! Jam i interesuar/e për: "${lst.title}"${fmt(lst.price, lst.currency)}. A është ende në shitje?`)
     }
 
@@ -487,12 +552,10 @@ export default function ListingPageClient({ params, initialListing }: { params: 
     channelRef.current?.send({ type: 'broadcast', event: 'typing', payload: { userId: user.id } })
   }
 
-  const fmt = (price: number, cur: string) =>
-    !price ? 'Çmim me marrëveshje' :
-    cur === 'EUR' ? `${price.toLocaleString('sq-AL')} €` : `${price.toLocaleString('sq-AL')} L`
+  // Burim i vetëm: `lib/format.ts`. Këtu mbetet vetëm fjala e kësaj sipërfaqeje.
+  const fmt = (price: number, cur: string) => priceLabel(price, cur, 'Çmim me marrëveshje')
 
-  const memberSince = (d: string) =>
-    d ? new Date(d).toLocaleDateString('sq-AL', { month: 'long', year: 'numeric' }) : ''
+  const memberSince = (d: string) => monthYear(d)
 
   function buildGroups(msgs: any[]) {
     const groups: Array<{ date: string; items: any[] }> = []
@@ -528,13 +591,43 @@ export default function ListingPageClient({ params, initialListing }: { params: 
     <div style={{ textAlign: 'center', padding: 60, fontFamily: "'Plus Jakarta Sans',system-ui" }}>
       <p style={{ fontSize: 40, marginBottom: 12 }} aria-hidden="true">🔍</p>
       <h2 style={{ color: '#111', marginBottom: 8 }}>Shpallja nuk u gjet</h2>
-      <a href="/" style={{ color: '#E63312', fontSize: 13 }}>← Kthehu</a>
+      <a href="/" style={{ color: '#C42B0F', fontSize: 13 }}>← Kthehu</a>
     </div>
   )
 
   const images  = listing.images?.length ? listing.images : []
   const isOwner = user?.id === listing.user_id
-  const hasShop = seller?.is_premium && seller?.shop_name
+  // Tier-i i shitësit që NDERON skadimin (seller vjen me select('*') → ka afatet).
+  const sellerTier = tierNgaProfili(seller)
+  const hasShop = sellerTier !== 'free' && seller?.shop_name
+
+  // A i perket kjo shpallje nje biznesi? Burimi i vertete eshte lidhja, jo
+  // `profiles.shop_name`.
+  //
+  // `shop_name` ishte nje kopje e emrit te biznesit e mbajtur te profili, dhe
+  // mbi te varej edhe shenja "Biznes" edhe pamja e avatarit. Kjo i mbante
+  // identitetet e ngaterruar: emri i dyqanit mbulonte emrin e personit. Tani
+  // identiteti biznes/person varet VETEM nga `business_id` (fakti i lidhjes),
+  // jo nga `shop_name` — ndarja person/biznes eshte e prere (Vendimi 7). Per
+  // lidhjen (bizHref) `hasShop` mbetet vetem si rrugedalje legacy me poshte.
+  const isBusinessListing = !!listing?.business_id
+
+  // Lidhja me biznesin del GJITHMONE nga `listing.business_id` — ky eshte
+  // biznesi te cili i PERKET kjo shpallje.
+  //
+  // Me pare perdorej `/biznese/${seller.id}`, pra id-ja e PERDORUESIT ne vend
+  // te id-se se biznesit. Ajo faqe nuk binte gjithmone, sepse BiznesPageClient
+  // ka nje rrugedalje: nese s'gjen biznes me ate id, e kerkon me `owner_id`.
+  // Por rrugedalja te con te biznesi i PARE i atij personi — jo domosdoshmerisht
+  // te ai i shpalljes. Nje shites me dy biznese e conte blerësin te i gabuari.
+  //
+  // `hasShop` mbetet vetem si rrugedalje per shitesit e vjeter premium qe kane
+  // `shop_name` pa nje rresht `businesses` te lidhur; atje id-ja e perdoruesit
+  // eshte e vetmja qe kemi dhe rrugedalja me `owner_id` e zgjidh sakte.
+  const bizHref = listing?.business_id
+    ? `/biznese/${listing.business_id}`
+    : (hasShop && seller ? `/biznese/${seller.id}` : null)
+  const sellerHref = bizHref || (seller ? `/u/${seller.id}` : '/')
   const initials  = (seller?.shop_name || seller?.full_name || '?').slice(0, 2).toUpperCase()
   const groups    = buildGroups(chatMsgs)
   const showChatSheet = !isOwner
@@ -550,6 +643,10 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .back i{font-size:18px;color:#111;}
         .topbar-title{font-size:15px;font-weight:700;color:#111;flex:1;}
+        /* Butonat e sigurise (§7.4): terciar i vogel, gjithmone i arritshem,
+           lartesi prekjeje 36px dhe kontrast qe kalon WCAG AA. */
+        .safety-btn{display:inline-flex;align-items:center;gap:4px;min-height:36px;padding:0 12px;background:#fff;border:1px solid #e6e6e6;border-radius:10px;color:#5a5a5a;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:border-color .15s ease,color .15s ease;}
+        .safety-btn:hover{border-color:#C42305;color:#C42305;}
         .share-btn{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .share-btn i{font-size:16px;color:#111;}
 
@@ -570,14 +667,15 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         .sc-active{background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7;}
         .sc-sold{background:#F3F3F3;color:#555;border:1px solid #ccc;}
         h1{font-size:18px;font-weight:800;color:#1a1a1a;margin-bottom:6px;line-height:1.3;letter-spacing:-.2px;}
-        .price{font-size:25px;font-weight:800;color:#E63312;margin-bottom:12px;letter-spacing:-.5px;}
+        .price{font-size:25px;font-weight:800;color:#C42B0F;margin-bottom:12px;letter-spacing:-.5px;}
         .meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
         .meta-item{display:flex;align-items:center;gap:4px;font-size:11px;color:#555;background:#f5f3eb;padding:5px 10px;border-radius:999px;font-weight:600;}
         .meta-item i{font-size:12px;color:#999;}
-        .cond-new{background:#FFF0EE;color:#E63312;font-weight:700;}
+        .cond-new{background:#FFF0EE;color:#C42B0F;font-weight:700;}
         .cond-used{background:#F0F0F0;color:#555;font-weight:700;}
         .divider{height:1px;background:#f0f0f0;margin:10px 0;}
-        .sec-label{font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+        .sec-label{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:800;color:#4A4A4A;text-transform:uppercase;letter-spacing:.6px;margin-bottom:9px;}
+        .sec-label::before{content:'';flex:0 0 auto;width:3px;height:13px;border-radius:2px;background:linear-gradient(180deg,#F5C842,#E63312);}
         .desc{font-size:13px;color:#555;line-height:1.7;}
 
         /* Seller section — free-flowing */
@@ -586,7 +684,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         .seller-av{width:44px;height:44px;border-radius:50%;background:#F5C842;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#111;flex-shrink:0;overflow:hidden;border:2.5px solid #F5C842;}
         .seller-av img{width:100%;height:100%;object-fit:cover;}
         .seller-name{font-size:14px;font-weight:700;color:#111;}
-        .seller-sub{font-size:11px;color:#888;margin-top:2px;}
+        .seller-sub{font-size:11px;color:#555;margin-top:2px;}
         .seller-chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px;}
         .schip{font-size:9.5px;font-weight:700;padding:3px 8px;border-radius:6px;}
         .sch-prem{background:linear-gradient(135deg,#F8D24E,#F5C842);color:#111;box-shadow:0 1px 4px rgba(245,200,66,.45);}
@@ -604,7 +702,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         .shop-link-row{display:flex;align-items:center;gap:9px;background:#f8f6f0;border:0.5px solid #ececec;border-radius:12px;padding:9px 12px;margin-top:8px;cursor:pointer;text-decoration:none;transition:background .15s ease;}
         .shop-link-row:hover{background:#f2efe6;}
         .shop-link-row span{font-size:12px;font-weight:700;color:#111;}
-        .shop-link-row small{font-size:10px;color:#aaa;display:block;margin-top:1px;}
+        .shop-link-row small{font-size:10px;color:#555;display:block;margin-top:1px;}
 
         /* ── CHAT BOTTOM SHEET ── */
         .cs-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:190;animation:fadeIn .2s;}
@@ -620,9 +718,9 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         .cs-close{width:28px;height:28px;background:#f5f5f5;border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .cs-close i{font-size:14px;color:#888;}
         .cs-ref{background:#FFF8EE;border-bottom:1px solid #FFE8C4;padding:7px 13px;display:flex;align-items:center;gap:7px;flex-shrink:0;}
-        .cs-ref i{font-size:12px;color:#E63312;flex-shrink:0;}
+        .cs-ref i{font-size:12px;color:#C42B0F;flex-shrink:0;}
         .cs-ref-text{font-size:11px;color:#333;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-        .cs-ref-price{font-size:11px;font-weight:700;color:#E63312;white-space:nowrap;}
+        .cs-ref-price{font-size:11px;font-weight:700;color:#C42B0F;white-space:nowrap;}
         .cs-msgs{flex:1;overflow-y:auto;padding:10px 12px 6px;display:flex;flex-direction:column;gap:2px;background:#f9f6ef;}
         .cs-msgs::-webkit-scrollbar{width:2px;}
         .cs-msgs::-webkit-scrollbar-thumb{background:#ddd;border-radius:10px;}
@@ -637,7 +735,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         .theirs .bubble{background:#fff;color:#111;border-bottom-left-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,.07);}
         .btime{font-size:9px;color:rgba(0,0,0,.3);margin-top:2px;text-align:right;}
         .theirs .btime{text-align:left;color:#bbb;}
-        .empty-chat{text-align:center;padding:20px 16px;color:#bbb;}
+        .empty-chat{text-align:center;padding:20px 16px;color:#555;}
         .empty-chat-icon{font-size:30px;margin-bottom:6px;}
         .empty-chat-txt{font-size:12px;line-height:1.6;}
         .typing-row{display:flex;align-items:flex-end;gap:6px;margin-bottom:4px;}
@@ -662,8 +760,8 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         /* Bottom bar */
         .bottom-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid #eee;padding:10px 12px;display:flex;gap:8px;align-items:center;z-index:100;box-shadow:0 -6px 20px rgba(0,0,0,.06);}
         .bb-price{display:flex;flex-direction:column;justify-content:center;flex-shrink:0;max-width:112px;padding-right:2px;}
-        .bb-price-l{font-size:9px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:.3px;line-height:1;}
-        .bb-price-n{font-size:16px;font-weight:800;color:#E63312;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.3px;line-height:1.2;}
+        .bb-price-l{font-size:9px;font-weight:600;color:#4A4A4A;text-transform:uppercase;letter-spacing:.3px;line-height:1;}
+        .bb-price-n{font-size:16px;font-weight:800;color:#C42B0F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.3px;line-height:1.2;}
         .main-chat-btn{flex:1;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 12px rgba(230,51,18,.3);}
         .main-chat-btn i{font-size:16px;}
         .wa-btn{width:48px;height:48px;background:#25D366;border:none;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(37,211,102,.3);text-decoration:none;}
@@ -680,13 +778,13 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         .alert-panel{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-radius:18px 18px 0 0;z-index:310;padding:20px 18px 36px;box-shadow:0 -4px 24px rgba(0,0,0,.15);}
         .alert-handle{width:36px;height:4px;background:#ddd;border-radius:4px;margin:0 auto 16px;}
         .alert-title{font-size:16px;font-weight:800;color:#111;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
-        .alert-sub{font-size:12px;color:#888;margin-bottom:16px;}
+        .alert-sub{font-size:12px;color:#555;margin-bottom:16px;}
         .alert-input{width:100%;border:1.5px solid #ddd;border-radius:11px;padding:12px 14px;font-size:15px;font-weight:700;color:#111;box-sizing:border-box;font-family:inherit;outline:none;}
         .alert-input:focus{border-color:#E63312;}
         .alert-btn-row{display:flex;gap:8px;margin-top:14px;}
         .alert-save{flex:1;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:11px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
         .alert-save:disabled{opacity:.5;cursor:not-allowed;}
-        .alert-del{width:48px;background:#FFF0EE;color:#E63312;border:1.5px solid #FFCDD2;border-radius:11px;padding:13px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+        .alert-del{width:48px;background:#FFF0EE;color:#C42B0F;border:1.5px solid #FFCDD2;border-radius:11px;padding:13px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .alert-msg{font-size:12px;text-align:center;margin-top:8px;font-weight:600;}
 
         @keyframes spin{to{transform:rotate(360deg);}}
@@ -696,15 +794,15 @@ export default function ListingPageClient({ params, initialListing }: { params: 
         .report-panel{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-radius:18px 18px 0 0;z-index:310;padding:18px 16px 32px;box-shadow:0 -4px 24px rgba(0,0,0,.15);}
         .report-handle{width:36px;height:4px;background:#ddd;border-radius:4px;margin:0 auto 14px;}
         .report-title{font-size:15px;font-weight:700;color:#111;margin-bottom:4px;}
-        .report-sub{font-size:12px;color:#888;margin-bottom:14px;}
+        .report-sub{font-size:12px;color:#555;margin-bottom:14px;}
         .reason-list{display:flex;flex-direction:column;gap:7px;margin-bottom:16px;}
         .reason-btn{display:flex;align-items:center;gap:10px;border:1.5px solid #eee;border-radius:10px;padding:11px 13px;background:#fff;font-family:inherit;font-size:13px;color:#333;cursor:pointer;text-align:left;}
-        .reason-btn.sel{border-color:#E63312;background:#FFF0EE;color:#E63312;font-weight:600;}
+        .reason-btn.sel{border-color:#E63312;background:#FFF0EE;color:#C42B0F;font-weight:600;}
         .report-submit{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:11px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
         .report-submit:disabled{opacity:.5;cursor:not-allowed;}
         .report-success{text-align:center;padding:18px 0;}
-        .report-link{display:block;text-align:center;font-size:11px;color:#bbb;margin-top:14px;cursor:pointer;}
-        .report-link:hover{color:#E63312;}
+        .report-link{display:block;text-align:center;font-size:11px;color:#555;margin-top:14px;cursor:pointer;}
+        .report-link:hover{color:#C42B0F;}
         @keyframes ai-fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
       ` }} />
 
@@ -781,7 +879,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
               <button
                 type="button"
                 aria-label={priceAlert ? 'Ndrysho alarmin e çmimit' : 'Vendos alarm çmimi'}
-                onClick={() => setAlertOpen(true)}
+                onClick={() => { trackEvent('notify', listing.id); setAlertOpen(true) }}
                 style={{
                   display: 'flex', alignItems: 'center', gap: 5,
                   background: priceAlert ? '#FFF8E1' : '#F0F7FF',
@@ -807,8 +905,117 @@ export default function ListingPageClient({ params, initialListing }: { params: 
             {listing.city && <div className="meta-item"><i className="ti ti-map-pin" aria-hidden="true" />{listing.city}</div>}
             {listing.created_at && <div className="meta-item"><i className="ti ti-calendar" aria-hidden="true" />{pubDate(listing.created_at)}</div>}
             {listing.category && <div className="meta-item"><i className="ti ti-tag" aria-hidden="true" />{CATEGORY_LABELS[listing.category] || listing.category}</div>}
-            {(listing.views_count || 0) > 0 && <div className="meta-item"><i className="ti ti-eye" aria-hidden="true" />{listing.views_count}</div>}
+            {/* H5: numri i shikimeve hiqet nga meta-rreshti — SocialProofBar (lart) e shfaq
+                tashmë me praninë live (👁 N · 🔴 M), pa e dyfishuar ~50px më poshtë. */}
           </div>
+
+          {/* ── PROFILI I SHITËSIT — free-flowing ── */}
+          {seller && (
+            <>
+              <div className="seller-section">
+                <div className="sec-label" style={{ marginTop: 0 }}>Shitësi</div>
+
+                {/* Avatar row */}
+                <div role="link" tabIndex={0} className="seller-av-row" onClick={() => window.location.href = sellerHref} onKeyDown={e => { if (e.key === 'Enter') window.location.href = sellerHref }} style={{ cursor: 'pointer' }}>
+                  <Avatar
+                    src={seller.avatar_url}
+                    name={seller.shop_name || seller.full_name || seller.username}
+                    type={isBusinessListing ? 'business' : 'person'}
+                    tier={tierNgaProfili(seller)}
+                    verified={(seller.trust_score ?? 0) >= 60}
+                    online={sellerOnline}
+                    size={44}
+                  />
+                  <div>
+                    <div className="seller-name" style={{ textDecoration: 'underline', textDecorationColor: '#ddd' }}>
+                      {seller.shop_name || seller.full_name || seller.username || 'Shitës'}
+                    </div>
+                    <div className="seller-sub">
+                      {seller.city && <><span aria-hidden='true'>📍</span> {seller.city}</>}
+                      {seller.city && seller.created_at && ' · '}
+                      {seller.created_at && `Anëtar nga ${memberSince(seller.created_at)}`}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Badges */}
+                <div className="seller-chips">
+                  {seller.is_admin   && <span className="schip sch-admin"><span aria-hidden="true">🛡</span> Admin</span>}
+                  {sellerTier !== 'free' && <span className="schip sch-prem"><span aria-hidden="true">👑</span> {sellerTier === 'vip' ? 'VIP Ekstra Boost' : 'Premium'}</span>}
+                  {isBusinessListing && <span className="schip sch-shop"><span aria-hidden="true">🏢</span> Biznes</span>}
+                  {sellerCount > 0 && <span className="schip sch-seller"><span aria-hidden="true">📦</span> Shitës aktiv</span>}
+                  {isNewMember(seller.created_at) && <span className="schip sch-new"><span aria-hidden="true">🆕</span> Anëtar i ri</span>}
+                  {!isOwner && <span className="schip sch-priv"><span aria-hidden="true">🔒</span> Bisedë private</span>}
+                  {/* H1: "I verifikuar" hiqet — Avatar-i tashmë e shfaq vulën ✓ (verified) me të njëjtin
+                      prag. "Përgjigjet shpejt" hiqet — ishte proxy i rremë nga trust_score, jo kohë reale.
+                      Niveli i reputacionit shfaqet vetëm nga TrustBadge (një burim, poshtë). */}
+                </div>
+
+                {/* Stats */}
+                <div className="seller-stats">
+                  <span className="stat-chip"><i className="ti ti-package" aria-hidden="true" />{sellerCount} shpallje aktive</span>
+                  {seller.username && <span className="stat-chip"><i className="ti ti-at" aria-hidden="true" />{seller.username}</span>}
+                  {seller.gamification_points > 0 &&
+                    <span className="stat-chip"><i className="ti ti-bolt" aria-hidden="true" />{seller.gamification_points} pikë</span>}
+                </div>
+
+                {/* Trust Score — respekto opt-out (Ligj 124/2024 n.19) */}
+                {seller.created_at && seller.trust_score_visible !== false && (
+                  <div style={{ marginBottom: 8 }}>
+                    <TrustBadge
+                      score={seller.trust_score ?? undefined}
+                      createdAt={seller.created_at}
+                      listingsActive={sellerCount}
+                      gamificationPoints={seller.gamification_points || 0}
+                    />
+                  </div>
+                )}
+
+                {/* Bio */}
+                {(seller.bio || seller.shop_description) && (
+                  <div className="seller-bio">{seller.bio || seller.shop_description}</div>
+                )}
+
+                {/* Profile / Business button */}
+                {!isOwner && bizHref && (
+                  <button type="button" className="view-profile-btn"
+                    onClick={() => { window.location.href = bizHref }}>
+                    <i className="ti ti-building-store" aria-hidden="true" />
+                    Shiko biznesin →
+                  </button>
+                )}
+                {/* Profili i personit del edhe kur shitesi eshte biznes:
+                    dyqani dhe njeriu pas tij jane dy faqe te ndryshme dhe
+                    blerësi mund te doje te dyja (§4.5 — lidhje dydrejtimeshe). */}
+                {!isOwner && (
+                  <button type="button" className="view-profile-btn"
+                    onClick={() => window.location.href = `/u/${seller.id}`}>
+                    <i className="ti ti-user" aria-hidden="true" />
+                    Shiko profilin →
+                  </button>
+                )}
+
+                {/* Shop link — vetem per shitesit e vjeter me `shop_name` pa
+                    `business_id`; kur shpallja ka biznes, BusinessMiniCard e
+                    mbulon tashme kete rresht dhe do te ishte dyfishim. */}
+                {hasShop && !isOwner && !listing.business_id && bizHref && (
+                  <a className="shop-link-row" href={bizHref}>
+                    <span style={{ fontSize: 20 }} aria-hidden="true">🏢</span>
+                    <div>
+                      <span>{seller.shop_name}</span>
+                      <small>Shfleto të gjitha shpalljet e biznesit</small>
+                    </div>
+                    <i className="ti ti-chevron-right" style={{ fontSize: 13, color: '#aaa', marginLeft: 'auto' }} aria-hidden="true" />
+                  </a>
+                )}
+              </div>
+              <div style={{ height: 11 }} />
+            </>
+          )}
+
+          {/* GAP 5 (RESTAURIMI FINAL): BusinessMiniCard u hoq — dublonte lidhjen e biznesit
+              që jepet tashmë nga butoni "Shiko biznesin →" te blloku i shitësit (një lidhje e
+              vetme biznesi, pa dy kartela për të njëjtin biznes). */}
 
           {listing.description && (
             <>
@@ -844,114 +1051,15 @@ export default function ListingPageClient({ params, initialListing }: { params: 
             </>
           )}
 
-          {/* Business mini-card — shown when listing belongs to a business */}
-          {listing.business_id && (
-            <BusinessMiniCard bizId={listing.business_id} />
-          )}
+          {/* Oferta — mbyllja e qarkut te `offers`. Vjen PAS pershkrimit dhe
+              vendndodhjes: bleresi vendos per cmimin pasi e ka kuptuar sendin.
+              Komponenti vetefshihet kur ofertat jane te fikura nga `app_config`,
+              kur shpallja s'eshte aktive, ose kur s'ka asgje per te thene. */}
+          <OfferBox listingId={params.id} isOwner={isOwner} initial={offerState} />
 
           {/* Marketing: upsell per pronarin jo-premium */}
-          {isOwner && !seller?.is_premium && (
+          {isOwner && sellerTier === 'free' && (
             <SellerPremiumUpsell isPremium={false} />
-          )}
-
-          {/* ── PROFILI I SHITËSIT — free-flowing ── */}
-          {seller && (
-            <>
-              <div className="seller-section">
-                <div className="sec-label" style={{ marginTop: 0 }}>Shitësi</div>
-
-                {/* Avatar row */}
-                <div role="link" tabIndex={0} className="seller-av-row" onClick={() => window.location.href = hasShop ? `/biznese/${seller.id}` : `/u/${seller.id}`} onKeyDown={e => { if (e.key === 'Enter') window.location.href = hasShop ? `/biznese/${seller.id}` : `/u/${seller.id}` }} style={{ cursor: 'pointer' }}>
-                  <Avatar
-                    src={seller.avatar_url}
-                    name={seller.shop_name || seller.full_name || seller.username}
-                    type={hasShop ? 'business' : (seller.is_premium ? 'premium' : 'user')}
-                    verified={(seller.trust_score ?? 0) >= 60}
-                    size={44}
-                  />
-                  <div>
-                    <div className="seller-name" style={{ textDecoration: 'underline', textDecorationColor: '#ddd' }}>
-                      {seller.shop_name || seller.full_name || seller.username || 'Shitës'}
-                    </div>
-                    <div className="seller-sub">
-                      {seller.city && <><span aria-hidden='true'>📍</span> {seller.city}</>}
-                      {seller.city && seller.created_at && ' · '}
-                      {seller.created_at && `Anëtar nga ${memberSince(seller.created_at)}`}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Badges */}
-                <div className="seller-chips">
-                  {seller.is_admin   && <span className="schip sch-admin"><span aria-hidden="true">🛡</span> Admin</span>}
-                  {seller.is_premium && <span className="schip sch-prem"><span aria-hidden="true">👑</span> Premium</span>}
-                  {seller.shop_name  && <span className="schip sch-shop"><span aria-hidden="true">🏢</span> Biznes</span>}
-                  {(() => { const l = getLevel(seller.gamification_points || 0); return <span className="schip" style={{ background: l.bg, color: l.color }}>{l.icon} {l.name}</span> })()}
-                  {sellerCount > 0 && <span className="schip sch-seller"><span aria-hidden="true">📦</span> Shitës aktiv</span>}
-                  {isNewMember(seller.created_at) && <span className="schip sch-new"><span aria-hidden="true">🆕</span> Anëtar i ri</span>}
-                  {!isOwner && <span className="schip sch-priv"><span aria-hidden="true">🔒</span> Bisedë private</span>}
-                  {(seller.trust_score ?? 0) >= 60 && (
-                    <span className="schip" style={{ background: '#dcfce7', color: '#16a34a', fontWeight: 700 }}><span aria-hidden="true">✓</span> I verifikuar</span>
-                  )}
-                  {(seller.trust_score ?? 0) >= 75 && (
-                    <span className="schip" style={{ background: '#fef9c3', color: '#854d0e', fontWeight: 700 }}><span aria-hidden="true">⚡</span> Përgjigjet shpejt</span>
-                  )}
-                </div>
-
-                {/* Stats */}
-                <div className="seller-stats">
-                  <span className="stat-chip"><i className="ti ti-package" aria-hidden="true" />{sellerCount} shpallje aktive</span>
-                  {seller.username && <span className="stat-chip"><i className="ti ti-at" aria-hidden="true" />{seller.username}</span>}
-                  {seller.gamification_points > 0 &&
-                    <span className="stat-chip"><i className="ti ti-bolt" aria-hidden="true" />{seller.gamification_points} pikë</span>}
-                </div>
-
-                {/* Trust Score — respekto opt-out (Ligj 124/2024 n.19) */}
-                {seller.created_at && seller.trust_score_visible !== false && (
-                  <div style={{ marginBottom: 8 }}>
-                    <TrustBadge
-                      createdAt={seller.created_at}
-                      listingsActive={sellerCount}
-                      gamificationPoints={seller.gamification_points || 0}
-                    />
-                  </div>
-                )}
-
-                {/* Bio */}
-                {(seller.bio || seller.shop_description) && (
-                  <div className="seller-bio">{seller.bio || seller.shop_description}</div>
-                )}
-
-                {/* Profile / Business button */}
-                {!isOwner && hasShop && (
-                  <button type="button" className="view-profile-btn"
-                    onClick={() => window.location.href = `/biznese/${seller.id}`}>
-                    <i className="ti ti-building-store" aria-hidden="true" />
-                    Shiko biznesin →
-                  </button>
-                )}
-                {!isOwner && !hasShop && (
-                  <button type="button" className="view-profile-btn"
-                    onClick={() => window.location.href = `/u/${seller.id}`}>
-                    <i className="ti ti-user" aria-hidden="true" />
-                    Shiko profilin →
-                  </button>
-                )}
-
-                {/* Shop link */}
-                {hasShop && !isOwner && (
-                  <a className="shop-link-row" href={`/biznese/${seller.id}`}>
-                    <span style={{ fontSize: 20 }} aria-hidden="true">🏢</span>
-                    <div>
-                      <span>{seller.shop_name}</span>
-                      <small>Shfleto të gjitha shpalljet e biznesit</small>
-                    </div>
-                    <i className="ti ti-chevron-right" style={{ fontSize: 13, color: '#aaa', marginLeft: 'auto' }} aria-hidden="true" />
-                  </a>
-                )}
-              </div>
-              <div style={{ height: 11 }} />
-            </>
           )}
 
           {/* Owner actions */}
@@ -969,12 +1077,57 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                   onClick={doBump}
                   disabled={bumpLoading || !canBump(listing.last_bumped_at)}
                   aria-label={canBump(listing.last_bumped_at) ? 'Ngrije shpalljen në krye' : 'Mund ta ngresh pas 7 ditësh'}
+                  title="Rifresko dukshmërinë — një herë çdo 7 ditë"
                   style={{ flex: 1, background: canBump(listing.last_bumped_at) ? '#E63312' : '#F0F0F0', color: canBump(listing.last_bumped_at) ? '#fff' : '#999', border: 'none', borderRadius: 10, padding: '10px', fontSize: 12, fontWeight: 700, cursor: canBump(listing.last_bumped_at) ? 'pointer' : 'not-allowed', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, opacity: bumpLoading ? 0.7 : 1 }}>
-                  <i className="ti ti-arrow-up" style={{ fontSize: 14 }} aria-hidden="true" />{canBump(listing.last_bumped_at) ? 'Ngrije' : 'Ngritur'}
+                  <i className="ti ti-arrow-up" style={{ fontSize: 14 }} aria-hidden="true" />{canBump(listing.last_bumped_at) ? 'Ngrije në krye' : 'Ngritur'}
                 </button>
               </div>
+
+              {/* Fshirja — buton shkaterrues: outline i kuq, jo mbushje, dhe
+                  kurre me nje klikim te vetem (§7.4). Klikimi i pare hap
+                  konfirmimin, i dyti fshin. */}
+              <div style={{ marginTop: 8 }}>
+                {!delConfirm ? (
+                  <button
+                    type="button"
+                    onClick={() => { setDelConfirm(true); setDelMsg('') }}
+                    aria-label="Fshi shpalljen"
+                    style={{ width: '100%', background: '#fff', color: '#C42305', border: '1.5px solid #C42305', borderRadius: 12, minHeight: 44, padding: '10px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+                    <i className="ti ti-trash" style={{ fontSize: 14 }} aria-hidden="true" />Fshi shpalljen
+                  </button>
+                ) : (
+                  <div role="alertdialog" aria-label="Konfirmo fshirjen" style={{ background: '#FFF5F3', border: '1.5px solid #F0BDB2', borderRadius: 12, padding: '11px 12px' }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: '#C42305', marginBottom: 4 }}>
+                      Ta fshijmë këtë shpallje?
+                    </div>
+                    <div style={{ fontSize: 11.5, color: '#6b5a56', lineHeight: 1.5, marginBottom: 10 }}>
+                      Hiqet nga faqja dhe nga kërkimi. Bisedat dhe historiku i pagesave nuk preken.
+                    </div>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <button
+                        type="button"
+                        onClick={() => setDelConfirm(false)}
+                        style={{ flex: 1, background: '#fff', color: '#555', border: '1px solid #ddd', borderRadius: 12, minHeight: 44, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
+                        Jo, hiqe
+                      </button>
+                      <button
+                        type="button"
+                        onClick={doDelete}
+                        disabled={delLoading}
+                        style={{ flex: 1, background: '#C42305', color: '#fff', border: 'none', borderRadius: 12, minHeight: 44, fontSize: 12, fontWeight: 800, cursor: delLoading ? 'wait' : 'pointer', fontFamily: 'inherit', opacity: delLoading ? 0.7 : 1 }}>
+                        {delLoading ? 'Po fshihet…' : 'Po, fshije'}
+                      </button>
+                    </div>
+                  </div>
+                )}
+                {delMsg && (
+                  <div role="alert" style={{ fontSize: 12, fontWeight: 600, color: '#C42305', textAlign: 'center', padding: '6px 0 0' }}>
+                    {delMsg}
+                  </div>
+                )}
+              </div>
               {bumpMsg && (
-                <div role="alert" style={{ fontSize: 12, fontWeight: 600, color: bumpMsg.startsWith('ok:') ? '#1D9E75' : '#E63312', textAlign: 'center', padding: '4px 0' }}>
+                <div role="alert" style={{ fontSize: 12, fontWeight: 600, color: bumpMsg.startsWith('ok:') ? '#1D9E75' : '#C42305', textAlign: 'center', padding: '4px 0' }}>
                   {bumpMsg.replace(/^(ok:|err:)/, '')}
                 </div>
               )}
@@ -985,7 +1138,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
           {!isOwner && user && seller && (
             <div style={{ padding: '0 13px 14px' }}>
               <div className="divider" style={{ marginBottom: 12 }} />
-              <div style={{ fontSize: 11, fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '.5px', marginBottom: 10 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#4A4A4A', textTransform: 'uppercase', letterSpacing: '.5px', marginBottom: 10 }}>
                 Vlerëso shitësin
               </div>
 
@@ -1019,7 +1172,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                     style={{ width: '100%', border: '1.5px solid #ddd', borderRadius: 9, padding: '8px 11px', fontSize: 12, fontFamily: 'inherit', outline: 'none', resize: 'none', minHeight: 60, color: '#111', background: '#fff', boxSizing: 'border-box' }}
                   />
                   {reviewMsg && (
-                    <div style={{ fontSize: 11, marginTop: 6, color: reviewMsg.startsWith('ok:') ? '#3B6D11' : '#E63312', fontWeight: 600 }}>
+                    <div style={{ fontSize: 11, marginTop: 6, color: reviewMsg.startsWith('ok:') ? '#3B6D11' : '#C42305', fontWeight: 600 }}>
                       {reviewMsg.split(/:(.+)/)[1]}
                     </div>
                   )}
@@ -1041,48 +1194,59 @@ export default function ListingPageClient({ params, initialListing }: { params: 
               <div style={{ fontWeight: 700, fontSize: 14, color: '#111', marginBottom: 12 }}>
                 Shpallje të ngjashme
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 9 }}>
-                {similar.map(s => {
-                  const img = Array.isArray(s.images) && s.images.length ? s.images[0] : null
-                  const priceStr = s.currency === 'EUR'
-                    ? `€${Number(s.price).toLocaleString('sq-AL')}`
-                    : `${Number(s.price).toLocaleString('sq-AL')} L`
-                  return (
-                    <div
-                      key={s.id}
-                      role="link" tabIndex={0}
-                      onClick={() => { window.location.href = `/listing/${s.id}` }}
-                      onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/listing/${s.id}` }}
-                      style={{ borderRadius: 12, overflow: 'hidden', background: '#fff', border: '1px solid #F0F0F0', boxShadow: '0 1px 6px rgba(0,0,0,0.06)', cursor: 'pointer' }}
-                    >
-                      <div style={{ width: '100%', aspectRatio: '4/3', background: '#F6F6F6', overflow: 'hidden', position: 'relative' }}>
-                        {img
-                          ? <img src={img} alt={s.title} loading="lazy" width={400} height={300} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                          : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><i className="ti ti-photo" style={{ fontSize: 24, color: '#ccc' }} aria-hidden="true" /></div>
-                        }
-                        {s.is_premium && (
-                          <div style={{ position: 'absolute', top: 5, left: 5, background: 'linear-gradient(90deg,#FFD700,#FFA500)', color: '#7B5000', fontSize: 9, fontWeight: 800, padding: '2px 6px', borderRadius: 5 }}>GOLD</div>
-                        )}
-                      </div>
-                      <div style={{ padding: '7px 8px 9px' }}>
-                        <div style={{ fontSize: 11, fontWeight: 600, color: '#111', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', lineHeight: 1.35, marginBottom: 4 }}>{s.title}</div>
-                        <div style={{ fontSize: 13, fontWeight: 800, color: '#E63312' }}>{priceStr}</div>
-                        {s.city && <div style={{ fontSize: 10, color: '#888', marginTop: 2 }}><i className="ti ti-map-pin" style={{ fontSize: 10 }} aria-hidden="true" /> {s.city}</div>}
-                      </div>
-                    </div>
-                  )
-                })}
+              {/* I njejti ListingCard si kudo tjeter. `showSeller={false}`: kartat
+                  jane kompakte dhe te dhenat e ngjashme vijne nga tri burime
+                  (/api/similar, recommend_similar, fallback) qe s'i mbajne gjithmone
+                  join-et e shitesit; karta shfaqet e njesuar edhe pa to. `similar`
+                  mbushet vetem pas montimit, ndaj mounted={true} eshte i sigurt. */}
+              <div className="listings-grid">
+                {similar.map((s, i) => (
+                  <ListingCard key={s.id} listing={s as any} index={i} showSeller={false} mounted={true} />
+                ))}
               </div>
             </div>
           )}
 
-          {/* Report link — only for non-owner visitors */}
+          {/* Rreshti siguri/besim — Raporto, Takedown, Ndaj bashke.
+              Me pare "Raporto" rrinte vetem, me ngjyre #ccc mbi te bardhe
+              (rreth 1.6:1 — nen cdo prag WCAG); tani teksti eshte i lexueshem
+              dhe rruget e ankimit qendrojne bashke, ku i kerkon syri. */}
           {!isOwner && (
-            <div style={{ padding: '0 13px 20px', textAlign: 'center' }}>
-              <button type="button" aria-label="Raporto shpalljen" aria-haspopup="dialog" onClick={() => setReportOpen(true)}
-                style={{ background: 'none', border: 'none', color: '#ccc', fontSize: 11, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                <i className="ti ti-flag" style={{ fontSize: 12 }} aria-hidden="true" />Raporto këtë shpallje
-              </button>
+            <div style={{ padding: '0 13px 20px' }}>
+              <div style={{ display: 'flex', gap: 6, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  aria-label="Raporto shpalljen"
+                  aria-haspopup="dialog"
+                  onClick={() => setReportOpen(true)}
+                  className="safety-btn">
+                  <i className="ti ti-flag" style={{ fontSize: 12 }} aria-hidden="true" />Raporto
+                </button>
+                <a
+                  href="/takedown"
+                  className="safety-btn"
+                  title="Kërkesë ligjore për heqjen e përmbajtjes">
+                  <i className="ti ti-gavel" style={{ fontSize: 12 }} aria-hidden="true" />Kërkesë heqjeje
+                </a>
+                <button
+                  type="button"
+                  aria-label="Ndaj shpalljen"
+                  onClick={() => {
+                    trackEvent('share', listing.id)
+                    const url = buildShareUrl(`/listing/${params.id}`, myRefCode)
+                    if (navigator.share) {
+                      navigator.share({ title: listing.title, url }).catch(() => {})
+                    } else {
+                      navigator.clipboard?.writeText(url).then(
+                        () => { setLinkCopied(true); setTimeout(() => setLinkCopied(false), 2000) },
+                        () => {},
+                      )
+                    }
+                  }}
+                  className="safety-btn">
+                  <i className="ti ti-share" style={{ fontSize: 12 }} aria-hidden="true" />{linkCopied ? 'U kopjua' : 'Ndaj'}
+                </button>
+              </div>
             </div>
           )}
         </div>
@@ -1095,7 +1259,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
           <div className="alert-panel" role="dialog" aria-modal="true" aria-label="Alarmi i Çmimit">
             <div className="alert-handle" />
             <div className="alert-title">
-              <i className="ti ti-bell-ringing" style={{ color: '#E63312' }} aria-hidden="true" />
+              <i className="ti ti-bell-ringing" style={{ color: '#C42B0F' }} aria-hidden="true" />
               Alarmi i Çmimit
             </div>
             <div className="alert-sub">
@@ -1111,7 +1275,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
                 </span>
               )}
             </div>
-            <div style={{ fontSize: 12, color: '#888', marginBottom: 8 }}>
+            <div style={{ fontSize: 12, color: '#555', marginBottom: 8 }}>
               Çmimi aktual: <strong style={{ color: '#111' }}>{fmt(listing?.price, listing?.currency)}</strong>
             </div>
             <input
@@ -1134,7 +1298,7 @@ export default function ListingPageClient({ params, initialListing }: { params: 
               </button>
             </div>
             {alertMsg && (
-              <div role="alert" className="alert-msg" style={{ color: alertMsg.startsWith('ok:') ? '#2e7d32' : '#E63312' }}>
+              <div role="alert" className="alert-msg" style={{ color: alertMsg.startsWith('ok:') ? '#2e7d32' : '#C42305' }}>
                 {alertMsg.replace(/^(ok|err):/, '')}
               </div>
             )}
@@ -1144,38 +1308,11 @@ export default function ListingPageClient({ params, initialListing }: { params: 
 
       {/* ── REPORT MODAL ── */}
       {reportOpen && (
-        <>
-          <div className="report-overlay" onClick={() => setReportOpen(false)} />
-          <div className="report-panel" role="dialog" aria-modal="true" aria-label="Raporto këtë shpallje">
-            <div className="report-handle" />
-            {reportSent ? (
-              <div className="report-success">
-                <div style={{ fontSize: 40, marginBottom: 10 }} aria-hidden="true">✅</div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: '#3B6D11' }}>Raporti u dërgua!</div>
-                <div style={{ fontSize: 12, color: '#888', marginTop: 4 }}>Faleminderit. Ekipi ynë do ta shqyrtojë.</div>
-              </div>
-            ) : (
-              <>
-                <div className="report-title"><span aria-hidden="true">⚑</span> Raporto shpalljen</div>
-                <div className="report-sub">Zgjidh arsyen e raportimit</div>
-                <div role="group" aria-label="Arsyeja e raportimit" className="reason-list">
-                  {REPORT_REASONS.map(r => (
-                    <button key={r} type="button" aria-pressed={reportReason === r} className={`reason-btn ${reportReason === r ? 'sel' : ''}`}
-                      onClick={() => setReportReason(r)}>
-                      <><span aria-hidden='true'>{reportReason === r ? '●' : '○'}</span> {r}</>
-                    </button>
-                  ))}
-                </div>
-                {reportErr && <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', color: '#E63312', borderRadius: 10, padding: '9px 12px', margin: '0 0 10px', fontSize: 12, fontWeight: 600 }}>{reportErr}</div>}
-                <button type="button" className="report-submit" onClick={submitReport}
-                  disabled={!reportReason || reportLoading}>
-                  {reportLoading ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : 'Dërgo raportin'}
-                </button>
-                <button type="button" className="report-link" onClick={() => setReportOpen(false)}>Anulo</button>
-              </>
-            )}
-          </div>
-        </>
+        <ReportSheet
+          listingId={params.id}
+          userId={user?.id || null}
+          onClose={() => setReportOpen(false)}
+        />
       )}
 
       {/* ── CHAT BOTTOM SHEET ── */}
@@ -1190,7 +1327,8 @@ export default function ListingPageClient({ params, initialListing }: { params: 
               <Avatar
                 src={seller.avatar_url}
                 name={seller.shop_name || seller.full_name || seller.username}
-                type={hasShop ? 'business' : (seller.is_premium ? 'premium' : 'user')}
+                type={isBusinessListing ? 'business' : 'person'}
+                tier={tierNgaProfili(seller)}
                 verified={(seller.trust_score ?? 0) >= 60}
                 size={36}
               />
@@ -1305,26 +1443,77 @@ export default function ListingPageClient({ params, initialListing }: { params: 
             <i className="ti ti-messages" aria-hidden="true" />
             {user ? <><span aria-hidden='true'>💬</span> Fillo bisedën</> : <><span aria-hidden='true'>🔑</span> Hyr për të biseduar</>}
           </button>
-          {seller.phone && (
-            <a
-              href={`https://wa.me/${seller.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Përshëndetje! Jam i interesuar/e për: "${listing.title}"`)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="wa-btn"
-              aria-label="Kontakto me WhatsApp">
+          {/*  BUTONA, JO LIDHJE: numri nuk ekziston ne faqe derisa perdoruesi
+               ta kerkoje. Fleta e konfirmimit perdor te njejtin fjalor si ajo
+               te `/messages` — i njejti veprim duhet te duket i njejte.  */}
+          {seller.has_phone && (
+            <button type="button" className="wa-btn" aria-label="Kontakto me WhatsApp"
+              onClick={() => { setKontakti('wa'); hapKontaktin() }}>
               <i className="ti ti-brand-whatsapp" aria-hidden="true" />
-            </a>
+            </button>
           )}
-          {seller.phone && (
-            <a
-              href={`viber://chat?number=%2B${seller.phone.replace(/\D/g, '')}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="viber-btn"
-              aria-label="Kontakto me Viber">
+          {seller.has_phone && (
+            <button type="button" className="viber-btn" aria-label="Kontakto me Viber"
+              onClick={() => { setKontakti('viber'); hapKontaktin() }}>
               <i className="ti ti-phone" aria-hidden="true" />
-            </a>
+            </button>
           )}
+        </div>
+      )}
+
+      {/*  FLETA E KONTAKTIT — i njejti model si te `/messages`: emoji, titull,
+           fjali shpjeguese, numri i shfaqur SHPREHIMISHT, veprimi kryesor,
+           anulimi. Numri tregohet sepse perdoruesi duhet te shohe cfare po
+           merr; eshte edhe zbulim i ndershem edhe rruge e dyte kur aplikacioni
+           nuk hapet dot.
+           z-index 300 = i njejti nivel si `.overlay` e `/messages`, JO nje numer
+           i ri: me 120 flluska e Albit (z-index 200) dilte MBI fleten modale dhe
+           mbulonte fjaline — pare me sy me 31 gusht 2026.  */}
+      {kontakti && seller && (
+        <div onClick={() => setKontakti(null)}
+          style={{ position:'fixed', inset:0, background:'rgba(0,0,0,.55)', zIndex:300, display:'flex', alignItems:'flex-end', justifyContent:'center' }}>
+          <div role="dialog" aria-modal="true"
+            aria-label={kontakti === 'wa' ? 'Vazhdo në WhatsApp' : 'Vazhdo në Viber'}
+            onClick={e => e.stopPropagation()}
+            style={{ width:'100%', maxWidth:480, background:'#fff', borderRadius:'20px 20px 0 0', padding:'10px 20px 24px', textAlign:'center' }}>
+            <div style={{ width:38, height:4, borderRadius:2, background:'#e0e0e0', margin:'0 auto 14px' }} aria-hidden="true" />
+            <div style={{ fontSize:52, marginBottom:10 }} aria-hidden="true">{kontakti === 'wa' ? '💬' : '📲'}</div>
+            <div style={{ fontWeight:700, fontSize:16, color:'#111', marginBottom:8 }}>
+              {kontakti === 'wa' ? 'Vazhdo në WhatsApp' : 'Vazhdo në Viber'}
+            </div>
+            <div style={{ fontSize:13, color:'#555', lineHeight:1.7, marginBottom:18 }}>
+              Do të kontaktosh <strong>{seller.shop_name || seller.full_name || seller.username || 'shitësin'}</strong> jashtë Alpazar-it.
+            </div>
+
+            {kontaktDuke ? (
+              <div role="status" style={{ padding:14, borderRadius:14, background:'#f5f3eb', fontSize:14, fontWeight:600, color:'#555', marginBottom:10 }}>
+                Duke hapur kontaktin…
+              </div>
+            ) : kontaktGabim ? (
+              <div role="alert" style={{ padding:'12px 14px', borderRadius:14, background:'#FFF0EE', border:'1px solid #F09595', fontSize:13, fontWeight:600, color:'#C42305', marginBottom:10, lineHeight:1.6 }}>
+                {kontaktGabim}
+              </div>
+            ) : sellerPhone ? (
+              <>
+                <div style={{ fontSize:15, fontWeight:800, color:'#111', letterSpacing:'.3px', marginBottom:12 }}>{sellerPhone}</div>
+                <a
+                  href={kontakti === 'wa'
+                    ? `https://wa.me/${sellerPhone.replace(/\D/g, '')}?text=${encodeURIComponent(`Përshëndetje! Jam i interesuar/e për: "${listing.title}"`)}`
+                    : `viber://chat?number=%2B${sellerPhone.replace(/\D/g, '')}`}
+                  target={kontakti === 'wa' ? '_blank' : undefined}
+                  rel={kontakti === 'wa' ? 'noopener noreferrer' : undefined}
+                  onClick={() => { trackEvent(kontakti === 'wa' ? 'contact_whatsapp' : 'contact_viber', listing.id); setKontakti(null) }}
+                  style={{ display:'block', background: kontakti === 'wa' ? '#25D366' : '#7360F2', color:'#fff', textDecoration:'none', padding:14, borderRadius:14, fontWeight:700, fontSize:15, marginBottom:10 }}>
+                  {kontakti === 'wa' ? 'Hap WhatsApp' : 'Hap Viber'}
+                </a>
+              </>
+            ) : null}
+
+            <button type="button" onClick={() => setKontakti(null)}
+              style={{ width:'100%', padding:13, background:'#f5f3eb', border:'none', borderRadius:14, fontWeight:600, fontSize:14, cursor:'pointer', color:'#555', fontFamily:'inherit' }}>
+              Anulo
+            </button>
+          </div>
         </div>
       )}
 

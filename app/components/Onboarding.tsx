@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 export function Onboarding() {
   const [visible, setVisible] = useState(false)
+  const dialogRef = useRef<HTMLDivElement>(null)
   const [step, setStep] = useState(0)
 
   useEffect(() => {
@@ -16,10 +17,22 @@ export function Onboarding() {
     setVisible(false)
   }
 
+  // A11y (WCAG 2.1.1 / 2.4.3): Escape mbyll + fokusi hyn brenda dialogut.
+  useEffect(() => {
+    if (!visible) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close() }
+    document.addEventListener('keydown', onKey)
+    const t = setTimeout(() => {
+      dialogRef.current?.querySelector<HTMLElement>('button')?.focus()
+    }, 50)
+    return () => { document.removeEventListener('keydown', onKey); clearTimeout(t) }
+  }, [visible])
+
   if (!visible) return null
 
   return (
     <div
+      ref={dialogRef}
       role="dialog"
       aria-modal="true"
       aria-label="Mirë se erdhe në Alpazar"
@@ -54,12 +67,12 @@ export function Onboarding() {
         {step === 0 && (
           <>
             <div style={{ textAlign: 'center', marginBottom: 16 }}>
-              <span style={{ background: '#111', color: '#F5C842', fontSize: 13, fontWeight: 800, letterSpacing: 2, padding: '4px 12px', borderRadius: 8, display: 'inline-block' }}><span aria-hidden="true">🦅</span> ALPAZAR</span>
+              <span style={{ background: '#111', color: '#F5C842', fontSize: 13, fontWeight: 800, letterSpacing: 2, padding: '4px 12px', borderRadius: 8, display: 'inline-block' }}><img src="/icons/eagle.svg" alt="" aria-hidden="true" style={{ height: '0.9em', verticalAlign: '-0.12em', display: 'inline-block' }} /> ALPAZAR</span>
             </div>
             <div style={{ fontSize: 22, fontWeight: 800, color: '#111', textAlign: 'center', marginBottom: 8 }}>Mirë se erdhe!</div>
-            <div style={{ fontSize: 14, color: '#888', textAlign: 'center', lineHeight: 1.6, marginBottom: 28 }}>Shit, bli dhe bëj pazarin tënd — falas, pa komision.</div>
+            <div style={{ fontSize: 14, color: '#555', textAlign: 'center', lineHeight: 1.6, marginBottom: 28 }}>Shit, bli dhe bëj pazarin tënd — falas, pa komision.</div>
             <button type="button" onClick={() => setStep(1)} style={{ width: '100%', background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 12, padding: 14, fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', marginBottom: 10 }}>Vazhdo →</button>
-            <button type="button" onClick={close} style={{ width: '100%', background: 'none', border: 'none', color: '#aaa', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>Anashkalo</button>
+            <button type="button" onClick={close} style={{ width: '100%', background: 'none', border: 'none', color: '#555', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>Anashkalo</button>
           </>
         )}
 
@@ -86,10 +99,10 @@ export function Onboarding() {
         {step === 2 && (
           <>
             <div style={{ fontSize: 22, fontWeight: 800, color: '#111', textAlign: 'center', marginBottom: 8 }}>Gati? <span aria-hidden="true">🚀</span></div>
-            <div style={{ fontSize: 13, color: '#888', textAlign: 'center', marginBottom: 24 }}>Zgjidh si dëshiron të fillosh</div>
+            <div style={{ fontSize: 13, color: '#555', textAlign: 'center', marginBottom: 24 }}>Zgjidh si dëshiron të fillosh</div>
             <button type="button" onClick={() => { close(); window.location.href = '/listing/new' }} style={{ width: '100%', background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 12, padding: 14, fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', marginBottom: 10 }}><span aria-hidden="true">➕</span> Shto shpalljen e parë</button>
             <button type="button" onClick={() => { close(); window.location.href = '/search' }} style={{ width: '100%', background: 'linear-gradient(135deg,#F8D24E,#F5C842)', color: '#111', border: 'none', borderRadius: 12, padding: 14, fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', marginBottom: 10 }}><span aria-hidden="true">🔍</span> Eksploro</button>
-            <button type="button" onClick={() => setStep(1)} style={{ width: '100%', background: 'none', border: 'none', color: '#aaa', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>← Mbrapa</button>
+            <button type="button" onClick={() => setStep(1)} style={{ width: '100%', background: 'none', border: 'none', color: '#555', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>← Mbrapa</button>
           </>
         )}
       </div>

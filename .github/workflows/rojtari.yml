@@ -1,0 +1,70 @@
+name: Rojtari — çdo 5 minuta
+
+# Nga 10 deri me 12 gusht faqja mbeti e ngrire dy dite pa e vene re askush:
+# nje cron i palejuar ne vercel.json bllokonte CDO vendosje, ndersa GitHub-i
+# dhe Actions punonin normalisht dhe ndertimet e vjetra dukeshin te gjelbra.
+#
+# Prandaj ky rojtar nuk kontrollon nese ndertimi i fundit ishte i sukseshem.
+# Ai kontrollon nese commit-i qe sherbehet LIVE eshte i njejte me main.
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: rojtari
+  cancel-in-progress: true
+
+jobs:
+  prodhimi:
+    name: Prodhimi pasqyron main
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+
+      # pas nje shtytjeje, Vercel-it i duhen ~3 minuta per te ndertuar
+      - name: Prit ndertimin
+        if: github.event_name == 'push'
+        run: sleep 210
+
+      - name: Prodhimi eshte i njejte me main?
+        run: node scripts/verifiko-live.mjs
+        env:
+          URL_PRODHIMI: ${{ vars.URL_PRODHIMI || 'https://alpazar.vercel.app' }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          TOLERANCA_MIN: '20'
+
+      - name: Kontrata kod ↔ bazë
+        if: always()
+        run: node scripts/kontroll-kontrate.mjs
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://sopafwfkrxpcdaljddoh.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+      # Rruga e shpetimit: nese prodhimi ka ngecur, provo ta nisesh vendosjen vete.
+      - name: Nis vendosjen nese prodhimi ka ngecur
+        if: failure() && github.event_name == 'schedule'
+        continue-on-error: true
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          [ -n "$HOOK" ] || { echo "::notice::VERCEL_DEPLOY_HOOK mungon — anashkalohet."; exit 0; }
+          echo "Prodhimi ka ngecur — nis vendosjen…"
+          curl -sS -X POST "$HOOK" | head -c 300
+
+      - name: Alarm ne Slack
+        if: failure()
+        continue-on-error: true
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          [ -n "$SLACK_WEBHOOK_URL" ] || { echo "::notice::SLACK_WEBHOOK_URL mungon."; exit 0; }
+          payload=$(jq -nc --arg u "$RUN_URL" '{text:("🔴 *ALPAZAR — prodhimi nuk pasqyron main* \n" + $u)}')
+          curl -sS -X POST "$SLACK_WEBHOOK_URL" -H "Content-Type: application/json" -d "$payload" >/dev/null

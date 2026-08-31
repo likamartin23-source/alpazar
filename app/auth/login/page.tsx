@@ -20,14 +20,14 @@ const CSS = `
   .logo{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:20px;}
   .brand{font-size:24px;font-weight:700;color:#111;letter-spacing:2px;}
   h2{font-size:17px;font-weight:700;color:#111;margin-bottom:5px;text-align:center;}
-  .sub{font-size:12px;color:#888;text-align:center;margin-bottom:18px;line-height:1.6;}
+  .sub{font-size:12px;color:#555;text-align:center;margin-bottom:18px;line-height:1.6;}
   .sub strong{color:#111;}
   .row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   .field{margin-bottom:12px;}
   label{font-size:11px;font-weight:600;color:#555;display:block;margin-bottom:4px;}
   input[type=text],input[type=email],input[type=tel],input[type=number],input[type=password]{width:100%;border:1.5px solid #ddd;border-radius:8px;padding:11px 13px;font-size:13px;font-family:inherit;outline:none;transition:border .15s;background:#fff;color:#111;}
   input:focus{border-color:#F5C842;}
-  .hint{font-size:10px;color:#aaa;margin-top:4px;line-height:1.5;}
+  .hint{font-size:10px;color:#555;margin-top:4px;line-height:1.5;}
   .hint.ok{color:#3B6D11;}
   .hint.warn{color:#A05000;}
   .btn{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px;box-shadow:0 4px 14px -3px rgba(230,51,18,.45);transition:transform .15s ease,box-shadow .15s ease;}
@@ -39,45 +39,45 @@ const CSS = `
   .btn-yellow:hover{opacity:.9;}
   .msg{text-align:center;font-size:12px;padding:10px 12px;border-radius:8px;margin-bottom:12px;font-weight:500;line-height:1.5;}
   .ok{background:#EAF3DE;color:#3B6D11;border:0.5px solid #97C459;}
-  .err{background:#FFF0EE;color:#E63312;border:0.5px solid #F09595;}
+  .err{background:#FFF0EE;color:#C42B0F;border:0.5px solid #F09595;}
   .info{background:#EEF4FF;color:#185FA5;border:0.5px solid #85B7EB;}
   .warn{background:#FFF8EE;color:#A05000;border:0.5px solid #F5C842;}
-  .divider{display:flex;align-items:center;gap:10px;margin:12px 0;color:#ccc;font-size:12px;}
+  .divider{display:flex;align-items:center;gap:10px;margin:12px 0;color:#6E6E6E;font-size:12px;}
   .divider::before,.divider::after{content:'';flex:1;border-top:1px solid #eee;}
-  .back{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:14px;color:#888;font-size:12px;cursor:pointer;}
-  .back:hover{color:#E63312;}
+  .back{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:14px;color:#555;font-size:12px;cursor:pointer;}
+  .back:hover{color:#C42B0F;}
   .otp-row{display:flex;gap:8px;justify-content:center;margin-bottom:16px;}
   .otp-input{width:46px;height:54px;border:2px solid #e0e0e0;border-radius:12px;font-size:22px;font-weight:700;text-align:center;color:#111;outline:none;transition:border-color .15s ease,box-shadow .15s ease;background:#fff;}
   .otp-input:focus{border-color:#111;box-shadow:0 4px 16px -4px rgba(0,0,0,.2);}
   .otp-input:focus{border-color:#F5C842;background:#FFFBEA;}
-  .otp-input.filled{border-color:#E63312;color:#E63312;}
+  .otp-input.filled{border-color:#E63312;color:#C42B0F;}
   .otp-input:disabled{background:#f9f9f9;color:#bbb;border-color:#eee;}
   .countdown{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding:8px 12px;border-radius:8px;background:#FFFBEA;border:1px solid #f0e0a8;}
   .countdown-time{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;}
   .countdown-time.ok-c{color:#3B6D11;}
   .countdown-time.warn-c{color:#A05000;}
-  .countdown-time.err-c{color:#E63312;}
-  .resend-btn{font-size:12px;color:#E63312;font-weight:600;background:none;border:none;cursor:pointer;font-family:inherit;text-decoration:underline;}
+  .countdown-time.err-c{color:#C42B0F;}
+  .resend-btn{font-size:12px;color:#C42B0F;font-weight:600;background:none;border:none;cursor:pointer;font-family:inherit;text-decoration:underline;}
   .resend-btn:disabled{color:#bbb;text-decoration:none;cursor:default;}
   .steps{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:16px;}
   .step-dot{width:8px;height:8px;border-radius:50%;background:#eee;}
   .step-dot.active{background:#E63312;width:20px;border-radius:4px;}
   .step-dot.done{background:#97C459;}
-  .terms{font-size:10px;color:#aaa;text-align:center;margin-top:10px;line-height:1.6;}
-  .terms a{color:#888;text-decoration:underline;}
+  .terms{font-size:10px;color:#555;text-align:center;margin-top:10px;line-height:1.6;}
+  .terms a{color:#555;text-decoration:underline;}
   .pass-wrap{position:relative;}
   .pass-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#aaa;font-size:13px;padding:4px;}
   .contact-wrap{position:relative;}
   .contact-type{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;}
-  .forgot-link{display:block;text-align:center;font-size:11px;color:#aaa;cursor:pointer;margin-top:4px;}
-  .forgot-link:hover{color:#E63312;text-decoration:underline;}
+  .forgot-link{display:block;text-align:center;font-size:11px;color:#555;cursor:pointer;margin-top:4px;}
+  .forgot-link:hover{color:#C42B0F;text-decoration:underline;}
   .sms-fail-box{background:#FFF8EE;border:1.5px solid #F5C842;border-radius:12px;padding:14px;margin-bottom:10px;}
   .sms-fail-header{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;}
   .sms-fail-header span{font-size:22px;flex-shrink:0;}
   .sms-fail-header strong{font-size:13px;font-weight:700;color:#111;display:block;margin-bottom:3px;}
-  .sms-fail-header p{font-size:11px;color:#888;margin:0;line-height:1.5;}
-  .sec-row{text-align:center;font-size:12px;color:#888;margin-top:6px;}
-  .sec-row a{color:#E63312;font-weight:700;cursor:pointer;text-decoration:none;}
+  .sms-fail-header p{font-size:11px;color:#555;margin:0;line-height:1.5;}
+  .sec-row{text-align:center;font-size:12px;color:#555;margin-top:6px;}
+  .sec-row a{color:#C42B0F;font-weight:700;cursor:pointer;text-decoration:none;}
   .sec-row a:hover{text-decoration:underline;}
 `
 
@@ -403,10 +403,11 @@ export default function Auth() {
 
         // Register / login: send a 6-digit CODE via our server (Resend).
         if (mode === 'register') {
+          // Siguri MEDIUM-1: NUK ruajmë fjalëkalimin në localStorage (plaintext). Fjalëkalimi
+          // vendoset server-side nga email-otp (createUser) dhe/ose nga verifyOtp (state regPass).
           localStorage.setItem('alpazar_reg_pending', JSON.stringify({
             full_name: fullName || null,
             age: parseInt(age) || null,
-            password: regPass || null,
           }))
         }
         const otpRes = await fetch('/api/email', {
@@ -784,11 +785,15 @@ export default function Auth() {
 
   const contactHint = contact.length > 2
     ? cType === 'email'
-      ? <p className="hint ok"><span aria-hidden="true">📧</span> Lidhja e konfirmimit dërgohet me <strong>email</strong></p>
+      ? mode === 'forgot'
+        ? <p className="hint ok"><span aria-hidden="true">📧</span> Lidhja e rivendosjes dërgohet me <strong>email</strong></p>
+        : <p className="hint ok"><span aria-hidden="true">📧</span> Kodi 6-shifror dërgohet me <strong>email</strong></p>
       : cType === 'phone'
         ? smsFailMode
           ? <p className="hint ok"><span aria-hidden="true">📧</span> Numri ruhet — kodi dërgohet me <strong>email</strong></p>
-          : <p className="hint ok"><span aria-hidden="true">📱</span> Kodi konfirmimit dërgohet me <strong>SMS</strong></p>
+          : /^\+355[^6]/.test(toE164(contact.trim()))
+            ? <p className="hint warn"><span aria-hidden="true">⚠️</span> Numri celular shqiptar fillon me <strong>6</strong> (067/068/069). SMS shkon vetëm te celularët — te fiksi jo. Përdor email nëse s&apos;e merr kodin.</p>
+            : <p className="hint ok"><span aria-hidden="true">📱</span> Kodi konfirmimit dërgohet me <strong>SMS</strong></p>
         : <p className="hint warn">Fut email (user@domain.com) ose nr. telefoni (+355, +1, +44...)</p>
     : <p className="hint"><span aria-hidden="true">📧</span> Email &nbsp;·&nbsp; <span aria-hidden="true">📱</span> Çdo numër telefoni bote (+355, +1, +44...)</p>
 
@@ -819,12 +824,12 @@ export default function Auth() {
         Kodi 6-shifror u dërgua te<br />
         <strong>{resolvedId}</strong><br />
         {detectType(resolvedId) === 'email' && (
-          <span style={{ fontSize: 10, color: '#aaa' }}>Nëse nuk e gjen, kontrollo Spam / Junk</span>
+          <span style={{ fontSize: 10, color: '#555' }}>Nëse nuk e gjen, kontrollo Spam / Junk</span>
         )}
       </p>
 
       <div className="countdown">
-        <span style={{ fontSize: 12, color: '#888' }}>{expired ? 'Kodi skadoi' : 'Skadon në:'}</span>
+        <span style={{ fontSize: 12, color: '#555' }}>{expired ? 'Kodi skadoi' : 'Skadon në:'}</span>
         <span className={`countdown-time ${expired ? 'err-c' : timeClass}`}>
           {expired ? '0:00' : `${mins}:${fmt2(secs)}`}
         </span>
@@ -840,6 +845,15 @@ export default function Auth() {
       </div>
 
       {expired && <div className="msg warn" role="alert">Kodi ka skaduar. Klikoje &quot;Ridërgo&quot; për kod të ri.</div>}
+
+      {/* Dalje nga kurthi i SMS-së: kur kodi i telefonit skadon (SMS-ja s'mbërriti — p.sh.
+          numër fiks ose gateway i ngadaltë), përdoruesi kalon menjëherë te konfirmimi me
+          email (kanal i garantuar: Brevo→Resend). Pa këtë, ekrani ishte rrugë pa krye. */}
+      {expired && detectType(resolvedId) === 'phone' && mode !== 'login' && (
+        <button type="button" className="btn-yellow" onClick={() => { setOriginalPhone(resolvedId); setSmsFailMode(true); resetToForm() }}>
+          <span aria-hidden="true">📧</span> SMS-ja s&apos;erdhi? Konfirmo me email
+        </button>
+      )}
 
       <div className="otp-row" role="group" aria-label="Kodi i konfirmimit 6-shifror" onPaste={handleOtpPaste}>
         {otp.map((d, i) => (
@@ -861,7 +875,7 @@ export default function Auth() {
           padding:'8px 12px', marginBottom:10, fontSize:12 }}>
           <span style={{ color:'#185FA5' }}><span aria-hidden="true">⏳</span> Duke verifikuar automatikisht në <strong>{autoSubmitIn.toFixed(1)}s</strong>…</span>
           <button type="button" onClick={cancelAutoSubmit}
-            style={{ background:'none', border:'none', color:'#E63312', cursor:'pointer',
+            style={{ background:'none', border:'none', color: '#C42B0F', cursor:'pointer',
               fontWeight:700, fontSize:12, padding:'0 4px' }}><span aria-hidden="true">✕</span> Anulo</button>
         </div>
       )}
@@ -1108,9 +1122,18 @@ export default function Auth() {
 
               {!smsFailMode ? (
                 <>
+                  {/* Regjistrimi përdor GJITHMONË kod 6-shifror (email → Brevo/Resend; telefon → SMS),
+                      jo link. Kështu fluksi është i njëjtë dhe i parashikueshëm. */}
                   <button type="button" className="btn" onClick={sendOtp} disabled={loading}>
-                    {loading ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : cType === 'email' ? <><span aria-hidden='true'>📨</span> Dërgo Linkun e Konfirmimit</> : <><span aria-hidden='true'>📨</span> Dërgo Kodin e Konfirmimit</>}
+                    {loading ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : <><span aria-hidden='true'>📨</span> Dërgo Kodin e Konfirmimit</>}
                   </button>
+                  {/* Alternativë e garantuar për numra telefoni: konfirmim me email pa pritur
+                      SMS-në (që mund të vonojë a të mos mbërrijë — p.sh. numër fiks). */}
+                  {cType === 'phone' && (
+                    <button type="button" className="btn-ghost" onClick={() => { setOriginalPhone(toE164(contact.trim())); setSmsFailMode(true); setMsg('') }}>
+                      <span aria-hidden="true">📧</span> SMS-ja vonon? Konfirmo me email
+                    </button>
+                  )}
                   <div className="sec-row">Ke llogari? &nbsp;<a role="button" tabIndex={0} onClick={() => switchMode('login')} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') switchMode('login') }} style={{ cursor: 'pointer' }}>Hyr →</a></div>
                   <p className="terms">
                     Duke u regjistruar pranon{' '}
@@ -1159,7 +1182,7 @@ export default function Auth() {
               <p className="sub">
                 Dërguam {mode === 'forgot' ? 'link rivendosjeje' : 'link konfirmimi'} te<br />
                 <strong>{resolvedId}</strong><br />
-                <span style={{ fontSize: 10, color: '#aaa' }}>Kontrollo Spam/Junk nëse nuk e gjen</span>
+                <span style={{ fontSize: 10, color: '#555' }}>Kontrollo Spam/Junk nëse nuk e gjen</span>
               </p>
               <div style={{ background: '#EAF3DE', border: '0.5px solid #97C459', borderRadius: 10, padding: '14px 16px', marginBottom: 14, textAlign: 'center' }}>
                 <span aria-hidden="true" style={{ fontSize: 28, display: 'block', marginBottom: 6 }}>📬</span>
@@ -1202,9 +1225,17 @@ export default function Auth() {
               </div>
 
               {!smsFailMode ? (
-                <button type="button" className="btn" onClick={sendOtp} disabled={loading}>
-                  {loading ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : cType === 'email' ? <><span aria-hidden='true'>📨</span> Dërgo Linkun e Rivendosjes</> : <><span aria-hidden='true'>📨</span> Dërgo Kodin e Konfirmimit</>}
-                </button>
+                <>
+                  <button type="button" className="btn" onClick={sendOtp} disabled={loading}>
+                    {loading ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : cType === 'email' ? <><span aria-hidden='true'>📨</span> Dërgo Linkun e Rivendosjes</> : <><span aria-hidden='true'>📨</span> Dërgo Kodin e Konfirmimit</>}
+                  </button>
+                  {/* Alternativë e garantuar për numra telefoni (SMS mund të vonojë/mos mbërrijë). */}
+                  {cType === 'phone' && (
+                    <button type="button" className="btn-ghost" onClick={() => { setOriginalPhone(toE164(contact.trim())); setSmsFailMode(true); setMsg('') }}>
+                      <span aria-hidden="true">📧</span> SMS-ja vonon? Rivendos me email
+                    </button>
+                  )}
+                </>
               ) : null}
 
               {smsFailMode && (
@@ -1242,7 +1273,12 @@ export default function Auth() {
               )}
 
               {!smsFailMode && (
-                <button type="button" className="btn-ghost" onClick={() => switchMode('login')}>← Kthehu te Hyrja</button>
+                <>
+                  {/* Nga screenshot-et: përdoruesit ngecnin te "Rikthe llogarinë" me një numër
+                      që s'kishte llogari → "nuk është i regjistruar". Rrugë e qartë te regjistrimi. */}
+                  <div className="sec-row" style={{ marginBottom: 8 }}>Nuk ke llogari? &nbsp;<a role="button" tabIndex={0} onClick={() => { const c = contact; switchMode('register'); setTimeout(() => setContact(c), 0) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { const c = contact; switchMode('register'); setTimeout(() => setContact(c), 0) } }} style={{ cursor: 'pointer' }}>Regjistrohu →</a></div>
+                  <button type="button" className="btn-ghost" onClick={() => switchMode('login')}>← Kthehu te Hyrja</button>
+                </>
               )}
             </>
           )}

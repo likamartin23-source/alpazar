@@ -1,6 +1,53 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useAlpazar } from '../../lib/context'
+import { supabase } from '../../lib/supabase'
+import { moneyDec, nf } from '../../lib/format'
+
+// Cmimi vjen LIVE nga paneli. Asnje vlere e kodifikuar: nese konfigurimi ende
+// s'eshte ngarkuar, nuk shfaqim cmim te gabuar — e heshtim derisa te vije.
+// moneyDec: gjithmone 2 shifra (999,90) — BLLOKU FAZA0, determinist pa ICU.
+function usePlanPrice(override?: string): string {
+  const { cfg } = useAlpazar()
+  const raw = override ?? cfg('premium_monthly_price_all', '')
+  if (!raw) return ''
+  return moneyDec(Number(raw)) + ' L'
+}
+
+/**
+ * SYTE LIVE (BLLOKU FAZA 2.1): sa vete po e shohin kete shpallje TANI —
+ * Supabase Realtime *presence* REALE (jo Math.random si dikur; ajo praktike
+ * u hoq si mashtruese). Fail-soft: cdo gabim kanali → 0 → pjesa 🔴 thjesht
+ * s'shfaqet; faqja nuk preket. Track-ohet nje celes anonim per skede.
+ */
+export function useSyteLive(listingId?: string): number {
+  const [syte, setSyte] = useState(0)
+  useEffect(() => {
+    if (!listingId) return
+    let alive = true
+    const key = 'sy-' + Math.random().toString(36).slice(2)
+    const ch = supabase.channel(`syte-live-${listingId}`, {
+      config: { presence: { key } },
+    })
+    ch.on('presence', { event: 'sync' }, () => {
+      if (!alive) return
+      try {
+        setSyte(Object.keys(ch.presenceState()).length)
+      } catch { /* fail-soft */ }
+    })
+    ch.subscribe((status: string) => {
+      if (status === 'SUBSCRIBED') {
+        ch.track({ t: 1 }).catch(() => { /* fail-soft */ })
+      }
+    })
+    return () => {
+      alive = false
+      try { supabase.removeChannel(ch) } catch { /* fail-soft */ }
+    }
+  }, [listingId])
+  return syte
+}
 
 // ── Premium Upsell Modal ──────────────────────────────────────────────
 // Shfaqet kur:
@@ -9,7 +56,7 @@ import { useState, useEffect } from 'react'
 //  - trigger='exit'   → pas 25s inaktiviteti
 export function PremiumUpsellModal({
   trigger = 'scroll',
-  price = '9.99',
+  price,
   onClose,
 }: {
   trigger?: 'scroll' | 'limit' | 'exit'
@@ -18,7 +65,7 @@ export function PremiumUpsellModal({
 }) {
   const [show, setShow] = useState(false)
   const [dismissed, setDismissed] = useState(false)
-  const [countdown, setCountdown] = useState(15 * 60) // 15 min offer countdown
+  const shownPrice = usePlanPrice(price)
 
   useEffect(() => {
     if (dismissed) return
@@ -44,18 +91,14 @@ export function PremiumUpsellModal({
   useEffect(() => {
     if (!show) return
     localStorage.setItem(`alpazar_upsell_${trigger}`, String(Date.now()))
-    const t = setInterval(() => setCountdown(c => c > 0 ? c - 1 : 0), 1000)
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close() }
     document.addEventListener('keydown', onKey)
-    return () => { clearInterval(t); document.removeEventListener('keydown', onKey) }
+    return () => { document.removeEventListener('keydown', onKey) }
   }, [show])
 
   function close() { setShow(false); setDismissed(true); onClose?.() }
 
   if (!show) return null
-
-  const mins = Math.floor(countdown / 60).toString().padStart(2, '0')
-  const secs = (countdown % 60).toString().padStart(2, '0')
 
   return (
     <div
@@ -76,10 +119,10 @@ export function PremiumUpsellModal({
         .ups-close{position:absolute;top:14px;right:16px;width:30px;height:30px;background:#eee;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:#555;}
         .ups-crown{font-size:44px;display:block;text-align:center;margin-bottom:10px;}
         .ups-h{font-size:19px;font-weight:800;color:#111;text-align:center;margin-bottom:6px;}
-        .ups-sub{font-size:12px;color:#888;text-align:center;margin-bottom:14px;line-height:1.6;}
+        .ups-sub{font-size:12px;color:#555;text-align:center;margin-bottom:14px;line-height:1.6;}
         .ups-feats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
         .ups-feat{background:#fff;border:0.5px solid #eee;border-radius:10px;padding:10px 11px;display:flex;align-items:center;gap:7px;}
-        .ups-feat i{font-size:14px;color:#E63312;}
+        .ups-feat i{font-size:14px;color:#C42B0F;}
         .ups-feat span{font-size:11px;font-weight:600;color:#333;}
         .ups-offer{background:#111;border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
         .ups-price{color:#F5C842;font-size:22px;font-weight:800;}
@@ -88,7 +131,7 @@ export function PremiumUpsellModal({
         .ups-timer-n{color:#fff;font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;}
         .ups-timer-l{color:rgba(255,255,255,.7);font-size:9px;}
         .ups-cta{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:15px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:10px;box-shadow:0 4px 16px rgba(230,51,18,.4);}
-        .ups-skip{width:100%;background:none;border:none;color:#aaa;font-size:12px;cursor:pointer;font-family:inherit;padding:4px;}
+        .ups-skip{width:100%;background:none;border:none;color:#555;font-size:12px;cursor:pointer;font-family:inherit;padding:4px;}
       ` }} />
       <div className="ups-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative' }}>
         <button type="button" className="ups-close" aria-label="Mbyll" onClick={close}><span aria-hidden="true">✕</span></button>
@@ -104,7 +147,7 @@ export function PremiumUpsellModal({
             ['building-store', 'Biznes online'],
             ['infinity', 'Shpallje ∞'],
             ['shield-check', 'Badge ✓'],
-            ['photo', 'Deri 20 foto'],
+            ['photo', 'Foto pa limit'],
             ['star', 'Prioritet listimi'],
             ['chart-bar', 'Statistika live'],
           ].map(([icon, text]) => (
@@ -116,14 +159,8 @@ export function PremiumUpsellModal({
         </div>
         <div className="ups-offer">
           <div className="ups-price">
-            {price}€<span>/ muaj · Anulo kurdo</span>
+            {shownPrice}<span>/ muaj · Anulo kurdo</span>
           </div>
-          {countdown > 0 && (
-            <div className="ups-timer">
-              <div className="ups-timer-n">{mins}:{secs}</div>
-              <div className="ups-timer-l">Oferta skadon</div>
-            </div>
-          )}
         </div>
         <button type="button" className="ups-cta" onClick={() => { window.location.href = '/premium'; close() }}>
           <><span aria-hidden="true">👑</span> Aktivizo Premium Tani</>
@@ -135,56 +172,43 @@ export function PremiumUpsellModal({
 }
 
 // ── Social Proof Bar ─────────────────────────────────────────────────
-// Rreshti i vogël "X njerëz po shikojnë këtë shpallje tani"
-export function SocialProofBar({ viewsCount, listingId }: { viewsCount: number; listingId: string }) {
-  const [liveViewers, setLiveViewers] = useState(Math.floor(Math.random() * 4) + 1)
-
-  useEffect(() => {
-    // Simulate live viewers fluctuation every 15-40s
-    const randomInterval = () => Math.floor(Math.random() * 25000) + 15000
-    let t: ReturnType<typeof setTimeout>
-    function tick() {
-      setLiveViewers(v => Math.max(1, v + (Math.random() > 0.5 ? 1 : -1)))
-      t = setTimeout(tick, randomInterval())
-    }
-    t = setTimeout(tick, randomInterval())
-    return () => clearTimeout(t)
-  }, [listingId])
-
+// Rreshti i vogël me interesin REAL të shpalljes (BLLOKU FAZA 2.2):
+// "👁 N shikime · 🔴 M duke shikuar". Shikimet nga baza (views_count);
+// "duke shikuar" nga Supabase Realtime presence REALE (useSyteLive, fail-soft) —
+// kurrë numra të trilluar (praktika e vjetër me Math.random u hoq si mashtruese).
+export function SocialProofBar({ viewsCount, listingId }: { viewsCount: number; listingId?: string }) {
+  const syte = useSyteLive(listingId)
+  if (!viewsCount || viewsCount < 1) return null
   return (
     <div style={{
       background: '#FFF8EE', border: '0.5px solid #F5C842', borderRadius: 10,
       padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10,
     }}>
-      <div style={{ display: 'flex', gap: 2 }}>
-        {Array.from({ length: Math.min(liveViewers, 4) }).map((_, i) => (
-          <div key={i} style={{
-            width: 22, height: 22, borderRadius: '50%', background: `hsl(${i * 40 + 20},70%,60%)`,
-            border: '2px solid #FFF8EE', marginLeft: i ? -6 : 0,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10,
-          }} aria-hidden="true">👤</div>
-        ))}
-      </div>
+      <div style={{
+        width: 26, height: 26, borderRadius: '50%', background: '#F5C842', flexShrink: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13,
+      }} aria-hidden="true">👁</div>
       <div style={{ flex: 1 }}>
-        <span style={{ fontSize: 11, fontWeight: 700, color: '#111' }}>
-          {liveViewers} {liveViewers === 1 ? 'person' : 'persona'} po shikojnë tani
+        <span style={{ fontSize: 11, fontWeight: 700, color: '#111', display: 'block' }}>
+          {nf(viewsCount)} {viewsCount === 1 ? 'shikim' : 'shikime'}
+          {syte > 0 && (
+            <span style={{ marginLeft: 8, color: '#C4230F', fontWeight: 800 }}>
+              <span aria-hidden="true">🔴</span> {syte} duke shikuar
+            </span>
+          )}
         </span>
-        <span style={{ fontSize: 10, color: '#888', display: 'block' }}>
-          <><span aria-hidden="true">👁</span> {viewsCount.toLocaleString()} shikime totale</>
+        <span style={{ fontSize: 10, color: '#6B6B6B', display: 'block' }}>
+          Interes real për këtë shpallje
         </span>
       </div>
-      <span style={{
-        background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', fontSize: 9, fontWeight: 700,
-        padding: '3px 8px', borderRadius: 6, animation: 'pulse-dot 2s infinite',
-      }}>LIVE</span>
-      <style dangerouslySetInnerHTML={{ __html: `@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.6}}` }} />
     </div>
   )
 }
 
 // ── Premium Seller Upsell (në faqen e shpalljes, vetëm për shitësin) ─
-export function SellerPremiumUpsell({ isPremium, price = '9.99' }: { isPremium: boolean; price?: string }) {
+export function SellerPremiumUpsell({ isPremium, price }: { isPremium: boolean; price?: string }) {
   const [visible, setVisible] = useState(true)
+  const shownPrice = usePlanPrice(price)
   if (!visible || isPremium) return null
   return (
     <div style={{
@@ -197,7 +221,7 @@ export function SellerPremiumUpsell({ isPremium, price = '9.99' }: { isPremium: 
         <div style={{ color: '#F5C842', fontSize: 12, fontWeight: 800, marginBottom: 3 }}>
           Shpallja jote shihet 5× më shumë me Premium
         </div>
-        <div style={{ color: '#888', fontSize: 10, lineHeight: 1.5 }}>
+        <div style={{ color: '#555', fontSize: 10, lineHeight: 1.5 }}>
           Shfaqet e para · Badge verifikimi · Biznes online
         </div>
       </div>
@@ -210,7 +234,7 @@ export function SellerPremiumUpsell({ isPremium, price = '9.99' }: { isPremium: 
             padding: '7px 12px', fontSize: 11, fontWeight: 800, cursor: 'pointer', whiteSpace: 'nowrap',
           }}
         >
-          <span aria-hidden="true">👑</span> {price}€/muaj
+          <span aria-hidden="true">👑</span> {shownPrice}/muaj
         </button>
         <button type="button" aria-label="Mbyll ofertën" onClick={() => setVisible(false)} style={{
           background: 'none', border: 'none', color: '#555', fontSize: 9, cursor: 'pointer',
@@ -224,12 +248,13 @@ export function SellerPremiumUpsell({ isPremium, price = '9.99' }: { isPremium: 
 export function FreeTierBanner({
   listingCount,
   freeLimit = 5,
-  price = '9.99',
+  price,
 }: {
   listingCount: number
   freeLimit?: number
   price?: string
 }) {
+  const shownPrice = usePlanPrice(price)
   const remaining = Math.max(0, freeLimit - listingCount)
   if (remaining > 2) return null
   const pct = ((freeLimit - remaining) / freeLimit) * 100
@@ -241,7 +266,7 @@ export function FreeTierBanner({
       borderRadius: 12, padding: '12px 14px', marginBottom: 14,
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-        <span style={{ fontSize: 12, fontWeight: 700, color: remaining === 0 ? '#E63312' : '#A05000' }}>
+        <span style={{ fontSize: 12, fontWeight: 700, color: remaining === 0 ? '#C42305' : '#A05000' }}>
           {remaining === 0 ? <><span aria-hidden='true'>🚫</span> Ke arritur kufirin falas</> : <><span aria-hidden='true'>⚠️</span> {remaining} shpallje të mbetura falas</>}
         </span>
         <span style={{ fontSize: 10, color: '#888' }}>{listingCount}/{freeLimit}</span>
@@ -253,7 +278,7 @@ export function FreeTierBanner({
         }} />
       </div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: 10, color: '#888', lineHeight: 1.5 }}>
+        <span style={{ fontSize: 10, color: '#555', lineHeight: 1.5 }}>
           Premium → shpallje të pakufizuara + biznes online
         </span>
         <button
@@ -264,7 +289,7 @@ export function FreeTierBanner({
             padding: '7px 12px', fontSize: 11, fontWeight: 700, cursor: 'pointer', flexShrink: 0, marginLeft: 10,
           }}
         >
-          <span aria-hidden="true">👑</span> {price}€/muaj
+          <span aria-hidden="true">👑</span> {shownPrice}/muaj
         </button>
       </div>
     </div>

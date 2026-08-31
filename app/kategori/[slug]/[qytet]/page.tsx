@@ -4,18 +4,18 @@ import { SITE_URL } from '../../../../lib/siteConfig'
 import {
   fetchCategoryBySlug, fetchCategoryListings, cityFromSlug, citySlug, CITIES,
 } from '../../../../lib/seoTaxonomy'
-import { ListingGrid, LANDING_CSS } from '../../_shared'
+import { LANDING_CSS } from '../../_shared'
+import { ListingGrid } from '../../CategoryGrid'
 
-export const revalidate = 3600
-export const dynamicParams = true
-
-// City pages are generated on demand (ISR) — the combinatorial space is large,
-// so we don't pre-build them; the sitemap still lists them for discovery.
-export function generateStaticParams() { return [] }
+// SSR DINAMIK (jo ISR) — konsistencë build-i cross-route + verifikueshmëri (Cowork §12).
+// Hapësira kombinatorike qytet×kategori s'para-ndërtohej gjithsesi; tani renderon me
+// kodin e deploy-it aktual në çdo kërkesë (buildId i njëjtë kudo). Sitemap-i i liston për zbulim.
+export const dynamic = 'force-dynamic'
 
 export async function generateMetadata(
-  { params }: { params: { slug: string; qytet: string } },
+  props: { params: Promise<{ slug: string; qytet: string }> },
 ): Promise<Metadata> {
+  const params = await props.params
   const cat = await fetchCategoryBySlug(params.slug)
   const city = cityFromSlug(params.qytet)
   if (!cat || !city) return { title: 'Kategori — ALPAZAR' }
@@ -31,14 +31,15 @@ export async function generateMetadata(
     openGraph: {
       type: 'website', url, siteName: 'ALPAZAR', locale: 'sq_AL',
       title, description: desc,
-      images: [{ url: `${SITE_URL}/icons/icon-512.png`, width: 512, height: 512, alt: `${cat.name} ${city}` }],
+      images: [{ url: `${SITE_URL}/api/og`, width: 1200, height: 630, alt: `${cat.name} ${city}` }],
     },
   }
 }
 
 export default async function CategoryCityPage(
-  { params }: { params: { slug: string; qytet: string } },
+  props: { params: Promise<{ slug: string; qytet: string }> },
 ) {
+  const params = await props.params
   const cat = await fetchCategoryBySlug(params.slug)
   const city = cityFromSlug(params.qytet)
   if (!cat || !city) notFound()

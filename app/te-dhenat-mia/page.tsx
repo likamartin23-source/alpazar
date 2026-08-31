@@ -21,11 +21,9 @@ export default function TeDhenatMiaPage() {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/auth/login'; return }
       setUserId(session.user.id)
-      const { data: p } = await supabase
-        .from('profiles')
-        .select('full_name,username,city,created_at,marketing_opt_in')
-        .eq('id', session.user.id)
-        .single()
+      // `marketing_opt_in` eshte mbyllur per leximin nder-perdorues; mbi veten
+      // vjen i teri nga `my_profile()`.
+      const { data: p } = await supabase.rpc('my_profile')
       if (p) {
         setProfile({ ...p, email: session.user.email })
         setMarketingOpt(p.marketing_opt_in ?? false)
@@ -39,22 +37,27 @@ export default function TeDhenatMiaPage() {
     setExporting(true)
     setMsg('')
     try {
-      const [profileRes, listingsRes, favoritesRes, messagesRes] = await Promise.all([
-        supabase.from('profiles').select('*').eq('id', userId).single(),
-        supabase.from('listings').select('id,title,price,currency,city,created_at,is_active').eq('user_id', userId),
-        supabase.from('favorites').select('listing_id,created_at').eq('user_id', userId),
-        supabase.from('messages').select('id,content,created_at,is_read').or(`sender_id.eq.${userId},receiver_id.eq.${userId}`).limit(200),
-      ])
+      /*  Eksporti vjen nga `export_my_data()` — nje funksion i vetem ne baze qe
+          mbledh TE GJITHA te dhenat e personit: profili, preferencat, shpalljet,
+          blerjet, te preferuarat, kerkimet e ruajtura, njoftimet e cmimit,
+          ndarjet, mesazhet e derguara DHE te marra, njoftimet — me bazen ligjore
+          dhe shenimin e ruajtjes se faturave.
 
-      const exportObj = {
-        exported_at: new Date().toISOString(),
-        platform: 'ALPAZAR — alpazar.vercel.app',
-        gdpr_basis: 'GDPR Art.20 — E drejta e portabilitetit të të dhënave',
-        profile: profileRes.data,
-        listings: listingsRes.data || [],
-        favorites: favoritesRes.data || [],
-        messages_count: messagesRes.data?.length || 0,
-      }
+          Me pare kjo faqe e ndertonte vete eksportin me kater query, dhe rezultati
+          ishte i mangët ne menyre qe shkelte vete te drejten qe pretendonte te
+          plotesonte (neni 24, ligji 124/2024 — subjekti merr TE GJITHA te dhenat
+          qe lidhen me te):
+            · mesazhet nuk eksportoheshin fare — shkruhej vetem `messages_count`,
+              dhe ai numer ishte i cunguar ne 200;
+            · mungonin preferencat, blerjet, kerkimet e ruajtura, njoftimet e
+              cmimit, ndarjet dhe njoftimet.
+          Gjetur me 31 gusht 2026: funksioni ekzistonte ne baze prej kohesh dhe
+          asnje rresht i nderfaqes nuk e therriste.  */
+      const { data: eksporti, error: gabimEksporti } = await supabase.rpc('export_my_data')
+      if (gabimEksporti) throw new Error(gabimEksporti.message)
+      if ((eksporti as any)?.error) throw new Error((eksporti as any).error)
+
+      const exportObj = eksporti
 
       const blob = new Blob([JSON.stringify(exportObj, null, 2)], { type: 'application/json' })
       const url = URL.createObjectURL(blob)
@@ -73,9 +76,10 @@ export default function TeDhenatMiaPage() {
   async function toggleMarketing(checked: boolean) {
     if (!userId) return
     setSavingOpt(true)
-    await supabase.from('profiles').update({ marketing_opt_in: checked }).eq('id', userId)
-    setMarketingOpt(checked)
+    const { error } = await supabase.from('profiles').update({ marketing_opt_in: checked }).eq('id', userId)
     setSavingOpt(false)
+    if (error) { setMsg('err:Nuk u ruajt preferenca. Provo sërish.'); setTimeout(() => setMsg(''), 3000); return }
+    setMarketingOpt(checked)
     setMsg(`ok:Preferencat e marketingut u ${checked ? 'aktivizuan' : 'çaktivizuan'}.`)
     setTimeout(() => setMsg(''), 3000)
   }
@@ -106,10 +110,26 @@ export default function TeDhenatMiaPage() {
     }
   }
 
+  /*  Gjendja e ngarkimit mban TE NJEJTIN skelet si faqja e ngarkuar.
+   *  Me pare ishte nje rrotullues i centruar ne `100vh` me flex; kur permbajtja
+   *  mberrinte, dokumenti kalonte nga nje kuti e centruar ne nje kolone 1080px
+   *  dhe Chrome-i e numeronte si nje zhvendosje te vetme. Matur me 31 gusht
+   *  2026: CLS = 0,333 ne desktop — mbi trefishin e pragut 0,1, nga NJE ngjarje
+   *  e vetme ne 1447ms. Koka (55px) dhe kolona (480px) tani jane te pranishme
+   *  qe ne fillim; skeleti mbulon trupin e matur (~1025px).  */
   if (loading) return (
-    <div style={{ minHeight: '100vh', background: '#FFFBEA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ width: 36, height: 36, border: '3px solid #F5C842', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-      <style dangerouslySetInnerHTML={{ __html: `@keyframes spin{to{transform:rotate(360deg)}}` }} />
+    <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh', paddingBottom: 80, fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
+      <div style={{ background: 'linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%)', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10, position: 'sticky', top: 0, zIndex: 10 }}>
+        <button type="button" aria-label="Kthehu mbrapa" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+          <i className="ti ti-arrow-left" aria-hidden="true" style={{ fontSize: 22, color: '#111' }} />
+        </button>
+        <h1 style={{ fontSize: 16, fontWeight: 800, color: '#111', margin: 0 }}>Të dhënat e mia</h1>
+      </div>
+      <div style={{ padding: 16 }} aria-busy="true" aria-label="Duke ngarkuar të dhënat">
+        {[210, 150, 260, 190, 170].map((h, i) => (
+          <div key={i} style={{ height: h, borderRadius: 14, background: '#f2ead0', opacity: 0.45, marginBottom: 12 }} />
+        ))}
+      </div>
     </div>
   )
 
@@ -125,7 +145,7 @@ export default function TeDhenatMiaPage() {
 
       <div style={{ padding: '16px 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
         {msg && (
-          <div role="alert" style={{ background: msg.startsWith('err:') ? '#FFF0EE' : '#F0FFF4', border: `1px solid ${msg.startsWith('err:') ? '#F09595' : '#86efac'}`, borderRadius: 10, padding: '10px 14px', fontSize: 12, color: msg.startsWith('err:') ? '#E63312' : '#166534', fontWeight: 600 }}>
+          <div role="alert" style={{ background: msg.startsWith('err:') ? '#FFF0EE' : '#F0FFF4', border: `1px solid ${msg.startsWith('err:') ? '#F09595' : '#86efac'}`, borderRadius: 10, padding: '10px 14px', fontSize: 12, color: msg.startsWith('err:') ? '#C42305' : '#166534', fontWeight: 600 }}>
             {msg.replace(/^(err:|ok:)/, '')}
           </div>
         )}
@@ -133,7 +153,7 @@ export default function TeDhenatMiaPage() {
         {/* Who am I */}
         {profile && (
           <div style={{ background: '#fff', borderRadius: 14, padding: 16, boxShadow: '0 1px 6px rgba(0,0,0,.06)' }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>Identiteti juaj në Alpazar</div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: '#4A4A4A', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>Identiteti juaj në Alpazar</div>
             <div style={{ fontSize: 13, color: '#333', lineHeight: 2 }}>
               <div><span aria-hidden="true">👤</span> {profile.full_name || profile.username || 'Pa emër'}</div>
               {profile.city && <div><span aria-hidden="true">📍</span> {profile.city}</div>}
@@ -144,7 +164,7 @@ export default function TeDhenatMiaPage() {
 
         {/* Data rights */}
         <div style={{ background: '#fff', borderRadius: 14, padding: 16, boxShadow: '0 1px 6px rgba(0,0,0,.06)' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 }}><span aria-hidden="true">📋</span> Të drejtat tuaja (GDPR)</div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: '#4A4A4A', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 }}><span aria-hidden="true">📋</span> Të drejtat tuaja (GDPR)</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 12, color: '#555', lineHeight: 1.6, marginBottom: 14 }}>
             <div><span aria-hidden="true">🔍</span> <strong>Art.15</strong> — E drejta e aksesit (shko tek profili yt)</div>
             <div><span aria-hidden="true">✏️</span> <strong>Art.16</strong> — E drejta e korrigjimit (edito profilin)</div>
@@ -164,7 +184,7 @@ export default function TeDhenatMiaPage() {
 
         {/* Marketing opt-in */}
         <div style={{ background: '#fff', borderRadius: 14, padding: 16, boxShadow: '0 1px 6px rgba(0,0,0,.06)' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}><span aria-hidden="true">📢</span> Komunikim marketing</div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: '#4A4A4A', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}><span aria-hidden="true">📢</span> Komunikim marketing</div>
           <label style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer', padding: '4px 0' }}>
             <input
               type="checkbox"
@@ -175,7 +195,7 @@ export default function TeDhenatMiaPage() {
             />
             <div>
               <div style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>Pranoj njoftime marketingu</div>
-              <div style={{ fontSize: 11, color: '#888', marginTop: 2, lineHeight: 1.5 }}>Oferta speciale, lajme, këshilla. Mund ta heqësh kurdo. (GDPR Art.7 — konsensum i lirë)</div>
+              <div style={{ fontSize: 11, color: '#555', marginTop: 2, lineHeight: 1.5 }}>Oferta speciale, lajme, këshilla. Mund ta heqësh kurdo. (GDPR Art.7 — konsensum i lirë)</div>
             </div>
           </label>
         </div>
@@ -190,13 +210,13 @@ export default function TeDhenatMiaPage() {
             <button
               type="button"
               onClick={() => setConfirmDelete(true)}
-              style={{ width: '100%', background: 'transparent', color: '#dc2626', border: '1.5px solid #dc2626', borderRadius: 11, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+              style={{ width: '100%', background: 'transparent', color: '#C42305', border: '1.5px solid #C42305', borderRadius: 11, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
             >
               <><span aria-hidden="true">🗑️</span> Fshi llogarinë time</>
             </button>
           ) : (
             <div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: '#dc2626', marginBottom: 10 }}>Jeni i sigurt? Ky veprim NUK mund të kthehet!</div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#C42305', marginBottom: 10 }}>Jeni i sigurt? Ky veprim NUK mund të kthehet!</div>
               <input
                 id="delete-confirm-password"
                 type="password"
@@ -205,7 +225,7 @@ export default function TeDhenatMiaPage() {
                 placeholder="Shkruaj fjalëkalimin për të konfirmuar"
                 aria-label="Fjalëkalimi për konfirmim fshirjeje"
                 autoComplete="current-password"
-                style={{ width: '100%', border: '1.5px solid #dc2626', borderRadius: 10, padding: '10px 12px', fontSize: 13, marginBottom: 10, fontFamily: 'inherit', boxSizing: 'border-box', outline: 'none' }}
+                style={{ width: '100%', border: '1.5px solid #C42305', borderRadius: 10, padding: '10px 12px', fontSize: 13, marginBottom: 10, fontFamily: 'inherit', boxSizing: 'border-box', outline: 'none' }}
               />
               <div style={{ display: 'flex', gap: 8 }}>
                 <button
@@ -219,7 +239,7 @@ export default function TeDhenatMiaPage() {
                   type="button"
                   onClick={deleteAccount}
                   disabled={deleting}
-                  style={{ flex: 1, background: '#dc2626', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: deleting ? 'not-allowed' : 'pointer', opacity: deleting ? 0.7 : 1, fontFamily: 'inherit' }}
+                  style={{ flex: 1, background: '#C42305', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: deleting ? 'not-allowed' : 'pointer', opacity: deleting ? 0.7 : 1, fontFamily: 'inherit' }}
                 >
                   {deleting ? <><span aria-hidden='true'>⏳</span> Duke fshirë...</> : 'Po, fshi!'}
                 </button>
@@ -228,8 +248,8 @@ export default function TeDhenatMiaPage() {
           )}
         </div>
 
-        <div style={{ textAlign: 'center', fontSize: 11, color: '#888', lineHeight: 1.6, padding: '8px 0' }}>
-          Për çdo kërkesë tjetër GDPR kontaktoni: <a href="mailto:privacy@alpazar.al" style={{ color: '#E63312' }}>privacy@alpazar.al</a>
+        <div style={{ textAlign: 'center', fontSize: 11, color: '#555', lineHeight: 1.6, padding: '8px 0' }}>
+          Për çdo kërkesë tjetër GDPR kontaktoni: <a href="mailto:alpazarsuport@gmail.com" style={{ color: '#C42B0F' }}>alpazarsuport@gmail.com</a>
           <br />
           Rregullorja (EU) 2016/679 · Ligj 9887/2008 (Shqipëri)
         </div>

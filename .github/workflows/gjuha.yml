@@ -1,0 +1,43 @@
+name: Gjuhet - mbulim i plote
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/gjuha_kudo.py'
+      - '.github/workflows/gjuha.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  gjuha:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Zbato
+        run: python3 scripts/gjuha_kudo.py
+
+      - name: Kontroll
+        run: |
+          grep -q 'LanguageSwitcher tone="light"' app/HomeClient.tsx
+          grep -q 'LanguageSwitcher' app/admin/page.tsx
+          grep -q 'eshteKod' lib/i18n.tsx
+          grep -q 'ReportSheet' 'app/listing/[id]/ListingPageClient.tsx'
+          sha256sum lib/i18n.tsx app/HomeClient.tsx app/admin/page.tsx 'app/listing/[id]/ListingPageClient.tsx'
+
+      - name: Shty ne degen gjuha/auto
+        run: |
+          if git diff --quiet; then
+            echo 'Asnje ndryshim - dalje.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git checkout -b gjuha/auto
+          git add -A
+          git commit -m 'Gjuhet: mbulim i plote + fleta e raportimit'
+          git push -f origin gjuha/auto

@@ -9,31 +9,31 @@ export default function Siguria() {
     .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0;}
     .back i{font-size:18px;color:#111;}
     .topbar-title{font-size:15px;font-weight:700;color:#111;}
-    .hero{background:#E63312;padding:28px 20px;text-align:center;}
+    .hero{background:#C42B0F;padding:28px 20px;text-align:center;}
     .hero-icon{font-size:48px;display:block;margin-bottom:12px;}
     .hero h1{color:#fff;font-size:20px;font-weight:700;margin-bottom:6px;}
-    .hero p{color:rgba(255,255,255,.8);font-size:13px;line-height:1.6;}
+    .hero p{color:#FFFFFF;font-size:13px;line-height:1.6;}
     .body{padding:16px 14px 40px;}
     .alert{background:#FFF0EE;border:1px solid #F09595;border-radius:10px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;}
-    .alert i{font-size:20px;color:#E63312;flex-shrink:0;margin-top:2px;}
-    .alert-text strong{font-size:13px;font-weight:700;color:#E63312;display:block;margin-bottom:4px;}
+    .alert i{font-size:20px;color:#C42B0F;flex-shrink:0;margin-top:2px;}
+    .alert-text strong{font-size:13px;font-weight:700;color:#C42B0F;display:block;margin-bottom:4px;}
     .alert-text span{font-size:12px;color:#666;line-height:1.6;}
     .section{background:#fff;border-radius:12px;padding:18px;border:0.5px solid #eee;margin-bottom:12px;}
     .sec-title{font-size:13px;font-weight:700;color:#111;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
-    .sec-title i{font-size:16px;color:#E63312;}
+    .sec-title i{font-size:16px;color:#C42B0F;}
     .tip{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:0.5px solid #f5f5f5;}
     .tip:last-child{border:none;}
     .tip-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
     .t-green{background:#EAF3DE;}
     .t-green i{color:#3B6D11;}
     .t-red{background:#FFF0EE;}
-    .t-red i{color:#E63312;}
+    .t-red i{color:#C42B0F;}
     .tip-icon i{font-size:14px;}
     .tip-text strong{font-size:12px;font-weight:700;color:#111;display:block;margin-bottom:2px;}
     .tip-text span{font-size:11px;color:#666;line-height:1.6;}
-    .red-btn{display:block;background:#E63312;color:#fff;text-align:center;border-radius:10px;padding:13px;font-size:14px;font-weight:700;text-decoration:none;margin-top:4px;}
+    .red-btn{display:block;background:#C42B0F;color:#fff;text-align:center;border-radius:10px;padding:13px;font-size:14px;font-weight:700;text-decoration:none;margin-top:4px;}
     .ftr{display:flex;flex-wrap:wrap;gap:8px 16px;padding:20px;background:#f9f9f9;border-top:1px solid #eee;}
-    .ftr a{color:#888;font-size:11px;text-decoration:none;}
+    .ftr a{color:#555;font-size:11px;text-decoration:none;}
   `
   return (
     <>

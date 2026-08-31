@@ -1,9 +1,17 @@
+// Kjo faqe render-ohet BRENDA layout-it rrenje, ndaj nuk guxon te nxjerre
+// etiketat e veta rrenje (html/body). Kete e ben VETEM `global-error.tsx`,
+// qe zevendeson layout-in. Deri me 31 gusht 2026 kjo faqe (dhe `error.tsx`)
+// nxirrnin nje cift te dyte; matur ne shfletues, cdo 404 jepte tri gabime:
+//   'cannot contain a nested html'
+//   'In HTML, main cannot be a child of html. This will cause a hydration error.'
+//   'You are mounting a new html component when a previous one has not first unmounted.'
+// Parsuesi i HTML-se i hidhte etiketat e brendshme, por pema e React-it i
+// mbante — ndaj hidratimi deshtonte ne CDO faqe 404.
 export default function NotFound() {
   return (
-    <html lang="sq">
-      <body style={{ margin: 0, fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", background: '#FFFBEA' }}>
+    <div style={{ background: '#FFFBEA' }}>
         <div style={{
-          minHeight: '100vh', display: 'flex', flexDirection: 'column',
+          minHeight: '58vh', display: 'flex', flexDirection: 'column',
           alignItems: 'center', justifyContent: 'center', padding: 24, gap: 16,
         }}>
           <div style={{
@@ -19,7 +27,7 @@ export default function NotFound() {
               ALPAZAR
             </div>
             <div style={{
-              fontSize: 64, fontWeight: 900, color: '#E63312',
+              fontSize: 64, fontWeight: 900, color: '#C42B0F',
               lineHeight: 1, marginBottom: 8,
             }}>
               404
@@ -27,7 +35,7 @@ export default function NotFound() {
             <h2 style={{ fontSize: 18, fontWeight: 700, color: '#111', margin: '0 0 8px' }}>
               Faqja nuk u gjet
             </h2>
-            <p style={{ fontSize: 13, color: '#888', lineHeight: 1.6, margin: '0 0 24px' }}>
+            <p style={{ fontSize: 13, color: '#555', lineHeight: 1.6, margin: '0 0 24px' }}>
               Faqja që kërkove nuk ekziston ose është zhvendosur.
               Mund të jetë fshirë ose të kesh shtypur adresën gabim.
             </p>
@@ -55,7 +63,6 @@ export default function NotFound() {
             </div>
           </div>
         </div>
-      </body>
-    </html>
+    </div>
   )
 }

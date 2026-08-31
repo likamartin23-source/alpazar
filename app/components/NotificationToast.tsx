@@ -63,7 +63,8 @@ export function NotificationToast() {
       supabase.removeChannel(ch)
       timers.current.forEach(t => clearTimeout(t))
     }
-  }, [user])
+    // user?.id (jo objektin) — refresh token-i s'ri-abonon të njëjtin topic.
+  }, [user?.id])
 
   if (toasts.length === 0) return null
 

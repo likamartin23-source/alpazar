@@ -1,18 +1,25 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { useListingMedia } from './ListingMediaContext'
 
+interface VideoItem { url: string; poster?: string; duration?: number }
 interface Props {
   images: string[]
+  videos?: VideoItem[]
+  poster?: string
   alt?: string
   aspectRatio?: '4/3' | '1/1' | '4/5'
   rounded?: boolean
 }
 
-export function ImageCarousel({ images, alt = '', aspectRatio = '4/3', rounded = true }: Props) {
+type Slide = { kind: 'image'; src: string } | { kind: 'video'; src: string; poster?: string }
+
+export function ImageCarousel({ images, videos, poster, alt = '', aspectRatio = '4/3', rounded = true }: Props) {
   const [current, setCurrent] = useState(0)
   const [lightbox, setLightbox] = useState(false)
   const trackRef = useRef<HTMLDivElement>(null)
+  const media = useListingMedia()
 
   useEffect(() => {
     if (!lightbox) return
@@ -27,7 +34,43 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3', rounded =
   const mouseStartX = useRef<number | null>(null)
   const mouseMoved = useRef(false)
 
-  const count = images.length
+  const imgList = Array.isArray(images) ? images.filter(Boolean) : []
+  const vidSource = (videos && videos.length) ? videos : (media?.videos || [])
+  const vidList = Array.isArray(vidSource) ? vidSource.filter(v => v && v.url) : []
+  const effPoster = poster || media?.poster
+  const slides: Slide[] = [
+    ...imgList.map((src): Slide => ({ kind: 'image', src })),
+    ...vidList.map((v): Slide => ({ kind: 'video', src: v.url, poster: v.poster || effPoster || imgList[0] })),
+  ]
+  const count = slides.length
+  const imgCount = imgList.length
+
+  // Video-ja që është NË PAMJE nis vetë (në lak); të tjerat ndalen. Shfletuesit lejojnë autoplay
+  // vetëm kur është pa zë, ndaj e nisim pa zë — POR mutojmë VETËM kur nis nga gjendja e ndalur.
+  // Kështu, kur përdoruesi heq heshtjen nga controls, NUK e rimutojmë (luhet me zë e pa zë sipas tij).
+  // Respekton `prefers-reduced-motion`. PARA return-it të hershëm (Rules of Hooks).
+  useEffect(() => {
+    const track = trackRef.current
+    if (!track) return
+    const reduce = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
+    // Hartim sipas POZICIONIT REAL të slajdit (jo sipas indeksit te NodeList-i `video`): disa slajde
+    // video renderohen si <iframe> (Cloudflare Stream) → do të prishnin numërimin nëse ndërthureshin
+    // me <video> direkte. Iterojmë fëmijët e track-ut; luajmë atë të slajdit aktual, ndalim të tjerët.
+    Array.from(track.children).forEach((child, slideIdx) => {
+      const v = child.querySelector('video')
+      if (!v) return
+      if (slideIdx === current && !reduce) {
+        if (v.paused) {
+          v.muted = true
+          const p = v.play()
+          if (p && typeof (p as any).catch === 'function') (p as any).catch(() => { /* autoplay-policy: fail-soft */ })
+        }
+      } else {
+        try { v.pause() } catch { /* ignore */ }
+      }
+    })
+  }, [current, imgCount, count])
+
   if (count === 0) return (
     <div style={{ width: '100%', aspectRatio, background: 'linear-gradient(135deg,#FBF7E8,#F2EAD0)', borderRadius: rounded ? 16 : 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <i className="ti ti-photo" style={{ fontSize: 44, color: '#d8cfa8' }} aria-hidden="true" />
@@ -46,7 +89,8 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3', rounded =
     setCurrent(Math.round(scrollLeft / clientWidth))
   }
 
-  // Touch events — most reliable for mobile tap detection
+  const isImageSlide = (i: number) => slides[i]?.kind === 'image'
+
   function onTouchStart(e: React.TouchEvent) {
     touchStartX.current = e.touches[0].clientX
     touchStartY.current = e.touches[0].clientY
@@ -59,13 +103,12 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3', rounded =
     if (dx > 8 || dy > 8) touchMoved.current = true
   }
   function onTouchEnd() {
-    if (!touchMoved.current) setLightbox(true)
+    if (!touchMoved.current && isImageSlide(current)) setLightbox(true)
     touchStartX.current = null
     touchStartY.current = null
     touchMoved.current = false
   }
 
-  // Mouse events for desktop
   function onMouseDown(e: React.MouseEvent) {
     mouseStartX.current = e.clientX
     mouseMoved.current = false
@@ -75,13 +118,14 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3', rounded =
       mouseMoved.current = true
   }
   function onMouseUp() {
-    if (!mouseMoved.current) setLightbox(true)
+    if (!mouseMoved.current && isImageSlide(current)) setLightbox(true)
     mouseStartX.current = null
     mouseMoved.current = false
   }
 
   return (
     <>
+      <style dangerouslySetInnerHTML={{ __html: `.carousel-track::-webkit-scrollbar{display:none}` }} />
       <div style={{ position: 'relative', borderRadius: rounded ? 16 : 0, overflow: 'hidden', background: '#0e0e0e' }}>
         <div
           ref={trackRef}
@@ -104,41 +148,77 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3', rounded =
           }}
           className="carousel-track"
         >
-          {images.map((src, i) => (
-            <div key={i} style={{ flex: '0 0 100%', scrollSnapAlign: 'start', aspectRatio, background: '#0e0e0e', position: 'relative', overflow: 'hidden' }}>
-              {/* Blurred fill of the same photo — fills the letterbox so nothing is cropped or empty (Instagram/Temu style) */}
-              <img
-                src={src}
-                alt=""
-                aria-hidden="true"
-                loading={i === 0 ? 'eager' : 'lazy'}
-                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'blur(28px) brightness(.6) saturate(1.2)', transform: 'scale(1.25)', pointerEvents: 'none' }}
-                draggable={false}
-              />
-              <img
-                src={src}
-                alt={`${alt} ${i + 1}`}
-                loading={i === 0 ? 'eager' : 'lazy'}
-                style={{ position: 'relative', width: '100%', height: '100%', objectFit: 'contain', display: 'block', pointerEvents: 'none', userSelect: 'none' }}
-                draggable={false}
-                onError={e => {
-                  const img = e.currentTarget
-                  img.style.display = 'none'
-                  const wrap = img.parentElement
-                  if (wrap && !wrap.querySelector('.img-err')) {
-                    const d = document.createElement('div')
-                    d.className = 'img-err'
-                    d.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#ccc;background:#F6F6F6;'
-                    d.innerHTML = '<i class="ti ti-photo" style="font-size:32px"></i><span style="font-size:11px;font-weight:600">Pa foto</span>'
-                    wrap.appendChild(d)
-                  }
-                }}
-              />
+          {slides.map((s, i) => (
+            <div key={i} style={{ flex: '0 0 100%', scrollSnapAlign: 'start', scrollSnapStop: 'always', aspectRatio, background: '#0e0e0e', position: 'relative', overflow: 'hidden' }}>
+              {s.kind === 'image' ? (
+                <>
+                  <img
+                    src={s.src}
+                    alt=""
+                    aria-hidden="true"
+                    loading={i === 0 ? 'eager' : 'lazy'}
+                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'blur(28px) brightness(.6) saturate(1.2)', transform: 'scale(1.25)', pointerEvents: 'none' }}
+                    draggable={false}
+                  />
+                  <img
+                    src={s.src}
+                    alt={`${alt} ${i + 1}`}
+                    loading={i === 0 ? 'eager' : 'lazy'}
+                    fetchPriority={i === 0 ? 'high' : 'auto'}
+                    decoding="async"
+                    style={{ position: 'relative', width: '100%', height: '100%', objectFit: 'contain', display: 'block', pointerEvents: 'none', userSelect: 'none' }}
+                    draggable={false}
+                    onError={e => {
+                      const img = e.currentTarget
+                      img.style.display = 'none'
+                      const wrap = img.parentElement
+                      if (wrap && !wrap.querySelector('.img-err')) {
+                        const d = document.createElement('div')
+                        d.className = 'img-err'
+                        d.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#555;background:#F6F6F6;'
+                        d.innerHTML = '<i class="ti ti-photo" style="font-size:32px"></i><span style="font-size:11px;font-weight:600">Pa foto</span>'
+                        wrap.appendChild(d)
+                      }
+                    }}
+                  />
+                </>
+              ) : s.src.includes('cloudflarestream.com') ? (
+                <>
+                  {/* Video e transkoduar (Cloudflare Stream): luhet KUDO (edhe H.265→H.264), adaptiv,
+                      me player-in e vetë që mban zërin/kontrollet — pa varësi shtesë në klient. */}
+                  <iframe
+                    src={s.src}
+                    loading="lazy"
+                    allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+                    allowFullScreen
+                    title={`Video ${i + 1}`}
+                    style={{ position: 'relative', zIndex: 2, width: '100%', height: '100%', border: 'none', display: 'block', background: '#0e0e0e' }}
+                  />
+                  <span aria-hidden="true" style={{ position: 'absolute', top: 10, left: 10, zIndex: 3, display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(230,51,18,.92)', color: '#fff', fontSize: 10, fontWeight: 800, padding: '3px 7px', borderRadius: 7, letterSpacing: '.4px', pointerEvents: 'none' }}>
+                    <i className="ti ti-player-play-filled" style={{ fontSize: 11 }} /> VIDEO
+                  </span>
+                </>
+              ) : (
+                <>
+                  <video
+                    src={s.src}
+                    poster={s.poster}
+                    controls
+                    playsInline
+                    loop
+                    preload="metadata"
+                    controlsList="nodownload"
+                    style={{ position: 'relative', zIndex: 2, width: '100%', height: '100%', objectFit: 'contain', display: 'block', background: '#0e0e0e' }}
+                  />
+                  <span aria-hidden="true" style={{ position: 'absolute', top: 10, left: 10, zIndex: 3, display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(230,51,18,.92)', color: '#fff', fontSize: 10, fontWeight: 800, padding: '3px 7px', borderRadius: 7, letterSpacing: '.4px', pointerEvents: 'none' }}>
+                    <i className="ti ti-player-play-filled" style={{ fontSize: 11 }} /> VIDEO
+                  </span>
+                </>
+              )}
             </div>
           ))}
         </div>
 
-        {/* Counter top-right */}
         {count > 1 && (
           <div aria-hidden="true" style={{
             position: 'absolute', top: 10, right: 10,
@@ -151,19 +231,18 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3', rounded =
         )}
       </div>
 
-      {/* Dots */}
       {count > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 5, marginTop: 8 }}>
-          {images.map((_, i) => (
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 5, marginTop: 8, flexWrap: 'wrap' }}>
+          {slides.map((s, i) => (
             <button
               key={i}
               type="button"
               aria-current={i === current ? 'true' : undefined}
               onClick={() => goTo(i)}
-              aria-label={`Foto ${i + 1}`}
+              aria-label={s.kind === 'video' ? `Video ${i + 1}` : `Foto ${i + 1}`}
               style={{
                 width: i === current ? 18 : 7, height: 7, borderRadius: 4, border: 'none',
-                background: i === current ? '#E63312' : '#ccc',
+                background: i === current ? '#E63312' : (s.kind === 'video' ? '#9a9a9a' : '#ccc'),
                 cursor: 'pointer', padding: 0, transition: 'all .2s',
               }}
             />
@@ -171,8 +250,18 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3', rounded =
         </div>
       )}
 
-      {/* Lightbox */}
-      {lightbox && (
+      {count > 1 && (
+        <div style={{ fontSize: 13.2, fontWeight: 600, color: '#555', letterSpacing: .2, textAlign: 'center', marginTop: 8 }}>
+          <span aria-hidden="true">↔</span> Rrëshkit për të parë të tjerat
+        </div>
+      )}
+      {vidList.length > 0 && (
+        <div style={{ fontSize: 11.5, fontWeight: 600, color: '#555', textAlign: 'center', marginTop: 6 }}>
+          <span aria-hidden="true">🎬</span> Videot ndihmojnë shpalljen të shitet deri në 3× më shpejt.
+        </div>
+      )}
+
+      {lightbox && isImageSlide(current) && (
         <div
           role="dialog"
           aria-modal="true"
@@ -184,23 +273,23 @@ export function ImageCarousel({ images, alt = '', aspectRatio = '4/3', rounded =
             animation: 'lb-fade .15s ease',
           }}
         >
-          <style dangerouslySetInnerHTML={{ __html: `@keyframes lb-fade{from{opacity:0}to{opacity:1}} .carousel-track::-webkit-scrollbar{display:none}` }} />
+          <style dangerouslySetInnerHTML={{ __html: `@keyframes lb-fade{from{opacity:0}to{opacity:1}}` }} />
           <button type="button" aria-label="Mbyll" onClick={() => setLightbox(false)} style={{ position: 'absolute', top: 16, right: 16, background: 'rgba(255,255,255,.15)', border: 'none', color: '#fff', borderRadius: '50%', width: 36, height: 36, fontSize: 18, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
           {current > 0 && (
             <button type="button" onClick={e => { e.stopPropagation(); goTo(current - 1) }} aria-label="Foto e mëparshme" style={{ position: 'absolute', left: 12, background: 'rgba(255,255,255,.15)', border: 'none', color: '#fff', borderRadius: '50%', width: 40, height: 40, fontSize: 20, cursor: 'pointer' }}>‹</button>
           )}
           <img
-            src={images[current]}
+            src={imgList[current]}
             alt={alt}
             onClick={e => e.stopPropagation()}
             style={{ maxWidth: '92vw', maxHeight: '86vh', objectFit: 'contain', borderRadius: 8 }}
           />
-          {current < count - 1 && (
+          {current < imgCount - 1 && (
             <button type="button" onClick={e => { e.stopPropagation(); goTo(current + 1) }} aria-label="Foto e ardhshme" style={{ position: 'absolute', right: 12, background: 'rgba(255,255,255,.15)', border: 'none', color: '#fff', borderRadius: '50%', width: 40, height: 40, fontSize: 20, cursor: 'pointer' }}>›</button>
           )}
-          {count > 1 && (
+          {imgCount > 1 && (
             <div aria-hidden="true" style={{ position: 'absolute', bottom: 20, display: 'flex', gap: 6 }}>
-              {images.map((_, i) => (
+              {imgList.map((_, i) => (
                 <div key={i} style={{ width: i === current ? 18 : 7, height: 7, borderRadius: 4, background: i === current ? '#E63312' : 'rgba(255,255,255,.4)', transition: 'all .2s' }} />
               ))}
             </div>

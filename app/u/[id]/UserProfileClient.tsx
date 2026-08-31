@@ -1,9 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../../../lib/supabase'
+import { useRealtimeTable } from '../../../hooks/useRealtimeTable'
 import { useAlpazar } from '../../../lib/context'
-import Avatar from '../../components/Avatar'
+import Avatar, { tierNgaProfili } from '../../components/Avatar'
+import { useIsOnline } from '../../components/OnlinePresence'
+import ListingCard from '../../components/ListingCard'
+import { TrustBadge } from '../../components/TrustBadge'
 
 function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime()
@@ -15,40 +19,93 @@ function timeAgo(dateStr: string) {
   return `${Math.floor(m / 12)} vite më parë`
 }
 
-function formatPrice(price: number, currency: string) {
-  if (price === 0) return 'Falas'
-  return `${price.toLocaleString('sq-AL')} ${currency || 'L'}`
-}
+// `formatPrice` u hoq bashke me grid-in katror: ListingCard e formaton vete
+// cmimin me `nf()`, qe jep te njejtin rezultat ne server e ne shfletues.
 
-export default function PublicProfilePage({ params }: { params: { id: string } }) {
+export default function PublicProfilePage({ params, initialProfile, initialListings, initialBiz, initialIsOwn }: { params: { id: string }; initialProfile?: any; initialListings?: any[]; initialBiz?: any; initialIsOwn?: boolean }) {
   const { user } = useAlpazar()
-  const [profile, setProfile] = useState<any>(null)
-  const [listings, setListings] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+  const seedListings = Array.isArray(initialListings) ? initialListings : []
+  // Seed nga SSR => paraqitja e pare eshte e plote (profil + shpallje), pa spinner
+  // mbi ekran e pa flash 0. Refetch-i ne klient eshte vetem rifreskim i heshtur.
+  const [profile, setProfile] = useState<any>(initialProfile ?? null)
+  const ownerOnline = useIsOnline(profile?.id) // prania LIVE (BLLOKU Imazhi 5)
+  const [listings, setListings] = useState<any[]>(seedListings)
+  const [loading, setLoading] = useState(!initialProfile)
   const [notFound, setNotFound] = useState(false)
   const [activeTab, setActiveTab] = useState<'listings' | 'about'>('listings')
+  const [biz, setBiz] = useState<any>(initialBiz ?? null)
+  // Shitjet personale te kryera — social proof (Faza 6). Funksioni
+  // user_sold_count numeron vetem status='sold' me business_id null.
+  const [soldCount, setSoldCount] = useState(0)
+  // Ndjekesit e personit (tabela `follows`, following_id = ky profil) —
+  // kutia e 4-te e matrices se ngrire (BLLOKU Imazhi 5), identike me biznesin.
+  const [followers, setFollowers] = useState(0)
+
+  // Shpalljet personale — një burim i vetëm fetch-i, i ripërdorur nga ngarkimi fillestar dhe
+  // nga realtime. `condition`/`rank_tier`/`video_poster` për ListingCard (shenjat + kopertina video).
+  const reloadListings = useCallback(async (keepSeedOnEmpty = false) => {
+    const { data: ls } = await supabase
+      .from('listings')
+      .select('id,title,price,currency,images,video_poster,city,created_at,is_premium,condition,rank_tier,views_count')
+      .eq('user_id', params.id)
+      .is('business_id', null)   // vetem shpallje personale — ato te biznesit rrine te faqja e biznesit (Vendimi 7, pa dyfishim)
+      .eq('is_active', true)
+      .order('rank_tier', { ascending: false })
+      .order('last_bumped_at', { ascending: false })
+      .limit(60)
+    // Ngarkimi fillestar: mbaj seed-in SSR kur bosh (kurrë flash 0). Realtime: lejo edhe bosh
+    // (p.sh. u fshi/çaktivizua shpallja e fundit) → pasqyron gjendjen reale menjëherë.
+    if (ls && (ls.length || !keepSeedOnEmpty)) setListings(ls)
+  }, [params.id])
+
+  // Live si te kryefaqja (Cowork — përditësimi realtime i /u/[id]): çdo insert/update/delete i
+  // shpalljeve të këtij përdoruesi rifreskon listën. "Fshirja" në app është soft (is_active=false →
+  // UPDATE), ndaj filtri user_id e kap; reload-i e heq sepse query-ja kërkon is_active=true.
+  useRealtimeTable(
+    'listings',
+    `user_id=eq.${params.id}`,
+    () => { reloadListings() },
+    () => { reloadListings() },
+    () => { reloadListings() },
+  )
 
   useEffect(() => {
     async function load() {
       const { data: p } = await supabase
         .from('profiles')
-        .select('id,full_name,username,avatar_url,cover_url,bio,city,is_premium,is_verified,trust_score,trust_score_visible,created_at,shop_name,seller_rating,reviews_count')
+        .select('id,full_name,username,avatar_url,cover_url,bio,city,is_premium,premium_expires_at,has_boost,boost_expires_at,is_verified,trust_score,trust_score_visible,created_at,shop_name,seller_rating,reviews_count,gamification_points,gamification_level')
         .eq('id', params.id)
         .single()
 
       if (!p) { setNotFound(true); setLoading(false); return }
       setProfile(p)
 
-      const { data: ls } = await supabase
-        .from('listings')
-        .select('id,title,price,currency,images,city,created_at,is_premium')
-        .eq('user_id', params.id)
-        .eq('is_active', true)
-        .order('is_premium', { ascending: false })
-        .order('created_at', { ascending: false })
-        .limit(60)
+      await reloadListings(true)
 
-      setListings(ls || [])
+      // Biznesi i ketij personi — lidhja person → dyqan (§4.5). Merret nga
+      // tabela `businesses`, jo nga `profiles.shop_name`: ai i fundit tregon
+      // vetem qe dikur eshte shkruar nje emer dyqani, jo qe ekziston nje
+      // faqe biznesi per te.
+      const { data: bz } = await supabase
+        .from('businesses')
+        .select('id,name,logo_url,is_verified')
+        .eq('owner_id', params.id)
+        .maybeSingle()
+      setBiz(bz || null)
+
+      // Shitjet personale — funksioni kthen skalar integer (Faza 6).
+      supabase.rpc('user_sold_count', { p_user: params.id }).then(({ data }) => {
+        const n = Number(Array.isArray(data) ? data[0] : data)
+        if (Number.isFinite(n)) setSoldCount(n)
+      })
+
+      // Ndjekesit — count pa rreshta (head:true), fail-soft ne 0.
+      supabase
+        .from('follows')
+        .select('id', { count: 'exact', head: true })
+        .eq('following_id', params.id)
+        .then(({ count }) => { if (typeof count === 'number') setFollowers(count) }, () => {})
+
       setLoading(false)
     }
     load()
@@ -71,12 +128,15 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
 
   const name = profile.full_name || profile.username || 'Përdorues'
   const memberSince = new Date(profile.created_at).getFullYear()
-  const isOwnProfile = user?.id === profile.id
-  const isBusiness = !!profile.shop_name
+  // FIX-3: para se konteksti të zgjidhë `user`, përdor vlerën nga serveri (initialIsOwn)
+  // => paraqitja e parë s'kërcen vizitor↔pronar. Kur `user` vjen, përputhet.
+  const isOwnProfile = user ? user.id === profile.id : !!initialIsOwn
+  // Nje faqe biznesi e vertete peshon me shume se nje `shop_name` i mbetur.
+  const isBusiness = !!biz || !!profile.shop_name
 
   const tabs = [
     { key: 'listings', label: `Shpalljet (${listings.length})` },
-    { key: 'about', label: 'Rreth' },
+    { key: 'about', label: 'Rreth & Vlerësime' },
   ]
 
   return (
@@ -109,8 +169,10 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
           <Avatar
             src={profile.avatar_url}
             name={name}
-            type={isBusiness ? 'business' : profile.is_premium ? 'premium' : 'user'}
+            type={isBusiness ? 'business' : 'person'}
+            tier={tierNgaProfili(profile)}
             verified={profile.is_verified || (profile.trust_score ?? 0) >= 60}
+            online={ownerOnline}
             size={96}
           />
         </div>
@@ -119,42 +181,58 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
           {/* Name + badges */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
             <h1 style={{ fontSize: 22, fontWeight: 800, color: '#111', margin: 0, lineHeight: 1.2 }}>{name}</h1>
-            {profile.is_premium && <span title="Premium" role="img" aria-label="Premium" style={{ fontSize: 16 }}>👑</span>}
+            {(() => { const t = tierNgaProfili(profile); return t !== 'free' && <span title={t === 'vip' ? 'VIP Ekstra Boost' : 'Premium'} role="img" aria-label={t === 'vip' ? 'VIP Ekstra Boost' : 'Premium'} style={{ fontSize: 16 }}>👑</span> })()}
             {profile.is_verified && <span title="Verifikuar" role="img" aria-label="Verifikuar" style={{ fontSize: 16 }}>✅</span>}
             {isBusiness && <span style={{ background: '#111', color: '#F5C842', fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 12 }}><span aria-hidden="true">🏢</span> BIZNES</span>}
           </div>
 
           {profile.username && (
-            <div style={{ color: '#888', fontSize: 13, marginBottom: 4 }}>@{profile.username}</div>
+            <div style={{ color: '#6b6b6b', fontSize: 13, marginBottom: 4 }}>@{profile.username}</div>
           )}
 
           {profile.city && (
             <div style={{ color: '#666', fontSize: 13, marginBottom: 6 }}><span aria-hidden="true">📍</span> {profile.city}</div>
           )}
 
-          {/* Stats row */}
+          {/* Stats row — matrica e ngrire (BLLOKU Imazhi 5): Shpallje / Të shitura /
+              Ndjekës / Anëtar, IDENTIKE me kutine e biznesit. Rating u zhvendos
+              te vlerësimet (seksioni "Rreth"), Besueshmëria te "Informacion". */}
           <div style={{ display: 'flex', gap: 20, marginBottom: 12 }}>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontWeight: 800, fontSize: 17, color: '#111' }}>{listings.length}</div>
-              <div style={{ fontSize: 11, color: '#888' }}>Shpallje</div>
+              <div style={{ fontSize: 11, color: '#6b6b6b' }}>Shpallje</div>
             </div>
-            {(profile.trust_score_visible !== false) && (profile.trust_score ?? 0) > 0 && (
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontWeight: 800, fontSize: 17, color: '#111' }}>{profile.trust_score}%</div>
-                <div style={{ fontSize: 11, color: '#888' }}>Besueshmëri</div>
-              </div>
-            )}
-            {profile.seller_rating > 0 && (
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontWeight: 800, fontSize: 17, color: '#111' }}><span aria-hidden="true">⭐</span> {Number(profile.seller_rating).toFixed(1)}</div>
-                <div style={{ fontSize: 11, color: '#888' }}>Vlerësim</div>
-              </div>
-            )}
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontWeight: 800, fontSize: 17, color: soldCount > 0 ? '#0E7A35' : '#111' }}>{soldCount}</div>
+              <div style={{ fontSize: 11, color: '#6b6b6b' }}>Të shitura</div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontWeight: 800, fontSize: 17, color: '#111' }}>{followers}</div>
+              <div style={{ fontSize: 11, color: '#6b6b6b' }}>Ndjekës</div>
+            </div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontWeight: 800, fontSize: 17, color: '#111' }}>{memberSince}</div>
-              <div style={{ fontSize: 11, color: '#888' }}>Anëtar</div>
+              <div style={{ fontSize: 11, color: '#6b6b6b' }}>Anëtar</div>
             </div>
           </div>
+
+          {/* Reputacioni (GAP 3+4 — mbyllja e lakut): TrustBadge i plotë (unazë "X/100") +
+              "⚡ N pikë" reale. Pikët fitohen e njoftohen por s'shfaqeshin te profili — tani po.
+              Respekton opt-out-in `trust_score_visible` (Ligji 124/2024). */}
+          {profile.trust_score_visible !== false && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
+              <TrustBadge
+                createdAt={profile.created_at}
+                listingsActive={listings.length}
+                gamificationPoints={profile.gamification_points || 0}
+              />
+              {(profile.gamification_points || 0) > 0 && (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 700, color: '#7A4A00', background: '#FFF8E1', border: '1px solid #F5C84255', borderRadius: 9, padding: '4px 10px' }}>
+                  <span aria-hidden="true">⚡</span> {profile.gamification_points} pikë
+                </span>
+              )}
+            </div>
+          )}
 
           {/* Action buttons */}
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -179,10 +257,13 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
                 <><span aria-hidden="true">✏️</span> Edito Profilin</>
               </button>
             )}
-            {isBusiness && (
+            {/* Lidhja del nga rreshti real i biznesit; me pare perdorej
+                id-ja e profilit dhe faqja e biznesit e shpetonte me nje
+                rrugedalje `owner_id`. */}
+            {biz && (
               <button
                 type="button"
-                onClick={() => window.location.href = `/biznese/${profile.id}`}
+                onClick={() => window.location.href = `/biznese/${biz.id}`}
                 style={{ padding: '10px 16px', background: '#111', color: '#F5C842', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}
               >
                 <><span aria-hidden="true">🏢</span> Shiko Biznesin</>
@@ -191,6 +272,24 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
           </div>
         </div>
       </div>
+
+      {/* Rasti i paparashikuar në dizajn — "vizitori i profilit të vet": kur pronari sheh
+          profilin e tij nga jashtë (nga "Shiko publik" te /profile, ose "profili yt →" te
+          faqja e biznesit), njihet qartë + i jepet rrugë kthimi. Simetrike me banderolën e
+          biznesit (BiznesPageClient: "Po e shikon faqen publike ← Kthehu te menaxhimi"). */}
+      {isOwnProfile && (
+        <div style={{ background: '#111', color: '#F5C842', margin: '0 0 8px', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, fontSize: 12.5, fontWeight: 700 }}>
+          <span><span aria-hidden="true">👁</span> Po e shikon profilin tënd publik — kështu e shohin vizitorët</span>
+          <button
+            type="button"
+            onClick={() => window.location.href = '/profile'}
+            aria-label="Kthehu te profili im"
+            style={{ background: '#F5C842', color: '#111', border: 'none', borderRadius: 8, padding: '6px 12px', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}
+          >
+            ← Kthehu te profili
+          </button>
+        </div>
+      )}
 
       {/* Tab bar */}
       <div role="tablist" aria-label="Seksionet e profilit" style={{ background: '#fff', display: 'flex', borderBottom: '1px solid #eee', marginBottom: 8, position: 'sticky', top: 0, zIndex: 10 }}>
@@ -203,7 +302,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
             aria-selected={activeTab === t.key}
             aria-controls={`tabpanel-${t.key}`}
             onClick={() => setActiveTab(t.key as any)}
-            style={{ flex: 1, padding: '14px 8px', border: 'none', background: 'transparent', fontWeight: activeTab === t.key ? 800 : 500, fontSize: 13, color: activeTab === t.key ? '#E63312' : '#666', borderBottom: activeTab === t.key ? '2px solid #E63312' : '2px solid transparent', cursor: 'pointer', transition: 'all .15s' }}
+            style={{ flex: 1, padding: '14px 8px', border: 'none', background: 'transparent', fontWeight: activeTab === t.key ? 800 : 500, fontSize: 13, color: activeTab === t.key ? '#C42305' : '#666', borderBottom: activeTab === t.key ? '2px solid #C42305' : '2px solid transparent', cursor: 'pointer', transition: 'all .15s' }}
           >
             {t.label}
           </button>
@@ -214,48 +313,19 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
       {activeTab === 'listings' && (
         <div id="tabpanel-listings" role="tabpanel" aria-labelledby="tab-listings" style={{ padding: '0 2px' }}>
           {listings.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '48px 16px', color: '#888', fontSize: 14 }}>
+            <div style={{ textAlign: 'center', padding: '48px 16px', color: '#6b6b6b', fontSize: 14 }}>
               <div style={{ fontSize: 36, marginBottom: 8 }} aria-hidden="true">📭</div>
               Nuk ka shpallje aktive
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 2 }}>
-              {listings.map(l => {
-                const img = Array.isArray(l.images) ? l.images[0] : null
-                return (
-                  <div
-                    key={l.id}
-                    role="link"
-                    tabIndex={0}
-                    aria-label={`${l.title} — ${l.price ? `${l.price.toLocaleString('sq-AL')} ${l.currency || 'L'}` : 'Falas'}`}
-                    onClick={() => window.location.href = `/listing/${l.id}`}
-                    onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/listing/${l.id}` }}
-                    style={{ position: 'relative', aspectRatio: '1/1', background: '#eee', overflow: 'hidden', cursor: 'pointer' }}
-                  >
-                    {img ? (
-                      <img
-                        src={img}
-                        alt={l.title}
-                        loading="lazy"
-                        width={400}
-                        height={400}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                        onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
-                      />
-                    ) : (
-                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg,#F5C842,#E63312)', color: '#fff', fontSize: 28 }} aria-hidden="true">📦</div>
-                    )}
-                    {/* Price overlay */}
-                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)', padding: '20px 6px 6px', color: '#fff' }}>
-                      <div style={{ fontSize: 11, fontWeight: 700, lineHeight: 1.2, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical' }}>{l.title}</div>
-                      <div style={{ fontSize: 12, fontWeight: 800, color: '#F5C842' }}>{formatPrice(l.price, l.currency)}</div>
-                    </div>
-                    {l.is_premium && (
-                      <div style={{ position: 'absolute', top: 4, right: 4, fontSize: 12 }} role="img" aria-label="Premium">⭐</div>
-                    )}
-                  </div>
-                )
-              })}
+            // I njejti ListingCard si te kryefaqja dhe te faqja e biznesit.
+            // Me pare ky ishte nje grid katror 1/1 me titullin e mbivendosur
+            // mbi foto — i lexueshem me veshtiresi dhe i ndryshem nga cdo
+            // siperfaqe tjeter.
+            <div className="listings-grid" style={{ padding: '0 12px' }}>
+              {listings.map((l, idx) => (
+                <ListingCard key={l.id} listing={l as any} index={idx} showSeller={false} />
+              ))}
             </div>
           )}
         </div>
@@ -266,12 +336,12 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
         <div id="tabpanel-about" role="tabpanel" aria-labelledby="tab-about" style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
           {profile.bio && (
             <div style={{ background: '#fff', borderRadius: 14, padding: 16, boxShadow: '0 1px 6px rgba(0,0,0,.06)' }}>
-              <div style={{ fontWeight: 700, fontSize: 13, color: '#888', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5 }}>Për Mua</div>
+              <div style={{ fontWeight: 700, fontSize: 13, color: '#6b6b6b', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5 }}>Për Mua</div>
               <div style={{ fontSize: 14, color: '#333', lineHeight: 1.6 }}>{profile.bio}</div>
             </div>
           )}
           <div style={{ background: '#fff', borderRadius: 14, padding: 16, boxShadow: '0 1px 6px rgba(0,0,0,.06)', display: 'flex', flexDirection: 'column', gap: 10 }}>
-            <div style={{ fontWeight: 700, fontSize: 13, color: '#888', textTransform: 'uppercase', letterSpacing: 0.5 }}>Informacion</div>
+            <div style={{ fontWeight: 700, fontSize: 13, color: '#6b6b6b', textTransform: 'uppercase', letterSpacing: 0.5 }}>Informacion</div>
             {profile.city && (
               <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 14, color: '#333' }}>
                 <span aria-hidden="true">📍</span><span>{profile.city}</span>
@@ -283,6 +353,13 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
             {profile.reviews_count > 0 && (
               <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 14, color: '#333' }}>
                 <span aria-hidden="true">⭐</span><span>{profile.reviews_count} vlerësime · mesatare {Number(profile.seller_rating).toFixed(1)}</span>
+              </div>
+            )}
+            {/* Besueshmëria u zhvendos ketu nga stats-row (matrica 4-kuti e bllokut);
+                respekton opt-out-in `trust_score_visible` (Ligji 124/2024). */}
+            {(profile.trust_score_visible !== false) && (profile.trust_score ?? 0) > 0 && (
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 14, color: '#333' }}>
+                <span aria-hidden="true">🛡️</span><span>Besueshmëri {profile.trust_score}%</span>
               </div>
             )}
           </div>

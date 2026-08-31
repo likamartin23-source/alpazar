@@ -3,258 +3,61 @@
 export const dynamic = 'force-dynamic'
 
 import { useState, useEffect } from 'react'
+import { useParams } from 'next/navigation'
 import { supabase } from '../../../../lib/supabase'
-import { MapPicker } from '../../../components/MapPicker'
+import BusinessForm, { BusinessInitial } from '../../../components/BusinessForm'
+import VerificationBox from '../../../components/VerificationBox'
 
-export default function BiznesEditPage({ params }: { params: { id: string } }) {
-  const [loading, setLoading]   = useState(true)
-  const [saving, setSaving]     = useState(false)
-  const [uploading, setUploading] = useState(false)
-  const [msg, setMsg]           = useState('')
-  const [userId, setUserId]     = useState<string | null>(null)
-
-  const [form, setForm] = useState({
-    name: '', description: '', address: '', phone: '', website: '',
-    hours: '', email: '', city: '', nipt: '', withdrawal_days: 14,
-    latitude: null as number | null, longitude: null as number | null,
-    logo_url: '', cover_url: '',
-  })
-  const [logoFile, setLogoFile]   = useState<File | null>(null)
-  const [coverFile, setCoverFile] = useState<File | null>(null)
-  const [logoPreview, setLogoPreview]   = useState('')
-  const [coverPreview, setCoverPreview] = useState('')
+// BLLOKU PËRFUNDIMTAR §3.8 — Editimi përdor TË NJËJTIN komponent BusinessForm si
+// krijimi (një burim i vetëm). Vetëm-pronar (kontroll owner===viewer para ngarkimit).
+export default function BiznesEditPage() {
+  const params = useParams() as { id: string }
+  const [loading, setLoading] = useState(true)
+  const [initial, setInitial] = useState<BusinessInitial | null>(null)
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/auth/login'; return }
-      setUserId(session.user.id)
-
       const { data: b } = await supabase.from('businesses').select('*').eq('id', params.id).single()
       if (!b) { window.location.href = '/profile'; return }
       if (b.owner_id !== session.user.id) { window.location.href = `/biznese/${params.id}`; return }
-
-      setForm({
-        name: b.name || '',
-        description: b.description || '',
-        address: b.address || '',
-        phone: b.phone || '',
-        website: b.website || '',
-        hours: b.hours?.schedule || '',
-        email: b.email || '',
-        city: b.city || '',
-        nipt: b.nipt || '',
-        withdrawal_days: b.withdrawal_days ?? 14,
-        latitude: b.latitude || null,
-        longitude: b.longitude || null,
-        logo_url: b.logo_url || '',
-        cover_url: b.cover_url || '',
+      const { data: maps } = await supabase.from('business_subcategory_map').select('subcategory_id').eq('business_id', params.id)
+      setInitial({
+        id: b.id, name: b.name, type: b.type, description: b.description, tagline: b.tagline,
+        founded_year: b.founded_year, logo_url: b.logo_url, cover_url: b.cover_url,
+        gallery: Array.isArray(b.gallery) ? b.gallery : null,
+        phone: b.phone, whatsapp: b.whatsapp, email: b.email, website: b.website, contact_person: b.contact_person,
+        socials: b.socials, city: b.city, address: b.address, latitude: b.latitude, longitude: b.longitude,
+        service_area: b.service_area, delivery: b.delivery, hours: b.hours, nipt: b.nipt,
+        legal_form: b.legal_form, withdrawal_days: b.withdrawal_days,
+        payment_methods: Array.isArray(b.payment_methods) ? b.payment_methods : null,
+        return_policy: b.return_policy, warranty: b.warranty,
+        subcatIds: (maps || []).map((m: any) => m.subcategory_id),
       })
-      if (b.logo_url) setLogoPreview(b.logo_url)
-      if (b.cover_url) setCoverPreview(b.cover_url)
       setLoading(false)
     })
   }, [params.id])
 
-  function setF(k: string, v: any) { setForm(f => ({ ...f, [k]: v })) }
-
-  async function compressImage(file: File, maxW: number): Promise<Blob> {
-    if (file.size < 100 * 1024) return file
-    return new Promise(resolve => {
-      const img = new Image(), url = URL.createObjectURL(file)
-      img.onload = () => {
-        URL.revokeObjectURL(url)
-        const scale = Math.min(1, maxW / Math.max(img.naturalWidth, img.naturalHeight))
-        const canvas = document.createElement('canvas')
-        canvas.width = Math.round(img.naturalWidth * scale)
-        canvas.height = Math.round(img.naturalHeight * scale)
-        canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height)
-        canvas.toBlob(b => resolve(b ?? file), 'image/jpeg', 0.82)
-      }
-      img.onerror = () => { URL.revokeObjectURL(url); resolve(file) }
-      img.src = url
-    })
-  }
-
-  async function uploadFile(file: File, path: string, maxW: number, bucket: string): Promise<string> {
-    const blob = await compressImage(file, maxW)
-    const { error } = await supabase.storage.from(bucket).upload(path, blob, { contentType: 'image/jpeg', upsert: true })
-    if (error) throw error
-    return supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl
-  }
-
-  async function save() {
-    if (!form.name.trim()) { setMsg('err:Emri i biznesit është i detyrueshëm!'); return }
-    if (!userId) return
-    setSaving(true); setMsg(''); setUploading(true)
-
-    let logoUrl = form.logo_url
-    let coverUrl = form.cover_url
-    try {
-      if (logoFile) logoUrl = await uploadFile(logoFile, `${userId}/biz-logo.jpg`, 400, 'avatars')
-      if (coverFile) coverUrl = await uploadFile(coverFile, `${userId}/biz-cover.jpg`, 1920, 'covers')
-    } catch (e: any) {
-      setMsg(`err:Gabim gjatë ngarkimit të fotove: ${e.message}`)
-      setSaving(false); setUploading(false); return
-    }
-    setUploading(false)
-
-    const { error } = await supabase.from('businesses').update({
-      name: form.name.trim(),
-      description: form.description || null,
-      address: form.address || null,
-      latitude: form.latitude,
-      longitude: form.longitude,
-      phone: form.phone || null,
-      website: form.website || null,
-      hours: form.hours ? { schedule: form.hours } : null,
-      email: form.email || null,
-      city: form.city || null,
-      nipt: form.nipt || null,
-      withdrawal_days: form.withdrawal_days || 14,
-      logo_url: logoUrl || null,
-      cover_url: coverUrl || null,
-    }).eq('id', params.id).eq('owner_id', userId)
-
-    setSaving(false)
-    if (error) { setMsg(`err:${error.message}`); return }
-    // Keep profile shop_name in sync
-    await supabase.from('profiles').update({ shop_name: form.name.trim() }).eq('id', userId)
-    setMsg('ok:Ndryshimet u ruajtën!')
-    setTimeout(() => window.location.href = `/biznese/${params.id}`, 1200)
-  }
-
-  if (loading) return (
-    <div style={{ minHeight: '100vh', background: '#FFFBEA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ width: 36, height: 36, border: '3px solid #F5C842', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-      <style dangerouslySetInnerHTML={{ __html: `@keyframes spin{to{transform:rotate(360deg)}}` }} />
-    </div>
-  )
-
   return (
     <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh', paddingBottom: 80, fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
-      <style dangerouslySetInnerHTML={{ __html: `
-        .biz-input{width:100%;border:1px solid #e5e5e5;border-radius:10px;padding:11px 13px;font-size:13px;font-family:inherit;background:#fff;outline:none;box-sizing:border-box;}
-        .biz-input:focus{border-color:#E63312;}
-        .section-title{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:10px;margin-top:4px;}
-        .save-btn{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:13px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;}
-        .save-btn:disabled{opacity:.5;cursor:not-allowed;}
-      ` }} />
-
-      {/* Header */}
       <div style={{ background: 'linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%)', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10, position: 'sticky', top: 0, zIndex: 10 }}>
         <button type="button" aria-label="Kthehu mbrapa" onClick={() => window.location.href = `/biznese/${params.id}`} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
           <i className="ti ti-arrow-left" style={{ fontSize: 22, color: '#111' }} aria-hidden="true" />
         </button>
-        <h1 style={{ fontSize: 15, fontWeight: 700, color: '#111', flex: 1, margin: 0 }}><span aria-hidden="true">✏️</span> Edito Biznesin</h1>
+        <h1 style={{ fontSize: 15, fontWeight: 700, color: '#111', flex: 1, margin: 0 }}><span aria-hidden="true">🏢</span> Të dhënat e biznesit</h1>
       </div>
-
-      <div style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 14 }}>
-        {msg && (
-          <div role="alert" style={{ background: msg.startsWith('err:') ? '#FFF0EE' : '#F0FFF4', border: `1px solid ${msg.startsWith('err:') ? '#F09595' : '#86efac'}`, borderRadius: 10, padding: '10px 14px', fontSize: 12, color: msg.startsWith('err:') ? '#E63312' : '#166534', fontWeight: 600 }}>
-            {msg.replace(/^(err:|ok:)/, '')}
-          </div>
+      <div style={{ padding: '20px 16px' }}>
+        {loading || !initial ? (
+          <div style={{ textAlign: 'center', padding: 40, color: '#555', fontSize: 13 }}>Duke ngarkuar…</div>
+        ) : (
+          <>
+            <BusinessForm mode="edit" initial={initial} onSaved={() => { window.location.href = `/biznese/${params.id}` }} />
+            {/* Kerkesa per verifikim rri KETU, bashke me te dhenat e biznesit:
+                verifikimi krahason pikerisht keto te dhena me regjistrin e QKB-se,
+                ndaj nje ekran i vetem i pergjigjet nje pyetjeje te vetme (§6). */}
+            <VerificationBox businessId={params.id} nipt={initial.nipt} />
+          </>
         )}
-
-        {/* Cover + Logo */}
-        <div style={{ position: 'relative', width: '100%', aspectRatio: '16/6', borderRadius: 12, overflow: 'hidden', marginBottom: 28, background: coverPreview ? 'transparent' : 'linear-gradient(135deg,#F5C842,#E63312)', cursor: 'pointer' }}>
-          {coverPreview && <img src={coverPreview} alt="Foto kopertinë" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
-          <label style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: coverPreview ? 'rgba(0,0,0,.3)' : 'none' }}>
-            <span style={{ background: 'rgba(0,0,0,.5)', color: '#fff', borderRadius: 10, padding: '8px 16px', fontSize: 12, fontWeight: 700 }}><span aria-hidden="true">📷</span> {coverPreview ? 'Ndrysho kopertinën' : 'Shto kopertinën'}</span>
-            <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) { setCoverFile(f); setCoverPreview(URL.createObjectURL(f)) } }} />
-          </label>
-          <div style={{ position: 'absolute', bottom: -24, left: 16 }}>
-            <div style={{ position: 'relative', width: 48, height: 48 }}>
-              <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#fff', border: '3px solid #fff', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, boxShadow: '0 2px 8px rgba(0,0,0,.15)' }}>
-                {logoPreview ? <img src={logoPreview} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span aria-hidden="true">🏢</span>}
-              </div>
-              <label aria-label="Ndrysho logon" style={{ position: 'absolute', bottom: -2, right: -2, background: '#E63312', width: 18, height: 18, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, cursor: 'pointer', border: '2px solid #fff' }}>
-                <span aria-hidden="true">📷</span>
-                <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) { setLogoFile(f); setLogoPreview(URL.createObjectURL(f)) } }} />
-              </label>
-            </div>
-          </div>
-        </div>
-
-        {/* Basic info */}
-        <div>
-          <div className="section-title">Informacion bazë</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            <div>
-              <label htmlFor="biz-name" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>Emri i biznesit *</label>
-              <input id="biz-name" type="text" className="biz-input" autoComplete="organization" value={form.name} onChange={e => setF('name', e.target.value)} placeholder="p.sh. Elektro Servisi Tirana" maxLength={80} required />
-            </div>
-            <div>
-              <label htmlFor="biz-description" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>Përshkrim</label>
-              <textarea id="biz-description" className="biz-input" value={form.description} onChange={e => setF('description', e.target.value)} placeholder="Çfarë bëni? Si mund t'ju ndihmojmë..." maxLength={500} style={{ resize: 'none', minHeight: 80 }} />
-            </div>
-          </div>
-        </div>
-
-        {/* Contact */}
-        <div>
-          <div className="section-title">Kontakti</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            <div>
-              <label htmlFor="biz-phone" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}><span aria-hidden="true">☎</span> Telefon</label>
-              <input id="biz-phone" className="biz-input" type="tel" autoComplete="tel" value={form.phone} onChange={e => setF('phone', e.target.value)} placeholder="+355 6X XXX XXXX" />
-            </div>
-            <div>
-              <label htmlFor="biz-email" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}><span aria-hidden="true">✉️</span> Email</label>
-              <input id="biz-email" className="biz-input" type="email" autoComplete="email" value={form.email} onChange={e => setF('email', e.target.value)} placeholder="info@biznesi.al" />
-            </div>
-            <div>
-              <label htmlFor="biz-website" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}><span aria-hidden="true">🌐</span> Website</label>
-              <input id="biz-website" className="biz-input" type="url" value={form.website} onChange={e => setF('website', e.target.value)} placeholder="https://..." />
-            </div>
-          </div>
-        </div>
-
-        {/* Location */}
-        <div>
-          <div className="section-title">Vendndodhja</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            <div>
-              <label htmlFor="biz-city" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}><span aria-hidden="true">🏙️</span> Qyteti</label>
-              <input id="biz-city" type="text" className="biz-input" autoComplete="address-level2" value={form.city} onChange={e => setF('city', e.target.value)} placeholder="p.sh. Tiranë" maxLength={80} />
-            </div>
-            <div>
-              <label htmlFor="biz-address" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}><span aria-hidden="true">📍</span> Adresa (harta OSM)</label>
-              <MapPicker
-                address={form.address}
-                lat={form.latitude}
-                lng={form.longitude}
-                onChange={(lat, lng, address) => { setF('latitude', lat); setF('longitude', lng); setF('address', address) }}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Hours */}
-        <div>
-          <label htmlFor="biz-hours" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}><span aria-hidden="true">🕐</span> Orari</label>
-          <input id="biz-hours" type="text" className="biz-input" autoComplete="off" value={form.hours} onChange={e => setF('hours', e.target.value)} placeholder="Hënë–Premte 09:00–18:00" />
-        </div>
-
-        {/* Legal — B2C */}
-        <div style={{ background: '#fff', borderRadius: 14, padding: 16, border: '1px solid #e5e5e5' }}>
-          <div className="section-title" style={{ marginBottom: 12 }}><span aria-hidden="true">⚖️</span> Të dhëna ligjore (B2C)</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            <div>
-              <label htmlFor="biz-nipt" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>NIPT / Nr. TVSH</label>
-              <input id="biz-nipt" type="text" className="biz-input" autoComplete="off" value={form.nipt} onChange={e => setF('nipt', e.target.value.toUpperCase())} placeholder="p.sh. K12345678A" maxLength={20} />
-              <div style={{ fontSize: 11, color: '#888', marginTop: 4 }}>Numri i Identifikimit të Personit të Tatueshëm — detyrueshëm nëse shet B2C</div>
-            </div>
-            <div>
-              <label htmlFor="biz-withdrawal" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}><span aria-hidden="true">📅</span> E drejta e tërheqjes (ditë)</label>
-              <input id="biz-withdrawal" className="biz-input" type="number" min={14} max={30} value={form.withdrawal_days} onChange={e => setF('withdrawal_days', parseInt(e.target.value) || 14)} />
-              <div style={{ fontSize: 11, color: '#888', marginTop: 4 }}>Direktiva EU 2011/83/EU — minimum 14 ditë për blerjet B2C online</div>
-            </div>
-          </div>
-        </div>
-
-        <button type="button" className="save-btn" disabled={saving || !form.name.trim()} onClick={save} style={{ marginTop: 8 }}>
-          {saving ? <><span aria-hidden='true'>⏳</span> {uploading ? 'Duke ngarkuar...' : 'Duke ruajtur...'}</> : <><span aria-hidden='true'>✓</span> Ruaj Ndryshimet</>}
-        </button>
       </div>
     </div>
   )

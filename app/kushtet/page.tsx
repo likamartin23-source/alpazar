@@ -10,16 +10,16 @@ export default function Kushtet() {
     .back i{font-size:18px;color:#111;}
     .topbar-title{font-size:15px;font-weight:700;color:#111;}
     .content{padding:24px 20px 40px;}
-    .ver{font-size:11px;color:#888;margin-bottom:20px;background:#FFFBEA;padding:8px 12px;border-radius:8px;display:inline-block;}
+    .ver{font-size:11px;color:#6E6E6E;margin-bottom:20px;background:#FFFBEA;padding:8px 12px;border-radius:8px;display:inline-block;}
     h1{font-size:22px;font-weight:700;color:#111;margin-bottom:8px;}
     h2{font-size:14px;font-weight:700;color:#111;margin:22px 0 8px;padding-bottom:5px;border-bottom:2px solid #F5C842;}
     p{font-size:13px;color:#444;line-height:1.85;margin-bottom:10px;}
     ul{font-size:13px;color:#444;line-height:1.85;padding-left:18px;margin-bottom:10px;}
     li{margin-bottom:5px;}
     .note{background:#FFFBEA;border-left:3px solid #E63312;padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:12px;color:#555;line-height:1.7;}
-    .law{font-size:11px;color:#aaa;font-style:italic;}
+    .law{font-size:11px;color:#555;font-style:italic;}
     .ftr{display:flex;flex-wrap:wrap;gap:8px 16px;padding:20px;background:#f9f9f9;border-top:1px solid #eee;margin-top:10px;}
-    .ftr a{color:#888;font-size:11px;text-decoration:none;}
+    .ftr a{color:#555;font-size:11px;text-decoration:none;}
   `
   return (
     <>
@@ -65,7 +65,7 @@ export default function Kushtet() {
             <li>Shërbime mashtruese ose shërbime me natyrë seksuale</li>
             <li>Çdo artikull ose shërbim i ndaluar me ligjet e Republikës së Shqipërisë</li>
           </ul>
-          <div className="note">Raportimi i shpalljeve të dyshimta bëhet me butonin "Raporto" ose me email tek support@alpazar.al. Shpalljet ilegale i raportohen autoriteteve kompetente.</div>
+          <div className="note">Raportimi i shpalljeve të dyshimta bëhet me butonin "Raporto" ose me email tek alpazarsuport@gmail.com. Shpalljet ilegale i raportohen autoriteteve kompetente.</div>
 
           <h2>5-a. Mbrojtja e Fëmijëve dhe Raportimi i Shkeljeve</h2>
           <p>Alpazar zbaton tolerancë zero ndaj çdo përmbajtjeje që dëmton ose shfrytëzon fëmijët:</p>
@@ -73,20 +73,29 @@ export default function Kushtet() {
             <li>Çdo material seksual që përfshin të mitur <span className="law">(Kodi Penal, neni 117)</span> raportohet <strong>MENJËHERË</strong> te Policia e Shtetit dhe prokuroria kompetente — dhe hiqet pa paralajmërim.</li>
             <li>Moshat nën 16 vjeç nuk mund të regjistrohen <span className="law">(Ligji 124/2024, neni 8)</span>.</li>
             <li>Nuk lejohet asnjë kontakt privat i rritur–fëmijë brenda platformës.</li>
-            <li>Çdo shpallje ose aktivitet i dyshimtë raportohet me butonin <span aria-hidden="true">⚠️</span> ose nëpërmjet <a href="/takedown" style={{ color: '#E63312' }}>/takedown</a>.</li>
+            <li>Çdo shpallje ose aktivitet i dyshimtë raportohet me butonin <span aria-hidden="true">⚠️</span> ose nëpërmjet <a href="/takedown" style={{ color: '#C42B0F' }}>/takedown</a>.</li>
           </ul>
           <div className="note">Shkeljet penale raportohen edhe pa kërkesën e viktimës. Platforma bashkëpunon plotësisht me autoritetet hetimore.</div>
 
           <h2>6. Shërbimi Premium</h2>
-          <p>Shërbimi Premium ofrohet me tarifa mujore ose vjetore të publikuara në platformë. Pagesa konfirmohet brenda 24 orësh pune. Anulimi bëhet duke kontaktuar administratorët. Rimbursimi nuk ofrohet për periudha të shfrytëzuara plotësisht, por mund të merret parasysh rast pas rasti sipas ligjit të konsumatorëve (Ligji Nr. 9902/2008, Neni 35).</p>
+          <p>Shërbimi Premium ofrohet me tarifa mujore ose vjetore të publikuara në platformë, <strong>në lekë</strong>. Pagesa konfirmohet brenda 24 orësh pune. Abonimi anulohet kurdo te <a href="/billing" style={{ color: '#C42B0F' }}>Plani im</a> ose duke kontaktuar administratën; pas anulimit përfitimet vazhdojnë deri në fund të periudhës së paguar.</p>
+
+          <h2>6-a. E drejta e heqjes dorë brenda 14 ditëve</h2>
+          <p>Abonimi Premium blihet nga distanca, ndaj ti ke <strong>të drejtën ligjore ta heqësh dorë brenda 14 ditëve kalendarike</strong> nga dita e lidhjes së kontratës, <strong>pa dhënë asnjë arsye dhe pa asnjë penalitet</strong> <span className="law">(Ligji Nr. 9902/2008 "Për mbrojtjen e konsumatorëve", nenet 37/1–37/8)</span>.</p>
+          <ul>
+            <li><strong>Si bëhet:</strong> me një klikim te <a href="/billing" style={{ color: '#C42B0F' }}>Plani im</a> — butoni „Hiq dorë dhe kthe pagesën", ku shfaqen afati, ditët e mbetura dhe shuma që kthehet. Ose me një njoftim të qartë nga <a href="/kontakt" style={{ color: '#C42B0F' }}>faqja e kontaktit</a>. Nuk kërkohet formular i posaçëm dhe nuk kërkohet arsye.</li>
+            <li><strong>Sa kthehet:</strong> shuma e paguar kthehet brenda <strong>14 ditëve</strong> nga marrja e njoftimit, me të njëjtën mënyrë pagese. Nëse ke kërkuar shprehimisht që shërbimi të nisë menjëherë, mbahet vetëm pjesa <strong>në raport me ditët e shfrytëzuara</strong> deri në njoftim — jo më shumë.</li>
+            <li><strong>Kur nuk zbatohet:</strong> e drejta shuhet nëse shërbimi është përmbushur <em>plotësisht</em> brenda afatit me pëlqimin tënd paraprak të shprehur dhe me pranimin se e humb këtë të drejtë <span className="law">(neni 37/8)</span>.</li>
+          </ul>
+          <div className="note">Kjo është e drejtë e dhënë nga ligji, jo mirësjellje e platformës: nuk mund të kufizohet me kushte, as nga ky dokument. Nëse ndonjë tekst tjetër i këtyre kushteve duket se e ngushton, mbizotëron ligji.</div>
 
           <h2>7. Mbrojtja e të Dhënave Personale</h2>
           <p>Mbledhja, ruajtja dhe përpunimi i të dhënave personale kryhet në përputhje me <strong>Ligjin Nr. 124/2024 "Për mbrojtjen e të dhënave personale"</strong> (hyrë në fuqi 1 Janar 2025), i cili harmonizoi legjislacionin shqiptar me Rregulloren GDPR 2016/679 të BE-së.</p>
-          <p>Për detaje të plota, shihni <a href="/privatesia" style={{ color: '#E63312' }}>Politikën e Privatësisë</a> dhe <a href="/cookies" style={{ color: '#E63312' }}>Politikën e Cookie-ve</a>.</p>
+          <p>Për detaje të plota, shihni <a href="/privatesia" style={{ color: '#C42B0F' }}>Politikën e Privatësisë</a> dhe <a href="/cookies" style={{ color: '#C42B0F' }}>Politikën e Cookie-ve</a>.</p>
           <p className="law">Autoritet mbikëqyrëse: Komisioneri për Mbrojtjen e të Dhënave Personale — www.idp.al</p>
 
           <h2>8. Heqja dhe Notice-and-Takedown</h2>
-          <p>Nëse besoni se një shpallje shkel të drejtat tuaja të autorit, privatësinë ose është ilegale, mund të paraqisni kërkesë formale <a href="/takedown" style={{ color: '#E63312' }}>këtu</a>. Alpazar shqyrton çdo kërkesë brenda 72 orëve pune dhe vepron sipas Ligjit Nr. 9880/2008 "Për nënshkrimin elektronik" dhe direktivave europiane mbi tregtinë elektronike.</p>
+          <p>Nëse besoni se një shpallje shkel të drejtat tuaja të autorit, privatësinë ose është ilegale, mund të paraqisni kërkesë formale <a href="/takedown" style={{ color: '#C42B0F' }}>këtu</a>. Alpazar shqyrton çdo kërkesë brenda 72 orëve pune dhe vepron sipas Ligjit Nr. 9880/2008 "Për nënshkrimin elektronik" dhe direktivave europiane mbi tregtinë elektronike.</p>
 
           <h2>9. Kufizimi i Përgjegjësisë</h2>
           <p>Alpazar nuk mban përgjegjësi për: saktësinë e informacionit të postuar nga përdoruesit; humbjet financiare nga transaksionet mes palëve; dëmet e shkaktuara nga ndërprerjet teknike; apo veprimet e palëve të treta. Limiti maksimal i përgjegjësisë së Alpazar ndaj çdo përdoruesi është i barabartë me shumën e paguar prej tij gjatë 12 muajve të fundit.</p>
@@ -102,7 +111,7 @@ export default function Kushtet() {
           <p>Alpazar njofton ndryshimet e rëndësishme të kushteve të paktën 30 ditë para hyrjes në fuqi, me email dhe njoftim brenda platformës. Vazhdimi i përdorimit pas datës efektive nënkupton pranimin e plotë të kushteve të reja.</p>
 
           <h2>13. Kontakti Ligjor</h2>
-          <p>Pyetje ligjore dhe ankesa: <strong>support@alpazar.al</strong><br />Alpazar · Tiranë, Shqipëri</p>
+          <p>Pyetje ligjore dhe ankesa: <strong>alpazarsuport@gmail.com</strong><br />Alpazar · Tiranë, Shqipëri</p>
         </div>
         <div className="ftr">
           <a href="/privatesia" style={LS}>Privatësia</a>

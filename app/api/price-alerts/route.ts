@@ -47,6 +47,8 @@ export async function GET(req: NextRequest) {
 
 // POST /api/price-alerts — krijo ose përditëso alert
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(`price-alerts:write:${getClientIp(req)}`, { limit: 20, windowMs: 60_000 })
+  if (!rl.allowed) return NextResponse.json({ error: 'Shumë kërkesa.' }, { status: 429 })
   const token = getToken(req)
   if (!token) return NextResponse.json({ error: 'Kërkohet hyrja' }, { status: 401 })
 
@@ -84,6 +86,8 @@ export async function POST(req: NextRequest) {
 
 // DELETE /api/price-alerts?listing_id=xxx
 export async function DELETE(req: NextRequest) {
+  const rl = rateLimit(`price-alerts:write:${getClientIp(req)}`, { limit: 20, windowMs: 60_000 })
+  if (!rl.allowed) return NextResponse.json({ error: 'Shumë kërkesa.' }, { status: 429 })
   const token = getToken(req)
   if (!token) return NextResponse.json({ error: 'Kërkohet hyrja' }, { status: 401 })
 

@@ -3,43 +3,109 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { useRealtimeTable } from '../hooks/useRealtimeTable'
+import { useDraggable } from '../hooks/useDraggable'
 import type { Category, Listing } from '../lib/types'
+import { LISTING_SELECT } from '../lib/listingSelect'
 import { SkeletonGrid } from './components/Skeleton'
-import Avatar from './components/Avatar'
+import Avatar, { tierNgaProfili } from './components/Avatar'
+import ListingCard from './components/ListingCard'
 import { getLevel } from './components/Badges'
 import { PremiumUpsellModal } from './components/PremiumUpsell'
 import { Onboarding } from './components/Onboarding'
 import { useAlpazar } from '../lib/context'
 import { saveRefFromUrl } from '../lib/referral'
 import { SITE_URL } from '../lib/siteConfig'
+import { nf } from '../lib/format'
 
 // Banner shkarkim — buton i vogël katrore pulsues (fixed, vetem faqja kryesore)
 function InstallBanner() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
-  const [show, setShow] = useState(false)
   const [installed, setInstalled] = useState(false)
   const [dismissed, setDismissed] = useState(false)
+  const [standalone, setStandalone] = useState(false)
+  const [showGuide, setShowGuide] = useState(false)
+
+  const { pos, dragging, onPointerDown } = useDraggable(
+    '_alpz_pos_install',
+    () => window.innerWidth >= 768 ? { left: 24, bottom: 104 } : { left: 12, bottom: 226 },
+    64
+  )
 
   useEffect(() => {
-    if (window.matchMedia('(display-mode: standalone)').matches) return
-    const handler = (e: any) => { e.preventDefault(); setDeferredPrompt(e); setShow(true) }
-    const installedHandler = () => { setInstalled(true); setShow(false) }
+    // Nese app-i eshte tashme i instaluar (standalone), fshihe butonin.
+    try {
+      if (window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone) setStandalone(true)
+    } catch { /* ignore */ }
+    // Chromium ndez beforeinstallprompt -> instalim me nje klik. Firefox/Safari nuk e ndezin;
+    // atehere butoni mbetet i dukshem dhe klik-u tregon udhezime manuale (shih install()).
+    const handler = (e: any) => { e.preventDefault(); setDeferredPrompt(e) }
+    const installedHandler = () => { setInstalled(true) }
     window.addEventListener('beforeinstallprompt', handler)
     window.addEventListener('appinstalled', installedHandler)
     return () => { window.removeEventListener('beforeinstallprompt', handler); window.removeEventListener('appinstalled', installedHandler) }
   }, [])
 
   async function install() {
-    if (!deferredPrompt) return
-    deferredPrompt.prompt()
-    const { outcome } = await deferredPrompt.userChoice
-    if (outcome === 'accepted') setInstalled(true)
-    setShow(false)
+    if (deferredPrompt) {
+      deferredPrompt.prompt()
+      const { outcome } = await deferredPrompt.userChoice
+      if (outcome === 'accepted') setInstalled(true)
+      setDeferredPrompt(null)
+      return
+    }
+    // Pa prompt native (Firefox/Safari) -> udhezime manuale.
+    setShowGuide(v => !v)
   }
 
-  if (!show || installed || dismissed) return null
+  // GJITHMONE i dukshem per perdoruesin (jo i varur nga beforeinstallprompt qe s'ndizet
+  // ne cdo browser) — fshihet vetem nese eshte instaluar, mbyllur, ose ne standalone.
+  if (installed || dismissed || standalone) return null
   return (
-    <div style={{ position: 'fixed', bottom: 226, left: 12, zIndex: 190, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 3 }}>
+    <div
+      className="install-float"
+      style={{
+        position: 'fixed',
+        bottom: pos?.bottom ?? 226,
+        left: pos?.left ?? 12,
+        right: 'auto',
+        zIndex: 190,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        gap: 3,
+        cursor: dragging ? 'grabbing' : 'grab',
+        touchAction: 'none',
+        userSelect: 'none',
+      }}
+      onPointerDown={onPointerDown}
+    >
+      {showGuide && (
+        <div
+          role="dialog"
+          aria-label="Si të instaloni Alpazar"
+          style={{
+            position: 'absolute', bottom: '112%', left: 0,
+            width: 236, maxWidth: '78vw',
+            background: '#111', color: '#fff', borderRadius: '12px 12px 12px 4px',
+            padding: '12px 13px', boxShadow: '0 10px 30px rgba(0,0,0,.35)',
+            fontSize: 12, lineHeight: 1.5, zIndex: 5, cursor: 'default',
+          }}
+          onPointerDown={e => e.stopPropagation()}
+        >
+          <strong style={{ display: 'block', color: '#22C55E', fontSize: 13, marginBottom: 6 }}>
+            Instalo Alpazar-in
+          </strong>
+          <div style={{ marginBottom: 5 }}><b>Chrome/Edge:</b> menyja ⋮ → “Instalo aplikacionin”.</div>
+          <div style={{ marginBottom: 5 }}><b>iPhone (Safari):</b> Ndaj <span aria-hidden="true">↑</span> → “Add to Home Screen”.</div>
+          <div><b>Android:</b> menyja ⋮ → “Shto te ekrani kryesor”.</div>
+          <button
+            type="button"
+            onClick={() => setShowGuide(false)}
+            style={{ position: 'absolute', top: 6, right: 8, background: 'none', border: 'none', color: '#6b6b6b', cursor: 'pointer', fontSize: 13, lineHeight: 1 }}
+            aria-label="Mbyll udhëzimet"
+          >✕</button>
+        </div>
+      )}
       <button
         type="button"
         aria-label="Instalo aplikacionin"
@@ -48,16 +114,14 @@ function InstallBanner() {
           width: 36, height: 44,
           background: 'linear-gradient(135deg,#22C55E,#16a34a)',
           borderRadius: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2,
-          border: 'none', cursor: 'pointer',
+          border: 'none', cursor: 'inherit',
           boxShadow: '0 4px 13px rgba(34,197,94,.45)',
           animation: 'install-pulse 2.2s infinite',
           transition: 'transform .15s',
         }}
-        onMouseDown={e => (e.currentTarget.style.transform = 'scale(.92)')}
-        onMouseUp={e => (e.currentTarget.style.transform = '')}
       >
-        <i className="ti ti-device-mobile-down" style={{ fontSize: 16, color: '#fff' }} aria-hidden="true" />
-        <span style={{ fontSize: 7, color: '#fff', fontWeight: 800, letterSpacing: .3, lineHeight: 1 }}>Instalo</span>
+        <i className="ti ti-device-mobile-down float-icon-main" aria-hidden="true" />
+        <span className="float-label">Instalo</span>
       </button>
       <button type="button" aria-label="Mbyll" onClick={() => setDismissed(true)} style={{ background: 'none', border: 'none', color: 'rgba(34,197,94,.7)', cursor: 'pointer', fontSize: 7, padding: 0, lineHeight: 1, alignSelf: 'center' }}>✕</button>
     </div>
@@ -69,6 +133,12 @@ function ShareBox({ refCode }: { refCode?: string }) {
   const [open, setOpen] = useState(false)
   const [mode, setMode] = useState<'feed' | 'msg'>('feed')
   const [copied, setCopied] = useState<string | null>(null)
+
+  const { pos, dragging, onPointerDown } = useDraggable(
+    '_alpz_pos_share',
+    () => window.innerWidth >= 768 ? { left: 24, bottom: 24 } : { left: 12, bottom: 157 },
+    64
+  )
 
   const base = SITE_URL
   const url  = refCode ? `${base}?ref=${refCode}` : base
@@ -150,7 +220,24 @@ function ShareBox({ refCode }: { refCode?: string }) {
   }
 
   return (
-    <div style={{ position: 'fixed', bottom: 157, left: 12, zIndex: 190, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 3 }}>
+    <div
+      className="share-float"
+      style={{
+        position: 'fixed',
+        bottom: pos?.bottom ?? 157,
+        left: pos?.left ?? 12,
+        right: 'auto',
+        zIndex: 190,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        gap: 3,
+        cursor: dragging ? 'grabbing' : 'grab',
+        touchAction: 'none',
+        userSelect: 'none',
+      }}
+      onPointerDown={onPointerDown}
+    >
       {open && (
         <div style={{
           background: '#111', border: '1.5px solid #1d4ed8', borderRadius: '14px 14px 14px 0',
@@ -211,8 +298,8 @@ function ShareBox({ refCode }: { refCode?: string }) {
         onMouseDown={e => (e.currentTarget.style.transform = 'scale(.92)')}
         onMouseUp={e => (e.currentTarget.style.transform = '')}
       >
-        <i className={`ti ti-${open ? 'x' : 'share-2'}`} aria-hidden="true" style={{ fontSize: 16, color: '#fff' }} />
-        <span style={{ fontSize: 7, color: '#fff', fontWeight: 800, letterSpacing: .3, lineHeight: 1 }}>Ndaj</span>
+        <i className={`ti ti-${open ? 'x' : 'share-2'} float-icon-main`} aria-hidden="true" />
+        <span className="float-label">Ndaj</span>
       </button>
       <button type="button" aria-label="Mbyll" onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', color: 'rgba(59,130,246,.7)', cursor: 'pointer', fontSize: 8, padding: 0, lineHeight: 1, alignSelf: 'center', display: open ? 'block' : 'none' }}>✕</button>
     </div>
@@ -238,13 +325,13 @@ function AlpazarIcon() {
   )
 }
 
-export default function HomeClient({ initialListings = [], initialCategories = [] }: { initialListings?: Listing[]; initialCategories?: Category[] }) {
+export default function HomeClient({ initialListings = [], initialCategories = [], initialShops = [] }: { initialListings?: Listing[]; initialCategories?: Category[]; initialShops?: any[] }) {
   // Global context — auth, config, unread counts
   const { user, profile, authReady, unreadMessages: unreadCount, unreadNotifications, cfg } = useAlpazar()
 
   const [categories, setCategories] = useState<Category[]>(initialCategories)
   const [listings, setListings] = useState<Listing[]>(initialListings)
-  const [shops, setShops] = useState<any[]>([])
+  const [shops, setShops] = useState<any[]>(initialShops)
   const [activeCategory, setActiveCategory] = useState('all')
   const [activeFilter, setActiveFilter] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
@@ -257,12 +344,17 @@ export default function HomeClient({ initialListings = [], initialCategories = [
   // SSR'd content stays visible (no skeleton flicker). Filter/poll/visibility
   // fetches still run normally.
   const skipMountFetch = useRef(initialListings.length > 0)
+  const listingsReqId = useRef(0)
   const [listingCount, setListingCount] = useState(0)
   const [userCount, setUserCount] = useState(0)
   // settings now from app_config via context (cfg helper)
   const settings: Record<string, string> = {}
   const [newListingBadge, setNewListingBadge] = useState(false)
   const [recentlyViewed, setRecentlyViewed] = useState<any[]>([])
+  // Hidratimi: koha relative (timeAgo) varet nga Date.now() → ndryshon mes
+  // serverit dhe klientit. Renderohet vetëm pas mount-it që SSR-i dhe render-i
+  // i parë në klient të jenë identikë (pa React #418/#425).
+  const [mounted, setMounted] = useState(false)
 
   // Realtime listings via hook
   useRealtimeTable<Listing>(
@@ -270,7 +362,17 @@ export default function HomeClient({ initialListings = [], initialCategories = [
     null,
     (row) => {
       if (!row.is_active) return
-      setListings(prev => prev.find(l => l.id === row.id) ? prev : [row, ...prev].slice(0, 20))
+      // Garanci "del në homepage në kohë reale, e njohur": payload-i realtime s'ka join-in e
+      // biznesit/autorit → karta do dilte e maskuar. Marrim projeksionin e plotë (LISTING_SELECT)
+      // për rreshtin e ri, pastaj e vëmë në krye. Fail-soft: nëse fetch-i s'del, përdorim rreshtin bruto.
+      ;(async () => {
+        let full: any = row
+        try {
+          const { data } = await supabase.from('listings').select(LISTING_SELECT).eq('id', row.id).maybeSingle()
+          if (data) full = data
+        } catch { /* fail-soft: mbaj rreshtin bruto */ }
+        setListings(prev => prev.find(l => l.id === full.id) ? prev : [full as Listing, ...prev].slice(0, 20))
+      })()
       setListingCount(c => c + 1)
       setNewListingBadge(true)
       setTimeout(() => setNewListingBadge(false), 4000)
@@ -309,25 +411,39 @@ export default function HomeClient({ initialListings = [], initialCategories = [
     saveRefFromUrl()
     // Seeded from SSR: listings + categories already present; only fetch the
     // extras (counts, shops) on mount. Otherwise do the full initial load.
-    if (skipMountFetch.current) { fetchCounts(); fetchShops() } else { fetchAll() }
+    // F1 (DIAGNOZA KAUZALE, 27 gusht): SSR-seed-i i kryefaqes vjen nga CDN me
+    // s-maxage=60 + stale-while-revalidate=120 → mund të jetë deri ~1–3 min i vjetër,
+    // pra PA shpalljen e sapo-publikuar. Realtime nuk e mbulon këtë rast (INSERT-i
+    // ndodhi PARA se kryefaqja të abonohej) dhe tick-u i parë i poll-it është në +60s.
+    // Një refetch i HESHTUR në mount e mbyll dritaren nga ~60–180s në ~1–2s.
+    // keepSeedOnEmpty: kurrë flash 0 — seed-i mbahet nëse query-ja kthehet bosh.
+    if (skipMountFetch.current) {
+      fetchListings(activeCategory, activeFilter, { silent: true, keepSeedOnEmpty: true })
+      fetchCounts(); fetchShops()
+    } else { fetchAll() }
 
     // Rilexo kur tab bëhet aktiv sërish
     const onVisible = () => {
       if (document.visibilityState === 'visible') {
-        fetchListings()
+        fetchListings(activeCategory, activeFilter, { silent: true })
         fetchCounts()
       }
     }
     document.addEventListener('visibilitychange', onVisible)
 
-    // Poll shpallje çdo 10 sekonda
+    // Rrjeti/bateria: useRealtimeTable tashme streamon insert/update/delete per
+    // 'listings', dhe visibilitychange rifreskon kur kthehet perdoruesi. Polling-u
+    // 10s ishte tepri (2 count(exact) — count-i me i shtrenjte ne Postgres — plus
+    // nje refetch i plote qe ri-renderonte gjithe grid-in cdo 10s).
     const listingsPoll = setInterval(() => {
-      fetchListings()
-      fetchCounts()
-    }, 10000)
+      fetchListings(activeCategory, activeFilter, { silent: true })
+    }, 60000)
+    // Statistikat ndryshojne ngadale — mjafton cdo 5 minuta.
+    const countsPoll = setInterval(() => { fetchCounts() }, 300000)
 
     return () => {
       clearInterval(listingsPoll)
+      clearInterval(countsPoll)
       document.removeEventListener('visibilitychange', onVisible)
     }
   }, [])
@@ -358,13 +474,14 @@ export default function HomeClient({ initialListings = [], initialCategories = [
     if (data) setShops(data)
   }
 
-  async function fetchListings(catSlug = activeCategory, filter = activeFilter) {
-    setLoading(true)
+  async function fetchListings(catSlug = activeCategory, filter = activeFilter, opts?: { silent?: boolean; keepSeedOnEmpty?: boolean }) {
+    const reqId = ++listingsReqId.current
+    if (!opts?.silent) setLoading(true) // poll/visibility: mos rifut skeleton-in
     let query = supabase
       .from('listings')
-      .select('id,title,price,currency,condition,city,is_premium,images,category_id,created_at,user_id,author:user_id(id,full_name,username,avatar_url,is_premium,trust_score)')
+      .select(LISTING_SELECT)
       .eq('is_active', true)
-      .order('is_premium', { ascending: false })
+      .order('rank_tier', { ascending: false })
       .order('created_at', { ascending: false })
       .limit(20)
 
@@ -377,14 +494,18 @@ export default function HomeClient({ initialListings = [], initialCategories = [
     if (filter === 'premium') query = query.eq('is_premium', true)
 
     const { data } = await query
-    if (data) setListings(data as unknown as Listing[])
-    setLoading(false)
+    // Guard kundër race: apliko vetëm nëse ky është kërkimi më i fundit.
+    if (reqId !== listingsReqId.current) return
+    // keepSeedOnEmpty (vetëm refetch-i i mount-it): mos e zëvendëso seed-in SSR me
+    // listë bosh — zëvendëso vetëm kur kthehen të dhëna reale.
+    if (data && (data.length || !opts?.keepSeedOnEmpty)) setListings(data as unknown as Listing[])
+    if (!opts?.silent) setLoading(false)
   }
 
   async function fetchCounts() {
     const [{ count: lc }, { count: uc }] = await Promise.all([
       supabase.from('listings').select('*', { count: 'exact', head: true }).eq('is_active', true),
-      supabase.from('profiles').select('*', { count: 'exact', head: true }),
+      supabase.from('profiles').select('id', { count: 'exact', head: true }),
     ])
     if (lc) setListingCount(lc)
     if (uc) setUserCount(uc)
@@ -422,18 +543,10 @@ export default function HomeClient({ initialListings = [], initialCategories = [
     return () => document.removeEventListener('mousedown', handleOutside)
   }, [])
 
-  const fmt = (price: number, cur: string) =>
-    !price ? 'Çmim me marrëveshje' :
-    cur === 'EUR' ? `${price.toLocaleString('sq-AL')} €` : `${price.toLocaleString('sq-AL')} L`
+  useEffect(() => { setMounted(true) }, [])
 
-  function timeAgo(iso: string): string {
-    const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000)
-    if (diff < 60)    return 'tani'
-    if (diff < 3600)  return `${Math.floor(diff / 60)}min`
-    if (diff < 86400) return `${Math.floor(diff / 3600)}h`
-    if (diff < 604800) return `${Math.floor(diff / 86400)}d`
-    return new Date(iso).toLocaleDateString('sq-AL', { day: 'numeric', month: 'short' })
-  }
+  // `fmt` dhe `timeAgo` u zhvendosen te ListingCard bashke me karten — ishin
+  // te vetmit perdorues te tyre ketu.
 
   const go = (path: string) => { window.location.href = path }
 
@@ -455,7 +568,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
         .wrap{max-width:480px;margin:0 auto;background:#FFFBEA;padding-bottom:80px;}
         /* Header */
-        .header{background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%);position:sticky;top:0;z-index:50;box-shadow:0 6px 22px -8px rgba(190,130,0,.5);border-bottom:1px solid rgba(255,255,255,.25);}
+        .header{background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%);position:sticky;top:0;z-index:50;box-shadow:0 6px 22px -8px rgba(190,130,0,.5),inset 0 1px 0 rgba(255,255,255,.4);border-bottom:1px solid rgba(255,255,255,.25);}
         .topbar{padding:10px 14px;display:flex;align-items:center;justify-content:space-between;}
         .logo{display:flex;align-items:center;gap:8px;cursor:pointer;}
         .brand{font-size:20px;font-weight:800;color:#111;letter-spacing:2px;text-shadow:0 1px 0 rgba(255,255,255,.3);}
@@ -479,8 +592,8 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         /* Search */
         .searchbar{padding:0 12px 12px;display:flex;gap:8px;}
         .search-wrap{flex:1;background:#fff;border-radius:12px;display:flex;align-items:center;padding:0 12px;gap:8px;border:1.5px solid rgba(0,0,0,.07);box-shadow:0 1px 4px rgba(0,0,0,.05);transition:border-color .2s ease,box-shadow .2s ease;}
-        .search-wrap:focus-within{border-color:#111;box-shadow:0 4px 16px -4px rgba(0,0,0,.2);}
-        .search-wrap:focus-within i{color:#E63312;}
+        .search-wrap:focus-within{border-color:#E63312;box-shadow:0 6px 20px -6px rgba(230,51,18,.22);transform:translateY(-1px);}
+        .search-wrap:focus-within i{color:#C42B0F;}
         .search-wrap i{font-size:15px;color:#bbb;}
         .search-wrap input{border:none;background:transparent;font-size:13px;color:#111;outline:none;flex:1;padding:10px 0;font-family:inherit;}
         .search-wrap input::placeholder{color:#bbb;}
@@ -492,13 +605,14 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .sug-item:hover{background:#FFFBEA;}
         .sug-img{width:38px;height:38px;border-radius:6px;object-fit:cover;flex-shrink:0;background:#f0e8d0;}
         .sug-title{font-size:13px;font-weight:600;color:#111;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-        .sug-price{font-size:12px;font-weight:700;color:#E63312;white-space:nowrap;}
+        .sug-price{font-size:12px;font-weight:700;color:#C42B0F;white-space:nowrap;}
         /* Categories */
         .cat-scroll{display:flex;gap:8px;padding:0 12px 12px;overflow-x:auto;scroll-snap-type:x mandatory;}
         .cat-scroll::-webkit-scrollbar{display:none;}
         .cat-item{background:#fff;border-radius:20px;padding:6px 12px;display:flex;align-items:center;gap:5px;cursor:pointer;border:1.5px solid transparent;font-family:inherit;transition:all .15s;box-shadow:0 1px 4px rgba(0,0,0,.06);white-space:nowrap;flex-shrink:0;scroll-snap-align:start;}
+        .cat-item:hover{border-color:#F5C84288;background:#FFFDF5;}
         .cat-item:active{transform:scale(.95);}
-        .cat-item.active{background:linear-gradient(135deg,#1a1a1a,#000);border-color:#111;box-shadow:0 4px 12px -2px rgba(0,0,0,.3);}
+        .cat-item.active{background:linear-gradient(135deg,#1a1a1a,#000);border-color:#111;box-shadow:0 6px 16px -4px rgba(0,0,0,.35);transform:translateY(-1px);}
         .cat-item i{font-size:14px;color:#777;}
         .cat-item.active i{color:#F5C842;}
         .cat-item span{font-size:11px;color:#555;font-weight:600;}
@@ -508,15 +622,21 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .no-ads{background:#EAF3DE;border:0.5px solid #97C459;border-radius:8px;padding:7px 12px;display:flex;align-items:center;gap:6px;margin-bottom:12px;}
         .no-ads i{font-size:13px;color:#3B6D11;}
         .no-ads span{font-size:9px;color:#3B6D11;font-weight:700;}
-        /* Hero — -40% lartesi */
-        .hero{background:linear-gradient(135deg,#151515 0%,#1c1c1c 60%,#231a0a 100%);border-radius:16px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;margin:0 0 12px;position:relative;overflow:hidden;box-shadow:0 8px 24px -8px rgba(0,0,0,.4);}
-        .hero::before{content:'';position:absolute;top:-40%;right:-10%;width:180px;height:180px;background:radial-gradient(circle,rgba(245,200,66,.22),transparent 68%);pointer-events:none;}
-        .hero h2{color:#F5C842;font-size:14px;font-weight:800;margin-bottom:4px;}
-        .hero p{color:#8a8a8a;font-size:10px;line-height:1.5;}
-        .hero-stats{display:flex;gap:16px;flex-shrink:0;}
-        .stat{text-align:center;}
-        .stat-n{color:#F5C842;font-size:18px;font-weight:800;}
-        .stat-l{color:#777;font-size:8px;margin-top:2px;}
+        /* Hero — premium (CSS-only, performant) */
+        .hero{background:linear-gradient(155deg,#151517 0%,#101012 100%);border-radius:18px;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;margin:0 0 12px;position:relative;overflow:hidden;box-shadow:0 10px 30px -10px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.04);}
+        .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(120px 90px at 92% 40%,rgba(245,200,66,.05),transparent 70%);pointer-events:none;}
+        .hero::after{content:'';position:absolute;top:0;left:-60%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.06),transparent);transform:skewX(-18deg);animation:hero-sheen 7s ease-in-out infinite;pointer-events:none;}
+        @keyframes hero-sheen{0%,74%{left:-60%}90%,100%{left:135%}}
+        @keyframes hero-in{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+        .hero>div{position:relative;z-index:1;animation:hero-in .55s cubic-bezier(.2,.8,.2,1) both;}
+        .hero h2{color:#F5C842;font-size:17px;font-weight:800;margin-bottom:5px;letter-spacing:-.2px;text-shadow:0 1px 2px rgba(0,0,0,.35);}
+        .hero p{color:#9a9488;font-size:11px;line-height:1.55;}
+        .hero-stats{display:flex;gap:0;flex-shrink:0;position:relative;z-index:1;}
+        .stat{text-align:center;padding:0 14px;}
+        .stat+.stat{border-left:1px solid rgba(245,200,66,.18);}
+        .stat-n{color:#F5C842;font-size:20px;font-weight:800;line-height:1;letter-spacing:-.5px;}
+        .stat-l{color:#8a8375;font-size:8px;margin-top:3px;text-transform:uppercase;letter-spacing:.6px;}
+        @media (prefers-reduced-motion: reduce){.hero::after,.hero>div{animation:none;}}
         /* Trust row */
         .trust-row{display:flex;gap:8px;margin-bottom:16px;}
         .trust-card{flex:1;border-radius:9px;padding:7px 8px;display:flex;align-items:center;gap:5px;}
@@ -531,52 +651,43 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         /* Shops section */
         .section-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
         .section-hdr h3{font-size:13px;font-weight:700;color:#111;}
-        .section-hdr a{color:#E63312;font-size:11px;text-decoration:none;cursor:pointer;font-weight:600;}
-        .shops-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;}
-        .shop-mini{background:#fff;border-radius:12px;overflow:hidden;cursor:pointer;border:0.5px solid #ececec;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 16px -10px rgba(0,0,0,.14);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;aspect-ratio:3/4;}
+        .section-hdr a{color:#C42B0F;font-size:11px;text-decoration:none;cursor:pointer;font-weight:600;}
+        .shops-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:16px;}
+        /* Kartat e bizneseve = madhësi e barabartë me kartat e shpalljeve: të njëjtat
+           kolona responsive si .listings-grid (768→180px, 1024→220px) + media 4/3 e njëjtë. */
+        @media(min-width:768px){.shops-grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));}}
+        @media(min-width:1024px){.shops-grid{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;}}
+        @media(min-width:1440px){.shops-grid{grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:24px;}}
+        .shop-mini{background:#fff;border-radius:14px;overflow:hidden;cursor:pointer;border:1px solid #eee;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 18px -12px rgba(0,0,0,.14);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;}
         .shop-mini:hover{transform:translateY(-3px);box-shadow:0 10px 24px -8px rgba(0,0,0,.2);}
         .shop-mini:active{transform:scale(.96);}
-        .shop-top{flex:0 0 70%;display:flex;align-items:flex-end;padding:5px;position:relative;}
-        .shop-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;border:1.5px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25);}
-        .shop-prem{position:absolute;top:3px;right:3px;font-size:6px;background:#F5C842;color:#111;padding:1px 4px;border-radius:6px;font-weight:700;}
-        .shop-info{flex:0 0 30%;padding:4px 5px;display:flex;flex-direction:column;justify-content:center;}
-        .shop-nm{font-size:7.5px;font-weight:700;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-        .shop-ct{font-size:6.5px;color:#aaa;margin-top:1px;}
+        .shop-top{flex:none;width:100%;aspect-ratio:4/3;display:flex;align-items:flex-end;padding:8px;position:relative;}
+        .shop-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;border:1.5px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25);}
+        .shop-prem{position:absolute;top:6px;right:6px;font-size:9px;background:#F5C842;color:#111;padding:3px 7px;border-radius:999px;font-weight:700;}
+        .shop-info{flex:1 1 auto;padding:9px 10px 10px;display:flex;flex-direction:column;gap:3px;min-height:72px;}
+        .shop-nm{font-size:13px;font-weight:700;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .shop-ct{font-size:11px;color:#6B6B6B;}
         /* Filter row */
         .filter-row{display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;}
         .filter-row::-webkit-scrollbar{display:none;}
         .filter-btn{background:#fff;border:0.5px solid #ddd;border-radius:20px;padding:6px 13px;font-size:10px;color:#666;white-space:nowrap;flex-shrink:0;cursor:pointer;font-family:inherit;transition:all .12s;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+        .filter-btn:hover{border-color:#F5C842;color:#C42B0F;}
         .filter-btn.active{background:#111;border-color:#111;color:#F5C842;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.15);}
-        /* Listings grid — raporti 70% foto / 30% të dhëna — 3 kolona (-40%) */
-        .listings-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;}
-        .listing-card{background:#fff;border:0.5px solid #ececec;border-radius:12px;overflow:hidden;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 16px -10px rgba(0,0,0,.14);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;aspect-ratio:3/4;animation:card-in .45s cubic-bezier(.2,.8,.2,1) both;}
-        @keyframes card-in{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
-        @media (prefers-reduced-motion: reduce){.listing-card{animation:none;}}
-        .listing-card:hover{transform:translateY(-3px);box-shadow:0 10px 24px -8px rgba(0,0,0,.2);}
-        .listing-card:active{transform:scale(.97);}
-        .card-img{flex:0 0 70%;position:relative;background:linear-gradient(135deg,#FBF7E8,#F2EAD0);overflow:hidden;display:flex;align-items:center;justify-content:center;}
-        .card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
-        .card-img i{font-size:20px;color:#d0c9a0;}
-        .badge-new{position:absolute;top:4px;left:4px;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;font-size:6px;padding:2px 5px;border-radius:6px;font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(230,51,18,.4);letter-spacing:.2px;}
-        .badge-used{position:absolute;top:4px;left:4px;background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;font-size:6px;padding:2px 5px;border-radius:6px;font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(0,0,0,.3);letter-spacing:.2px;}
-        .badge-premium{position:absolute;top:4px;right:4px;background:linear-gradient(135deg,#F8D24E,#F5C842);color:#111;font-size:6px;padding:2px 5px;border-radius:6px;font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(245,200,66,.5);}
-        .card-body{flex:0 0 30%;padding:4px 5px;display:flex;flex-direction:column;justify-content:space-between;min-height:0;}
-        .card-title{font-size:7.5px;font-weight:700;color:#222;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
-        .card-price{font-size:8px;font-weight:800;color:#E63312;}
-        .card-meta{display:flex;align-items:center;justify-content:space-between;}
-        .card-loc{font-size:6.5px;color:#aaa;display:flex;align-items:center;gap:1px;}
-        .card-loc i{font-size:6.5px;}
+        /* Karta e shpalljes (.listing-card e me radhe) rri te
+           app/ui-refine.css seksioni 8 — nje burim i vetem per kryefaqen,
+           faqen e biznesit dhe profilin. Ketu mbeten vetem klasat qe i
+           perkasin VETEM kryefaqes. */
         .empty-state{grid-column:1/-1;text-align:center;padding:36px 16px;background:linear-gradient(135deg,#f9f5e0,#f5f0d5);border:0.5px solid #eee;border-radius:13px;}
         .empty-state i{font-size:40px;color:#F5C842;display:block;margin-bottom:10px;}
         .empty-state h3{font-size:14px;font-weight:700;color:#555;margin-bottom:6px;}
-        .empty-state p{font-size:11px;color:#aaa;line-height:1.6;margin-bottom:14px;}
+        .empty-state p{font-size:11px;color:#555;line-height:1.6;margin-bottom:14px;}
         .empty-cta{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
         /* Premium CTA */
         .premium-cta{margin:0 0 16px;background:linear-gradient(135deg,#FFFBEA,#fff8d9);border:1.5px solid #F5C842;border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 3px 12px rgba(245,200,66,.15);}
         .prem-icon{width:30px;height:30px;background:#F5C842;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
         .prem-icon i{font-size:15px;color:#111;}
         .prem-text strong{font-size:11px;font-weight:700;color:#111;display:block;}
-        .prem-text span{font-size:9px;color:#888;}
+        .prem-text span{font-size:9px;color:#555;}
         .prem-btn{background:#111;color:#F5C842;border:none;border-radius:8px;padding:8px 13px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;margin-left:auto;}
         /* Bottom nav */
         .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(15,15,15,.9);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);padding:8px 6px 16px;display:flex;justify-content:space-around;align-items:center;z-index:100;box-shadow:0 -6px 26px rgba(0,0,0,.32);border-top:1px solid rgba(255,255,255,.06);}
@@ -593,12 +704,90 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         /* Floating pulsing squares */
         @keyframes install-pulse{0%,100%{box-shadow:0 6px 20px rgba(34,197,94,.4);transform:scale(1)}50%{box-shadow:0 8px 28px rgba(34,197,94,.65);transform:scale(1.07)}}
         @keyframes share-pulse{0%,100%{box-shadow:0 6px 20px rgba(59,130,246,.35);transform:scale(1)}50%{box-shadow:0 8px 28px rgba(59,130,246,.6);transform:scale(1.07)}}
-        .loading{text-align:center;padding:32px;color:#888;font-size:13px;}
+        .loading{text-align:center;padding:32px;color:#555;font-size:13px;}
         .spinner{display:block;width:28px;height:28px;border:3px solid #F5C842;border-top-color:#E63312;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px;}
         @keyframes spin{to{transform:rotate(360deg);}}
         .new-listing-toast{background:#EAF3DE;border:1px solid #97C459;border-radius:8px;padding:6px 12px;display:flex;align-items:center;gap:7px;margin-bottom:7px;animation:toast-in .3s ease;}
         @keyframes toast-in{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
         .new-listing-toast span{font-size:11px;font-weight:700;color:#3B6D11;}
+        /* ── Etiketat e butonave lundrues (responsive me className) ── */
+        .float-label{font-size:7px;color:#fff;font-weight:800;letter-spacing:.3px;line-height:1;}
+        .float-icon-main{font-size:16px;color:#fff;}
+        /* ── Navigimi desktop ── */
+        .desk-nav{display:none;}
+        .desk-nav-btn{background:rgba(0,0,0,.08);border:none;border-radius:8px;padding:6px 11px;font-size:12px;font-weight:700;color:#111;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:background .15s;}
+        .desk-nav-btn:hover{background:rgba(0,0,0,.16);}
+        .desk-nav-btn.dn-active{background:rgba(0,0,0,.16);}
+        .desk-nav-add{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:8px;padding:6px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:opacity .15s;box-shadow:0 2px 8px rgba(230,51,18,.3);}
+        .desk-nav-add:hover{opacity:.88;}
+        /* ── Responsive breakpoints (additive) ── */
+        @media(min-width:768px){
+          body{background:#FFFBEA;}
+          .wrap{max-width:960px;padding-bottom:0;}
+          .body{padding:0 24px;}
+          .bottom-nav{display:none;}
+          .desk-nav{display:flex;gap:3px;align-items:center;margin-right:6px;}
+          /* pozicioni i share-float dhe install-float menaxhohet nga useDraggable (JS) */
+          .share-float>button:first-of-type,.install-float>button:first-of-type{width:60px !important;height:60px !important;border-radius:50% !important;}
+          .float-label{font-size:11px;}
+          .float-icon-main{font-size:22px;}
+        }
+        @media(min-width:1024px){
+          /* 100% full screen: wrap-i mbush gjithë gjerësinë e ekranit; padding-u
+             anësor rritet me viewport-in. Rregull i artë (#4): gjithçka zmadhohet
+             NË SINKRON — header, kërkim, kategori, hero, tituj, karta, banner-a —
+             përndryshe do dukej si mobile e tejzgjatur nëpër ekran. */
+          .wrap{max-width:100%;}
+          .body{padding:0 clamp(32px,4vw,72px);}
+          .topbar{padding:14px clamp(32px,4vw,72px);}
+          .searchbar{padding:0 clamp(32px,4vw,72px) 14px;}
+          .cat-scroll{padding:0 clamp(32px,4vw,72px) 14px;flex-wrap:wrap;}
+          /* Header */
+          .brand{font-size:24px;}
+          .icon-btn{width:40px;height:40px;}
+          .icon-btn i{font-size:20px;}
+          /* Kërkimi */
+          .search-wrap i{font-size:18px;}
+          .search-wrap input{font-size:15px;padding:14px 0;}
+          .search-btn{font-size:14px;padding:14px 24px;}
+          /* Kategoritë */
+          .cat-item{padding:9px 16px;}
+          .cat-item i{font-size:16px;}
+          .cat-item span{font-size:13px;}
+          /* Hero */
+          .hero{padding:26px 32px;border-radius:22px;margin-bottom:18px;}
+          .hero h2{font-size:24px;}
+          .hero p{font-size:14px;}
+          .stat{padding:0 22px;}
+          .stat-n{font-size:30px;}
+          .stat-l{font-size:10px;}
+          /* Tituj seksioni */
+          .section-hdr h3{font-size:18px;}
+          .section-hdr a{font-size:14px;}
+          /* Kartat e bizneseve — në sinkron me kartat e shpalljeve */
+          .shop-av{width:42px;height:42px;font-size:16px;}
+          .shop-nm{font-size:15px;}
+          .shop-ct{font-size:13px;}
+          .shop-info{min-height:80px;padding:12px 13px 13px;}
+          /* Banner-a & rreshta */
+          .no-ads{padding:10px 16px;} .no-ads i{font-size:16px;} .no-ads span{font-size:12px;}
+          .trust-card{padding:10px 12px;} .trust-card i{font-size:18px;} .trust-card span{font-size:11px;}
+          .filter-btn{font-size:13px;padding:8px 16px;}
+          .premium-cta{padding:14px 20px;border-radius:16px;}
+          .prem-icon{width:38px;height:38px;} .prem-icon i{font-size:19px;}
+          .prem-text strong{font-size:14px;} .prem-text span{font-size:12px;}
+          .prem-btn{font-size:13px;padding:11px 18px;}
+        }
+        @media(min-width:1440px){
+          .body{padding:0 clamp(56px,5vw,120px);}
+          .topbar{padding-left:clamp(56px,5vw,120px);padding-right:clamp(56px,5vw,120px);}
+          .searchbar{padding-left:clamp(56px,5vw,120px);padding-right:clamp(56px,5vw,120px);}
+          .cat-scroll{padding-left:clamp(56px,5vw,120px);padding-right:clamp(56px,5vw,120px);}
+          .brand{font-size:26px;}
+          .hero h2{font-size:27px;}
+          .stat-n{font-size:34px;}
+          .section-hdr h3{font-size:20px;}
+        }
       ` }} />
 
       <div className="wrap">
@@ -609,16 +798,37 @@ export default function HomeClient({ initialListings = [], initialCategories = [
               <span className="brand">{settings.site_name || 'ALPAZAR'}</span>
             </div>
             <div className="nav">
-              {user && unreadNotifications > 0 && (
-                <button type="button" className="icon-btn" aria-label={`${unreadNotifications} njoftime të palexuara`} onClick={() => go('/notifications')} style={{ position: 'relative' }}>
-                  <i className="ti ti-bell-ringing" aria-hidden="true" />
-                  <span aria-hidden="true" style={{ position: 'absolute', top: 2, right: 2, background: '#E63312', color: '#fff', fontSize: 7, fontWeight: 700, borderRadius: 8, padding: '1px 3px', minWidth: 12, textAlign: 'center', lineHeight: '12px' }}>{unreadNotifications > 9 ? '9+' : unreadNotifications}</span>
+              {/* Navigim desktop — i fshehur në mobile me CSS */}
+              <div className="desk-nav">
+                <button type="button" className="desk-nav-btn dn-active" aria-current="page">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                  Kreu
                 </button>
-              )}
-              {user && unreadNotifications === 0 && unreadCount > 0 && (
-                <button type="button" className="icon-btn" aria-label={`${unreadCount} mesazhe të palexuara`} onClick={() => go('/messages')} style={{ position: 'relative' }}>
-                  <i className="ti ti-bell" aria-hidden="true" />
-                  <span aria-hidden="true" style={{ position: 'absolute', top: 2, right: 2, background: '#E63312', color: '#fff', fontSize: 7, fontWeight: 700, borderRadius: 8, padding: '1px 3px', minWidth: 12, textAlign: 'center', lineHeight: '12px' }}>{unreadCount > 9 ? '9+' : unreadCount}</span>
+                <button type="button" className="desk-nav-btn" onClick={() => go('/search')}>
+                  <i className="ti ti-search" aria-hidden="true" />Kërko
+                </button>
+                <button type="button" className="desk-nav-add" onClick={() => go(user ? '/listing/new' : '/auth/login')}>
+                  <i className="ti ti-plus" aria-hidden="true" />Shto
+                </button>
+                <button type="button" className="desk-nav-btn" onClick={() => go(user ? '/messages' : '/auth/login')} style={{ position: 'relative' }}>
+                  <i className="ti ti-message-circle" aria-hidden="true" />Mesazhe
+                  {unreadCount > 0 && <span className="nav-badge" aria-hidden="true">{unreadCount > 9 ? '9+' : unreadCount}</span>}
+                </button>
+                <button type="button" className="desk-nav-btn" onClick={() => go(user ? '/profile' : '/auth/login')}>
+                  <i className="ti ti-user-circle" aria-hidden="true" />
+                  {authReady && user ? 'Profili' : 'Hyr'}
+                </button>
+              </div>
+              {/* Njoftimet — GJITHMONË i dukshëm e funksional për përdoruesin e loguar
+                  (më parë zhdukej kur s'kishte njoftime të palexuara, ose çonte gabimisht
+                  te /messages). Tani: kambanë e qëndrueshme → /notifications; distinktivi
+                  del vetëm kur ka të palexuara. Mesazhet kanë hyrjen e vet (bottom-nav + desk-nav). */}
+              {user && (
+                <button type="button" className="icon-btn" aria-label={unreadNotifications > 0 ? `Njoftime — ${unreadNotifications} të palexuara` : 'Njoftime'} onClick={() => go('/notifications')} style={{ position: 'relative' }}>
+                  <i className={`ti ti-bell${unreadNotifications > 0 ? '-ringing' : ''}`} aria-hidden="true" />
+                  {unreadNotifications > 0 && (
+                    <span aria-hidden="true" style={{ position: 'absolute', top: 2, right: 2, background: '#E63312', color: '#fff', fontSize: 7, fontWeight: 700, borderRadius: 8, padding: '1px 3px', minWidth: 12, textAlign: 'center', lineHeight: '12px' }}>{unreadNotifications > 9 ? '9+' : unreadNotifications}</span>
+                  )}
                 </button>
               )}
               {!authReady ? (
@@ -631,13 +841,15 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                   return (
                     <button type="button" className="user-chip" onClick={() => go('/profile')} aria-label="Profili im">
                       <span className="user-chip-av" style={{ overflow: 'visible' }}>
-                        <Avatar src={profile?.avatar_url} name={nm} type={profile?.is_premium ? 'premium' : 'user'} verified={(profile?.trust_score ?? 0) >= 60} size={28} />
+                        <Avatar src={profile?.avatar_url} name={nm} type="person" tier={tierNgaProfili(profile)} verified={(profile?.trust_score ?? 0) >= 60} size={28} />
                         <span className="user-chip-on" />
                       </span>
                       <span className="user-chip-txt">
                         <span className="user-chip-name">{nm}</span>
                         <span className="user-chip-lvl" style={{ color: lvl.color }}>
-                          {profile?.is_premium ? <><span aria-hidden='true'>👑</span> Premium</> : <><span aria-hidden='true'>{lvl.icon}</span> {lvl.name}</>}
+                          {(() => { const t = tierNgaProfili(profile); return t !== 'free'
+                            ? <><span aria-hidden='true'>👑</span> {t === 'vip' ? 'VIP Ekstra Boost' : 'Premium'}</>
+                            : <><span aria-hidden='true'>{lvl.icon}</span> {lvl.name}</> })()}
                         </span>
                       </span>
                     </button>
@@ -669,7 +881,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
               <div className="search-suggestions">
                 {suggestions.map(s => {
                   const img = Array.isArray(s.images) && s.images.length ? s.images[0] : null
-                  const price = !s.price ? 'Falas' : s.currency === 'EUR' ? `${s.price.toLocaleString('sq-AL')} €` : `${s.price.toLocaleString('sq-AL')} L`
+                  const price = !s.price ? 'Falas' : s.currency === 'EUR' ? `${nf(s.price)} €` : `${nf(s.price)} L`
                   return (
                     <div key={s.id} className="sug-item" onMouseDown={() => { setShowSuggestions(false); window.location.href = `/listing/${s.id}` }}>
                       {img
@@ -716,19 +928,19 @@ export default function HomeClient({ initialListings = [], initialCategories = [
             <div>
               <h1 style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', margin: 0 }}>Alpazar — Treg Online Shqipëri</h1>
               <h2><span aria-hidden="true">🦅</span> {cfg('site_slogan', 'Shit · Bli · Bëj Pazrin Tënd')}</h2>
-              <p><span style={{color:'#E63312',fontWeight:800}}>Platforma #1 shqiptare<br />e tregtisë online</span></p>
+              <p><span style={{color: '#C42B0F',fontWeight:800}}>Platforma #1 shqiptare<br />e tregtisë online</span></p>
             </div>
             {(cfg('show_listing_count','true') !== 'false' || cfg('show_user_count','true') !== 'false') && (
               <div className="hero-stats">
                 {cfg('show_listing_count','true') !== 'false' && (
                   <div className="stat">
-                    <div className="stat-n">{listingCount.toLocaleString('sq-AL')}</div>
+                    <div className="stat-n">{nf(listingCount)}</div>
                     <div className="stat-l">Shpallje</div>
                   </div>
                 )}
                 {cfg('show_user_count','true') !== 'false' && (
                   <div className="stat">
-                    <div className="stat-n">{userCount.toLocaleString('sq-AL')}</div>
+                    <div className="stat-n">{nf(userCount)}</div>
                     <div className="stat-l">Përdorues</div>
                   </div>
                 )}
@@ -741,7 +953,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
             <div className="prem-icon"><i className="ti ti-crown" aria-hidden="true" /></div>
             <div className="prem-text">
               <strong><span aria-hidden="true">👑</span> Bëhu Anëtar Premium</strong>
-              <span>Biznes · Badge · Shpallje ∞ · {cfg('premium_monthly_price','9.99')}€/muaj</span>
+              <span>Biznes · Badge · Shpallje ∞ · {cfg('premium_monthly_price_all','') ? `${Number(cfg('premium_monthly_price_all','')).toLocaleString('sq-AL')} L/muaj` : ''}</span>
             </div>
             <button type="button" className="prem-btn" onClick={() => go('/premium')}>Shiko →</button>
           </div>
@@ -774,7 +986,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                     <div key={shop.id} role="link" tabIndex={0} className="shop-mini" onClick={() => go(`/biznese/${shop.id}`)} onKeyDown={e => { if (e.key === 'Enter') go(`/biznese/${shop.id}`) }}>
                       <div className="shop-top" style={{ background: `linear-gradient(135deg,${col}22,${col}44)` }}>
                         <div className="shop-av" style={{ background: 'transparent' }}>
-                          <Avatar src={shop.avatar_url} name={shop.shop_name || shop.full_name} type="business" verified={shop.is_premium} size={40} />
+                          <Avatar src={shop.avatar_url} name={shop.shop_name || shop.full_name} type="business" tier={tierNgaProfili(shop)} verified={shop.is_verified} size={40} />
                         </div>
                         <span className="shop-prem" aria-label="Premium">⭐</span>
                       </div>
@@ -786,8 +998,8 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                   )
                 })}
                 <div role="link" tabIndex={0} className="shop-mini" onClick={() => go('/biznese')} onKeyDown={e => { if (e.key === 'Enter') go('/biznese') }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#fff', border: '1.5px dashed #F5C842', cursor: 'pointer' }}>
-                  <i className="ti ti-arrow-right" style={{ fontSize: 14, color: '#E63312' }} aria-hidden="true" />
-                  <div style={{ fontSize: 7, color: '#E63312', fontWeight: 700, marginTop: 3, textAlign: 'center', padding: '0 4px' }}>Shiko të gjitha</div>
+                  <i className="ti ti-arrow-right" style={{ fontSize: 14, color: '#C42B0F' }} aria-hidden="true" />
+                  <div style={{ fontSize: 7, color: '#C42B0F', fontWeight: 700, marginTop: 3, textAlign: 'center', padding: '0 4px' }}>Shiko të gjitha</div>
                 </div>
               </div>
             </>
@@ -829,13 +1041,13 @@ export default function HomeClient({ initialListings = [], initialCategories = [
             <div style={{ marginBottom: 12 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px', marginBottom: 10 }}>
                 <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: '#111' }}><span aria-hidden="true">👁</span> Rishikimet e fundit</h3>
-                <button type="button" onClick={() => { localStorage.removeItem('_alpazar_rv'); setRecentlyViewed([]) }} style={{ background: 'none', border: 'none', fontSize: 10, color: '#aaa', cursor: 'pointer', fontFamily: 'inherit' }}>Pastro</button>
+                <button type="button" onClick={() => { localStorage.removeItem('_alpazar_rv'); setRecentlyViewed([]) }} style={{ background: 'none', border: 'none', fontSize: 10, color: '#6b6b6b', cursor: 'pointer', fontFamily: 'inherit' }}>Pastro</button>
               </div>
               <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, scrollbarWidth: 'none' }}>
                 {recentUnique.map(item => {
                   const price = item.currency === 'EUR'
-                    ? `€${Number(item.price).toLocaleString('sq-AL')}`
-                    : `${Number(item.price).toLocaleString('sq-AL')} L`
+                    ? `€${nf(item.price)}`
+                    : `${nf(item.price)} L`
                   return (
                     <div key={item.id} role="link" tabIndex={0} onClick={() => { window.location.href = `/listing/${item.id}` }} onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/listing/${item.id}` }} style={{ flex: '0 0 120px', borderRadius: 10, overflow: 'hidden', background: '#fff', border: '1px solid #F0F0F0', boxShadow: '0 1px 4px rgba(0,0,0,.06)', cursor: 'pointer' }}>
                       <div style={{ width: '100%', aspectRatio: '4/3', background: '#F6F6F6', overflow: 'hidden' }}>
@@ -846,7 +1058,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                       </div>
                       <div style={{ padding: '6px 8px' }}>
                         <div style={{ fontSize: 10, fontWeight: 600, color: '#111', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', lineHeight: 1.3, marginBottom: 2 }}>{item.title}</div>
-                        <div style={{ fontSize: 11, fontWeight: 800, color: '#E63312' }}>{price}</div>
+                        <div style={{ fontSize: 11, fontWeight: 800, color: '#C42B0F' }}>{price}</div>
                       </div>
                     </div>
                   )
@@ -871,45 +1083,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                 </div>
               ) : (
                 listings.map((listing, idx) => (
-                  <div key={listing.id} className="listing-card" style={{ animationDelay: `${Math.min(idx * 45, 360)}ms` }} role="link" tabIndex={0} onClick={() => go(`/listing/${listing.id}`)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') go(`/listing/${listing.id}`) }}>
-                    <div className="card-img">
-                      {listing.images?.[0]
-                        ? <img src={listing.images[0]} alt={listing.title} loading="lazy" width={400} height={300} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
-                        : <i className="ti ti-photo" style={{ fontSize: 26, color: '#ccc' }} aria-hidden="true" />
-                      }
-                      {listing.condition === 'i_ri' && <span className="badge-new">I ri</span>}
-                      {listing.condition === 'i_perdorur' && <span className="badge-used">I përdorur</span>}
-                      {listing.is_premium && <span className="badge-premium" aria-label="Premium">⭐</span>}
-                    </div>
-                    <div className="card-body">
-                      <div className="card-title">{listing.title}</div>
-                      <div className="card-price">{fmt(listing.price, listing.currency)}</div>
-                      <div className="card-meta">
-                        <span className="card-loc">
-                          <i className="ti ti-map-pin" aria-hidden="true" />
-                          {listing.city || 'Shqipëri'}
-                        </span>
-                        <span style={{ fontSize: 6, color: '#ccc', flexShrink: 0 }}>{timeAgo(listing.created_at)}</span>
-                      </div>
-                      {(listing as any).author && (
-                        <div
-                          style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6, paddingTop: 6, borderTop: '1px solid #f0f0f0' }}
-                          onClick={e => { e.stopPropagation(); go(`/u/${(listing as any).author.id}`) }}
-                        >
-                          <Avatar
-                            src={(listing as any).author.avatar_url}
-                            name={(listing as any).author.full_name || (listing as any).author.username}
-                            type={(listing as any).author.is_premium ? 'premium' : 'user'}
-                            verified={((listing as any).author.trust_score ?? 0) >= 60}
-                            size={20}
-                          />
-                          <span style={{ fontSize: 11, color: '#888', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                            {(listing as any).author.full_name || (listing as any).author.username || 'Shitës'}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                  <ListingCard key={listing.id} listing={listing as any} index={idx} mounted={mounted} />
                 ))
               )}
             </div>
@@ -961,7 +1135,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
       <ShareBox refCode={profile?.referral_code || profile?.username || undefined} />
       <InstallBanner />
       {/* Marketing: upsell modal per jo-premium */}
-      {authReady && user && !profile?.is_premium && <PremiumUpsellModal trigger="scroll" />}
+      {authReady && user && tierNgaProfili(profile) === 'free' && <PremiumUpsellModal trigger="scroll" />}
     </>
   )
 }

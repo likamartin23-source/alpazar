@@ -3,9 +3,10 @@
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState, useRef, useCallback } from 'react'
+import { lidhjaEFirmosur, rrugaNgaUrl } from '../../lib/attachments'
 import { supabase } from '../../lib/supabase'
 import { useAlpazar } from '../../lib/context'
-import AlpazarAvatar from '../components/Avatar'
+import AlpazarAvatar, { tierNgaProfili } from '../components/Avatar'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -115,7 +116,8 @@ function Avatar({ profile, size = 46, online = false }: { profile: any; size?: n
       <AlpazarAvatar
         src={profile?.avatar_url}
         name={name}
-        type={profile?.shop_name ? 'business' : profile?.is_premium ? 'premium' : 'user'}
+        type={profile?.shop_name ? 'business' : 'person'}
+        tier={tierNgaProfili(profile)}
         verified={(profile?.trust_score ?? 0) >= 60}
         size={size}
       />
@@ -143,6 +145,23 @@ export default function MessagesPage() {
   const [showScrollBtn,  setShowScrollBtn]  = useState(false)
   const [reactionMsg,    setReactionMsg]    = useState<string|null>(null)
   const [otherPhone,     setOtherPhone]     = useState<string|null>(null)
+  /*  Numri NUK merret me kur hapet biseda. Deri me 31 gusht 2026 lexohej
+   *  drejtperdrejt nga `profiles.phone`, cka do te thoshte qe cdo anetar mund
+   *  ta nxirrte numrin e kujtdo. Tani vjen nga `conversation_contact()`, i
+   *  cili e jep VETEM kur ekziston nje bisede reale mes te dyve, e kufizon
+   *  shpeshtesine dhe e shenon zbulimin. Butonat varen nga flamuri jo-
+   *  identifikues `has_phone`; numri kerkohet vetem kur hapet fleta.  */
+  const [otherHasPhone,  setOtherHasPhone]  = useState(false)
+  /*  Lidhjet e firmosura per bashkengjitjet. Derisa bucket-i eshte publik, kjo
+   *  harte rri bosh dhe `srcBashkengjitje()` kthen lidhjen e ruajtur — pra
+   *  asgje nuk ndryshon. Kur bucket-i behet privat, e njejta funksion kthen
+   *  lidhjen e firmosur. Rendi eshte i qellimshem: klienti meson te firmose
+   *  PARA se bucket-i te mbyllet (shih `lib/attachments.ts`).  */
+  const [firmat, setFirmat] = useState<Record<string, string>>({})
+  const srcBashkengjitje = (u?: string | null) => (u ? (firmat[u] || u) : '')
+
+  const [kontaktGabim,   setKontaktGabim]   = useState<string|null>(null)
+  const [kontaktDuke,    setKontaktDuke]    = useState(false)
   const [showInfo,       setShowInfo]       = useState(false)
   const [showWhatsApp,   setShowWhatsApp]   = useState(false)
   const [showViber,      setShowViber]      = useState(false)
@@ -316,7 +335,7 @@ export default function MessagesPage() {
   }
 
   async function openThreadById(otherId: string, uid: string) {
-    const { data } = await supabase.from('profiles').select('id,full_name,username,avatar_url').eq('id', otherId).single()
+    const { data } = await supabase.from('profiles').select('id,full_name,username,avatar_url,has_phone').eq('id', otherId).single()
     if (data) openThread({ otherId, other: data, lastMsg: null, unread: 0 }, uid)
   }
 
@@ -337,14 +356,15 @@ export default function MessagesPage() {
         .select('*,reply_msg:reply_to_id(id,content,sender_id,type,attachment_url)')
         .or(`and(sender_id.eq.${myId},receiver_id.eq.${thread.otherId}),and(sender_id.eq.${thread.otherId},receiver_id.eq.${myId})`)
         .order('created_at', { ascending: true }),
-      supabase.from('profiles').select('phone').eq('id', thread.otherId).single(),
+      supabase.from('profiles').select('has_phone').eq('id', thread.otherId).single(),
     ])
 
     // Guard kundër race: nëse përdoruesi ndërroi bisedë gjatë await-it, mos shfaq
     // mesazhet e bisedës së gabuar.
     if (selectedRef.current?.otherId !== thread.otherId) return
     if (msgs) { setMessages(msgs); prevMsgCount.current = msgs.length; setTimeout(() => scrollBottom(false), 50) }
-    if (pData?.phone) setOtherPhone(pData.phone)
+    setOtherPhone(null); setKontaktGabim(null)
+    setOtherHasPhone(!!pData?.has_phone)
     const now = new Date().toISOString()
     await Promise.all([
       supabase.from('messages').update({ read: true })
@@ -668,6 +688,41 @@ export default function MessagesPage() {
   }
 
   // ── Derived ───────────────────────────────────────────────────────────────
+  /*  Zbulimi i kontaktit: nje veprim i vetem, i kufizuar dhe i regjistruar.
+   *  Therritet kur hapet fleta e konfirmimit — jo ne ngarkim.  */
+  async function hapKontaktin() {
+    if (!selected || otherPhone || kontaktDuke) return
+    setKontaktDuke(true); setKontaktGabim(null)
+    try {
+      const { data } = await supabase.rpc('conversation_contact', { p_other_id: selected.otherId })
+      if (data?.numri) setOtherPhone(data.numri)
+      else setKontaktGabim(data?.mesazhi || 'Kontakti nuk u hap dot.')
+    } catch { setKontaktGabim('Kontakti nuk u hap dot.') }
+    setKontaktDuke(false)
+  }
+
+  /*  Firmos cdo bashkengjitje te dukshme qe s'e kemi firmosur ende. Behet ne
+   *  nje efekt te vetem mbi listen e mesazheve: pa kete, cdo <img> do te
+   *  kerkonte firmen e vet dhe do te binte ne nje varg kerkesash.  */
+  useEffect(() => {
+    const urls = new Set<string>()
+    for (const m of messages) {
+      for (const u of [m?.attachment_url, m?.reply_msg?.attachment_url]) {
+        if (typeof u === 'string' && rrugaNgaUrl(u) && !firmat[u]) urls.add(u)
+      }
+    }
+    if (urls.size === 0) return
+    let gjalle = true
+    ;(async () => {
+      const cifte = await Promise.all([...urls].map(async u => [u, await lidhjaEFirmosur(u)] as const))
+      if (!gjalle) return
+      const te_reja: Record<string, string> = {}
+      for (const [u, f] of cifte) if (f) te_reja[u] = f
+      if (Object.keys(te_reja).length) setFirmat(p => ({ ...p, ...te_reja }))
+    })()
+    return () => { gjalle = false }
+  }, [messages, firmat])
+
   const isBlocked       = selected ? blockedIds.has(selected.otherId) : false
   const filteredThreads = threads.filter(t => !search.trim() || displayName(t.other).toLowerCase().includes(search.toLowerCase()))
   const totalUnread     = threads.reduce((s, t) => s + t.unread, 0)
@@ -725,7 +780,7 @@ export default function MessagesPage() {
         .empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 24px;text-align:center;}
         .empty-emoji{font-size:62px;margin-bottom:16px;}
         .empty h3{font-size:16px;font-weight:700;color:#555;margin-bottom:8px;}
-        .empty p{font-size:12px;color:#aaa;line-height:1.8;margin-bottom:20px;}
+        .empty p{font-size:12px;color:#555;line-height:1.8;margin-bottom:20px;}
         .empty-cta{background:#111;color:#F5C842;border:none;border-radius:12px;padding:13px 26px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
 
         /* Chat area */
@@ -786,7 +841,7 @@ export default function MessagesPage() {
         .theirs .rp{border-color:#E63312;background:rgba(230,51,18,.06);}
         .rp-name{font-size:10px;font-weight:700;margin-bottom:2px;opacity:.9;}
         .mine .rp-name{color:#F5C842;}
-        .theirs .rp-name{color:#E63312;}
+        .theirs .rp-name{color:#C42B0F;}
         .rp-text{font-size:11px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;opacity:.65;}
         .rp-img{width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0;}
 
@@ -818,7 +873,7 @@ export default function MessagesPage() {
         /* Reply strip */
         .reply-strip{background:#fff;border-top:1.5px solid #EDE6D0;padding:8px 12px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
         .rs-bar{flex:1;border-left:3px solid #E63312;padding:0 0 0 8px;min-width:0;}
-        .rs-name{font-size:11px;color:#E63312;font-weight:700;margin-bottom:1px;}
+        .rs-name{font-size:11px;color:#C42B0F;font-weight:700;margin-bottom:1px;}
         .rs-text{font-size:11px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
         .rs-img{width:38px;height:38px;border-radius:6px;object-fit:cover;flex-shrink:0;}
 
@@ -851,8 +906,8 @@ export default function MessagesPage() {
 
         /* Blocked bar */
         .blocked-bar{background:#fff3f0;border-top:1px solid #ffd5cc;padding:14px 16px;flex-shrink:0;text-align:center;}
-        .blocked-bar p{font-size:12px;color:#E63312;margin-bottom:8px;}
-        .unblock-btn{background:transparent;border:1.5px solid #E63312;color:#E63312;border-radius:10px;padding:7px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .blocked-bar p{font-size:12px;color:#C42B0F;margin-bottom:8px;}
+        .unblock-btn{background:transparent;border:1.5px solid #E63312;color:#C42B0F;border-radius:10px;padding:7px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
 
         /* Select mode bar */
         .select-bar{background:#111;padding:0 12px;height:52px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
@@ -862,9 +917,9 @@ export default function MessagesPage() {
         /* Recording bar */
         .rec-bar{flex:1;display:flex;align-items:center;gap:8px;background:#fff;border-radius:22px;padding:0 12px;min-height:46px;box-shadow:0 1px 3px rgba(0,0,0,.1);}
         .rec-dot{width:9px;height:9px;border-radius:50%;background:#E63312;flex-shrink:0;animation:pulse .9s infinite;}
-        .rec-time{font-size:13px;font-weight:700;color:#E63312;font-variant-numeric:tabular-nums;white-space:nowrap;}
+        .rec-time{font-size:13px;font-weight:700;color:#C42B0F;font-variant-numeric:tabular-nums;white-space:nowrap;}
         .rec-wave{flex:1;display:flex;align-items:center;gap:2px;height:24px;overflow:hidden;}
-        .rec-cancel{background:none;border:none;color:#E63312;font-size:22px;cursor:pointer;padding:2px;line-height:1;flex-shrink:0;}
+        .rec-cancel{background:none;border:none;color:#C42B0F;font-size:22px;cursor:pointer;padding:2px;line-height:1;flex-shrink:0;}
 
         /* Modals */
         .overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .15s;}
@@ -877,14 +932,14 @@ export default function MessagesPage() {
         .mi:hover{background:#f9f9f9;}
         .mi i{font-size:20px;width:24px;text-align:center;color:#555;}
         .mi span{font-size:14px;color:#111;}
-        .mi.danger i,.mi.danger span{color:#E63312;}
+        .mi.danger i,.mi.danger span{color:#C42B0F;}
         .mi.wa i{color:#25D366;}
         .mi.success i,.mi.success span{color:#22c55e;}
 
         /* Confirm */
         .confirm-card{background:#fff;border-radius:20px;padding:24px;max-width:340px;width:100%;animation:popIn .15s;text-align:center;}
         .confirm-title{font-size:16px;font-weight:700;color:#111;margin-bottom:8px;}
-        .confirm-desc{font-size:13px;color:#888;line-height:1.6;margin-bottom:20px;}
+        .confirm-desc{font-size:13px;color:#555;line-height:1.6;margin-bottom:20px;}
         .confirm-btns{display:flex;gap:10px;}
         .confirm-btn{flex:1;padding:13px;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;}
         .confirm-btn.cancel{background:#f5f5f0;color:#555;}
@@ -901,7 +956,7 @@ export default function MessagesPage() {
         .lightbox img{max-width:100%;max-height:90dvh;object-fit:contain;}
 
         /* Spinner */
-        .spin-center{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:#888;font-size:12px;}
+        .spin-center{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:#555;font-size:12px;}
         .spinner{width:26px;height:26px;border:3px solid #F5C842;border-top-color:#E63312;border-radius:50%;animation:spin .7s linear infinite;}
 
         @keyframes spin{to{transform:rotate(360deg)}}
@@ -964,7 +1019,7 @@ export default function MessagesPage() {
             )}
 
             <div role="button" tabIndex={0} className="mi" onClick={() => { setReplyTo(ctxMenu.msg); setCtxMenu(null); setTimeout(() => inputRef.current?.focus(), 120) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setReplyTo(ctxMenu.msg); setCtxMenu(null); setTimeout(() => inputRef.current?.focus(), 120) } }}>
-              <i className="ti ti-corner-up-left" style={{ color:'#E63312' }} aria-hidden="true" />
+              <i className="ti ti-corner-up-left" style={{ color: '#C42B0F' }} aria-hidden="true" />
               <span>Përgjigju</span>
             </div>
 
@@ -976,7 +1031,7 @@ export default function MessagesPage() {
             )}
 
             {ctxMenu.msg.type === 'image' && ctxMenu.msg.attachment_url && (
-              <div role="button" tabIndex={0} className="mi" onClick={() => { setLightbox(ctxMenu.msg.attachment_url); setCtxMenu(null) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setLightbox(ctxMenu.msg.attachment_url); setCtxMenu(null) } }}>
+              <div role="button" tabIndex={0} className="mi" onClick={() => { setLightbox(srcBashkengjitje(ctxMenu.msg.attachment_url)); setCtxMenu(null) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setLightbox(srcBashkengjitje(ctxMenu.msg.attachment_url)); setCtxMenu(null) } }}>
                 <i className="ti ti-photo" style={{ color:'#F5C842' }} aria-hidden="true" />
                 <span>Shiko foton</span>
               </div>
@@ -1021,14 +1076,14 @@ export default function MessagesPage() {
               <i className="ti ti-bell" aria-hidden="true" />
               <span>Njoftimet e mia</span>
             </div>
-            {waLink && (
-              <div role="button" tabIndex={0} className="mi wa" onClick={() => { setShowInfo(false); setShowWhatsApp(true) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setShowInfo(false); setShowWhatsApp(true) } }}>
+            {otherHasPhone && (
+              <div role="button" tabIndex={0} className="mi wa" onClick={() => { setShowInfo(false); setShowWhatsApp(true); hapKontaktin() }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setShowInfo(false); setShowWhatsApp(true) } }}>
                 <i className="ti ti-brand-whatsapp" aria-hidden="true" />
                 <span>Vazhdo në WhatsApp</span>
               </div>
             )}
-            {viberLink && (
-              <div role="button" tabIndex={0} className="mi" style={{ '--mi-accent': '#7360F2' } as any} onClick={() => { setShowInfo(false); setShowViber(true) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setShowInfo(false); setShowViber(true) } }}>
+            {otherHasPhone && (
+              <div role="button" tabIndex={0} className="mi" style={{ '--mi-accent': '#7360F2' } as any} onClick={() => { setShowInfo(false); setShowViber(true); hapKontaktin() }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setShowInfo(false); setShowViber(true) } }}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="#7360F2" style={{display:'inline-block',verticalAlign:'middle',flexShrink:0}} aria-hidden="true"><path d="M11.5 1C5.7 1.1 1.1 5.7 1 11.5c-.04 2.1.55 4 1.53 5.65L1 23l6.09-1.5c1.57.9 3.4 1.41 5.27 1.45C18.1 23.02 23 18.1 23 12c0-6.07-5.1-11.09-11.5-11zm4.55 15.9c-.31.85-1.5 1.58-2.26 1.6-.77.05-1.51-.16-4.45-1.4C6.08 15.6 3.83 12.17 3.63 11.9c-.2-.28-1.63-2.16-1.63-4.13 0-1.96.85-2.95 1.18-3.37.33-.42.64-.62.9-.64.32 0 .62 0 .9.02.3.02.7-.11.97.74.32.94 1.08 3.26 1.18 3.49.1.24.16.5.03.8-.12.3-.18.48-.36.74-.18.26-.38.57-.55.76-.18.2-.36.42-.16.83.2.4.9 1.48 1.93 2.4 1.33 1.19 2.45 1.56 2.8 1.74.34.18.55.15.75-.08.2-.22.87-1.02 1.1-1.37.23-.34.46-.28.78-.17.33.11 2.07.98 2.43 1.16.35.18.58.27.67.42.09.15.09.85-.22 1.62z"/></svg>
                 <span>Vazhdo në Viber</span>
               </div>
@@ -1048,21 +1103,38 @@ export default function MessagesPage() {
       )}
 
       {/* WhatsApp handoff */}
-      {showWhatsApp && selected && waLink && (
+      {showWhatsApp && selected && (
         <div className="overlay" onClick={() => setShowWhatsApp(false)}>
           <div role="dialog" aria-modal="true" aria-label="Vazhdo në WhatsApp" className="sheet" onClick={e => e.stopPropagation()}>
             <div className="handle" />
             <div style={{ padding:'4px 20px 20px', textAlign:'center' }}>
               <div style={{ fontSize:52, marginBottom:10 }} aria-hidden="true">💬</div>
               <div style={{ fontWeight:700, fontSize:16, color:'#111', marginBottom:8 }}>Vazhdo në WhatsApp</div>
-              <div style={{ fontSize:13, color:'#888', lineHeight:1.7, marginBottom:20 }}>
+              <div style={{ fontSize:13, color:'#555', lineHeight:1.7, marginBottom:20 }}>
                 Do të hapësh WhatsApp me <strong>{displayName(selected.other)}</strong>.
               </div>
-              <a href={waLink} target="_blank" rel="noopener noreferrer"
-                style={{ display:'block', background:'#25D366', color:'#fff', textDecoration:'none', padding:'14px', borderRadius:14, fontWeight:700, fontSize:15, marginBottom:10 }}
-                onClick={() => setShowWhatsApp(false)}>
-                <i className="ti ti-brand-whatsapp" style={{ marginRight:8 }} aria-hidden="true" />Hap WhatsApp
-              </a>
+              {/*  Tri gjendje: numri po hapet · nuk u hap dot · gati.
+                   Numri shfaqet SHPREHIMISHT — perdoruesi e sheh cfare po merr,
+                   dhe kjo eshte edhe zbulim i ndershem edhe rruge e dyte kur
+                   aplikacioni nuk hapet dot.  */}
+              {kontaktDuke ? (
+                <div role="status" style={{ padding:'14px', borderRadius:14, background:'#f5f5f0', fontSize:14, fontWeight:600, color:'#555', marginBottom:10 }}>
+                  Duke hapur kontaktin…
+                </div>
+              ) : kontaktGabim ? (
+                <div role="alert" style={{ padding:'12px 14px', borderRadius:14, background:'#FFF0EE', border:'1px solid #F09595', fontSize:13, fontWeight:600, color:'#C42305', marginBottom:10, lineHeight:1.6 }}>
+                  {kontaktGabim}
+                </div>
+              ) : waLink ? (
+                <>
+                  <div style={{ fontSize:15, fontWeight:800, color:'#111', letterSpacing:'.3px', marginBottom:12 }}>{otherPhone}</div>
+                  <a href={waLink} target="_blank" rel="noopener noreferrer"
+                    style={{ display:'block', background:'#25D366', color:'#fff', textDecoration:'none', padding:'14px', borderRadius:14, fontWeight:700, fontSize:15, marginBottom:10 }}
+                    onClick={() => setShowWhatsApp(false)}>
+                    <i className="ti ti-brand-whatsapp" style={{ marginRight:8 }} aria-hidden="true" />Hap WhatsApp
+                  </a>
+                </>
+              ) : null}
               <button type="button" style={{ width:'100%', padding:'13px', background:'#f5f5f0', border:'none', borderRadius:14, fontWeight:600, fontSize:14, cursor:'pointer', color:'#555', fontFamily:'inherit' }}
                 onClick={() => setShowWhatsApp(false)}>Anulo</button>
             </div>
@@ -1071,21 +1143,36 @@ export default function MessagesPage() {
       )}
 
       {/* Viber handoff */}
-      {showViber && selected && viberLink && (
+      {showViber && selected && (
         <div className="overlay" onClick={() => setShowViber(false)}>
           <div role="dialog" aria-modal="true" aria-label="Vazhdo në Viber" className="sheet" onClick={e => e.stopPropagation()}>
             <div className="handle" />
             <div style={{ padding:'4px 20px 20px', textAlign:'center' }}>
               <div style={{ fontSize:52, marginBottom:10 }} aria-hidden="true">📲</div>
               <div style={{ fontWeight:700, fontSize:16, color:'#111', marginBottom:8 }}>Vazhdo në Viber</div>
-              <div style={{ fontSize:13, color:'#888', lineHeight:1.7, marginBottom:20 }}>
+              <div style={{ fontSize:13, color:'#555', lineHeight:1.7, marginBottom:20 }}>
                 Do të hapësh Viber me <strong>{displayName(selected.other)}</strong>.
               </div>
-              <a href={viberLink}
-                style={{ display:'block', background:'#7360F2', color:'#fff', textDecoration:'none', padding:'14px', borderRadius:14, fontWeight:700, fontSize:15, marginBottom:10 }}
-                onClick={() => setShowViber(false)}>
+              {/*  I njejti zinxhir tri-gjendjesh si te WhatsApp-i — i njejti
+                   fjalor, qe fleta te mos duket si dy komponente te ndryshem.  */}
+              {kontaktDuke ? (
+                <div role="status" style={{ padding:'14px', borderRadius:14, background:'#f5f5f0', fontSize:14, fontWeight:600, color:'#555', marginBottom:10 }}>
+                  Duke hapur kontaktin…
+                </div>
+              ) : kontaktGabim ? (
+                <div role="alert" style={{ padding:'12px 14px', borderRadius:14, background:'#FFF0EE', border:'1px solid #F09595', fontSize:13, fontWeight:600, color:'#C42305', marginBottom:10, lineHeight:1.6 }}>
+                  {kontaktGabim}
+                </div>
+              ) : viberLink ? (
+                <>
+                  <div style={{ fontSize:15, fontWeight:800, color:'#111', letterSpacing:'.3px', marginBottom:12 }}>{otherPhone}</div>
+                  <a href={viberLink}
+                    style={{ display:'block', background:'#7360F2', color:'#fff', textDecoration:'none', padding:'14px', borderRadius:14, fontWeight:700, fontSize:15, marginBottom:10 }}
+                    onClick={() => setShowViber(false)}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" style={{display:'inline-block',verticalAlign:'middle',marginRight:8}} aria-hidden="true"><path d="M11.5 1C5.7 1.1 1.1 5.7 1 11.5c-.04 2.1.55 4 1.53 5.65L1 23l6.09-1.5c1.57.9 3.4 1.41 5.27 1.45C18.1 23.02 23 18.1 23 12c0-6.07-5.1-11.09-11.5-11zm4.55 15.9c-.31.85-1.5 1.58-2.26 1.6-.77.05-1.51-.16-4.45-1.4C6.08 15.6 3.83 12.17 3.63 11.9c-.2-.28-1.63-2.16-1.63-4.13 0-1.96.85-2.95 1.18-3.37.33-.42.64-.62.9-.64.32 0 .62 0 .9.02.3.02.7-.11.97.74.32.94 1.08 3.26 1.18 3.49.1.24.16.5.03.8-.12.3-.18.48-.36.74-.18.26-.38.57-.55.76-.18.2-.36.42-.16.83.2.4.9 1.48 1.93 2.4 1.33 1.19 2.45 1.56 2.8 1.74.34.18.55.15.75-.08.2-.22.87-1.02 1.1-1.37.23-.34.46-.28.78-.17.33.11 2.07.98 2.43 1.16.35.18.58.27.67.42.09.15.09.85-.22 1.62z"/></svg>Hap Viber
-              </a>
+                  </a>
+                </>
+              ) : null}
               <button type="button" style={{ width:'100%', padding:'13px', background:'#f5f5f0', border:'none', borderRadius:14, fontWeight:600, fontSize:14, cursor:'pointer', color:'#555', fontFamily:'inherit' }}
                 onClick={() => setShowViber(false)}>Anulo</button>
             </div>
@@ -1140,13 +1227,13 @@ export default function MessagesPage() {
                   </div>
                 </div>
                 <div className="t-actions">
-                  {waLink && (
-                    <button type="button" className="t-action-btn" aria-label="Hap WhatsApp" onClick={() => setShowWhatsApp(true)}>
+                  {otherHasPhone && (
+                    <button type="button" className="t-action-btn" aria-label="Hap WhatsApp" onClick={() => { setShowWhatsApp(true); hapKontaktin() }}>
                       <i className="ti ti-brand-whatsapp" style={{ color:'#25D366' }} aria-hidden="true" />
                     </button>
                   )}
-                  {viberLink && (
-                    <button type="button" className="t-action-btn" aria-label="Hap Viber" onClick={() => setShowViber(true)}>
+                  {otherHasPhone && (
+                    <button type="button" className="t-action-btn" aria-label="Hap Viber" onClick={() => { setShowViber(true); hapKontaktin() }}>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="#7360F2" style={{display:'block'}} aria-hidden="true"><path d="M11.5 1C5.7 1.1 1.1 5.7 1 11.5c-.04 2.1.55 4 1.53 5.65L1 23l6.09-1.5c1.57.9 3.4 1.41 5.27 1.45C18.1 23.02 23 18.1 23 12c0-6.07-5.1-11.09-11.5-11zm4.55 15.9c-.31.85-1.5 1.58-2.26 1.6-.77.05-1.51-.16-4.45-1.4C6.08 15.6 3.83 12.17 3.63 11.9c-.2-.28-1.63-2.16-1.63-4.13 0-1.96.85-2.95 1.18-3.37.33-.42.64-.62.9-.64.32 0 .62 0 .9.02.3.02.7-.11.97.74.32.94 1.08 3.26 1.18 3.49.1.24.16.5.03.8-.12.3-.18.48-.36.74-.18.26-.38.57-.55.76-.18.2-.36.42-.16.83.2.4.9 1.48 1.93 2.4 1.33 1.19 2.45 1.56 2.8 1.74.34.18.55.15.75-.08.2-.22.87-1.02 1.1-1.37.23-.34.46-.28.78-.17.33.11 2.07.98 2.43 1.16.35.18.58.27.67.42.09.15.09.85-.22 1.62z"/></svg>
                     </button>
                   )}
@@ -1160,7 +1247,7 @@ export default function MessagesPage() {
             <div className="chat-wrap" style={{ position:'relative' }}>
               <div className="msgs-area" ref={attachScrollListener}>
                 {isBlocked && (
-                  <div style={{ background:'rgba(230,51,18,.08)', borderRadius:12, padding:'10px 14px', margin:'8px 0', textAlign:'center', fontSize:12, color:'#E63312', border:'1px solid rgba(230,51,18,.15)' }}>
+                  <div style={{ background:'rgba(230,51,18,.08)', borderRadius:12, padding:'10px 14px', margin:'8px 0', textAlign:'center', fontSize:12, color: '#C42B0F', border:'1px solid rgba(230,51,18,.15)' }}>
                     <><span aria-hidden="true">🚫</span> Ke bllokuar këtë përdorues</>
                   </div>
                 )}
@@ -1170,7 +1257,7 @@ export default function MessagesPage() {
                     <div style={{ background:'rgba(255,255,255,.8)', borderRadius:16, padding:'20px 24px', display:'inline-block', maxWidth:280 }}>
                       <Avatar profile={selected.other} size={60} online={isOtherOnline} />
                       <div style={{ fontWeight:700, fontSize:14, color:'#111', marginTop:10 }}>{displayName(selected.other)}</div>
-                      <div style={{ fontSize:12, color:'#888', marginTop:4 }}>Mesazhet janë private dhe të sigurta <span aria-hidden="true">🔒</span></div>
+                      <div style={{ fontSize:12, color:'#555', marginTop:4 }}>Mesazhet janë private dhe të sigurta <span aria-hidden="true">🔒</span></div>
                     </div>
                   </div>
                 )}
@@ -1228,7 +1315,7 @@ export default function MessagesPage() {
                                       )}
                                     </div>
                                     {m.reply_msg.type === 'image' && m.reply_msg.attachment_url && (
-                                      <img className="rp-img" src={m.reply_msg.attachment_url} alt="Imazh i thënë" loading="lazy" />
+                                      <img className="rp-img" src={srcBashkengjitje(m.reply_msg.attachment_url)} alt="Imazh i thënë" loading="lazy" />
                                     )}
                                   </div>
                                 </div>
@@ -1242,14 +1329,14 @@ export default function MessagesPage() {
                               ) : m.type === 'image' && m.attachment_url ? (
                                 <img
                                   className="bubble-img"
-                                  src={m.attachment_url}
+                                  src={srcBashkengjitje(m.attachment_url)}
                                   alt="Imazh i mesazhit"
                                   loading="lazy"
-                                  onClick={e => { e.stopPropagation(); setLightbox(m.attachment_url) }}
+                                  onClick={e => { e.stopPropagation(); setLightbox(srcBashkengjitje(m.attachment_url)) }}
                                   style={{ marginBottom: m.content ? 6 : 0 }}
                                 />
                               ) : m.type === 'audio' && m.attachment_url ? (
-                                <AudioPlayer url={m.attachment_url} mine={mine} />
+                                <AudioPlayer url={srcBashkengjitje(m.attachment_url)} mine={mine} />
                               ) : (
                                 <span style={{ whiteSpace:'pre-wrap' }}>{m.content}</span>
                               )}
@@ -1313,7 +1400,7 @@ export default function MessagesPage() {
                   {/* Reply strip */}
                   {replyTo && (
                     <div className="reply-strip">
-                      <i className="ti ti-corner-up-left" style={{ color:'#E63312', fontSize:16, flexShrink:0 }} aria-hidden="true" />
+                      <i className="ti ti-corner-up-left" style={{ color: '#C42B0F', fontSize:16, flexShrink:0 }} aria-hidden="true" />
                       <div className="rs-bar">
                         <div className="rs-name">{replyTo.sender_id === user?.id ? 'Unë' : displayName(selected.other)}</div>
                         {replyTo.type === 'audio' ? (
@@ -1325,7 +1412,7 @@ export default function MessagesPage() {
                         )}
                       </div>
                       {replyTo.type === 'image' && replyTo.attachment_url && (
-                        <img className="rs-img" src={replyTo.attachment_url} alt="Imazh i thënë" loading="lazy" width={40} height={40} />
+                        <img className="rs-img" src={srcBashkengjitje(replyTo.attachment_url)} alt="Imazh i thënë" loading="lazy" width={40} height={40} />
                       )}
                       <button type="button" aria-label="Anulo përgjigjen" onClick={() => setReplyTo(null)} style={{ background:'none', border:'none', color:'#bbb', fontSize:20, cursor:'pointer', padding:0, lineHeight:1, flexShrink:0 }}>✕</button>
                     </div>
@@ -1333,9 +1420,9 @@ export default function MessagesPage() {
 
                   {/* Upload error toast */}
                   {uploadErr && (
-                    <div style={{ background:'#FFF0EE', border:'1px solid #f8c0b8', color:'#E63312', fontSize:11, fontWeight:600, padding:'6px 12px', display:'flex', alignItems:'center', gap:8 }}>
+                    <div style={{ background:'#FFF0EE', border:'1px solid #f8c0b8', color: '#C42B0F', fontSize:11, fontWeight:600, padding:'6px 12px', display:'flex', alignItems:'center', gap:8 }}>
                       <span style={{ flex:1 }}><span aria-hidden="true">⚠️</span> {uploadErr}</span>
-                      <button type="button" aria-label="Mbyll gabimin" onClick={() => setUploadErr('')} style={{ background:'none', border:'none', color:'#E63312', cursor:'pointer', padding:0, fontSize:14, lineHeight:1 }}>✕</button>
+                      <button type="button" aria-label="Mbyll gabimin" onClick={() => setUploadErr('')} style={{ background:'none', border:'none', color: '#C42B0F', cursor:'pointer', padding:0, fontSize:14, lineHeight:1 }}>✕</button>
                     </div>
                   )}
 

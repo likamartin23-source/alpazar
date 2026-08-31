@@ -1,9 +1,23 @@
 // @ts-check
 const { withSentryConfig } = require('@sentry/nextjs')
 
+// Identiteti i ndertimit — burimi qe ushqen /api/version.
+// SHENIM: fallback-u KURRE nuk perdor Date.now(): nje vlere qe ndryshon ne cdo
+// ndertim prodhon build-id te ndryshem edhe kur kodi eshte i njejte, gje qe
+// shkakton mospershtatje te rreme te versionit. Ne Vercel, VERCEL_GIT_COMMIT_SHA
+// eshte gjithmone i pranishem; fallback-u eshte nje konstante e qendrueshme.
+const BUILD_ID = process.env.VERCEL_GIT_COMMIT_SHA || 'dev'
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  typescript: { ignoreBuildErrors: true },
+  generateBuildId: async () => BUILD_ID,
+  env: { NEXT_PUBLIC_BUILD_ID: BUILD_ID },
+
+  // R1 (AUTOPSI 27 gusht): fail-closed ndaj gabimeve te tipit. Pa preview,
+  // build-i (Vercel-native + CI) eshte i vetmi rrjet sigurie qe ndalon nje
+  // gabim tipi te zbrese live. `tsc --noEmit` eshte i paster, ndaj eshte i sigurt.
+  // eslint: mbetet i anashkaluar — s'ka konfigurim ESLint ne repo.
+  typescript: { ignoreBuildErrors: false },
   eslint: { ignoreDuringBuilds: true },
 
   // Google Maps API key must be set in Vercel env vars, NOT here (git-exposed)
@@ -20,6 +34,7 @@ const nextConfig = {
       { protocol: 'https', hostname: '**.supabase.in' },
       { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
       { protocol: 'https', hostname: 'avatars.githubusercontent.com' },
+      { protocol: 'https', hostname: 'res.cloudinary.com' }, // poster/thumbnail videosh (next/image)
     ],
   },
 
@@ -32,26 +47,59 @@ const nextConfig = {
     ]
   },
 
+  async rewrites() {
+    return [
+      { source: '/favicon.ico', destination: '/favicon.png' },
+      { source: '/apple-touch-icon.png', destination: '/icons/apple-touch-icon.png' },
+      { source: '/apple-touch-icon-precomposed.png', destination: '/icons/apple-touch-icon.png' },
+    ]
+  },
+
   async headers() {
     const csp = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://va.vercel-scripts.com https://vercel.live https://accounts.google.com",
-      "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com",
-      "font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https://*.supabase.co https://*.supabase.in https://lh3.googleusercontent.com https://avatars.githubusercontent.com https://nominatim.openstreetmap.org https://*.tile.openstreetmap.org",
-      "connect-src 'self' https://*.supabase.co https://*.supabase.in wss://*.supabase.co https://va.vercel-scripts.com https://vitals.vercel-insights.com https://nominatim.openstreetmap.org https://*.sentry.io https://de.sentry.io https://accounts.google.com",
-      "frame-src 'self' https://www.openstreetmap.org https://accounts.google.com",
+      "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
+      "font-src 'self' https://cdn.jsdelivr.net",
+      "img-src 'self' data: blob: https://*.supabase.co https://*.supabase.in https://res.cloudinary.com https://lh3.googleusercontent.com https://avatars.githubusercontent.com https://nominatim.openstreetmap.org https://*.tile.openstreetmap.org",
+      // media-src: pa kete, videot (edhe nga Supabase) binin te default-src 'self' → bllokoheshin.
+      // Perfshin transkoderat: Cloudinary (mp4 H.264) dhe Cloudflare Stream (HLS), + blob per preview lokal.
+      "media-src 'self' blob: https://*.supabase.co https://*.supabase.in https://res.cloudinary.com https://*.cloudflarestream.com",
+      "connect-src 'self' https://*.supabase.co https://*.supabase.in wss://*.supabase.co https://api.cloudinary.com https://res.cloudinary.com https://*.cloudflarestream.com https://upload.videodelivery.net https://va.vercel-scripts.com https://vitals.vercel-insights.com https://nominatim.openstreetmap.org https://*.sentry.io https://de.sentry.io https://accounts.google.com",
+      "frame-src 'self' https://www.openstreetmap.org https://accounts.google.com https://*.cloudflarestream.com https://iframe.videodelivery.net",
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
-      "worker-src blob:",
+      "frame-ancestors 'self'", // anti-clickjacking (ekuivalenti modern i X-Frame-Options: SAMEORIGIN)
+      // 'self' është i nevojshëm që `sw.js` (kill-switch-i që pastron SW-të e vjetër të ngecur)
+      // të regjistrohet — pa të, worker-i nga origjina bllokohej dhe pajisjet mbeteshin te versioni i vjetër.
+      "worker-src 'self' blob:",
       "upgrade-insecure-requests",
     ].join('; ')
 
     return [
       {
-        // Faqet dinamike — kurrë mos i cache në CDN
-        source: '/((?!_next/static|_next/image|icons|favicon).*)',
+        // SHËNIM: cache-i real i këtyre rrugëve KONTROLLOHET nga middleware.ts (që vendos
+        // Vercel-CDN-Cache-Control me përparësinë më të lartë). Header-at këtu janë dytësorë;
+        // mos u mbështet te ta për cache. Freskia (no-store) vendoset qëllimisht te middleware.
+        source: '/',
+        headers: [
+          { key: 'Cache-Control', value: 'no-store, must-revalidate' },
+          { key: 'CDN-Cache-Control', value: 'no-store' },
+          { key: 'Vercel-CDN-Cache-Control', value: 'no-store' },
+        ],
+      },
+      {
+        source: '/listing/:id',
+        headers: [
+          { key: 'Cache-Control', value: 'no-store, must-revalidate' },
+          { key: 'CDN-Cache-Control', value: 'no-store' },
+          { key: 'Vercel-CDN-Cache-Control', value: 'no-store' },
+        ],
+      },
+      {
+        // Pjesa tjeter (llogari, mesazhe, admin, API) — kurre ne CDN
+        source: '/((?!_next/static|_next/image|icons|favicon|listing/).*)',
         headers: [
           { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' },
           { key: 'CDN-Cache-Control', value: 'no-store' },

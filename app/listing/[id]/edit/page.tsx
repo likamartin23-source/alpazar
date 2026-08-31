@@ -3,17 +3,20 @@
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
 import nextDynamic from 'next/dynamic'
 import { supabase } from '../../../../lib/supabase'
-import { useAlpazar } from '../../../../lib/context'
 import { uploadImages, UploadProgress } from '../../../../lib/uploadImages'
+import { useVideos } from '../../new/useVideos'
 
 const MapPicker = nextDynamic(() => import('../../../components/MapPicker').then(m => ({ default: m.MapPicker })), { ssr: false })
 
 
-export default function EditListing({ params }: { params: { id: string } }) {
-  const { cfgInt, profile } = useAlpazar()
-  const maxImages = profile?.is_premium ? cfgInt('max_images_premium', 10) : cfgInt('max_images_free', 5)
+export default function EditListing() {
+  // Ne Next 15 nje faqe klient e merr `params` si Promise. Hook-u e jep
+  // sinkron dhe punon njesoj ne 14 e ne 15.
+  const params = useParams() as { id: string }
+  const [existingVideos, setExistingVideos] = useState<any[]>([])
   const [user, setUser]       = useState<any>(null)
   const [categories, setCategories] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
@@ -31,6 +34,8 @@ export default function EditListing({ params }: { params: { id: string } }) {
   const [existingImages, setExistingImages] = useState<string[]>([])
   const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null)
   const [isDirty, setIsDirty] = useState(false)
+  const vid = useVideos(setMsg, setIsDirty, existingVideos.length)
+  const maxImages: number = vid.maxImages
 
   useEffect(() => {
     return () => { imagePreviews.forEach(url => URL.revokeObjectURL(url)) }
@@ -67,6 +72,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
 
       if (cats) setCategories(cats)
       setExistingImages(listing.images || [])
+    setExistingVideos(Array.isArray(listing.videos) ? listing.videos : [])
       setForm({
         title: listing.title || '',
         description: listing.description || '',
@@ -115,6 +121,11 @@ export default function EditListing({ params }: { params: { id: string } }) {
     setExistingImages(imgs => imgs.filter(i => i !== url))
   }
 
+  function removeExistingVideo(i: number) {
+    setExistingVideos(v => v.filter((_, idx) => idx !== i))
+    setIsDirty(true)
+  }
+
   async function submit() {
     if (!form.title.trim()) { setMsg('err:Titulli është i detyrueshëm!'); return }
     if (!form.category_id)  { setMsg('err:Zgjidh kategorinë!'); return }
@@ -142,6 +153,13 @@ export default function EditListing({ params }: { params: { id: string } }) {
       setUploadProgress(null)
       const allImages = [...existingImages, ...newUrls]
 
+      let allVideos: any[] = existingVideos
+      if (vid.count > 0) {
+        const rv = await vid.uploadAll()
+        if (rv.error) { setMsg(`err:Video: ${rv.error}`); setLoading(false); return }
+        allVideos = [...existingVideos, ...rv.videos]
+      }
+
       const { error } = await supabase.from('listings').update({
         title: form.title.trim(),
         description: form.description.trim() || null,
@@ -151,6 +169,8 @@ export default function EditListing({ params }: { params: { id: string } }) {
         category_id: form.category_id,
         city: form.city,
         images: allImages,
+        videos: allVideos,
+        video_poster: allImages[0] || null,
         latitude: form.latitude,
         longitude: form.longitude,
         location_address: form.location_address || null,
@@ -188,11 +208,11 @@ export default function EditListing({ params }: { params: { id: string } }) {
         .body{padding:14px;}
         .msg-box{border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:12px;font-weight:600;}
         .ok{background:#EAF3DE;color:#3B6D11;border:0.5px solid #97C459;}
-        .err{background:#FFF0EE;color:#E63312;border:0.5px solid #F09595;}
+        .err{background:#FFF0EE;color:#C42B0F;border:0.5px solid #F09595;}
         .warn{background:#FFF8E1;color:#E65100;border:0.5px solid #FFB74D;}
         .card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;border:0.5px solid #eee;}
         .card-title{font-size:13px;font-weight:700;color:#111;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
-        .card-title i{font-size:16px;color:#E63312;}
+        .card-title i{font-size:16px;color:#C42B0F;}
         label{font-size:11px;font-weight:600;color:#555;display:block;margin-bottom:4px;}
         .field{margin-bottom:12px;}
         input[type=text],input[type=number],textarea,select{width:100%;border:1.5px solid #e0e0e0;border-radius:12px;padding:10px 13px;font-size:13px;font-family:inherit;outline:none;transition:border .15s;background:#fff;color:#111;}
@@ -203,11 +223,11 @@ export default function EditListing({ params }: { params: { id: string } }) {
         .price-row select{width:90px;flex-shrink:0;}
         .cond-row{display:flex;gap:8px;}
         .cond-btn{flex:1;border:1.5px solid #e0e0e0;border-radius:12px;padding:9px;font-size:12px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;}
-        .cond-btn.active{border-color:#E63312;background:#FFF0EE;color:#E63312;}
+        .cond-btn.active{border-color:#E63312;background:#FFF0EE;color:#C42B0F;}
         .img-zone{border:2px dashed #e0b030;border-radius:10px;padding:20px;text-align:center;cursor:pointer;background:#FFFBEA;}
         .img-zone input{display:none;}
         .img-zone i{font-size:32px;color:#e0b030;display:block;margin-bottom:8px;}
-        .img-zone p{font-size:12px;color:#888;}
+        .img-zone p{font-size:12px;color:#555;}
         .img-previews{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
         .img-prev-wrap{position:relative;}
         .img-prev{width:70px;height:70px;border-radius:8px;object-fit:cover;border:2px solid #F5C842;}
@@ -216,8 +236,8 @@ export default function EditListing({ params }: { params: { id: string } }) {
         .cat-btn{border:1.5px solid #e0e0e0;border-radius:12px;padding:8px 4px;font-size:10px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;}
         .cat-btn i{font-size:18px;color:#aaa;}
         .cat-btn.active{border-color:#F5C842;background:#FFFBEA;color:#111;}
-        .cat-btn.active i{color:#E63312;}
-        .submit-btn{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px -3px rgba(230,51,18,.45);transition:transform .15s ease,box-shadow .15s ease;} .submit-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 7px 20px -4px rgba(230,51,18,.55);}
+        .cat-btn.active i{color:#C42B0F;}
+        .submit-btn{width:100%;min-height:52px;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:800;letter-spacing:.3px;cursor:pointer;font-family:inherit;box-shadow:0 6px 18px -3px rgba(230,51,18,.5);transition:transform .15s ease,box-shadow .15s ease;} .submit-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 9px 24px -4px rgba(230,51,18,.6);}
         .submit-btn:disabled{opacity:.6;cursor:not-allowed;}
       ` }} />
 
@@ -251,14 +271,14 @@ export default function EditListing({ params }: { params: { id: string } }) {
               <label htmlFor="listing-title">Titulli *</label>
               <input id="listing-title" type="text" placeholder="p.sh. iPhone 13 Pro Max 256GB..." value={form.title}
                 onChange={e => set('title', e.target.value)} maxLength={100} required />
-              <div style={{ textAlign: 'right', fontSize: 10, color: form.title.length > 85 ? '#E63312' : '#aaa', marginTop: 2 }}>{form.title.length}/100</div>
+              <div style={{ textAlign: 'right', fontSize: 10, color: form.title.length > 85 ? '#C42305' : '#aaa', marginTop: 2 }}>{form.title.length}/100</div>
             </div>
 
             <div className="field">
               <label htmlFor="listing-description">Përshkrimi</label>
               <textarea id="listing-description" placeholder="Përshkruaj artikullin..." value={form.description}
                 onChange={e => set('description', e.target.value)} maxLength={2000} />
-              <div style={{ textAlign: 'right', fontSize: 10, color: form.description.length > 1800 ? '#E63312' : '#aaa', marginTop: 2 }}>{form.description.length}/2000</div>
+              <div style={{ textAlign: 'right', fontSize: 10, color: form.description.length > 1800 ? '#C42305' : '#aaa', marginTop: 2 }}>{form.description.length}/2000</div>
             </div>
 
             <div className="field">
@@ -315,7 +335,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
               />
             </div>
             <div className="field">
-              <label>Adresa e saktë <span style={{ fontWeight: 400, color: '#aaa' }}>(opsional — mund të vendoset me GPS)</span></label>
+              <label>Adresa e saktë <span style={{ fontWeight: 400, color: '#555' }}>(opsional — mund të vendoset me GPS)</span></label>
               <MapPicker
                 lat={form.latitude}
                 lng={form.longitude}
@@ -331,7 +351,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
 
             {existingImages.length > 0 && (
               <div style={{ marginBottom: 12 }}>
-                <p style={{ fontSize: 11, color: '#888', marginBottom: 8 }}>Fotot aktuale (kliko <span aria-hidden="true">✕</span> për të hequr):</p>
+                <p style={{ fontSize: 11, color: '#555', marginBottom: 8 }}>Fotot aktuale (kliko <span aria-hidden="true">✕</span> për të hequr):</p>
                 <div className="img-previews">
                   {existingImages.map((url, i) => (
                     <div key={i} className="img-prev-wrap">
@@ -352,7 +372,7 @@ export default function EditListing({ params }: { params: { id: string } }) {
               <input id="img-input" type="file" accept="image/*" multiple onChange={handleImages} />
               <i className="ti ti-cloud-upload" aria-hidden="true" />
               <p>Kliko për të shtuar foto të reja</p>
-              <p style={{ fontSize: 10, marginTop: 4, color: '#bbb' }}>JPG, PNG, WebP · max 10MB secila</p>
+              <p style={{ fontSize: 10, marginTop: 4, color: '#555' }}>JPG, PNG, WebP · max 10MB secila</p>
             </label>
 
             {imagePreviews.length > 0 && (
@@ -371,6 +391,67 @@ export default function EditListing({ params }: { params: { id: string } }) {
                   )
                 })}
               </div>
+            )}
+          </div>
+
+          <div className="card">
+            <div className="card-title">
+              <i className="ti ti-video" aria-hidden="true" />
+              Videot ({existingVideos.length + vid.count}/{vid.maxVideos < 0 ? '∞' : vid.maxVideos})
+            </div>
+
+            {existingVideos.length > 0 && (
+              <div style={{ display: 'grid', gap: 8, marginBottom: 10 }}>
+                {existingVideos.map((v: any, i: number) => (
+                  <div key={i} style={{ position: 'relative' }}>
+                    {String(v?.url || v).includes('cloudflarestream.com') ? (
+                      <iframe src={String(v?.url || v)} allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" allowFullScreen
+                        title={`Video ${i + 1}`} style={{ width: '100%', height: 200, border: 'none', borderRadius: 12, background: '#000', display: 'block' }} />
+                    ) : (
+                      <video src={v?.url || v} controls playsInline preload="metadata"
+                        style={{ width: '100%', maxHeight: 200, borderRadius: 12, background: '#000', display: 'block' }} />
+                    )}
+                    <button type="button" aria-label={`Hiq videon ${i + 1}`} onClick={() => removeExistingVideo(i)}
+                      style={{ position: 'absolute', top: 8, right: 8, background: 'rgba(0,0,0,.62)', color: '#fff', border: 'none', borderRadius: 999, width: 30, height: 30, cursor: 'pointer', fontSize: 16, lineHeight: 1 }}>
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {(vid.maxVideos < 0 || existingVideos.length + vid.count < vid.maxVideos) ? (
+              <label className="img-zone" onClick={() => document.getElementById('vid-input')?.click()}>
+                <input id="vid-input" type="file" accept="video/*" multiple onChange={vid.add} />
+                <i className="ti ti-video" aria-hidden="true" />
+                <p>Kliko për të shtuar video</p>
+                <p style={{ fontSize: 10, marginTop: 4, color: '#555' }}>
+                  Deri në {vid.maxMin} minuta secila · max {vid.maxVideos < 0 ? '∞' : vid.maxVideos} video
+                </p>
+              </label>
+            ) : (
+              <div style={{ background: '#FFF8E1', border: '1px solid #FFE082', borderRadius: 10, padding: '10px 12px', fontSize: 11.5, color: '#856404' }}>
+                Ke arritur kufirin prej {vid.maxVideos} videosh.
+              </div>
+            )}
+
+            {vid.count > 0 && (
+              <div style={{ display: 'grid', gap: 8, marginTop: 10 }}>
+                {vid.items.map((it: any, i: number) => (
+                  <div key={i} style={{ position: 'relative' }}>
+                    <video src={it.preview} controls playsInline preload="metadata"
+                      style={{ width: '100%', maxHeight: 200, borderRadius: 12, background: '#000', display: 'block' }} />
+                    <button type="button" aria-label={`Hiq videon e re ${i + 1}`} onClick={() => vid.remove(i)}
+                      style={{ position: 'absolute', top: 8, right: 8, background: 'rgba(0,0,0,.62)', color: '#fff', border: 'none', borderRadius: 999, width: 30, height: 30, cursor: 'pointer', fontSize: 16, lineHeight: 1 }}>
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {vid.uploading && (
+              <div style={{ marginTop: 10, fontSize: 12, color: '#1565c0' }}>Duke ngarkuar videot… {vid.pct}%</div>
             )}
           </div>
 

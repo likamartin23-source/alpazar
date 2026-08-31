@@ -4,10 +4,14 @@ import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../lib/supabase'
 import { SITE_URL } from '../lib/siteConfig'
 import type { Listing, Category } from '../lib/types'
 import HomeClient from './HomeClient'
+import { LISTING_SELECT } from '../lib/listingSelect'
 
-// ISR: crawlers get real, recent content in the initial HTML (not an empty
-// client shell), refreshed every 60s. Fixes the SEO "0 photos / 0 h1" blocker.
-export const revalidate = 60
+// SSR DINAMIK (jo ISR). Crawler-at vazhdojnë të marrin përmbajtje reale në HTML-in
+// fillestar (SEO i ruajtur), POR pa `stale-while-revalidate`-in ~1-vjeçar që Next-i
+// stampon për faqet e para-renderuara — pikërisht ai header e mbante shfletuesin në
+// versionin e vjetër edhe pas rifreskimit (autopsia e mospasqyrimit live). Dinamik
+// => çdo kërkesë merr HTML të freskët; asetet me hash mbeten immutable e të shpejta.
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'ALPAZAR — Shit · Bli · Bëj Pazrin Tënd',
@@ -15,29 +19,46 @@ export const metadata: Metadata = {
   alternates: { canonical: '/' },
 }
 
-async function fetchHome(): Promise<{ listings: Listing[]; categories: Category[] }> {
+// `shops` merret KETU, jo ne klient. Arsyeja u mat me 31 gusht 2026 mbi ndertimin
+// e prodhimit, ne telefon te ngadalesuar: seksioni "Biznese Online" render-ohej
+// vetem pas fetch-it te klientit dhe hynte 256px MBI rreshtin e filtrave, duke
+// shtyre poshte filtrat, kokën e seksionit dhe gjithe rrjetin e shpalljeve.
+// Matja: CLS 0.207 ne kryefaqe — "i dobet" sipas Core Web Vitals (kufiri 0.1).
+// Duke ardhur nga serveri, blloku ekziston qysh te piktura e pare: pa kercim,
+// dhe si perfitim i dyte crawler-at e shohin vitrinen e bizneseve ne HTML.
+async function fetchHome(): Promise<{ listings: Listing[]; categories: Category[]; shops: any[] }> {
   try {
     const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-    const [{ data: listings }, { data: categories }] = await Promise.all([
+    const [{ data: listings }, { data: categories }, { data: shops }] = await Promise.all([
       sb.from('listings')
-        .select('id,title,price,currency,condition,city,is_premium,images,category_id,created_at,user_id,author:user_id(id,full_name,username,avatar_url,is_premium,trust_score)')
+        // Një projeksion i vetëm identiteti (lib/listingSelect) — pa join-in e biznesit,
+        // ListingCard e trajton shpalljen e biznesit si personale (maskim). Identik me HomeClient
+        // dhe kërkimin: karta e biznesit "noton" e njohur qysh te render-i i parë SSR.
+        .select(LISTING_SELECT)
         .eq('is_active', true)
-        .order('is_premium', { ascending: false })
-        .order('created_at', { ascending: false })
+        .order('rank_tier', { ascending: false })
+        .order('last_bumped_at', { ascending: false })
         .limit(20),
       sb.from('categories').select('*').eq('is_active', true).order('sort_order'),
+      // I njejti projeksion dhe i njejti kufi si `fetchShops()` te HomeClient —
+      // ndryshe SSR-ja dhe klienti do te jepnin dy lartesi te ndryshme.
+      sb.from('profiles')
+        .select('id,full_name,username,avatar_url,city,shop_name,shop_description,shop_category,shop_banner_url')
+        .eq('is_premium', true)
+        .limit(6),
     ])
     return {
       listings: (listings ?? []) as unknown as Listing[],
       categories: (categories ?? []) as unknown as Category[],
+      shops: shops ?? [],
     }
   } catch {
-    return { listings: [], categories: [] }
+    return { listings: [], categories: [], shops: [] }
   }
 }
 
 export default async function HomePage() {
-  const { listings, categories } = await fetchHome()
+  const { listings, categories, shops } = await fetchHome()
 
   // WebSite/Organization schema already lives in the root layout <head>; here we
   // add only the ItemList of current listings (complements, no duplication).
@@ -57,7 +78,7 @@ export default async function HomePage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
-      <HomeClient initialListings={listings} initialCategories={categories} />
+      <HomeClient initialListings={listings} initialCategories={categories} initialShops={shops} />
     </>
   )
 }

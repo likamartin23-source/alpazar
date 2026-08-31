@@ -1,0 +1,44 @@
+name: Paneli - ristrukturim
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/panel_ristrukturim.py'
+      - '.github/workflows/panel-ristrukturim.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  ristrukturo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Zbato ristrukturimin
+        run: python3 scripts/panel_ristrukturim.py
+
+      - name: Kontroll i shpejte
+        run: |
+          grep -q "'Sot'" app/admin/page.tsx
+          grep -q "'Njerëzit'" app/admin/page.tsx
+          grep -q "'Radha'" app/admin/page.tsx
+          grep -q "'Paratë'" app/admin/page.tsx
+          ! grep -q 'ModerationTab' app/admin/page.tsx
+          wc -c app/admin/page.tsx
+
+      - name: Shty ne degen panel/auto
+        run: |
+          if git diff --quiet; then
+            echo 'Asnje ndryshim - dalje.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git checkout -b panel/auto
+          git add app/admin/page.tsx
+          git commit -m 'Paneli: 17 skeda -> 12 (Sot, Njerezit, Radha, Parate, Konfigurime)'
+          git push -f origin panel/auto

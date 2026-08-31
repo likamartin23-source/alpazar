@@ -27,7 +27,7 @@ export function MapDisplay({ lat, lng, address }: MapDisplayProps) {
       <div style={{ marginTop: 8, display: 'flex', alignItems: 'flex-start', gap: 8, flexWrap: 'wrap' }}>
         {address && (
           <span style={{ fontSize: 12, color: '#555', flex: 1 }}>
-            <i className="ti ti-map-pin" style={{ fontSize: 13, marginRight: 3, color: '#E63312' }} aria-hidden="true" />
+            <i className="ti ti-map-pin" style={{ fontSize: 13, marginRight: 3, color: '#C42B0F' }} aria-hidden="true" />
             {address}
           </span>
         )}

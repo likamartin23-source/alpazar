@@ -10,7 +10,7 @@ export default function Cookies() {
     .back i{font-size:18px;color:#111;}
     .topbar-title{font-size:15px;font-weight:700;color:#111;}
     .content{padding:24px 20px 40px;}
-    .ver{font-size:11px;color:#888;margin-bottom:20px;background:#FFFBEA;padding:8px 12px;border-radius:8px;display:inline-block;}
+    .ver{font-size:11px;color:#6E6E6E;margin-bottom:20px;background:#FFFBEA;padding:8px 12px;border-radius:8px;display:inline-block;}
     h1{font-size:22px;font-weight:700;color:#111;margin-bottom:8px;}
     h2{font-size:14px;font-weight:700;color:#111;margin:22px 0 8px;padding-bottom:5px;border-bottom:2px solid #F5C842;}
     p{font-size:13px;color:#444;line-height:1.85;margin-bottom:10px;}
@@ -23,14 +23,14 @@ export default function Cookies() {
     .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;margin-left:6px;}
     .badge-req{background:#EAF3DE;color:#3B6D11;}
     .badge-opt{background:#EEF4FF;color:#185FA5;}
-    .law{font-size:11px;color:#aaa;font-style:italic;}
+    .law{font-size:11px;color:#555;font-style:italic;}
     .table-wrap{overflow-x:auto;margin:10px 0;}
     table{width:100%;border-collapse:collapse;font-size:12px;}
     th{background:#FFFBEA;padding:8px 10px;text-align:left;font-weight:700;color:#111;border:1px solid #eee;}
     td{padding:8px 10px;color:#444;border:1px solid #eee;vertical-align:top;}
     code{background:#f0f0f0;padding:1px 5px;border-radius:3px;font-size:11px;font-family:monospace;}
     .ftr{display:flex;flex-wrap:wrap;gap:8px 16px;padding:20px;background:#f9f9f9;border-top:1px solid #eee;margin-top:10px;}
-    .ftr a{color:#888;font-size:11px;text-decoration:none;}
+    .ftr a{color:#555;font-size:11px;text-decoration:none;}
   `
   return (
     <>
@@ -120,7 +120,8 @@ export default function Cookies() {
 
           <div className="cookie-card">
             <strong>Cookie Marketingu dhe Reklamimit <span className="badge badge-req">Nuk përdoren</span></strong>
-            <span>Alpazar <strong>nuk përdor</strong> asnjë cookie reklamimi, tracker nga palë të treta (Meta Pixel, Google Analytics, TikTok Pixel, Hotjar etj.) dhe nuk ndan të dhëna me platformat reklamuese. Zero re-targeting. Zero profilizim.</span>
+            <span>Alpazar <strong>nuk përdor</strong> cookie reklamimi, nuk bën re-targeting, nuk profilizon dhe nuk ndan të dhëna me platforma reklamuese. Nuk kemi Meta Pixel, Google Analytics, TikTok Pixel apo Hotjar.<br /><br />
+            Për ndershmëri të plotë: përdorim dy shërbime <strong>jo-reklamuese</strong> të palëve të treta, dhe të dyja ngarkohen <strong>vetëm pasi ti pranon</strong> te banneri i cookies — <strong>Vercel Analytics</strong> (statistika trafiku, SHBA) dhe <strong>Sentry</strong> (diagnostikë gabimesh dhe regjistrim sesioni me tekst të maskuar, BE). Nëse zgjedh «Vetëm thelbësoret», asnjëra nuk niset.</span>
           </div>
 
           <h2>3. Baza Ligjore</h2>
@@ -152,7 +153,7 @@ export default function Cookies() {
 
           <h2>7. Kontakti dhe Ankesat</h2>
           <p>Pyetje rreth cookie-ve dhe privatësisë:<br />
-          <strong>privacy@alpazar.al</strong> · Alpazar, Tiranë, Shqipëri</p>
+          <strong>alpazarsuport@gmail.com</strong> · Alpazar, Tiranë, Shqipëri</p>
           <p>Ankesa te autoriteti mbikëqyrës:<br />
           <strong>Komisioneri për Mbrojtjen e të Dhënave Personale</strong><br />
           Rruga "Abdi Toptani", Nr. 2, Tiranë · <strong>www.idp.al</strong></p>

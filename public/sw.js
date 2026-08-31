@@ -1,72 +1,32 @@
-const CACHE_NAME = 'alpazar-v10'
+// SERVICE WORKER VETËSHKATËRRUES (kill-switch) — PA RINGARKIM.
+//
+// PSE: Për muaj të tërë app-i shërbente "versionin e vjetër" me flake që kthehej
+// te i vjetri. Dy shkaqe u gjetën e u hoqën: (1) UpdatePrompt që ringarkonte
+// faqen vetvetiu; (2) edge-cache/SW që shërbente HTML të vjetër. Ky skedar heq
+// Service Worker-in krejt.
+//
+// KUJDES I VEÇANTË: versioni i mëparshëm i kill-switch-it bënte `client.navigate()`
+// (një ringarkim) në `activate`. Për një pajisje me HTML të vjetër ende në cache,
+// ai ringarkim mund të hynte në cikël (HTML i vjetër -> riregjistron SW -> kill
+// -> navigate -> HTML i vjetër ...). Prandaj TANI kill-switch-i vetëshkatërrohet
+// NË HESHTJE: fshin çdo cache, çregjistron veten, dhe NUK ringarkon. Faqja
+// përditësohet vetvetiu në navigimin/rifreskimin e radhës — pa Service Worker,
+// çdo kërkesë shkon te rrjeti dhe `no-store` garanton freskinë. Zero ringarkim
+// automatik kudo => zero cikël "flicker->old".
 
 self.addEventListener('install', () => self.skipWaiting())
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
-    )).then(() => self.clients.claim())
-  )
+  event.waitUntil((async () => {
+    try {
+      const keys = await caches.keys()
+      await Promise.all(keys.map(k => caches.delete(k)))
+    } catch (e) { /* pa Cache API — vazhdo */ }
+    try { await self.clients.claim() } catch (e) { /* vazhdo */ }
+    try { await self.registration.unregister() } catch (e) { /* vazhdo */ }
+    // PA client.navigate()/reload — vetëshkatërrim i heshtur.
+  })())
 })
 
-self.addEventListener('fetch', (event) => {
-  const req = event.request
-  const url = new URL(req.url)
-
-  if (req.method !== 'GET') return
-
-  // Navigime dhe API → gjithmonë network-first (kurrë mos shërbe HTML të vjetër)
-  if (req.mode === 'navigate' || url.pathname.startsWith('/api') ||
-      url.hostname.includes('supabase')) {
-    event.respondWith(
-      fetch(req).catch(() => caches.match('/offline.html'))
-    )
-    return
-  }
-
-  // Vetëm asetet statike (js/css/img/font) → cache-first
-  if (/\.(js|css|png|jpg|jpeg|webp|svg|woff2?|ico)$/.test(url.pathname)) {
-    event.respondWith(
-      caches.match(req).then(cached => cached || fetch(req).then(res => {
-        const copy = res.clone()
-        caches.open(CACHE_NAME).then(ca => ca.put(req, copy))
-        return res
-      }))
-    )
-    return
-  }
-
-  // Tjetra → rrjeti
-  event.respondWith(fetch(req).catch(() => caches.match(req)))
-})
-
-self.addEventListener('push', (event) => {
-  let data = { title: 'ALPAZAR', body: 'Ke një mesazh të ri!' }
-  try { if (event.data) data = event.data.json() } catch { /* malformed push payload — use defaults */ }
-  event.waitUntil(
-    self.registration.showNotification(data.title, {
-      body: data.body,
-      icon: '/icons/icon-192.png',
-      badge: '/icons/icon-96.png',
-      vibrate: [200, 100, 200],
-      tag: 'alpazar-notification',
-      renotify: true,
-      // Ruaj destinacionin që notificationclick ta hapë objektin e saktë
-      // (shpallje/mesazh/profil), jo gjithmonë /messages.
-      data: { url: data.url || data.link || '/notifications' },
-    })
-  )
-})
-
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close()
-  const targetUrl = event.notification.data?.url || '/messages'
-  event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(wins => {
-      const existing = wins.find(w => w.url.includes(self.location.origin))
-      if (existing) { existing.focus(); existing.navigate(targetUrl) }
-      else clients.openWindow(targetUrl)
-    })
-  )
-})
+// PA fetch-handler: SW-ja nuk ndërhyn në asnjë kërkesë. Çdo navigim/aset/API
+// shkon DIREKT te rrjeti — kurrë nga një cache i vjetër.

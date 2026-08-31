@@ -10,7 +10,7 @@ export default function Privatesia() {
     .back i{font-size:18px;color:#111;}
     .topbar-title{font-size:15px;font-weight:700;color:#111;}
     .content{padding:24px 20px 40px;}
-    .ver{font-size:11px;color:#888;margin-bottom:20px;background:#FFFBEA;padding:8px 12px;border-radius:8px;display:inline-block;}
+    .ver{font-size:11px;color:#6E6E6E;margin-bottom:20px;background:#FFFBEA;padding:8px 12px;border-radius:8px;display:inline-block;}
     h1{font-size:22px;font-weight:700;color:#111;margin-bottom:8px;}
     h2{font-size:14px;font-weight:700;color:#111;margin:22px 0 8px;padding-bottom:5px;border-bottom:2px solid #F5C842;}
     p{font-size:13px;color:#444;line-height:1.85;margin-bottom:10px;}
@@ -20,13 +20,13 @@ export default function Privatesia() {
     .right-box{background:#EAF3DE;border:0.5px solid #97C459;border-radius:10px;padding:12px 16px;margin:12px 0;}
     .right-box strong{font-size:12px;font-weight:700;color:#3B6D11;display:block;margin-bottom:6px;}
     .right-box ul{color:#3B6D11;font-size:12px;margin:0;}
-    .law{font-size:11px;color:#aaa;font-style:italic;}
+    .law{font-size:11px;color:#555;font-style:italic;}
     .table-wrap{overflow-x:auto;margin:10px 0;}
     table{width:100%;border-collapse:collapse;font-size:12px;}
     th{background:#FFFBEA;padding:8px 10px;text-align:left;font-weight:700;color:#111;border:1px solid #eee;}
     td{padding:8px 10px;color:#444;border:1px solid #eee;vertical-align:top;}
     .ftr{display:flex;flex-wrap:wrap;gap:8px 16px;padding:20px;background:#f9f9f9;border-top:1px solid #eee;margin-top:10px;}
-    .ftr a{color:#888;font-size:11px;text-decoration:none;}
+    .ftr a{color:#555;font-size:11px;text-decoration:none;}
   `
   return (
     <>
@@ -48,8 +48,8 @@ export default function Privatesia() {
           <h2>1. Identiteti dhe Kontakti i Kontrolluesit</h2>
           <p><strong>Kontrolluesi i të dhënave:</strong> Alpazar<br />
           <strong>Adresa:</strong> Tiranë, Shqipëri<br />
-          <strong>Email kontakti (DPO/Privatësi):</strong> privacy@alpazar.al<br />
-          <strong>Email i përgjithshëm:</strong> support@alpazar.al</p>
+          <strong>Email kontakti (DPO/Privatësi):</strong> alpazarsuport@gmail.com<br />
+          <strong>Email i përgjithshëm:</strong> alpazarsuport@gmail.com</p>
 
           <h2>2. Kategoritë e të Dhënave dhe Qëllimi i Përpunimit</h2>
           <p>Përpunojmë kategorinë minimale të nevojshme të të dhënave personale. Tabela më poshtë shpjegon çdo kategori, qëllimin dhe bazën ligjore:</p>
@@ -131,14 +131,21 @@ export default function Privatesia() {
           <h2>5. Ndarja me Palë të Treta</h2>
           <p>Alpazar <strong>nuk shet dhe nuk tregton</strong> të dhënat tuaja. Aksesi i kufizuar lejohet vetëm tek:</p>
           <ul>
-            <li><strong>Supabase Inc.</strong> — ruajtja e bazës së të dhënave dhe autentikimi (Data Processing Agreement aktiv)</li>
-            <li><strong>Vercel Inc.</strong> — infrastruktura e hosting-ut (DPA aktiv)</li>
-            <li><strong>Vercel Analytics</strong> — statistika anonime të vizitorëve (pa cookies, GDPR-compliant)</li>
+            <li><strong>Supabase Inc.</strong> — baza e të dhënave dhe autentikimi (BE, Frankfurt)</li>
+            <li><strong>Vercel Inc.</strong> — hosting (SHBA)</li>
+            <li><strong>Vercel Analytics</strong> — statistika trafiku (SHBA) — <em>vetëm me pëlqimin tënd</em></li>
+            <li><strong>Sentry</strong> — diagnostikë gabimesh, regjistrim sesioni me tekst të maskuar (BE, Frankfurt) — <em>regjistrimi vetëm me pëlqimin tënd</em></li>
+            <li><strong>Groq Inc.</strong> — modeli i asistentit Albi; merr bisedën që ti shkruan (SHBA)</li>
+            <li><strong>Anthropic PBC</strong> — modeli rezervë i Albit; merr bisedën që ti shkruan (SHBA)</li>
+            <li><strong>Cloudinary</strong> — ruajtje dhe shpërndarje e videove që ngarkon (SHBA)</li>
+            <li><strong>OpenStreetMap / Nominatim</strong> — kërkim adresash në hartë (BE)</li>
             <li><strong>Autoritetet kompetente shqiptare</strong> — vetëm me urdhër gjykate ose kërkesë ligjore</li>
           </ul>
 
           <h2>6. Transferimi Ndërkombëtar</h2>
-          <p>Të dhënat përpunohen brenda Bashkimit Europian (Frankfurt, Gjermani). Nëse bëhet transferim jashtë BE-së, ai realizohet me <strong>Klauzolat Standarde Kontraktuale (SCCs)</strong> të miratuara nga Komisioni Europian, sipas Nenit 46 të GDPR.</p>
+          <p>Baza e të dhënave dhe diagnostika ndodhen brenda <strong>Bashkimit Europian</strong> (Frankfurt, Gjermani).</p>
+          <p><strong>Një pjesë e përpunimit ndodh në Shtetet e Bashkuara</strong> — hosting-u (Vercel), modelet e asistentit Albi (Groq, Anthropic) dhe ruajtja e videove (Cloudinary). Kur bisedon me Albin ose ngarkon një video, ato të dhëna dalin jashtë BE-së.</p>
+          <p>Jemi në proces të plotësimit të <strong>Klauzolave Standarde Kontraktuale (SCC)</strong> me këta përpunues, sipas neneve 39–42 të ligjit 124/2024 dhe nenit 46 të GDPR. Deri në përfundimin e tyre, ky transferim <strong>nuk ka ende instrument të plotë ligjor</strong> dhe po e deklarojmë hapur në vend që ta fshehim. Nëse nuk dëshiron që biseda jote të dalë jashtë BE-së, mos e përdor asistentin Albi.</p>
 
           <h2>7. Të Drejtat Tuaja</h2>
           <div className="right-box">
@@ -153,22 +160,22 @@ export default function Privatesia() {
               <li><strong>Tërhiqni konsentimin</strong> — pa pasoja negative, në çdo kohë (Art. 7.3)</li>
             </ul>
           </div>
-          <p>Ushtroni të drejtat tuaja duke dërguar email tek <strong>privacy@alpazar.al</strong> me subjekt "Kërkesë Privatësi". Përgjigjet jepen brenda <strong>30 ditëve</strong> (ose 90 ditë nëse kompleksiteti e kërkon, me njoftim).</p>
+          <p>Ushtroni të drejtat tuaja duke dërguar email tek <strong>alpazarsuport@gmail.com</strong> me subjekt "Kërkesë Privatësi". Përgjigjet jepen brenda <strong>30 ditëve</strong> (ose 90 ditë nëse kompleksiteti e kërkon, me njoftim).</p>
           <p>Nëse nuk jeni të kënaqur me përgjigjen, keni të drejtë të paraqisni ankesë tek:</p>
           <p className="law"><strong>Komisioneri për Mbrojtjen e të Dhënave Personale (IDP)</strong><br />
           Adresa: Rruga "Abdi Toptani", Nr. 2, Tiranë · Tel: +355 4 2235996 · www.idp.al</p>
 
           <h2>8. Cookie-t dhe Teknologjitë e Gjurmimit</h2>
           <p>Alpazar përdor vetëm cookie-t teknikë të domosdoshëm për funksionimin e platformës (autentikimi, preferencat). Nuk përdorim cookie-t e marketingut apo ata të palëve të treta pa konsentimin tuaj.</p>
-          <p>Për detaje të plota, lexoni <a href="/cookies" style={{ color: '#E63312' }}>Politikën e Cookie-ve</a>.</p>
+          <p>Për detaje të plota, lexoni <a href="/cookies" style={{ color: '#C42B0F' }}>Politikën e Cookie-ve</a>.</p>
 
           <h2>9. Ndryshimet e Politikës</h2>
           <p>Çdo ndryshim i rëndësishëm i kësaj politike njoftohet me email dhe njoftim në platformë, të paktën <strong>14 ditë</strong> para hyrjes në fuqi, sipas Nenit 13.2 të GDPR. Data e përditësimit shfaqet gjithmonë në krye të faqes.</p>
 
           <h2>10. Kontakti për Privatësinë</h2>
           <p>
-            <strong>Email privatësi (DPO):</strong> privacy@alpazar.al<br />
-            <strong>Email i përgjithshëm:</strong> support@alpazar.al<br />
+            <strong>Email privatësi (DPO):</strong> alpazarsuport@gmail.com<br />
+            <strong>Email i përgjithshëm:</strong> alpazarsuport@gmail.com<br />
             <strong>Adresa:</strong> Alpazar · Tiranë, Shqipëri
           </p>
         </div>

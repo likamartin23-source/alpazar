@@ -3,6 +3,9 @@
 import { useEffect } from 'react'
 import { reportError } from '../lib/monitor'
 
+// Si te `not-found.tsx`: kjo faqe render-ohet BRENDA layout-it rrenje, ndaj
+// etiketat rrenje te vetat prishnin hidratimin. Ato i takojne vetem
+// `global-error.tsx`, qe zevendeson layout-in kur deshton vete rrenja.
 export default function GlobalError({
   error,
   reset,
@@ -13,10 +16,9 @@ export default function GlobalError({
   useEffect(() => { console.error('[App Error]', error); reportError(error, 'route') }, [error])
 
   return (
-    <html lang="sq">
-      <body style={{ margin: 0, fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", background: '#FFFBEA' }}>
+    <div style={{ background: '#FFFBEA' }}>
         <div style={{
-          minHeight: '100vh', display: 'flex', flexDirection: 'column',
+          minHeight: '58vh', display: 'flex', flexDirection: 'column',
           alignItems: 'center', justifyContent: 'center', padding: 24, gap: 16,
         }}>
           <div style={{
@@ -35,7 +37,7 @@ export default function GlobalError({
             <h2 style={{ fontSize: 18, fontWeight: 700, color: '#111', margin: '0 0 8px' }}>
               Ndodhi një gabim
             </h2>
-            <p style={{ fontSize: 13, color: '#888', lineHeight: 1.6, margin: '0 0 24px' }}>
+            <p style={{ fontSize: 13, color: '#555', lineHeight: 1.6, margin: '0 0 24px' }}>
               {error?.message
                 ? error.message.slice(0, 200)
                 : 'Diçka nuk shkoi siç duhet. Provo të rifreskosh faqen.'}
@@ -70,7 +72,6 @@ export default function GlobalError({
             )}
           </div>
         </div>
-      </body>
-    </html>
+    </div>
   )
 }

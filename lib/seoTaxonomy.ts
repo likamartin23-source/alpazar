@@ -3,21 +3,18 @@
 // the /kategori/* routes and the sitemap. Kept dependency-free (relative imports only).
 
 import { createClient } from '@supabase/supabase-js'
+import { priceLabel } from './format'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from './supabase'
 
 export type SeoCategory = { id: string; name: string; slug: string; icon: string | null }
 
-export type SeoListing = {
-  id: string
-  title: string
-  price: number
-  currency: string
-  condition: string | null
-  city: string | null
-  is_premium: boolean
-  images: string[] | null
-  created_at: string
-}
+// GAP 2: kartat SEO përdorin ListingCard-in e përbashkët → tipi i rreshtit = ListingCardItem
+// (identitet biznes/person, rank_tier, status, views_count). `import type` erret në build,
+// s'krijon varësi runtime nga komponenti klient.
+import { LISTING_SELECT } from './listingSelect'
+import type { ListingCardItem } from '../app/components/ListingCard'
+
+export type SeoListing = ListingCardItem
 
 // Fallback category names if the DB is unreachable at build time (mirrors search page).
 export const FALLBACK_CATEGORIES = [
@@ -88,22 +85,24 @@ export async function fetchCategoryListings(
   try {
     let q = db()
       .from('listings')
-      .select('id,title,price,currency,condition,city,is_premium,images,created_at', { count: 'exact' })
+      .select(LISTING_SELECT, { count: 'exact' })
       .eq('is_active', true)
       .eq('category_id', categoryId)
     if (opts.city) q = q.ilike('city', opts.city)
     const { data, count, error } = await q
-      .order('is_premium', { ascending: false })
+      .order('rank_tier', { ascending: false })
       .order('created_at', { ascending: false })
       .limit(limit)
     if (error || !data) return { listings: [], total: 0 }
-    return { listings: data as SeoListing[], total: count ?? data.length }
+    return { listings: data as unknown as SeoListing[], total: count ?? data.length }
   } catch {
     return { listings: [], total: 0 }
   }
 }
 
+// `toLocaleString()` varej nga ICU-ja e mjedisit dhe jepte `1,450,000` në vend
+// të konventës shqipe `1.450.000` — mospërputhje me çdo sipërfaqe tjetër, dhe
+// rrezik hidratimi SSR↔klient. Tani i njëjti burim si kudo tjetër.
 export function fmtPrice(price: number, cur: string): string {
-  if (!price) return 'Me marrëveshje'
-  return cur === 'EUR' ? `${price.toLocaleString()} €` : `${price.toLocaleString()} L`
+  return priceLabel(price, cur)
 }

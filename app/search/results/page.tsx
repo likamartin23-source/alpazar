@@ -2,9 +2,11 @@
 
 export const dynamic = 'force-dynamic'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { SkeletonGrid } from '../../components/Skeleton'
+import ListingCard from '../../components/ListingCard'
+import { LISTING_SELECT } from '../../../lib/listingSelect'
 
 const CITIES = ['Tiranë', 'Durrës', 'Vlorë', 'Shkodër', 'Elbasan', 'Fier', 'Korçë', 'Berat', 'Lushnjë', 'Kavajë', 'Gjirokastër', 'Sarandë', 'Lezhë', 'Kukës', 'Pogradec', 'Peshkopi', 'Tropojë', 'Përmet', 'Tepelenë', 'Tjetër']
 
@@ -19,10 +21,10 @@ const SHOP_CATEGORIES = [
   { id: 'bukuri', label: 'Bukuri' },
 ]
 
-function fmt(price: number, cur: string) {
-  if (!price) return 'Me marrëveshje'
-  return cur === 'EUR' ? `${price.toLocaleString()} €` : `${price.toLocaleString()} L`
-}
+// Select-i i vetem per listat e shpalljeve — i njejti te kerkimi fillestar
+// (buildQb) dhe te "Shiko me shume" (loadMore), qe kartat te mos divergjojne
+// brenda te njejtes liste (badge VIP, overlay SHITUR, chip biznes/person).
+// LISTING_SELECT vjen nga lib/listingSelect (një projeksion identiteti për të gjitha feed-et).
 
 function ShopCard({ shop }: { shop: any }) {
   const initials = (shop.shop_name || shop.full_name || '?').slice(0, 2).toUpperCase()
@@ -38,7 +40,7 @@ function ShopCard({ shop }: { shop: any }) {
         <div className="shop-avatar">
           {shop.avatar_url
             ? <img src={shop.avatar_url} alt={shop.shop_name} loading="lazy" width={60} height={60} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
-            : <span style={{ fontSize: 17, fontWeight: 700, color: '#E63312' }}>{initials}</span>
+            : <span style={{ fontSize: 17, fontWeight: 700, color: '#C42B0F' }}>{initials}</span>
           }
         </div>
         <div className="shop-premium-badge"><span aria-hidden="true">⭐</span> Premium</div>
@@ -50,26 +52,6 @@ function ShopCard({ shop }: { shop: any }) {
           <span className="shop-city"><i className="ti ti-map-pin" style={{ fontSize: 10 }} aria-hidden="true" /> {shop.city || 'Shqipëri'}</span>
           <span className="shop-count">{shop.listing_count || 0} shpallje</span>
         </div>
-      </div>
-    </a>
-  )
-}
-
-function ListingCard({ l, premium }: { l: any; premium?: boolean }) {
-  return (
-    <a className="listing-card" href={`/listing/${l.id}`}>
-      <div className="card-img">
-        {l.images?.[0]
-          ? <img src={l.images[0]} alt={l.title} loading="lazy" width={400} height={300} />
-          : <i className="ti ti-photo" style={{ fontSize: 30, color: '#ccc' }} aria-hidden="true" />}
-        {l.condition === 'i_ri'       && <span className="badge-new">I ri</span>}
-        {l.condition === 'i_perdorur' && <span className="badge-used">I përdorur</span>}
-        {premium && <span className="badge-premium" aria-label="Premium">⭐</span>}
-      </div>
-      <div className="card-body">
-        <div className="card-title">{l.title}</div>
-        <div className="card-price">{fmt(l.price, l.currency)}</div>
-        <div className="card-loc"><i className="ti ti-map-pin" style={{ fontSize: 10 }} aria-hidden="true" />{l.city || 'Shqipëri'}</div>
       </div>
     </a>
   )
@@ -92,6 +74,8 @@ const [searchError, setSearchError] = useState(false)
   const [categories, setCategories] = useState<any[]>([])
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [savedOk, setSavedOk]         = useState(false)
+  const [saveErr, setSaveErr]         = useState(false)
+  const searchReqId = useRef(0)
   const [userId, setUserId]           = useState<string | null>(null)
   const [sortBy, setSortBy]           = useState('newest')
 
@@ -100,6 +84,18 @@ const [searchError, setSearchError] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
   const [regularOffset, setRegularOffset] = useState(0)
   const [showScrollTop, setShowScrollTop] = useState(false)
+  // `timeAgo` te ListingCard varet nga Date.now(); jepet vetem pas montimit
+  // per te shmangur mospershtatje hidratimi.
+  const [mounted, setMounted] = useState(false)
+  // "Afer meje" (Faza 7c): mode i vecante, i nisur nga perdoruesi. Vendndodhja
+  // merret nga shfletuesi (pelqim) dhe kalon vetem si parametra te RPC-se
+  // listings_near — nuk ruhet asgje ne server (privatesi, Ligji 124/2024).
+  const [nearMode, setNearMode]   = useState(false)
+  const [nearBusy, setNearBusy]   = useState(false)
+  const [nearErr, setNearErr]     = useState('')
+  const [nearList, setNearList]   = useState<any[]>([])
+
+  useEffect(() => { setMounted(true) }, [])
 
   // Show/hide scroll-to-top button
   useEffect(() => {
@@ -130,6 +126,9 @@ const [searchError, setSearchError] = useState(false)
     if (!error) {
       setSavedOk(true)
       setTimeout(() => setSavedOk(false), 3000)
+    } else {
+      setSaveErr(true)
+      setTimeout(() => setSaveErr(false), 3000)
     }
   }
 
@@ -172,30 +171,61 @@ const [searchError, setSearchError] = useState(false)
     setActiveFilterCount(n)
   }, [catFilter, condFilter, cityFilter, priceMin, priceMax, premiumOnly, sortBy])
 
-  // Realtime: update/remove premium + regular listings
+  // Ref-i i filtrave aktualë — që handler-i realtime i INSERT-it të lexojë gjendjen e tanishme
+  // (jo atë të kapur në closure kur u abonua). Përditësohet në çdo render.
+  const filtersRef = useRef({ q, catFilter, condFilter, cityFilter, priceMin, priceMax, premiumOnly, sortBy })
+  filtersRef.current = { q, catFilter, condFilter, cityFilter, priceMin, priceMax, premiumOnly, sortBy }
+
+  // A i përshtatet një shpallje e re filtrave aktualë? Konservativ: kthen false kur s'jemi të
+  // sigurt (p.sh. filtër kategorie i vendosur — shmang përputhje id/slug të gabuar). Zero false-pozitive.
+  function matchesCurrentSearch(r: any): boolean {
+    const f = filtersRef.current
+    if (!r || r.is_active === false) return false
+    if (f.sortBy !== 'newest') return false          // pozicioni i saktë s'dihet pa rirenditje
+    if (f.catFilter) return false                    // shmang paqartësinë id↔slug — del në refresh
+    const qq = (f.q || '').trim().toLowerCase()
+    if (qq && !String(r.title || '').toLowerCase().includes(qq)) return false
+    if (f.condFilter && r.condition !== f.condFilter) return false
+    if (f.cityFilter && !String(r.city || '').toLowerCase().includes(f.cityFilter.trim().toLowerCase())) return false
+    if (f.priceMin && Number(r.price) < Number(f.priceMin)) return false
+    if (f.priceMax && Number(r.price) > Number(f.priceMax)) return false
+    if (f.premiumOnly && !r.is_premium) return false
+    return true
+  }
+
+  // Realtime: shto (INSERT) + përditëso/hiq (UPDATE/DELETE) premium + regular
   useEffect(() => {
     if (!premium.length && !regular.length) return
     const ch = supabase
       .channel('results-rt')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'listings' }, async (payload) => {
+        const row = payload.new as any
+        if (!matchesCurrentSearch(row)) return
+        // Merr projeksionin e plotë (payload-i s'ka join biznes/autor) pastaj vëre në krye.
+        let full: any = row
+        try { const { data } = await supabase.from('listings').select(LISTING_SELECT).eq('id', row.id).maybeSingle(); if (data) full = data } catch { /* fail-soft */ }
+        if (full.is_premium) setPremium(prev => prev.some(l => l.id === full.id) ? prev : [full, ...prev])
+        else setRegular(prev => prev.some(l => l.id === full.id) ? prev : [full, ...prev])
+      })
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'listings' }, (payload) => {
         const n = payload.new as any
-        if (!n.is_active) {
-          setPremium(prev => prev.filter(l => l.id !== n.id))
-          setRegular(prev => prev.filter(l => l.id !== n.id))
-          return
+        // Kanali s'ka filter → ndizet për ÇDO UPDATE të listings site-wide (përfshi increment_listing_views
+        // në çdo hapje shpalljeje, kurthi #7). GUARD brenda updater-it: kthe TË NJËJTIN prev kur rreshti
+        // s'është në listë → React bën bail-out, pa re-render të faqes. (Pa closure të vjetruar.)
+        const patch = (prev: any[], keep: boolean) => {
+          const i = prev.findIndex(l => l.id === n.id)
+          if (i < 0) return prev                                   // jashtë listës → pa ndryshim
+          if (!keep) return prev.filter(l => l.id !== n.id)        // joaktive, ose kaloi te lista tjetër
+          return prev.map(l => l.id === n.id ? { ...l, ...n } : l) // patch në vend
         }
-        if (n.is_premium) {
-          setPremium(prev => prev.map(l => l.id === n.id ? { ...l, ...n } : l))
-          setRegular(prev => prev.filter(l => l.id !== n.id))
-        } else {
-          setRegular(prev => prev.map(l => l.id === n.id ? { ...l, ...n } : l))
-          setPremium(prev => prev.filter(l => l.id !== n.id))
-        }
+        const active = !!n.is_active
+        setPremium(prev => patch(prev, active && !!n.is_premium))
+        setRegular(prev => patch(prev, active && !n.is_premium))
       })
       .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'listings' }, (payload) => {
         const id = (payload.old as any).id
-        setPremium(prev => prev.filter(l => l.id !== id))
-        setRegular(prev => prev.filter(l => l.id !== id))
+        setPremium(prev => prev.findIndex(l => l.id === id) < 0 ? prev : prev.filter(l => l.id !== id))
+        setRegular(prev => prev.findIndex(l => l.id === id) < 0 ? prev : prev.filter(l => l.id !== id))
       })
       .subscribe()
     return () => { supabase.removeChannel(ch) }
@@ -211,6 +241,7 @@ const [searchError, setSearchError] = useState(false)
     premOnly = premiumOnly,
     sort     = sortBy,
   ) {
+    const reqId = ++searchReqId.current // guard kundër race të kërkimeve paralele
     setLoading(true)
     setSearchError(false)
     try {
@@ -220,8 +251,10 @@ const [searchError, setSearchError] = useState(false)
     if (!premOnly) {
       let qb = supabase
         .from('profiles')
-        .select('id,full_name,username,avatar_url,city,bio,is_premium,shop_name,shop_description,shop_category,shop_banner_url')
+        .select('id,full_name,username,avatar_url,city,bio,is_premium,premium_expires_at,shop_name,shop_description,shop_category,shop_banner_url')
         .eq('is_premium', true)
+        // NDERO skadimin: përjashto premium-in e skaduar edhe para se cron-i ta fikë flamurin.
+        .or(`premium_expires_at.is.null,premium_expires_at.gt.${new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')}`)
         .order('created_at', { ascending: false })
         .limit(20)
 
@@ -244,6 +277,7 @@ const [searchError, setSearchError] = useState(false)
         shopResults = profiles.map(p => ({ ...p, listing_count: countMap[p.id] || 0 }))
       }
     }
+    if (reqId !== searchReqId.current) return // erdhi një kërkim më i ri
     setShops(shopResults)
 
     // ── 2 + 3) LISTINGS — FTS GIN ───────────────────────────
@@ -256,13 +290,13 @@ const [searchError, setSearchError] = useState(false)
     const buildQb = (isPrem: boolean) => {
       let qb = supabase
         .from('listings')
-        .select('id,title,price,currency,condition,city,is_premium,images,created_at,views_count,category_id')
+        .select(LISTING_SELECT)
         .eq('is_active', true)
         .eq('is_premium', isPrem)
         .order(sortOrder.col, { ascending: sortOrder.asc })
         .limit(40)
 
-      if (query.trim()) qb = (qb as any).textSearch('search_tsv', query.trim(), { type: 'websearch', config: 'simple' })
+      if (query.trim()) qb = (qb as any).textSearch('fts', query.trim(), { type: 'websearch', config: 'simple' })
       if (cat)         qb = qb.eq('category_id', cat)
       if (cond)        qb = qb.eq('condition', cond)
       if (city.trim()) qb = (qb as any).ilike('city', `%${city.trim()}%`)
@@ -274,6 +308,7 @@ const [searchError, setSearchError] = useState(false)
     const PAGE = 40
     if (premOnly) {
       const premRes = await buildQb(true)
+      if (reqId !== searchReqId.current) return
       setPremium(premRes.data || [])
       setRegular([])
       setHasMore(false)
@@ -282,6 +317,7 @@ const [searchError, setSearchError] = useState(false)
         buildQb(true),
         buildQb(false),
       ])
+      if (reqId !== searchReqId.current) return
       setPremium(premRes.data || [])
       setRegular(regRes.data || [])
       setHasMore((regRes.data?.length ?? 0) >= PAGE)
@@ -300,7 +336,7 @@ const [searchError, setSearchError] = useState(false)
     const nextOffset = regularOffset + PAGE
     let qb = supabase
       .from('listings')
-      .select('id,title,price,currency,condition,city,is_premium,images,created_at,views_count,category_id')
+      .select(LISTING_SELECT)
       .eq('is_active', true)
       .eq('is_premium', false)
       .range(nextOffset, nextOffset + PAGE - 1)
@@ -312,7 +348,7 @@ const [searchError, setSearchError] = useState(false)
                                 { col: 'created_at',  asc: false }
     qb = qb.order(sortOrder.col, { ascending: sortOrder.asc })
 
-    if (q.trim())         qb = (qb as any).textSearch('search_tsv', q.trim(), { type: 'websearch', config: 'simple' })
+    if (q.trim())         qb = (qb as any).textSearch('fts', q.trim(), { type: 'websearch', config: 'simple' })
     if (catFilter)        qb = qb.eq('category_id', catFilter)
     if (condFilter)       qb = qb.eq('condition', condFilter)
     if (cityFilter.trim()) qb = (qb as any).ilike('city', `%${cityFilter.trim()}%`)
@@ -353,6 +389,36 @@ const [searchError, setSearchError] = useState(false)
     url.searchParams.delete('sort')
     window.history.replaceState(null, '', url.toString())
     doSearch(q, '', '', '', '', '', false, 'newest')
+  }
+
+  // Toggle i "Afer meje": kërkon vendndodhjen, thërret RPC-në, pastaj merr
+  // kartat e plota (LISTING_SELECT) dhe i rendit sipas distances. Pa leje ose
+  // pa rezultat → mesazh i qartë, pa e prishur kërkimin normal.
+  function toggleNear() {
+    if (nearMode) { setNearMode(false); setNearErr(''); return }
+    if (typeof navigator === 'undefined' || !('geolocation' in navigator)) {
+      setNearErr('Shfletuesi nuk e mbështet vendndodhjen.'); return
+    }
+    setNearBusy(true); setNearErr('')
+    navigator.geolocation.getCurrentPosition(
+      async pos => {
+        try {
+          const { latitude, longitude } = pos.coords
+          const { data: near } = await supabase.rpc('listings_near', { p_lat: latitude, p_lng: longitude, p_radius_km: 25, p_limit: 60 })
+          const rows = (near || []) as { id: string; distance_km: number }[]
+          if (rows.length === 0) { setNearList([]); setNearMode(true); return }
+          const dist = new Map(rows.map(r => [r.id, r.distance_km]))
+          const { data: full } = await supabase.from('listings').select(LISTING_SELECT).in('id', rows.map(r => r.id))
+          const ordered = (full || [])
+            .map((l: any) => ({ ...l, _dist: dist.get(l.id) }))
+            .sort((a: any, b: any) => (a._dist ?? 1e9) - (b._dist ?? 1e9))
+          setNearList(ordered); setNearMode(true)
+        } catch { setNearErr('Nuk u ngarkuan shpalljet afër teje.') }
+        finally { setNearBusy(false) }
+      },
+      () => { setNearErr('Nuk u dha leje për vendndodhjen.'); setNearBusy(false) },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 },
+    )
   }
 
   function newSearch(e: React.FormEvent) {
@@ -397,7 +463,7 @@ const [searchError, setSearchError] = useState(false)
 
         /* Body */
         .body{padding:12px 10px;}
-        .results-meta{font-size:11px;color:#888;margin-bottom:14px;}
+        .results-meta{font-size:11px;color:#6B6B6B;margin-bottom:14px;}
         .results-meta strong{color:#111;}
 
         /* Section headings */
@@ -405,7 +471,7 @@ const [searchError, setSearchError] = useState(false)
         .section-hdr{display:flex;align-items:center;gap:7px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #F5C842;}
         .section-hdr .section-icon{font-size:16px;}
         .section-hdr h2{font-size:13px;font-weight:800;color:#111;flex:1;}
-        .section-count{font-size:10px;color:#888;background:#f5f5f0;border-radius:20px;padding:2px 8px;}
+        .section-count{font-size:10px;color:#6B6B6B;background:#f5f5f0;border-radius:20px;padding:2px 8px;}
 
         /* Shop grid */
         .shops-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
@@ -417,31 +483,17 @@ const [searchError, setSearchError] = useState(false)
         .shop-premium-badge{position:absolute;top:5px;right:6px;background:#F5C842;color:#111;font-size:7.5px;padding:2px 5px;border-radius:8px;font-weight:700;}
         .shop-body{padding:7px 9px 9px;}
         .shop-name{font-size:11.5px;font-weight:700;color:#111;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-        .shop-cat-tag{font-size:9px;color:#E63312;font-weight:600;margin-bottom:4px;}
+        .shop-cat-tag{font-size:9px;color:#C42B0F;font-weight:600;margin-bottom:4px;}
         .shop-meta{display:flex;align-items:center;justify-content:space-between;}
         .shop-city{font-size:9px;color:#aaa;display:flex;align-items:center;gap:2px;}
-        .shop-count{font-size:9px;color:#E63312;font-weight:700;}
+        .shop-count{font-size:9px;color:#C42B0F;font-weight:700;}
 
-        /* Listing grid */
-        .listings-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
-        .listing-card{background:#fff;border:0.5px solid #ececec;border-radius:12px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;aspect-ratio:3/4;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 16px -10px rgba(0,0,0,.14);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s cubic-bezier(.2,.8,.2,1);text-decoration:none;color:inherit;animation:card-in .45s cubic-bezier(.2,.8,.2,1) both;}
-        @keyframes card-in{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
-        @media (prefers-reduced-motion: reduce){.listing-card{animation:none;}}
-        .listing-card:hover{transform:translateY(-3px);box-shadow:0 10px 24px -8px rgba(0,0,0,.2);}
-        .listing-card:active{transform:scale(.98);}
-        .card-img{flex:0 0 70%;position:relative;background:linear-gradient(135deg,#FBF7E8,#F2EAD0);overflow:hidden;}
-        .card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
-        .card-img i{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
-        .badge-new{position:absolute;top:6px;left:6px;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;font-size:8px;padding:2px 6px;border-radius:6px;font-weight:700;box-shadow:0 1px 4px rgba(230,51,18,.4);letter-spacing:.2px;}
-        .badge-used{position:absolute;top:6px;left:6px;background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;font-size:8px;padding:2px 6px;border-radius:6px;font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.3);letter-spacing:.2px;}
-        .badge-premium{position:absolute;top:6px;right:6px;background:linear-gradient(135deg,#F8D24E,#F5C842);color:#111;font-size:8px;padding:2px 6px;border-radius:6px;font-weight:700;box-shadow:0 1px 4px rgba(245,200,66,.5);}
-        .card-body{flex:0 0 30%;padding:7px 8px;display:flex;flex-direction:column;justify-content:space-between;min-height:0;}
-        .card-title{font-size:11px;font-weight:700;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-        .card-price{font-size:12.5px;font-weight:800;color:#E63312;}
-        .card-loc{font-size:9.5px;color:#999;display:flex;align-items:center;gap:3px;}
+        /* Kartat e shpalljeve: stilet vijne nga app/ui-refine.css (§8), i njejti
+           ListingCard i perbashket si kudo. Rregullat lokale u hoqen qe kjo faqe
+           te mos divergjoje me kryefaqen/profilin/biznesin. Grid-i i njesuar. */
 
         /* Empty state per section */
-        .section-empty{text-align:center;padding:16px;background:#f9f9f7;border-radius:10px;color:#aaa;font-size:11px;}
+        .section-empty{text-align:center;padding:16px;background:#f9f9f7;border-radius:10px;color:#555;font-size:11px;}
 
         /* Global loading */
         .loading{text-align:center;padding:50px 20px;}
@@ -462,7 +514,7 @@ const [searchError, setSearchError] = useState(false)
         .price-range input{flex:1;}
         .cond-row{display:flex;gap:6px;flex-wrap:wrap;}
         .cond-btn{flex:1;min-width:70px;border:1.5px solid #ddd;border-radius:9px;padding:8px 6px;font-size:11px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;white-space:nowrap;}
-        .cond-btn.active{border-color:#E63312;background:#FFF0EE;color:#E63312;}
+        .cond-btn.active{border-color:#E63312;background:#FFF0EE;color:#C42B0F;}
         .fp-actions{display:flex;gap:8px;margin-top:6px;}
         .fp-apply{flex:1;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:11px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
         .fp-clear{background:#f5f5f5;color:#555;border:none;border-radius:11px;padding:13px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
@@ -494,6 +546,10 @@ const [searchError, setSearchError] = useState(false)
 
         {/* ── CATEGORY CHIPS ── */}
         <div className="cats">
+          <button type="button" aria-pressed={nearMode} className={`cb ${nearMode ? 'on' : ''}`}
+            onClick={toggleNear} disabled={nearBusy} aria-label="Shpallje afër meje">
+            <span aria-hidden="true">📍</span> {nearBusy ? 'Duke gjetur…' : 'Afër meje'}
+          </button>
           <button type="button" aria-pressed={!catFilter} className={`cb ${!catFilter ? 'on' : ''}`}
             onClick={() => { setCatFilter(''); doSearch(q, '', condFilter, cityFilter, priceMin, priceMax) }}>
             Të gjitha
@@ -508,6 +564,12 @@ const [searchError, setSearchError] = useState(false)
             </button>
           ))}
         </div>
+
+        {nearErr && (
+          <div role="alert" style={{ padding: '8px 12px', fontSize: 12, color: '#C42305', background: '#FFF0EE', borderBottom: '1px solid #F5C5BC' }}>
+            {nearErr}
+          </div>
+        )}
 
         {/* ── ACTIVE FILTERS BAR ── */}
         {activeFilterCount > 0 && (
@@ -534,8 +596,25 @@ const [searchError, setSearchError] = useState(false)
             </div>
           ) : loading ? (
             <SkeletonGrid count={6} />
+          ) : nearMode ? (
+            <>
+              <h1 style={{ position: 'absolute', width: 1, height: 1, padding: 0, margin: -1, overflow: 'hidden', clip: 'rect(0 0 0 0)', whiteSpace: 'nowrap', border: 0 }}>Shpallje afër teje</h1>
+              <div className="results-meta">
+                <span aria-live="polite"><span aria-hidden="true">📍</span> <strong>{nearList.length}</strong> shpallje afër teje (deri 25 km)</span>
+              </div>
+              {nearList.length === 0 ? (
+                <div className="section-empty">Nuk u gjet asnjë shpallje afër teje. Provo më vonë ose kërko normalisht.</div>
+              ) : (
+                <div className="listings-grid">
+                  {nearList.map((l, i) => <ListingCard key={l.id} listing={l} index={i} mounted={mounted} />)}
+                </div>
+              )}
+            </>
           ) : (
             <>
+              <h1 style={{ position: 'absolute', width: 1, height: 1, padding: 0, margin: -1, overflow: 'hidden', clip: 'rect(0 0 0 0)', whiteSpace: 'nowrap', border: 0 }}>
+                {q ? `Rezultatet e kërkimit për "${q}"` : 'Rezultatet e kërkimit'}
+              </h1>
               <div className="results-meta" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
                 <span aria-live="polite" aria-atomic="true">
                   {q
@@ -550,8 +629,8 @@ const [searchError, setSearchError] = useState(false)
                     aria-label="Ruaj këtë kërkim"
                     style={{
                       background: savedOk ? '#10B981' : '#fff',
-                      color: savedOk ? '#fff' : '#E63312',
-                      border: `1.5px solid ${savedOk ? '#10B981' : '#E63312'}`,
+                      color: savedOk ? '#fff' : '#C42305',
+                      border: `1.5px solid ${savedOk ? '#10B981' : '#C42305'}`,
                       borderRadius: 20, padding: '3px 10px', fontSize: 10,
                       fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
                       display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0,
@@ -559,7 +638,7 @@ const [searchError, setSearchError] = useState(false)
                     }}
                   >
                     <i className={`ti ti-bell${savedOk ? '-ringing' : ''}`} aria-hidden="true" style={{ fontSize: 11 }} />
-                    {savedOk ? '✓ Ruajtur!' : 'Ruaj'}
+                    {savedOk ? '✓ Ruajtur!' : saveErr ? '✕ Provo sërish' : 'Ruaj'}
                   </button>
                 )}
               </div>
@@ -591,7 +670,7 @@ const [searchError, setSearchError] = useState(false)
                   <div className="section-empty">Nuk ka shpallje premium{q ? ` për "${q}"` : ''}</div>
                 ) : (
                   <div className="listings-grid">
-                    {premium.map(l => <ListingCard key={l.id} l={l} premium={true} />)}
+                    {premium.map((l, i) => <ListingCard key={l.id} listing={l} index={i} mounted={mounted} />)}
                   </div>
                 )}
               </div>
@@ -607,7 +686,7 @@ const [searchError, setSearchError] = useState(false)
                   <div className="section-empty">Nuk ka shpallje të tjera{q ? ` për "${q}"` : ''}</div>
                 ) : (
                   <div className="listings-grid">
-                    {regular.map(l => <ListingCard key={l.id} l={l} premium={false} />)}
+                    {regular.map((l, i) => <ListingCard key={l.id} listing={l} index={i} mounted={mounted} />)}
                   </div>
                 )}
                 {hasMore && (
@@ -684,11 +763,16 @@ const [searchError, setSearchError] = useState(false)
 
             {/* Premium only */}
             <div className="fp-row"
+              role="switch"
+              aria-checked={premiumOnly}
+              aria-label="Vetëm Premium"
+              tabIndex={0}
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: premiumOnly ? '#FFF8EE' : '#f9f9f7', border: `1.5px solid ${premiumOnly ? '#e0b030' : '#eee'}`, borderRadius: 12, padding: '12px 14px', cursor: 'pointer' }}
+              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setPremiumOnly(v => !v) } }}
               onClick={() => setPremiumOnly(v => !v)}>
               <div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: '#111' }}>Vetëm Premium</div>
-                <div style={{ fontSize: 11, color: '#888', marginTop: 2 }}>Shpallje të verifikuara</div>
+                <div style={{ fontSize: 11, color: '#6B6B6B', marginTop: 2 }}>Shpallje të verifikuara</div>
               </div>
               <div style={{
                 width: 44, height: 24, borderRadius: 12, background: premiumOnly ? '#F5C842' : '#ddd',

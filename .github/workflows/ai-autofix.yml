@@ -1,0 +1,163 @@
+name: AI Auto-Fix — rregullim automatik i gabimeve nga AI Health
+
+# Mbyll ciklin e monitorimit: AI Health i REGJISTRON gabimet e prodhimit
+# (health_events), ky workflow i LEXON dhe i JEP Claude Code-it që t'i rregullojë
+# vetë, duke hapur një PR. Pa nderhyrje manuale.
+#
+# Trigger-at:
+#  - schedule: çdo ditë 05:30 UTC (07:30 Tiranë) — pas auditimit ditës
+#  - workflow_dispatch: manual, ose i thirrur nga jashtë me një problem konkret
+on:
+  schedule:
+    - cron: '30 5 * * *'
+  workflow_dispatch:
+    inputs:
+      problem:
+        description: 'Problem konkret për t''u rregulluar (bosh = merr nga AI Health)'
+        required: false
+        type: string
+      min_severity:
+        description: 'Pragu minimal (low|medium|high)'
+        required: false
+        default: 'medium'
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write
+
+concurrency:
+  group: ai-autofix
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    name: Mblidh gabimet e pazgjidhura
+    runs-on: ubuntu-latest
+    outputs:
+      problems: ${{ steps.fetch.outputs.problems }}
+      has_work: ${{ steps.fetch.outputs.has_work }}
+    steps:
+      - id: fetch
+        env:
+          SB_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SB_ANON: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          FEED_TOKEN: ${{ secrets.HEALTH_FEED_TOKEN }}
+          MANUAL: ${{ inputs.problem }}
+          MIN_SEV: ${{ inputs.min_severity }}
+        run: |
+          set -euo pipefail
+
+          # 1) Problem i dhenë manualisht ka përparësi.
+          if [ -n "${MANUAL:-}" ]; then
+            printf 'problems<<EOF\n%s\nEOF\n' "$MANUAL" >> "$GITHUB_OUTPUT"
+            echo "has_work=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # 2) Perndryshe lexo nga AI Health nepermjet RPC-se me PRIVILEGJ MINIMAL.
+          #    QELLIMISHT NUK perdoret service_role: ai eshte celesi-perendi qe lexon
+          #    e shkruan gjithcka, dhe do ta ekspozonte cdo workflow. Ne vend te tij,
+          #    funksioni health_open_events(p_token) kthen VETEM gabimet e hapura
+          #    (asnje tabele tjeter, asnje shkrim), i mbrojtur me token te dedikuar.
+          if [ -z "${SB_URL:-}" ] || [ -z "${SB_ANON:-}" ] || [ -z "${FEED_TOKEN:-}" ]; then
+            echo "::notice::Mungon SB_URL/SB_ANON/HEALTH_FEED_TOKEN — leximi automatik u anashkalua. Workflow-i thirret ende manualisht me input 'problem'."
+            echo "has_work=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          HTTP=$(curl -sS -w '%{http_code}' -o /tmp/ev.json -X POST \
+            -H "apikey: $SB_ANON" \
+            -H "Authorization: Bearer $SB_ANON" \
+            -H "Content-Type: application/json" \
+            --data "$(jq -nc --arg t "$FEED_TOKEN" '{p_token:$t}')" \
+            "$SB_URL/rest/v1/rpc/health_open_events" || echo 000)
+
+          if [ "$HTTP" != "200" ]; then
+            echo "::warning::Leximi i AI Health deshtoi (HTTP $HTTP) — anashkalohet."
+            echo "has_work=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          COUNT=$(python3 -c "import json;print(len(json.load(open('/tmp/ev.json'))))")
+          if [ "$COUNT" = "0" ]; then
+            echo "::notice::Asnjë gabim i pazgjidhur — asgjë për të rregulluar."
+            echo "has_work=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          python3 - <<'PY' > /tmp/problems.txt
+          import json
+          evs = json.load(open('/tmp/ev.json'))
+          for e in evs:
+              print(f"- [{e.get('severity','?')}] x{e.get('count',1)} ({e.get('source','?')}/{e.get('category','?')}) {e.get('message','')}")
+              if e.get('url'):
+                  print(f"    URL: {e['url']}")
+              if e.get('likely_cause'):
+                  print(f"    Shkaku i dyshuar: {e['likely_cause']}")
+          PY
+
+          {
+            echo 'problems<<EOF'
+            cat /tmp/problems.txt
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+          echo "has_work=true" >> "$GITHUB_OUTPUT"
+
+  fix:
+    name: Claude rregullon dhe hap PR
+    needs: collect
+    if: needs.collect.outputs.has_work == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.ALPAZAR_CLAUD_SECRET || secrets.GITHUB_TOKEN }}
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.ALPAZAR_CLAUD_SECRET || secrets.GITHUB_TOKEN }}
+          prompt: |
+            Ti je inxhinier i lartë në projektin Alpazar (Next.js 14 App Router + Supabase).
+            AI Health ka regjistruar këto gabime REALE nga PRODHIMI:
+
+            ${{ needs.collect.outputs.problems }}
+
+            RREGULLA ABSOLUTE (mos i shkel kurrë):
+            - CSS vetëm inline — JO Tailwind, JO librari komponentësh
+            - Import paths vetëm relative — JO alias "@/"
+            - Navigimi me window.location.href — JO useRouter()
+            - OTP_SECONDS = 120 — MOS E NDRYSHO
+            - Mos shto varësi npm të reja pa nevojë kritike
+            - Gjuha e UI: shqip
+
+            SI TË PUNOSH (metodë, jo hamendje):
+            1. Për çdo gabim, GJEJ SHKAKUN RRËNJËSOR në kod përpara se të ndryshosh gjë.
+               Mos e "fashit" simptomën.
+            2. VERIFIKO se gabimi ekziston endë në kodin aktual — telemetria mund të
+               jetë e vjetër dhe problemi tashmë i rregulluar. Nëse është i rregulluar,
+               mos ndrysho asgjë dhe shpjegoje këtë në PR.
+            3. Për React #418/#422/#425 (hydration): shkaktarët e zakonshëm janë
+               Date.now(), Math.random(), dhe toLocaleString/toLocaleDateString
+               (varen nga ICU/timezone → server ≠ klient). Përdor helper-at
+               deterministikë te lib/format.ts.
+            4. Për "Cannot read properties of null": shto guard, mos hiq funksionalitet.
+            5. Pas ndryshimeve: `npx tsc --noEmit` DHE `npx next build` duhet të kalojnë.
+
+            REZULTATI:
+            Hap një Pull Request (MOS bëj push direkt në main) me:
+            - titull të shkurtër që përshkruan fiksin
+            - në përshkrim: për çdo gabim → shkaku rrënjësor, fiksi, dhe si u verifikua
+            - nëse ndonjë gabim u vlerësua si i vjetër/i parregullueshem, thuaje qartë
+
+          # v1: mjetet kalojne si argumente CLI. Si `allowed_tools` ato injoroheshin
+          # heshtazi, pra ky workflow — qe niset vete me cron dhe ka leje shkrimi —
+          # punonte pa asnje kufizim. Shih mesazhin e commit-it.
+          # https://github.com/anthropics/claude-code-action/blob/main/docs/migration-guide.md
+          claude_args: |
+            --allowedTools "Bash(npx tsc --noEmit),Bash(npx next build),Bash(npm ci),Bash(git *),Read,Edit,Write,Glob,Grep"

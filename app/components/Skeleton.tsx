@@ -6,11 +6,12 @@ const shimmer = `
     100% { background-position: 400px 0; }
   }
   .sk {
-    background: linear-gradient(90deg, #f0ede0 25%, #e8e4d0 50%, #f0ede0 75%);
+    background: linear-gradient(90deg, #efeadb 0%, #efeadb 20%, #faf7ee 50%, #efeadb 80%, #efeadb 100%);
     background-size: 800px 100%;
-    animation: shimmer 1.4s infinite linear;
+    animation: shimmer 1.6s cubic-bezier(.4,0,.6,1) infinite;
     border-radius: 6px;
   }
+  @media (prefers-reduced-motion: reduce){ .sk{ animation: none; } }
 `
 
 /* ─── Skeleton një kartë shpalljeje (listing card) ───────────────────── */
@@ -22,8 +23,12 @@ export function SkeletonCard() {
         background: '#fff', borderRadius: 12, overflow: 'hidden',
         border: '0.5px solid #eee', flexShrink: 0,
       }}>
-        {/* Fotoja */}
-        <div className="sk" style={{ width: '100%', height: 140 }} />
+        {/* Fotoja — RAPORT, jo lartesi fikse.
+            `.listing-card` reale e ka median me `aspect-ratio:4/3`
+            (app/ui-refine.css). Nje lartesi fikse 140px perputhej vetem ne nje
+            gjeresi te vetme; ne cdo tjeter, zevendesimi i skeletonit me kartat
+            reale i zhvendoste te gjitha me poshte. */}
+        <div className="sk" style={{ width: '100%', aspectRatio: '4 / 3' }} />
         {/* Body */}
         <div style={{ padding: '8px 10px 10px' }}>
           <div className="sk" style={{ height: 13, width: '80%', marginBottom: 6 }} />
@@ -44,10 +49,15 @@ export function SkeletonGrid({ count = 6 }: { count?: number }) {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: shimmer }} />
-      <div role="status" aria-busy="true" aria-label="Duke ngarkuar..." style={{
-        display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)',
-        gap: 10, padding: '0 13px',
-      }}>
+      {/*  I NJEJTI grid si permbajtja reale, jo nje kopje me numra te ngjashem.
+          Me pare skeletoni kishte rrjetin e vet — `repeat(2,1fr)`, gap 10,
+          padding 13 — ndersa `.listings-grid` ka `auto-fill minmax(150px,1fr)`
+          me `var(--sp-3)` dhe pa padding. Ndryshimi i gjeometrise ne castin e
+          zevendesimit ishte burimi kryesor i kercimit: CLS 0.206 ne kryefaqe,
+          matur me 31 gusht 2026 mbi ndertimin e prodhimit, ne telefon te
+          ngadalesuar. Duke perdorur te njejten klase, perputhja mbetet e sakte
+          ne CDO breakpoint, jo vetem ne ate qe u provua.  */}
+      <div role="status" aria-busy="true" aria-label="Duke ngarkuar…" className="listings-grid">
         {Array.from({ length: count }).map((_, i) => (
           <SkeletonCard key={i} />
         ))}

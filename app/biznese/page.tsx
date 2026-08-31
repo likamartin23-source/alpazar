@@ -4,12 +4,21 @@ export const dynamic = 'force-dynamic'
 
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
-import Avatar from '../components/Avatar'
+import Avatar, { tierNgaProfili } from '../components/Avatar'
 
 interface Biz {
   id: string; name: string; type: string; logo_url: string | null
   city: string | null; description: string | null; is_verified: boolean
   listing_count?: number
+  // Tier-i i unazes se avatarit vjen nga pronari, jo nga biznesi (Vendimi 1 i
+  // planit: identiteti dhe abonimi jane boshte te ndryshem). Join i vetem, jo
+  // per-rresht — pa N+1.
+  owner?: {
+    is_premium?: boolean | null
+    premium_expires_at?: string | null
+    has_boost?: boolean | null
+    boost_expires_at?: string | null
+  } | null
 }
 
 const TYPE_LABELS: Record<string, string> = {
@@ -24,17 +33,39 @@ export default function BiznestPage() {
   const [loadError, setLoadError]   = useState(false)
   const [search, setSearch]         = useState('')
   const [typeFilter, setTypeFilter] = useState('')
+  // §1B: krijimi i biznesit eshte vecori Premium (i toggle-ueshem nga app_config).
+  // Gate-i i vertete eshte RLS + ridrejtimi te /biznese/new; ky routing CTA eshte per UX.
+  const [krijoDest, setKrijoDest]       = useState('/biznese/new')
+  const [ftesePremium, setFtesePremium] = useState(false)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session) return // vizitor: CTA -> /biznese/new (aty vendoset login + gate)
+      const [{ data: prof }, { data: cfg }] = await Promise.all([
+        supabase.from('profiles')
+          .select('is_premium,premium_expires_at,has_boost,boost_expires_at')
+          .eq('id', session.user.id).single(),
+        supabase.from('app_config').select('value')
+          .eq('key', 'business_requires_premium').maybeSingle(),
+      ])
+      const gated = ((cfg?.value ?? 'true') === 'true') && tierNgaProfili(prof) === 'free'
+      setFtesePremium(gated)
+      setKrijoDest(gated ? '/premium' : '/biznese/new')
+    })
+  }, [])
 
   useEffect(() => {
     supabase
       .from('businesses')
-      .select('id,name,type,logo_url,city,description,is_verified')
+      .select('id,name,type,logo_url,city,description,is_verified,owner:owner_id(is_premium,premium_expires_at,has_boost,boost_expires_at)')
       .order('is_verified', { ascending: false })
       .order('created_at', { ascending: false })
       .limit(100)
       .then(({ data, error }) => {
         if (error) { setLoadError(true); setLoading(false); return }
-        setBusinesses(data || [])
+        // Supabase e tipizon join-in to-one `owner:owner_id(...)` si varg, por
+        // ne runtime eshte objekt (nje biznes → nje pronar). Cast i shenuar.
+        setBusinesses((data ?? []) as unknown as Biz[])
         setLoading(false)
       })
   }, [])
@@ -86,10 +117,12 @@ export default function BiznestPage() {
       </div>
 
       {/* Create business CTA */}
-      <div role="link" tabIndex={0} style={{ margin: '12px 16px 4px', background: 'linear-gradient(135deg,#151515,#1c1c1c 60%,#231a0a)', borderRadius: 12, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', boxShadow: '0 6px 18px -8px rgba(0,0,0,.4)' }} onClick={() => window.location.href = '/biznese/new'} onKeyDown={e => { if (e.key === 'Enter') window.location.href = '/biznese/new' }}>
+      <div role="link" tabIndex={0} style={{ margin: '12px 16px 4px', background: 'linear-gradient(135deg,#151515,#1c1c1c 60%,#231a0a)', borderRadius: 12, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', boxShadow: '0 6px 18px -8px rgba(0,0,0,.4)' }} onClick={() => window.location.href = krijoDest} onKeyDown={e => { if (e.key === 'Enter') window.location.href = krijoDest }}>
         <div>
           <div style={{ color: '#F5C842', fontWeight: 800, fontSize: 14, marginBottom: 2 }}>+ Krijo Biznesin Tënd</div>
-          <div style={{ color: '#aaa', fontSize: 11 }}>Falas · Prezencë profesionale online</div>
+          <div style={{ color: '#aaa', fontSize: 11 }}>{ftesePremium
+            ? <><span aria-hidden="true">👑</span> Veçori Premium · Prezencë profesionale</>
+            : <>Prezencë profesionale online</>}</div>
         </div>
         <i className="ti ti-arrow-right" style={{ fontSize: 20, color: '#F5C842' }} aria-hidden="true" />
       </div>
@@ -115,7 +148,7 @@ export default function BiznestPage() {
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '48px 16px', color: '#888' }}>
+          <div style={{ textAlign: 'center', padding: '48px 16px', color: '#555' }}>
             <div style={{ fontSize: 40, marginBottom: 10 }} aria-hidden="true">🏢</div>
             <div style={{ fontSize: 14, fontWeight: 600 }}>{search || typeFilter ? 'Asnjë biznes nuk përputhet' : 'Asnjë biznes ende'}</div>
             {(search || typeFilter) && (
@@ -132,7 +165,7 @@ export default function BiznestPage() {
                 onClick={() => window.location.href = `/biznese/${b.id}`}
                 style={{ background: '#fff', border: '0.5px solid #ececec', borderRadius: 12, padding: 14, display: 'flex', gap: 12, alignItems: 'center', cursor: 'pointer', boxShadow: '0 1px 2px rgba(0,0,0,.04),0 6px 16px -10px rgba(0,0,0,.14)', transition: 'transform .1s' }}
               >
-                <Avatar src={b.logo_url} name={b.name} type="business" verified={b.is_verified} size={52} />
+                <Avatar src={b.logo_url} name={b.name} type="business" tier={tierNgaProfili(b.owner)} verified={b.is_verified} size={52} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 3 }}>
                     <span style={{ fontSize: 14, fontWeight: 800, color: '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{b.name}</span>
@@ -145,7 +178,7 @@ export default function BiznestPage() {
                       </span>
                     )}
                     {b.city && (
-                      <span style={{ fontSize: 11, color: '#888' }}><span aria-hidden="true">📍</span> {b.city}</span>
+                      <span style={{ fontSize: 11, color: '#6E6E6E' }}><span aria-hidden="true">📍</span> {b.city}</span>
                     )}
                   </div>
                   {b.description && (
@@ -157,7 +190,7 @@ export default function BiznestPage() {
                 <i className="ti ti-chevron-right" style={{ fontSize: 16, color: '#ccc', flexShrink: 0 }} aria-hidden="true" />
               </div>
             ))}
-            <div style={{ textAlign: 'center', padding: '12px 0', fontSize: 11, color: '#bbb' }}>
+            <div style={{ textAlign: 'center', padding: '12px 0', fontSize: 11, color: '#6E6E6E' }}>
               {filtered.length} biznes{filtered.length !== 1 ? 'e' : ''}
             </div>
           </div>

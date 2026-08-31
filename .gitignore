@@ -18,10 +18,21 @@ skills-lock.json
 # Code intelligence indexes (generated)
 .codegraph/
 .graphify/
-.claude/skills/
+# Skills: ato të importuara janë të commit-uara qëllimisht — vetëm kështu i sheh
+# edhe Cowork-u dhe çdo sesion i ri. Jashtë mbeten vetëm ato që i instalon vetë
+# mjedisi (vijnë me harness-in, jo me projektin).
+.claude/skills/caveman*
+.claude/skills/cavecrew/
 .playwright-mcp/
 alpazar-playwright.png
 
 # Test artifacts (generated)
 test-results/
 playwright-report/
+
+# Python cache nga skill CLIs
+__pycache__/
+*.pyc
+
+# Rruge harness per verifikim vizual — kurre ne prodhim
+app/verifikim-vizual/
