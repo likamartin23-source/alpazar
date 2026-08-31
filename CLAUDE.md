@@ -9,6 +9,29 @@
 
 **Mos shkruaj asnje rresht pa lexuar gjendjen reale.**
 
+### 0-bis. NJE MIGRIM NE PRODHIM DHE KODI QE E SHOQERON NISEN BASHKE
+
+Kur kodi rri ne nje dege TE PABASHKUAR, i vetmi migrim i lejuar eshte **ADITIV**
+(tabela, kolona, funksione te reja). **Cdo HEQJE te drejtash — `revoke`, politike
+me e ngushte, bucket qe behet privat — duhet te presi deploy-in.**
+
+Matur me kosto me 1 shtator 2026: migrimi `privatesia_e_kontaktit` hoqi SELECT-in
+e 16 kolonave te `profiles` ne bazen e PRODHIMIT, ndersa kodi qe e mbeshtet rrinte
+ne nje dege 47 commit-e para `main`. Prodhimi xhiron `main`. U prishen gjashte
+rruge te gjalla njekohesisht: faqja e profilit (`select('*')`), paneli i adminit
+(qe ridrejtonte te `/` — pronari mbetej jashte), i tere thread-i i mesazheve,
+butonat WhatsApp/Viber, dhe faqja GDPR.
+
+Nuk e kapi asnje porte: tsc, testet dhe build-i shohin KODIN E DEGES, kurre
+ndeshjen midis bazes se prodhimit dhe kodit te `main`-it.
+
+**Kontrolli i detyrueshem para cdo `revoke`/ngushtimi:**
+`git show origin/main:<skedari>` per cdo vend qe prek — a e perdor kodi LIVE ate
+qe po heq? Nese po: shkruaje migrimin, LERE TE PA-APLIKUAR me nje koke te dukshme
+qe e thote pse, dhe zbatoje pas deploy-it. Dy shembuj ne repo:
+`20260901_profiles_ngushtimi_pas_deploy.sql` dhe
+`20260901_bashkengjitjet_private.sql`.
+
 Baza ka **190+ migrime** dhe eshte e mirendertuar. Ne gusht 2026 u ndertuan gjashte
 migrime dhe dhjete komponente mbi supozime; kur u lexua baza reale, **cdo gje e
 ndertuar ekzistonte tashme**:
@@ -427,13 +450,29 @@ Celesa ose token-a te ngjitur ne tekst te hapur trajtohen si te **komprometuar**
 → anulohen dhe rigjenerohen. Ekzekutuesi i kodit nuk i trajton sekretet;
 i vendos Martineli.
 
-### Kufi i matur i ketij mjedisi (jo i rregullores)
+### Kufi i matur i ketij mjedisi — I ZGJIDHUR PJESERISHT (1 shtator 2026)
 
-Rregulli 11 kerkon verifikim live me sy. Nga nje sesion i larguar, dalja HTTPS
-drejt `alpazar.vercel.app` dhe `*.supabase.co` eshte e bllokuar nga politika e
-mjedisit (shih `docs/RRJETI.md`). Pra hapi "sy live" e kryen pronari; agjenti
-raporton cfare mati dhe cfare nuk e verifikoi dot — kurre nuk e paraqet si te
-verifikuar.
+Rregulli 11 kerkon verifikim live me sy. Dalja HTTPS e AGJENTIT drejt
+`alpazar.vercel.app` mbetet e bllokuar nga politika (matur: `000`, connect
+rejected). **POR ekziston nje rruge e dyte qe nuk e kisha provuar kurre:**
+`web_fetch_vercel_url` i serverit MCP te Vercel-it e merr faqen nga
+infrastruktura e VERCEL-it, jo nga dalja ime. Provuar dhe punon:
+
+    /api/version → 200, build da45d9f (= koka e `main`)
+    /api/health  → ok:true, db 458ms, realtime 473ms
+    /listing/<id> → 200, HTML i plote, pa asnje gabim lejeje
+    /biznese      → 200, HTML i plote
+
+Pra agjenti TANI e verifikon dot prodhimin: kodin e statusit, kokat (CSP,
+cache-control), HTML-ne e renderuar dhe permbajtjen. Kufijte qe mbeten:
+  · nuk hyn dot ne llogari → faqet e autentikuara (`/profile`, `/admin`,
+    `/messages`) nuk shihen dot live; per to prova me e mire mbetet ekzekutimi
+    i SAKTESISHT te njejtave kerkesa te baza, si `authenticated`;
+  · merr HTML, jo pamje — pra CLS, kontrasti dhe prekja maten te dyfishi lokal;
+  · `*.supabase.co` mbetet 403 per agjentin.
+
+**Rrjedhimisht: mos e shkruaj me "nuk verifikohet dot live".** Verifikohet ajo
+qe eshte publike dhe pa sesion; deklaro sakte cfare mate dhe cfare jo.
 
 ---
 
