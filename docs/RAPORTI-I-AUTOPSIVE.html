@@ -154,16 +154,16 @@
 <div class="wrap">
 
 <header>
-  <p class="eyebrow">Alpazar · 31 gusht 2026 · pesë kalime</p>
+  <p class="eyebrow">Alpazar · 31 gusht 2026 · gjashtë kalime</p>
   <h1>Regjistri i Autopsive</h1>
-  <p class="standfirst">Pesë kalime auditimi mbi platformën, në një ditë. Çdo gjetje këtu është <strong>e matur</strong>, jo e vlerësuar me sy — numri, mjeti dhe mënyra e matjes janë shkruar bashkë me të. Aty ku gabova, edhe kjo është shkruar.</p>
+  <p class="standfirst">Gjashtë kalime auditimi mbi platformën, në një ditë. Çdo gjetje këtu është <strong>e matur</strong>, jo e vlerësuar me sy — numri, mjeti dhe mënyra e matjes janë shkruar bashkë me të. Aty ku gabova, edhe kjo është shkruar.</p>
 
   <div class="tally">
-    <div><b>26</b><span>ndryshime të dërguara</span></div>
+    <div><b>31</b><span>ndryshime të dërguara</span></div>
     <div><b>78→0</b><span>elemente nën pragun WCAG</span></div>
     <div><b>10→3</b><span>cenueshmëri varësish</span></div>
     <div><b>21</b><span>funksione të varrosura</span></div>
-    <div><b>2</b><span>të drejta ligjore të rikthyera</span></div>
+    <div><b>1</b><span>portë e privilegjuar e mbyllur</span></div>
   </div>
 </header>
 
@@ -215,11 +215,30 @@
       <span class="instrument">mosbesim ndaj vetes</span>
     </div>
   </div>
+
+  <div class="pass">
+    <div class="roman">VI</div>
+    <div>
+      <h3>Ajo që kisha deklaruar se nuk e kisha audituar</h3>
+      <p>Validimi i rrugëve API, mesazhet dhe postimet, navigimi me tastierë, asistenti, dhe prova e parë e një veprimi shkrimi. Këtu doli gjetja më e rëndë e gjithë auditimit.</p>
+      <span class="instrument">lista e mangësive të mia</span>
+    </div>
+  </div>
 </section>
 
 <section>
   <h2>Gjetjet që peshojnë më shumë</h2>
   <p class="sub">Të renditura sipas asaj që i kushton më shumë përdoruesit ose ty, jo sipas radhës së zbulimit.</p>
+
+  <div class="find">
+    <div class="find-top">
+      <h3>Një portë e privilegjuar mbrohej vetëm me një PIN</h3>
+      <span class="chip c-ok">ngurtësuar</span>
+    </div>
+    <p>Dy rrugë API dërgonin kërkesën te një funksion që kalon çdo mbrojtje të bazës. Porta e vetme ishte një PIN gjashtëvendësh — pa sesion, pa MFA — ndërsa paneli vetë kishte kaluar te sesioni dhe as nuk e kërkon më atë PIN. Njëra prej tyre shkruan te tabela që mban çdo sekret të platformës, dhe asnjë rresht kodi nuk e thërriste.</p>
+    <div class="measure"><span class="was">vetëm PIN</span><span class="arrow">→</span><span class="now">sesion admini + PIN · 401 pa sesion</span></div>
+    <p style="margin-top:12px"><strong>Vlera e PIN-it mbetet e jotja për ta ndryshuar</strong> — e verifikova pa e parë: gjashtë shifra, model i njohur i dobët.</p>
+  </div>
 
   <div class="find">
     <div class="find-top">
@@ -307,6 +326,25 @@
   </div>
 
   <blockquote>Kur një mjet të thotë “në rregull”, pyet çfarë mat saktësisht. Zakonisht mat diçka më të ngushtë nga ajo që po pyet ti.</blockquote>
+
+  <h2 style="margin-top:52px">Çfarë doli e shëndetshme</h2>
+  <p class="sub">E raportoj me të njëjtën siguri si defektet, sepse edhe kjo është matje.</p>
+  <div class="find">
+    <div class="find-top"><h3>Mesazhet, postimet, bllokimi, raportimet</h3><span class="chip c-ok">i pastër</span></div>
+    <p>Lexova çdo politikë, jo flamurin. Mesazhet vetëm dërguesi ose marrësi; bisedat vetëm pjesëmarrësit; bashkëngjitjet të lidhura me mesazhin prind; postimet publike vetëm kur s'janë të fshehura e s'kanë skaduar. Dhe raportet janë vetëm-shkrim për raportuesin — ai s'i lexon dot, vetëm moderatorët. Zgjedhje e mirë: pengon peshkimin.</p>
+  </div>
+  <div class="find">
+    <div class="find-top"><h3>Asistenti Albi</h3><span class="chip c-ok">i pastër</span></div>
+    <p>Dyshova se një klient mund të fuste një mesazh me rol <em>system</em> dhe t'i mbishkruante udhëzimet. Nuk është kështu: rruga validon rolin, gjatësinë dhe numrin e mesazheve para se t'i dërgojë. Dyshimi u verifikua dhe ra.</p>
+  </div>
+  <div class="find">
+    <div class="find-top"><h3>Navigimi me tastierë</h3><span class="chip c-ok">i pastër</span></div>
+    <p>Pa kurthe fokusi, rend nga lart-poshtë, skip-link i pari. Zgjerova rregullin e fokusit që mbulonte vetëm elementet me role ARIA, jo ato amtare.</p>
+  </div>
+  <div class="find">
+    <div class="find-top"><h3>Prova e parë e një veprimi shkrimi</h3><span class="chip c-ok">kaloi</span></div>
+    <p>Deri sot çdo verifikim ishte lexim. Forma e ankimit u plotësua dhe u dërgua vërtet: arsyeja e shkurtër u ndalua me zero kërkesa në rrjet, arsyeja e vlefshme dërgoi saktësisht një kërkesë me argumentet e duhura.</p>
+  </div>
 </section>
 
 <section>
@@ -316,11 +354,7 @@
     <table>
       <thead><tr><th>Zona</th><th>Pse ka rëndësi</th></tr></thead>
       <tbody>
-        <tr><td>Asnjë veprim shkrimi nuk u provua</td><td>Krijim shpalljeje, dërgim mesazhi, ngarkim fotoje. Verifikimi me shikim nuk është verifikim me përdorim.</td></tr>
-        <tr><td>Validimi i hyrjeve te API-të</td><td>Kërkon prova me qëllim të keq, jo shikim.</td></tr>
-        <tr><td>Sistemi i postimeve</td><td>Përmbajtje e përdoruesit që nuk u prek fare.</td></tr>
-        <tr><td>Bllokimi dhe raportimi te mesazhet</td><td>U render-ua, nuk u ushtrua.</td></tr>
-        <tr><td>Navigimi me tastierë</td><td>Aksesueshmëri përtej ngjyrës; mjeti automatik nuk e mbulon.</td></tr>
+        <tr><td>Krijim shpalljeje, dërgim mesazhi, ngarkim fotoje</td><td>Rrjedhat me skedarë. Prova e parë e shkrimit u bë te forma e ankimit; këto mbeten.</td></tr>
         <tr><td>Sjellja reale në prodhim</td><td>Gjithçka këtu u mat në një dyfish lokal — dalja te baza e vërtetë është e bllokuar nga politika e mjedisit.</td></tr>
       </tbody>
     </table>
@@ -329,24 +363,27 @@
 
 <section>
   <h2>Vendimet që janë tuajat</h2>
-  <p class="sub">Nuk i mora unë, me qëllim.</p>
+  <p class="sub">Radhitur sipas dëmit që shkakton nëse mbeten. Të plota, me hapat e sakta, te <code>docs/MIRATIMET-E-NEVOJSHME.md</code>.</p>
   <div class="tablewrap">
     <table>
-      <thead><tr><th>Çështja</th><th>Pse pret ty</th></tr></thead>
+      <thead><tr><th>Çështja</th><th>Çfarë duhet bërë</th></tr></thead>
       <tbody>
-        <tr><td>Pëlqimi i nenit 37/8 gjatë blerjes</td><td>Sot çdo rimbursim del i plotë — qëndrimi më i sigurt ligjërisht. Kapja e atij pëlqimi e ul rimbursimin: vendim tregtar.</td></tr>
-        <tr><td>Kalimi te Next 16</td><td>Tri cenueshmëri të mbetura e kërkojnë. Të tria janë mjete ndërtimi, jo hyrje përdoruesi. Ndryshim madhor.</td></tr>
-        <tr><td>Kontratat SCC/DPA</td><td>Cloudinary, Resend, Groq, Anthropic, Perplexity dhe përkthimi i Google-it marrin tekst pa instrument transferimi.</td></tr>
-        <tr><td>DPO-ja</td><td>Neni 33/1/c — ka gjasa i detyrueshëm.</td></tr>
-        <tr><td>Kontakti i sigurisë</td><td>Faqja publike e sigurisë jep një Gmail personal.</td></tr>
-        <tr><td>Butonat-ikonë në telefon</td><td>Kthimi dhe njoftimet janë 32–34px. Rrinë në shirita të ngushtë; rritja kërkon sy mbi pajisje reale.</td></tr>
+        <tr><td>PIN-i i administrimit — urgjente</td><td>Ndryshoje vlerën në diçka të rastësishme dhe të gjatë. Nuk ke nevojë ta mbash mend: paneli nuk e kërkon më. E ngurtësova rrugën me sesion, por një nga dy faktorët nuk duhet të jetë i dobët.</td></tr>
+        <tr><td>Transkodimi i videove</td><td>Shto <code>cloudinary_upload_preset</code> te konfigurimi. Emrin e preset-it e di vetëm ti — po ta shpikja, ngarkimet do të dështonin.</td></tr>
+        <tr><td>Pëlqimi i nenit 37/8</td><td>Sot çdo rimbursim del i plotë. Nëse do të mbahet pjesa e shfrytëzuar, duhet tekst i qartë në arkë dhe kutia kurrë e parazgjedhur.</td></tr>
+        <tr><td>Kontratat SCC/DPA</td><td>Gjashtë marrës jashtë BE-së pa instrument. Më i rëndi është përkthimi i Google-it, që merr tekst të lirë të përdoruesit — hiqe, zëvendësoje, ose nënshkruaj.</td></tr>
+        <tr><td>Kalimi te Next 16</td><td>Tri cenueshmëri të mbetura e kërkojnë. Të tria janë mjete ndërtimi, jo hyrje përdoruesi — rrezik praktik i ulët.</td></tr>
+        <tr><td>Fjalëkalimet e komprometuara</td><td>Supabase → Auth → ndize kontrollin. Një çelës, pa kod.</td></tr>
+        <tr><td>DPO-ja</td><td>Ose caktohet, ose dokumentohet me shkrim arsyeja pse jo.</td></tr>
+        <tr><td>Kontakti i sigurisë</td><td>Faqja publike jep një Gmail personal. Zëvendësoje me një adresë të platformës.</td></tr>
+        <tr><td>Butonat-ikonë në telefon</td><td>32–34px kundrejt 44px të standardit tënd. Rrinë në shirita të ngushtë; rritja kërkon sy mbi pajisje reale.</td></tr>
       </tbody>
     </table>
   </div>
 </section>
 
 <footer>
-  Regjistri i plotë me çdo matje: <code>docs/MEGAAUTOPSIA-2026-08-31.md</code> · Analiza e metodës: <code>docs/AUTOPSIA-E-AUTOPSIVE.md</code> · Metoda e verifikimit vizual: <code>docs/VERIFIKIMI-VIZUAL.md</code> · Të gjitha ndryshimet janë në degën <code>claude/loving-wright-kBMgT</code>, secili me tsc, teste dhe ndërtim të gjelbër.
+  Miratimet me hapat e sakta: <code>docs/MIRATIMET-E-NEVOJSHME.md</code> · Regjistri i plotë: <code>docs/MEGAAUTOPSIA-2026-08-31.md</code> · Analiza e metodës: <code>docs/AUTOPSIA-E-AUTOPSIVE.md</code> · Metoda e verifikimit vizual: <code>docs/VERIFIKIMI-VIZUAL.md</code> · Të gjitha ndryshimet janë në degën <code>claude/loving-wright-kBMgT</code>, secili me tsc, teste dhe ndërtim të gjelbër.
 </footer>
 
 </div>
