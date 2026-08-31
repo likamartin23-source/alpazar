@@ -5,13 +5,19 @@
  *  Gjendja e gjetur më 31 gusht 2026: `verification_requests` ekzistonte me
  *  politikat e sakta, enum-et e dokumenteve dhe `admin_review_verification()`
  *  të shkruar plotësisht. Asnjë rresht i ndërfaqes nuk e prekte — as rrugë për
- *  të kërkuar, as ekran për të shqyrtuar. Kjo e mbyll gjysmën e përdoruesit.
+ *  të kërkuar, as ekran për ta shqyrtuar. Kjo e mbyll gjysmën e përdoruesit.
+ *
+ *  HARMONIA: ky bllok rri brenda faqes së të dhënave të biznesit dhe përdor
+ *  SAKTËSISHT fjalorin pamor të `BusinessForm` — e njëjta kokë seksioni
+ *  (`#C42B0F`, uppercase), e njëjta etiketë, e njëjta `.bf-input`, i njëjti
+ *  buton `.bf-save`, e njëjta kuti alarmi. Asnjë stil i shpikur nga e para:
+ *  përndryshe do të dukej si diçka e ngjitur, jo si pjesë e formularit.
  *
  *  PSE PA NGARKIM SKEDARI: në Shqipëri NIPT-i është publik dhe kontrollohet te
  *  QKB. Verifikimi real bëhet duke e krahasuar NIPT-in e deklaruar me regjistrin —
- *  jo duke mbajtur një kopje dokumenti. Kështu platforma nuk grumbullon dokumente
- *  identiteti që s'i duhen (minimizim, neni 5/1/c i ligjit 124/2024), dhe
- *  `doc_storage_path` mbetet për rastet kur admini kërkon diçka shtesë.
+ *  jo duke mbajtur një kopje dokumenti identiteti që platformës nuk i duhet
+ *  (minimizim, neni 5/1/c i ligjit 124/2024). `doc_storage_path` mbetet për
+ *  rastet kur administrata kërkon diçka shtesë.
  */
 
 import { useCallback, useEffect, useState } from 'react'
@@ -25,16 +31,15 @@ const LLOJET: [string, string][] = [
   ['other',                 'Tjetër'],
 ]
 
-const kutia: React.CSSProperties = {
-  background: '#fff', border: '1.5px solid #f0e6b0', borderRadius: 14,
-  padding: 16, marginTop: 16,
-}
-
 export default function VerificationBox({ businessId, nipt }: { businessId?: string; nipt?: string | null }) {
   const [gjendja, setGjendja] = useState<any>(null)
   const [lloji, setLloji]     = useState('business_registration')
   const [duke, setDuke]       = useState(true)
   const [dergon, setDergon]   = useState('')
+
+  // I njëjti fjalor si BusinessForm — kopjuar me qëllim, jo i përafërt.
+  const sec: React.CSSProperties = { fontSize: 12, fontWeight: 800, color: '#C42B0F', textTransform: 'uppercase', letterSpacing: 0.5, margin: '18px 0 10px' }
+  const lbl: React.CSSProperties = { fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }
 
   const ngarko = useCallback(async () => {
     const { data } = await supabase.rpc('my_verification_status', {
@@ -48,8 +53,10 @@ export default function VerificationBox({ businessId, nipt }: { businessId?: str
 
   async function dergo() {
     setDergon('duke')
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) { setDergon('Hyr në llogari për të kërkuar verifikimin.'); return }
     const { error } = await supabase.from('verification_requests').insert({
-      user_id: (await supabase.auth.getUser()).data.user?.id,
+      user_id: user.id,
       business_id: businessId ?? null,
       doc_type: lloji,
       status: 'pending',
@@ -58,64 +65,71 @@ export default function VerificationBox({ businessId, nipt }: { businessId?: str
     setDergon(''); ngarko()
   }
 
-  if (duke) return null
-  if (gjendja?.error) return null
+  if (duke || gjendja?.error) return null
 
   const k = gjendja?.kerkesa
+  const pengesa = !!businessId && !nipt
 
   return (
-    <div style={kutia}>
-      <div style={{ fontSize: 13, fontWeight: 800, color: '#111', marginBottom: 6 }}>
-        <span aria-hidden="true">✓</span> Verifikimi
-      </div>
+    /*  KARTE E VECANTE, jo nje seksion i tete i formularit.
+        Blloku render-ohet pas `BusinessForm`, pra pas butonit "Fshij biznesin".
+        Pa nje kufi te vetin do te dukej si nje seksion i mbetur pas nje veprimi
+        shkaterrues — hierarki e gabuar. Karta e ndan qarte: formulari mbaron,
+        ky eshte nje veprim tjeter mbi te njejtat te dhena.  */
+    <div style={{ background: '#fff', border: '1.5px solid #f0e6b0', borderRadius: 14, padding: '4px 16px 18px', marginTop: 28 }}>
+      <div style={sec}>Verifikimi</div>
 
       {gjendja?.i_verifikuar ? (
-        <div style={{ fontSize: 12.5, color: '#3B6D11', lineHeight: 1.6 }}>
-          Ky profil është <strong>i verifikuar</strong>. Distinktivi shfaqet te shpalljet
-          dhe te faqja e biznesit.
+        <div role="status" style={{ background: '#F0FFF4', border: '1px solid #86efac', borderRadius: 10, padding: '10px 14px', fontSize: 12, color: '#166534', fontWeight: 600 }}>
+          Ky profil është i verifikuar. Distinktivi shfaqet te shpalljet dhe te faqja e biznesit.
         </div>
       ) : k && k.status === 'pending' ? (
-        <div style={{ fontSize: 12.5, color: '#555', lineHeight: 1.6 }}>
-          Kërkesa jote është <strong>në shqyrtim</strong>. E dërguar më{' '}
-          {new Date(k.derguar_me).toLocaleDateString('sq-AL')}. Do të marrësh njoftim
-          me vendimin dhe arsyen.
+        <div role="status" style={{ background: '#FFF8E1', border: '1px solid #FFB74D', borderRadius: 10, padding: '10px 14px', fontSize: 12, color: '#8A6D00', lineHeight: 1.6 }}>
+          Kërkesa jote është <strong>në shqyrtim</strong> — dërguar më{' '}
+          {new Date(k.derguar_me).toLocaleDateString('sq-AL')}. Do të marrësh njoftim me vendimin dhe arsyen.
         </div>
       ) : (
         <>
           {k?.status === 'rejected' && (
-            <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', borderRadius: 8, padding: '9px 11px', fontSize: 12, color: '#C42B0F', marginBottom: 10, lineHeight: 1.55 }}>
+            <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', borderRadius: 10, padding: '10px 14px', marginBottom: 12, fontSize: 12, color: '#C42305', lineHeight: 1.6 }}>
               Kërkesa e mëparshme nuk u miratua.{k.shenimi ? ` „${k.shenimi}"` : ''} Mund të dërgosh një të re.
             </div>
           )}
 
-          <p style={{ fontSize: 12, color: '#555', lineHeight: 1.6, margin: '0 0 10px' }}>
+          <p style={{ fontSize: 12, color: '#555', lineHeight: 1.6, margin: '0 0 12px' }}>
             Verifikimi krahason të dhënat e deklaruara me regjistrin publik të QKB-së.
-            {businessId
-              ? nipt
-                ? <> NIPT-i i deklaruar: <strong>{nipt}</strong>.</>
-                : <> <strong>Shto NIPT-in</strong> te të dhënat e biznesit para se të kërkosh.</>
-              : null}
+            {businessId && (nipt
+              ? <> NIPT-i i deklaruar: <strong style={{ color: '#111' }}>{nipt}</strong>.</>
+              : <> Shto <strong style={{ color: '#111' }}>NIPT-in</strong> më sipër dhe ruaje, para se ta kërkosh.</>)}
           </p>
 
-          <label htmlFor="lloji-dok" style={{ fontSize: 11.5, color: '#555', display: 'block', marginBottom: 4 }}>
-            Baza e verifikimit
-          </label>
-          <select id="lloji-dok" value={lloji} onChange={e => setLloji(e.target.value)}
-            style={{ width: '100%', border: '1.5px solid #ddd', borderRadius: 8, padding: '10px 12px', fontSize: 13, fontFamily: 'inherit', background: '#fff', color: '#111' }}>
+          <label htmlFor="lloji-dok" style={lbl}>Baza e verifikimit</label>
+          <select id="lloji-dok" className="bf-input" value={lloji} onChange={e => setLloji(e.target.value)}>
             {LLOJET.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
           </select>
 
           {dergon && dergon !== 'duke' && (
-            <div role="alert" style={{ background: '#FFF0EE', color: '#C42B0F', border: '1px solid #F09595', borderRadius: 8, padding: '9px 11px', fontSize: 12, marginTop: 10 }}>{dergon}</div>
+            <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', borderRadius: 10, padding: '10px 14px', marginTop: 12, fontSize: 12, color: '#C42305', fontWeight: 600 }}>
+              {dergon}
+            </div>
           )}
 
-          <button type="button" onClick={dergo}
-            disabled={dergon === 'duke' || (!!businessId && !nipt)}
-            style={{ width: '100%', marginTop: 12, background: (!!businessId && !nipt) ? '#ddd' : '#111', color: '#fff', border: 'none', borderRadius: 10, padding: 13, fontSize: 14, fontWeight: 700, cursor: (!!businessId && !nipt) ? 'not-allowed' : 'pointer' }}>
+          {/*  Buton DYTESOR me qellim. Veprimi kryesor i kesaj faqeje eshte
+               "Ruaj ndryshimet"; dy butona identike te kuq do te konkurronin
+               per te njejten vemendje dhe do ta benin te paqarte se cili eshte
+               hapi i pritur.  */}
+          <button type="button" onClick={dergo} disabled={dergon === 'duke' || pengesa}
+            style={{
+              width: '100%', marginTop: 16, background: '#fff', color: '#111',
+              border: '1.5px solid #ddd', borderRadius: 13, padding: 14,
+              fontSize: 14, fontWeight: 700, fontFamily: 'inherit',
+              cursor: (dergon === 'duke' || pengesa) ? 'not-allowed' : 'pointer',
+              opacity: (dergon === 'duke' || pengesa) ? 0.55 : 1,
+            }}>
             {dergon === 'duke' ? 'Duke dërguar…' : 'Kërko verifikimin'}
           </button>
 
-          <div style={{ fontSize: 10.5, color: '#555', marginTop: 8, lineHeight: 1.55 }}>
+          <div style={{ fontSize: 11, color: '#555', marginTop: 8, lineHeight: 1.55, textAlign: 'center' }}>
             Vendimin e merr një person dhe shoqërohet gjithmonë me arsye.
           </div>
         </>
