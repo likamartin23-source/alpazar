@@ -65,3 +65,8 @@ Kjo lista ndertohet me lexim, jo me grep.
 | `lottiefiles/motion-design-skill` | `f9a8a041b85185ee4881b3471d3415e939aac772` | `skills` |
 | `Leonxlnx/taste-skill` | `ccbc15639c97057cbfcf32ecebc38ef716e4bb37` | `skills` |
 | `AgriciDaniel/claude-seo` | `a1480c7e590b16001bd9dc1627eacdcd44d580f9` | `.` |
+| `kylezantos/design-motion-principles` | `4a9ca879f24a361f4dca4174fe2da0f67b5ddee3` | `skills` |
+| `alexlarcheveque/claude-watch` | `4332651cb336d231e2994f9347d7e729f4745b8f` | `.` |
+| `199-biotechnologies/motion-dev-animations-skill` | `3feedfb4dba8adae40fc9a5f9a23e3dda2121205` | `.` |
+| `vercel-labs/skills` | `435076e78988e1e6ec40d00b0b1d76bdbbc5419a` | `.` |
+| `magicuidesign/magicui` | `2d671cc6c0e0f40e28682c9cbddd16694dcfe627` | `skills` |
