@@ -164,6 +164,26 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     let cache: Record<string, string> = {}
     const cacheKey = `az_tr_${lang}`
     if (tr) { try { cache = JSON.parse(localStorage.getItem(cacheKey) || '{}') } catch {} }
+
+    /* SHQIPJA ESHTE BURIMI — `UI` s'ka celes 'sq'. Pra kur lang='sq' dhe asgje
+       s'eshte perkthyer ende, ky efekt e ecte gjithe DOM-in, u vinte cdo
+       elementi nje `data-i18n-*` rezerve dhe i rishkruante tekstet me VETEN e
+       tyre: zero perfitim, kosto reale. Kostoja u mat me 31 gusht 2026 ne
+       shfletues: DOM-i mutohej PARA se segmenti i faqes te perfundonte
+       hidratimin, ndaj React jepte
+         "A tree hydrated but some attributes … didn't match … This won't be
+          patched up"
+       te /profile, /search, /search/results, /messages dhe /notifications —
+       me diferencen pikerisht `data-i18n-aria-label` / `data-i18n-placeholder`.
+       Pra perdoruesi shqiptar, qe eshte shumica, paguante nje hidratim te
+       prishur per nje perkthim qe nuk i duhej.
+
+       Dalja e hershme vlen VETEM per rastin e paster: pa fjalor (burim), pa
+       tekste te ruajtura per t'u rikthyer dhe pa gjurme perkthimi ne DOM.
+       Kthimi en→sq e ka `store` te mbushur ose `data-i18n-*` ne DOM, ndaj
+       kalon me poshte dhe rikthimi behet si me pare. */
+    if (!tr && store.current.size === 0 &&
+        !document.querySelector(ATTRS.map(a => `[data-i18n-${a}]`).join(','))) return
     const pendingSet = new Set<string>()
     let queue = new Set<string>()
     let timer: ReturnType<typeof setTimeout> | null = null
