@@ -60,3 +60,7 @@ Kjo lista ndertohet me lexim, jo me grep.
   pranueshem, por dije se ekziston.
 - **`browse`, `make-pdf`, `cso`** permendin `GITHUB_TOKEN` / `~/.ssh` vetem ne
   komente qe **parandalojne** rrjedhjen. Te lexuara, jo te supozuara.
+| `kylezantos/design-motion-principles` | `4a9ca879f24a361f4dca4174fe2da0f67b5ddee3` | `skills` |
+| `alexlarcheveque/claude-watch` | `4332651cb336d231e2994f9347d7e729f4745b8f` | `.` |
+| `199-biotechnologies/motion-dev-animations-skill` | `3feedfb4dba8adae40fc9a5f9a23e3dda2121205` | `.` |
+| `vercel-labs/skills` | `435076e78988e1e6ec40d00b0b1d76bdbbc5419a` | `.` |
