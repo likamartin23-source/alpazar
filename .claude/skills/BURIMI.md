@@ -60,3 +60,5 @@ Kjo lista ndertohet me lexim, jo me grep.
   pranueshem, por dije se ekziston.
 - **`browse`, `make-pdf`, `cso`** permendin `GITHUB_TOKEN` / `~/.ssh` vetem ne
   komente qe **parandalojne** rrjedhjen. Te lexuara, jo te supozuara.
+| `vercel-labs/skills` | `435076e78988e1e6ec40d00b0b1d76bdbbc5419a` | `.` |
+| `HKUDS/CLI-Anything` | `810c18b0d1ab9b234bc996c9fd999318523a3ef0` | `.` |
