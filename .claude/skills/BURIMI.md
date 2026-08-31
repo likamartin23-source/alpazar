@@ -60,3 +60,4 @@ Kjo lista ndertohet me lexim, jo me grep.
   pranueshem, por dije se ekziston.
 - **`browse`, `make-pdf`, `cso`** permendin `GITHUB_TOKEN` / `~/.ssh` vetem ne
   komente qe **parandalojne** rrjedhjen. Te lexuara, jo te supozuara.
+| `magicuidesign/magicui` | `2d671cc6c0e0f40e28682c9cbddd16694dcfe627` | `skills` |
