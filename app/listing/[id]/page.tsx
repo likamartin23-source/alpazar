@@ -36,7 +36,8 @@ async function fetchSellerData(listing: any) {
       ? sb.from('businesses').select('id,name,logo_url,is_verified').eq('id', listing.business_id).single().then(r => r.data)
       : Promise.resolve(null),
   ])
-  return { seller: seller ?? null, sellerCount: count ?? 0, biz: biz ?? null }
+  // `count ?? 0` e kap null-in, jo NaN-in (shih shenimin te ListingPageClient).
+  return { seller: seller ?? null, sellerCount: Number.isFinite(count as number) ? (count as number) : 0, biz: biz ?? null }
 }
 
 function videoList(listing: any): string[] {

@@ -50,6 +50,14 @@ export default function BillingPage() {
 
   const totalDays = plan?.duration_days || 30
   const daysLeft = sub?.days_left ?? null
+  /* `get_my_billing` e mbron `days_left` nga null-i, por daten jo: nje periudhe
+     pa `current_period_end` e shfaqte si 'Invalid Date' te faqja e faturimit —
+     pikerisht atje ku klienti qe paguan pret qartesi. Nje funksion i vetem
+     mban te njejten sjellje ne te tria vendet ku shfaqet ajo date. */
+  const dataOse = (v: any, ndryshe = 'pa datë të caktuar') => {
+    const d = v ? new Date(v) : null
+    return d && !isNaN(d.getTime()) ? d.toLocaleDateString('sq-AL') : ndryshe
+  }
   const pct = daysLeft != null ? Math.max(0, Math.min(100, Math.round((daysLeft / totalDays) * 100))) : 0
 
   return (
@@ -81,8 +89,8 @@ export default function BillingPage() {
                 <>
                   <div className="muted" style={{ marginTop: 10 }}>
                     {sub.cancel_at_period_end
-                      ? <>Aktiv deri më <b>{new Date(sub.current_period_end).toLocaleDateString('sq-AL')}</b> — nuk rinovohet.</>
-                      : <>Periudha mbaron më <b>{new Date(sub.current_period_end).toLocaleDateString('sq-AL')}</b> ({daysLeft} ditë të mbetura).</>}
+                      ? <>Aktiv deri më <b>{dataOse(sub.current_period_end)}</b> — nuk rinovohet.</>
+                      : <>Periudha mbaron më <b>{dataOse(sub.current_period_end)}</b>{daysLeft != null ? <> ({daysLeft} ditë të mbetura)</> : null}.</>}
                   </div>
                   <div className="bar"><div className="fill" style={{ width: `${pct}%` }} /></div>
                   {/* Rinovim automatik: 'nuk anulohet' = aktiv. Cron-i (auto_renew_run) e nis
@@ -107,7 +115,7 @@ export default function BillingPage() {
                           </>
                         : <button type="button" className="btn" disabled={!!busy} onClick={() => setConfirmCancel(true)}>Çaktivizo rinovimin</button>}
                   </div>
-                  {confirmCancel && <div className="note warn">Mban aksesin deri më {new Date(sub.current_period_end).toLocaleDateString('sq-AL')}. Asnjë pagesë tjetër nuk kërkohet.</div>}
+                  {confirmCancel && <div className="note warn">Mban aksesin deri më {dataOse(sub.current_period_end)}. Asnjë pagesë tjetër nuk kërkohet.</div>}
                 </>
               )}
 

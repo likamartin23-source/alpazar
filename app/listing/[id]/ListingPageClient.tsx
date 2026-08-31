@@ -274,7 +274,11 @@ export default function ListingPageClient({ params, initialListing, initialSelle
             .eq('user_id', data.user_id).eq('is_active', true),
         ])
         if (p) { setSeller(p); sellerRef.current = p }
-        if (count !== null) setSellerCount(count)
+        // `count` vjen nga header-i `content-range`. Kur ai mungon ose vjen i
+        // cunguar, supabase-js jep NaN — dhe `!== null` NUK e kap: faqja publike
+        // e shpalljes shfaqte 'NaN shpallje aktive' te blloku i shitesit.
+        // Pare me sy me 31 gusht 2026.
+        if (Number.isFinite(count as number)) setSellerCount(count as number)
         // Telefoni i shitësit: vetëm për përdorues të loguar (anon s'e lexon dot pas HIGH-1).
         // Kështu butonat WhatsApp/Viber punojnë për anëtarët, por numri s'ekspozohet publikisht.
         if (user?.id && data.user_id) {
