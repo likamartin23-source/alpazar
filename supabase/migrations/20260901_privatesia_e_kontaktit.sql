@@ -1,3 +1,12 @@
+-- ┌────────────────────────────────────────────────────────────────────────┐
+-- │  KUJDES: PJESA E HEQJES SE LEXIMIT (§7) U KTHYE MBRAPSHT NE PRODHIM.   │
+-- │  Ajo pret deploy-in e deges. Shih                                      │
+-- │  `20260901_profiles_ngushtimi_pas_deploy.sql`. Pjesa tjeter — kolona    │
+-- │  `has_phone`, `contact_reveal_log`, `listing_contact()`,                │
+-- │  `conversation_contact()`, `my_profile()`, `admin_referral_list()` —    │
+-- │  eshte ADITIVE dhe rri live pa prishur asgje.                          │
+-- └────────────────────────────────────────────────────────────────────────┘
+--
 -- PRIVATESIA E KONTAKTIT — zbulimi behet VEPRIM, jo efekt anesor
 --
 -- GJETJA (megaautopsia e shtate, 31 gusht 2026, e provuar): nje perdorues
