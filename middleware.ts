@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from './lib/supabaseConfig'
 import type { NextRequest } from 'next/server'
 
 export async function middleware(req: NextRequest) {
@@ -53,7 +54,18 @@ export async function middleware(req: NextRequest) {
       // Dynamic import — kodi i rëndë Supabase ngarkohet vetëm kur vizitohet /admin,
       // jo për çdo kërkesë të faqes (ul madhësinë e ekzekutuar në edge).
       const { createMiddlewareClient } = await import('@supabase/auth-helpers-nextjs')
-      const supabase = createMiddlewareClient({ req, res })
+      // Vlerat jepen SHPREHIMISHT nga `lib/supabase.ts`, jo nga mjedisi.
+      // Pa kete, `createMiddlewareClient()` i lexon vete `NEXT_PUBLIC_SUPABASE_URL`
+      // dhe `..._ANON_KEY` dhe HEDH PERJASHTIM kur njeri mungon → bie te `catch`
+      // → ridrejtim te hyrja. Pasoja e matur me 31 gusht 2026: faqet publike
+      // vazhdonin te punonin (lib/supabase.ts ka vlere rezerve) ndersa CDO
+      // kerkese te `/admin` ridrejtohej ne heshtje, pa asnje diagnoze.
+      // Tani te dyja shtresat lexojne te njejtin burim; `/api/health` e raporton
+      // gjithsesi mungesen e variablit qe konfigurimi te rregullohet.
+      const supabase = createMiddlewareClient(
+        { req, res },
+        { supabaseUrl: SUPABASE_URL, supabaseKey: SUPABASE_ANON_KEY },
+      )
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) {
         return NextResponse.redirect(new URL('/auth/login', req.url))
