@@ -325,7 +325,7 @@ function AlpazarIcon() {
   )
 }
 
-export default function HomeClient({ initialListings = [], initialCategories = [], initialShops = [] }: { initialListings?: Listing[]; initialCategories?: Category[]; initialShops?: any[] }) {
+export default function HomeClient({ initialListings = [], initialCategories = [], initialShops = [], initialListingCount = 0, initialUserCount = 0 }: { initialListings?: Listing[]; initialCategories?: Category[]; initialShops?: any[]; initialListingCount?: number; initialUserCount?: number }) {
   // Global context — auth, config, unread counts
   const { user, profile, authReady, unreadMessages: unreadCount, unreadNotifications, cfg } = useAlpazar()
 
@@ -345,8 +345,8 @@ export default function HomeClient({ initialListings = [], initialCategories = [
   // fetches still run normally.
   const skipMountFetch = useRef(initialListings.length > 0)
   const listingsReqId = useRef(0)
-  const [listingCount, setListingCount] = useState(0)
-  const [userCount, setUserCount] = useState(0)
+  const [listingCount, setListingCount] = useState(initialListingCount)
+  const [userCount, setUserCount] = useState(initialUserCount)
   // settings now from app_config via context (cfg helper)
   const settings: Record<string, string> = {}
   const [newListingBadge, setNewListingBadge] = useState(false)
@@ -816,7 +816,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                 </button>
                 <button type="button" className="desk-nav-btn" onClick={() => go(user ? '/profile' : '/auth/login')}>
                   <i className="ti ti-user-circle" aria-hidden="true" />
-                  {authReady && user ? 'Profili' : 'Hyr'}
+                  {authReady ? (user ? 'Profili' : 'Hyr') : '\u00a0'}
                 </button>
               </div>
               {/* Njoftimet — GJITHMONË i dukshëm e funksional për përdoruesin e loguar
@@ -1126,7 +1126,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
             {authReady && user && (
               <span style={{ position: 'absolute', top: 4, right: 12, width: 8, height: 8, background: '#22C55E', borderRadius: '50%', border: '1.5px solid #111' }} />
             )}
-            <span>{authReady && user ? 'Profili' : 'Hyr'}</span>
+            <span>{authReady ? (user ? 'Profili' : 'Hyr') : '\u00a0'}</span>
           </button>
         </nav>
       </div>

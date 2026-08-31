@@ -26,10 +26,10 @@ export const metadata: Metadata = {
 // Matja: CLS 0.207 ne kryefaqe — "i dobet" sipas Core Web Vitals (kufiri 0.1).
 // Duke ardhur nga serveri, blloku ekziston qysh te piktura e pare: pa kercim,
 // dhe si perfitim i dyte crawler-at e shohin vitrinen e bizneseve ne HTML.
-async function fetchHome(): Promise<{ listings: Listing[]; categories: Category[]; shops: any[] }> {
+async function fetchHome(): Promise<{ listings: Listing[]; categories: Category[]; shops: any[]; listingCount: number; userCount: number }> {
   try {
     const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-    const [{ data: listings }, { data: categories }, { data: shops }] = await Promise.all([
+    const [{ data: listings }, { data: categories }, { data: shops }, { count: listingCount }, { count: userCount }] = await Promise.all([
       sb.from('listings')
         // Një projeksion i vetëm identiteti (lib/listingSelect) — pa join-in e biznesit,
         // ListingCard e trajton shpalljen e biznesit si personale (maskim). Identik me HomeClient
@@ -46,19 +46,27 @@ async function fetchHome(): Promise<{ listings: Listing[]; categories: Category[
         .select('id,full_name,username,avatar_url,city,shop_name,shop_description,shop_category,shop_banner_url')
         .eq('is_premium', true)
         .limit(6),
+      // Numrat publikë të hero-t merren KËTU (SSR), jo në klient. Më parë nisnin
+      // nga 0 dhe kërcenin te vlera reale pas fetch-it të klientit — flash-i
+      // "0 SHPALLJE/0 PËRDORUES → 2/2" që pa terminali live (#6). Të pjekura në
+      // HTML, shfaqen sakt qysh te piktura e parë, edhe në guaskën e cache-uar.
+      sb.from('listings').select('id', { count: 'exact', head: true }).eq('is_active', true),
+      sb.from('profiles').select('id', { count: 'exact', head: true }),
     ])
     return {
       listings: (listings ?? []) as unknown as Listing[],
       categories: (categories ?? []) as unknown as Category[],
       shops: shops ?? [],
+      listingCount: Number.isFinite(listingCount as number) ? (listingCount as number) : 0,
+      userCount: Number.isFinite(userCount as number) ? (userCount as number) : 0,
     }
   } catch {
-    return { listings: [], categories: [], shops: [] }
+    return { listings: [], categories: [], shops: [], listingCount: 0, userCount: 0 }
   }
 }
 
 export default async function HomePage() {
-  const { listings, categories, shops } = await fetchHome()
+  const { listings, categories, shops, listingCount, userCount } = await fetchHome()
 
   // WebSite/Organization schema already lives in the root layout <head>; here we
   // add only the ItemList of current listings (complements, no duplication).
@@ -78,7 +86,7 @@ export default async function HomePage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
-      <HomeClient initialListings={listings} initialCategories={categories} initialShops={shops} />
+      <HomeClient initialListings={listings} initialCategories={categories} initialShops={shops} initialListingCount={listingCount} initialUserCount={userCount} />
     </>
   )
 }
