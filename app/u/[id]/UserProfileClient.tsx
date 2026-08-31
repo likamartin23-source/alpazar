@@ -22,6 +22,9 @@ function timeAgo(dateStr: string) {
 // `formatPrice` u hoq bashke me grid-in katror: ListingCard e formaton vete
 // cmimin me `nf()`, qe jep te njejtin rezultat ne server e ne shfletues.
 
+// /u/<param>: param mund të jetë UUID ose username. E njëjta logjikë si te page.tsx.
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 export default function PublicProfilePage({ params, initialProfile, initialListings, initialBiz, initialIsOwn }: { params: { id: string }; initialProfile?: any; initialListings?: any[]; initialBiz?: any; initialIsOwn?: boolean }) {
   const { user } = useAlpazar()
   const seedListings = Array.isArray(initialListings) ? initialListings : []
@@ -34,6 +37,9 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
   const [notFound, setNotFound] = useState(false)
   const [activeTab, setActiveTab] = useState<'listings' | 'about'>('listings')
   const [biz, setBiz] = useState<any>(initialBiz ?? null)
+  // ID-ja REALE e profilit. SSR-ja e ka zgjidhur username→id te initialProfile; nëse mungon
+  // (rast i rrallë), përdorim params.id kur është UUID, përndryshe presim load().
+  const [uid, setUid] = useState<string | null>(initialProfile?.id ?? (UUID_RE.test(params.id) ? params.id : null))
   // Shitjet personale te kryera — social proof (Faza 6). Funksioni
   // user_sold_count numeron vetem status='sold' me business_id null.
   const [soldCount, setSoldCount] = useState(0)
@@ -44,10 +50,11 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
   // Shpalljet personale — një burim i vetëm fetch-i, i ripërdorur nga ngarkimi fillestar dhe
   // nga realtime. `condition`/`rank_tier`/`video_poster` për ListingCard (shenjat + kopertina video).
   const reloadListings = useCallback(async (keepSeedOnEmpty = false) => {
+    if (!uid) return
     const { data: ls } = await supabase
       .from('listings')
       .select('id,title,price,currency,images,video_poster,city,created_at,is_premium,condition,rank_tier,views_count')
-      .eq('user_id', params.id)
+      .eq('user_id', uid)
       .is('business_id', null)   // vetem shpallje personale — ato te biznesit rrine te faqja e biznesit (Vendimi 7, pa dyfishim)
       .eq('is_active', true)
       .order('rank_tier', { ascending: false })
@@ -56,14 +63,14 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
     // Ngarkimi fillestar: mbaj seed-in SSR kur bosh (kurrë flash 0). Realtime: lejo edhe bosh
     // (p.sh. u fshi/çaktivizua shpallja e fundit) → pasqyron gjendjen reale menjëherë.
     if (ls && (ls.length || !keepSeedOnEmpty)) setListings(ls)
-  }, [params.id])
+  }, [uid])
 
   // Live si te kryefaqja (Cowork — përditësimi realtime i /u/[id]): çdo insert/update/delete i
   // shpalljeve të këtij përdoruesi rifreskon listën. "Fshirja" në app është soft (is_active=false →
   // UPDATE), ndaj filtri user_id e kap; reload-i e heq sepse query-ja kërkon is_active=true.
   useRealtimeTable(
     'listings',
-    `user_id=eq.${params.id}`,
+    `user_id=eq.${uid ?? '00000000-0000-0000-0000-000000000000'}`,
     () => { reloadListings() },
     () => { reloadListings() },
     () => { reloadListings() },
@@ -71,16 +78,30 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
 
   useEffect(() => {
     async function load() {
+      // Zgjidh me id ose me username (gjetja live O1: /u/<username> jepte 404).
       const { data: p } = await supabase
         .from('profiles')
         .select('id,full_name,username,avatar_url,cover_url,bio,city,is_premium,premium_expires_at,has_boost,boost_expires_at,is_verified,trust_score,trust_score_visible,created_at,shop_name,seller_rating,reviews_count,gamification_points,gamification_level')
-        .eq('id', params.id)
-        .single()
+        .eq(UUID_RE.test(params.id) ? 'id' : 'username', params.id)
+        .maybeSingle()
 
       if (!p) { setNotFound(true); setLoading(false); return }
       setProfile(p)
+      setUid(p.id)
+      const realId = p.id  // përdore këtë (jo params.id, që mund të jetë username) për query-t që vijojnë
 
-      await reloadListings(true)
+      // Shpalljet personale — inline me realId (reloadListings varet nga `uid` që sapo u vendos
+      // dhe s'do ta shohë ende brenda këtij ekzekutimi). Mbaj seed-in SSR kur bosh.
+      const { data: ls } = await supabase
+        .from('listings')
+        .select('id,title,price,currency,images,video_poster,city,created_at,is_premium,condition,rank_tier,views_count')
+        .eq('user_id', realId)
+        .is('business_id', null)
+        .eq('is_active', true)
+        .order('rank_tier', { ascending: false })
+        .order('last_bumped_at', { ascending: false })
+        .limit(60)
+      if (ls && ls.length) setListings(ls)
 
       // Biznesi i ketij personi — lidhja person → dyqan (§4.5). Merret nga
       // tabela `businesses`, jo nga `profiles.shop_name`: ai i fundit tregon
@@ -89,12 +110,12 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
       const { data: bz } = await supabase
         .from('businesses')
         .select('id,name,logo_url,is_verified')
-        .eq('owner_id', params.id)
+        .eq('owner_id', realId)
         .maybeSingle()
       setBiz(bz || null)
 
       // Shitjet personale — funksioni kthen skalar integer (Faza 6).
-      supabase.rpc('user_sold_count', { p_user: params.id }).then(({ data }) => {
+      supabase.rpc('user_sold_count', { p_user: realId }).then(({ data }) => {
         const n = Number(Array.isArray(data) ? data[0] : data)
         if (Number.isFinite(n)) setSoldCount(n)
       })
@@ -103,7 +124,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
       supabase
         .from('follows')
         .select('id', { count: 'exact', head: true })
-        .eq('following_id', params.id)
+        .eq('following_id', realId)
         .then(({ count }) => { if (typeof count === 'number') setFollowers(count) }, () => {})
 
       setLoading(false)
@@ -313,10 +334,28 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
       {activeTab === 'listings' && (
         <div id="tabpanel-listings" role="tabpanel" aria-labelledby="tab-listings" style={{ padding: '0 2px' }}>
           {listings.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '48px 16px', color: '#6b6b6b', fontSize: 14 }}>
-              <div style={{ fontSize: 36, marginBottom: 8 }} aria-hidden="true">📭</div>
-              Nuk ka shpallje aktive
-            </div>
+            biz ? (
+              // Rasti #2b (gjetja live O1): pronari i një biznesi. Shpalljet e tij i atribuohen
+              // biznesit (business_id != null, Vendimi 7), ndaj profili personal del bosh — teknikisht
+              // korrekt por ngatërrues. Zgjidhja e ligjshme e paqartësisë: e themi qartë dhe japim rrugën
+              // te faqja e biznesit, ku ndodhen shpalljet — pa i dyfishuar këtu.
+              <div style={{ textAlign: 'center', padding: '40px 16px', color: '#6b6b6b', fontSize: 14 }}>
+                <div style={{ fontSize: 36, marginBottom: 8 }} aria-hidden="true">🏢</div>
+                <div style={{ marginBottom: 14 }}>Ky përdorues shet përmes biznesit të tij.</div>
+                <button
+                  type="button"
+                  onClick={() => window.location.href = `/biznese/${biz.id}`}
+                  style={{ padding: '10px 20px', background: '#111', color: '#F5C842', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}
+                >
+                  <span aria-hidden="true">🏢</span> Shiko shpalljet te {biz.name || 'biznesi'} →
+                </button>
+              </div>
+            ) : (
+              <div style={{ textAlign: 'center', padding: '48px 16px', color: '#6b6b6b', fontSize: 14 }}>
+                <div style={{ fontSize: 36, marginBottom: 8 }} aria-hidden="true">📭</div>
+                Nuk ka shpallje aktive
+              </div>
+            )
           ) : (
             // I njejti ListingCard si te kryefaqja dhe te faqja e biznesit.
             // Me pare ky ishte nje grid katror 1/1 me titullin e mbivendosur

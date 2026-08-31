@@ -6,6 +6,15 @@ import UserProfileClient from './UserProfileClient'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../lib/supabase'
 import { SITE_URL } from '../../../lib/siteConfig'
 
+// /u/<param> pranon UUID ose username. Rrugëzimi i vjetër zgjidhte VETËM me `id`,
+// ndaj `/u/likamartin23` jepte "Profili nuk u gjet" (gjetje live O1). Detektojmë
+// formatin UUID; nëse s'është, e zgjidhim me `username`. `maybeSingle` => pa përjashtim
+// kur s'ka përputhje (username i pasaktë) — thjesht profil bosh, si më parë.
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+function profileCol(param: string): 'id' | 'username' {
+  return UUID_RE.test(param) ? 'id' : 'username'
+}
+
 // FIX-3 (Cowork): identiteti i viewer-it NE SERVER nga cookie-sesioni => paraqitja
 // e parë rendon degën e saktë (pronar↔vizitor) pa kërcim pas hidratimit. Defensiv:
 // çdo dështim => null (= vizitor), default-i aktual, pa regresion.
@@ -28,8 +37,8 @@ export async function generateMetadata(props: { params: Promise<{ id: string }> 
   const { data: p } = await sb
     .from('profiles')
     .select('full_name,username,bio,city,avatar_url')
-    .eq('id', params.id)
-    .single()
+    .eq(profileCol(params.id), params.id)
+    .maybeSingle()
 
   if (!p) return { title: 'Profil — ALPAZAR' }
 
@@ -67,14 +76,16 @@ async function fetchProfileData(id: string) {
   const { data: profile } = await sb
     .from('profiles')
     .select('id,full_name,username,avatar_url,cover_url,bio,city,is_premium,premium_expires_at,has_boost,boost_expires_at,is_verified,trust_score,trust_score_visible,created_at,shop_name,seller_rating,reviews_count,gamification_points,gamification_level')
-    .eq('id', id)
-    .single()
+    .eq(profileCol(id), id)
+    .maybeSingle()
   if (!profile) return { profile: null, listings: [], biz: null }
 
+  // Nga këtu përdorim ID-në REALE të profilit (jo `id`-në e URL-së, që mund të jetë username).
+  const uid = profile.id
   const [{ data: listings }, { data: biz }] = await Promise.all([
     sb.from('listings')
       .select('id,title,price,currency,images,city,created_at,is_premium,condition,rank_tier,views_count')
-      .eq('user_id', id)
+      .eq('user_id', uid)
       .is('business_id', null)
       .eq('is_active', true)
       .order('rank_tier', { ascending: false })
@@ -82,7 +93,7 @@ async function fetchProfileData(id: string) {
       .limit(60),
     sb.from('businesses')
       .select('id,name,logo_url,is_verified')
-      .eq('owner_id', id)
+      .eq('owner_id', uid)
       .maybeSingle(),
   ])
   return { profile, listings: listings ?? [], biz: biz ?? null }
