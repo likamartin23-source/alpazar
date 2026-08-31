@@ -152,6 +152,17 @@ Deri atehere `fiscal_status='not_required'` dhe asgje nuk prishet.
    `app/api/ai/context.ts`, qe dergon tekst te lire te perdoruesit te Google.
    Fushat qe kerkojne vendim te pronarit jane shenuar `[PLOTESO]`.
 6. DPO ka gjasa i detyrueshem — neni 33/1/c (te dhena penale ne shkalle te gjere).
+6-bis. ~~Cdo anetar i kycur lexonte telefonin, vitin e lindjes, arsyen e
+   pezullimit dhe rolin e adminit te KUJTDO.~~ **I MBYLLUR 1 shtator 2026.**
+   Vrima nuk ishte handoff-i WhatsApp/Viber — ishte AUTOMATIZMI: `/messages` e
+   merrte numrin pas nje bisede reale, ndersa `/listing/[id]` e merrte NE
+   NGARKIM TE FAQES, pra nje llogari plus nje skript i nxirrte te gjithe. Tani
+   numri vjen nga `listing_contact()` / `conversation_contact()` — veprim i
+   shprehur, i kufizuar (`contact_reveals_per_hour`) dhe i regjistruar
+   (`contact_reveal_log` + metrika `contact_phone`). Butonat varen nga kolona e
+   gjeneruar `has_phone`, jo-identifikuese. `authenticated` tani pasqyron
+   `anon`: 16 kolona pa qellim nder-perdorues jane te mbyllura, dhe leximi i
+   vetes behet me `my_profile()`.
 7. **NIPT-i “(ne regjistrim)”** — neni 7, ligji 10128.
 8. Mekanizmi i pelqimit per cookie — neni 123/6, ligji 9918/2008.
 9. ~~**Arsyetimi i vendimit nuk i dergohet perdoruesit** dhe **nuk ka rruge ankimi**.~~

@@ -132,7 +132,28 @@ kufizime të vetë dyfishit (HEAD/WebSocket të pambuluara).
 
 ---
 
-## 5. Çfarë pret vendimin tënd
+## 5. Çfarë u zgjidh më pas (1 shtator 2026)
+
+Të gjashtë pikat e hapura u mbyllën. Për secilën, zgjidhja u zgjodh pasi u mat,
+jo pasi u supozua.
+
+| Pika | Zgjidhja | Fakti që e vendosi |
+|---|---|---|
+| Telefoni i nxjerrshëm | `listing_contact()` / `conversation_contact()` — veprim i shprehur, i kufizuar, i regjistruar | Vrima ishte **automatizmi**: `/messages` e merrte pas një bisede, `/listing` në ngarkim faqeje |
+| `admin_role` e flamujt | `authenticated` pasqyron `anon`; 9 vende kodi te RPC-të | `is_admin()` ekzistonte tashmë si DEFINER — kolona s'kish pse lexohej |
+| Bump pa kufi | `app_config` → trigeri **dhe** `get_my_entitlements()` | `/profile` kishte 7 ditë të ngurtësuara, biznesi asnjë, baza asnjë |
+| `postcss` | `overrides: postcss ^8.5.26` | Next 15 mban `8.4.31`; e rregulluara është 8.5.23+ — **Next 16 nuk u desh** |
+| `anon` me `arwdDxtm` | TRUNCATE/REFERENCES/TRIGGER të hequra, edhe për tabelat e ardhshme | 69 tabela → 0; TRUNCATE nuk filtrohet nga RLS |
+| `sharp` | 0.34.5 → 0.35.4 | e vetmja që përpunon byte të përdoruesit në server |
+
+Mbeten të hapura **vetëm** tabelat me politika e pa ndërfaqe (`posts`, `orders`,
+`disputes`, `listing_comments`, `push_tokens`) — secila kërkon ose sipërfaqe të
+re publike me kapacitet moderimi, ose infrastrukturë. §5 i kontratës kërkon
+miratim shprehimisht.
+
+---
+
+## 6. Çfarë priste vendimin (arkivë e vendimit)
 
 1. **`profiles.phone` lexohet nga çdo anëtar.** I qëllimshëm (handoff), por është
    e dhënë personale e nxjerrshme me një llogari të vetme. Zgjidhja e mundshme:
