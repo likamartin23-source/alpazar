@@ -206,3 +206,29 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
   .card-title{font-size:16px;}
   .card-price{font-size:19px;}
 }
+
+
+/* ─────────────────────────────────────────────────────────────────────────
+   OBJEKTIVAT E PREKJES — 44px ne pajisje me gisht
+   ─────────────────────────────────────────────────────────────────────────
+   Vendimi 8 i projektit e ka kerkuar prej kohesh "prekje >=44x44px", por deri
+   me 31 gusht 2026 nuk ishte MATUR kurre: te gjitha kalimet e meparshme e pane
+   faqen vetem ne 1280-1440px, ndersa perdoruesi shqiptar eshte kryesisht ne
+   telefon. Matja e pare ne 390px: 23-50 objektiva nen 44px per faqe.
+
+   Rregulli ndizet VETEM me `pointer: coarse` — pra prek telefonin dhe tabletin,
+   kurre miun. Zbatohet vetem mbi butonat e VEPRIMIT, qe rrjedhin normalisht ne
+   faqe: rritja e tyre nga ~35px ne 44px shton lartesi, s'mund te prishe rreshtim.
+   Butonat-ikone te shiritave te ngushte (kthimi, njoftimet, ndarja — 32-36px)
+   NUK preken ketu: ata rrine ne gjeometri te ngushta dhe rritja e tyre kerkon
+   sy mbi pajisje reale. Jane matur dhe raportuar, jo ndryshuar verbërisht.
+
+   Referenca: WCAG 2.1 AAA 2.5.5 (44x44 CSS px) dhe udhezimet e Apple/Google.  */
+@media (pointer: coarse) {
+  .btn,
+  .empty-cta,
+  .plan,
+  button[type="submit"] {
+    min-height: 44px;
+  }
+}
