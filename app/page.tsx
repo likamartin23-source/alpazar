@@ -19,10 +19,17 @@ export const metadata: Metadata = {
   alternates: { canonical: '/' },
 }
 
-async function fetchHome(): Promise<{ listings: Listing[]; categories: Category[] }> {
+// `shops` merret KETU, jo ne klient. Arsyeja u mat me 31 gusht 2026 mbi ndertimin
+// e prodhimit, ne telefon te ngadalesuar: seksioni "Biznese Online" render-ohej
+// vetem pas fetch-it te klientit dhe hynte 256px MBI rreshtin e filtrave, duke
+// shtyre poshte filtrat, kokën e seksionit dhe gjithe rrjetin e shpalljeve.
+// Matja: CLS 0.207 ne kryefaqe — "i dobet" sipas Core Web Vitals (kufiri 0.1).
+// Duke ardhur nga serveri, blloku ekziston qysh te piktura e pare: pa kercim,
+// dhe si perfitim i dyte crawler-at e shohin vitrinen e bizneseve ne HTML.
+async function fetchHome(): Promise<{ listings: Listing[]; categories: Category[]; shops: any[] }> {
   try {
     const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-    const [{ data: listings }, { data: categories }] = await Promise.all([
+    const [{ data: listings }, { data: categories }, { data: shops }] = await Promise.all([
       sb.from('listings')
         // Një projeksion i vetëm identiteti (lib/listingSelect) — pa join-in e biznesit,
         // ListingCard e trajton shpalljen e biznesit si personale (maskim). Identik me HomeClient
@@ -33,18 +40,25 @@ async function fetchHome(): Promise<{ listings: Listing[]; categories: Category[
         .order('last_bumped_at', { ascending: false })
         .limit(20),
       sb.from('categories').select('*').eq('is_active', true).order('sort_order'),
+      // I njejti projeksion dhe i njejti kufi si `fetchShops()` te HomeClient —
+      // ndryshe SSR-ja dhe klienti do te jepnin dy lartesi te ndryshme.
+      sb.from('profiles')
+        .select('id,full_name,username,avatar_url,city,shop_name,shop_description,shop_category,shop_banner_url')
+        .eq('is_premium', true)
+        .limit(6),
     ])
     return {
       listings: (listings ?? []) as unknown as Listing[],
       categories: (categories ?? []) as unknown as Category[],
+      shops: shops ?? [],
     }
   } catch {
-    return { listings: [], categories: [] }
+    return { listings: [], categories: [], shops: [] }
   }
 }
 
 export default async function HomePage() {
-  const { listings, categories } = await fetchHome()
+  const { listings, categories, shops } = await fetchHome()
 
   // WebSite/Organization schema already lives in the root layout <head>; here we
   // add only the ItemList of current listings (complements, no duplication).
@@ -64,7 +78,7 @@ export default async function HomePage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
-      <HomeClient initialListings={listings} initialCategories={categories} />
+      <HomeClient initialListings={listings} initialCategories={categories} initialShops={shops} />
     </>
   )
 }

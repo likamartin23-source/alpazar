@@ -107,8 +107,12 @@ Deri atehere `fiscal_status='not_required'` dhe asgje nuk prishet.
    dytesor — kjo eshte e ligjshme. Mbetet e hapur vetem monedha e zgjedhur nga
    shitesi per shpalljen e vet (opsioni EUR te `/listing/new`), qe kerkon nje
    vendim per kursin e kembimit — burimi duhet `app_config`, kurre i ngurtesuar.
-2. **E drejta 14-ditore e heqjes dore** nga Premium — nenet 37/1–37/8.
-   (`businesses.withdrawal_days` tregon se ishte menduar.)
+2. ~~**E drejta 14-ditore e heqjes dore** nga Premium — nenet 37/1–37/8.~~
+   **E DEKLARUAR 31 gusht 2026:** `/kushtet` §6-a e thote saktesisht (afati, si
+   behet, kthimi pro-rata, perjashtimi i nenit 37/8) dhe shprehimisht qe kushtet
+   nuk e kufizojne dot. §6 nuk e paraqet me si mireservi. **MBETET:** rrjedha
+   operative e rimbursimit — berthama e pagesave nuk u prek me qellim; ajo eshte
+   vendim dhe veprim i pronarit.
 3. **Etiketa “E promovuar”** te VIP Boost — neni 17/A.11 + neni 8, ligji 10128.
 4. **Transferim nderkombetar pa instrument** — nenet 26, 39–42, ligji 124/2024.
    Sidomos `gtranslate()` te `app/api/ai/context.ts`, qe dergon tekst te Google.
@@ -119,8 +123,15 @@ Deri atehere `fiscal_status='not_required'` dhe asgje nuk prishet.
    Ishte transferim i vertete ne cdo hapje faqeje. **I zgjidhur:** fonti u
    vetestreh te `/public/fonts/fraunces-600-*.woff2` (OFL 1.1 bashkelidhur).
    Matur pas: 0 kerkesa drejt fonts.googleapis.com/gstatic.com, 0 gabime CSP.
-5. Mungon regjistri i veprimtarive (neni 27) dhe procedura 72-oreshe e cenimit
-   (neni 29), ligji 124/2024.
+5. ~~Mungon regjistri i veprimtarive (neni 27) dhe procedura 72-oreshe e cenimit
+   (neni 29), ligji 124/2024.~~ **TE HARTUARA 31 gusht 2026:**
+   `docs/REGJISTRI-I-PERPUNIMIT.md` dhe `docs/PROCEDURA-CENIMI-72-ORE.md`.
+   Fakt i ri i matur qe ndryshon peshen e §4.4: ruajtja kryesore eshte
+   **brenda BE-se** — Supabase `eu-west-1` (Irlande), Sentry Gjermani, Brevo
+   France. Transferimet pa instrument mbeten: Cloudinary, Resend, Groq,
+   Anthropic, Perplexity dhe — me i rendi — `gtranslate()` te
+   `app/api/ai/context.ts`, qe dergon tekst te lire te perdoruesit te Google.
+   Fushat qe kerkojne vendim te pronarit jane shenuar `[PLOTESO]`.
 6. DPO ka gjasa i detyrueshem — neni 33/1/c (te dhena penale ne shkalle te gjere).
 7. **NIPT-i “(ne regjistrim)”** — neni 7, ligji 10128.
 8. Mekanizmi i pelqimit per cookie — neni 123/6, ligji 9918/2008.
@@ -145,7 +156,16 @@ Deri atehere `fiscal_status='not_required'` dhe asgje nuk prishet.
   shkakun: "Host not in allowlist: sopafwfkrxpcdaljddoh.supabase.co. Add this
   host to your network egress settings." Kjo eshte pikerisht ajo qe duhet hapur
   qe agjenti te beje verifikim live me sy (Rregulli 11).
-- **Supabase** `sopafwfkrxpcdaljddoh` — PG 17.6.
+- **Ekranet e autentikuara SHIHEN me nje dyfish lokal** — `docs/VERIFIKIMI-VIZUAL.md`.
+  Aplikacioni drejtohet me `NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321`
+  te nje server dyfish; pa DNS, pa certifikata, pa anashkalim politike.
+  DY KURTHE: (a) cookie-t e sesionit vendosen te ENA (`addCookies`), sepse
+  `addInitScript` nisret pas navigimit dhe kerkesa e pare shkon pa cookie →
+  middleware-i fail-closed ridrejton; (b) `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+  duhet vendosur — `lib/supabase.ts` ka vlere rezerve, POR
+  `createMiddlewareClient()` e lexon nga mjedisi dhe **hedh perjashtim** kur
+  mungon, pra `/admin` nuk hapet kurre pa asnje diagnoze.
+- **Supabase** `sopafwfkrxpcdaljddoh` — PG 17.6, rajoni **eu-west-1 (BE)**.
 - **Vercel:** vetem `alpazar` (`prj_KNCEtuUDGNCA6ulHomdKniNAZEuX`) eshte real.
   Tre projekte jane lidhur me te njejten depo dhe marrin cdo push (vendosje me
   te njejtin SHA brenda 128 ms). Gjashte te tjeret jane per fshirje.
@@ -188,6 +208,13 @@ Deri atehere `fiscal_status='not_required'` dhe asgje nuk prishet.
   "e prishur" ne nje screenshot ketu **nuk eshte defekt** — eshte instrumenti.
 - **Nje detektues "komponente pa reference" qe nuk kupton `dynamic(() => import(…))`
   jep 100% pozitive te rreme.** Te 7 "te pareferencuarit" ishin te gjalle.
+- **Nje dyfish qe nuk riprodhon filtrat e vertete prodhon defekte te rreme.**
+  Te dhenat prove pa `is_active` bene qe `/kategori/automjete` te jepte 404 —
+  duket defekt i rende, eshte mangesi e dyfishit. Kontrollo skemen reale para
+  se te raportosh.
+- **`count` i supabase-js vjen nga `content-range`; kur ai mungon jep NaN.**
+  `count !== null` dhe `count ?? 0` NUK e kapin. Perdor `Number.isFinite`.
+  I njejti gabim ne familje: `??` nuk e kap NaN-in (NaN s'eshte null).
 - **Mos shpik URL prove.** `/kategori/makina` jep 404 sepse slug-u eshte
   `automjete`; kategori te sakta: arsim, automjete, biznese, elektronike, gaming,
   kafshë, mobilje, prona, pune, shendet, sherbime, sport, te-tjera, turizem,

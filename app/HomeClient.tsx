@@ -325,13 +325,13 @@ function AlpazarIcon() {
   )
 }
 
-export default function HomeClient({ initialListings = [], initialCategories = [] }: { initialListings?: Listing[]; initialCategories?: Category[] }) {
+export default function HomeClient({ initialListings = [], initialCategories = [], initialShops = [] }: { initialListings?: Listing[]; initialCategories?: Category[]; initialShops?: any[] }) {
   // Global context — auth, config, unread counts
   const { user, profile, authReady, unreadMessages: unreadCount, unreadNotifications, cfg } = useAlpazar()
 
   const [categories, setCategories] = useState<Category[]>(initialCategories)
   const [listings, setListings] = useState<Listing[]>(initialListings)
-  const [shops, setShops] = useState<any[]>([])
+  const [shops, setShops] = useState<any[]>(initialShops)
   const [activeCategory, setActiveCategory] = useState('all')
   const [activeFilter, setActiveFilter] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
