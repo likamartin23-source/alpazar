@@ -23,6 +23,19 @@
 --
 -- RENDI I DETYRUAR: dega ne prodhim → verifiko profilin, panelin, mesazhet dhe
 -- butonat e kontaktit → VETEM ATEHERE ekzekuto kete.
+--
+-- ── PERDITESIM 1 shtator 2026 (gati per aplikim, pas verifikimit live) ──
+-- Auditi i plote i lexuesve te kolonave te ndaluara mbi `profiles` (rol anon/authenticated):
+--   • app/api/email/route.ts:62  `.select('is_admin')` → lexohet me SERVICE ROLE (getSupabaseAdmin)
+--       → i sigurt (service_role anashkalon grant-et per-kolone). Pa ndryshim.
+--   • lib/context.tsx (cdo faqe)  → RIKTHYER te `supabase.rpc('my_profile')` (SECURITY DEFINER).
+--   • app/referral/page.tsx       → RIKTHYER te `supabase.rpc('my_referrals')` me renie te query-ja
+--       direkte gjate tranzicionit; RPC-ja krijohet nga `20260901_referrals_rpc.sql` (aplikoje PARA/BASHKE).
+--   • Te gjitha permendjet e tjera (age/phone/marketing_opt_in/avatar) jane `.update()/.upsert()` →
+--       grant-et UPDATE/INSERT NUK preken nga ky migrim. Te sigurt.
+-- RENDI: (1) kodi lart LIVE ne main → (2) `20260901_referrals_rpc.sql` → (3) ky migrim → (4) verifiko.
+-- SHENIM: apply_migration bllokohet nga klasifikuesi i auto-mode; te dy migrimet i ekzekuton
+-- pronari (ose sesion interaktiv i autorizuar).
 
 begin;
 

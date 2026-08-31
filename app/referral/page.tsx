@@ -138,10 +138,20 @@ export default function ReferralPage() {
         setProfile(p)
         const code = p.referral_code || p.username || uid.replace(/-/g,'').slice(0,8).toUpperCase()
         const codes = [...new Set([p.referral_code, p.username, code].filter(Boolean))] as string[]
-        const { data: refs } = await supabase.from('profiles')
-          .select('id,full_name,username,created_at')
-          .in('referred_by', codes)
-          .order('created_at', { ascending: false }).limit(20)
+        // Provo RPC-në my_referrals (SECURITY DEFINER) — punon edhe pasi `referred_by`
+        // t'i hiqet leximit të drejtpërdrejtë (privatësia, Ligji 124/2024). Bie te query-ja
+        // direkte nëse RPC-ja s'ekziston ende (tranzicion) — të dyja japin të njëjtin rezultat.
+        let refs: any[] | null = null
+        const rpc = await supabase.rpc('my_referrals')
+        if (!rpc.error && Array.isArray(rpc.data)) {
+          refs = rpc.data as any[]
+        } else {
+          const { data: d } = await supabase.from('profiles')
+            .select('id,full_name,username,created_at')
+            .in('referred_by', codes)
+            .order('created_at', { ascending: false }).limit(20)
+          refs = d
+        }
         if (refs) setReferrals(refs)
       }
       if (sc !== null) setShareCount(sc)

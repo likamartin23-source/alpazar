@@ -112,11 +112,11 @@ export function AlpazarProvider({ children }: { children: ReactNode }) {
   const LAST_SEEN_TTL = 5 * 60 * 1000 // write at most once per 5 minutes
 
   const loadProfile = useCallback(async (uid: string) => {
-    const { data } = await supabase
-      .from('profiles')
-      .select('id,username,full_name,avatar_url,is_premium,premium_expires_at,has_boost,boost_expires_at,is_admin,is_verified,is_suspended,gamification_points,gamification_level,shop_name,shop_banner_url,seller_rating,reviews_count,referral_code')
-      .eq('id', uid)
-      .single()
+    // my_profile() (SECURITY DEFINER) kthen rreshtin e plotë të profilit të vet nga auth.uid(),
+    // duke anashkaluar grant-et per-kolonë. Kjo e mban kontekstin (çdo faqe) funksional edhe pasi
+    // leximi i drejtpërdrejtë i `is_admin`/`is_suspended` t'i hiqet rolit authenticated
+    // (migrimi profiles_ngushtimi_pas_deploy — mbrojtja e të dhënave, Ligji 124/2024).
+    const { data } = await supabase.rpc('my_profile')
     if (data) setProfile(data as Profile)
     // Throttle last_seen: write at most once per 5 min to avoid redundant DB writes
     const now = Date.now()
