@@ -20,7 +20,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA}
 .seg{display:flex;gap:6px;background:#f2ecd6;border-radius:999px;padding:4px;margin-bottom:14px}
 .sg{flex:1;border:none;background:transparent;border-radius:999px;padding:9px 4px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;color:#7a6a30;white-space:nowrap}
 .sg.on{background:#fff;color:#111;box-shadow:0 1px 4px rgba(0,0,0,.08)}
-.save{background:#E63312;color:#fff;font-size:8px;font-weight:800;padding:2px 4px;border-radius:5px;margin-left:3px;vertical-align:middle}
+.save{background:#C42B0F;color:#fff;font-size:8px;font-weight:800;padding:2px 4px;border-radius:5px;margin-left:3px;vertical-align:middle}
 .plan{width:100%;text-align:left;background:#fff;border:2px solid #eee;border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;font-family:inherit;display:block}
 .plan.on{border-color:#E63312;background:#FFFDF6}
 .plan.feat{border-color:#F5C842}

@@ -59,6 +59,14 @@ button:active{transform:scale(.97);}
 .filter-btn{color:#555555 !important;}
 .filter-btn.active{color:#F5C842 !important;}
 .stat-l{color:#757575 !important;}
+/*  Kjo mbizoterese globale eshte per KARTAT E NDRITURA. Mbi nje karte te
+    erret (#111) #757575 jep 4.09:1 — nen 4.5:1 te WCAG 2.1 AA (matur me
+    axe-core, 31 gusht 2026), dhe `!important`-i ketu i anashkalonte
+    rregullimet e bera ne faqe. Asnje gri e VETME s'i kalon te dy sfondet:
+    mbi #111 duhet me e ndritur se ~#7F7F7F, mbi kremin me e erret se
+    ~#767676 — kufij qe perjashtojne njeri-tjetrin. Prandaj siperfaqja e
+    erret shenohet dhe merr vleren e vet.  */
+.stat-dark .stat-l{color:#9A9A9A !important;}
 
 .header{
   background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%) !important;

@@ -13,7 +13,7 @@ export default function RrethNesh() {
     .hero::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#E63312,#F5C842);}
     .hero-logo{font-size:56px;display:block;margin-bottom:14px;}
     .hero h1{color:#F5C842;font-size:24px;font-weight:700;letter-spacing:2px;margin-bottom:8px;}
-    .hero p{color:#555;font-size:13px;line-height:1.7;}
+    .hero p{color:#9A9A9A;font-size:13px;line-height:1.7;}
     .body{padding:20px 16px 40px;}
     .section{background:#fff;border-radius:12px;padding:20px;border:0.5px solid #eee;margin-bottom:14px;}
     .sec-title{font-size:15px;font-weight:700;color:#111;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
@@ -28,7 +28,7 @@ export default function RrethNesh() {
     .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px;}
     .stat{background:#111;border-radius:10px;padding:14px;text-align:center;}
     .stat-n{font-size:22px;font-weight:700;color:#F5C842;}
-    .stat-l{font-size:10px;color:#666;margin-top:4px;}
+    .stat-l{font-size:10px;color:#9A9A9A;margin-top:4px;}
     .timeline{position:relative;padding-left:20px;}
     .tl-item{position:relative;padding-bottom:20px;}
     .tl-item::before{content:'';position:absolute;left:-16px;top:5px;width:8px;height:8px;border-radius:50%;background:#F5C842;}
@@ -92,15 +92,15 @@ export default function RrethNesh() {
           <div className="section">
             <h2 className="sec-title"><i className="ti ti-chart-bar" aria-hidden="true" />Alpazar në numra</h2>
             <div className="stats">
-              <div className="stat">
+              <div className="stat stat-dark">
                 <div className="stat-n">0€</div>
                 <div className="stat-l">Kosto për shpallje</div>
               </div>
-              <div className="stat">
+              <div className="stat stat-dark">
                 <div className="stat-n">0</div>
                 <div className="stat-l">Reklama në platformë</div>
               </div>
-              <div className="stat">
+              <div className="stat stat-dark">
                 <div className="stat-n">24/7</div>
                 <div className="stat-l">Disponueshmëri</div>
               </div>

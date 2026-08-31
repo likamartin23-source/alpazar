@@ -42,7 +42,7 @@ const CSS = `
   .err{background:#FFF0EE;color:#C42B0F;border:0.5px solid #F09595;}
   .info{background:#EEF4FF;color:#185FA5;border:0.5px solid #85B7EB;}
   .warn{background:#FFF8EE;color:#A05000;border:0.5px solid #F5C842;}
-  .divider{display:flex;align-items:center;gap:10px;margin:12px 0;color:#ccc;font-size:12px;}
+  .divider{display:flex;align-items:center;gap:10px;margin:12px 0;color:#6E6E6E;font-size:12px;}
   .divider::before,.divider::after{content:'';flex:1;border-top:1px solid #eee;}
   .back{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:14px;color:#555;font-size:12px;cursor:pointer;}
   .back:hover{color:#C42B0F;}

@@ -105,12 +105,12 @@ export default function TakedownPage() {
   return (
     <div style={{ minHeight: '100dvh', background: '#FFFBEA', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 20px' }}>
       <div style={{ width: '100%', maxWidth: 500 }}>
-        <button type="button" aria-label="Kthehu" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: 13, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 6 }}>
+        <button type="button" aria-label="Kthehu" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', color: '#6E6E6E', cursor: 'pointer', fontSize: 13, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 6 }}>
           ← Kthehu
         </button>
         <div style={{ background: '#fff', border: '1.5px solid #f0e6b0', borderRadius: 16, padding: 28 }}>
           <h1 style={{ fontSize: 20, fontWeight: 800, color: '#111', marginBottom: 6 }}><span aria-hidden="true">⚖️</span> Kerkese Heqje Permbajtjeje / IP</h1>
-          <p style={{ fontSize: 12, color: '#888', lineHeight: 1.6, marginBottom: 20 }}>
+          <p style={{ fontSize: 12, color: '#6E6E6E', lineHeight: 1.6, marginBottom: 20 }}>
             Nese beson se ndonje permbajtje ne Alpazar shkel te drejtat e tua ose ligjin, plotesoje kete formular.
             Nuk te duhet llogari. Permbajtja qartesisht e paligjshme shqyrtohet <strong>menjehere</strong>;
             rastet e pronesise intelektuale brenda <strong>72 oreve</strong>.
@@ -120,7 +120,7 @@ export default function TakedownPage() {
             <div style={{ background: '#EAF3DE', border: '1px solid #97C459', borderRadius: 10, padding: 20, textAlign: 'center' }}>
               <div style={{ fontSize: 32, marginBottom: 8 }} aria-hidden="true">✅</div>
               <div style={{ fontWeight: 700, color: '#3B6D11', fontSize: 15 }}>Njoftimi u regjistrua</div>
-              <div style={{ color: '#888', fontSize: 12, marginTop: 6, lineHeight: 1.6 }}>
+              <div style={{ color: '#6E6E6E', fontSize: 12, marginTop: 6, lineHeight: 1.6 }}>
                 Pergjigjen do ta marresh te <strong>{contactEmail.trim()}</strong>.
                 {isLegal
                   ? ' Rasti u shenua si prioritar dhe shqyrtohet menjehere.'
@@ -163,7 +163,7 @@ export default function TakedownPage() {
               <div>
                 <label htmlFor="td-url" style={labelStyle}>Adresa e permbajtjes *</label>
                 <input id="td-url" type="url" required value={contentUrl} onChange={e => setContentUrl(e.target.value)} placeholder="https://alpazar.vercel.app/listing/..." style={inputStyle} />
-                <div style={{ fontSize: 10.5, color: '#aaa', marginTop: 4, lineHeight: 1.5 }}>
+                <div style={{ fontSize: 10.5, color: '#6E6E6E', marginTop: 4, lineHeight: 1.5 }}>
                   Kopjoje adresen e sakte te shpalljes. Pa te nuk e identifikojme dot permbajtjen.
                 </div>
               </div>
@@ -171,7 +171,7 @@ export default function TakedownPage() {
               <div>
                 <label htmlFor="td-desc" style={labelStyle}>Pershkrimi i ceshtjes *</label>
                 <textarea id="td-desc" value={description} onChange={e => setDescription(e.target.value)} required rows={4} placeholder="Shpjego cfare pe, ku, dhe pse mendon se eshte shkelje..." style={{ ...inputStyle, resize: 'vertical' }} />
-                <div style={{ fontSize: 10.5, color: description.trim().length >= 20 ? '#aaa' : '#C08A00', marginTop: 4 }}>
+                <div style={{ fontSize: 10.5, color: description.trim().length >= 20 ? '#6E6E6E' : '#8A6400', marginTop: 4 }}>
                   {description.trim().length}/20 shkronja minimumi
                 </div>
               </div>
@@ -179,7 +179,7 @@ export default function TakedownPage() {
               <div>
                 <label htmlFor="td-email" style={labelStyle}>Email kontakti *</label>
                 <input id="td-email" type="email" required value={contactEmail} onChange={e => setContactEmail(e.target.value)} placeholder="juaj@email.com" autoComplete="email" style={inputStyle} />
-                <div style={{ fontSize: 10.5, color: '#aaa', marginTop: 4, lineHeight: 1.5 }}>
+                <div style={{ fontSize: 10.5, color: '#6E6E6E', marginTop: 4, lineHeight: 1.5 }}>
                   Aty te dergojme rezultatin e shqyrtimit. Pergjigjja eshte pjese e procedures.
                 </div>
               </div>
@@ -197,10 +197,10 @@ export default function TakedownPage() {
             </form>
           )}
         </div>
-        <p style={{ fontSize: 10, color: '#aaa', textAlign: 'center', marginTop: 16, lineHeight: 1.6 }}>
+        <p style={{ fontSize: 10, color: '#6E6E6E', textAlign: 'center', marginTop: 16, lineHeight: 1.6 }}>
           Te dhenat e njoftimit perpunohen per shqyrtimin e tij dhe per permbushjen e detyrimeve ligjore
-          te platformes, sipas ligjit nr. 124/2024. Shih <a href="/kushtet" style={{ color: '#888' }}>Kushtet</a> dhe{' '}
-          <a href="/privatesia" style={{ color: '#888' }}>Privatesine</a>.
+          te platformes, sipas ligjit nr. 124/2024. Shih <a href="/kushtet" style={{ color: '#6E6E6E' }}>Kushtet</a> dhe{' '}
+          <a href="/privatesia" style={{ color: '#6E6E6E' }}>Privatesine</a>.
         </p>
       </div>
     </div>

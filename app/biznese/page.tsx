@@ -178,7 +178,7 @@ export default function BiznestPage() {
                       </span>
                     )}
                     {b.city && (
-                      <span style={{ fontSize: 11, color: '#888' }}><span aria-hidden="true">📍</span> {b.city}</span>
+                      <span style={{ fontSize: 11, color: '#6E6E6E' }}><span aria-hidden="true">📍</span> {b.city}</span>
                     )}
                   </div>
                   {b.description && (
@@ -190,7 +190,7 @@ export default function BiznestPage() {
                 <i className="ti ti-chevron-right" style={{ fontSize: 16, color: '#ccc', flexShrink: 0 }} aria-hidden="true" />
               </div>
             ))}
-            <div style={{ textAlign: 'center', padding: '12px 0', fontSize: 11, color: '#bbb' }}>
+            <div style={{ textAlign: 'center', padding: '12px 0', fontSize: 11, color: '#6E6E6E' }}>
               {filtered.length} biznes{filtered.length !== 1 ? 'e' : ''}
             </div>
           </div>

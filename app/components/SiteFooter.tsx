@@ -20,7 +20,11 @@ export function SiteFooter() {
   // fundi i faqes me lidhjet e marketingut, rrjetet sociale dhe nje kontroll
   // gjuhe te dyte vetem shton zhurme atje (pare me sy me 31 gusht 2026).
   if (pathname?.startsWith('/admin')) return null
-  const link: React.CSSProperties = { color: '#666', fontSize: 11, textDecoration: 'none' }
+  // Kontrast i matur me axe-core mbi #111111 (WCAG 2.1 AA kerkon 4.5:1 per
+  // tekst normal): #666666 jepte 3.29 — deshtim ne CDO faqe, sepse fundi
+  // shfaqet kudo. #9A9A9A jep 6.71 dhe e ruan hierarkine ndaj rreshtit te
+  // te drejtave (#8A8A8A, 5.47), qe mbetet me i zbehte se lidhjet.
+  const link: React.CSSProperties = { color: '#9A9A9A', fontSize: 11, textDecoration: 'none' }
   return (
     <footer style={{ background: '#111', padding: '22px 16px 28px', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
       <div style={{ maxWidth: 480, margin: '0 auto', textAlign: 'center' }}>
@@ -45,7 +49,7 @@ export function SiteFooter() {
           <a href="/referral" style={{ color: '#F5C842', fontSize: 11, textDecoration: 'none', fontWeight: 600 }}><span aria-hidden="true">🎁</span> {t('nav_referral')}</a>
         </nav>
         <div style={{ marginBottom: 14 }}><LanguageSwitcher /></div>
-        <div style={{ fontSize: 10, color: '#444' }}>© 2026 Alpazar · NIPT/QKB: (në regjistrim) · Tiranë, Shqipëri · {t('rights')}</div>
+        <div style={{ fontSize: 10, color: '#8A8A8A' }}>© 2026 Alpazar · NIPT/QKB: (në regjistrim) · Tiranë, Shqipëri · {t('rights')}</div>
       </div>
     </footer>
   )
