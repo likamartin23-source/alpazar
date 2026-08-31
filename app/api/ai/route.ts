@@ -2,6 +2,7 @@ import Anthropic from '@anthropic-ai/sdk'
 import { LANG_NAMES, buildSystemPrompt, localFallback } from './kb'
 import { getLiveContext, sanitizeConvo, gtranslate } from './context'
 import { tryGroqStream, tryGroqJSON } from './groq'
+import { tryPerplexityStream, tryPerplexityJSON } from './perplexity'
 import { NextRequest, NextResponse } from 'next/server'
 import { rateLimit, getClientIp } from '../../../lib/rateLimit'
 import { getSupabaseAdmin } from '../../../lib/supabase-admin'
@@ -72,7 +73,19 @@ export async function POST(req: NextRequest) {
   const liveCtx = await getLiveContext(lastUserMsg)
   const systemPrompt = buildSystemPrompt(liveCtx, lang)
 
-  // 1. Groq — falas (llama-3.3-70b, 100K token/ditë)
+  // 1. Perplexity Router — modele frontier (Claude/GPT/Gemini) me një çelës, të ndërrueshme
+  //    nga PERPLEXITY_MODEL pa deploy. Pa çelës kthen null MENJËHERË, pa thirrje rrjeti:
+  //    zinxhiri i mëposhtëm mbetet saktësisht si më parë. Ky është shtegu me cilësi më të lartë;
+  //    Groq mbetet rrjeta falas poshtë tij.
+  if (wantStream) {
+    const pplxStream = await tryPerplexityStream(convo, systemPrompt)
+    if (pplxStream) return pplxStream
+  } else {
+    const pplxReply = await tryPerplexityJSON(convo, systemPrompt)
+    if (pplxReply) return NextResponse.json({ reply: pplxReply })
+  }
+
+  // 2. Groq — falas (llama-3.1-8b-instant, 100K token/ditë)
   if (wantStream) {
     const groqStream = await tryGroqStream(convo, systemPrompt)
     if (groqStream) return groqStream
@@ -81,7 +94,7 @@ export async function POST(req: NextRequest) {
     if (groqReply) return NextResponse.json({ reply: groqReply })
   }
 
-  // 2. Anthropic Claude — fallback (çelësi nga admin_settings; aktiv kur ai_enabled + çelës present).
+  // 3. Anthropic Claude — fallback (çelësi nga admin_settings; aktiv kur ai_enabled + çelës present).
   //    Nëse llogaria s'ka kredit, gabimi kapet butë dhe shërbehet FAQ (pa ndotur error-tracking).
   const { enabled: aiEnabled, anthropicKey } = await getAiConfig()
   if (aiEnabled && anthropicKey) {
@@ -105,7 +118,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // 3. FAQ fallback (lokalizuar ne gjuhen e perdoruesit) — vetëm për bisedën e Albit.
+  // 4. FAQ fallback (lokalizuar ne gjuhen e perdoruesit) — vetëm për bisedën e Albit.
   //    Për thirrjet e ndihmësit (task) kthejmë null që klienti të përdorë fallback-un lokal.
   if (isTask) return NextResponse.json({ reply: null, ai: false })
   return NextResponse.json({ reply: await gtranslate(localFallback(lastUserMsg), lang) })
