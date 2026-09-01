@@ -3561,3 +3561,66 @@ Mësim për vete, i shtuar: **çdo pretendim sjelljeje duhet provuar me gjest t�
 
 ### 4. Gjendja e galerisë — E MBYLLUR, pa punë të mbetur
 swipe ✓ · treguesi ✓ · zona e prekjes ~25px ✓ · 9 foto. **Prioriteti 2 bie nga lista.**
+
+---
+
+## [O29] · pjesërisht — [O28] I BLLOKUAR nga klasifikuesi + verifikim i deploy-eve
+
+### 1. ⛔ [O28] NUK U APLIKUA DOT — klasifikuesi bllokon ndryshimet e politikave RLS
+
+E verifikova VETË paraprakisht se migrimi është i sigurt (nuk u mjaftova me fjalën e cloud-it):
+```
+trg_guard_profile_privileges : BEFORE UPDATE · tgenabled='O' (aktiv)
+guard_profile_privileges     : SECURITY DEFINER, search_path='public','pg_temp'
+Bllokon: is_admin · admin_role            (vetë-ndryshimi ndalohet plotësisht; të tjerët: roles.manage)
+         is_premium · premium_expires_at · has_boost · boost_expires_at   (kërkon users.gift)
+         is_suspended · is_verified · trust_score                          (kërkon users.moderate)
+Përjashtime: service_role · app.skip_privilege_guard
+Përdor VETËM OLD/NEW + auth.uid() → S'KA nevojë për SELECT tabelar → ngushtimi s'e prek.
+```
+**Trigeri mbulon 9 kolona — MË SHUMË se 6-shja e RLS-së** (shton `premium_expires_at`,
+`boost_expires_at`, `trust_score`). Pra nën-SELECT-et janë vërtet të tepërta dhe heqja e tyre
+**nuk dobëson asgjë**. Migrimi është i sigurt.
+
+**POR:** `apply_migration` u refuzua dy herë — *«Permission for this action was denied by the
+Claude Code auto mode classifier»*. Klasifikuesi e bllokon çdo `alter policy … with check` (ndryshim RLS).
+**Nuk e anashkalova** (as me `execute_sql`, as duke e ndarë në copa) — ai bllok ekziston me qëllim.
+
+**SQL-ja që duhet ekzekutuar (pronari, te Supabase → SQL Editor):**
+```sql
+alter policy profiles_update on public.profiles
+  with check ( public.has_perm('users.moderate'::text) OR ( ( select auth.uid() ) = id ) );
+```
+Pastaj dy provat që kërkon [O28] (unë i ekzekutoj dot, janë vetëm lexim/shkrim i zakonshëm):
+```sql
+-- POZITIVE (duhet OK):      update profiles set last_seen = now()  where id = auth.uid();
+-- NEGATIVE (duhet bllokim): update profiles set is_premium = true  where id = auth.uid();
+--   → «Perfitimet e paguara jepen vetem nga abonimi ose nga administrata»
+```
+
+### 2. ✅ Verifikim i deploy-eve — live = `6b3c58a`
+
+| Commit | Përmbajtja | Live? |
+|---|---|---|
+| `fa7544d` | LISTING_SELECT në të gjitha feed-et | **✅** |
+| `238e0cb` | kriza e ruajtjes së bllokuar (i18n cookie) | **✅** |
+| `6b3c58a` | K2 pjesa 1 — BusinessCard + «Biznese Online» nga `businesses` | **✅** |
+| `9c0980d` | filtrat VIP + Shërbim + njësim me `rank_tier` | **✅** |
+| `e9cb89b` | K2 pjesa 2 — lista `/biznese` me BusinessCard | ⏳ |
+| `4e10524` | middleware mbron rrugët private | ⏳ |
+| `f69f68e` | shkalla e butonave (O24) | ⏳ |
+| `f422e98` | «Pazrin»→«Pazarin» | ⏳ |
+
+### 3. ✅ [O25] i mbyllur në kod — 10 skedarë importojnë `LISTING_SELECT`
+```
+u/[id]/UserProfileClient:61,102 · u/[id]/page.tsx · biznese/[id]/page.tsx:37
+biznese/[id]/BiznesPageClient:327 · listing/[id]/ListingPageClient:358 · favorites
+HomeClient:373,488 · page.tsx · search/results · api/search/fts (const SELECT = LISTING_SELECT)
+```
+Mbetet i shkruar me dorë vetëm `BiznesPageClient:383` — **me të drejtë**: është lista e MENAXHIMIT
+të pronarit (i duhen `is_active`, `last_bumped_at`, `status`), jo një feed që ushqen `ListingCard`.
+
+### 4. ⚠ MBETET: porta CI nuk u shtua
+`grep -rl LISTING_SELECT .github/ scripts/` → **asgjë**. Pika 2 e rekomandimit tim ([O25]) — testi
+që dështon nëse një `from('listings').select(` i ri nuk e përdor konstanten — **s'ekziston ende**.
+Pa të, projeksioni i shtatë do lindë. Kjo është pikërisht mekanizmi që e ndal §4-bis të përsëritet.
