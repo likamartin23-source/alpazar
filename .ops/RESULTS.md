@@ -2446,3 +2446,26 @@ konfigurimi. Dhe urdhri thotë qartë: *"mos fshi asgjë pa provën live të hyr
 **Pret pronarin:** një hyrje e vërtetë me Google te `/auth/login`. Nëse hyn — kanoniku
 konfirmohet dhe mund të hiqet vetëm ajo që provohet e papërdorur. Nuk e bëj dot unë:
 kërkon llogarinë tënde të Google-it.
+
+## [PYETJA E CLOUD-IT] · dead code `isOnline` — matur, me një korrigjim timin
+
+Cloud-i pyeti: ta heq apo ta lë? E mata në vend që të përgjigjem me ndjesi.
+
+| Simboli | Referenca jashtë përkufizimit | Verdikti |
+|---|---|---|
+| `isOnline` | **0** — as brenda `Badges.tsx` | vërtet i vdekur |
+| `buildBadges` | 1 — thirret nga `UserBadges` (`Badges.tsx:69`) | **JO i vdekur drejtpërdrejt** |
+| `UserBadges` (i eksportuar) | **0** në gjithë `app/` dhe `lib/` | i vdekur një nivel më lart |
+
+**Korrigjim i raportit tim:** te pika G shkrova "`isOnline` dhe `buildBadges` janë kod i vdekur".
+Kjo ishte e pasaktë për `buildBadges` — ai **përdoret**, nga `UserBadges`. Zinxhiri i plotë
+është `buildBadges → UserBadges → askush`. Përfundimi im ishte i drejtë, arsyetimi jo:
+më duhej edhe një hap. E njëjta neglizhencë si tërheqjet e tjera.
+
+**Rekomandimi im (vendimi mbetet i pronarit):**
+- **`isOnline`: hiqe.** Zero referenca, asnjë rrezik, asnjë humbje.
+- **`UserBadges` + `buildBadges`: LËRI.** S'janë kalbësirë — janë një komponent koherent e
+  funksional që ndërton distinktivët nga `LEVELS` (burimi që sapo u unifikua), dhe pikërisht
+  vendi i natyrshëm ku do të renderohej distinktivi i nivelit. Rregulli i pronarit është
+  "përshtat para se të fshish": këtu ka çfarë të përshtatet, jo çfarë të hidhet.
+- **MOS prek `getLevel` dhe `LEVELS`** — të dy përdoren gjallërisht (`/referral` + `Badges`).
