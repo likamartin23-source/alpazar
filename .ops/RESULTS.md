@@ -1025,3 +1025,49 @@ panelit, jo pamjen — ngjyrat, CLS dhe prekja kërkojnë ende shfletuesin.
 
 `admin_stats`: `listings_total=7` por `listings_active=2` — pesë shpallje jo-aktive
 që s'duken askund në ndërfaqe.
+
+## [O8-ANIMACIONET-DHE-UNAZA] · Tri gjetje, të gjitha me shkak të provuar
+
+### 1. Kartat e bizneseve nuk "notojnë" — shkaku: klasë tjetër
+`ui-refine.css:174` e jep notimin VETËM te `.listing-card`:
+
+    .listing-card{… animation:card-in .45s …, alpzCardFloat 5s ease-in-out infinite;}
+    @keyframes alpzCardFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+
+Kartat e bizneseve te kryefaqja përdorin klasën **`.shop-mini`**, e cila s'e ka
+fare atë rregull. Matur LIVE:
+
+    .shop-mini    → animation-name: none
+    .listing-card → animation-name: card-in, alpzCardFloat
+
+Nuk është animacion i prishur — është animacion që s'u aplikua kurrë te ajo klasë.
+
+### 2. Unaza nuk pulson — shkaku: i njëjti SELECT i mangët
+`Avatar.tsx:165` e vë klasën pulsuese vetëm sipas tier-it:
+`tier==='vip' → .alpz-vip-ring` · `tier==='premium' → .alpz-premium-ring` · përndryshe **asnjë klasë**.
+
+Te kryefaqja `tierNgaProfili(shop)` merr një objekt që **s'i ka fushat e nevojshme**
+(`is_premium`, `has_boost`, `premium_expires_at` s'janë në `fetchShops`), ndaj kthen
+gjithnjë `'free'`. Matur LIVE: unaza e kartës së biznesit ka **klasë boshe** dhe
+`animation-name: none`.
+
+**Një shkak i vetëm → tri simptoma:** vula ✓ s'shfaqet, unaza del e nivelit falas,
+dhe pulsimi nuk ndizet. Të tria zgjidhen duke shtuar katër fusha te ai `select`.
+
+### 3. Mbivendosje: logoja e biznesit mbi butonin e ngarkimit
+Të dy elementet janë ankoruar në **të njëjtin cep poshtë-djathtas** të së njëjtës
+enë 84×84:
+
+| Elementi | Pozicioni | Përmasa |
+|---|---|---|
+| Distinktivi 🏢/✓ (`Avatar.tsx:197`) | `right:-2; bottom:-2` | ~29×29 |
+| Butoni 📷 `.cam` (`BiznesPageClient.tsx:548`) | `bottom:0; right:-4` | 30×30 |
+
+Mbulohen pothuajse plotësisht. Matur live te faqja publike, distinktivi `🏢` bie
+te `(73,15)` me 29×29 brenda unazës `(16,-42, 84×84)` — pikërisht ku ulet `.cam`.
+Duket vetëm në **pamjen e pronarit** (`bizp-card`), prandaj s'e kapa si vizitor.
+
+Slot-et e lira te Avatar-i: `right:-2 top:-2` (kurora VIP/Premium) dhe
+`left:-1 bottom:-1` (pika online). Poshtë-djathtas është i zënë nga distinktivi i
+tipit, ndaj `.cam` duhet zhvendosur (p.sh. poshtë-majtas kur s'ka pikë online,
+ose jashtë unazës si buton më vete).
