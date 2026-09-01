@@ -7,6 +7,7 @@ import Avatar, { tierNgaProfili } from '../components/Avatar'
 import { supabase } from '../../lib/supabase'
 import { SITE_URL } from '../../lib/siteConfig'
 import { getLevel, isNewMember } from '../components/Badges'
+import { TrustBadge } from '../components/TrustBadge'
 import { monthYear } from '../../lib/format'
 import { SkeletonProfile, SkeletonList } from '../components/Skeleton'
 
@@ -680,11 +681,26 @@ export default function ProfilePage() {
             {(user?.email_confirmed_at || user?.phone_confirmed_at) && <span className="badge b-verif"><span aria-hidden="true">✓</span> Verifikuar</span>}
             {(() => { const t = tierNgaProfili(profile); return t !== 'free' && <span className="badge b-prem"><span aria-hidden="true">👑</span> {t === 'vip' ? 'VIP Ekstra Boost' : 'Premium'}</span> })()}
             {profile?.shop_name && <span className="badge b-shop"><span aria-hidden="true">🏢</span> Biznes</span>}
-            {(() => { const l = getLevel(profile?.gamification_points || 0); return <span className="badge" style={{ background: l.bg, color: l.color }}><span aria-hidden="true">{l.icon}</span> {l.name}</span> })()}
+            {/* Niveli vetëm kur ka kaluar Fillestarin (pts≥100) — i njëjti rregull si IdentityBadges/[O43]:
+                "🌱 Fillestar për këdo është zhurmë". Më parë /profile e shfaqte GJITHMONË (kontradiktë). */}
+            {(profile?.gamification_points || 0) >= 100 && (() => { const l = getLevel(profile.gamification_points); return <span className="badge" style={{ background: l.bg, color: l.color }}><span aria-hidden="true">{l.icon}</span> {l.name}</span> })()}
             {myListings.some(l => l.is_active) && <span className="badge b-seller"><span aria-hidden="true">📦</span> Shitës aktiv</span>}
             {isNewMember(profile?.created_at) && <span className="badge b-new"><span aria-hidden="true">🆕</span> Anëtar i ri</span>}
             {profile?.gamification_points > 0 && <span className="badge b-pts"><span aria-hidden="true">⚡</span> {profile.gamification_points} pikë</span>}
           </div>
+          {/* Besueshmëria (TrustBadge) — [O43]: /profile ishte E VETMJA siperfaqe pa te, pikerisht ku
+              pronari do te shihte piken e vet. I njejti komponent si /u · /listing · /biznese, i njejti
+              opt-out (Ligji 124/2024 n.19 · trust_score_visible). Skini i faqes (.badge) mbetet i paprekur. */}
+          {profile?.created_at && profile?.trust_score_visible !== false && (
+            <div style={{ marginTop: 10 }}>
+              <TrustBadge
+                score={profile.trust_score ?? undefined}
+                createdAt={profile.created_at}
+                listingsActive={myListings.filter(l => l.is_active).length}
+                gamificationPoints={profile.gamification_points || 0}
+              />
+            </div>
+          )}
         </div>
 
         <div className="alpz-stats" style={{ margin: "12px 12px 0" }}>
