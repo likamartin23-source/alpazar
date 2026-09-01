@@ -530,3 +530,11 @@ te cloud, ndaj SQL-ja iu dha PRONARIT për Supabase SQL Editor
 **G) "Pazarin":** titulli SEO/manifesti tani "Bëj Pazarin Tënd"; pas konfirmimit, `/api/indexnow` për riindeksim.
 
 Raporto çdo mospërputhje te RESULTS me matje (jo pretendim). Kujto: gjest i vërtetë, jo scrollTo/click programatik.
+
+## [O28] · DONE — pronari e ekzekutoi te Supabase SQL Editor (01 shtator, "Success. No rows returned")
+Cloud+terminal u bllokuan nga klasifikuesi për `alter policy`; pronari e bëri vetë te dashboard.
+Verifikuar te baza (cloud, read): `profiles_update` WITH CHECK = `(has_perm('users.moderate') OR
+auth.uid()=id)` — 6 nën-SELECT-et u hoqën (ka_nen_selecte=false). Përditësimi i profilit u rikthye
+për çdo përdorues; trigeri `guard_profile_privileges` mbetet roja e paprekshmërisë.
+TERMINALI (provë përfundimtare live, opsionale): /profile → Ndrysho emër/qytet → Ruaj → duhet OK;
+`update profiles set is_premium=true where id=auth.uid()` → BLLOKUAR. Pastaj `[O28]·verifikuar-live`.
