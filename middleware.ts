@@ -86,6 +86,25 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL('/auth/login', req.url))
     }
   } else if (
+    pathname === '/messages' || pathname.startsWith('/messages/') ||
+    pathname === '/profile'  || pathname.startsWith('/profile/')  ||
+    pathname === '/favorites'|| pathname.startsWith('/favorites/')||
+    pathname === '/biznese/new'
+  ) {
+    // Rrugë PRIVATE: kërkojnë sesion. Pa këtë, faqja kthehej 200 dhe rendohej për një çast
+    // (flash) para se klienti të ridrejtonte te hyrja — dhe ishte e indeksueshme nga crawler-at.
+    // RLS i mbron TË DHËNAT gjithsesi (s'ishte vrimë sigurie); kjo heq flash-in + i fsheh nga SEO.
+    // Fail-soft: nëse `getSession()` dështon (rrjet/edge), NUK bllokojmë — klienti e trajton (pa lockout).
+    try {
+      const { createMiddlewareClient } = await import('@supabase/auth-helpers-nextjs')
+      const supabase = createMiddlewareClient(
+        { req, res },
+        { supabaseUrl: SUPABASE_URL, supabaseKey: SUPABASE_ANON_KEY },
+      )
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) return NextResponse.redirect(new URL('/auth/login', req.url))
+    } catch { /* fail-soft: mos blloko */ }
+  } else if (
     pathname.startsWith('/biznese') ||
     pathname.startsWith('/u/') ||
     pathname.startsWith('/listing')
