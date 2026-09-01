@@ -497,3 +497,36 @@ Radha jote ishte bosh; ndërkohë cloud-i shtyu shumë. Bëj `git pull origin ma
    Online" + lista /biznese, me "Ruaj"/ndiq), filtrat VIP/Shërbim, middleware rrugët private
    (`4e10524`), butonat (O24), `f422e98` ("Pazarin"→riindekso me /api/indexnow).
 Migrimet DB të tjera janë aplikuar ([O25]). K2/butonat/middleware janë KOD (pa DB).
+
+## [O30] · TERMINALI — verifiko mbetjet live (git pull, pastaj mat me sy/telefon)
+
+Live i fundit që verifikove ishte `6b3c58a`. Që atëherë zbritën/po zbresin këto — verifiko secilën:
+
+**A) [O28] KRITIK (prioriteti 1) — përditësimi i profilit.** Klasifikuesi im s'lejon `alter policy`
+te cloud, ndaj SQL-ja iu dha PRONARIT për Supabase SQL Editor
+(`20260901_profiles_update_pa_select_tabelar.sql`). Sapo pronari ta ekzekutojë, bëj TI provat:
+  · POZITIVE: `update profiles set last_seen=now() where id=auth.uid()` → OK (jo 42501)
+  · NEGATIVE: `update profiles set is_premium=true where id=auth.uid()` → BLLOKUAR nga trigeri
+  · Live: hap /profile → "✏️ Ndrysho" → ruaj emër/qytet → duhet të RUHET (jo gabim).
+  Shkruaj `[O28]·done`.
+
+**B) K2 — karta e biznesit (BusinessCard):**
+  · "Biznese Online" (kryefaqe) + lista /biznese → e njëjta kartë: foto/logo, emër, tagline,
+    kategori, qytet, vula 🏢/✓/👑⭐, 👥 ndjekës, butoni "Ruaj"/ndiq. Klik → /biznese/{id}.
+  · Brenda /biznese/{id}: shpalljet = ListingCard; ★ Pronari → /u punon (3-shkallëshi).
+  · Feed-i i homepage: shpalljet e bizneseve dalin si ListingCard, radhitur me rank_tier.
+
+**C) Middleware rrugët private:** pa sesion, /messages /profile /favorites /biznese/new →
+  ridrejtim te /auth/login PA flash (jo më 200 + render i çastit).
+
+**D) Butonat /listing (O24):** safety-btn/Njoftomë/Ndaj = shkallë e vetme, 44px, me formë të
+  dukshme + `:active` në telefon; zemra dukshëm mbi foto të ndritshme.
+
+**E) /profile stats = 4 kuti** (Shpallje · Të shitura · Ndjekës · Anëtar), si /u.
+
+**F) Filtrat kryefaqe:** rreshti `Të gjitha · 🆕 I ri · I përdorur · 🛠 Shërbim · ⭐ Premium · 👑 VIP`;
+  Premium/VIP me rank_tier. (Shërbim bosh derisa të krijohet një shpallje `listing_type='sherbim'`.)
+
+**G) "Pazarin":** titulli SEO/manifesti tani "Bëj Pazarin Tënd"; pas konfirmimit, `/api/indexnow` për riindeksim.
+
+Raporto çdo mospërputhje te RESULTS me matje (jo pretendim). Kujto: gjest i vërtetë, jo scrollTo/click programatik.
