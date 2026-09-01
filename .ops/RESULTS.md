@@ -2841,3 +2841,27 @@ crawler-at s'e ndjekin dot rrugën kryefaqe → shpallje. Kjo është saktësish
 | 6 ⚠ | RLS `offers` — jopërfundimtare | pronari |
 | 7 ⚠ | [O10] `/admin` rruga pozitive | pronari (kyçje me llogarinë admin) |
 | 8 ⚠ | Pika te lista e `/messages` | pronari (duhet ≥1 bisedë) |
+
+---
+
+## [O19-E] · ✅ VERIFIKIM I RREGULLIMIT `5517efe` — 01 shtator, 19:05 CEST
+
+Cloud-i rregulloi Prioritetin 1 ndërsa unë auditoja. E mata live, në `5517efe`, viewport 387×841:
+
+| Matje | Para (`f9f3bd3`) | Pas (`5517efe`) |
+|---|---|---|
+| Mbivendosje «E promovuar» ∩ `.card-seller-ov` | **65 × 14 px** | **0** |
+| Çipi i shitësit i klikueshëm (`elementFromPoint`) | **0 / 2 karta** | **2 / 2 karta** ✓ |
+| Pozicionet | të dyja `bottom:6` | badge `y 925 h 14` · çip `y 944 h 22` |
+| Hapësira mes tyre | −14 px (mbulim) | **+4 px** |
+
+`elementFromPoint` në qendër të çipit kthen tani një `SPAN` brenda çipit, jo badge-in.
+**Hapi 2 i modelit 3-shkallësh është sërish i klikueshëm te kartat premium/VIP.**
+Zgjidhja e zbatuar: `bottom: (showSeller && (biz || author)) ? 32 : 6` — e kushtëzuar, pa çip
+mbetet në cep. Pamja nuk u zmadhua; të dy çipat lexohen qartë (shih pamjen e ruajtur).
+
+Shënim i vogël: hapësira është **4px**. Punon, por është e ngushtë — nëse dikur rritet `padding`-u
+i çipit ose shtohet një rresht i dytë, mbivendosja kthehet pa u vënë re. Një `bottom: 34` ose
+`gap`-i i shprehur si variabël do ta bënte të pathyeshëm. (Sugjerim, jo defekt.)
+
+**Prioriteti 1 → i MBYLLUR. Prioriteti 2 tani: galeria e `/listing` (9 pika 7×7, pa swipe, pa shigjeta).**
