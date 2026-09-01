@@ -3837,3 +3837,62 @@ u nisur nga instrumenti në vend të gjestit.
 **Mos audito simptomën që kupton — audito simptomën që përshkruan pronari.**
 «Nuk reflektohet» ≠ «kthehet te e vjetra». E para është tubacion; e dyta është gjendje e klientit.
 E humba një cikël të plotë sepse s'e dallova.
+
+---
+
+# [O33] · AUTOPSI SHUMËDIMENSIONALE — «kthehet te e vjetra»
+
+Përgjigjet e pronarit: (1) **kryesisht te shpalljet**, edhe gjetkë · (2) **të dyja pajisjet** ·
+(3) **çdo herë pas hyrjes dhe pas rifreskimit** · (4) **tani u kthye përfundimisht**.
+Metoda: matrica §9.4 e SUPERAUTOPSISË — një instrument i veçantë për çdo dimension, matje jo arsyetim.
+
+## Tetë dimensionet — të gjitha të matura, të gjitha të pastra
+
+| # | Dimensioni | Instrumenti | Rezultati |
+|---|---|---|---|
+| 1 | **Rikthim i Vercel-it** | API e GitHub-ut, 14 deployment sipas kohës së PËRFUNDIMIT | `e0b8114→829c3cc→f9f3bd3→32d6dc4→5517efe→d2dc643→8c372a4→1198389→4d1a397→fa7544d→d3aff61→6b3c58a→4aaf730→5f0ed84` — **rreptësisht përpara, 0 inversione** |
+| 2 | **Cache i buzës (CDN)** | 12 kërkesa të shpejta, header-at | **MISS 12/12 · Age 0 12/12** — CDN-ja s'e ruan fare HTML-në |
+| 3 | **Freskia e HTML-së** | build i pjekur në HTML vs `/api/version` | **përputhen 6/6** |
+| 4 | **Chunk-et** | 17 burimet `/_next/static/*` të referuara | **200 · 17/17** — asnjë `ChunkLoadError` i mundshëm |
+| 5 | **Service Worker** | leximi i `public/sw.js` + `layout.tsx` | kill-switch pa fetch-handler; app-i s'regjistron SW; pastrim në çdo ngarkim; `/rifresko` = 200 me `Clear-Site-Data` |
+| 6 | **Të dhënat** | `update listings set title=title` si `authenticated` | **kalon** · 7 shpallje, `updated_at` i qëndrueshëm, asgjë s'i rishkruan |
+| 7 | **Aliaset / hostet** | `/api/version` në 3 aliase + `alpazar.al` | aliaset koherente; `alpazar.al` = faqe e parkuar (`lang="en"`, `noindex`), **nuk është app-i** |
+| 8 | **Kodi i shërbyer == kodi i repos** | krahasim byte-për-byte i `.safety-btn` | live `min-height:44px · border:1px solid #b0b0b0 · :active` == repo · **`#e6e6e6` (i vjetri) = 0 shfaqje** |
+
+**Përfundim i matur: nga kodi te pikseli, zinxhiri është i saktë. «E vjetra» NUK vjen nga serveri.**
+
+## Ç'mbetet — dhe pse s'e mbyll dot vetë
+
+Dy klasa nga taksonomia, të dyja të dokumentuara në autopsitë e mëparshme:
+
+**F4 — «Pretendimi qëndron në koment; kodi kurrë s'e prodhoi.»**
+Një rregullim raportohet si i bërë, por sipërfaqja që pronari sheh s'e përdor atë komponent/rrugë.
+**Sot gjeta shtatë devijime që JANË ende aty dhe që dikush mund t'i lexojë si «u kthye te e vjetra»:**
+| Devijimi | Gjendja |
+|---|---|
+| Paneli i biznesit: caku **5 tabs**, live **3** (Mesazhet/Analitika si karta) | i hapur |
+| `/profile`: caku **4 kuti stats**, live **3** («Shpallje aktive · Shikime · Niveli») | i hapur — vendimi **B2** |
+| Etiketa «**Trust Score**» në anglisht; vendimi **G5** kërkon «**Besueshmëria**» | i hapur |
+| «**📍 Harta**» te `/biznese` — vendimi **G5** | mungon |
+| «📞 Telefono» · «⏱️ Përgjigjet» · «NIPT ✓» te caku B2 | mungojnë |
+| `.card-stats` shfaqet te **2 nga 3** kartat | i hapur |
+| `.shop-mini` CSS i vdekur te `HomeClient:672-674` | i hapur |
+
+**§4 — «Verbëria e tetë: nuk e provova mekanizmin e rregullimit tim.»**
+Porta CI për `LISTING_SELECT` **ende s'ekziston** (`grep -rl LISTING_SELECT .github/ scripts/` → asgjë).
+Pa të, projeksioni i shtatë lind dhe e njëjta plagë kthehet — **ky është mekanizmi i vetëm që
+e ndal përsëritjen**, dhe s'u ndërtua.
+
+## Pse s'e mbyll dot sot
+Ekstensioni **s'ka leje për `alpazar.vercel.app`** (`screenshot → «must request permission»`,
+`javascript_tool → timeout`). **Nuk e kam parë kurrë ekranin ku ti sheh «të vjetrën».**
+Çdo pretendim i mëtejshëm nga ana ime do ishte hamendje — dhe sot kam gabuar **katër herë**
+duke u nisur nga instrumenti në vend të gjestit (swipe · localStorage vs cookie · HEAD 503 · treguesi).
+**Nuk e bëj të pestin.**
+
+## Hapi i vetëm që e mbyll — njëri nga të dy
+1. **Jep lejen e ekstensionit** për `alpazar.vercel.app` (te ikona e ekstensionit, jo rifreskim) → e mat vetë ekranin tënd brenda minutash; **ose**
+2. **Një pamje ekrani me shiritin e URL-së të dukshëm**, plus një fjali: *«këtu duhet të ishte X, po shoh Y»*.
+
+Me njërën nga këto, e ndaj menjëherë: **F4 (rregullimi s'preku atë sipërfaqe)** nga **gjendje e klientit**.
+Pa asnjërën, tetë dimensionet e mësipërme thonë se serveri jep të renë — dhe kjo është gjithçka që di me siguri.
