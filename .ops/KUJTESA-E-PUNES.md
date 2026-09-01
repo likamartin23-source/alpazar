@@ -54,6 +54,9 @@ Prandaj "të vjetrat në disa faqe, të rejat në të tjera" — të dyja të gj
 - **Zgjidhja = FAZË KONSOLIDIMI** (jo fikse të vetme): heq të vjetrën + bën të renë të detyrueshme. Prek pamje/përmbajtje → kërkon plan + verifikim vizual per-sipërfaqe (Rregulli 11), JO zëvendësim masiv verbër.
 - Nën-fazat: (K1) tokena ngjyrash — konsolido `#c42b0f/#c42a0e`→token; (K2) 3 kartat e biznesit → një; (K3) sistemet e vdekura (isOnline/buildBadges/10 RPC/conversation_id); (K4) navigimi `next/link`; (K5) `getLevel`/`LEVELS` një fjalor. Secila CI-green + sy.
 
+- **Autoaudit i terminalit (`10a986b`):** retrospektivë procesi (jo defekt i ri). Mësime: telefoni i pari; kontrollet e lira (npm audit/axe/konsola) para të shtrenjtave; asnjë diagnozë pa provë sjelljeje; paralajmërim para veprimeve që prekin sesionin e pronarit (terminali e nxori veten nga llogaria duke klikuar "Dil").
+- **Zë i ri vizual (per kalimin vizual):** mbivendosja 🏢/📷 — badge biznesi mbi ikonën e fotos te karta; verifiko pozicionimin.
+
 ## 5. Mësime të vërtetuara (shtoji këtu, mos i harro)
 - **Device flow** = rrugë autentikimi që s'ia kalon sekretin agjentit (Vercel CLI). Sekretet i vë pronari (§8).
 - **Rendi A→C** te privatësia: `my_referrals()` PARA ngushtimit të `profiles`; pamja s'e dallon dështimin — provoje në bazë.
