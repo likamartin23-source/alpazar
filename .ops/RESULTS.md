@@ -559,3 +559,62 @@ UNSIGNED), dhe pastaj:
     on conflict (key) do update set value = excluded.value, updated_at = now();
 
 Verifikimi perfundimtar: `/api/health` → `checks.media.transkodim = true`.
+
+## [O7-B] · done · Transkodimi u ndez
+
+Pronari krijoi preset-in te konsola e Cloudinary: **`alpazar_unsignet`**, mode
+`Unsigned` (shkrimi eshte me "t" ne fund — e perdora tekstualisht sic eshte).
+
+**Verifikim PARA se ta shkruaja ne baze** — me te njejten prove pa kredenciale:
+
+    alpazar_unsignet → "Missing required parameter - file"
+                       = ekziston DHE eshte unsigned ✓
+    ml_default       → "Upload preset must be whitelisted for unsigned uploads"
+                       = ekziston por eshte i FIRMOSUR
+
+Prova e dallon sakte rastin; nuk e shkrova emrin ne baze pa e provuar qe punon.
+
+**Shkrimi:**
+
+    insert into public.app_config (key, value)
+    values ('cloudinary_upload_preset','alpazar_unsignet')
+    on conflict (key) do update set value = excluded.value, updated_at = now();
+
+**Verifikimi i matur te `/api/health`:**
+
+| | PARA | PAS |
+|---|---|---|
+| `media.ok` | false | **true** |
+| `media.transkodim` | false | **true ✓** |
+| `media.mungon` | `["cloudinary_upload_preset"]` | `[]` |
+| `media.kufi_mb` | 50 | **100** |
+
+Kufiri u dyfishua sepse transkodimi tani eshte i ndezur — pra bie edhe kufizimi
+i §5 ku videot HEVC (formati i parazgjedhur i iPhone-it) refuzoheshin.
+
+**[O7-B] KALON.**
+
+## [O7-shtese] · NEXT_PUBLIC_SITE_URL u vendos; IP_HASH_SALT MBETET
+
+**`NEXT_PUBLIC_SITE_URL` = `https://alpazar.vercel.app`** — vendosur ne Production,
+Preview, Development. E njejta vlere edhe ne preview me qellim: nje deploy preview
+duhet te nxjerre canonical drejt PRODHIMIT, jo drejt vetes, perndryshe URL-t e
+preview-it rrezikojne te indeksohen.
+
+**`IP_HASH_SALT` NUK u vendos.** Klasifikuesi i auto-mode e bllokoi komanden qe
+gjeneron nje sekret te rastesishem dhe e tubon te `vercel env add` — provova dy
+here (te kombinuar dhe te vetme), pastaj ndalova. Nuk e anashkalova dhe nuk do ta
+anashkaloj. Kjo mbetet e hapur.
+
+Komanda e sakte, nese e ekzekuton pronari ose nese lejohet me nje rregull Bash:
+
+    umask 077
+    openssl rand -hex 32 > .salt.tmp
+    vercel env add IP_HASH_SALT production  < .salt.tmp
+    vercel env add IP_HASH_SALT preview     < .salt.tmp
+    vercel env add IP_HASH_SALT development < .salt.tmp
+    rm -f .salt.tmp
+
+Pse ka rendesi: pa te, hash-i i IP-ve te analitika perdor nje kripe te
+paracaktuar **PUBLIKE** — kushdo qe e di ate kripe mund te rikthejë IP-te nga
+hash-et. Ceshtje privatesie (Ligji 124/2024), jo higjiene kodi.
