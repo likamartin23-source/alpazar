@@ -2322,3 +2322,50 @@ dhe më e madhja: një version i tërë i hershëm i aplikacionit.
 mbi historinë e përbashkët; kërkon vendim pronari. Dy rrugë:
 - e shpejtë dhe e sigurt: shto `"alpazar"` te `exclude` i `tsconfig.json` → porta e tipeve rikthehet menjëherë, kopja mbetet për referencë
 - e plotë: hiqe gitlink-un nga indeksi dhe arkivoje drejtorinë jashtë depos
+
+## [VERIFIKIM · 51a6859] · Kundërshtimet e cloud-it — i verifikova të treja: KA TË DREJTË
+
+Nuk i pranova në besim; i mata. Të treja qëndrojnë. Tri tërheqje të reja për mua.
+
+**1. "shop-prem ⭐ i ngurtësuar te HomeClient:991"** → **I GABUAR (i vjetruar).**
+Rreshti real: `tierNgaProfili(shop)` → `vip ? 👑 : premium ? ⭐ : null`.
+Është VIP-aware. Pretendimi im vinte nga një lexim i vjetër i skedarit.
+
+**2. "hasShop te /messages:119"** → **PREZENT POR INERT.** Cloud-i ka të drejtë.
+Të dyja query-t e profilit aty janë me kolona të shtjelluara:
+`select('id,full_name,username,avatar_url,has_phone')` dhe `select('has_phone')`.
+`shop_name` **nuk ngarkohet kurrë** → `type` del gjithnjë `'person'`. S'ka defekt të dukshëm.
+*Shënim i vogël (higjienë, jo defekt):* modeli mbetet kurth i fjetur — dita që dikush
+shton `shop_name` te ai select ose kalon te `select('*')`, identiteti i biznesit fillon
+të rrjedhë nga rruga e ndaluar pa e vënë re askush.
+
+**3. "fetchShops lexon `profiles` në vend të `businesses`"** → **PUNON ME QËLLIM. MOS E PREK.**
+E ndoqa deri në fund: karta navigon te `/biznese/${shop.id}` ku `shop.id` është id profili,
+dhe `app/biznese/[id]/page.tsx:19-21` bën pikërisht fallback-un:
+`.eq('id', id)` → nëse bosh → `.eq('owner_id', id)`.
+Pra id-ja e pronarit zgjidhet saktë. Sistem i menduar, jo gabim.
+
+**Modeli, sërish:** të treja i nxora duke matur *formën* (cili literal, cila tabelë) dhe
+jo *sjelljen* (çfarë sheh përdoruesi). Është e njëjta rrënjë me dhjetë tërheqjet e mëparshme.
+
+---
+
+## [KORRIGJIM I GJETJES SIME · ./alpazar] — e vërtetë, por e ngushtë; CI-ja s'preket
+Në seksionin e mëparshëm shkrova se porta `tsc --noEmit = 0` e cloud-it "nuk kalohet dot".
+**Kjo ishte e gabuar dhe e korrigjoj menjëherë.**
+
+Cloud-i raporton CI-green, unë mata 5 gabime — të dyja janë të vërteta, sepse:
+`./alpazar` është e regjistruar si **gitlink pa `.gitmodules`**. `git ls-tree origin/main`
+kthen një zë të vetëm `160000 commit 8bfa688…`, **jo një pemë skedarësh**. Pra në një
+klon të freskët (CI, cloud) drejtoria del **bosh** dhe `tsc` s'ka çfarë të shohë → jeshile.
+Gabimet shfaqen vetëm te makinat ku ajo depo e ndarë është e mbushur — kompjuteri i
+pronarit dhe ky terminal.
+
+**Gjetja mbetet e vlefshme, por e ricilësuar:**
+- ndot `tsc` **lokalisht** te pronari (5 gabime fantazmë), jo në CI
+- mbetet një **kopje e vjetër e aplikacionit** (10 `.tsx`, e ndenjur që 22 maj 2026) e lidhur
+  te `origin/main` përmes një gitlink-u të thyer që `git submodule status` s'e njeh dot
+- prandaj është përgjigje e drejtpërdrejtë e kërkesës *"sisteme të vjetra që nuk u hoqën"*
+
+Rregullimi më i vogël që e zgjidh shqetësimin lokal pa prekur historinë:
+shto `"alpazar"` te `exclude` i `tsconfig.json`. Heqja e gitlink-ut mbetet vendim pronari.
