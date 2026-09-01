@@ -818,3 +818,59 @@ real në `/` dhe `/kategori/automjete`.
 3. TrustBadge të marrë të njëjtat hyrje kudo (profili i pronarit, jo biznesi).
 4. `/profile` të marrë të njëjtat komponentë si tri faqet e tjera.
 5. `ListingCard`: çipi `🏢` të bëhet lidhje e vërtetë drejt `/biznese/<id>`.
+
+## [O8-ORGANOGRAMA] · Nderlidhja mes faqeve — e matur, me nje korrigjim timin
+
+### Korrigjim i matjes sime
+Matja e pare e kesaj seksioni ishte **e gabuar**. Kerkova `href="/u/..."` me
+thonjeza dhe nxora "zero lidhje kudo". Ne fakt JSX-i i shkruan si
+`href={\`/u/${biz.owner_id}\`}` — shprehje me template, qe modeli im nuk e kapte.
+E riperseriva me nje model qe kap edhe `href={`. Perfundimi qe vijon eshte i dyti,
+jo i pari.
+
+### Fakti sistemik: `next/link` NUK perdoret askund
+    git grep -l "from 'next/link'"  →  ZERO skedare
+Aplikacioni eshte Next.js App Router dhe nuk perdor asnje `<Link>`. Navigimi mes
+faqeve behet ose me `<a href>` te thjeshte, ose me `window.location.href`.
+
+### Grafi real i profileve — vetem NJE brinje eshte lidhje e vertete
+
+| Kalimi | Mekanizmi | I lexueshem nga crawler-i |
+|---|---|---|
+| `/biznese` → `/u/[owner_id]` | **`<a href>`** (rreshti 923) | **PO** |
+| `/listing` → `/u/[seller]` | `location.href` | JO |
+| `/u` → `/biznese/[id]` | `location.href` | JO |
+| `/profile` → `/u/[vetja]` · `/biznese/[imi]` | `location.href` | JO |
+| `ListingCard` → `/listing/[id]` | handler i prindit, **asnje `<a>`** | JO |
+| `/` dhe `/kategori` → shpalljet | `location.href` te HomeClient | JO |
+
+`/u/[id]` dhe `ListingCard` kane **zero** `<a href>` fare.
+
+### Cfare kushton kjo, konkretisht
+1. **SEO:** grafi shites↔biznes↔shpallje eshte i padukshem per Google. Per nje
+   treg online, kjo amputon pikerisht shtresen qe sjell trafik organik.
+   Vetem `/biznese → /u` gjendet.
+2. **`location.href` eshte ringarkim i plote** — jo navigim klienti. Cdo kalim
+   ri-shkarkon dhe ri-hidraton: humbet shpejtesia, pozicioni i scroll-it, gjendja.
+3. **Pa hapje ne skede te re:** klikim i mesit / Ctrl+klik nuk punojne askund ku
+   perdoret `location.href`. Vizitori nuk e krahason dot nje shites ne dy skeda.
+4. **Aksesueshmeri:** pa semantiken e lidhjes, s'ka `:visited`, s'ka navigim me
+   tastiere si lidhje, s'ka menu konteksti. axe-core do ta shenonte.
+5. **Karta e shpalljes s'eshte lidhje** — prandaj cipi `🏢` mbi te s'ka ku te
+   coje, dhe klikimi bie te handler-i i kartes → shpallja. Kjo nuk eshte defekt i
+   cipit; eshte pasoje e faktit qe e gjithe karta nuk eshte lidhje.
+
+### Perfundimi mbi "shkrirjen qe deshtoi"
+Sistemet e reja u ndertuan si **komponente te perbashket** (TrustBadge, Avatar,
+ListingCard, OfferBox) dhe u lidhen me tabela te vjetra qe rrinin te vdekura
+(`offers`, `verification_requests`, `follows`, `business_followers`) — deri ketu
+shkrirja punoi.
+
+Ajo qe deshtoi eshte **shtresa qe i lidh faqet mes tyre**: komponentet u ndane,
+por navigimi jo. Cdo faqe e zgjidhi vete kalimin me `location.href`, ndaj:
+- s'ka nje burim te vetem per lidhjet (as `next/link`, as nje helper),
+- `/profile` mbeti jashte grupit te komponenteve te perbashket (pa TrustBadge, pa
+  `useIsOnline`, pa `ListingCard`),
+- dhe dy fjalore nivelesh bien ndesh brenda te njejtit bllok.
+
+Pra: **shkrirja e komponenteve eshte bere; shkrirja e organogrames jo.**
