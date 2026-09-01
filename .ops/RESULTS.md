@@ -3624,3 +3624,84 @@ të pronarit (i duhen `is_active`, `last_bumped_at`, `status`), jo një feed që
 `grep -rl LISTING_SELECT .github/ scripts/` → **asgjë**. Pika 2 e rekomandimit tim ([O25]) — testi
 që dështon nëse një `from('listings').select(` i ri nuk e përdor konstanten — **s'ekziston ende**.
 Pa të, projeksioni i shtatë do lindë. Kjo është pikërisht mekanizmi që e ndal §4-bis të përsëritet.
+
+---
+
+## [O30] · AUDIT I REFLEKTIMIT — pse ndryshimet «nuk pasqyrohen» dhe s'ka koherencë
+
+Pronari: «sërish probleme të vazhdueshme me reflektimet dhe mungesën e koherencës… audito këtë problem».
+E mata të gjithë zinxhirin: **kod → push → deployment → buzë (CDN) → HTML → bundle në shfletues**.
+Klasifikimi sipas `docs/SUPERAUTOPSIA.md`.
+
+### A. ✅ Serveri NUK është shkaku — reflekton menjëherë
+```
+6 prova radhazi:  build i HTML-së == /api/version   →  PËRPUTHEN 6/6
+X-Vercel-Cache: MISS (6/6) · Age: 0 (6/6)
+Cache-Control (shfletues): private, no-cache, no-store, max-age=0, must-revalidate ✓
+/api/version == /api/health.build ✓
+```
+Ekziston `Cdn-Cache-Control: public, s-maxage=60, stale-while-revalidate=120` (deri ~3 min vjetërsi
+teorike në buzë), **por matja tregon MISS gjithnjë** — pra praktikisht s'aktivizohet. Nuk është shkaku.
+
+### B. ⛔ SHKAKU I PARË — verifikimi i vendosjes anulohet në 76% të rasteve (klasa **F7**)
+
+Historiku i «Verifiko deploy-in live», 25 ekzekutimet e fundit:
+```
+sukses = 4 · DËSHTIM = 2 · TË ANULUARA = 19        →  76% e commit-eve MBETEN TË PAVERIFIKUARA
+```
+Shkaku, i matur te `verifiko-deploy.yml`:
+```yaml
+concurrency: { group: verifiko-deploy-${{ github.ref }}, cancel-in-progress: true }
+# dhe puna pret deri 50 × 12s = 10 minuta që prodhimi të shërbejë commit-in
+```
+Çdo push brenda **10 minutash** e anulon verifikimin e commit-it të mëparshëm. Sot pushet ndodhën
+çdo **3–5 minuta** → praktikisht **asnjë verifikim nuk mbaroi**.
+
+**Kjo është pikërisht F7 e SUPERAUTOPSISË: «Rrjeta e sigurisë e fsheh defektin që duhej të kapte.»**
+Rrjeta ekziston, duket e gjelbër (run-et «cancelled» s'janë të kuqe), dhe pikërisht prandaj askush
+s'e di **cili commit ka reflektuar vërtet**. Kjo është mungesa e koherencës që raporton pronari.
+
+Dy vrima shtesë, të matura më parë ([O19]):
+- **Rojtari «çdo 5 minuta»** ekzekutohet realisht një herë çdo **4–6 orë** (GitHub e ngadalëson `schedule`).
+- **Toleranca `TOLERANCA_MIN=20`** e bën rojtarin e push-it të kalojë gjithnjë (commit-i është 4 minutash).
+- Rasti i provuar: **136 minuta pa asnjë deployment** për `4c038ee`/`4ace9b5` — `vercel ls --meta
+  githubCommitSha=…` ktheu «No deployments found». Askush s'e kapi.
+
+### C. ⚠ SHKAKU I DYTË — skeda e hapur mban bundle-in e VJETËR (mos-koherenca brenda faqes)
+
+`UpdatePrompt.tsx:33-55` krahason `NEXT_PUBLIC_BUILD_ID` (i pjekur në bundle) me `/api/version`,
+dhe kur ndryshojnë shfaq **VETËM një banderolë opt-in — pa ringarkim automatik** (komenti e thotë
+shprehimisht). Pra:
+- **Navigim i plotë** (F5 / URL e re) → HTML `no-store` → chunk-e të reja → gjithçka e re ✓
+- **Skedë e lënë hapur** me navigim klienti (App Router) → **bundle-i i vjetër mbetet** derisa
+  pronari të klikojë «Rifresko». Rezultat: një pjesë e sjelljes e re (SSR/të dhëna), një pjesë e
+  vjetër (JS) → **«disa gjëra reflektohen, disa jo»**.
+- Banderola shuhet për atë build (`sessionStorage._alpz_upd_dismiss`) — nëse mbyllet një herë,
+  s'rishfaqet për të njëjtin build.
+Prania e skriptit `alpazar-chunk-reload` te `<head>` (heq SW+cache pas `ChunkLoadError`) dëshmon se
+kjo klasë ka goditur më parë.
+
+### D. Lidhja me 9 autopsitë — kjo klasë ishte e njohur
+| Autopsia | Ç'thotë | Sot |
+|---|---|---|
+| `SUPERAUTOPSIA §2 F7` | «rrjeta e sigurisë fsheh defektin që duhej të kapte» | **përsëritur** te verifiko-deploy (19/25 të anuluara) |
+| `SUPERAUTOPSIA §3` — gënjeshtra e instrumentit (G1, G2…) | «prodhon fiksion të raportuar me siguri» | **4 tërheqjet e mia sot** (swipe · localStorage · HEAD 503 · treguesi) |
+| `SUPERAUTOPSIA §4` — «nuk e provova mekanizmin e rregullimit tim» | verbëria e tetë | **porta CI për `LISTING_SELECT` ende s'ekziston** |
+| `scripts/verifiko-live.mjs` (koka) | 10–12 gusht: 2 ditë të ngrira, «të gjithë verifikonin ndërtimin e FUNDIT, jo nëse ekzistonte një i ri» | i njëjti mekanizëm, tani i anuluar nga concurrency |
+
+### E. RREGULLIMET — të renditura sipas efektit
+1. **`verifiko-deploy.yml`: hiq `cancel-in-progress`** ose grupo sipas **SHA** (`group: verifiko-deploy-${{ github.sha }}`).
+   Kjo e vetme e kthen sinjalin për 76% të commit-eve. **Ndryshimi më i vogël me efektin më të madh.**
+2. **Njoftim kur dështon** — sot `verifiko-deploy` dështon në heshtje (dështoi për `4ace9b5` dhe
+   `238e0cb`; askush s'e pa). Slack/email te pronari.
+3. **Rojtari periodik të mos mbështetet te `schedule`** i GitHub-ut (4–6 orë realisht). Ose cron i
+   jashtëm, ose thirrje pas çdo `verifiko-deploy`.
+4. **`TOLERANCA_MIN`**: 20 min e bën rojtarin e push-it të verbër. Ose 5 min, ose të mos vlerësojë fare push-et.
+5. **`UpdatePrompt`**: për skeda pa ndërveprim, ringarkim automatik pas X sekondash (ose të paktën
+   banderolë e pashuajtshme). Sot pronari duhet ta dijë vetë se duhet «Rifresko».
+6. **Porta CI për `LISTING_SELECT`** — ende mungon (§4 «verbëria e tetë»).
+
+### F. Ç'DUHET TË BËJË PRONARI KUR VERIFIKON
+Derisa (1)–(5) të zbatohen, rregulli praktik: **rifresko fort skedën (Ctrl+Shift+R) para se të thuash
+«nuk reflektohet»** — dhe kontrollo `alpazar.vercel.app/api/version` kundrejt SHA-së së fundit.
+Serveri, sipas matjes, reflekton menjëherë; ajo që ngec është ose deployment-i ose skeda jote.
