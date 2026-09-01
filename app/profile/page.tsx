@@ -458,6 +458,11 @@ export default function ProfilePage() {
     !price ? 'Me marrëveshje' :
     cur === 'EUR' ? `${price.toLocaleString()} €` : `${price.toLocaleString()} L`
 
+  // "E pauzuar" = joaktive por E RIKTHYESHME. `deleted`/`expired` s'janë të pauzuara
+  // (fshirja s'është e pakthyeshme, skadimi jo). Një predikat i vetëm që numëruesi DHE
+  // lista ta përdorin — burim i vetëm, s'ka më shmangie numër↔listë (H, raporti terminal).
+  const eshtePauzuar = (l: any) => !l.is_active && l.status !== 'sold' && l.status !== 'deleted' && l.status !== 'expired'
+
   const [mt, mm] = msg.split(/:(.+)/)
 
   if (loadError) return (
@@ -1063,7 +1068,7 @@ export default function ProfilePage() {
                   {([['active','Aktive'],['paused','Të pauzuara'],['sold','Të shitura']] as const).map(([k, etiketa]) => {
                     const n = k === 'active' ? myListings.filter(l => l.is_active).length
                             : k === 'sold' ? myListings.filter(l => l.status === 'sold').length
-                            : myListings.filter(l => !l.is_active && l.status !== 'sold').length
+                            : myListings.filter(eshtePauzuar).length
                     return (
                       <button key={k} type="button" role="tab" aria-selected={listFilter === k} onClick={() => setListFilter(k)}
                         style={{ flex: 1, minHeight: 40, borderRadius: 9, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
@@ -1077,7 +1082,7 @@ export default function ProfilePage() {
                 {(() => {
                   const shown = listFilter === 'active' ? myListings.filter(l => l.is_active)
                               : listFilter === 'sold'   ? myListings.filter(l => l.status === 'sold')
-                              : myListings.filter(l => !l.is_active && l.status !== 'sold' && l.status !== 'deleted' && l.status !== 'expired')
+                              : myListings.filter(eshtePauzuar)
                   const bosh = listFilter === 'active' ? 'Nuk ke shpallje aktive.'
                              : listFilter === 'sold'   ? 'Ende asnjë shpallje e shitur.'
                              : 'Asnjë shpallje e pauzuar.'

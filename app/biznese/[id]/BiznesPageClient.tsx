@@ -546,7 +546,10 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
             {/* Avatar unazë+🏢 (+kurorë kur VIP) + kamerë INLINE */}
             <div style={{ position: 'relative', width: 84, marginTop: -42, marginBottom: 10 }}>
               <Avatar src={biz.logo_url} name={biz.name} type="business" tier={tier} verified={biz.is_verified} size={84} />
-              <label className="cam" aria-label="Ndrysho logon" style={{ bottom: 0, right: -4, width: 30, height: 30 }}>
+              {/* Kamera te CEPI LART-MAJTAS: i vetmi cep që Avatar-i s'e përdor kurrë
+                  (djathtas-lart=vula e abonimit, djathtas-poshtë=🏢/✓, majtas-poshtë=pika online).
+                  Më parë rrinte poshtë-djathtas dhe përplasej me vulën 🏢 (raporti terminal, H). */}
+              <label className="cam" aria-label="Ndrysho logon" style={{ top: -4, left: -4, width: 30, height: 30 }}>
                 <span aria-hidden="true" style={{ fontSize: 13 }}>{imgUp === 'logo' ? '⏳' : '📷'}</span>
                 <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) uploadBizImage(f, 'logo'); e.currentTarget.value = '' }} />
               </label>
