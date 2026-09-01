@@ -1125,3 +1125,51 @@ autoplay-i teknikisht punon. Kufizimi është rregulli "vetëm pa foto", plus pr
 Pra pohimi është i saktë: kartat e bizneseve te kryefaqja dhe te kërkimi mbajnë
 **stampën e vjetër Premium**, dhe varianti VIP atje nuk u ndërtua kurrë. Për më
 tepër te kryefaqja stampa as nuk varet nga tier-i — shfaqet gjithmonë.
+
+## [O8-BUTONAT] · "Ruaj" dhe butonat e rinj — shkaku kryesor + një defekt i vërtetë
+
+### Shkaku kryesor: sesioni është i dalur (faji im)
+Për të kaluar te llogaria e adminit, klikova "Dil" te `/profile`. Që nga ai çast
+shfletuesi është **i pakyçur**. Shumica e butonave janë të mbrojtur me portë kyçjeje,
+ndaj duken "jo funksionalë" ndërsa në fakt po ridrejtojnë ose po ndalen.
+
+**Prova që "Ruaj" punon kur je i kyçur** — matur në bazë me rolin real:
+
+    favorites: 3 rreshta ekzistues · RLS: ndezur · politikë: own_favorites [*]
+    të drejtat e `authenticated`: SELECT, INSERT, UPDATE, DELETE
+    provë si përdorues: INSERT = LEJUAR (OK) · SELECT = OK
+
+Dhe kodi i `FavoriteButton` është i saktë: ka `e.stopPropagation()` dhe
+`e.preventDefault()`, pra klikimi mbi ♡ nuk rrëshqet te karta. (Kisha dyshuar se
+mungonin — dyshimi ra pas leximit.)
+Kur s'ka sesion, `toggle` bën `window.location.href = '/auth/login'` — sjellje e
+saktë, por e padukshme si e tillë nëse nuk e pret.
+
+### Defekt i vërtetë: dy veprime dështojnë NË HESHTJE
+Jo të gjithë butonat ridrejtojnë. Dy prej tyre thjesht **kthehen pa bërë asgjë**,
+pa mesazh, pa ridrejtim — përdoruesi klikon dhe nuk ndodh absolutisht asgjë:
+
+| Veprimi | Rreshti | Kodi | Sjellja pa sesion |
+|---|---|---|---|
+| **⭐ Dërgo vlerësimin** | `ListingPageClient.tsx:124` | `if (!user \|\| !seller \|\| reviewStars === 0) return` | **heshtje totale** |
+| **Dërgo mesazh** | `ListingPageClient.tsx:533` | `if (!text \|\| !user \|\| !seller \|\| sending) return` | **heshtje totale** |
+
+Krahasoji me sjelljen e saktë diku tjetër te i njëjti skedar — rreshtat 80, 405,
+449 e bëjnë si duhet: `if (!user) { window.location.href = '/auth/login'; return }`.
+
+Pra i njëjti skedar përmban **dy trajtime të ndryshme** për të njëjtin kusht.
+Kjo është e njëjta klasë mospërputhjeje si te nivelet dhe navigimi: rregulli
+ekziston, por s'është zbatuar kudo.
+
+**Rregullimi:** te të dy vendet, zëvendëso `return` bosh me ridrejtimin te
+`/auth/login` (ose me një mesazh "Hyr për të vlerësuar"), njësoj si rreshti 80.
+
+### Butonat e tjerë — gjendja
+| Butoni | Porta | Vlerësimi |
+|---|---|---|
+| Njoftomë (`:80`) | ridrejton te login | i saktë |
+| Dërgo ofertën (`:405`, `:449`) | ridrejton te login | i saktë |
+| Fillo bisedën (`:1439`) | ridrejton + ndryshon tekstin në "Hyr për të biseduar" | i saktë, më i miri |
+| Raporto (`:1219`) | hap `ReportSheet` | s'ka portë kyçjeje në pikën e klikimit |
+| Kërkesë heqjeje (`:1229`) | shkon te `/takedown` | publik me qëllim (§2) |
+| **Dërgo vlerësimin** (`:1184`→`:124`) | **asnjë** | **hesht** |
