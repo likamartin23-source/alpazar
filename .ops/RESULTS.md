@@ -1493,3 +1493,78 @@ me axe, **jo** me sesion pronari. Çdo pohim këtu ka provë; çdo gjë pa prov�
 shënuar si e pamatur.
 
 **Autopsia mbyllet këtu.**
+
+## [MBYLLJE-2] · Sistemi 3-shkallësh — i vjetri dhe i riu
+
+Dy sisteme "tri shkallë" ekzistojnë. **Të dyja janë ndërtuar dhe funksionojnë** —
+por rruga e re ka dy mospërputhje me të vjetrën dhe me premtimin e vet.
+
+### A. Butoni Biznes — një hyrje, tri gjendje (BP2 §B3.2) ✅
+`app/profile/page.tsx:1279–1352`:
+
+    G1  !premium              → "Bëhu Premium → Shiko Planet"
+    G2  premium && !biznes    → "+ Krijo faqen e biznesit"  (çaktivizohet kur ka biznes)
+    G3  me biznes             → "Vepro si Biznes → hap profilin" + "Shiko faqen publike"
+
+Verifikuar LIVE te `/profile` (llogaria pa premium): të tria kartat renderohen,
+G1 aktive, G2/G3 të shënuara "kërkon Premium" / "pa biznes". **Përputhet me imazhin.**
+
+### B. Fshirja 3-shkallëshe e biznesit (§3.9) — ndërtuar, por me dy çarje
+`app/components/BusinessForm.tsx:100–101, 392–424`:
+
+    delStage 0 → mbyllur
+    delStage 1 → paralajmërim (lista e humbjeve)
+    delStage 2 → shkruaj EMRIN e saktë të biznesit (butoni i çaktivizuar derisa përputhet)
+    delStage 3 → duke fshirë → RPC delete_own_business
+
+Shkallëzimi është i saktë dhe i fortë (konfirmim me shtypje emri). Por:
+
+#### Çarja 1 — rruga e RE nuk lë ASNJË gjurmë
+| | `admin_delete_business` (e vjetra) | `delete_own_business` (e reja) |
+|---|---|---|
+| `admin_log()` | **PO** | **JO** |
+| `audit_logs` | — | **JO** |
+
+Pronari mund të shkatërrojë përfundimisht një biznes, dhe **asgjë nuk regjistrohet
+askund**. Rruga e adminit e regjistron; rruga e pronarit jo.
+Kjo bie ndesh me §8 ("çdo veprim shkatërrues me arsye të detyrueshme dhe gjurmë")
+dhe me §2.6 (`audit_logs` si vlerë provuese — nenet 6 e 12, ligji 10273/2010).
+Në rast mosmarrëveshjeje "biznesi im u fshi", nuk ka provë.
+
+#### Çarja 2 — teksti premton më shumë se ç'bën kodi
+Dialogu i shkallës 1 thotë: *"Do të fshihen **përfundimisht**: faqja e biznesit,
+shpalljet e tij, **vlerësimet**, ndjekësit dhe kategoritë."*
+
+Harta reale e çelësave të huaj mbi `businesses`:
+
+    business_followers        → CASCADE      ✅ fshihen
+    business_subcategory_map  → CASCADE      ✅ fshihen
+    posts · verification_requests → CASCADE  ✅
+    listings                  → SET NULL     ⚠️ NUK fshihen (humbin vetëm lidhjen)
+
+Dhe `reviews` lidhet me **`listing_id`**, jo me `business_id` — pra vlerësimet
+varen nga shpalljet, të cilat mbijetojnë. Skanimi i trupit të `delete_own_business`
+tregon se prek `listings`, `business_followers`, `business_subcategory_map`,
+`businesses` — **`reviews` nuk përmendet fare**.
+
+Pra: shpalljet çaktivizohen (siç thotë fjalia e dytë e dialogut, kjo është e saktë),
+por **vlerësimet nuk fshihen**, ndonëse dialogu premton se fshihen përfundimisht.
+Dialogu i fshirjes është ekran pëlqimi; një premtim i pasaktë aty ka peshë ligjore.
+
+*(Nuk e ekzekutova fshirjen. Kjo del nga skanimi i trupit të funksionit dhe nga
+harta e FK-ve, jo nga një provë live.)*
+
+---
+
+## MBYLLJA E AUTOPSISË
+Të pesta shtresat u matën: sisteme · nivele · organogramë · karta · dizajn — plus
+të dy sistemet 3-shkallëshe. Diagnoza mbetet e njëjta dhe tani e plotë:
+
+**E reja u shtua pranë të vjetrës, jo në vend të saj.** Aty ku e reja u ndërtua nga
+e para (butoni 3-gjendjesh, fshirja 3-shkallëshe), ajo është e saktë strukturalisht —
+por nuk e trashëgoi disiplinën e së vjetrës (gjurmën e auditit), dhe teksti i saj
+premton më shumë se sjellja.
+
+Borxhi i verifikimit mbetet siç u listua te [MBYLLJE]: telefoni real, axe-core,
+CLS, RLS e `offers`/`business_followers`, prova e shkrimit mbi 8 kolonat, dhe
+pamja e panelit të adminit me sesion pronari.
