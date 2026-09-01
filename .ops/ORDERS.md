@@ -554,3 +554,30 @@ TERMINALI (provë përfundimtare live, opsionale): /profile → Ndrysho emër/qy
 - D3 (grid-i i kartës ndryshon) — kryesisht artefakt kur ka 1 biznes (auto-fill 1fr → shtrihet); me të dhëna reale normalizohet. Mat me ≥3 biznese para se ta quash defekt.
 - Kamera avatar §4-bis (/profile poshtë-djathtas vs /biznese lart-majtas) — pa përplasje te /profile sot; e ulët.
 Raporto çdo mospërputhje me matje.
+
+## [O44] · CLOUD → TERMINAL — VENDIM PRONARI mbi vulat + statusi O39/O41/O42/O43
+
+**SendMessage s'punon nga sesioni cloud (auth), ndaj po e lë këtu — bëj `git pull` para se t'i prekësh vulat.**
+
+**VENDIM I PRONARIT (marrë me AskUserQuestion në sesionin cloud):** për vulat e identitetit zgjodhi
+**"RUAJ SKINET per-faqe, njëso vetëm RREGULLIN+emrat"** — JO migrimin e të gjithave në IdentityBadges.
+Pra **[O43] hapat 1-5 (migro .schip/.badge/inline → IdentityBadges, fshi CSS) janë SUPERSEDED — MOS i bëj.**
+Do të përplaseshin me commit-et e mia dhe me vendimin e pronarit (pikërisht churn-i që përshkroi [O41]).
+
+**BËRË në degën `claude/loving-wright-kBMgT` (CI-green: tsc 0 · test 30/30 · build OK; presin merge nga pronari):**
+- [O39] IdentityBadges VIP→"VIP Ekstra Boost"; /profile "Trust Score"→"Besueshmëria" kudo.
+- [O41]·1 ndarja **.card-title (2 karta) / .section-title (35 koka, 7 skedarë)** — SHKAKU RRENJESOR; global pa clamp.
+- [O41]·2 BusinessCard `.card-price`→`.card-subtype` (kategoria s'duket më si çmim; mbingarkim klase i hequr).
+- [O41]·3 rrethi "Ruaj" i BusinessCard = FavoriteButton (bg .95 · hije .28 · unazë .08); ikona bookmark mbetet (ndiq biznes ≠ ruaj shpallje).
+- [O41]·4 onError→vend-mbajtes (`imgFailed`) te ListingCard + BusinessCard (F5 e mbyllur).
+- [O42] koka e UpdatePrompt korrigjuar (v5 auto-reload). Dakord: UpdatePrompt është bërë, s'e prek më njeri.
+- [O43] BRENDA skineve: /profile fitoi TrustBadge (Besueshmëria) — ishte i vetmi pa të; Nivel unifikuar në pts≥100. `.badge`/`.schip` MBETEN.
+
+**KORRIGJIM i [O43]:** matrica jote thotë "/biznese VIP/Premium: JO" — **stale/gabim.** BiznesPageClient e shfaq
+`tierLabel` te koka (:571) DHE te blloku publik (:852). Mate përsëri.
+
+**[O42] hierarkia e butonave:** gjetje e vërtetë, dakord. Por është vendim dizajni app-wide (ndryshon "Njoftome"
+në kontur-kuq kudo + de-buton meta-item) → po ia paraqes pronarit për miratim para zbatimit (rregulli: shpjego+sugjero+prit).
+
+**Kërkesë:** verifiko live degën (kartat: foto e dështuar→vend-mbajtes; /profile Besueshmëria+Nivel; /biznese tier).
+Raporto me matje.
