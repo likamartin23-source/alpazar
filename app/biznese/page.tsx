@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import Avatar, { tierNgaProfili } from '../components/Avatar'
 import { BackButton } from '../components/BackButton'
+import BusinessCard from '../components/BusinessCard'
 
 interface Biz {
   id: string; name: string; type: string; logo_url: string | null
@@ -64,7 +65,7 @@ export default function BiznestPage() {
     (async () => {
       const { data: bizRows, error } = await supabase
         .from('businesses')
-        .select('id,name,type,logo_url,city,description,is_verified,owner_id')
+        .select('id,name,type,logo_url,cover_url,city,description,is_verified,owner_id')
         .order('is_verified', { ascending: false })
         .order('created_at', { ascending: false })
         .limit(100)
@@ -170,38 +171,14 @@ export default function BiznestPage() {
             )}
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {filtered.map(b => (
-              <div
-                key={b.id}
-                onClick={() => window.location.href = `/biznese/${b.id}`}
-                style={{ background: '#fff', border: '0.5px solid #ececec', borderRadius: 12, padding: 14, display: 'flex', gap: 12, alignItems: 'center', cursor: 'pointer', boxShadow: '0 1px 2px rgba(0,0,0,.04),0 6px 16px -10px rgba(0,0,0,.14)', transition: 'transform .1s' }}
-              >
-                <Avatar src={b.logo_url} name={b.name} type="business" tier={tierNgaProfili(b.owner)} verified={b.is_verified} size={52} />
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 3 }}>
-                    <span style={{ fontSize: 14, fontWeight: 800, color: '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{b.name}</span>
-                    {b.is_verified && <span style={{ fontSize: 13 }} role="img" aria-label="Verifikuar">✅</span>}
-                  </div>
-                  <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
-                    {b.type && (
-                      <span style={{ fontSize: 10, background: '#FFF8E1', color: '#7B5000', padding: '2px 8px', borderRadius: 6, fontWeight: 700 }}>
-                        {TYPE_LABELS[b.type] || b.type}
-                      </span>
-                    )}
-                    {b.city && (
-                      <span style={{ fontSize: 11, color: '#6E6E6E' }}><span aria-hidden="true">📍</span> {b.city}</span>
-                    )}
-                  </div>
-                  {b.description && (
-                    <div style={{ fontSize: 11, color: '#666', marginTop: 4, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical' }}>
-                      {b.description}
-                    </div>
-                  )}
-                </div>
-                <i className="ti ti-chevron-right" style={{ fontSize: 16, color: '#ccc', flexShrink: 0 }} aria-hidden="true" />
-              </div>
-            ))}
+          // E njëjta KARTË e njësuar si te "Biznese Online" dhe feed-i (BusinessCard) — "e njëjta
+          // kartë kudo" (imazhi C). Më parë ishin rreshta me chevron (paraqitje e tretë).
+          <div style={{ padding: '0 16px' }}>
+            <div className="listings-grid">
+              {filtered.map((b, idx) => (
+                <BusinessCard key={b.id} business={b as any} index={idx} />
+              ))}
+            </div>
             <div style={{ textAlign: 'center', padding: '12px 0', fontSize: 11, color: '#6E6E6E' }}>
               {filtered.length} biznes{filtered.length !== 1 ? 'e' : ''}
             </div>
