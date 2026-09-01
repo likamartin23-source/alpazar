@@ -3069,3 +3069,68 @@ Ky është K2 i KUJTESA §4-bis në formën e tij të plotë, tani i matur.
 (e njëjta kornizë, të njëjtat vula, foto = kopertina/logoja, titulli = emri, çmimi → kategoria),
 dhe të dyja vendet ta përdorin atë — pas rregullimit të FK-së së [O21], që `businesses` të bëhet
 burimi i vetëm në vend të `profiles.is_premium`.
+
+---
+
+## [O23] · «Shtesat (shërbim) dhe VIP nuk u reflektuan» — matur, pronari ka të drejtë
+
+Raport pronari me pamje nga telefoni real (i kyçur si «Administrator… 👑 Premium»).
+Rrethoi rreshtin e filtrave te kryefaqja.
+
+### A. Filtrat e kryefaqes — të ngurtësuar, vetëm 4
+
+Matur live: `.filter-btn` → **«Të gjitha» · «🆕 I ri» · «I përdorur» · «⭐ Premium»**.
+Burimi: `app/HomeClient.tsx:1017-1021` — **varg i ngurtësuar**, pa VIP, pa Shërbime.
+
+```
+filter === 'new'     -> .eq('condition','i_ri')
+filter === 'used'    -> .eq('condition','i_perdorur')
+filter === 'premium' -> .eq('is_premium', true)
+filter === 'vip'     -> NUK EKZISTON
+```
+
+### B. VIP — dy shkaqe të ndara, të dyja të verifikuara
+
+**1. Kodi:** rreshti i filtrave s'ka çip VIP. Pjesa tjetër e app-it ËSHTË tier-aware
+(`HomeClient:852` 👑 «VIP Ekstra Boost», `:992` 👑/⭐ te vitrina) — **vetëm filtrat mbetën pas.**
+
+**2. Të dhënat — asnjë entitet VIP nuk ekziston ende:**
+```
+tierNgaProfili   -> 'vip' KERKON is_premium ACTIVE **DHE** has_boost ACTIVE
+   llogaria admin: is_premium=true (skadon 2027-08-19), has_boost=FALSE  -> tier = 'premium'
+tierNgaRankTier  -> rank_tier 2 = vip · 1 = premium
+   te 2 shpalljet aktive kanë rank_tier = 1                              -> të dyja 'premium'
+```
+Pra vula 👑 «Premium» në kokë është **e saktë për të dhënat**: llogaria s'është VIP sepse
+`has_boost=false`. Që VIP-i të «reflektohet» duhen të dyja: (i) çipi VIP në kod, dhe
+(ii) `has_boost=true` (+`boost_expires_at` në të ardhmen) ose një shpallje me `rank_tier=2`.
+
+### C. Shërbimi — ekziston te bizneset, MUNGON te shpalljet
+
+| Vend | Gjendja |
+|---|---|
+| `businesses.type` | **`sherbime_produkte`** ✓ ekziston te biznesi `ffb19071` |
+| `/biznese` filtrat | **«🛠️ Shërbime · 📦 Produkte · 🔁 Të dyja»** ✓ ekzistojnë |
+| `listings` fushë shërbimi | **ZERO** — `grep sherbim\|service\|listing_type\|kind` te `HomeClient.tsx` = 0 përputhje |
+| Filtrat e kryefaqes | **pa «Shërbime»** |
+
+**Pasojë e matur:** nga 2 shpalljet aktive, njëra ka **`condition = null`**
+(`VLERAT E condition NE DB: i_ri, <null>`). Ajo shpallje:
+- nuk kapet nga «🆕 I ri» (`condition='i_ri'`)
+- nuk kapet nga «I përdorur» (`condition='i_perdorur'`)
+- dhe s'ka çip «Shërbime» ku të bjerë
+→ **është e arritshme vetëm nga «Të gjitha».** Një shërbim s'ka «gjendje» (i ri/i përdorur) —
+prandaj `condition` mbetet null dhe shpallja bie jashtë çdo filtri. Kjo është pikërisht «shtesa
+që nuk u reflektua»: koncepti u shtua te bizneset, por rrjedha e shpalljeve s'e njeh.
+
+### D. Dy gjëra në pamje që NUK janë defekte (i verifikova para se t'i raportoja)
+- **«Keni nevojë për ndihmë?» duket dy herë** — hera e dytë është **brenda fotos** së shpalljes
+  (foto e ngarkuar është një screenshot i vetë aplikacionit). Live: `nBubbles = 1`.
+- **«Rrjeti u nderpre gjatë ngarkimit»** — po ashtu brenda asaj fotoje. Live: zero gabime rrjeti.
+Mësim: pamja e ekranit përmban një screenshot brenda vetes; çdo pretendim u kontrollua në DOM para raportimit.
+
+### Kërkesa për cloud-in
+1. Çipi **«👑 VIP»** te rreshti i filtrave + `filter==='vip'` → `.eq('rank_tier', 2)` (ose tier-aware).
+2. Çipi **«🛠️ Shërbime»** + një fushë/konvencion shërbimi te `listings` (ose `condition IS NULL` → shërbim),
+   që shpalljet-shërbim të mos bien jashtë çdo filtri.
+3. Rreshti i filtrave të mos jetë varg i ngurtësuar — të burohet nga i njëjti fjalor si vulat.
