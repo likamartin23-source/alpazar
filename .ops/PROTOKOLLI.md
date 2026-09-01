@@ -9,6 +9,10 @@ Pra depoja është kutia postare: cloud shkruan urdhra këtu, terminali i lexon.
 
 Pasi bootstrap-i (një herë), terminali punon KËTË cikël pa pronarin:
 
+0. **Lidh kujtesën:** lexo `.ops/KUJTESA-E-PUNES.md` (kujtesa e përbashkët cloud⇄terminal)
+   + `CLAUDE.md` (kanonike). Aty është gjendja live, vendimet e marra, rolet dhe mësimet.
+   Kur mëson diçka të re ose ndryshon gjendja, SHTOJE te `KUJTESA-E-PUNES.md` (të dy sesionet
+   e mbajnë të njëjtën kujtesë përmes depos).
 1. `git pull --rebase origin main`
 2. Lexo `.ops/ORDERS.md`. Çdo bllok `## [ID] · pending` që NUK ka përgjigje te
    `.ops/RESULTS.md` është urdhër i ri.
