@@ -1173,3 +1173,40 @@ ekziston, por s'është zbatuar kudo.
 | Raporto (`:1219`) | hap `ReportSheet` | s'ka portë kyçjeje në pikën e klikimit |
 | Kërkesë heqjeje (`:1229`) | shkon te `/takedown` | publik me qëllim (§2) |
 | **Dërgo vlerësimin** (`:1184`→`:124`) | **asnjë** | **hesht** |
+
+## [O8-PROJEKSIONI] · Kartat kudo — një sipërfaqe e vetme e thyen rregullin
+
+`lib/listingSelect.ts` e thotë vetë rregullin:
+> "Çdo query që ushqen `ListingCard` duhet ta përdorë KËTË konstante … Burimi i
+> vetëm i së vërtetës për select-in."
+
+**Ballafaqim i të gjitha sipërfaqeve që render-ojnë karta:**
+
+| Sipërfaqja | Projeksioni | Vlerësimi |
+|---|---|---|
+| `/` (SSR, `app/page.tsx`) | `LISTING_SELECT` | ✅ |
+| `/` (klient, `HomeClient`) | `LISTING_SELECT` | ✅ |
+| `/kategori/[slug]` (+ `/[qytet]`) | `LISTING_SELECT` via `lib/seoTaxonomy.ts` | ✅ |
+| `/search/results` | `LISTING_SELECT` (×3 query) | ✅ |
+| `/u/[id]` · `/biznese/[id]` · shpallje të ngjashme | pa join, por `showSeller={false}` | ✅ me qëllim |
+| **`/favorites`** | **select i vetin, i shkruar inline** | ❌ **shkel rregullin** |
+
+*(Fillimisht dyshova edhe te `/kategori` — ndoqa zinxhirin `page.tsx → fetchCategoryListings → lib/seoTaxonomy.ts` dhe del se e përdor projeksionin. Dyshimi ra.)*
+
+### Çfarë i mungon `/favorites` krahasuar me `LISTING_SELECT`
+    videos        ← MUNGON
+    category_id   ← mungon
+    user_id       ← mungon
+(dhe ka një `is_active` shtesë)
+
+**Pasoja e drejtpërdrejtë:** te "Të ruajtura", një shpallje **vetëm-video** shfaqet
+pa video, pa autoplay dhe **pa distinktivin `VIDEO`** — sepse `l.videos` vjen
+`undefined`, ndaj `hasVideo=false` dhe `videoUrl=null` te `ListingCard`.
+E njëjta shpallje te kryefaqja e shfaq videon normalisht.
+
+Kjo prek konkretisht shpalljen `25225352` (0 foto, 3 video): e ruajtur, karta e
+saj do të dalë **bosh** — pa kopertinë, sepse `images[0]` s'ekziston dhe
+`video_poster` është e vetmja rrugë e mbetur.
+
+Ky është saktësisht defekti që `LISTING_SELECT` u krijua për ta parandaluar, dhe
+i vetmi vend ku rregulli nuk u zbatua.
