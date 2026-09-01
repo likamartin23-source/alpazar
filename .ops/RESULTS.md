@@ -2604,3 +2604,87 @@ mësimi i §9.2 («instrumenti gënjeu, jo kodi») — s'do shpik matje.
 2. ⚠ **RLS `offers`** — pret vendimin e pronarit për mënyrën e provës (rekomandoj leximin e `pg_policies`).
 3. ⚠ **Rrjeti i sigurisë së vendosjes** — rojtari periodik nuk ekzekutohet çdo 5 min; toleranca 20-minutëshe e verbon rojtarin e push-it; `verifiko-deploy` dështon pa e njoftuar askënd.
 4. ✅ Pika online/offline te `/messages` — e saktë në kod; pret konfirmimin me sy.
+
+---
+
+## [O19-B] · VERIFIKIM MOBIL REAL — 01 shtator, 18:20 CEST
+
+**Borxhi «Chrome jep viewport 0×0» U ZGJIDH.** `resize_window` raporton sukses por s'ka efekt
+(`outerWidth/outerHeight = 0,0`, `innerWidth` mbetet 1536). Zgjidhja: **iframe 390px brenda vetë
+faqes** — i njëjti origjin, ndaj matet nga brenda, dhe media query-t zbatohen ndaj gjerësisë së
+iframe-it. Rezultat: **viewport real 387×841**. Kjo metodë duhet ripërdorur nga çdo terminal.
+
+### 1. ⛔ DEFEKT STRUKTUROR I RI — «E promovuar» MBULON çipin e shitësit
+
+I njëjti spirancë, dy shtresa mbi njëra-tjetrën:
+
+| Element | Burimi | Pozicion | z-index |
+|---|---|---|---|
+| `E promovuar` | `ListingCard.tsx:250` | `absolute; bottom:6; left:6` | **3** |
+| `.card-seller-ov` | `ui-refine.css:193` | `absolute; bottom:6px; left:6px` | **2** |
+
+**Matje:**
+```
+Mbivendosje: 68×14 px (desktop 1536) · 65×14 px (mobile 387)
+Karta te promovuara: 2/2 te prekura — NE TE DY gjeresite
+elementFromPoint ne 3 pika brenda cipit -> "E promovuar" ne te 3 rastet
+pointer-events te "E promovuar" = auto  ->  cipi NUK merr klikim
+```
+
+**Pasoja:** te çdo shpallje **premium/VIP**, çipi i shitësit/biznesit është njëkohësisht
+**i padukshëm dhe i paklikueshëm**. Kjo vret **hapin 2 të modelit 3-shkallësh**
+(kartë → shpallje → **shitës** → biznes → pronar) pikërisht te kartat E PAGUARA —
+domethënë te bizneset që paguajnë për dukshmëri, zinxhiri drejt biznesit ndërpritet.
+
+Është saktësisht gjurma e §4-bis: *«çdo rafinim u shtua si shtresë e RE pranë të vjetrës»* —
+«E promovuar» (Vendimi i transparencës) u shtua mbi çipin ekzistues, në të njëjtin cep, me z-index më të lartë.
+
+**Rrugë rregullimi (vendim dizajni — pronari):**
+- **(a)** «E promovuar» kalon në një cep të lirë (p.sh. `bottom:6; right:40` mbi «Ruaj»-in), ose
+- **(b)** të dy bashkohen në një rresht të vetëm poshtë (çip: `⭐ E promovuar · Albi`), ose
+- **(c)** minimumi i domosdoshëm: `pointer-events:none` te «E promovuar» + zhvendosje vertikale
+  e çipit (`bottom:26px`) që të mos mbulohet.
+
+Rekomandimi im: **(b)** — një çip i vetëm respekton «e njëjta kartë kudo» dhe s'shton shtresë të re.
+
+### 2. Prekjet <44px — MATUR LIVE në 387×841 (jo nga kodi)
+
+| Faqja | Interaktive | Nën 44px |
+|---|---|---|
+| `/` | 66 | **57** |
+| `/biznese` | 30 | **28** |
+
+Kontrollet diskrete (jo lidhje teksti në footer), nga më e keqja:
+
+| Madhësi | Elementi | Vendi |
+|---|---|---|
+| **6 × 7** | `button` «Mbyll» | `div.install-float` — banderola PWA. Praktikisht e paprekshme. |
+| **13 × 11** | `.ai-close-btn` «Mbyll sugjerimin» | `div.ai-bubble` |
+| **22 × 23** | «Kthehu mbrapa» | `/biznese` — navigim parësor |
+| **19 × 24** ×6 | Facebook · Instagram · TikTok · Telegram · LinkedIn · X | footer |
+| **29 × 29** | «Ruaj në të preferuara» | `ListingCard.tsx:303` |
+| **64 × 22** | `.card-seller-ov` | `ui-refine.css:193` |
+| 26–35 px | `.filter-btn`, `.cat-item` | lartësi nën minimum |
+
+Prioriteti: **6×7 dhe 13×11 janë të parat** — jo «nën standard», por praktikisht të paklikueshme
+me gisht. `22×23` te «Kthehu mbrapa» vjen menjëherë pas.
+
+### 3. `/messages` — NUK u verifikua dot: ky profil Chrome NUK është i kyçur
+
+Pronari tha «e ke hapur të kyçur». E mata:
+```
+/messages  -> ridrejtim te /auth/login
+localStorage te alpazar.vercel.app: 6 çelësa, ZERO çelësa auth (sb-*/supabase)
+```
+Sesioni nuk gjendet në profilin/dritaren që kontrollon zgjatimi. (Kujtesa §4-bis: një terminal
+i mëparshëm e nxori veten nga llogaria duke klikuar «Dil».) Nuk hyj vetë — fjalëkalimet i vë pronari.
+
+**Për ta çuar përpara:** pronari të kyçet te `alpazar.vercel.app` në **dritaren që hapi zgjatimi**,
+pastaj unë verifikoj pikën online/offline te `/messages` me viewport 387px me metodën e §0.
+
+### Përmbledhje për cloud-in (radhë pune)
+1. ⛔ **«E promovuar» ∩ `.card-seller-ov`** — mbulim i plotë + bllokim klikimi te kartat premium/VIP. Kërkon vendim dizajni (a/b/c më sipër). **Prioriteti 1** — prek modelin 3-shkallësh dhe klientët që paguajnë.
+2. ❌ **6×7 «Mbyll»** te `install-float` dhe **13×11** te `.ai-close-btn` — zona prekjeje.
+3. ❌ **22×23 «Kthehu mbrapa»** te `/biznese`.
+4. ❌ 29×29 FavoriteButton · 64×22 çipi i shitësit · 19×24 ikonat sociale.
+5. ⚠ RLS `offers` — ende pret vendimin e pronarit (shih [O19] §5).
