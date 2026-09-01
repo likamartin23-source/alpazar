@@ -472,7 +472,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
     // e vërtetë, me tier-in e pronarit përmes embed-it (FK businesses.owner_id→profiles, O25).
     const { data } = await supabase
       .from('businesses')
-      .select('id,name,logo_url,cover_url,type,city,is_verified,owner:owner_id(is_premium,has_boost,premium_expires_at,boost_expires_at)')
+      .select('id,name,logo_url,cover_url,type,city,is_verified,tagline,followers_count,owner:owner_id(is_premium,has_boost,premium_expires_at,boost_expires_at)')
       .eq('is_active', true)
       .eq('is_visible', true)
       .order('is_verified', { ascending: false })

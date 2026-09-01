@@ -65,7 +65,7 @@ export default function BiznestPage() {
     (async () => {
       const { data: bizRows, error } = await supabase
         .from('businesses')
-        .select('id,name,type,logo_url,cover_url,city,description,is_verified,owner_id')
+        .select('id,name,type,logo_url,cover_url,city,description,is_verified,tagline,followers_count,owner_id')
         .order('is_verified', { ascending: false })
         .order('created_at', { ascending: false })
         .limit(100)

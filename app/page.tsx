@@ -43,7 +43,7 @@ async function fetchHome(): Promise<{ listings: Listing[]; categories: Category[
       // I njejti projeksion dhe kufi si `fetchShops()` te HomeClient (burimi = `businesses`,
       // BusinessCard) — ndryshe SSR-ja dhe klienti do te jepnin dy forma/lartesi te ndryshme.
       sb.from('businesses')
-        .select('id,name,logo_url,cover_url,type,city,is_verified,owner:owner_id(is_premium,has_boost,premium_expires_at,boost_expires_at)')
+        .select('id,name,logo_url,cover_url,type,city,is_verified,tagline,followers_count,owner:owner_id(is_premium,has_boost,premium_expires_at,boost_expires_at)')
         .eq('is_active', true)
         .eq('is_visible', true)
         .order('is_verified', { ascending: false })

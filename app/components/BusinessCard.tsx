@@ -18,6 +18,8 @@ export type BusinessCardItem = {
   type?: string | null
   city?: string | null
   is_verified?: boolean | null
+  tagline?: string | null
+  followers_count?: number | null
   owner?: { is_premium?: boolean | null; has_boost?: boolean | null; premium_expires_at?: string | null; boost_expires_at?: string | null } | null
 }
 
@@ -105,6 +107,10 @@ export default function BusinessCard({ business, index = 0 }: { business: Busine
       </div>
       <div className="card-body">
         <div className="card-title">{b.name}</div>
+        {/* Slogani i biznesit (tagline) — identitet, si "përshkrimi" te karta e shpalljes. */}
+        {b.tagline && (
+          <div style={{ fontSize: 11, color: '#6B6B6B', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>{b.tagline}</div>
+        )}
         {/* Në vend të çmimit → kategoria/tipi i biznesit. */}
         <div className="card-price" style={{ fontSize: 12.5, color: '#7A4A00' }}>{tipLabel}</div>
         <div className="card-meta">
@@ -113,6 +119,14 @@ export default function BusinessCard({ business, index = 0 }: { business: Busine
             {b.city || 'Shqipëri'}
           </span>
         </div>
+        {/* Prova sociale (analoge me 👁 te karta e shpalljes): 👥 ndjekës, kur >0. */}
+        {(b.followers_count ?? 0) > 0 && (
+          <div className="card-stats">
+            <span className="cs-eye" aria-label={`${b.followers_count} ndjekës`}>
+              <span aria-hidden="true">👥</span> {b.followers_count}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   )
