@@ -1198,14 +1198,13 @@ export default function ListingPageClient({ params, initialListing, initialSelle
               <div style={{ fontWeight: 700, fontSize: 14, color: '#111', marginBottom: 12 }}>
                 Shpallje të ngjashme
               </div>
-              {/* I njejti ListingCard si kudo tjeter. `showSeller={false}`: kartat
-                  jane kompakte dhe te dhenat e ngjashme vijne nga tri burime
-                  (/api/similar, recommend_similar, fallback) qe s'i mbajne gjithmone
-                  join-et e shitesit; karta shfaqet e njesuar edhe pa to. `similar`
-                  mbushet vetem pas montimit, ndaj mounted={true} eshte i sigurt. */}
+              {/* I njejti ListingCard si kudo tjeter. showSeller={true}: tani te tria burimet
+                  (/api/similar, recommend_similar, fallback) perdorin LISTING_SELECT, ndaj mbajne
+                  join-et business/author -> cipi i shitesit shfaqet edhe ketu (3-shkalleshi konsistent,
+                  D2). `similar` mbushet vetem pas montimit, ndaj mounted={true} eshte i sigurt. */}
               <div className="listings-grid">
                 {similar.map((s, i) => (
-                  <ListingCard key={s.id} listing={s as any} index={i} showSeller={false} mounted={true} />
+                  <ListingCard key={s.id} listing={s as any} index={i} showSeller={true} mounted={true} />
                 ))}
               </div>
             </div>
