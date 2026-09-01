@@ -1210,3 +1210,59 @@ saj do të dalë **bosh** — pa kopertinë, sepse `images[0]` s'ekziston dhe
 
 Ky është saktësisht defekti që `LISTING_SELECT` u krijua për ta parandaluar, dhe
 i vetmi vend ku rregulli nuk u zbatua.
+
+## [O8-BP2] · Ballafaqim me imazhet e miratuara — pjesa që mungonte e enigmës
+
+Burimi: `docs/bllok/03_Gjendja_Cak_Harmonizuar.html` (pamja-cak) + checklist §B15
+te `BP2-REFERENCE.md`. Rregulli mbisundues: **ku kodi ndryshon nga imazhi → fiton imazhi**.
+
+### Çfarë kërkon specifikimi për kartën (seksioni C, rreshtat 237 & 260)
+> "E njëjta kartë e njësuar (**notim** · 👁+🔴 · Ruaj · vula ★/👑) … **KJO ËSHTË E
+> NJËJTA KUDO (kryefaqe/kërkim/kategori/të ruajtura)**"
+> "Karta e biznesit … avatar me **unazë sipas tier-it** + shenja 🏢 … Të dyja:
+> **notim, 👁+🔴, Ruaj 🔖, vula ★/👑**."
+> (rreshti 342) "Karta e BIZNESIT shfaqet **2 herë**: te FEED/shpalljet dhe te lista e Bizneseve."
+
+### Çfarë ekziston në kod: TRE zbatime, jo një
+
+| # | Vendi | Burimi i të dhënave | Vlerësimi |
+|---|---|---|---|
+| 1 | `ListingCard` (feed/kërkim/kategori) | `LISTING_SELECT` me `business:business_id` | ✅ i saktë, biznes-aware |
+| 2 | `/biznese` lista | **`businesses`** + join `owner:owner_id(tier)` | burim i saktë, **por paraqitje krejt tjetër** (rreshta me `chevron-right`) |
+| 3 | `HomeClient` "Biznese Online" (`.shop-mini`) | **`profiles`** me `is_premium=true` | ❌ **burim i gabuar** — liston përdorues, jo biznese |
+
+Specifikimi thotë "e njëjta kartë"; kodi ka tri paraqitje të ndryshme, njëra prej
+tyre mbi tabelën e gabuar.
+
+### Karta e biznesit te kryefaqja — dështon 6 nga 6 kërkesat e imazhit
+
+| Kërkesa e pamjes-cak | Gjendja e matur |
+|---|---|
+| **notim** | ❌ `.shop-mini` → `animation-name: none` (vetëm `.listing-card` e ka `alpzCardFloat`) |
+| **unazë sipas tier-it + pulsim** | ❌ `tierNgaProfili(shop)` kthen gjithnjë `'free'` — query s'merr `is_premium`/`has_boost`/`premium_expires_at` |
+| **vula ★/👑** | ❌ `⭐` i ngurtësuar te rreshti 991, pa kusht, pa variant VIP |
+| **shenja 🏢 / ✓** | ❌ `verified={shop.is_verified}` — fusha s'merret, pra gjithnjë `undefined` |
+| **👁 + 🔴** | ❌ mungon fare te `.shop-mini` |
+| **Ruaj 🔖** | ❌ mungon fare te `.shop-mini` |
+
+### Checklist §B15 — verdikti im për zërat që preka
+
+| Zëri | Verdikti |
+|---|---|
+| "Rrathët pulsojnë & kartat notojnë **në TË GJITHA call-site-t (B10)**" | ❌ **NUK plotësohet** — `.shop-mini` s'noton, unaza s'pulson |
+| "E njëjta kartë **kudo**, përfshi **të ruajtura**" | ❌ **NUK plotësohet** — `/favorites` s'e përdor `LISTING_SELECT`; humbet `videos` |
+| "Tab 'Shpalljet' pa dublikatët 'Statistikat'/'Abonimi'" | ✅ plotësohet (matur live) |
+| "Siguria një ekran (4 seksione)" | ✅ plotësohet (Trust/GDPR · Llogaria · Takedown · Kujdes) |
+| "Karta biznes-aware me `business_id`, kurrë `hasShop`" | ✅ plotësohet te `ListingCard` |
+| "Vizitor: … **Vlerëso**/Ruaj/Ndaj/Raporto/Njoftomë" | ⚠️ **Vlerëso hesht** pa sesion (`:124`), s'ridrejton |
+| "Shiriti 'Vepro si' te të DY panelet" | ⏳ e pamatur — kërkon sesion pronari |
+
+### Përfundimi që lidh gjithçka
+Gap 1/2 quhet "i mbyllur" te pamja-cak, por matja tregon se u mbyll **vetëm te
+`ListingCard`**. Karta e biznesit — që imazhi e trajton si të njëjtin objekt me
+kërkesa identike — mbeti jashtë njësimit në të dy vendet ku shfaqet, dhe te
+kryefaqja lexon edhe tabelën e gabuar.
+
+Kjo shpjegon pse pronari sheh "sisteme të vjetra në disa faqe": `ListingCard`
+është sistemi i ri; `.shop-mini` dhe rreshtat e `/biznese` janë dy mbetje të
+vjetra që s'u shkrinë me të.
