@@ -1419,3 +1419,77 @@ që heshtin · 10 RPC admin të vdekura · `conversation_id` që s'shkruhet kurr
 2. Kontrollet e lira (`npm audit`, axe, konsola) para atyre të shtrenjta.
 3. Asnjë diagnozë pa e provuar sjelljen — vetëm vëzhgim derisa të ketë provë.
 4. Paralajmërim para çdo veprimi që prek sesionin e pronarit.
+
+## [MBYLLJE] · Autopsia përfundimtare — sinteza
+
+### Prekja në telefon: gjetje statike (matja live mbetet borxh)
+Provova ta bëja auditin në viewport celulari; dritarja raportoi `0x0`, pra media
+query-t ranë te dega më e vogël. **Nuk e raportoj si matje celulari** — do të ishte
+saktësisht gabimi që katalogova te [AUTOAUDIT]. Ja çfarë matet me siguri nga CSS-ja:
+
+Ndarjet e `listings-grid`: bazë `minmax(150px,1fr)` · 768px→180 · 1024px→230 · 1440px→250.
+`prefers-reduced-motion` mbulohet siç duhet (dy herë, përfshi `*{animation:none!important}`).
+
+**Por rregulli i prekjes është i ngushtë** — `@media (pointer: coarse)` jep `min-height:44px`
+vetëm për `.btn`, `.empty-cta`, `.plan`, `button[type=submit]`. Nuk mbulon elementet
+që mata live te karta:
+
+| Elementi | Përmasa e matur | ≥44px? |
+|---|---|---|
+| Butoni "Ruaj" (♡) | **29×29** | ❌ |
+| Çipi i biznesit (`role="link"`) | **64×22** | ❌ (lartësia) |
+| Distinktivët `★`/`🏢` | 29×29 | ❌ |
+| Glifet dekorative brenda avatarit | 10×10 | ❌ |
+
+Pra në telefon objektivat kryesorë të prekjes te karta janë nën pragun e Vendimit 8.
+Kjo është gjetje statike + matje përmasash; **konfirmimi në pajisje reale mbetet i pabërë.**
+
+---
+
+### DIAGNOZA E VETME
+Në pesë shtresa të matura — sisteme, nivele, organogramë, karta, dizajn — gjendet
+e njëjta gjurmë: **çdo rafinim u shtua PRANË të vjetrës, jo NË VEND të saj.**
+E reja s'u bë e detyrueshme dhe e vjetra s'u hoq. Prandaj cila fiton varet nga faqja.
+
+### RENDITJA E RREGULLIMEVE (nga pesha për përdoruesin/ligjin)
+
+**1 · Ligjore dhe të dhëna**
+- `nipt_mungon = true` — Ligji 10128 neni 7 (§4.7)
+- `pin_i_paziguar = true` — PIN i parazgjedhur i adminit (§5)
+- `admin_log()` humbet në heshtje: gjurmë admin 24h = **0** kundrejt audit = **46** (§1.4)
+
+**2 · Të dukshme për përdoruesin**
+- Dy veprime heshtin pa sesion: **Vlerëso** (`:124`) dhe **Dërgo mesazh** (`:533`) — modeli i saktë është `:1439`
+- `/favorites` s'përdor `LISTING_SELECT` → shpalljet vetëm-video dalin bosh
+- Karta e biznesit te kryefaqja: lexon `profiles`, ⭐ i ngurtësuar, pa notim, pa pulsim, pa 👁+🔴, pa Ruaj — **6 nga 6 kërkesat e imazhit**
+- Mbivendosja `🏢` me `📷` në të njëjtin cep të unazës
+- Media: karta s'ka rrëshqitje fare; te `/listing` s'ka shigjeta jashtë lightbox-it → në desktop s'kalohet dot te tjetra
+
+**3 · Strukturore**
+- Tre fjalorë nivelesh (`Badges.getLevel` · `TrustBadge.getLevel` · `referral.LEVELS`)
+- Tre karta biznesi ku imazhi kërkon një
+- `next/link` i papërdorur; një brinjë e vetme `<a>` në gjithë grafin e profileve
+- `/profile` jashtë grupit të komponentëve (pa TrustBadge, useIsOnline, ListingCard)
+
+**4 · Higjienë**
+- 2057 hex kundër 26 përdorimeve tokeni; e kuqja në 4 variante (i gabuari 176 herë, kanoniku 72)
+- Kod i vdekur: `isOnline`, `buildBadges`, komponenti `Badges`, 10 RPC admin
+- `conversation_id` s'shkruhet kurrë → `conversations`, `typing_indicators`, `message_reactions` s'punojnë dot
+- `npm audit`: 5 cenueshmëri (1 kritike) — **të gjitha dev-only** (`vitest`/`vite`/`esbuild`)
+
+### BORXHI I VERIFIKIMIT (çfarë i mbetet kujtdo vazhdon)
+1. **Telefon real** — asnjë matje live; boshllëku më i madh
+2. **axe-core** — s'u ekzekutua kurrë; `div role="link"` dhe prekjet <44px e kërkojnë
+3. **CLS/performancë** — s'u matën
+4. **RLS e `offers` dhe `business_followers`** — tabela të sapogjallëruara, politikat e pashqyrtuara
+5. **Provë shkrimi** mbi 8 kolonat e falsifikueshme (u bë vetëm për `favorites`)
+6. **Paneli i adminit vizualisht** + profili i brendshëm i biznesit + shiriti "Vepro si" — kërkojnë sesion pronari
+7. `numerues_te_shkeputur` te `admin_health`; 5 shpalljet jo-aktive
+
+### KUFIJTË E KËSAJ AUTOPSIE
+Matur me: Chrome (vetëm desktop 1536px), `curl`, lexim i `origin/main`, dhe query
+në bazë me rol të veshur në transaksion të kthyer mbrapsht. **Jo** me telefon, **jo**
+me axe, **jo** me sesion pronari. Çdo pohim këtu ka provë; çdo gjë pa provë është
+shënuar si e pamatur.
+
+**Autopsia mbyllet këtu.**
