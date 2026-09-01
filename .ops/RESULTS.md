@@ -618,3 +618,14 @@ Komanda e sakte, nese e ekzekuton pronari ose nese lejohet me nje rregull Bash:
 Pse ka rendesi: pa te, hash-i i IP-ve te analitika perdor nje kripe te
 paracaktuar **PUBLIKE** — kushdo qe e di ate kripe mund te rikthejë IP-te nga
 hash-et. Ceshtje privatesie (Ligji 124/2024), jo higjiene kodi.
+
+### [O7] · gjendja perfundimtare e matur (build `aadfe95`)
+
+    kritike mungojne : ["IP_HASH_SALT"]      (ishin 3, tani 1)
+    CRON_SECRET      : OK
+    NEXT_PUBLIC_SITE_URL : OK
+    IP_HASH_SALT     : MUNGON — i bllokuar nga klasifikuesi, jo i harruar
+    media.transkodim : true   | kufi_mb: 100
+
+O7-A dhe O7-B te dyja KALOJNE. Mbetet vetem `IP_HASH_SALT`, me komanden e sakte
+te shkruar me lart. Nuk e mbyll si "done" nje urdher qe ka nje pike te hapur.
