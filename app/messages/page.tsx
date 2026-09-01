@@ -109,8 +109,12 @@ function AudioPlayer({ url, mine }: { url: string; mine: boolean }) {
 
 // ─── Avatar ───────────────────────────────────────────────────────────────────
 
-function Avatar({ profile, size = 46, online = false }: { profile: any; size?: number; online?: boolean }) {
+function Avatar({ profile, size = 46, online }: { profile: any; size?: number; online?: boolean }) {
   const name = profile?.shop_name || profile?.full_name || profile?.username
+  // Prania online/offline udhëton ME rrethin përmes AlpazarAvatar (pika kanonike poshtë-MAJTAS).
+  // Më parë kjo faqe vizatonte pikën e VET poshtë-DJATHTAS (bottom:1,right:1) → mbivendosej me
+  // vulën ✓/🏢 (poshtë-djathtas te rrethi). Tani ripërdor sistemin e vetëm: pa dublim, pa përplasje,
+  // dhe offline-i (gri) shfaqet njësoj si kudo. (Urdhër pronari: mos e mbivendos me sistemet në rreth.)
   return (
     <div style={{ position:'relative', flexShrink:0 }}>
       <AlpazarAvatar
@@ -119,9 +123,9 @@ function Avatar({ profile, size = 46, online = false }: { profile: any; size?: n
         type={profile?.shop_name ? 'business' : 'person'}
         tier={tierNgaProfili(profile)}
         verified={(profile?.trust_score ?? 0) >= 60}
+        online={online}
         size={size}
       />
-      {online && <span style={{ position:'absolute', bottom:1, right:1, width:Math.max(size*.22,8), height:Math.max(size*.22,8), borderRadius:'50%', background:'#22c55e', border:'2px solid #FFFBEA' }} />}
     </div>
   )
 }
