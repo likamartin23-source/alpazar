@@ -1071,3 +1071,57 @@ Slot-et e lira te Avatar-i: `right:-2 top:-2` (kurora VIP/Premium) dhe
 `left:-1 bottom:-1` (pika online). Poshtë-djathtas është i zënë nga distinktivi i
 tipit, ndaj `.cam` duhet zhvendosur (p.sh. poshtë-majtas kur s'ka pikë online,
 ose jashtë unazës si buton më vete).
+
+## [O8-MEDIA-DHE-VULAT] · Rrëshqitja, autoplay-i dhe vulat Premium/VIP
+
+### 1. Karta nuk rrëshqitet — sepse s'ka fare mekanizëm
+`ListingCard` render-on **vetëm** `l.images?.[0]`. Kërkim në komponent për
+`onTouchStart|onPointerDown|swipe|scrollSnap|images.map`: **0 përputhje**.
+Nuk është defekt rrëshqitjeje — nuk ekziston asnjë mënyrë për foton tjetër.
+
+**Sa kushton:** shpallja `39bb6642` ka **9 foto**; karta shfaq 1. Tetë të tjerat
+janë të paarritshme derisa hapet faqja e shpalljes.
+
+### 2. Në desktop nuk kalohet dot te tjetra as te faqja e shpalljes
+`ImageCarousel` e ka rrëshqitjen, por vetëm me **prekje**: shiriti kalon me
+`scroll-snap` dhe gishtin. Handler-at e mausit (`onMouseDown/Move/Up`, rreshtat
+112–124) **nuk e lëvizin shiritin** — ata vetëm dallojnë nëse mausi lëvizi, për të
+vendosur nëse hapet lightbox-i.
+
+Shigjetat `‹ ›` ekzistojnë vetëm **brenda lightbox-it** (rreshtat 279, 288).
+Pra në desktop rruga e vetme është: klik → hapet lightbox-i → shigjetat.
+Kjo është arsyeja e saktë pse "nuk rrëshqiten dot nga web".
+
+### 3. Autoplay-i nuk është "kudo" — sepse është vetëm për shpalljet PA foto
+Karta e luan videon vetëm kur shpallja është **vetëm-video**; nëse ka foto,
+kopertina mbetet fotoja dhe videoja nuk niset. Kjo është me qëllim në kod
+(rreshtat 126–141), jo defekt — por shpjegon plotësisht vëzhgimin.
+
+Gjendja reale e të dhënave:
+
+| Shpallja | Foto | Video | URL | Autoplay |
+|---|---|---|---|---|
+| `39bb6642` Makine (aktive) | **9** | 0 | — | s'ka video |
+| `25225352` Makine (aktive) | 0 | **3** | `res.cloudinary.com/.../f_mp4,vc_h264/...` | **po** |
+
+**Të gjitha videot janë mp4 të drejtpërdrejta nga Cloudinary**, jo Cloudflare
+Stream. Pra dega `cloudflarestream.com → videoUrl=null` nuk aktivizohet fare sot;
+autoplay-i teknikisht punon. Kufizimi është rregulli "vetëm pa foto", plus pragu
+≥50% në pamje.
+
+### 4. Vulat Premium/VIP — dy vendet ku VIP nuk u krijua kurrë
+**Aty ku është e saktë** (VIP e zëvendëson Premium, i njëjti slot, përjashtues):
+- `Avatar.tsx:181–195` → `vip` = 👑 mbi ari · `premium` = ★ mbi të verdhë
+- `ListingCard.tsx:239–241` → `vip` = 👑 VIP (gradient ari→kuqe) · `premium` = ★
+
+**Aty ku ka mbetur vetëm stampa e vjetër, pa asnjë degë VIP:**
+
+| Vendi | Kodi | Problemi |
+|---|---|---|
+| `HomeClient.tsx:991` | `<span className="shop-prem" aria-label="Premium">⭐</span>` | **i ngurtësuar** — pa kusht fare, pa VIP |
+| `search/results/page.tsx:46` | `<div className="shop-premium-badge">⭐ Premium</div>` | **i ngurtësuar** — pa VIP |
+| `ui-refine.css:197` | `.badge-premium{…gradient ari…}` | ekziston `.badge-premium`, **s'ekziston `.badge-vip`** — VIP stilohet vetëm inline te ListingCard |
+
+Pra pohimi është i saktë: kartat e bizneseve te kryefaqja dhe te kërkimi mbajnë
+**stampën e vjetër Premium**, dhe varianti VIP atje nuk u ndërtua kurrë. Për më
+tepër te kryefaqja stampa as nuk varet nga tier-i — shfaqet gjithmonë.
