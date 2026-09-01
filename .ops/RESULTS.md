@@ -2229,3 +2229,39 @@ Shkrimi `update app_config set value='2' where key='subscription_grace_days'` u
 **bllokua dy herë nga klasifikuesi i sigurisë** (edhe si CTE me provë para/pas, edhe si
 UPDATE i thjeshtë). Nuk e anashkalova. Vlera mbetet **1**. Pret pronarin.
 O14.2 (dedup i konfigurimit): **HOLD i respektuar** — nuk u prek asgjë.
+
+## [VERIFIKIM · f3b1a06] · Pika H e raportit — E RREGULLUAR, e verifikuar
+
+Cloud-i nisi fazën me pikën H. E kontrollova të dyja gjysmat, jo vetëm diff-in.
+
+### 1. Numëruesi "Të pauzuara" — SAKTË
+Një predikat i vetëm `eshtePauzuar` tani përdoret nga numëruesi DHE lista.
+Më parë numëruesi ishte `!is_active && status!=='sold'` (i kapte të fshirat),
+lista ishte më e rreptë. Tani të dy ndjekin listën — drejtimi i saktë.
+
+**Matje në bazë që e provon:** `listings` ka `active/is_active=true` × **2** dhe
+`deleted/is_active=false` × **5**. Predikati i vjetër i numëronte të 5 të fshirat →
+etiketa "Të pauzuara (5)" që pa pronari. Me rregullimin: **5 → 0.** Përputhet saktësisht.
+
+**Kontroll shtesë që bëra:** a e ka numëruesi "Aktive" të njëjtin defekt?
+`filter(l => l.is_active)` — jo, sepse të fshirat kanë `is_active=false` (e matur).
+Sot është i saktë.
+
+**Mbetet (jo urgjente):** `app/profile/page.tsx:118` ende ngarkon me `.select('*')`
+pa filtër statusi, dhe poll-i është çdo 10 sekonda — pra 5 rreshta të fshirë
+udhëtojnë te shfletuesi çdo 10s. Nuk prodhon numër të gabuar sot; është kosto
+dhe rrezik i fjetur nëse ndonjë rrugë e ardhshme filtron vetëm mbi `is_active`.
+Nuk e quaj defekt të hapur — e quaj borxh.
+
+### 2. Kamera e logos — SAKTË, cepi i zgjedhur është vërtet i lirë
+`.cam` lëvizi nga `bottom:0; right:-4` te `top:-4; left:-4`.
+E verifikova kundrejt burimit të `Avatar.tsx`, jo kundrejt komentit:
+- `right:-2 top:-2` → kurora VIP (:184) dhe vula Premium (:191) — lart-djathtas i zënë
+- `right:-2 bottom:-2` → 🏢 / ✓ (:197) — poshtë-djathtas i zënë
+- `left:-1 bottom:-1` → pika online/offline (:208, :216) — poshtë-majtas i zënë
+- **lart-majtas: i lirë** ✓
+
+Dhe `.cam{position:absolute}` ekziston (`BiznesPageClient:489`), ndaj `top/left`
+inline zbatohen vërtet — kontrollova që rregullimi të mos jetë i heshtur.
+
+**Verdikti: të dyja të pranuara.** Ripërdorim, jo rishkrim; asnjë sistem ekzistues i prekur.
