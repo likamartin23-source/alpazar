@@ -2753,3 +2753,91 @@ EKZISTON — cloud-i kishte shkruar «s'ka sesion të arritshëm»; kjo tashmë 
 | 3 | Pika online/offline, komponenti kanonik | ✅ verifikuar me sy |
 | 4 | Pika te lista e `/messages` | ⚠ bllokuar — duhet të paktën 1 bisedë |
 | 5 | RLS `offers` | ⚠ pret vendimin e pronarit |
+
+---
+
+## [O19-D] · AUDIT I PLOTË MOBIL (387×841, pronari i kyçur) — 01 shtator, 18:55 CEST
+
+### A. ✅ ZINXHIRI 3-SHKALLËSH — VERIFIKUAR ME KLIKIME (jo me grep)
+
+| Hapi | Veprim | Rezultat | Madhësia e prekjes |
+|---|---|---|---|
+| 1 | klik mbi kartë | `/listing/39bb6642-f50f-45c7-b32a-226bf769c283` | kartë e plotë |
+| 2 | «Shiko biznesin →» | `/biznese/ffb19071-7042-4f8b-b485-00bd10049f3b` | 302 × 36 |
+| 2b | «Shiko profilin →» (alternativa person) | ekziston në të njëjtën faqe | 302 × 36 |
+| 3 | «★ Pronari — shiko profilin» | `/u/af3e3d5b-0f49-4ad5-a83d-281733fed433` | **197 × 44** ✓ |
+| 4 | kthimi: «🏢 Shiko Biznesin» te `/u` | biznesi | 155 × 39 |
+
+**Modeli është i plotë dhe dykahësh — i konfirmuar me sjellje, jo me lexim kodi.**
+Vetëm hapi 3 e plotëson minimumin 44px; hapat 2 dhe 4 janë 36–39px.
+
+### B. `/admin` — sjellje e SAKTË, NUK është defekt
+
+```
+fetch('/admin', redirect:'manual')   -> opaqueredirect   (ndërsa /profile e /messages -> 200)
+Shfletuesi përfundon te  /  (JO te /auth/login)
+```
+Sipas `middleware.ts:71-86`: `/auth/login` = pa sesion; **`/` = sesion i vlefshëm por `is_admin()` = false**.
+Llogaria e kyçur është **`afbe35fb…` (Martinel Likaj)**; pronari i biznesit është
+**`af3e3d5b…` («Administratori Alpazar»)** — dy llogari të ndryshme.
+→ Ridrejtimi është i drejtë. **[O10] (rruga pozitive) mbetet e paverifikuar** derisa të kyçet llogaria admin.
+
+### C. ⛔ GALERIA E `/listing` — ndërrimi i fotos praktikisht i pamundur në telefon
+
+```
+9 pika ndërrimi = <button aria-label="Foto N">  ->  7 × 7 px  (aktivja 18 × 7)
+Zinxhiri i prindërve: overflow-x = visible NË TË 5 NIVELET, scroll-snap = none  -> PA SWIPE
+Shigjeta prev/next jashtë lightbox-it: ZERO
+```
+Pra e vetmja mënyrë për të parë foton 2–9 pa hapur lightbox-in është të godasësh një objektiv
+**7×7 px**. Kjo e mbyll pyetjen e hapur «media pa swipe» me numra: nuk është vetëm mungesë swipe-i —
+edhe zgjidhja alternative është nën çdo prag. **Prioriteti 2 pas përplasjes së «E promovuar».**
+
+### D. Prekjet <44px — të gjitha faqet, matur në 387px
+
+| Faqja | Interaktive | Nën 44px | Më e vogla |
+|---|---|---|---|
+| `/listing/{id}` | 57 | **52** | **7×7** ×9 (pikat e galerisë) |
+| `/` | 67 | **57** | **6×7** «Mbyll» (`div.install-float`) |
+| `/search` | 68 | **67** | 13×11 |
+| `/biznese` | 30 | **28** | **22×23** «Kthehu mbrapa» |
+| `/biznese/{id}` | 34 | **28** | 13×11 |
+| `/profile` | 38 | **27** | 13×11 |
+| `/referral` | 34 | **27** | 13×11 |
+| `/favorites` | 24 | **23** | 13×11 |
+
+**Globale (në ÇDO faqe):** `.ai-close-btn` **13×11** · 6 ikona sociale **19×24** · «Kërko» 31×14 ·
+lidhjet e footer-it me lartësi 14px.
+**Për faqe:** 7×7 galeria · 6×7 mbyllja e banderolës PWA · 22×23 kthimi · 29×29 «Ruaj» · 64×22 çipi i shitësit.
+
+### E. ✅ Performanca dhe higjiena — të shëndetshme (asnjë defekt)
+
+```
+/listing/{id}:  CLS = 0 (0 zhvendosje) · TTFB 87ms · DOMContentLoaded 1125ms
+                load 1198ms · transfer 20KB · 64 burime
+Konsola: 0 gabime, 0 paralajmërime (pas rifreskimit të plotë)
+A11y bazike, në të 8 faqet: 0 <img> pa alt · 0 input pa emër · 0 buton pa emër · saktësisht 1 <h1>
+```
+
+### F. ⚠ Navigimi — ZERO ankera drejt shpalljeve
+
+```
+Kryefaqja: 19 <a href> gjithsej, POR asnjë e vetme drejt /listing/
+Karta = <div role="link" tabindex="0" aria-label="Makine — Me marrëveshje"> cursor:pointer
+```
+A11y-ja e tastierës është e mbuluar (role + tabindex + aria-label) — kjo **nuk** është defekt aksesi.
+Por pa `href`: nuk hapet dot në skedë të re (klik i mesit / Ctrl+klik), nuk kopjohet lidhja, dhe
+crawler-at s'e ndjekin dot rrugën kryefaqe → shpallje. Kjo është saktësisht borxhi §4-#2
+(`window.location.href` → `next/link`), tani i matur. I njëjti model te «Shiko publik» në `/profile`.
+
+### Radha e punës (e përditësuar)
+| # | Punë | Kush |
+|---|---|---|
+| 1 ⛔ | «E promovuar» mbulon+bllokon çipin e shitësit (premium/VIP) | cloud + vendim dizajni |
+| 2 ⛔ | Galeria: 9 pika 7×7, pa swipe, pa shigjeta | cloud + vendim dizajni |
+| 3 ❌ | Prekjet globale: 13×11 `.ai-close-btn`, 19×24 socialet, 6×7 install-float, 22×23 kthimi | cloud |
+| 4 ❌ | 29×29 «Ruaj», 64×22 çipi, 36–39px hapat 2/4 të zinxhirit | cloud |
+| 5 ⚠ | `next/link` për kartat (0 ankera drejt /listing) | cloud, prek SEO |
+| 6 ⚠ | RLS `offers` — jopërfundimtare | pronari |
+| 7 ⚠ | [O10] `/admin` rruga pozitive | pronari (kyçje me llogarinë admin) |
+| 8 ⚠ | Pika te lista e `/messages` | pronari (duhet ≥1 bisedë) |
