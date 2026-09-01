@@ -68,6 +68,14 @@ Prandaj "të vjetrat në disa faqe, të rejat në të tjera" — të dyja të gj
 - **Autoaudit i terminalit (`10a986b`):** retrospektivë procesi (jo defekt i ri). Mësime: telefoni i pari; kontrollet e lira (npm audit/axe/konsola) para të shtrenjtave; asnjë diagnozë pa provë sjelljeje; paralajmërim para veprimeve që prekin sesionin e pronarit (terminali e nxori veten nga llogaria duke klikuar "Dil").
 - **Zë i ri vizual (per kalimin vizual):** mbivendosja 🏢/📷 — badge biznesi mbi ikonën e fotos te karta; verifiko pozicionimin.
 
+## 4-ter. AUTOPSIA U MBYLL (terminali, `77c333b`) — borxhi i verifikimit
+Cikli i auditit të terminalit PËRFUNDOI. Renditja e mbetur sipas peshës:
+- **Ligjore/të dhëna (PRONARI):** NIPT mungon (§4.7); admin_pin i paziguar (§5); `admin_log()` humbet pa përdorues (§1.4 — kërkon ndryshim DB-funksioni → terminali/pronari, klasifikuesi bllokon cloud).
+- **Vizuale/mobile (KËRKON TELEFON REAL — borxhi #1 i terminalit):** prekjet <44px te karta (Ruaj 29×29, çipi 64×22 — Vendimi 8); mbivendosja 🏢/📷; media pa swipe në desktop; kartat e biznesit (K2, modeli 3-shkallësh).
+- **Strukturore/higjienë (K1-K5):** tokenat e ngjyrave; 3 fjalorë nivelesh (referral.LEVELS mbetet); next/link; /profile te grupi i komponentëve; kod i vdekur; conversation_id.
+- **Të matura si të sigurta:** npm audit = 5 cenueshmëri POR të gjitha dev-only (vitest/vite/esbuild) — s'prekin prodhimin.
+- Defektet diskrete në dorën e cloud-it: TË GJITHA të rregulluara (7). Mbetja kërkon ose pronarin, ose shkrim DB (terminali), ose sy telefoni (terminali), ose vendim dizajni.
+
 ## 5. Mësime të vërtetuara (shtoji këtu, mos i harro)
 - **Device flow** = rrugë autentikimi që s'ia kalon sekretin agjentit (Vercel CLI). Sekretet i vë pronari (§8).
 - **Rendi A→C** te privatësia: `my_referrals()` PARA ngushtimit të `profiles`; pamja s'e dallon dështimin — provoje në bazë.
