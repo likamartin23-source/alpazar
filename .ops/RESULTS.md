@@ -4485,3 +4485,70 @@ Kjo është prova e dytë e pavarur për të njëjtin defekt.
 3. **Një komponent i vetëm** «Ruaj» për zemrën dhe bookmark-un.
 4. **Vend-mbajtës në `onError`** te `ListingCard`, jo `display:none`.
 5. **UpdatePrompt me rifreskim automatik** — përndryshe asnjë rregullim s'shihet.
+
+---
+
+# [O42] · KORRIGJIM i [O41] pika 5 + GJETJE E RE: hierarkia e butonave
+
+## ❌ Korrigjim — `UpdatePrompt` E RINGARKON VETË qysh prej `00338fc`
+
+Te [O41] shkrova se `UpdatePrompt` jep "vetëm banderolë opt-in, pa rifreskim automatik"
+dhe i kërkova cloud-it ta rendiste si punë. **Ishte gabim — puna është bërë.**
+
+`app/components/UpdatePrompt.tsx:50-80` sot:
+```js
+const typing = ae && (INPUT || TEXTAREA || isContentEditable)
+if (!typing) { location.reload(); return }        // skedë pa shkrim → RINGARKON VETË
+…
+onVis: hidden→visible → build i ri → location.reload()
+```
+Ringarkim automatik në: montim · rikthim fokusi · poll 30s. Banderola mbetet **vetëm**
+kur përdoruesi po shkruan në një fushë — që të mos i prishet forma. Sjellje e saktë.
+
+**Provë se është LIVE:** `/api/version` → `9abd6c9`; `00338fc` është paraardhës i tij.
+Midis `9abd6c9` dhe `main` ka vetëm `.ops/*.md` — jo aplikative. Prodhimi ka gjithë kodin.
+
+**Nga vjen gabimi im:** lexova **kokën e komentit** (`:18` — *"VETËM banderolë opt-in.
+Asnjë `location.reload()`"*) në vend të trupit të funksionit. Komenti nuk u përditësua kur
+u shtua ringarkimi. Klasa **F4 — pretendimi rri te komenti** — pikërisht kurthi që
+taksonomia paralajmëron, dhe rashë në të. `docs/` thotë *"mat pohimin, mos e lexo"*.
+**Punë e vogël e nevojshme:** korrigjo kokën `:16-26`, që të mos e gënjejë lexuesin tjetër.
+
+## ❌ Korrigjim — "Njoftomë" nuk është i zbehtë; është **i barasvlershëm me Raporto**
+
+E mata: `.njofto-btn` renderohet `#f4f4f4` / `#3d3d3d`. Ngjyra kaltërore te fotoja është
+**balancimi i bardhësisë së aparatit** (gjithë faqja ka të njëjtin cast — shiko të bardhat).
+Nuk ka defekt ngjyre.
+
+## 🟠 GJETJE E RE — hierarkia: veprimi kryesor vishet si veprim i fundit
+
+Te `/listing` çdo buton dytësor ndan **të njëjtin lëkurë**:
+
+| Elementi | Roli | Stili |
+|---|---|---|
+| `.njofto-btn` | **konvertim** (alarm çmimi, mban blerësin) | `#f4f4f4` · `1px #b0b0b0` · r11 · 44px |
+| `.safety-btn` | Raporto / Kërkesë heqjeje | `#f4f4f4` · `1px #b0b0b0` · r11 · 44px |
+| `.share-btn` | Ndaj | `#f4f4f4` · `1px #b0b0b0` · rreth 44px |
+| `.meta-item` | **info statike** (qytet, datë) | `#f5f3eb` · pa kornizë · r999 · ~26px |
+
+Domethënë: **«Njoftomë» dhe «Raporto» kanë peshë vizuale identike.** Njëri sjell blerës,
+tjetri raporton abuzim. Paleta ka një primar të qartë (`--action-red-deep` / `#E63312`,
+i përdorur te «Fillo bisedën»), por «Njoftomë» — i vendosur pikërisht te rreshti i çmimit,
+vendi me qëllim më të lartë në faqe — vishet me gri tercjare.
+
+Dhe `.njofto-btn` (`#f4f4f4`) qëndron drejtpërdrejt mbi `.meta-item` (`#f5f3eb`) — dy
+neutralë krem thuajse identikë. E dallon vetëm korniza dhe lartësia. **Kjo është ajo që
+pronari e ka përsëritur tri herë: "butonat janë të shpërndarë, të çrregullt, të padukshëm."**
+Nuk është se janë të thyer — është se **asgjë nuk të thotë çfarë është e klikueshme
+dhe çfarë ka rëndësi.**
+
+**Propozim (3 shkallë, jo 1):**
+1. **primar** — `Fillo bisedën` (i kuq i mbushur) — mbetet siç është
+2. **sekondar** — `Njoftomë` — kontur i kuq (`1px #C42305`, tekst `#C42305`, sfond i bardhë):
+   dukshëm i klikueshëm, dukshëm nën primarin
+3. **tercjar** — `Raporto` / `Kërkesë heqjeje` / `Ndaj` — grija aktuale, e saktë për rolin
+4. **info** — `.meta-item` — hiqi çdo ngjashmëri me buton (pa kornizë, ngjyrë më e ftohtë)
+
+## Gjendja e prodhimit (matur tani)
+- `/api/version` → `9abd6c9` · `main` → `438acd5` · ndryshimi: **vetëm `.ops/*.md`**
+- Pra prodhimi pasqyron **gjithë kodin aplikativ**. Asnjë ngecje vendosjeje.
