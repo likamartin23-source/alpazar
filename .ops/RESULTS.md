@@ -2688,3 +2688,68 @@ pastaj unë verifikoj pikën online/offline te `/messages` me viewport 387px me 
 3. ❌ **22×23 «Kthehu mbrapa»** te `/biznese`.
 4. ❌ 29×29 FavoriteButton · 64×22 çipi i shitësit · 19×24 ikonat sociale.
 5. ⚠ RLS `offers` — ende pret vendimin e pronarit (shih [O19] §5).
+
+---
+
+## [O19-C] · KORRIGJIM + VERIFIKIM ME SY — 01 shtator, 18:35 CEST
+
+### 0. KORRIGJOJ VETEN: profili Chrome ËSHTË i kyçur
+
+Te [O19-B] §3 shkrova «ky profil Chrome nuk është i kyçur». **Ishte gabim i instrumentit tim.**
+Kontrollova vetëm `localStorage` — por Supabase këtu ruan sesionin në **cookie**:
+```
+document.cookie -> sb-sopafwfkrxpcdaljddoh-auth-token, g_state
+/messages -> ngarkohet ("Mesazhet — ALPAZAR"), pa ridrejtim
+Kyçur si: Martinel Likaj · 355688536458@sms.al · /u/afbe35fb-e2e0-42a1-b938-2ce18b9cb714
+```
+E njëjta neglizhencë si §9.2 («instrumenti gënjeu, jo kodi»): matja e ngushtë nxori përfundim të gjerë.
+
+### 1. ✅ PIKA ONLINE — VERIFIKUAR ME SY, LIVE
+
+Te `/u/afbe35fb…` (pronari i kyçur → prania reale):
+```
+aria-label = "Në linjë"
+background  = rgb(22,163,74)  (= #16a34a, jeshile)
+left = -1px · bottom = -1px   -> POSHTË-MAJTAS ✓
+madhësia    = 28px (shkallëzohet me avatarin 96px)
+```
+Vula ✓/🏢 (e matur te kartat) = `right:-2px · bottom:-2px` → poshtë-djathtas.
+**Dy cepa të ndryshëm — asnjë mbivendosje.** Rregullimi `4ace9b5` është i saktë dhe live.
+Gjithashtu i konfirmuar live: etiketa **«🆕 I ri»** (rregullimi `a4e31da`), jo «Fillestar».
+
+### 2. ⚠ `/messages` — nuk verifikohet dot: llogaria ka ZERO biseda
+
+`/messages` ngarkohet saktë, por: **«Nuk ke mesazhe akoma»**. Pa asnjë bisedë s'ka avatarë
+për të inspektuar, ndaj pika te lista e bisedave mbetet e paverifikuar me sy.
+Komponenti kanonik u verifikua te §1 (i njëjti `AlpazarAvatar`), pra rreziku është i ulët —
+por për mbylljen e plotë duhet **të paktën një bisedë**: pronari të shkruajë te një shitës
+nga një shpallje, pastaj unë e mat listën në 387px.
+
+Pika s'u kap as te kryefaqja: të 3 kartat e dukshme kanë shitës **biznes** (`aria-label="Biznes"`),
+dhe `online` shfaqet vetëm për shitës-persona.
+
+### 3. Konfirmim i borxhit teknik #2 (navigimi), live
+
+Butoni **«Shiko publik»** te `/profile` s'ka `href` — është `<button>` që navigon me JS
+(`window.location.href`). Kjo është pikërisht «shtresa e navigimit `window.location.href` → `next/link`»
+e listuar te KUJTESA §4 si borxh i mbetur. E konfirmuar në sjellje, jo vetëm në kod.
+
+### 4. Bisedat e 1 shtatorit — të gjetura dhe të lexuara
+- **`session_012PSErXftYzCcFhiy6Y5VNG`** = «ALPAZAR web application» → sesioni **CLOUD**
+  (i njëjti që nënshkroi commit-in `4ace9b5`). Aktiv, `idle`.
+- **`session_0184X3NNHFPPdJR7AHhyGGP5`** = «Alpazar vercel app» → **terminali i mëparshëm**
+  (ai që aplikoi migrimin O17 me Supabase MCP). Tani `offline` — kompjuteri i tij i pakapshëm.
+  Përmbajtja e tij përputhet me dorëzimin te KUJTESA §4-quater → **dorëzimi ishte besnik**, s'ka humbje.
+
+**Raportim i drejtpërdrejtë te cloud-i:** `ListAgents` e gjeti «ALPAZAR web application» si sesion
+cloud të arritshëm, dhe i dërgova raportin me `SendMessage` (msg e0…af). Pra kanali i drejtpërdrejtë
+EKZISTON — cloud-i kishte shkruar «s'ka sesion të arritshëm»; kjo tashmë s'qëndron.
+
+### Gjendja e detyrave
+| # | Punë | Status |
+|---|---|---|
+| 1 | «E promovuar» ∩ `.card-seller-ov` (mbulim + bllokim klikimi) | ⛔ hapur — **cloud**, vendim dizajni |
+| 2 | Prekjet <44px (6×7, 13×11, 22×23, 19×24, 29×29, 64×22) | ❌ hapur — **cloud** |
+| 3 | Pika online/offline, komponenti kanonik | ✅ verifikuar me sy |
+| 4 | Pika te lista e `/messages` | ⚠ bllokuar — duhet të paktën 1 bisedë |
+| 5 | RLS `offers` | ⚠ pret vendimin e pronarit |
