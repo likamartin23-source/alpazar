@@ -1077,7 +1077,7 @@ export default function ProfilePage() {
                 {(() => {
                   const shown = listFilter === 'active' ? myListings.filter(l => l.is_active)
                               : listFilter === 'sold'   ? myListings.filter(l => l.status === 'sold')
-                              : myListings.filter(l => !l.is_active && l.status !== 'sold')
+                              : myListings.filter(l => !l.is_active && l.status !== 'sold' && l.status !== 'deleted' && l.status !== 'expired')
                   const bosh = listFilter === 'active' ? 'Nuk ke shpallje aktive.'
                              : listFilter === 'sold'   ? 'Ende asnjë shpallje e shitur.'
                              : 'Asnjë shpallje e pauzuar.'
