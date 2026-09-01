@@ -11,7 +11,7 @@ export function ListingTop({ p }: any) {
           {draftRestored && (
             <div style={{ background:'#F0FDF4', border:'1px solid #86EFAC', borderRadius:10, padding:'8px 14px', marginBottom:10, fontSize:12, color:'#166534', display:'flex', alignItems:'center', gap:8 }}>
               <span aria-hidden="true">💾</span> Draft-i u rikthye automatikisht.
-              <button type="button" onClick={() => { localStorage.removeItem('alpazar_listing_draft'); setForm({ title:'', description:'', price:'', currency:'ALL', condition:'', category_id:'', city:'', images:[], latitude:null, longitude:null, location_address:'' }); setDraftRestored(false) }} style={{ marginLeft:'auto', background:'none', border:'none', color:'#166534', cursor:'pointer', fontSize:11, textDecoration:'underline', fontFamily:'inherit' }}>Fshi draft-in</button>
+              <button type="button" onClick={() => { localStorage.removeItem('alpazar_listing_draft'); setForm({ title:'', description:'', price:'', currency:'ALL', condition:'', listing_type:'produkt', category_id:'', city:'', images:[], latitude:null, longitude:null, location_address:'' }); setDraftRestored(false) }} style={{ marginLeft:'auto', background:'none', border:'none', color:'#166534', cursor:'pointer', fontSize:11, textDecoration:'underline', fontFamily:'inherit' }}>Fshi draft-in</button>
             </div>
           )}
           {msg && <div className={`msg-box ${mt}`} role="alert">{mm}</div>}
@@ -93,12 +93,23 @@ export function ListingTop({ p }: any) {
             </div>
 
             <div className="field">
-              <label>Gjendja</label>
-              <div className="cond-row" aria-label="Gjendja">
-                <button type="button" aria-pressed={form.condition === 'i_ri'} className={`cond-btn ${form.condition === 'i_ri' ? 'active' : ''}`} onClick={() => set('condition', 'i_ri')}><span aria-hidden="true">✨</span> I ri</button>
-                <button type="button" aria-pressed={form.condition === 'i_perdorur'} className={`cond-btn ${form.condition === 'i_perdorur' ? 'active' : ''}`} onClick={() => set('condition', 'i_perdorur')}><span aria-hidden="true">🔄</span> I përdorur</button>
+              <label>Lloji</label>
+              <div className="cond-row" aria-label="Lloji i shpalljes">
+                <button type="button" aria-pressed={(form.listing_type || 'produkt') === 'produkt'} className={`cond-btn ${(form.listing_type || 'produkt') === 'produkt' ? 'active' : ''}`} onClick={() => set('listing_type', 'produkt')}><span aria-hidden="true">📦</span> Produkt</button>
+                <button type="button" aria-pressed={form.listing_type === 'sherbim'} className={`cond-btn ${form.listing_type === 'sherbim' ? 'active' : ''}`} onClick={() => { set('listing_type', 'sherbim'); set('condition', '') }}><span aria-hidden="true">🛠</span> Shërbim</button>
               </div>
             </div>
+
+            {/* Gjendja s'ka kuptim për një shërbim — shfaqet vetëm për produkte. */}
+            {(form.listing_type || 'produkt') !== 'sherbim' && (
+              <div className="field">
+                <label>Gjendja</label>
+                <div className="cond-row" aria-label="Gjendja">
+                  <button type="button" aria-pressed={form.condition === 'i_ri'} className={`cond-btn ${form.condition === 'i_ri' ? 'active' : ''}`} onClick={() => set('condition', 'i_ri')}><span aria-hidden="true">✨</span> I ri</button>
+                  <button type="button" aria-pressed={form.condition === 'i_perdorur'} className={`cond-btn ${form.condition === 'i_perdorur' ? 'active' : ''}`} onClick={() => set('condition', 'i_perdorur')}><span aria-hidden="true">🔄</span> I përdorur</button>
+                </div>
+              </div>
+            )}
           </div>
 
     </>

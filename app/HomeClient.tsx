@@ -490,9 +490,14 @@ export default function HomeClient({ initialListings = [], initialCategories = [
       const { data: cat } = await supabase.from('categories').select('id').eq('slug', catSlug).single()
       if (cat) query = query.eq('category_id', cat.id)
     }
+    // Filtrat flasin TË NJËJTIN fjalor si vulat dhe renditja (rank_tier): 1=Premium, 2=VIP —
+    // më parë 'premium' filtronte `is_premium` ndërsa vula/renditja përdorin rank_tier, ndaj një
+    // shpallje mund të mbante vulën 👑/⭐ e të mos dilte te filtri. Tani të tria pajtohen.
     if (filter === 'new') query = query.eq('condition', 'i_ri')
     if (filter === 'used') query = query.eq('condition', 'i_perdorur')
-    if (filter === 'premium') query = query.eq('is_premium', true)
+    if (filter === 'sherbim') query = query.eq('listing_type', 'sherbim')
+    if (filter === 'premium') query = query.eq('rank_tier', 1)
+    if (filter === 'vip') query = query.eq('rank_tier', 2)
 
     const { data } = await query
     // Guard kundër race: apliko vetëm nëse ky është kërkimi më i fundit.
@@ -1018,7 +1023,9 @@ export default function HomeClient({ initialListings = [], initialCategories = [
               { id: 'all', label: 'Të gjitha' },
               { id: 'new', label: '🆕 I ri' },
               { id: 'used', label: 'I përdorur' },
+              { id: 'sherbim', label: <><span aria-hidden='true'>🛠</span> Shërbim</> },
               { id: 'premium', label: <><span aria-hidden='true'>⭐</span> Premium</> },
+              { id: 'vip', label: <><span aria-hidden='true'>👑</span> VIP</> },
             ].map(f => (
               <button
                 key={f.id}
