@@ -3499,3 +3499,65 @@ Service Worker-i s'i prek.
 → **503-shi që pashë ishte lexim i regjistruesit të rrjetit të ekstensionit, jo dështim i vërtetë.**
 E tërheq pretendimin nga [O21] §2: numëruesit NUK janë të prishur. Klasa §9.2, hera e tretë
 (pas swipe-it dhe localStorage-vs-cookie). **Mos u shpenzo kod për këtë.**
+
+---
+
+## [O28] · MATRICA U MBYLL (B + B1 të parë me sy) + TËRHEQJE E TRETË
+
+### 1. ✅ B — PANELI I BIZNESIT (i brendshëm), i parë më në fund
+
+Pronari u kyç si «Administratori Alpazar» te `alpazar.vercel.app`. Pamja live:
+```
+Shiriti «Vepro si:  [🏢 Biznesi] [👤 Unë]»        ✓ (B3.1)
+Avatar BI + 📷 kamera POSHTË-MAJTAS…jo: TOP-LEFT ✓ (rregullimi H2) · ★ lart-djathtas · 🏢 poshtë-djathtas
+«Biznes» · çipat «👑 Premium» «🏢 Biznes» · «⚡ 135 pikë»
+4 stats në kuti të zezë: 2 Shpallje · 0 Të shitura · 0 Ndjekës · 2026 Anëtar prej   ✓
+«👁 Shiko faqen publike»                          ✓ (rruga drejt B1)
+Tabs (3): Profili i biznesit · Shpalljet · Vlerësime
+Kartat (4): 🏢 Të dhënat e biznesit · 📊 Analitika · 💬 Mesazhet · 👑 Plani: Premium · trashëgim
+```
+**Devijim nga caku B:** caku ka **5 tabs** (Biznesi · Shpalljet · Vlerësimet · **Mesazhet** · **Analitika**).
+Live ka **3 tabs**, dhe Mesazhet/Analitika janë **karta**, jo tabs. Ristrukturim i arsyeshëm, por
+ndryshim nga imazhi i miratuar — dhe rregulli është «**imazhi fiton mbi kodin**». Vendim pronari.
+**Devijim i vogël:** renditja e shiritit është «Biznesi · Unë»; caku e ka «Unë · Biznesi ▾».
+
+**Konfirmim i H2:** kamera 📷 është te cepi lart-majtas i avatarit, vula 🏢 poshtë-djathtas —
+**pa mbivendosje**. Rregullimi `f3b1a06` qëndron.
+
+### 2. ✅ B1 — VIZITORI PRONAR i biznesit (klikova «Shiko faqen publike»)
+```
+«★ Ti je pronari — profili yt →»                        ✓ (si caku)
+«👁 Kështu e sheh vizitori» + «Ti je pronari — veprimet janë për vizitorët»   ✓ (më e qartë se caku)
+«👁 Po e shikon faqen publike të biznesit» + «← Kthehu te menaxhimi»          ✓ (si caku)
+Çipat: 👑 Premium · 🏢 Biznes · 📦 Shitës aktiv · 💻 Teknologji & IT
+4 stats · «👁 108 shikime · 🔴 1 duke shikuar» · «🕐 Mbyllur tani» · «🚫 0% komision»
+```
+
+**MATRICA ËSHTË E PLOTË:** A · A1 · A2 · B · B1 · B2 — të gjashta të para me sy.
+Mbetet vetëm «vizitori i huaj», i cili në kod ndan **të njëjtin degëzim** me vizitorin e kyçur
+jo-pronar (`isOwnProfile=false` / `isOwner=false`); ndryshimi i vetëm janë portat e veprimeve,
+të verifikuara veç ([O26] §D1).
+
+### 3. ❌ TËRHIQ pretendimin: TREGUESI I GALERISË PUNON — cloud-i kishte të drejtë (hera e 4-t)
+
+Te [O22] shkrova «treguesi nuk ndjek rrëshqitjen». **Gabim i imi sërish.**
+
+| Provë | scrollLeft | ndarja | pika aktive | verdikt |
+|---|---|---|---|---|
+| `scrollTo({behavior:'instant'})` + `scrollend` + 500ms | 1908 | 3 | **0** | dukej i prishur |
+| **lëvizje e VËRTETË** (scroll me rrotë mbi karusel) | **636** | **1** | **1** ✓ | **punon** |
+
+Me gjest të vërtetë, `onScroll` ekzekutohet dhe `setCurrent` e përditëson pikën saktë.
+Rrëshqitja programatike me `behavior:'instant'` mbi një element me `scroll-behavior:smooth`
+**nuk e nxit** handler-in e React-it — pra instrumenti im, jo kodi.
+
+`ImageCarousel.tsx:130-149` — `ref`, `onScroll` dhe `className="carousel-track"` janë **të gjitha
+te i njëjti div**; lidhja është e saktë. Rregullimi `9d1f74a` është live: pikat 17px vizuale,
+zona e prekjes ~25px, aktivja 28px.
+
+**Kjo është hera e KATËRT që instrumenti gënjen** (swipe · localStorage-vs-cookie · HEAD 503 · treguesi).
+Mësim për vete, i shtuar: **çdo pretendim sjelljeje duhet provuar me gjest të vërtetë, jo me
+`scrollTo`/`click()` programatik.** Kur të dyja s'përputhen, gjesti ka të drejtë.
+
+### 4. Gjendja e galerisë — E MBYLLUR, pa punë të mbetur
+swipe ✓ · treguesi ✓ · zona e prekjes ~25px ✓ · 9 foto. **Prioriteti 2 bie nga lista.**
