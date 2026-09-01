@@ -874,3 +874,65 @@ por navigimi jo. Cdo faqe e zgjidhi vete kalimin me `location.href`, ndaj:
 - dhe dy fjalore nivelesh bien ndesh brenda te njejtit bllok.
 
 Pra: **shkrirja e komponenteve eshte bere; shkrirja e organogrames jo.**
+
+## [O8-VJETRAT] · Sistemet e vjetra përballë bllokut — çfarë u hoq, çfarë jo
+
+### 0. Konfirmim: defekti i privatësisë U RREGULLUA (dhe u verifikua nga unë)
+Cloud-i e mbylli me `86a81dc`, live te `abe924c`. Verifikova të tria hallkat, sepse
+një kusht mbi një fushë që s'merret nga baza do të ishte rregullim i rremë:
+- rreshti **573** → `{pronari?.trust_score_visible !== false && …}` ✅
+- rreshti **873** → i njëjti kusht ✅ (kisha raportuar DY vende; të dyja u mbyllën)
+- rreshti **289** → `.select('…,trust_score_visible')` ✅ **fusha merret vërtet**
+- LIVE: `/biznese/ffb19071…` nuk e shfaq më unazën.
+
+### 1. U HOQ SI DUHET — mbivendosjet `.ig-*`
+Karta e vjetër sinkronizohej me mbishkrime `!important` mbi klasat `.ig-*`.
+Matur sot: **0 selektorë `.ig-`** te `ui-refine.css`. Migrim i pastër; mbeti vetëm
+komenti historik te rreshti 138. Ky është shembulli i vetëm ku heqja u bë plotësisht.
+
+### 2. U INTEGRUA SI DUHET — katër tabela të vdekura u lidhën
+`offers` · `verification_requests` · `follows` · `business_followers`.
+Blloku nuk krijoi dublikatë; i mori tabelat që rrinin me RLS të plotë e pa ndërfaqe.
+
+### 3. NUK U HOQ — kod i vjetër që rri pa e thirrur askush
+| Eksporti | Skedari | Gjendja |
+|---|---|---|
+| `isOnline(lastSeen)` | `components/Badges.tsx:20` | **i vdekur** — e zëvendësoi `useIsOnline` (OnlinePresence), përdorur nga 4 faqe |
+| `buildBadges(p)` | `components/Badges.tsx:41` | **i vdekur jashtë skedarit** — thirret vetëm nga komponenti `Badges` në të njëjtin skedar |
+| komponenti `Badges` | `components/Badges.tsx:60` | **s'importohet askund si komponent** — nga ai skedar merren vetëm `getLevel` dhe `isNewMember` |
+
+Pra `Badges.tsx` sot është një modul gjysmë i vdekur: mban fjalorin e VJETËR të
+distinktivëve ("Shitës aktiv", "Anëtar i ri", nivelet me pikë) që asnjë faqe s'e
+render-on më nga aty — por dy funksione prej tij ende përdoren.
+
+### 4. NUK U PËRSHTAT — përplasja aktive e emrit `getLevel`
+Dy funksione të ndryshme me **të njëjtin emër**, në dy skedarë, të dy të gjallë:
+
+    components/Badges.tsx    getLevel(points) → Fillestar/Tregtar/Ekspert/Master
+    components/TrustBadge.tsx getLevel(score)  → Fillestar/I Besueshëm/I Verifikuar/Shitës Ekspert
+
+I pari importohet nga `HomeClient`, `/profile`, `/referral`. I dyti është lokal te
+TrustBadge dhe render-ohet te `/u`, `/biznese`, `/listing`.
+**Pasoja:** i njëjti person del "⚡ 135 pikë" (=Tregtar) dhe "🆕 Fillestar" në të
+njëjtin bllok. Kjo është përplasja që nuk u zgjidh me shkrirjen.
+
+### 5. NUK U INTEGRUA — shtresa e navigimit
+`next/link` nuk përdoret në asnjë skedar. Nga grafi i profileve vetëm
+`/biznese → /u/[owner]` është `<a href>`; pjesa tjetër është `window.location.href`.
+
+**Korrigjim i një gjetjeje timen:** thashë se çipi `🏢` te karta "s'të çon te
+biznesi". E gabuar. Karta **e ka** identitetin e klikueshëm —
+`DIV role="link" aria-label="Biznesi Biznes"` (64×22 px) → `/biznese/<id>`;
+e provova live dhe navigoi saktë. Ajo që kisha klikuar ishte një glif dekorativ
+10×10 (`role="img"`) brenda avatarit. Modeli i kartës është i saktë: shfaq
+biznesin OSE autorin, kurrë të dy (`biz = business_id && business ? … : null`).
+Mbetet e vërtetë vetëm se lidhja bëhet me `location.href`, jo me `<a href>` —
+pra pa crawler, pa klikim të mesit, me ringarkim të plotë.
+
+### 6. Renditja e borxhit teknik
+1. `getLevel` i dyfishtë — përplasje e dukshme për përdoruesin. **E para.**
+2. Shtresa e navigimit (`next/link` ose një helper i vetëm) — kosto SEO + UX.
+3. `/profile` të hyjë në grupin e komponentëve (TrustBadge, useIsOnline, ListingCard).
+4. `Badges.tsx` — hiq `isOnline`, `buildBadges` dhe komponentin; ruaj `getLevel`
+   (i riemërtuar) dhe `isNewMember`.
+5. TrustBadge të marrë të njëjtat hyrje kudo (profili i pronarit, jo `biz.created_at`).
