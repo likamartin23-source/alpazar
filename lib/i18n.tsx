@@ -124,8 +124,13 @@ const Ctx = createContext<I18nCtx>({ lang: 'sq', setLang: () => {}, t: (k) => k 
 
 function detect(): Lang {
   if (typeof document === 'undefined') return 'sq'
-  const m = document.cookie.match(/(?:^|; )alpazar_lang=([a-z]{2})/)
-  if (m && LANGS.some(l => l.code === m[1])) return m[1] as Lang
+  // `document.cookie` HEDH përjashtim kur ruajtja bllokohet (modalitet privat strikt, sandbox,
+  // politikë ndërmarrjeje). Pa këtë try/catch, i18n-i (provider global) rrëzonte ÇDO faqe,
+  // përfshi /u — "Diçka shkoi gabim!" (gjetja O26). Fail-soft → gjuha e parazgjedhur.
+  try {
+    const m = document.cookie.match(/(?:^|; )alpazar_lang=([a-z]{2})/)
+    if (m && LANGS.some(l => l.code === m[1])) return m[1] as Lang
+  } catch {}
   try { const s = localStorage.getItem('alpazar_lang'); if (s && LANGS.some(l => l.code === s)) return s as Lang } catch {}
   // Paneli eshte mjet i brendshem shqip. Pa nje zgjedhje te shprehur te adminit
   // nuk perkthehet nga gjuha e shfletuesit — perndryshe hapet gjithmone anglisht.

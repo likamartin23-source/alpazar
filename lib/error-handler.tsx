@@ -9,7 +9,7 @@ export function initAuthSync() {
   supabase.auth.onAuthStateChange((event) => {
     if (event === 'TOKEN_REFRESHED') { /* silent */ }
     if (event === 'SIGNED_OUT') {
-      localStorage.removeItem('alpazar_cart')
+      try { localStorage.removeItem('alpazar_cart') } catch {}
       window.location.href = '/auth/login?reason=session_expired'
     }
   })
