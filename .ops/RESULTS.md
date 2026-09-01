@@ -1909,3 +1909,55 @@ Të gjashtë konfirmimet forcojnë auditin ekzistues. Të pesë defektet e reja 
 janë **mobile-first ose mobile-only** — pikërisht klasa që §6 e CLAUDE.md
 paralajmëron se humbet kur matet vetëm në desktop, dhe që unë e kisha pranuar te
 [AUTOAUDIT] si boshllëkun tim më të rëndë. Pamjet e pronarit e mbyllën atë boshllëk.
+
+## 🔴 [REGRESION] · Paneli i adminit u shkëput — shkaktuar nga migrimi (C) që aplikova unë
+
+### Diagnoza, e provuar
+`middleware.ts:74–79` e mbron `/admin` duke lexuar **kolonën** drejtpërdrejt:
+
+    const supabase = createMiddlewareClient({req,res},{SUPABASE_URL, SUPABASE_ANON_KEY})
+    const { data: profile } = await supabase
+      .from('profiles').select('is_admin').eq('id', session.user.id).single()
+    if (!profile?.is_admin) return NextResponse.redirect(new URL('/', req.url))
+    // catch → redirect('/auth/login')
+
+Klienti është me **anon key + sesionin e përdoruesit**, pra roli efektiv është
+`authenticated`. Migrimi `profiles_ngushtimi_pas_deploy` (O6-C) e hoqi `is_admin`
+nga kolonat e lexueshme për `authenticated`.
+
+**Provë e drejtpërdrejtë** (roli i veshur, transaksion i kthyer):
+
+    select is_admin from profiles where id = <uid i adminit>
+    → BLLOKUAR (insufficient_privilege)
+
+Pra: select-i dështon → ose `profile` del null → ridrejtim te `/`, ose përjashtimi
+bie te `catch` → ridrejtim te `/auth/login`. **Paneli bëhet i paarritshëm.**
+
+Shtresat e tjera janë të shëndetshme — e verifikova: `my_profile()` kthen
+`is_admin=true`, dhe `is_admin()` kthen `true`. Vetëm middleware-i lexon kolonën.
+
+### Faji im, i saktë
+Kontrolli i §0-bis që bëra para (C) fshiu `app/*`, `lib/*`, `components/*` —
+**dhe e humbi `middleware.ts`, që rri në rrënjë të depos.** Raportova "§0-bis i
+pastër" mbi një fshesë që s'e mbulonte të gjithë kodin live. Ky është pikërisht
+skenari që §0-bis ekziston për ta parandaluar, dhe unë e riprodhova.
+
+### Rregullimi i saktë (kod — cloud)
+Middleware-i të përdorë RPC-në, si faqja `/admin` (`app/admin/page.tsx:293`):
+
+    const { data: eshteAdmin } = await supabase.rpc('is_admin')
+    if (!eshteAdmin) return NextResponse.redirect(new URL('/', req.url))
+
+`is_admin()` është SECURITY DEFINER, i thirrshëm nga `authenticated`, dhe përgjigjet
+vetëm për thirrësin — pra s'ekspozon rolin e askujt tjetër.
+
+### Zgjidhja e urgjencës (bazë) — me kosto të deklaruar
+    grant select (is_admin) on public.profiles to authenticated;
+
+E rikthen aksesin brenda sekondash, **por rihap vrimën e §4.6-bis**: politika RLS
+e `profiles` është `profiles_public_read USING (true)` — të gjitha rreshtat janë të
+lexueshme — ndaj çdo anëtar i kyçur do të mund të numërojë adminët e platformës.
+Kthimi: `revoke select (is_admin) on public.profiles from authenticated;`
+
+**Rekomandimi im: rregullimi në kod, jo rikthimi i grant-it.** Është një rresht dhe
+s'ka kosto privatësie. Vendimi është i pronarit.
