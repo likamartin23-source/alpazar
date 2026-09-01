@@ -56,19 +56,32 @@ export default function BiznestPage() {
   }, [])
 
   useEffect(() => {
-    supabase
-      .from('businesses')
-      .select('id,name,type,logo_url,city,description,is_verified,owner:owner_id(is_premium,premium_expires_at,has_boost,boost_expires_at)')
-      .order('is_verified', { ascending: false })
-      .order('created_at', { ascending: false })
-      .limit(100)
-      .then(({ data, error }) => {
-        if (error) { setLoadError(true); setLoading(false); return }
-        // Supabase e tipizon join-in to-one `owner:owner_id(...)` si varg, por
-        // ne runtime eshte objekt (nje biznes → nje pronar). Cast i shenuar.
-        setBusinesses((data ?? []) as unknown as Biz[])
-        setLoading(false)
-      })
+    // KRITIKE (gjetja e terminalit): embed-i `owner:owner_id(...)` kthen 400 PGRST200 sepse
+    // `businesses.owner_id` NUK ka çelës të huaj te `profiles.id` → PostgREST s'e ndërton dot
+    // embed-in → faqja e biznesit binte tërësisht ("Gabim gjatë ngarkimit"). Arnë pa DB: marr
+    // pronarët me një kërkesë të DYTË dhe i bashkoj në klient (një kërkesë për të gjithë → pa N+1).
+    // FK-ja e vërtetë shtohet veçmas në DB (gjurmë migrimi), që çdo embed i ardhshëm të punojë.
+    (async () => {
+      const { data: bizRows, error } = await supabase
+        .from('businesses')
+        .select('id,name,type,logo_url,city,description,is_verified,owner_id')
+        .order('is_verified', { ascending: false })
+        .order('created_at', { ascending: false })
+        .limit(100)
+      if (error) { setLoadError(true); setLoading(false); return }
+      const rows = (bizRows ?? []) as any[]
+      const ownerIds = Array.from(new Set(rows.map(b => b.owner_id).filter(Boolean)))
+      let ownersById: Record<string, any> = {}
+      if (ownerIds.length > 0) {
+        const { data: owners } = await supabase
+          .from('profiles')
+          .select('id,is_premium,premium_expires_at,has_boost,boost_expires_at')
+          .in('id', ownerIds)
+        ownersById = Object.fromEntries((owners ?? []).map(o => [o.id, o]))
+      }
+      setBusinesses(rows.map(b => ({ ...b, owner: ownersById[b.owner_id] ?? null })) as Biz[])
+      setLoading(false)
+    })()
   }, [])
 
   const filtered = businesses.filter(b => {
