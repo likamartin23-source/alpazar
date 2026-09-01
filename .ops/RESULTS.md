@@ -3196,3 +3196,81 @@ shkalle të vetme butonash** (parësor / dytësor / tretësor) me kontrast e gje
 2. **«Njoftomë»** të hyjë në të njëjtën shkallë (44px, kontrast, `:active`), jo stil inline i veçuar.
 3. **Zemra mbi media** të marrë hije ose kufi gjysmë-të-tejdukshëm që të mos humbasë mbi foto të ndritshme.
 4. Të tria të burohen nga i njëjti fjalor stilesh, jo tre përkufizime paralele (§4-bis).
+
+---
+
+## [O25] · ⛔⛔⛔ SHKAKU I VETËM: `LISTING_SELECT` është burimi i deklaruar — e përdorin 2 nga 8 vende
+
+Pronari: **«asgjë nuk u harmonizua dhe sinkronizua… në disa shpallje kemi shumë elemente, në disa jo…
+kartat e bizneseve mungojnë elemente dhe madhësia s'është e njëjtë»**. Ka të drejtë, dhe shkaku
+NUK është shumë defekte të ndara — është **një projeksion i vetëm që u shkrua dhe u shpërfill.**
+
+`lib/listingSelect.ts` e deklaron vetë qëllimin e vet:
+> «Një projeksion i vetëm identiteti për ÇDO feed shpalljesh… **Çdo query që ushqen `ListingCard`
+> duhet ta përdorë KËTË konstante**, që identiteti i biznesit (logo/emër → /biznese), identiteti i
+> personit (→ /u), tier-i (rank_tier), statusi (SHITUR) dhe numri i shikimeve **të shfaqen njësoj
+> kudo — pa "maskim" të shpalljeve të biznesit si personale.** Burimi i vetëm i së vërtetës.»
+
+### Inventari i plotë i call-site-ve që ushqejnë `ListingCard`
+
+| # | Vendi | Projeksioni | `videos` | `video_poster` | `business` | `author` | `status` | `category_id` |
+|---|---|---|---|---|---|---|---|---|
+| 1 | `HomeClient.tsx:483` | **LISTING_SELECT** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 2 | `favorites/page.tsx:30` | **LISTING_SELECT** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 3 | `biznese/[id]/page.tsx:36` (SSR) | me dorë | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| 4 | `biznese/[id]/BiznesPageClient:326` | me dorë | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| 5 | `biznese/[id]/BiznesPageClient:379` | me dorë | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ |
+| 6 | `u/[id]/page.tsx:87` (SSR) | me dorë | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| 7 | `u/[id]/UserProfileClient:60,101` | me dorë | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| 8 | `api/search/fts/route.ts:40` | me dorë | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+
+**2 nga 8.** Gjashtë faqe ushqejnë të njëjtin komponent me gjashtë grupe të ndryshme fushash.
+
+### Pasojat, të matura LIVE (jo të nxjerra nga kodi)
+
+Te `/biznese/ffb19071…`, dy kartat e të njëjtit biznes:
+```
+karta 1 «Makine»: ka_img=true  · badge VIDEO=false · çip shitësi=false
+karta 2 «Makine»: ka_img=FALSE · badge VIDEO=false · çip shitësi=false
+```
+E njëjta shpallje te kryefaqja shfaqet me **poster videoje + badge «VIDEO» + çipin «🏢 Biznes»**.
+Te faqja e biznesit del **kuti bosh gri**. Shkaku: `videos`/`video_poster` s'kërkohen fare (#3/#4).
+
+Harta e pasojave sipas fushës që mungon:
+| Fusha që mungon | Ç'zhduket nga karta |
+|---|---|
+| `videos`, `video_poster` | media e shpalljeve vetëm-video → **kartë bosh** |
+| `business`, `author` | **çipi i shitësit** → hapi 2 i modelit 3-shkallësh vdes në atë faqe |
+| `status` | vula **«SHITUR»** |
+| `rank_tier` | vulat **⭐ Premium / 👑 VIP** |
+| `category_id` | ikona e kategorisë |
+
+Prandaj «**në disa shpallje kemi shumë elemente, në disa jo**» — nuk varet nga shpallja,
+varet nga **faqja që e ngarkoi**. Fjalë-për-fjalë ajo që raportoi pronari.
+
+### Kjo është e njëjta plagë si `/favorites`, herën e katërt
+KUJTESA §4: «**/favorites → LISTING_SELECT — RREGULLUAR (`7bfdfee`):** shtoi videos/category_id/user_id;
+shpalljet vetëm-video s'dilnin më bosh te "Të ruajtura"». Rregullimi u bë **për një faqe**;
+`/biznese/{id}`, `/u/{id}` dhe kërkimi mbetën me projeksionet e tyre. §4-bis, sërish.
+
+### Dhe madhësia: dy komponentë, jo një
+| | `.listing-card` | `.shop-mini` |
+|---|---|---|
+| Përmasa | **250 × 407** | **255 × 272** |
+| Elemente nga 10 | 10 | **2** (vetëm avatar+vulë, qytet) |
+
+Caku `03_Gjendja_Cak_Harmonizuar.html` §C e thotë shprehimisht:
+> «E njëjta kartë e njësuar… **KJO ËSHTË E NJËJTA KUDO** (kryefaqe/kërkim/kategori/të ruajtura) —
+> Gap 1/2 i mbyllur.» dhe «**E njëjta kartë biznesi shfaqet në DY vende**: te feed-i/kërkimi
+> (si shpallje) DHE si vetë biznesi (te lista e bizneseve / faqja e vet).»
+
+Sot: te feed-i = `.listing-card`; te lista e bizneseve = rreshta pa kartë; te kryefaqja «Biznese
+Online» = `.shop-mini`. **Tre paraqitje, zero e përbashkët.**
+
+### RREGULLIMI (një, jo tetë)
+1. **Zëvendëso të 6 projeksionet me dorë me `LISTING_SELECT`** (#3–#8). Një rresht për secilin.
+   Kjo vetëm rikthen menjëherë: median e videove, çipin e shitësit, vulat ⭐/👑, «SHITUR», kategorinë.
+2. **Shto një test/porte CI** që dështon nëse ndonjë `from('listings').select(` nuk përdor
+   `LISTING_SELECT` — përndryshe projeksioni i shtatë do lindë javën tjetër.
+3. Pas kësaj, njësimi i **kartës së biznesit** (K2) bëhet i mundur, sepse çdo faqe do ketë
+   `business:business_id(...)` në duar.
