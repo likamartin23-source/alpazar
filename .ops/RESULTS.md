@@ -478,3 +478,84 @@ emrin e cloud-it.
 
 **[O7] mbetet i hapur.** Nuk shpika rruge dhe nuk raportova sukses te pjesshem si
 te plote.
+
+## [O7-A] · done · CRON_SECRET u vendos dhe u verifikua
+
+**Rruga qe u gjet:** Vercel CLI me **device flow** — pronari aprovon nje lidhje,
+CLI-ja autentikohet, dhe une nuk shoh kurre asnje token. Kjo e zgjidh konfliktin
+qe raportova me pare: nuk me duhej te trajtoja sekret per t'u autentikuar.
+
+    npm i -g vercel                        → CLI 59.10.0
+    vercel login                           → device code, pronari aprovoi
+    vercel whoami                          → likamartin23-source
+    vercel link --yes --project alpazar    → prj_KNCEtuUDGNCA6ulHomdKniNAZEuX
+                                             team_Kkg5W4qnF2t5CQZj64ZS8xbz
+
+**Vendosja e sekretit pa e pare askush:**
+
+    umask 077
+    openssl rand -hex 32 > .cronsecret.tmp        # 64 karaktere hex
+    vercel env add CRON_SECRET production  < .cronsecret.tmp
+    vercel env add CRON_SECRET preview     < .cronsecret.tmp
+    vercel env add CRON_SECRET development < .cronsecret.tmp
+    rm -f .cronsecret.tmp                          # verifikuar qe u fshi
+
+Vlera u gjenerua lokalisht dhe u tubua drejt e ne CLI. **Nuk u shfaq ne asnje
+dalje, ne asnje log, dhe ne asnje mesazh.** E njejta vlere ne te tria mjediset
+(nje `CRON_SECRET`, sic e kerkoi urdhri).
+
+`vercel env ls` konfirmoi: Production `Secret`, Preview `Secret`, Development `Config`.
+
+**Redeploy:** `vercel redeploy alpazar-sv6azat50…` → ✓ Ready in 3m,
+`▲ Aliased https://alpazar.vercel.app`.
+
+**Verifikimi i matur te `/api/health`:**
+
+| | PARA | PAS |
+|---|---|---|
+| `env.kritike.mungojne` | `NEXT_PUBLIC_SITE_URL`, **`CRON_SECRET`**, `IP_HASH_SALT` | `NEXT_PUBLIC_SITE_URL`, `IP_HASH_SALT` |
+| `CRON_SECRET` | mungonte | **u vendos ✓** |
+
+**[O7-A] KALON.**
+
+### Mbeten dy, jashte urdhrit — tani nje-rreshtesh secili
+Me CLI-ne e autentikuar keto zgjidhen brenda sekondash, por **nuk i preka pa urdher**:
+- `NEXT_PUBLIC_SITE_URL` — nuk eshte sekret. Vlera varet nga nje vendim qe s'eshte
+  imi: `https://alpazar.vercel.app` apo nje domen i ardhshem i vetin? Zgjedhja
+  ngulitet ne canonical/og:url/sitemap, ndaj e vendos pronari.
+- `IP_HASH_SALT` — eshte sekret; e vendos me te njejten teknike te tubimit
+  (`openssl rand -hex 32 | vercel env add`) pa e pare askush. Pa te, hash-i i IP-ve
+  perdor nje kripe te paracaktuar PUBLIKE — ceshtje privatesie, jo higjiene.
+
+## [O7-B] · BLLOKUAR te hapi i login-it — por me nje prove te dobishme
+
+**Fakt i matur:** nuk ekziston ASNJE upload preset ne llogarine `dltc3o5y3`.
+E provova pa asnje kredencial, duke derguar nje POST pa skedar te
+`api.cloudinary.com/v1_1/dltc3o5y3/image/upload` — pergjigja e dallon rastin:
+
+    ml_default        → "Upload preset not found"
+    default           → "Upload preset not found"
+    unsigned          → "Upload preset not found"
+    alpazar           → "Upload preset not found"
+    alpazar_unsigned  → "Upload preset not found"
+
+(Nje preset ekzistues por i firmosur do te kthente "must be whitelisted for
+unsigned uploads"; nje unsigned do te kthente "Missing required parameter - file".)
+Pra shpresa qe te kishte nje `ml_default` te gatshem bie — duhet krijuar.
+
+**Pengesa e vertete nuk ishte leja e zgjatimit.** `console.cloudinary.com`
+ridrejton te faqja e login-it: pronari nuk eshte i kycur. Dhe provimi i tij me
+GitHub OAuth deshtoi — `github.com` dha `ERR_CONNECTION_TIMED_OUT` ne shfletues
+(ndersa nga terminali `git push` punon normalisht; pra problem i shfletuesit, jo
+i rrjetit ne teresi). Rekomandim: **kycu me email + fjalekalim, jo me GitHub**,
+qe te shmanget krejt `github.com`.
+
+**Hapi 2 mbetet gati.** Sapo te ekzistoje preset-i, e verifikoj me te njejten
+prove (duhet te kthejë "Missing required parameter - file", qe deshmon se eshte
+UNSIGNED), dhe pastaj:
+
+    insert into public.app_config (key, value)
+    values ('cloudinary_upload_preset', '<emri>')
+    on conflict (key) do update set value = excluded.value, updated_at = now();
+
+Verifikimi perfundimtar: `/api/health` → `checks.media.transkodim = true`.
