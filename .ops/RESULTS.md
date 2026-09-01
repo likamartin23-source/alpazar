@@ -4275,3 +4275,58 @@ i zbatuar vetëm te njëra sipërfaqe.
 3. **D3** — përmasa e kartës ndryshon shumë mes faqeve.
 4. `/search`, `/favorites`, `/u`, `/biznese` hapen **pa shiritin e sipërm** të navigimit që ka kryefaqja.
 5. Kamera 📷 në dy pozicione (C më sipër).
+
+---
+
+# [O39] · MATRICA E SISTEMEVE — «shumë sisteme s'janë në vende të tjera»
+
+Pronari: *«shumë sisteme që janë te karta e shpalljes dhe te profili i brendshëm i administratorit,
+nuk janë në vende të tjera»*. **E mata sistem-për-sistem, pas hidratimit** (jo SSR — ai gënjen për
+faqet klient). Ka plotësisht të drejtë.
+
+| Sistemi | Kartat (kryefaqe) | `/biznese` | `/u` i jashtëm | **`/profile` i brendshëm** | `/listing` |
+|---|---|---|---|---|---|
+| çipi **«⚡ Tregtar»** | · | · | · | **✅** | · |
+| çipi **«📦 Shitës aktiv»** | · | · | **·** | **✅** | ✅ |
+| **«⚡ … pikë»** | **·** | **·** | ✅ | ✅ | ✅ |
+| **«Besueshmëria»** (shqip) | · | · | **✅** | **·** | · |
+| **«Trust Score»** (anglisht) | · | · | · | **✅** | · |
+| prania online (pikë) | · | · | ✅ | · | ✅ |
+| vula 🏢 Biznes | ✅ | ✅ | ✅ | ✅ | ✅ |
+| çipi **Premium / VIP** | ✅ | **·** | **·** | ✅ | ✅ |
+| shiriti «Vepro si» | · | · | · | ✅ | · |
+| Kopertina + kamera | · | · | · | ✅ | · |
+
+## Gjashtë mospërputhjet, të renditura sipas peshës
+
+**1. ⛔ «Trust Score» dhe «Besueshmëria» janë I NJËJTI sistem me DY emra.**
+`/profile` → «**Trust Score**» (anglisht) · `/u` → «**Besueshmëria**» (shqip, me unazë).
+**Vendimi G5 u zbatua vetëm te profili i jashtëm.** I njëjti numër, dy gjuhë, dy paraqitje.
+
+**2. ⛔ «⚡ Tregtar» ekziston VETËM te `/profile`.**
+As te `/u`, as te blloku i shitësit te `/listing`, as te kartat, as te biznesi.
+Një nivel që përdoruesi e fiton dhe **askush tjetër s'e sheh kurrë**.
+
+**3. ⛔ «📦 Shitës aktiv» mungon te `/u`.**
+Është te `/profile` dhe te blloku i shitësit te `/listing` — por **jo te profili i jashtëm**,
+pikërisht aty ku blerësi shkon të vlerësojë shitësin.
+
+**4. ⛔ «⚡ … pikë» mungon te kartat dhe te `/biznese`.**
+Është te `/profile`, `/u`, `/listing`. Kartat — sipërfaqja më e parë e platformës — s'e shfaqin.
+
+**5. ⛔ Çipi Premium/VIP mungon te `/u` dhe te lista `/biznese`.**
+Është te kartat, `/profile`, `/listing`. Pra i njëjti shitës del «Premium» te karta dhe pa nivel te profili.
+
+**6. ⚠ Prania online mungon te kartat.**
+`ListingCard` e mbështet (`online={authorOnline}`), por sot asnjë kartë s'e shfaq sepse të gjithë
+shitësit e dukshëm janë biznese. Kur të ketë shitës-persona, duhet verifikuar sërish.
+
+## Diagnoza — një fjalor, pesë zbatime
+Të gjitha këto vulat/çipat vijnë nga **i njëjti burim të dhënash** (`tierNgaProfili`, `trust_score`,
+`gamification_level`, `is_premium`, `has_boost`), por **secila faqe vendos VETË cilat i shfaq dhe si i
+quan**. Nuk ka një komponent të vetëm «shenjat e identitetit».
+
+**Rregullimi i vetëm i qëndrueshëm:** një komponent `<IdentityBadges profile|business tier="…" />`
+që kthen të njëjtin grup vulash kudo, me të njëjtat emërtime shqip — dhe faqja të vendosë vetëm
+**sa** të shfaqë (kompakte te karta, e plotë te profili), jo **cilat**. Përndryshe zbatimi i gjashtë
+do lindë me faqen tjetër (§4-bis).
