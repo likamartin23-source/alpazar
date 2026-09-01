@@ -3896,3 +3896,81 @@ duke u nisur nga instrumenti në vend të gjestit (swipe · localStorage vs cook
 
 Me njërën nga këto, e ndaj menjëherë: **F4 (rregullimi s'preku atë sipërfaqe)** nga **gjendje e klientit**.
 Pa asnjërën, tetë dimensionet e mësipërme thonë se serveri jep të renë — dhe kjo është gjithçka që di me siguri.
+
+---
+
+# [O34] · AUDITI VIZUAL U MBYLL — dhe problemi i ekstensionit u zgjidh
+
+## 0. ✅ PROBLEMI TEKNIK I EKSTENSIONIT — ZGJIDHUR (shkaku + zgjidhja)
+
+**Shkaku:** ekstensioni e humb aksesin te **skedat e vjetra** të grupit. Një skedë e krijuar para
+rilidhjes/rifreskimit kthen përgjithmonë:
+```
+computer screenshot  → «Cannot access contents of the page. Extension manifest must request permission…»
+javascript_tool      → CDP timeout 45s
+```
+Lejet janë të dhëna — por ajo **skedë** s'i trashëgon.
+
+**Zgjidhja (e provuar):** `tabs_create_mcp` → **skedë e re** → `navigate` → gjithçka punon.
+E njëjta URL, skedë e re → screenshot 1568×688 me sukses. **Rregull pune tani e tutje:
+skedë e re për çdo cikël; mos ripërdor skeda të vjetra.**
+
+## 1. ✅ ÇFARË U NJËSUA — parë me sy, build `c1f4fa5`+
+
+| Sipërfaqja | Gjendja |
+|---|---|
+| **Filtrat e kryefaqes** | **«Të gjitha · 🆕 I ri · I përdorur · 🛠 Shërbim · ⭐ Premium · 👑 VIP»** — të gjashtë. Kërkesa e vjetër `[KERKESE-FILTRAT]` **u zbatua** |
+| **Karta e biznesit (kryefaqe)** | kornizë `.listing-card` · zonë foto · vula ★ · çipi «🏢 Biznes» · butoni «Ruaj» · titulli · «🛠 Shërbime · 📦 Produkte» · «📍 Shqipëri» |
+| **Karta e biznesit (`/biznese`)** | **e njëjta kartë** · filtrat «Të gjithë · Shërbime · Produkte · Të dyja» · **pa më «Gabim gjatë ngarkimit»** |
+| **Kartat e shpalljeve** | «E promovuar» dhe çipi «🏢 Biznes» **të ndara vertikalisht, pa mbivendosje** · zemra me kontrast të mirë mbi foto · videoja shfaqet |
+| **Shpallja (pamja e pronarit)** | «✏️ Ndrysho» · «↑ Ngritur» · «🗑 Fshi shpalljen» · «103 shikime · 🔴 1 duke shikuar» |
+| **Blloku SHITËSI** | **identik në të dyja shpalljet**: avatar me unazë + **pikë jeshile (online)** + vula 🏢 · «👑 Premium · 🏢 Biznes · 📦 Shitës aktiv» · «2 shpallje aktive · @likamartin23 · ⚡135 pikë» |
+| **Galeria** | numëruesi «**1/9**» · pikat e ndërrimit · «↔ Rrëshkit për të parë të tjerat» |
+
+**Të dyja shpalljet që dërgove janë koherente mes tyre** — i njëjti bllok shitësi, të njëjtat vula,
+i njëjti sistem butonash.
+
+## 2. ⛔ PROVA E DREJTPËRDREJTË e «kthehet te e vjetra»
+
+Te `/listing/39bb6642…` kapa në pamje ekrani:
+```
+✨ Ka dalë një version i ri i Alpazar.   [Rifresko]
+```
+**Ky është saktësisht mekanizmi që përshkrova te [O30] §C, tani i parë me sy.** Skeda ime u hap
+para deploy-it të fundit → bundle-i i ngarkuar është i vjetër → banderolë opt-in → **derisa të
+klikohet «Rifresko», UI-ja mbetet E VJETRA.**
+
+**Pse ndodh «çdo herë» te ti:** cloud-i sot ka shtyrë **çdo 3–5 minuta**. Çdo ngarkim faqeje
+garon me një deploy të ri. Pra praktikisht **në çdo hyrje/rifreskim je në një bundle të vjetruar**
+brenda sekondash. Kjo shpjegon të katër përgjigjet e tua: kryesisht te shpalljet (faqja që hap më
+shpesh), të dyja pajisjet (s'është pajisja — është koha), çdo herë pas hyrjes/rifreskimit, dhe
+«përfundimisht e vjetër» kur banderola shuhet një herë (`sessionStorage._alpz_upd_dismiss`).
+
+**Rregullimi është ai që i propozova cloud-it te [O30] §E-5:** ringarkim automatik për skeda pa
+ndërveprim, ose banderolë e pashuajtshme. Sot pronari duhet ta dijë vetë.
+
+## 3. ❌ DEFEKTE VIZUALE TË REJA (të para me sy sot)
+
+**D1 — «Instalo» (jeshile) + «Ndaj» (blu) + ✕ pluskojnë MBI kartat.**
+Te kryefaqja mbulojnë kartën e parë (çmimin/vendndodhjen) dhe kartën e biznesit. Ngjyrat
+`#22c55e`/`#2563eb` janë **jashtë paletës** (marka = `#E63312` + `#F5C842`). Të tre elementet janë
+tre gjuhë vizuale të ndryshme në të njëjtin cep.
+
+**D2 — «Shpallje të ngjashme»: media del KREJT E ZEZË dhe mungon çipi i shitësit.**
+E njëjta shpallje te kryefaqja shfaq posterin e videos + çipin «🏢 Biznes»; te blloku i ngjashmeve
+te `/listing` shfaq **drejtkëndësh të zi** dhe **pa çip shitësi**. Pra karta ende ndryshon sipas vendit.
+
+**D3 — përmasa e kartës ndryshon shumë mes faqeve.**
+`/biznese`: karta zë gjithë gjerësinë (≈430px foto) · kryefaqja: ≈255px · «Shpallje të ngjashme»:
+gjithë kolona. Kartë e njëjtë, **grid i ndryshëm** — pamja s'është «e njëjta kudo».
+
+## 4. Radha e mbetur (e përditësuar)
+| # | Punë | Kush |
+|---|---|---|
+| 1 ⛔ | `profiles_update` — asnjë përditësim profili s'punon | **pronari** (SQL Editor) |
+| 2 ⛔ | UpdatePrompt → ringarkim automatik (shkaku i «kthimit te e vjetra») | cloud |
+| 3 ❌ | D1 «Instalo/Ndaj» pluskuese jashtë palete | cloud |
+| 4 ❌ | D2 media e zezë + çip mungues te «Shpallje të ngjashme» | cloud |
+| 5 ❌ | D3 grid-i i kartave i ndryshëm mes faqeve | cloud + vendim |
+| 6 ⚠ | porta CI për `LISTING_SELECT` · `.shop-mini` CSS i vdekur | cloud |
+| 7 ⚠ | 7 devijimet nga caku ([O33]) — tabs, stats, «Besueshmëria», Harta… | cloud + vendim |
