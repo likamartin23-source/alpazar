@@ -116,3 +116,49 @@ mbetur për terminalin: e vetmja gjë që mbetet janë çelësat e mjedisit te p
 Vercel-it, që i vë vetëm pronari. Faleminderit për verifikimin parimor — sidomos
 kontrollin §0-bis që dëshmoi rendin e detyruar A→C. Kanali mbetet i hapur për
 urdhra të ardhshëm; deri atëherë, pusho nga laku.
+
+---
+
+## [O8] · pending · VERIFIKIM LIVE I DETAJUAR — blloku vs BP2 (pas restaurimit)
+
+Konteksti: cloud-i bëri një autopsi të re kundër burimit zyrtar (Notion BP2 +
+Gjendja-cak) dhe restauroi 4 mangësi. Ti verifikon LIVE me sytë e Chrome atë që
+cloud-i s'e sheh dot (faqet e kyçura, ndërveprimet, pamja pixel).
+
+**Parakusht:** rifresko fort; konfirmo `alpazar.vercel.app/api/version` = `bc0ca2e`
+(ose më i ri). Ruaj screenshot te `.ops/shot/O8-*.png`.
+
+### A · PUBLIKE — konfirmo me sy atë që cloud-i e pa vetëm në SSR
+1. `/u/likamartin23` (si vizitor, jo pronar):
+   - Shiriti i reputacionit tregon **"⚡ 135 pikë"**? (RF1 — më parë fshihej nga opt-out)
+   - Duket butoni **"Ndiq"**? (RF2 — më parë mungonte)
+   - Stats 4-kuti (Shpallje/Të shitura/Ndjekës/Anëtar); empty-state "shet përmes biznesit → /biznese".
+2. `/biznese/ffb19071-7042-4f8b-b485-00bd10049f3b`:
+   - Badge **"🏢 Biznes"** + (👑 Premium pas hidratimit)? (RF3)
+   - **★ Pronari → /u**, info-row 👁/🔴/⏱️, tab **"Rreth & Vlerësime"**.
+3. `/listing/39bb6642-f50f-45c7-b32a-226bf769c283`:
+   - Blloku i shitësit tregon **⚡ pikë + unazë Besueshmëria PAS hidratimit** (jo në SSR)?
+   - Butonat sipas funksionit (BP2 §B17, JO grup i detyruar): Ruaj (te galeria), Ndaj+Raporto (bashkë), Vlerëso (seksion), Njoftomë (te çmimi). Një lidhje e vetme biznesi. "Shiko profilin →" → /u.
+4. `/` dhe `/kategori/automjete`: karta e biznesit me çip **🏢 → /biznese**; scroll — a duket grid "i zbrazët djathtas" me pak shpallje (auto-fill, jo defekt)?
+
+### B · NDËRVEPRIME — kyçu si Martinel Likaj (afbe35fb); për #5 ideale një llogari e dytë
+5. **Prova e vërtetë e Ndiq (RF2):** te `/u` i një përdoruesi tjetër, klik **Ndiq** →
+   numri "Ndjekës" rritet me 1? Rifresko faqen → mbetet "Duke ndjekur"? Klik prapë →
+   kthehet "Ndiq" dhe numri zbret? (kjo provon shkrimin te `follows`, jo vetëm pamjen)
+6. `/profile` (i kyçur):
+   - **B3.1 (i ri):** a duket në krye shiriti **"Vepro si: [Unë | Biznesi]"**? Klik "Biznesi" → shkon te `/biznese/[id]` paneli i brendshëm?
+   - Stats: **sa kuti — 3 apo 4?** (për vendimin B2)
+   - Tab "Shpalljet": a ka ende kartat **"Statistikat e Shpalljeve"** ose **"Abonimi im"**? (duhet JO — B16)
+   - "Siguri & privatësi": një ekran me 4 seksione (Privatësi/Trust+GDPR · Llogaria · Takedown · Kujdes)?
+   - Analitika: etiketat janë "Pasqyrë/Shpalljet—Krahasim" apo "Përmbledhje/Përmbajtja"? (B11)
+7. `/biznese/[id]` si pronar: paneli-pasqyrë me shiritin "Vepro si" + tabe [Profili i biznesit·Shpalljet·Vlerësime]; kalimi "Shiko faqen publike" ↔ "Vepro si: Biznesi" punon?
+8. **Konzola:** 0 gabime te secila: `/` · `/profile` · `/u/likamartin23` · `/biznese/<id>` · `/listing/<id>` · `/messages` · `/referral`.
+
+### C · VENDIME QË I DUHEN PRONARIT (raporto çka sheh + pyet Martinelin)
+- **B2:** /profile stats 3-kuti vs biznesi 4-kuti; Analitika/Mesazhe si karta jo tabe — pixel-identikë apo pranohet?
+- **G4:** butonat e /listing funksionalë (B17) apo grup pamor (Gjendja-cak)?
+- **B11:** etiketat t'i sjell te "Përmbledhje/Përmbajtja"?
+- **G5:** TrustBadge me `trust_score` real + fjala "Besueshmëria"; ★ Pronari udhëtues te /listing; Harta buton; SSR-seed i reputacionit.
+
+### Dorëzimi
+Shkruaj `[O8] · done` te `.ops/RESULTS.md` me: (a) PO/JO për çdo pikë A/B me screenshot-in përkatës; (b) përgjigjet e Martinelit për vendimet C. Nëse ndonjë pikë A/B del JO, shënoje si defekt me rrugën + pamjen — cloud-i e rregullon.
