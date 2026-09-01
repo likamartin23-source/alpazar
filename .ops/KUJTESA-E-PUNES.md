@@ -97,6 +97,16 @@ Cikli i auditit të terminalit PËRFUNDOI. Renditja e mbetur sipas peshës:
   · Karta e biznesit në 2 vende (feed + lista bizneseve) ✓
   · **Mësim matjeje (§9.2):** raportova fillimisht "Pronari→/u mungon" nga një `grep|head -40` i cunguar që preu para rreshtit 921. Leximi i burimit real e korrigjoi PARA çdo prekjeje. Instrumenti gënjeu, jo kodi.
 
+## 4-bis. PARIMI I HARMONISË + mënyra e punës (urdhër pronari, 01 shtator)
+- **Harmonia është e detyrueshme:** dizajni i bukur EKZISTUES dhe sistemet e bukura
+  ekzistuese shkrihen NË HARMONI TË PLOTË me ato të reja — kurrë përplasje, kurrë zëvendësim
+  i së bukurës me diçka të re "funksionale". Çdo shtesë e re duhet të duket sikur ishte
+  gjithnjë pjesë e së njëjtës gjuhë vizuale/sistemike. (Ripërdor > rindërto; §CLAUDE Rregulli i artë.)
+- **Mënyra e fazës tjetër:** CLOUD (unë) PUNON/ekzekuton kodin; PRONARI + TERMINALI
+  VERIFIKOJNË. "U bë" vlen vetëm me provë që e sheh pronari (kontrata §2.3, §4.3).
+- **Prit raportin PËRfundimtar të terminalit para se të nisë faza e re** (urdhër i drejtpërdrejtë).
+- **Vendimet e mbajtura HOLD:** dedup konfig (O12/O13) — pas auditit, verifikim live me pronarin.
+
 ## 5. Mësime të vërtetuara (shtoji këtu, mos i harro)
 - **Device flow** = rrugë autentikimi që s'ia kalon sekretin agjentit (Vercel CLI). Sekretet i vë pronari (§8).
 - **Rendi A→C** te privatësia: `my_referrals()` PARA ngushtimit të `profiles`; pamja s'e dallon dështimin — provoje në bazë.
