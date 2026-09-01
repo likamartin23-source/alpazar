@@ -10,6 +10,7 @@ import ListingCard from '../../components/ListingCard'
 import { TrustBadge } from '../../components/TrustBadge'
 import { useSyteLive } from '../../components/PremiumUpsell'
 import { useIsOnline } from '../../components/OnlinePresence'
+import { BackButton } from '../../components/BackButton'
 import { nf, monthYear } from '../../../lib/format'
 import { uploadSingleImage } from '../../../lib/uploadImages'
 
@@ -790,9 +791,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
         </div>
 
         {/* Floating buttons */}
-        <button type="button" aria-label="Kthehu mbrapa" onClick={() => window.history.back()} style={{ position: 'absolute', top: 12, left: 12, background: 'rgba(0,0,0,.45)', border: 'none', borderRadius: '50%', width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-          <i className="ti ti-arrow-left" aria-hidden="true" style={{ fontSize: 18, color: '#fff' }} />
-        </button>
+        <BackButton style={{ position: 'absolute', top: 12, left: 12, background: 'rgba(0,0,0,.45)', borderRadius: '50%' }} iconStyle={{ fontSize: 18, color: '#fff' }} />
         <div style={{ position: 'absolute', top: 12, right: 12, display: 'flex', gap: 8 }}>
           <button type="button" aria-label="Ndaj biznesin" onClick={share} style={{ background: 'rgba(0,0,0,.45)', border: 'none', borderRadius: '50%', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
             <i className="ti ti-share" style={{ fontSize: 16, color: '#fff' }} aria-hidden="true" />

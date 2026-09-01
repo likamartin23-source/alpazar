@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import Avatar, { tierNgaProfili } from '../components/Avatar'
+import { BackButton } from '../components/BackButton'
 
 interface Biz {
   id: string; name: string; type: string; logo_url: string | null
@@ -80,9 +81,7 @@ export default function BiznestPage() {
     <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh', paddingBottom: 80, fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
       {/* Header */}
       <div style={{ background: 'linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%)', padding: '14px 16px 16px', boxShadow: '0 4px 16px -8px rgba(190,130,0,.4)' }}>
-        <button type="button" aria-label="Kthehu mbrapa" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', marginBottom: 10, padding: 0 }}>
-          <i className="ti ti-arrow-left" aria-hidden="true" style={{ fontSize: 22, color: '#111' }} />
-        </button>
+        <BackButton style={{ marginBottom: 6, marginLeft: -10 }} iconStyle={{ fontSize: 22, color: '#111' }} />
         <h1 style={{ fontSize: 22, fontWeight: 800, color: '#111', margin: '0 0 4px' }}><span aria-hidden="true">🏢</span> Bizneset</h1>
         <p style={{ fontSize: 13, color: '#7B5000', margin: 0 }}>Zbulo bizneset shqiptare në Alpazar</p>
       </div>

@@ -12,6 +12,7 @@ import { saveRefFromUrl, buildShareUrl } from '../../../lib/referral'
 import { TrustBadge } from '../../components/TrustBadge'
 import { SharePanel } from '../../components/SharePanel'
 import { ImageCarousel } from '../../components/ImageCarousel'
+import { BackButton } from '../../components/BackButton'
 import Avatar, { tierNgaProfili } from '../../components/Avatar'
 import { useIsOnline } from '../../components/OnlinePresence'
 import ListingCard from '../../components/ListingCard'
@@ -642,8 +643,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA;}
         .wrap{max-width:480px;margin:0 auto;background:#fff;min-height:100vh;padding-bottom:${chatPanelOpen ? '300px' : '70px'};}
         .topbar{background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%);padding:10px 12px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
-        .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-        .back i{font-size:18px;color:#111;}
+        /* klasa e vjeter e back-butonit u zevendesua nga komponenti i perbashket BackButton (44px). */
         .topbar-title{font-size:15px;font-weight:700;color:#111;flex:1;}
         /* Butonat e sigurise (§7.4): terciar i vogel, gjithmone i arritshem,
            lartesi prekjeje 36px dhe kontrast qe kalon WCAG AA. */
@@ -810,9 +810,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
 
       <div className="wrap">
         <div className="topbar">
-          <button type="button" className="back" aria-label="Kthehu mbrapa" onClick={() => window.history.back()}>
-            <i className="ti ti-arrow-left" aria-hidden="true" />
-          </button>
+          <BackButton style={{ background: 'rgba(0,0,0,.1)', borderRadius: '50%', marginLeft: -6 }} iconStyle={{ fontSize: 18, color: '#111' }} />
           <span className="topbar-title">Shpallja</span>
           <button type="button" className="share-btn" aria-label={shareOpen ? 'Mbyll ndarjen' : 'Ndaj shpalljen'} aria-expanded={shareOpen} onClick={() => setShareOpen(o => !o)}>
             <i className={`ti ti-${shareOpen ? 'x' : 'share'}`} aria-hidden="true" />
