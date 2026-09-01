@@ -247,7 +247,11 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
           <span
             title="Pozicioni i kësaj shpalljeje në listë është i paguar."
             style={{
-              position: 'absolute', bottom: 6, left: 6, zIndex: 3,
+              // Kur çipi i shitësit shfaqet (poshtë-majtas), "E promovuar" ngjitet MBI të
+              // (bottom 32) që të mos e mbulojë as bllokojë — hapi 2 i modelit 3-shkallësh
+              // (kartë→shitës) duhet i klikueshëm edhe te shpalljet e paguara. Pa çip shitësi
+              // (p.sh. showSeller=false), rri në cep (bottom 6). Matur: përplasje 68×14px më parë.
+              position: 'absolute', bottom: (showSeller && (biz || author)) ? 32 : 6, left: 6, zIndex: 3,
               background: 'rgba(17,17,17,.82)', color: '#fff',
               fontSize: 8.5, fontWeight: 700, padding: '2px 6px',
               borderRadius: 6, letterSpacing: '.3px',
