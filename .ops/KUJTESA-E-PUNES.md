@@ -31,6 +31,8 @@
 - **DEFEKT PRIVATËSIE — RREGULLUAR (`86a81dc`):** /biznese shfaqte Trust Score pa nderuar `trust_score_visible` (rreshtat 571+869); tani gatohet si /u & /listing. Verifiko live.
 - **Zinxhir i vdekur (konfirmuar sërish):** `conversation_id` s'shkruhet nga asnjë rresht → `conversations` bosh → `typing_indicators` + `message_reactions` s'punojnë kurrë. Vendim: ose lidh conversation_id, ose fshi tri tabelat.
 - **10 RPC admin të vdekura:** 3 abonime (`admin_adjust/cancel/change_subscription`), 2 fiskale (`admin_fiscal_queue/retry`), `admin_attach_invoice_file`, `admin_send_invoices_bulk`, `admin_bulk_user_flag`, `admin_list_businesses`, `admin_list_reports`. Klasë F1 — të ndërtuara, të palidhura te paneli.
+- **Përplasja getLevel — RREGULLUAR (`a4e31da`):** TrustBadge `getLevel`→`trustLevel`, etiketa 'Fillestar'→'I ri' (s'ripërdor fjalët e gamifikimit). Badges.getLevel i paprekur.
+- **Borxh teknik i mbetur (nga terminali, jo urgjent):** (2) shtresa e navigimit `window.location.href` → `next/link` (SEO/UX); (3) `/profile` të hyjë te grupi i komponentëve (TrustBadge/useIsOnline/ListingCard); (4) `Badges.tsx` — hiq `isOnline`/`buildBadges`/komponentin (të vdekur), ruaj `getLevel`+`isNewMember`; (5) TrustBadge të marrë të njëjtat hyrje kudo (profili i pronarit, jo `biz.created_at`).
 - **Model (jo defekt):** vizitori sheh DY butona "Ndiq" të palidhur (person te /u + biznes te /biznese), dy numërues, pa shpjegim.
 - O4 (i pavendosur nga pronari): `/profile/security` & `/profile/subscription` si rrugë të ndashme apo tabe?
 
