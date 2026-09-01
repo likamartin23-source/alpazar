@@ -561,8 +561,6 @@ export default function HomeClient({ initialListings = [], initialCategories = [
 
   const go = (path: string) => { window.location.href = path }
 
-  const SHOP_COLORS = ['#3B82F6', '#EF4444', '#10B981', '#8B5CF6', '#F59E0B', '#06B6D4']
-
   // "Rishikimet e fundit" must not repeat listings already shown in the main
   // grid below (no "postime 2 fishta"), and never show the same id twice.
   const recentUnique = recentlyViewed.filter(
@@ -663,21 +661,8 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .section-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
         .section-hdr h3{font-size:13px;font-weight:700;color:#111;}
         .section-hdr a{color:#C42B0F;font-size:11px;text-decoration:none;cursor:pointer;font-weight:600;}
-        .shops-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:16px;}
-        /* Kartat e bizneseve = madhësi e barabartë me kartat e shpalljeve: të njëjtat
-           kolona responsive si .listings-grid (768→180px, 1024→220px) + media 4/3 e njëjtë. */
-        @media(min-width:768px){.shops-grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));}}
-        @media(min-width:1024px){.shops-grid{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;}}
-        @media(min-width:1440px){.shops-grid{grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:24px;}}
-        .shop-mini{background:#fff;border-radius:14px;overflow:hidden;cursor:pointer;border:1px solid #eee;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 18px -12px rgba(0,0,0,.14);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;}
-        .shop-mini:hover{transform:translateY(-3px);box-shadow:0 10px 24px -8px rgba(0,0,0,.2);}
-        .shop-mini:active{transform:scale(.96);}
-        .shop-top{flex:none;width:100%;aspect-ratio:4/3;display:flex;align-items:flex-end;padding:8px;position:relative;}
-        .shop-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;border:1.5px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25);}
-        .shop-prem{position:absolute;top:6px;right:6px;font-size:9px;background:#F5C842;color:#111;padding:3px 7px;border-radius:999px;font-weight:700;}
-        .shop-info{flex:1 1 auto;padding:9px 10px 10px;display:flex;flex-direction:column;gap:3px;min-height:72px;}
-        .shop-nm{font-size:13px;font-weight:700;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-        .shop-ct{font-size:11px;color:#6B6B6B;}
+        /* CSS-ja e vjeter shops-grid/shop-* u HOQ: "Biznese Online" perdor tani BusinessCard
+           mbi listings-grid + listing-card (K2). §4-bis: e reja u be e detyrueshme, e vjetra u hoq. */
         /* Filter row */
         .filter-row{display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;}
         .filter-row::-webkit-scrollbar{display:none;}
@@ -775,11 +760,6 @@ export default function HomeClient({ initialListings = [], initialCategories = [
           /* Tituj seksioni */
           .section-hdr h3{font-size:18px;}
           .section-hdr a{font-size:14px;}
-          /* Kartat e bizneseve — në sinkron me kartat e shpalljeve */
-          .shop-av{width:42px;height:42px;font-size:16px;}
-          .shop-nm{font-size:15px;}
-          .shop-ct{font-size:13px;}
-          .shop-info{min-height:80px;padding:12px 13px 13px;}
           /* Banner-a & rreshta */
           .no-ads{padding:10px 16px;} .no-ads i{font-size:16px;} .no-ads span{font-size:12px;}
           .trust-card{padding:10px 12px;} .trust-card i{font-size:18px;} .trust-card span{font-size:11px;}
