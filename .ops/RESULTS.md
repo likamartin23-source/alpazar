@@ -4202,3 +4202,76 @@ te cloud-i, **por tani është vetëm çështje UX-i** — dëmi te të dhënat 
 | `fk_businesses_owner_profiles` | ✅ [O25] |
 | `profiles_update_pa_select_tabelar` | ✅ **[O28] · done** |
 | `businesses_owner_id_unique` | ✅ **[O36] · done** |
+
+---
+
+# [O38] · AUDIT FAQE-PËR-FAQE I GJITHË BLLOKUT — i plotë, me sy, build `c8fea42`
+
+Pronari: *«auditi juaj nuk është i plotë sepse nuk kaluat faqe për faqe siç ju kërkova se ekstensioni ra».*
+Ka të drejtë. Ekstensioni tani punon (skedë e re për çdo cikël). **Ja kalimi i plotë — 13 sipërfaqe.**
+
+## A · KARTAT — a është e njëjta kudo?
+
+| Sipërfaqja | Komponenti | Foto/Video | Titull | Çmim | Çip shitësi | Vula ★/👑 | «E promovuar» | «Ruaj» |
+|---|---|---|---|---|---|---|---|---|
+| Kryefaqja — shpallje | `.listing-card` | ✅ (poster videoje) | ✅ | ✅ | ✅ 🏢 Biznes | ✅ | ✅ | ✅ ❤ |
+| Kryefaqja — «Biznese Online» | `.listing-card` (BusinessCard) | ✅ (placeholder) | ✅ emri | ✅ lloji | ✅ 🏢 | ✅ | — | ✅ 🔖 |
+| `/biznese` — lista | `.listing-card` (BusinessCard) | ✅ | ✅ | ✅ | ✅ | ✅ | — | ✅ |
+| `/search/results` | `.listing-card` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `/favorites` | `.listing-card` | ✅ (badge VIDEO) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `/biznese/{id}` — shpalljet | `.listing-card` | ✅ | ✅ | ✅ | ❌ (pa shitës — vetë biznesi) | ✅ | ✅ | ✅ |
+| `/listing` — «Të ngjashme» | `.listing-card` | ❌ **e zezë** | ✅ | ✅ | ❌ **mungon** | ✅ | ✅ | ✅ |
+
+**✅ Karta u njësua në 5 nga 7 sipërfaqe.** Mbeten dy:
+- `/listing` «Shpallje të ngjashme» — media del **krejt e zezë** + **pa çip shitësi** (**D2**)
+- **Përmasa** ndryshon shumë: kryefaqja ≈255px · `/biznese` ≈430px · «Të ngjashme» gjithë kolona (**D3**)
+
+## B · MODELI 3-SHKALLËSH — ndryshon sipas vizitorit
+
+| Hapi | Vizitor JO-pronar | **Pronar** |
+|---|---|---|
+| kartë → shpallje | ✅ | ✅ |
+| shpallje → shitës/biznes | ✅ «Shiko biznesin →» | ❌ **MUNGON** ([O37]) |
+| shpallje → profil | ✅ «Shiko profilin →» | ❌ **MUNGON** ([O37]) |
+| biznes → pronar | ✅ «Pronari — shiko profilin →» | ✅ «Ti je pronari — profili yt →» |
+| `/u` → biznes | ✅ «🏢 Shiko Biznesin» | ✅ |
+
+**Zinxhiri është i plotë për vizitorin, i thyer për pronarin** — te hapi 2. Faqja e biznesit e zgjidh
+saktë të njëjtin rast (ndryshon etiketën); shpallja e fsheh butonin. **Një zgjidhje, jo dy.**
+
+## C · PROFILET — të gjashta pamjet, me sy
+
+| Pamja | Ç'pashë |
+|---|---|
+| **A · `/profile`** | «Vepro si: [👤 Unë][🏢 Biznesi]» · **4 kuti** (2 Shpallje·0 Të shitura·0 Ndjekës·qershor 2026) · 5 tabs · çipat Admin/Premium/Biznes/Tregtar/Shitës aktiv · «⚡135 pikë» · «👁 Shiko publik» · «Paneli i Adminit» · 📷 **poshtë-djathtas** |
+| **A1 · `/u/{vetja}` pronar** | banderola «👁 Po e shikon profilin tënd publik» · «✏️ Edito Profilin» · «Kthehu te profili im» |
+| **A2 · `/u/{tjetri}` vizitor** | «💬 Dërgo Mesazh» · «＋ Ndiq» · pa banderolë · pa Edito · **«Besueshmëria 0/100» me unazë** ✅ (G5 u zbatua) · pikë **gri** offline · «📍 Tiranë» |
+| **B · `/biznese/{id}` panel** | «Vepro si: [🏢 Biznesi][👤 Unë]» · 4 kuti · «👁 Shiko faqen publike» · 3 tabs · 4 karta · 📷 **lart-majtas** |
+| **B1 · pronari sheh publikun** | «★ Ti je pronari — profili yt →» · «👁 Kështu e sheh vizitori» · «← Kthehu te menaxhimi» |
+| **B2 · vizitor jo-pronar** | «Pronari — shiko profilin →» · Mesazh · Ndiq · «🕐 Mbyllur tani» · «🚫 0% komision» · «👁 108 shikime · 🔴 1 duke shikuar» |
+
+**✅ Dy vendime të mbyllura sot, të konfirmuara me sy:**
+- **B2 (4 kuti te `/profile`)** — u zbatua
+- **G5 («Besueshmëria» në shqip + unazë)** — u zbatua
+
+**❌ Mospërputhje e mbetur:** kamera 📷 është **poshtë-djathtas** te `/profile` dhe **lart-majtas** te
+paneli i biznesit. Poshtë-djathtas është cepi i vulës ✓/🏢 — i njëjti rrezik që **H2** e rregulloi,
+i zbatuar vetëm te njëra sipërfaqe.
+
+## D · FILTRAT — njësuar te kryefaqja, JO te kërkimi
+
+| Faqja | Filtrat |
+|---|---|
+| Kryefaqja | **Të gjitha · 🆕 I ri · I përdorur · 🛠 Shërbim · ⭐ Premium · 👑 VIP** ✅ (kërkesa e vjetër u zbatua) |
+| `/biznese` | Të gjithë · 🛠️ Shërbime · 📦 Produkte · 🔁 Të dyja ✅ |
+| `/search` | **vetëm kategori** (Afër meje · Elektronike · Automjete…) + «Filtrat ▾» ❌ |
+
+**Kërkimi s'i ka çipat e gjendjes/nivelit.** Dy sisteme filtrash për të njëjtin katalog.
+*(Pozitive: kërkimi ka seksionin «🏪 Bizneset» krahas «⭐ Shpallje Premium» — biznesi kërkohet.)*
+
+## E · DEFEKTE VIZUALE TË MBETURA
+1. **D1** — «Instalo» (jeshile) + «Ndaj» (blu) + ✕ pluskojnë **mbi kartat**; ngjyra jashtë paletës (`#E63312`/`#F5C842`).
+2. **D2** — «Shpallje të ngjashme»: media e zezë + pa çip shitësi.
+3. **D3** — përmasa e kartës ndryshon shumë mes faqeve.
+4. `/search`, `/favorites`, `/u`, `/biznese` hapen **pa shiritin e sipërm** të navigimit që ka kryefaqja.
+5. Kamera 📷 në dy pozicione (C më sipër).
