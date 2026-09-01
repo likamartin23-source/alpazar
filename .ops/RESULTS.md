@@ -1839,3 +1839,73 @@ Këto NUK janë matjet e mia — janë vëzhgime nga ajo pamje, të shënuara p�
 
 Pika 1 dhe 2 janë defekte të mundshme mobile-only; s'i mata dot vetë sepse dritarja
 e Chrome-it rri 0×0. Këto janë provat e para reale nga telefoni në gjithë auditin.
+
+## [MOBILE-ADMIN] · Audit nga 8 pamje celulari të pronarit (i kyçur si Admin)
+
+Pronari dërgoi 8 pamje nga telefoni, i kyçur si `Administratori Alpazar`.
+Kjo mbyll dy boshllëqe që i kisha shënuar si më të rëndët: **telefoni** dhe
+**sesioni i pronarit**. Vëzhgimet janë nga pamjet, jo matje të miat — por disa
+konfirmojnë drejtpërdrejt gjetje që i kisha nxjerrë nga kodi.
+
+### ✅ KONFIRMIME (gjetje të miat, tani të dukshme në prodhim)
+
+**1. Bug-i "Të pauzuara" — KONFIRMUAR.**
+Tabi shfaq **`Aktive (2) · Të pauzuara (5) · Të shitura (0)`**.
+Të 5-tat kanë `status='deleted'` në bazë. Pra shpalljet e fshira janë të dukshme
+si "të pauzuara" për pronarin, me butonat e menaxhimit pranë. Kjo nuk ishte
+hipotezë — është ekrani real.
+
+**2. Asimetria e stats (B2) — KONFIRMUAR.**
+`/profile` → **3 kuti**: `2 Shpallje aktive · 292 Shikime totale · Tregtar Niveli`
+`/biznese` (paneli) → **4 kuti**: `2 Shpallje · 0 Të shitura · 0 Ndjekës · 2026 Anëtar prej`
+Vendimi B2 kërkon 4-kuti te të dyja.
+
+**3. Opt-out i Trust Score — RREGULLIMI PUNON.**
+Te faqja publike e biznesit nuk shfaqet asnjë unazë "Trust Score". Fix-i i cloud-it
+(`86a81dc`) është efektiv në prodhim.
+
+**4. Shiriti "Vepro si" — i pranishëm te TË DY panelet.**
+`/profile`: `Vepro si: [👤 Unë | 🏪 Biznesi]` · paneli i biznesit: `[🏪 Biznesi | 👤 Unë]`.
+Konfirmon korrigjimin tim — raporti fillestar "mungon te /profile" ishte i gabuar.
+
+**5. Butoni Biznes me tri gjendje — saktësisht si në kod.**
+`① Falas (ke Premium ✓)` · `② Premium pa biznes (ke b… → çaktivizohet, pa dublim)` ·
+`③ Me biznes (aktive)` me "Vepro si Biznes → hap profilin".
+
+**6. Data "qershor 2026"** te `Anëtar që` — konfirmon që krahasimi im i parë i
+datave ishte i pavlefshëm (dy përdorues të ndryshëm), jo defekt.
+
+### ❌ DEFEKTE TË REJA, të dukshme vetëm në telefon
+
+**7. Shpalljet e FSHIRA shfaqen si "✅ Shitur" te "Të ruajtura".**
+Lista `Shpalljet e ruajtura (3)` shfaq `Makina 900 L · 📍Lezhe · ✅ Shitur` dhe
+`Avokat · ✅ Shitur`. Por `ba7ecf6a` ("Avokat") ka `status='deleted'`, jo `'sold'`.
+Pra etiketa "Shitur" po vishet mbi gjendjen `deleted` — përdoruesi mendon se
+shpallja u shit, kur në fakt u fshi. Gabim i dytë i të njëjtës familje me §6.
+
+**8. Roboti AI dhe flluska "Keni nevojë për ndihmë?" mbulojnë përmbajtjen në ÇDO ekran.**
+Në të 8 pamjet flluska ulet mbi tekst ose butona. Konkretisht:
+- te tabi "Shpalljet", roboti **mbulon butonin e 4-t (🗑) të rreshtit të parë** —
+  rreshti i dytë ka 4 butona, i pari duket me 3;
+- te `/profile` mbulon kartën "Ofertat";
+- te faqja e biznesit mbulon kutinë "Anëtar prej".
+Në desktop nuk binte në sy sepse ka hapësirë anësore; në telefon është bllokuese.
+
+**9. Etiketat e ngjitura me përshkrimin (mungon hapësira/rreshti).**
+Te paneli i biznesit: **"Të dhënat e biznesitLogo & kopertinë, emri, kontakti…"**
+dhe **"AnalitikaShikime, arritje, kontakte…"** — titulli dhe përshkrimi janë
+ngjitur pa ndarje. Duket vetëm në gjerësi celulari.
+
+**10. Karta "Ofertat" pa ikonë.**
+Te `/profile`, `Analitika` ka ikonën 📊, `Abonimi im` ka 👑, por **"Ofertat" nuk ka
+ikonë** — rreshti nis drejt e me titullin. Mospërputhje vizuale në të njëjtën listë.
+
+**11. Teksti i orfanuar "Sherbim".**
+Në fund të faqes publike të biznesit shfaqet fjala **`Sherbim`** si tekst i zhveshur,
+pa etiketë, pa stil, jashtë çdo kutie. Duket si vlerë e papërpunuar e `biz.type`.
+
+### Vlerësim
+Të gjashtë konfirmimet forcojnë auditin ekzistues. Të pesë defektet e reja (7–11)
+janë **mobile-first ose mobile-only** — pikërisht klasa që §6 e CLAUDE.md
+paralajmëron se humbet kur matet vetëm në desktop, dhe që unë e kisha pranuar te
+[AUTOAUDIT] si boshllëkun tim më të rëndë. Pamjet e pronarit e mbyllën atë boshllëk.
