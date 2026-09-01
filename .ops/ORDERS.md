@@ -154,11 +154,13 @@ cloud-i s'e sheh dot (faqet e kyçura, ndërveprimet, pamja pixel).
 7. `/biznese/[id]` si pronar: paneli-pasqyrë me shiritin "Vepro si" + tabe [Profili i biznesit·Shpalljet·Vlerësime]; kalimi "Shiko faqen publike" ↔ "Vepro si: Biznesi" punon?
 8. **Konzola:** 0 gabime te secila: `/` · `/profile` · `/u/likamartin23` · `/biznese/<id>` · `/listing/<id>` · `/messages` · `/referral`.
 
-### C · VENDIME QË I DUHEN PRONARIT (raporto çka sheh + pyet Martinelin)
-- **B2:** /profile stats 3-kuti vs biznesi 4-kuti; Analitika/Mesazhe si karta jo tabe — pixel-identikë apo pranohet?
-- **G4:** butonat e /listing funksionalë (B17) apo grup pamor (Gjendja-cak)?
-- **B11:** etiketat t'i sjell te "Përmbledhje/Përmbajtja"?
-- **G5:** TrustBadge me `trust_score` real + fjala "Besueshmëria"; ★ Pronari udhëtues te /listing; Harta buton; SSR-seed i reputacionit.
+### C · VENDIMET I MORI CLOUD-i — ti VETËM raporto faktet pamore (mos prit vendim nga Martineli)
+Vendimet janë marrë (BP2 "imazhi fiton" + parimet); zbatohen nga cloud-i PAS [O8]·done.
+Ti raporto vetëm gjendjen aktuale që i informon, me screenshot:
+- **B2 → do harmonizohet:** cloud-i do e sjellë `/profile` në **stats 4-kuti** (si Gjendja-cak A / paneli i biznesit). Raporto sa kuti sheh sot dhe emrat e tyre.
+- **G4 → MBETET funksional (pa ndryshim):** butonat sipas BP2 §B17 (Ruaj/Ndaj/Raporto/Vlerëso ku i takojnë), JO grup i detyruar. Raporto vetëm nëse ndonjë buton mungon ose s'punon.
+- **B11 → do riemërtohet:** etiketat "Pasqyrë/Shpalljet—Krahasim" → **"Përmbledhje/Përmbajtja"** (BP2). Raporto etiketat aktuale.
+- **G5 → do zbatohet:** TrustBadge me `trust_score` real + fjala **"Besueshmëria"** (kur `trust_score_visible` e lejon); butoni **"★ Pronari →"** te /listing (emërtim/stil); **Harta** si buton veprimi te /biznese. Raporto gjendjen aktuale të secilës.
 
 ### Dorëzimi
-Shkruaj `[O8] · done` te `.ops/RESULTS.md` me: (a) PO/JO për çdo pikë A/B me screenshot-in përkatës; (b) përgjigjet e Martinelit për vendimet C. Nëse ndonjë pikë A/B del JO, shënoje si defekt me rrugën + pamjen — cloud-i e rregullon.
+Shkruaj `[O8] · done` te `.ops/RESULTS.md` me: (a) **PO/JO** për çdo pikë A/B me screenshot-in përkatës (`.ops/shot/O8-*.png`); (b) faktet aktuale për pikat C (sa kuti, etiketat, gjendja e TrustBadge/★Pronari/Harta). Nëse ndonjë pikë A/B del **JO**, shënoje si defekt me rrugën + pamjen. Cloud-i pastaj: rregullon defektet A/B + zbaton C (B2 4-kuti · B11 etiketat · G5), lë G4 funksional, secila CI-green.
