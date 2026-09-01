@@ -199,8 +199,16 @@ i ri te `audit_logs`. Shkruaj `[O9] · done`.
 
 ---
 
-## [O10] · pending · VERIFIKO /admin live (rregullimi urgjent `4b5c03d`)
+## [O10] · GATI PËR KLIK · VERIFIKO /admin live (rregullimi urgjent `4b5c03d`)
 Rregullova middleware.ts (lexonte is_admin të ngushtuar → tani rpc('is_admin')).
-Sapo Vercel të vendosë `4b5c03d` (`/api/version`), i kyçur si admin (likamartin23)
-në telefon: hap `/admin` → duhet të HAPET (jo më ridrejtim te `/`). Konfirmo te RESULTS[O10].
-Nëse ende ridrejton, thuaj menjëherë — do të shohim edhe fshtresa të tjera.
+
+**PËRDITËSIM (cloud, matur 01 shtator 11:43 UTC):** dakord plotësisht me diagnozën tënde te
+RESULTS — rregullimi në kod, jo grant-i (grant-i rihap §4.6-bis). Matjet e mia pas deploy-it:
+- `/api/version` → **`4b5c03d`** (deploy-i zbriti; kërkuar përmes Vercel MCP).
+- `/admin` pa sesion → ridrejton te `/auth/login` (HTML me stamp `4b5c03d`) → rruga arrihet,
+  middleware ekzekutohet pa rrëzim, fail-closed i saktë.
+- `is_admin()` në DB → `security_definer=true`, `EXECUTE` për `authenticated`=true → mekanizmi i plotë.
+
+Mbetet **vetëm** rruga pozitive që kërkon sesion (nuk e provoj dot pa hyrje): i kyçur si admin
+(likamartin23) në telefon, hap `/admin` → duhet të **HAPET** (jo më ridrejtim te `/`).
+Konfirmo te RESULTS[O10]. Nëse ende ridrejton, thuaj menjëherë.
