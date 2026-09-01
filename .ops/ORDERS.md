@@ -334,3 +334,38 @@ katër të tjerët janë `resolved`/të vjetër — mos u merr me ta).
 **Kujdes:** dega e punës është `claude/loving-wright-kBMgT` (= main). Puno mbi të, mos hap degë
 tjetër. Nëse rregullimi është i qartë dhe i vogël, bëje dhe verifikoje; nëse prek arkitekturë,
 raporto te RESULTS dhe prit.
+
+## [O16] · FATURA — përgatit gati-për-lidhje + fik invoice_autosend (vendim pronari, 01 shtator)
+
+Pronari: "përgadit sistemin gati për lidhje; faturat tatimore i ngarkoj MANUALISHT pasi t'i marr
+nga sistemi online i tatimeve, dhe blerësit ua dërgoj në DM."
+
+Rrjedha reale (jo automatike): pronari shkarkon faturën nga portali tatimor → e dërgon vetë në DM.
+Prandaj:
+- **Fik dërgimin automatik:** `update app_config set value='false' where key='invoice_autosend';`
+  (S'ka kanal dërgimi — resend_from_email=sandbox; dhe pronari s'e përdor autosend-in.)
+- **Mos prek fiskalizimin** (§3/§10): `fiscal_enabled` mbetet false derisa pronari të kryejë
+  NIPT+AKSHI+ofrues. Sistemi rri GATI (zinxhiri ekziston), s'shkakton dëm (fiscal_status='not_required').
+- **Mos konfiguro Resend domain** tani — s'nevojitet për rrjedhën manuale+DM.
+- NIPT/adresa e kompanisë: i vendos pronari kur regjistrohet (vlera konfigurimi, jo kod).
+
+## [O17] · APLIKO migrimin C (gjurmë për demote në skadim) — miratuar nga pronari
+
+`supabase/migrations/20260901_gjurme_demote_ne_skadim.sql` — rikrijon `expire_premium_run()`
+IDENTIK me LIVE, vetëm handler-i `exception when others then null` → insert te `audit_logs`
+('expire_premium.demote_failed', actor_id NULL). Additive/i kthyeshëm. Provuar teorikisht:
+demote_free_keep_newest + 4 cron të tjerë tashmë shkruajnë audit_logs (definer→audit punon).
+Aplikoje, pastaj `select expire_premium_run();` (duhet numër, pa gabim). Shkruaj `[O17]·done`.
+
+## [O18] · GOOGLE OAUTH — verifiko + konsolido LIVE me pronarin (miratuar; O12 mbetet i kujdesshëm)
+
+4 çelësa për një koncept; login-i përdor `alt1`. Hapat (me pronarin, sy live):
+1. Verifiko cilin çelës lexon REALISHT butoni GIS te /auth/login (kod: nga vjen `googleClientId`?
+   app_config.google_client_id apo admin_settings.*?). Kjo cakton kanonikun REAL, jo me hamendje.
+2. Kanonik = ai që lexon kodi DHE që punon në prodhim (mos e ndrysho çelësin që hyn realisht).
+3. Hiq VETËM të tepërtit e provuar si të papërdorur (_alt2, ndonjë dublim), pasi konfirmon
+   me login live që hyrja s'prishet. Provë para+pas (Rregulli 11 / §9.3).
+4. Mos fshi asgjë pa provën live të hyrjes me Google. Raporto `[O18]` me çelësin kanonik.
+
+## [O14.1] · rikujtesë · grace 1→2 (vendim pronari) — mbeti i bllokuar te klasifikuesi yt
+`update app_config set value='2' where key='subscription_grace_days';` — bëje gjatë sesionit live.
