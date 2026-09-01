@@ -52,7 +52,7 @@ export function IdentityBadges({
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
       {tier === 'vip'
-        ? <span style={chip('#F3E8FF', '#7C3AED', '#7C3AED33')} role="img" aria-label="VIP"><span aria-hidden="true">👑</span> VIP</span>
+        ? <span style={chip('#F3E8FF', '#7C3AED', '#7C3AED33')} role="img" aria-label="VIP Ekstra Boost"><span aria-hidden="true">👑</span> VIP Ekstra Boost</span>
         : tier === 'premium' && <span style={chip('#FFF3D6', '#7A4A00', '#F5C84255')} role="img" aria-label="Premium"><span aria-hidden="true">⭐</span> Premium</span>}
       {isBusiness && (
         <span style={chip('#E7F0FF', '#1D4ED8', '#1D4ED833')} role="img" aria-label="Biznes"><span aria-hidden="true">🏢</span> Biznes</span>
