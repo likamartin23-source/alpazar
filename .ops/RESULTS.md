@@ -277,3 +277,95 @@ ketu me verifikimet e listuara.
 - Pas (C) duhet ri-verifikim live i `/profile` · `/admin` · `/messages` ·
   `/referral` · `/te-dhenat-mia` — jam ketu dhe e bej brenda nje cikli.
 
+
+## [O6] · done · Te tri shkrimet u ekzekutuan dhe u verifikuan
+
+**Autorizimi:** Martineli e dha shprehimisht ne terminal — pyetje me tri opsione
+(vetem A+B / te tria / asnje); zgjodhi **"Të tria (A, B, C)"**, me paralajmerimin
+e §0-bis te dukshem para syve. Pa ate pergjigje nuk do ta kisha prekur bazen.
+
+**Mekanizmi:** Supabase MCP (`apply_migration` / `execute_sql`), projekti
+`sopafwfkrxpcdaljddoh` (eu-west-1).
+
+### Kontrolli i detyruar i §0-bis — i bere PARA se te preket (C)
+Fshese e plote mbi `origin/main` (`3763d0f`, i njejti kod aplikacioni si build-i
+live `5fc8c02`): 22 skedare prekin `profiles`. Cdo `.select()` u nda ne kolona dhe
+u ballafaqua me listen e 16 te ndaluarave.
+
+| Gjetje | Vleresimi |
+|---|---|
+| `app/api/email/route.ts:62` `.select('is_admin')` | **I sigurt** — lexohet me `getSupabaseAdmin()` (service_role), qe anashkalon grant-et per-kolone. E verifikova duke lexuar kodin, jo duke besuar komentin. |
+| `app/referral/page.tsx:151` `.in('referred_by', codes)` | **Fallback** — ekzekutohet vetem nese `my_referrals()` deshton. Rendi A→C e mbyll. |
+| `lib/context.tsx`, `app/te-dhenat-mia`, `app/admin:293` | `rpc('my_profile')` / `rpc('is_admin')` — nuk preken |
+| `messages:338,359` · `listing/[id]` · `profile:270` · `u/[id]` · `HomeClient` · `biznese/*` · `search/results` | vetem `has_phone` (kolone e gjeneruar) dhe kolona publike — **asnje e ndaluar** |
+| te tjerat | `.update()/.upsert()` — grant-et UPDATE/INSERT s'preken |
+
+Pozitivat e rreme: `phone` perputhet me `has_phone`, `age` me `image_url`/`messages`,
+`deleted_at` me tabelen `messages`. I ndava me perputhje token-i te plote, jo
+substring — perndryshe do te kisha raportuar 8 rreziqe qe s'ekzistojne.
+
+### Gjendja PARA
+`my_referrals` = 0 (s'ekzistonte) · grant tabelar SELECT mbi `profiles` = 1 ·
+kolona te lexueshme nga `authenticated` = 52/52 · bucket `message-attachments`
+`public=true`, **0 objekte**.
+
+### (A) `my_referrals()` — APLIKUAR
+`apply_migration name=referrals_rpc`. Verifikim:
+
+    prosecdef = true
+    proacl    = {postgres=X/postgres, authenticated=X/postgres, service_role=X/postgres}
+    has_function_privilege('authenticated', …, 'EXECUTE') = true
+    has_function_privilege('anon',          …, 'EXECUTE') = false
+
+Modeli i paster i §1.1; `anon` s'e ekzekuton dot.
+
+### (B) Bucket-i privat — APLIKUAR
+`update storage.buckets set public=false where id='message-attachments'` →
+`public=false`. 0 objekte ekzistuese, pra 0 lidhje te prishura.
+
+### (C) Ngushtimi i `profiles` — APLIKUAR
+`apply_migration name=profiles_ngushtimi_pas_deploy`. Verifikim:
+
+    grant tabelar SELECT (authenticated, anon) = 0
+    kolona SELECT per authenticated = 36 / 52
+    kolona SELECT per anon          = 36 / 52
+    te mbyllura = admin_role, age, age_confirmed_16, birth_year, deleted_at,
+                  gdpr_consent, gdpr_consent_at, is_admin, is_suspended,
+                  marketing_opt_in, metadata, phone, referred_by, search_vector,
+                  social_links, suspended_reason
+
+Saktesisht 16 kolonat e synuara, as nje me shume.
+
+### Prova me role (transaksion i kthyer mbrapsht, metoda e §6)
+    anon → select phone      : BLLOKUAR (OK)
+    auth → select admin_role : BLLOKUAR (OK)
+    auth → kolona publike    : LEJUAR   (OK)
+Kontroll negativ DHE pozitiv — perndryshe s'dihet nese porta ekziston apo thjesht
+s'u provua.
+
+### Verifikimi LIVE pas (C) — me llogarine time te kycur
+| Rruga | Renderim | Gabime konsole |
+|---|---|---|
+| `/profile` | i plote (emri, `gusht 2026`, te 6 zerat) | 0 |
+| `/referral` | i plote (`AFBE35FB`, statistikat, shperblimet) | 0 |
+| `/te-dhenat-mia` | i plote (GDPR, marketing checkbox) | 0 |
+| `/messages` | i plote | 0 |
+| `/listing/<id>` | i plote — blloku i shitesit, `has_phone` punon | 0 |
+| `/admin` | ridrejton te `/` (jo-admin — sjellje e sakte) | 0 |
+
+### Prove qe `/referral` punon me RPC-ne, JO me fallback-un
+E domosdoshme: faqja tregon "0 të ftuar" ne te dyja rastet, pra pamja s'e dallon.
+Matur ne baze si `authenticated` me `sub = afbe35fb-e2e0-42a1-b938-2ce18b9cb714`:
+
+    my_referrals()              → OK, 0 rreshta
+    select … where referred_by  → BLLOKUAR (insufficient_privilege)
+
+Rruga e re punon, e vjetra eshte vertet e mbyllur. **Rendi A→C ishte i detyrueshem**
+— po te ishte aplikuar (C) i pari, `/referral` do te binte per te gjithe.
+
+### Rollback nese duhet ndonjehere
+    grant select on public.profiles to authenticated, anon;
+    update storage.buckets set public = true where id='message-attachments';
+    -- (A) eshte aditiv; nuk ka nevoje te kthehet
+
+**[O6] KALON. Asnje regresion i matur.**
