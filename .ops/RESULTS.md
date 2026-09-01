@@ -1715,3 +1715,60 @@ shitës — një te `/u` (ndjek personin, tabela `follows`) dhe një te `/biznes
 asgjë që ia shpjegon ndryshimin. Nga ana teknike të dyja janë të sakta dhe secila
 me trigerin e vet; nga ana e produktit, përdoruesi nuk e kupton pse ndjek dy herë.
 Vendim i pronarit, jo defekt.
+
+## [MODALITETET] · Risitë e bllokut — cilat cikle mbyllen dhe cilat jo
+
+Kriteri: një modalitet është i plotë kur cikli mbyllet — **veprim → ruajtje →
+pasojë e dukshme për përdoruesin**. Ruajtja pa pasojë s'është vecori.
+
+| Modaliteti | Ruajtja | Pasoja | Verdikti |
+|---|---|---|---|
+| **Ofertat** | `offers` + `rpc('my_offers')` | OfferBox te `/listing` + faqja `/oferta` + zëri "Ofertat" te `/profile` | ✅ **i plotë** |
+| **Verifikimi** | `verification_requests` + `rpc('my_verification_status')` | VerificationBox (përdoruesi) + `admin_review_verification` (admini) | ✅ **i plotë** |
+| **Vlerësimet** | `reviews` me `seller_id` + `listing_id` + `purchase_verified` | `business_rating`/`business_reviews` agregojnë përmes `listings.business_id`; tab "Rreth & Vlerësime" | ✅ **i plotë, subjekt-dallues** |
+| **Ndjekja** | `follows` + `business_followers`, të dyja me triger numëruesi | **ASNJË** | ❌ **cikël i hapur** |
+| **Mesazhet e biznesit** | `messages` (një inbox) | pa filtër; identiteti nga `shop_name` | ⚠️ **i paplotë + shkel BP2** |
+| **Postimet e biznesit** | tabela `posts` (me FK CASCADE nga `businesses`) | asnjë rresht kodi | ❌ **s'u ndërtua kurrë** |
+
+### ❌ NDJEKJA — shkruhet, por s'prodhon asgjë
+Matur:
+
+    get_feed  → ekziston në bazë, i thirrur nga kodi: 0 herë
+    listë "kë ndjek unë" → nuk ekziston
+    njoftim kur shitësi i ndjekur shton shpallje → nuk ekziston
+
+Pra përdoruesi klikon "Ndiq", numëruesi rritet, butoni bëhet "Duke ndjekur" — dhe
+**asgjë tjetër nuk ndodh kurrë**. Nuk ka feed, nuk ka njoftim, nuk ka as listë ku
+ta shohë kë ndjek. Funksioni `get_feed` u ndërtua në bazë dhe rri i paarritshëm —
+e njëjta klasë F1 (§9.1) si 10 RPC-të e adminit.
+
+**Çfarë mungon konkretisht:** (a) rrugë/seksion "Ndjek" me feed nga `get_feed`;
+(b) njoftim te ndjekësit kur shitësi publikon; (c) listë "Duke ndjekur" te profili.
+
+### ⚠️ MESAZHET E BIZNESIT — dy mangësi
+**(a) S'ka filtër.** BP2 kërkon *"mesazhe (një inbox + filtër)"*. Kërkim te
+`/messages` për `business_id`, `Filtro`, ndarës biznes/person: **0 përputhje**.
+Inbox-i është një, por pa mënyrë për të ndarë bisedat e biznesit nga ato personale.
+
+**(b) Identiteti vendoset nga `shop_name` — pikërisht modeli që BP2 e ndalon.**
+`app/messages/page.tsx:113,119`:
+
+    const name = profile?.shop_name || profile?.full_name || profile?.username
+    type={profile?.shop_name ? 'business' : 'person'}
+
+BP2 e thotë shprehimisht: *"Karta biznes-aware me `business_id` … **kurrë `hasShop`**."*
+Këtu një bisedë shënohet "biznes" thjesht sepse personi ka plotësuar `shop_name` —
+edhe nëse nuk ka fare entitet `businesses`. Kjo është shtresa e vjetër `shop_*`
+që mbijetoi te mesazhet, ndërsa kartat kaluan te `business_id`.
+
+### ❌ POSTIMET E BIZNESIT — të projektuara, kurrë të ndërtuara
+`posts` ka FK `business_id → businesses ON DELETE CASCADE`, pra u projektua si
+vecori e biznesit. Asnjë rresht kodi s'e prek (verifikuar te lista e tabelave të
+vdekura). Nëse "postimet" ishin pjesë e misionit të biznesit, ato mungojnë tërësisht.
+
+### Përmbledhje: çfarë mungon
+1. **Feed-i dhe njoftimet e ndjekjes** — e vetmja gjë që i jep kuptim butonit "Ndiq"
+2. **Filtri biznes/person te inbox-i**
+3. **Kalimi i mesazheve nga `shop_name` te `business_id`**
+4. **Postimet e biznesit** (nëse mbeten në plan)
+5. Sqarimi i dy butonave "Ndiq" për të njëjtin shitës (vendim produkti)
