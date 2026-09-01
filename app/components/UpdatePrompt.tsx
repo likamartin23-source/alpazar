@@ -55,9 +55,21 @@ export default function UpdatePrompt() {
       } catch { /* rrjeti — provo herën tjetër */ }
     }
 
-    // Zbulim: montim + rikthim fokusi.
+    // Në MONTIM: vetëm zbulim → banderolë (mos ringarko; përdoruesi mund të jetë duke shkruar).
     check()
-    const onVis = () => { if (document.visibilityState === 'visible') check() }
+    // RIKTHIM te skeda (hidden→visible): pikë e SIGURT hyrjeje — nëse ekziston build i ri, RINGARKO
+    // automatikisht. Kjo zgjidh "disa gjëra reflektohen, disa jo" (C): skedat e lëna hapur mbanin
+    // bundle-in e vjetër derisa përdoruesi klikonte "Rifresko". Skeda AKTIVE (kurrë e fshehur) mban
+    // banderolën, që të mos ndërpritet një formë në mes.
+    const onVis = async () => {
+      if (document.visibilityState !== 'visible') return
+      try {
+        const r = await fetch('/api/version', { cache: 'no-store' })
+        if (!r.ok) return
+        const b = (await r.json())?.build
+        if (b && b !== 'dev' && b !== mine) { location.reload(); return }
+      } catch { /* rrjeti — provo herën tjetër */ }
+    }
     document.addEventListener('visibilitychange', onVis)
 
     // Poll i butë 30s vetëm kur skeda është e dukshme (ndalon kur fshihet). Vetëm ZBULON.

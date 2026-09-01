@@ -15,9 +15,12 @@ on:
 permissions:
   contents: read
 
+# Grup PER-COMMIT (sha), jo per-degë (ref): pushe të njëpasnjëshme s'e anulojnë më verifikimin e
+# commit-it të mëparshëm. Më parë `group: …ref` + cancel → 76% e verifikimeve anuloheshin (F7:
+# rrjeta dukej e gjelbër ndërsa s'verifikonte asgjë; "s'dihet cili commit reflektoi").
 concurrency:
-  group: verifiko-deploy-${{ github.ref }}
-  cancel-in-progress: true
+  group: verifiko-deploy-${{ github.sha }}
+  cancel-in-progress: false
 
 jobs:
   verifiko:
