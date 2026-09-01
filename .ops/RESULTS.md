@@ -1568,3 +1568,97 @@ premton më shumë se sjellja.
 Borxhi i verifikimit mbetet siç u listua te [MBYLLJE]: telefoni real, axe-core,
 CLS, RLS e `offers`/`business_followers`, prova e shkrimit mbi 8 kolonat, dhe
 pamja e panelit të adminit me sesion pronari.
+
+## [RISITE] · Audit i risive të bllokut: pauzimi, analitika, të dhënat, siguria
+
+### 1. PAUZIMI kur pagesa nuk rinovohet — sistemi ekziston, por me tri çarje
+
+**Motori i skadimit** (funksione në bazë):
+
+| Funksioni | Prek | Lë gjurmë |
+|---|---|---|
+| `expire_premium_run` (2904) | `is_premium`, `status` | **JO** |
+| `_apply_business_dimming` (1669) | dukshmërinë e biznesit | **JO** |
+| `renew_my_subscription` (1557) | `is_active`, `status` | **JO** |
+| `expire_listings_run` (544) | `is_active`, `status` | PO |
+| `premium_grace_notices_run` (1786) | njoftimet e periudhës së faljes | PO |
+| `auto_renew_run` (2759) | `status` | PO |
+
+**Çarja 1 — tre nga gjashtë funksionet e skadimit nuk lënë gjurmë.**
+Kur premium-i skadon, biznesi zbehet dhe shpalljet ndryshojnë gjendje **pa asnjë
+regjistrim**. Është e njëjta mangësi si te `delete_own_business`.
+
+**Çarja 2 — nuk ekziston gjendje "e pauzuar" në modelin e të dhënave.**
+Enum-i `listing_status` = `active · sold · reserved · deleted · pending · expired`.
+**S'ka `paused`.** Pauzimi zbatohet si `is_active=false` me `status` që mbetet
+`'active'` (`/profile:362`), dhe çpauzimi si `is_active=true, status='active'` (`:401`).
+Pra `is_active=false` mban njëkohësisht: *pauzuar nga pronari* · *shitur* ·
+*fshirë* · *skaduar*. Dallimi varet nga `status`, jo nga vetë flamuri.
+
+**Çarja 3 — BUG: shpalljet e FSHIRA shfaqen te tabi "Të pauzuara", me buton ripërdorimi.**
+- `myListings` ngarkohet me `.select('*').eq('user_id', uid)` — **pa filtër statusi** (`:119–122`)
+- Filtri i tabit: `myListings.filter(l => !l.is_active && l.status !== 'sold')` (`:1080`)
+  → përjashton `sold`, **por jo `deleted`**
+- Rreshti i shpalljes ka butonin **♻️ Riaktivizo** (`:1117`) → `is_active:true, status:'active'`
+
+**Matur në bazë:** të 5 shpalljet jo-aktive kanë `status='deleted'`. Pra pronari i
+sheh të pesta te "Të pauzuara" dhe mund t'i **ringjallë me një klikim** — një
+shpallje e fshirë kthehet në aktive. Fshirja e shpalljes nuk është e pakthyeshme.
+
+**Vërejtje shtesë:** tri prej tyre e kanë `expires_at` të kaluar (17 gush, 29 gush ×2)
+por asnjëra s'mori `status='expired'` — vlera ekziston në enum dhe nuk përdoret kurrë.
+
+### 2. ANALITIKA — ekziston, e pamatshme sot
+`/profile/analytics` nuk lexon nga baza; thërret rrugën `GET /api/analytics?days=N`
+me token-in e sesionit. Llogaria ime ka 0 shpallje, ndaj mora vetëm empty-state.
+Etiketat që kërkonte O8·C11 ("Pasqyrë/Shpalljet" apo "Përmbledhje/Përmbajtja")
+**nuk render-ohen fare pa të dhëna** — pra pyetja s'kthehet dot përgjigje pa një
+llogari me shpallje. Mbetet borxh verifikimi.
+
+### 3. TË DHËNAT (GDPR) — e plotë dhe e lidhur ✅
+`/te-dhenat-mia` përdor `rpc('my_profile')` dhe `rpc('export_my_data')` — të dyja
+**ekzistojnë në bazë** (verifikuar). Faqja render-on të pesë të drejtat (nenet 15,
+16, 17, 20, 21), shkarkimin JSON, dhe opt-out-in e marketingut.
+`my_withdrawal_right` (e drejta 14-ditore) gjithashtu ekziston.
+
+### 4. SIGURIA — një ekran, katër grupe ✅
+Verifikuar live: Trust Score + Komunikim Marketing + GDPR · Ndrysho Email +
+Fjalëkalimin · Takedown + Kujdesi ndaj klientit · Zona e Rrezikshme.
+Përputhet me kërkesën "Siguria një ekran (4 seksione)".
+
+---
+
+## [KERKESE-PRONARI] · Fshirja e llogarisë → 3 konfirmime, si modeli i biznesit
+
+### Gjendja aktuale: DY shkallë, jo tri
+Dy hyrje, e njëjta mbrojtje:
+
+| Vendi | Shkallët |
+|---|---|
+| `/profile → Siguri → Zona e Rrezikshme` (`:993`) | ① buton → ② fjalëkalim |
+| `/te-dhenat-mia` (`:87–105`) | ① `confirmDelete` → ② fjalëkalim (`signInWithPassword`) → `POST /api/delete-account` |
+
+**S'ka RPC fshirjeje në bazë** — verifikuar: `request_account_deletion` = 0, asnjë
+funksion që përputhet me `%delete%account%`. Fshirja kalon nga rruga serverike
+`/api/delete-account`. Kolona `profiles.deleted_at` ekziston (fshirje e butë, §2.3).
+
+### Modeli i kërkuar (i njëjti si `BusinessForm` §3.9)
+    shkalla 0 → mbyllur
+    shkalla 1 → paralajmërim: lista e saktë e humbjeve (shpalljet, mesazhet,
+                vlerësimet, ndjekësit, biznesi nëse ka) + afati 30-ditor i §2.3
+    shkalla 2 → shkruaj SAKTËSISHT identifikuesin (email ose username);
+                butoni i çaktivizuar derisa përputhet
+    shkalla 3 → fjalëkalimi + ekzekutim
+
+Kjo shton shkallën e shtypjes së identifikuesit, që sot mungon — dhe që te
+biznesi është pikërisht ajo që e bën veprimin të qëllimshëm.
+
+**Dy kërkesa shtesë që dalin nga auditi i sotëm:**
+1. **Gjurmë e detyrueshme.** `delete_own_business` nuk shkruan asgjë; mos e përsërit
+   gabimin te llogaria. Fshirja e llogarisë duhet të shkruajë te `audit_logs`
+   (jo `admin_log()` — ai humbet pa `auth.uid()`, §1.4).
+2. **Teksti të përputhet me sjelljen.** Dialogu i biznesit premton se fshihen
+   "vlerësimet", por ato varen nga `listing_id` dhe mbijetojnë. Për llogarinë,
+   lista e humbjeve duhet verifikuar kundër FK-ve para se të shkruhet.
+
+*(Zbatimi i takon cloud-it — terminali nuk prek kodin e aplikacionit, §2.)*
