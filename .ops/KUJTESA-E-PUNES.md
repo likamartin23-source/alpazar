@@ -22,6 +22,17 @@
 - Të katër shkrimet e bazës (O6/O7): `my_referrals()` · `profiles` i ngushtuar (16 kolona) · bucket privat · `cloudinary_upload_preset=alpazar_unsignet`. Të gjitha live.
 - Restaurimi i bllokut (RF1-RF3 + B3.1): pikët te /u pa opt-out, Ndiq te /u, badge VIP/🏢 te /biznese, shiriti "Vepro si" te /profile.
 
+## 3-MODELI. Modeli 3-shkallësh i biznesit (SQARIM PRONARI — autoritativ për K2)
+Bizneset kanë **personalitetin e tyre, TË PALIDHUR NGA pronari** (personaliteti vjen nga pronari,
+por biznesi është entitet më vete). **Karta e biznesit NOTON njëkohësisht te SHPALLJET dhe te BIZNESET**
+(e njëjta kartë, dy vende). Sistemi **3-shkallësh, model rrjeti social** (KA EKZISTUAR — restauroje):
+1. **Kliko kartën** → hapet shpallja me të dhënat e shpalljes + të shitësit.
+2. **Kliko shitësin** (dallim VETËM kur ka biznes) → hapet biznesi (ose përdoruesi).
+3. **Pasi hapet biznesi** → dalin të dhënat e pronarit + **buton që të çon te profili i pronarit** (/u).
+→ Pra K2 NUK është "premium-shitësit vs businesses" thjesht; është: karta e biznesit = kartë e njësuar
+qё noton te të dyja vendet, me zinxhirin kartë→shpallje→shitës→biznes→pronar. "Biznese Online" duhet
+të tregojë këtë kartë. Verifiko me imazhin C + organigramën (harta master).
+
 ## 3. Vendimet e marra (zbatohen nga cloud pas [O8])
 - **B2:** `/profile` → stats **4-kuti** (si Gjendja-cak / paneli i biznesit).
 - **G4:** butonat e /listing **mbeten funksionalë** (BP2 §B17) — jo grup i detyruar.
