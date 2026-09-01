@@ -7,7 +7,7 @@
 ## 0. Burimet e kujtesës (të lidhura)
 - **CLAUDE.md** — kujtesa KANONIKE e projektit (rregullorja §8, kontrata §2, kurthet). Mbi të gjitha.
 - **docs/** — autopsitë: `AUTOPSIA-BLLOKUT-2026-09-01.md`, `SUPERAUTOPSIA.md`, `MEGAAUTOPSIA-*`, `AUDITI-I-SISTEMEVE.md`.
-- **docs/bllok/** — MATERIALET E MIRATUARA TË BLLOKUT (imazhet HTML që dha pronari): `01_Blueprint_Autopsi_Perfundimtare.html`, `02_Autopsi_Realtime.html`, `03_Gjendja_Cak_Harmonizuar.html`. Hapi çdonjë në shfletues për pamjen-cak (A/B/C/D/E, organigramat). Rregull: imazhi fiton.
+- **docs/bllok/** — MATERIALET E BLLOKUT. **PRIORITET (urdhër pronari):** (1) imazhet e miratuara `03_Gjendja_Cak_Harmonizuar.html` (pamja-cak pixel), `01_Blueprint…`, `02_Autopsi_Realtime`; (2) megaauditi final `docs/MEGAAUTOPSIA-2026-08-31.md`(+B); (3) gjithçka origjinale — `docs/bllok/BP2-REFERENCE.md` (+ Notion BP2), `docs/RAPORT_CODE_BLLOKU.md`, organigramat SVG. Rregull: **imazhi fiton mbi kodin**.
 - **.ops/** — kanali live: `ORDERS.md` (cloud→terminal), `RESULTS.md` (terminal→cloud), `DOREZIMI.md` (dorëzimi i terminalit), `PROTOKOLLI.md` (cikli).
 - **Notion** — burimi zyrtar i bllokut: "🏁 BLLOKU PËRFUNDIMTAR 2" + Gjendja-cak + 3 organigramat. Rregull: **imazhi fiton mbi kodin**.
 
