@@ -32,11 +32,11 @@ function calcTrustScore(createdAt: string, listingsActive: number, gamificationP
   return Math.round(ageFactor + listingFactor + pointsFactor)
 }
 
-function getLevel(score: number): { label: string; color: string; bg: string; icon: string } {
+function trustLevel(score: number): { label: string; color: string; bg: string; icon: string } {
   if (score >= 80) return { label: 'Shitës Ekspert',   color: '#7C3AED', bg: '#F3EEFF', icon: '🏆' }
   if (score >= 55) return { label: 'I Verifikuar',     color: '#0E7A35', bg: '#E8F5E9', icon: '✅' }
   if (score >= 30) return { label: 'I Besueshëm',      color: '#185FA5', bg: '#EEF4FF', icon: '🔵' }
-  return               { label: 'Fillestar',           color: '#B45309', bg: '#FFF4E5', icon: '🆕' }
+  return               { label: 'I ri',               color: '#B45309', bg: '#FFF4E5', icon: '🆕' }
 }
 
 export function TrustBadge({ score: scoreProp, createdAt, listingsActive = 0, gamificationPoints = 0, compact = false }: TrustBadgeProps) {
@@ -47,7 +47,7 @@ export function TrustBadge({ score: scoreProp, createdAt, listingsActive = 0, ga
   // Mos e ndrysho në `>= 0` — do t'i shfaqte TË GJITHË shitësit "Fillestar 0" dhe do vriste heuristikën.
   const computed = createdAt ? calcTrustScore(createdAt, listingsActive, gamificationPoints) : 0
   const score = (typeof scoreProp === 'number' && scoreProp > 0) ? Math.min(100, Math.round(scoreProp)) : computed
-  const level = getLevel(score)
+  const level = trustLevel(score)
 
   if (compact) {
     return (
