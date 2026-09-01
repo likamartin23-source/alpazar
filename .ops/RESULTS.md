@@ -4105,3 +4105,39 @@ rregullimi u zbatua vetëm te njëra sipërfaqe. §4-bis.
 | C · middleware | ✅ 4/5 · ❌ `/listing/new` |
 | D · butonat | ✅ nga CSS-ja e shërbyer · ⚠ pa sy (duhet llogari jo-pronare) |
 | E · `/profile` 4 kuti | ✅ |
+
+---
+
+## [O37] · ⛔ RRUGA DREJT PROFILIT TË JASHTËM MUNGON TE `/listing` PËR PRONARIN — korrigjim i klasifikimit tim
+
+Pronari: «këtu mungon rruga për te profili i jashtëm siç e vutë re». **E vura re dhe e klasifikova gabim**
+si «pamje e saktë e pronarit». Ishte defekt. Ja kodi:
+
+```tsx
+// app/listing/[id]/ListingPageClient.tsx
+:984   {!isOwner && bizHref && ( … «Shiko biznesin →» )}
+:994   {!isOwner && (          … «Shiko profilin →» )}
+```
+**Të dyja butonat e navigimit fshihen kur `isOwner`.** Pra pronari, duke parë shpalljen e vet,
+**nuk ka asnjë rrugë** nga shpallja te faqja e biznesit as te profili i jashtëm `/u`.
+
+### Pse është defekt, jo zgjedhje
+1. **Hapi 2 i modelit 3-shkallësh vdes për pronarin.** Caku §E: zinxhiri `kartë → shpallje → shitës →
+   biznes → pronar` duhet të funksionojë; për pronarin ndërpritet te «shpallje →».
+2. **Asimetri me faqen e biznesit**, që e trajton saktë të njëjtin rast:
+   `BiznesPageClient:935` → `isOwner ? «Ti je pronari — profili yt →» : «Pronari — shiko profilin →»`.
+   Pra biznesi **e ndryshon etiketën**, shpallja **e fshin butonin**. Dy zgjidhje për të njëjtin problem.
+3. **Klasa F1 e dokumentuar në vetë kodin:** `:1020` shpjegon se `BusinessMiniCard` **u hoq** sepse
+   «lidhja jepet tashmë nga butoni "Shiko biznesin →"». Por ai buton **nuk rendohet për pronarin** →
+   dublimi u hoq, dhe e vetmja lidhje e mbetur është e kushtëzuar. *«Defekti rri në boshllëkun midis
+   dy shtresave.»*
+4. Pronari është pikërisht personi që i hap më shpesh shpalljet e veta.
+
+### Rregullimi (cloud)
+Ndiq modelin që tashmë punon te faqja e biznesit — **mos e fshih butonin, ndrysho etiketën**:
+```tsx
+{bizHref && (  … isOwner ? «🏢 Biznesi yt →» : «Shiko biznesin →» )}
+{(            … isOwner ? «👤 Profili yt →»  : «Shiko profilin →» )}
+```
+Kështu zinxhiri 3-shkallësh mbetet i plotë për **të gjithë**, dhe të dy sipërfaqet përdorin
+**një zgjidhje të vetme** për rastin «pronari sheh të vetën» (§4-bis: një gjuhë, jo dy).
