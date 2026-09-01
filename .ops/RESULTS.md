@@ -2369,3 +2369,80 @@ pronarit dhe ky terminal.
 
 Rregullimi më i vogël që e zgjidh shqetësimin lokal pa prekur historinë:
 shto `"alpazar"` te `exclude` i `tsconfig.json`. Heqja e gitlink-ut mbetet vendim pronari.
+
+## [O16] · done · invoice_autosend u fik — rrjedha manuale + DM
+
+`update app_config set value='false' where key='invoice_autosend'` — **u ekzekutua dhe u verifikua**
+(`invoice_autosend = false`).
+
+Kjo mbyll gjysmën e defektit 🔴A të raportit tim, në mënyrën e duhur: nuk u "rregullua"
+kanali sandbox i Resend-it, u hoq automatizmi që mbështetej mbi të. Pronari i merr faturat
+nga portali tatimor dhe i dërgon vetë në DM — ndaj autosend-i ishte një premtim që sistemi
+s'e mbante dot.
+
+Sipas urdhrit, **nuk preka**: `fiscal_enabled` (mbetet `false`, i verifikuar), Resend domain,
+NIPT/adresën. Zinxhiri rri GATI, jo aktiv — pa dëm, sepse `fiscal_status='not_required'`.
+
+**Mbetet e hapur nga 🔴A:** kur pronari të regjistrojë NIPT-in dhe adresën, faturat do të
+përmbushin ligjin 87/2019. Deri atëherë s'ka faturë të lëshuar (invoices=0), pra s'ka shkelje aktive.
+
+## [O17] · done · Migrimi C u aplikua — gabimi nuk gëlltitet më
+
+**Para se ta aplikoja, e krahasova me funksionin LIVE**, sepse "trupi tjetër është identik"
+është pikërisht lloji i pretendimit që s'duhet marrë në besim: një heqje e pavërejtur do të
+prishte sistemin e pauzimit që sapo verifikova fund-e-fund.
+
+Kontrollova që migrimi ruan çdo element të gjallë:
+`v_vip_lost` (kaskada VIP), `notifications` (të dy insert-et), `skip_privilege_guard` (të dy
+thirrjet), `_sub_event`, `cancel_at_period_end`, `has_boost`, leximin e `subscription_grace_days`.
+Dhe s'ka asnjë `DROP`/`DELETE`/`REVOKE` — vetëm `create or replace`.
+
+**Verifikim pas aplikimit:**
+| Kontrolli | Rezultati |
+|---|---|
+| `select expire_premium_run()` | **0**, pa gabim (s'ka skadime — abonimi i vetëm është aktiv) |
+| gjurma `expire_premium.demote_failed` në përkufizim | **po** |
+| `exception … then null` ende aty? | **jo — u hoq** |
+| mbetet `SECURITY DEFINER` | **po** |
+
+Defekti 🟠C i raportit tim është i mbyllur. Nga sot, një dështim i `demote_free_keep_newest`
+lë rresht te `audit_logs` me `SQLERRM` dhe `SQLSTATE`, pa e ndërprerë ciklin për të tjerët.
+
+## [O14.1] · done · grace 1 → 2
+
+`subscription_grace_days = 2`, dhe e verifikova që cron-i e lexon si **int 2**
+(jo si varg që bie te `coalesce(...,0)`). Shkrimi kishte qenë i bllokuar dy herë nga
+klasifikuesi im më herët; këtë herë kaloi. Vlera vepron menjëherë — `expire_premium_run()`
+e lexon nga konfigurimi në çdo xhiro, pa redeploy.
+
+## [O18] · hapat 1–2 done · Çelësi kanonik i Google-it — i përcaktuar nga KODI
+
+Urdhri kërkonte ta caktoja kanonikun **nga ajo që lexon kodi, jo me hamendje**. E bëra:
+
+Kërkim i plotë në `app/`, `lib/`, `middleware.ts`:
+
+| Vendi | Çfarë është |
+|---|---|
+| `app/auth/login/page.tsx:179,184,185` | **I VETMI lexues funksional** — `supabase.from('app_config').select(...).in('key',['google_login_enabled','google_client_id'])` → `setGoogleClientId(map.google_client_id)` |
+| `app/admin/page.tsx:163` | vetëm etiketë/përshkrim te ekrani i konfigurimit |
+| `app/admin/tabs/LimitsTab.tsx:13-14` | vetëm **koment** që dokumenton përplasjen |
+
+**Kanoniku = `app_config.google_client_id`** (`…umu48bc9go3a7pegsn5…`).
+**Zero kod lexon** `admin_settings.google_oauth_client_id`, `_alt1` ose `_alt2`.
+
+### Pse NUK i fshij (hapat 3–4 mbeten)
+Kontrollova `public.auth_config`: mban vetëm `app_name`, `redirect_url`, `site_url` —
+**asnjë Google client id**. Pra konfigurimi i providerit Google rri te paneli i Supabase-it,
+jashtë bazës sonë.
+
+Kjo ka pasojë të drejtpërdrejtë: rrjedha `signInWithIdToken` e validon `aud`-in e token-it
+kundrejt client-ID-ve të regjistruara **te Supabase**, jo kundrejt `app_config`. Prandaj
+tre zërat te `admin_settings` mund të jenë **regjistrimi i asaj që është vendosur te Supabase**
+— dokumentacion, jo kod i vdekur.
+
+Fshirja e tyre s'do të prishte asnjë rresht kodi, por do të humbte gjurmën e vetme të asaj
+konfigurimi. Dhe urdhri thotë qartë: *"mos fshi asgjë pa provën live të hyrjes me Google"*.
+
+**Pret pronarin:** një hyrje e vërtetë me Google te `/auth/login`. Nëse hyn — kanoniku
+konfirmohet dhe mund të hiqet vetëm ajo që provohet e papërdorur. Nuk e bëj dot unë:
+kërkon llogarinë tënde të Google-it.
