@@ -86,6 +86,8 @@ Cikli i auditit të terminalit PËRFUNDOI. Renditja e mbetur sipas peshës:
   · Dy butona "Ndiq" për të njëjtin shitës — vendim produkti.
 - **eb57551:** terminali korrigjoi dy raporte të vetat (Vepro si + referral) — ndarja biznes/llogari e zbatuar.
 
+- **URGJENTE — /admin i paarritshëm — RREGULLUAR (`4b5c03d`):** middleware.ts (rrënjë) lexonte `is_admin` të ngushtuar → pronari locked out. Tani `rpc('is_admin')`. Regres i shkaktuar nga cloud-i; auditi §0-bis kishte humbur `middleware.ts`. Mësimi u shtua te CLAUDE.md §0-bis (fshesa duhet të mbulojë rrënjën: middleware.ts/instrumentation.ts/next.config.js/app/api).
+
 ## 5. Mësime të vërtetuara (shtoji këtu, mos i harro)
 - **Device flow** = rrugë autentikimi që s'ia kalon sekretin agjentit (Vercel CLI). Sekretet i vë pronari (§8).
 - **Rendi A→C** te privatësia: `my_referrals()` PARA ngushtimit të `profiles`; pamja s'e dallon dështimin — provoje në bazë.

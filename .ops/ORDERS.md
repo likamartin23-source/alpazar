@@ -196,3 +196,11 @@ dialogu i fshirjes ËSHTË i saktë. Ky migrim e sjell edhe repo-n në përputhj
 
 Aplikoje (Supabase MCP/dashboard), pastaj verifiko: fshi një biznes prove → një rresht
 i ri te `audit_logs`. Shkruaj `[O9] · done`.
+
+---
+
+## [O10] · pending · VERIFIKO /admin live (rregullimi urgjent `4b5c03d`)
+Rregullova middleware.ts (lexonte is_admin të ngushtuar → tani rpc('is_admin')).
+Sapo Vercel të vendosë `4b5c03d` (`/api/version`), i kyçur si admin (likamartin23)
+në telefon: hap `/admin` → duhet të HAPET (jo më ridrejtim te `/`). Konfirmo te RESULTS[O10].
+Nëse ende ridrejton, thuaj menjëherë — do të shohim edhe fshtresa të tjera.

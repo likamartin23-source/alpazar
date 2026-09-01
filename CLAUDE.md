@@ -32,6 +32,17 @@ qe e thote pse, dhe zbatoje pas deploy-it. Dy shembuj ne repo:
 `20260901_profiles_ngushtimi_pas_deploy.sql` dhe
 `20260901_bashkengjitjet_private.sql`.
 
+**Fshesa e kontrollit duhet te perfshije RRENJEN e depos, jo vetem `app/lib/`.**
+Matur me 1 shtator 2026: pas aplikimit te `profiles_ngushtimi_pas_deploy`, `/admin`
+u be i paarritshem sepse `middleware.ts` (ne rrenje) lexonte `profiles.is_admin`
+me rolin `authenticated` — pikerisht kolona qe migrimi hoqi. Auditi §0-bis kishte
+kontrolluar vetem `app/*`, `lib/*`, `components/*` dhe e humbi `middleware.ts`.
+Prandaj fshesa e `git show origin/main:<skedari>` duhet te mbuloje edhe
+`middleware.ts`, `instrumentation.ts`, `next.config.js` dhe `app/api/**`.
+Rregullimi i sakte per lexime privilegji ne kod: RPC SECURITY DEFINER
+(`is_admin()`, `my_profile()`) — kurre `grant select` mbi kolonen kur RLS eshte
+`public_read` (do te rihapte §4.6-bis).
+
 Baza ka **190+ migrime** dhe eshte e mirendertuar. Ne gusht 2026 u ndertuan gjashte
 migrime dhe dhjete komponente mbi supozime; kur u lexua baza reale, **cdo gje e
 ndertuar ekzistonte tashme**:
