@@ -13,6 +13,7 @@ import { TrustBadge } from '../../components/TrustBadge'
 import { SharePanel } from '../../components/SharePanel'
 import { ImageCarousel } from '../../components/ImageCarousel'
 import { BackButton } from '../../components/BackButton'
+import { LISTING_SELECT } from '../../../lib/listingSelect'
 import Avatar, { tierNgaProfili } from '../../components/Avatar'
 import { useIsOnline } from '../../components/OnlinePresence'
 import ListingCard from '../../components/ListingCard'
@@ -354,7 +355,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
     } catch { /* fallback më poshtë */ }
     let q = supabase
       .from('listings')
-      .select('id,title,price,currency,images,condition,city,is_premium,views_count,rank_tier,created_at,status')
+      .select(LISTING_SELECT)
       .eq('category_id', categoryId)
       .eq('is_active', true)
       .neq('id', currentId)
@@ -376,7 +377,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
       // Fallback: broader search without city/price filters
       const { data: fallback } = await supabase
         .from('listings')
-        .select('id,title,price,currency,images,condition,city,is_premium,views_count,rank_tier,created_at,status')
+        .select(LISTING_SELECT)
         .eq('category_id', categoryId)
         .eq('is_active', true)
         .neq('id', currentId)

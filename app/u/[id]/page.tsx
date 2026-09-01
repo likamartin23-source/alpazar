@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import type { Metadata } from 'next'
 import UserProfileClient from './UserProfileClient'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../lib/supabase'
+import { LISTING_SELECT } from '../../../lib/listingSelect'
 import { SITE_URL } from '../../../lib/siteConfig'
 
 // /u/<param> pranon UUID ose username. Rrugëzimi i vjetër zgjidhte VETËM me `id`,
@@ -84,7 +85,7 @@ async function fetchProfileData(id: string) {
   const uid = profile.id
   const [{ data: listings }, { data: biz }] = await Promise.all([
     sb.from('listings')
-      .select('id,title,price,currency,images,city,created_at,is_premium,condition,rank_tier,views_count')
+      .select(LISTING_SELECT)
       .eq('user_id', uid)
       .is('business_id', null)
       .eq('is_active', true)

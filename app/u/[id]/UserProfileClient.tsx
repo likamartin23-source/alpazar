@@ -7,6 +7,7 @@ import { useAlpazar } from '../../../lib/context'
 import Avatar, { tierNgaProfili } from '../../components/Avatar'
 import { useIsOnline } from '../../components/OnlinePresence'
 import ListingCard from '../../components/ListingCard'
+import { LISTING_SELECT } from '../../../lib/listingSelect'
 import { TrustBadge } from '../../components/TrustBadge'
 
 function timeAgo(dateStr: string) {
@@ -57,7 +58,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
     if (!uid) return
     const { data: ls } = await supabase
       .from('listings')
-      .select('id,title,price,currency,images,video_poster,city,created_at,is_premium,condition,rank_tier,views_count')
+      .select(LISTING_SELECT)
       .eq('user_id', uid)
       .is('business_id', null)   // vetem shpallje personale — ato te biznesit rrine te faqja e biznesit (Vendimi 7, pa dyfishim)
       .eq('is_active', true)
@@ -98,7 +99,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
       // dhe s'do ta shohë ende brenda këtij ekzekutimi). Mbaj seed-in SSR kur bosh.
       const { data: ls } = await supabase
         .from('listings')
-        .select('id,title,price,currency,images,video_poster,city,created_at,is_premium,condition,rank_tier,views_count')
+        .select(LISTING_SELECT)
         .eq('user_id', realId)
         .is('business_id', null)
         .eq('is_active', true)

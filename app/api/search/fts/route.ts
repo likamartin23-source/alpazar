@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../../lib/supabase'
 import { rateLimit, getClientIp } from '../../../../lib/rateLimit'
+import { LISTING_SELECT } from '../../../../lib/listingSelect'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -37,7 +38,7 @@ export async function GET(req: NextRequest) {
   if (!q || q.length < 2) return NextResponse.json({ results: [] })
 
   const sb = anonSb()
-  const SELECT = 'id,title,price,currency,city,category_id,images,condition,created_at,views_count'
+  const SELECT = LISTING_SELECT
 
   // Build two tsquery forms: original + Albanian-normalized (ë→e, ç→c)
   const tsqueryOriginal   = buildTsquery(q)

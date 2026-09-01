@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import type { Metadata } from 'next'
 import BiznesPageClient from './BiznesPageClient'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../lib/supabase'
+import { LISTING_SELECT } from '../../../lib/listingSelect'
 
 // SSR DINAMIK (jo ISR). ISR-ja (revalidate) shkaktonte "mospershtatje build-i mes
 // rrugeve": edge-i sherbente nje prerender te nje deploy-i te VJETER per /biznese
@@ -33,7 +34,7 @@ async function fetchBizListings(businessId: string) {
   const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
   const { data } = await sb
     .from('listings')
-    .select('id,title,price,currency,images,condition,city,is_premium,views_count,created_at,rank_tier')
+    .select(LISTING_SELECT)
     .eq('business_id', businessId)
     .eq('is_active', true)
     .order('rank_tier', { ascending: false })

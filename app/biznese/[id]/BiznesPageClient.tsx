@@ -11,6 +11,7 @@ import { TrustBadge } from '../../components/TrustBadge'
 import { useSyteLive } from '../../components/PremiumUpsell'
 import { useIsOnline } from '../../components/OnlinePresence'
 import { BackButton } from '../../components/BackButton'
+import { LISTING_SELECT } from '../../../lib/listingSelect'
 import { nf, monthYear } from '../../../lib/format'
 import { uploadSingleImage } from '../../../lib/uploadImages'
 
@@ -323,7 +324,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
       // shfaq kohen relative dhe shenjen VIP, te dyja mungonin ne kete select.
       const { data: ls } = await supabase
         .from('listings')
-        .select('id,title,price,currency,images,condition,city,is_premium,views_count,created_at,rank_tier')
+        .select(LISTING_SELECT)
         .eq('business_id', b.id)
         .eq('is_active', true)
         .order('rank_tier', { ascending: false })   // VIP-first (Vendimi 2)
@@ -375,6 +376,9 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   function loadMgmt() {
     if (mgmtLoaded || !biz) return
     setMgmtLoaded(true)
+    // listing-select-exempt: kjo NUK ushqen ListingCard — është lista e MENAXHIMIT te paneli
+    // i pronarit (rreshta me butona Rifresko/Shitur/Hiq), kërkon is_active/last_bumped_at që
+    // LISTING_SELECT s'i ka. Prandaj projeksion me dorë, i lejuar shprehimisht.
     supabase.from('listings')
       .select('id,title,price,currency,images,city,is_premium,views_count,is_active,status,last_bumped_at,created_at,rank_tier,author,business_id')
       .eq('business_id', biz.id)
