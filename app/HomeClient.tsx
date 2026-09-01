@@ -988,7 +988,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                         <div className="shop-av" style={{ background: 'transparent' }}>
                           <Avatar src={shop.avatar_url} name={shop.shop_name || shop.full_name} type="business" tier={tierNgaProfili(shop)} verified={shop.is_verified} size={40} />
                         </div>
-                        {tierNgaProfili(shop) !== 'free' && <span className="shop-prem" aria-label="Premium">⭐</span>}
+                        {(() => { const t = tierNgaProfili(shop); return t === 'vip' ? <span className="shop-prem" aria-label="VIP">👑</span> : t === 'premium' ? <span className="shop-prem" aria-label="Premium">⭐</span> : null })()}
                       </div>
                       <div className="shop-info">
                         <div className="shop-nm">{shop.shop_name || shop.full_name}</div>

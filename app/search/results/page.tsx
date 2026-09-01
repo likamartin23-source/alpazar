@@ -7,6 +7,7 @@ import { supabase } from '../../../lib/supabase'
 import { SkeletonGrid } from '../../components/Skeleton'
 import ListingCard from '../../components/ListingCard'
 import { LISTING_SELECT } from '../../../lib/listingSelect'
+import { tierNgaProfili } from '../../components/Avatar'
 
 const CITIES = ['Tiranë', 'Durrës', 'Vlorë', 'Shkodër', 'Elbasan', 'Fier', 'Korçë', 'Berat', 'Lushnjë', 'Kavajë', 'Gjirokastër', 'Sarandë', 'Lezhë', 'Kukës', 'Pogradec', 'Peshkopi', 'Tropojë', 'Përmet', 'Tepelenë', 'Tjetër']
 
@@ -43,7 +44,9 @@ function ShopCard({ shop }: { shop: any }) {
             : <span style={{ fontSize: 17, fontWeight: 700, color: '#C42B0F' }}>{initials}</span>
           }
         </div>
-        <div className="shop-premium-badge"><span aria-hidden="true">⭐</span> Premium</div>
+        {tierNgaProfili(shop) === 'vip'
+          ? <div className="shop-premium-badge"><span aria-hidden="true">👑</span> VIP</div>
+          : <div className="shop-premium-badge"><span aria-hidden="true">⭐</span> Premium</div>}
       </div>
       <div className="shop-body">
         <div className="shop-name">{shop.shop_name || shop.full_name}</div>
@@ -251,7 +254,7 @@ const [searchError, setSearchError] = useState(false)
     if (!premOnly) {
       let qb = supabase
         .from('profiles')
-        .select('id,full_name,username,avatar_url,city,bio,is_premium,premium_expires_at,shop_name,shop_description,shop_category,shop_banner_url')
+        .select('id,full_name,username,avatar_url,city,bio,is_premium,premium_expires_at,has_boost,boost_expires_at,shop_name,shop_description,shop_category,shop_banner_url')
         .eq('is_premium', true)
         // NDERO skadimin: përjashto premium-in e skaduar edhe para se cron-i ta fikë flamurin.
         .or(`premium_expires_at.is.null,premium_expires_at.gt.${new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')}`)
