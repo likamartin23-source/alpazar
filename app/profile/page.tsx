@@ -522,7 +522,7 @@ export default function ProfilePage() {
         .err{background:#FFF0EE;color:#C42B0F;border:0.5px solid #F09595;}
         .card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;border:0.5px solid #ececec;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 16px -10px rgba(0,0,0,.14);}
         .card-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
-        .card-title{font-size:13px;font-weight:700;color:#1a1a1a;}
+        .section-title{font-size:13px;font-weight:700;color:#1a1a1a;}
         .edit-btn{background:linear-gradient(135deg,#1a1a1a,#000);border:none;border-radius:10px;padding:6px 13px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;color:#F5C842;transition:all .15s ease;}
         .save-btn{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:10px;padding:6px 13px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(230,51,18,.4);transition:all .15s ease;}
         .info-row{display:flex;align-items:flex-start;padding:8px 0;border-bottom:0.5px solid #f5f5f0;}
@@ -755,7 +755,7 @@ export default function ProfilePage() {
                     ndërmjetës. Kartat e tjera (Fto miq/Analitika/Abonimi/Siguri) më poshtë. */}
                 <div className="card">
                   <div className="card-hdr">
-                    <span className="card-title">Informacioni personal</span>
+                    <span className="section-title">Informacioni personal</span>
                     {editing
                       ? <button type="button" className="save-btn" onClick={saveProfile} disabled={saving}>{saving ? <><span aria-hidden="true">⏳</span> Duke ruajtur...</> : 'Ruaj'}</button>
                       : <button type="button" className="edit-btn" onClick={() => setEditing(true)}><span aria-hidden="true">✏️</span> Ndrysho</button>
@@ -835,7 +835,7 @@ export default function ProfilePage() {
               {/* ── Besueshmëria — Kundërshtim Profilizimit (Ligj 124/2024 n.19) ── */}
               <div className="card">
                 <div className="card-hdr">
-                  <span className="card-title"><span aria-hidden="true">🔵</span> Besueshmëria — Privatësia</span>
+                  <span className="section-title"><span aria-hidden="true">🔵</span> Besueshmëria — Privatësia</span>
                 </div>
                 <p style={{ fontSize: 12, color: '#555', lineHeight: 1.6, marginBottom: 12 }}>
                   <strong>Ç'është Besueshmëria?</strong> Është një vlerë 0–100 që tregon besueshmërinë
@@ -878,7 +878,7 @@ export default function ProfilePage() {
               {/* ── Marketing Opt-in (GDPR Art.7) ── */}
               <div className="card">
                 <div className="card-hdr">
-                  <span className="card-title"><span aria-hidden="true">📢</span> Komunikim Marketing</span>
+                  <span className="section-title"><span aria-hidden="true">📢</span> Komunikim Marketing</span>
                 </div>
                 <p style={{ fontSize: 12, color: '#666', marginBottom: 10, lineHeight: 1.6 }}>
                   Zgjidhni nëse doni të merrni oferta speciale, lajme dhe këshilla nga Alpazar. Mund ta ndryshoni kurdo. (GDPR Art.7)
@@ -912,7 +912,7 @@ export default function ProfilePage() {
               {/* ── Ndrysho Email-in ── */}
               <div className="card">
                 <div className="card-hdr">
-                  <span className="card-title"><span aria-hidden="true">✉️</span> Ndrysho Email-in</span>
+                  <span className="section-title"><span aria-hidden="true">✉️</span> Ndrysho Email-in</span>
                 </div>
                 {emailMsg && (
                   <div className={`msg-box msg-sm ${emailMsg.split(':')[0]}`} role="alert">{emailMsg.split(/:(.+)/)[1]}</div>
@@ -935,7 +935,7 @@ export default function ProfilePage() {
               {/* ── Ndrysho Fjalëkalimin ── */}
               <div className="card">
                 <div className="card-hdr">
-                  <span className="card-title"><span aria-hidden="true">🔒</span> Ndrysho Fjalëkalimin</span>
+                  <span className="section-title"><span aria-hidden="true">🔒</span> Ndrysho Fjalëkalimin</span>
                 </div>
                 {passMsg && (
                   <div className={`msg-box msg-sm ${passMsg.split(':')[0]}`} role="alert">{passMsg.split(/:(.+)/)[1]}</div>
@@ -975,7 +975,7 @@ export default function ProfilePage() {
                     te dhenat GDPR → /te-dhenat-mia (e njejta lidhje si te karta e marketingut). */}
               <div className="card">
                 <div className="card-hdr">
-                  <span className="card-title"><span aria-hidden="true">🛡️</span> Mbrojtja & ndihma</span>
+                  <span className="section-title"><span aria-hidden="true">🛡️</span> Mbrojtja & ndihma</span>
                 </div>
                 <a href="/takedown" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 0', borderBottom: '1px solid #f0f0f0', textDecoration: 'none', color: '#111', fontSize: 13, fontWeight: 600, minHeight: 44 }}>
                   <i className="ti ti-flag" style={{ fontSize: 17, color: '#C42B0F' }} aria-hidden="true" />
@@ -1042,7 +1042,7 @@ export default function ProfilePage() {
                   vetëm menaxhimi i shpalljeve (Skema 1: kuota/filtra/Rifresko/+Shto). */}
               <div className="card">
                 <div className="card-hdr">
-                  <span className="card-title">
+                  <span className="section-title">
                     Shpalljet e mia
                     {maxListings != null && maxListings >= 0
                       ? <span style={{ marginLeft: 6, fontSize: 12, fontWeight: 700, color: myListings.filter(l => l.is_active).length >= maxListings ? '#C42305' : '#0E7A35' }}>{myListings.filter(l => l.is_active).length}/{maxListings}</span>
@@ -1155,7 +1155,7 @@ export default function ProfilePage() {
           {activeTab === 'saved' && (
             <div className="card">
               <div className="card-hdr">
-                <span className="card-title"><span aria-hidden="true">❤️</span> Shpalljet e ruajtura ({savedListings.length})</span>
+                <span className="section-title"><span aria-hidden="true">❤️</span> Shpalljet e ruajtura ({savedListings.length})</span>
               </div>
               {savedListings.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '24px 0', color: '#555', fontSize: 12 }}>
@@ -1183,7 +1183,7 @@ export default function ProfilePage() {
           {activeTab === 'saved' && savedSearches.length > 0 && (
             <div className="card" style={{ marginTop: 10 }}>
               <div className="card-hdr">
-                <span className="card-title"><span aria-hidden="true">🔔</span> Kërkimet e ruajtura ({savedSearches.length})</span>
+                <span className="section-title"><span aria-hidden="true">🔔</span> Kërkimet e ruajtura ({savedSearches.length})</span>
               </div>
               {savedSearches.map((s: any) => {
                 const parts = [s.query, s.filters?.city, s.filters?.cat, s.filters?.cond === 'i_ri' ? 'I ri' : s.filters?.cond === 'i_perdorur' ? 'I përdorur' : null, s.filters?.priceMin ? `Min: ${s.filters.priceMin}` : null, s.filters?.priceMax ? `Max: ${s.filters.priceMax}` : null].filter(Boolean)
@@ -1211,7 +1211,7 @@ export default function ProfilePage() {
             <>
               <div className="card">
                 <div className="card-hdr">
-                  <span className="card-title"><span aria-hidden="true">💬</span> Bisedat e mia</span>
+                  <span className="section-title"><span aria-hidden="true">💬</span> Bisedat e mia</span>
                   <button type="button" className="edit-btn" onClick={() => window.location.href = '/messages'}>
                     Hap →
                   </button>
@@ -1309,7 +1309,7 @@ export default function ProfilePage() {
                 {/* ── Gjendja 1 — Falas ─────────────────────────────── */}
                 <div className="card" style={cardStyle(g1)}>
                   <div className="card-hdr">
-                    <span className="card-title"><span aria-hidden="true">①</span> Gjendja 1 — Falas</span>
+                    <span className="section-title"><span aria-hidden="true">①</span> Gjendja 1 — Falas</span>
                     {badge(g1, 'aktive', 'ke Premium ✓')}
                   </div>
                   <p style={{ fontSize: 11.5, color: '#767676', margin: '2px 0 12px', lineHeight: 1.5 }}>
@@ -1324,7 +1324,7 @@ export default function ProfilePage() {
                 {/* ── Gjendja 2 — Premium, pa biznes ────────────────── */}
                 <div className="card" style={cardStyle(g2)}>
                   <div className="card-hdr">
-                    <span className="card-title"><span aria-hidden="true">②</span> Gjendja 2 — Premium, pa biznes</span>
+                    <span className="section-title"><span aria-hidden="true">②</span> Gjendja 2 — Premium, pa biznes</span>
                     {badge(g2, 'aktive', hasBiz ? 'ke biznes' : 'kërkon Premium')}
                   </div>
                   <p style={{ fontSize: 11.5, color: '#767676', margin: '2px 0 12px', lineHeight: 1.5 }}>
@@ -1340,7 +1340,7 @@ export default function ProfilePage() {
                 {/* ── Gjendja 3 — Me biznes ─────────────────────────── */}
                 <div className="card" style={cardStyle(g3)}>
                   <div className="card-hdr">
-                    <span className="card-title"><span aria-hidden="true">③</span> Gjendja 3 — Me biznes</span>
+                    <span className="section-title"><span aria-hidden="true">③</span> Gjendja 3 — Me biznes</span>
                     {badge(g3, 'aktive', 'pa biznes')}
                   </div>
                   {g3 && myBiz ? (

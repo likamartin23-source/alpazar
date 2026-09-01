@@ -211,8 +211,8 @@ export default function EditListing() {
         .err{background:#FFF0EE;color:#C42B0F;border:0.5px solid #F09595;}
         .warn{background:#FFF8E1;color:#E65100;border:0.5px solid #FFB74D;}
         .card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;border:0.5px solid #eee;}
-        .card-title{font-size:13px;font-weight:700;color:#111;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
-        .card-title i{font-size:16px;color:#C42B0F;}
+        .section-title{font-size:13px;font-weight:700;color:#111;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+        .section-title i{font-size:16px;color:#C42B0F;}
         label{font-size:11px;font-weight:600;color:#555;display:block;margin-bottom:4px;}
         .field{margin-bottom:12px;}
         input[type=text],input[type=number],textarea,select{width:100%;border:1.5px solid #e0e0e0;border-radius:12px;padding:10px 13px;font-size:13px;font-family:inherit;outline:none;transition:border .15s;background:#fff;color:#111;}
@@ -265,7 +265,7 @@ export default function EditListing() {
           )}
 
           <div className="card">
-            <div className="card-title"><i className="ti ti-info-circle" aria-hidden="true" />Informacioni bazë</div>
+            <div className="section-title"><i className="ti ti-info-circle" aria-hidden="true" />Informacioni bazë</div>
 
             <div className="field">
               <label htmlFor="listing-title">Titulli *</label>
@@ -305,7 +305,7 @@ export default function EditListing() {
           </div>
 
           <div className="card">
-            <div className="card-title"><i className="ti ti-category" aria-hidden="true" />Kategoria *</div>
+            <div className="section-title"><i className="ti ti-category" aria-hidden="true" />Kategoria *</div>
             <div className="cat-grid">
               {categories.map(c => (
                 <button key={c.id}
@@ -321,7 +321,7 @@ export default function EditListing() {
           </div>
 
           <div className="card">
-            <div className="card-title"><i className="ti ti-map-pin" aria-hidden="true" />Vendndodhja *</div>
+            <div className="section-title"><i className="ti ti-map-pin" aria-hidden="true" />Vendndodhja *</div>
             <div className="field">
               <label htmlFor="listing-city">Qyteti *</label>
               <input
@@ -347,7 +347,7 @@ export default function EditListing() {
           </div>
 
           <div className="card">
-            <div className="card-title"><i className="ti ti-photo" aria-hidden="true" />Fotot (max {maxImages})</div>
+            <div className="section-title"><i className="ti ti-photo" aria-hidden="true" />Fotot (max {maxImages})</div>
 
             {existingImages.length > 0 && (
               <div style={{ marginBottom: 12 }}>
@@ -395,7 +395,7 @@ export default function EditListing() {
           </div>
 
           <div className="card">
-            <div className="card-title">
+            <div className="section-title">
               <i className="ti ti-video" aria-hidden="true" />
               Videot ({existingVideos.length + vid.count}/{vid.maxVideos < 0 ? '∞' : vid.maxVideos})
             </div>

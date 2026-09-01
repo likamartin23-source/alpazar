@@ -774,7 +774,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
         .stat-n{font-size:18px;font-weight:800;color:#111;}
         .stat-l{font-size:10px;color:#555;font-weight:500;margin-top:1px;}
         .card{background:#fff;border-radius:16px;margin:8px 12px 0;padding:16px;}
-        .card-title{font-size:13px;font-weight:800;color:#111;margin-bottom:14px;display:flex;align-items:center;gap:6px;}
+        .section-title{font-size:13px;font-weight:800;color:#111;margin-bottom:14px;display:flex;align-items:center;gap:6px;}
         .biz-chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:#444;background:#f4f4f4;border:1px solid #e2e2e2;border-radius:999px;padding:6px 11px;min-height:32px;text-decoration:none;cursor:default;}
         a.biz-chip{cursor:pointer;}
         .biz-panel-btn{min-height:44px;background:#fff;border:1px solid #e5e5e5;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;color:#111;display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:0 6px;text-align:center;}
@@ -1091,7 +1091,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
       {activeTab === 'about' && (
         <div id="tabpanel-about" role="tabpanel" aria-labelledby="tab-about" style={{ padding: '8px 0' }}>
           <div className="card">
-            <h2 className="card-title"><i className="ti ti-building-store" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Rreth biznesit</h2>
+            <h2 className="section-title"><i className="ti ti-building-store" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Rreth biznesit</h2>
             {biz.tagline && (
               <p style={{ fontSize: 13.5, color: '#C42305', fontWeight: 700, fontStyle: 'italic', marginBottom: 10 }}>“{biz.tagline}”</p>
             )}
@@ -1108,7 +1108,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           </div>
 
           <div className="card">
-            <h2 className="card-title"><i className="ti ti-map-pin" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Vendndodhja & Kontakti</h2>
+            <h2 className="section-title"><i className="ti ti-map-pin" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Vendndodhja & Kontakti</h2>
             {biz.address && (
               <div className="info-row">
                 <span className="info-icon" aria-hidden="true">📍</span>
@@ -1161,7 +1161,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
 
           {subcats.length > 0 && (
             <div className="card">
-              <h2 className="card-title"><i className="ti ti-tag" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Kategoritë</h2>
+              <h2 className="section-title"><i className="ti ti-tag" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Kategoritë</h2>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                 {subcats.map((s, i) => (
                   <span key={i} style={{ fontSize: 12, background: '#FFF8E1', color: '#7B5000', padding: '5px 12px', borderRadius: 20, fontWeight: 700, border: '1px solid #F5C84244' }}>
@@ -1181,7 +1181,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           {/* BP2 §B5 — Galeria e biznesit (rrjet fotosh); shfaqet vetëm kur ka foto. */}
           {Array.isArray(biz.gallery) && biz.gallery.length > 0 && (
             <div className="card">
-              <h2 className="card-title"><i className="ti ti-photo" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Galeria</h2>
+              <h2 className="section-title"><i className="ti ti-photo" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Galeria</h2>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
                 {biz.gallery.filter(Boolean).slice(0, 12).map((url, i) => (
                   <a key={i} href={url} target="_blank" rel="noopener noreferrer" style={{ display: 'block', aspectRatio: '1/1', borderRadius: 10, overflow: 'hidden', background: '#f2f2f2' }}>
@@ -1196,7 +1196,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           {/* FINAL §3.8 — Detajet e reja profesionale; secili rresht shfaqet vetëm kur plotësohet. */}
           {(biz.founded_year || biz.service_area || biz.delivery?.ka || biz.socials?.instagram || biz.socials?.facebook || biz.socials?.tiktok) && (
             <div className="card">
-              <h2 className="card-title"><i className="ti ti-building-store" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Detaje</h2>
+              <h2 className="section-title"><i className="ti ti-building-store" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Detaje</h2>
               {biz.founded_year ? <div className="info-row"><span className="info-icon" aria-hidden="true">📅</span><span className="info-text">Themeluar: <strong>{biz.founded_year}</strong></span></div> : null}
               {biz.service_area ? <div className="info-row"><span className="info-icon" aria-hidden="true">🗺️</span><span className="info-text">Zona e shërbimit: {biz.service_area}</span></div> : null}
               {biz.delivery?.ka ? <div className="info-row"><span className="info-icon" aria-hidden="true">🚚</span><span className="info-text">Dorëzim: Po{biz.delivery.detaje ? ` — ${biz.delivery.detaje}` : ''}</span></div> : null}
@@ -1215,7 +1215,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
 
           {(biz.nipt || biz.withdrawal_days || biz.legal_form || (biz.payment_methods && biz.payment_methods.length) || biz.return_policy || biz.warranty) && (
             <div className="card">
-              <h2 className="card-title"><i className="ti ti-scale" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Informacion ligjor</h2>
+              <h2 className="section-title"><i className="ti ti-scale" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Informacion ligjor</h2>
               {biz.legal_form ? <div className="info-row"><span className="info-icon" aria-hidden="true">🏢</span><span className="info-text">Forma ligjore: <strong>{biz.legal_form}</strong></span></div> : null}
               {biz.payment_methods && biz.payment_methods.length > 0 ? <div className="info-row"><span className="info-icon" aria-hidden="true">💳</span><span className="info-text">Pagesa: {biz.payment_methods.join(' · ')}</span></div> : null}
               {biz.return_policy ? <div className="info-row"><span className="info-icon" aria-hidden="true">↩️</span><span className="info-text">Kthimi: {biz.return_policy}</span></div> : null}
