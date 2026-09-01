@@ -4552,3 +4552,70 @@ dhe çfarë ka rëndësi.**
 ## Gjendja e prodhimit (matur tani)
 - `/api/version` → `9abd6c9` · `main` → `438acd5` · ndryshimi: **vetëm `.ops/*.md`**
 - Pra prodhimi pasqyron **gjithë kodin aplikativ**. Asnjë ngecje vendosjeje.
+
+---
+
+# [O43] · MATRICA E VULAVE TË IDENTITETIT — asnjë dy sipërfaqe s'tregojnë të njëjtat
+
+Përgjigje e drejtpërdrejtë e ankesës: *"shumë sisteme që janë te karta e shpalljes dhe te
+profili i brendshëm i administratorit nuk janë në vende të tjera."* **E matur — keni të drejtë.**
+
+`IdentityBadges` (fjalori kanonik, [O39]) është lidhur në **1 sipërfaqe të vetme: `/u`.**
+Të tria të tjerat i ndërtojnë vulat me dorë, secila me fjalorin e vet.
+
+## Matrica — 9 vula × 4 sipërfaqe
+
+| Vula | `/u` (kanonik) | `/profile` (i brendshëm) | `/listing` (shitësi) | `/biznese/[id]` |
+|---|:--:|:--:|:--:|:--:|
+| 👑 VIP / ⭐ Premium | ✅ | ✅ | ✅ | ❌ |
+| 🏢 Biznes | ✅ | ✅ | ✅ | ✅ |
+| **TrustBadge (X/100)** | ✅ | **❌** | ✅ | ✅ ×2 |
+| ⚡ Nivel | ✅ *(vetëm pts≥100)* | ✅ **(gjithmonë)** | ❌ | ❌ |
+| ⚡ N pikë | ✅ | ✅ | ❌ | ✅ |
+| 📦 Shitës aktiv | ✅ | ✅ | ✅ | ✅ |
+| 🛡 Admin | ❌ | ✅ | ✅ | ❌ |
+| 🆕 Anëtar i ri | ❌ | ✅ | ✅ | ❌ |
+| ✓ Verifikuar | ❌ | ✅ | ❌ | ❌ |
+| 🔒 Bisedë private | ❌ | ❌ | ✅ | ❌ |
+| ★ Vlerësimi | ❌ | ❌ | ❌ | ✅ |
+
+**Asnjë kolonë nuk përputhet me një tjetër.** Katër sipërfaqe → katër përgjigje të ndryshme
+për pyetjen "kush është ky shitës".
+
+## Katër fjalorë stilizimi paralelë për të njëjtën gjë
+
+| Sipërfaqja | Sistemi | Numri |
+|---|---|---|
+| `/listing` | `.schip .sch-*` (CSS) | 6 |
+| `/profile` | `.badge .b-*` (CSS) | 7 |
+| `/biznese/[id]` | **stile inline të shkruara me dorë** | 7 |
+| `/u` | `chip()` te `IdentityBadges` | 6 |
+
+Të katërt prodhojnë pothuajse të njëjtën pamje (`radius 9`, `padding 4px 10px`,
+`12.5px/700`) — **të riprodhuar nga e para katër herë.** Kjo është §4-bis e KUJTESA-s
+fjalë për fjalë: *"çdo përpunim u shtua si shtresë E RE pranë së vjetrës, pa hequr të vjetrën."*
+
+## Tri kontradikta konkrete (jo mungesa — konflikte)
+
+1. **`/profile` s'ka TrustBadge.** Është **e vetmja** sipërfaqe pa të. Pikërisht vendi ku
+   pronari do të shihte pikën e vet të besueshmërisë — ndërsa vizitorët e shohin kudo.
+2. **Niveli — politikë e kundërt nga i njëjti burim.** `IdentityBadges:65` e shfaq vetëm
+   `pts >= 100`, me arsyetimin e shkruar *"«🌱 Fillestar» për këdo është zhurmë"*.
+   `/profile:684` e shfaq **gjithmonë**, edhe Fillestarin. I njëjti `getLevel()`, dy vendime.
+3. **`/biznese/[id]` s'ka vulën Premium/VIP** — edhe pse krijimi i biznesit **kërkon Premium**
+   (`biznese/new/page.tsx:28`). Sipërfaqja ku statusi është i garantuar është e vetmja
+   që s'e tregon.
+
+## Ç'duhet bërë — vazhdimi i "1/n" të `[O39]`
+Commit-i `9abd6c9` e quajti veten **"1/n"**. Ky raport e mat **n = 3** dhe rendit:
+
+1. `/listing` → `<IdentityBadges subject={seller} activeListings={sellerCount} isBusiness={isBusinessListing} density="compact" />`
+   Ruaj si të veçanta vetëm ato që janë **kontekstuale**, jo identitare: 🔒 Bisedë private, 🛡 Admin.
+2. `/biznese/[id]` → i njëjti komponent me `isBusiness` — heq 7 blloqe stili inline
+   dhe **fiton vulën Premium/VIP që i mungon**.
+3. `/profile` → i njëjti komponent — **fiton TrustBadge-in që i mungon** dhe e heq
+   kontradiktën e Nivelit.
+4. Zgjeroje `IdentityBadges` me tri props opsionale për vulat që sot jetojnë vetëm në një vend:
+   `isAdmin` · `isNewMember` · `rating` — përndryshe migrimi i humbet ato.
+5. Pas migrimit, `.schip .sch-*` dhe `.badge .b-*` mbeten CSS e vdekur → fshiji
+   (ndryshe rikthehet §4-bis).
