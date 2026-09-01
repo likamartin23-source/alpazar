@@ -7,6 +7,7 @@ import { supabase } from '../../lib/supabase'
 import { useRealtimeTable } from '../../hooks/useRealtimeTable'
 import { SkeletonGrid } from '../components/Skeleton'
 import ListingCard from '../components/ListingCard'
+import { LISTING_SELECT } from '../../lib/listingSelect'
 
 export default function FavoritesPage() {
   const [listings, setListings] = useState<any[]>([])
@@ -26,7 +27,7 @@ export default function FavoritesPage() {
       // identitetin (biznes/person), unazen VIP dhe overlay-n "SHITUR".
       const { data } = await supabase
         .from('favorites')
-        .select('listing_id, created_at, listings(id,title,price,currency,city,images,video_poster,condition,is_active,is_premium,created_at,rank_tier,status,business_id,views_count,business:business_id(id,name,logo_url,is_verified),author:user_id(id,full_name,username,avatar_url,is_premium,trust_score))')
+        .select(`listing_id, created_at, listings(${LISTING_SELECT},is_active)`)
         .eq('user_id', session.user.id)
         .order('created_at', { ascending: false })
         .limit(50)
