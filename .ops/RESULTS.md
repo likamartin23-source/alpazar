@@ -3274,3 +3274,84 @@ Online» = `.shop-mini`. **Tre paraqitje, zero e përbashkët.**
    `LISTING_SELECT` — përndryshe projeksioni i shtatë do lindë javën tjetër.
 3. Pas kësaj, njësimi i **kartës së biznesit** (K2) bëhet i mundur, sepse çdo faqe do ketë
    `business:business_id(...)` në duar.
+
+---
+
+## [O26] · MATRICA E PLOTË: profil i brendshëm/i jashtëm × tre lloje vizitorësh + rrugët
+
+Pronari: «mungon vizitor si i huaj dhe vizitor si pronar + rruga për te profilet e jashtëm dhe anasjelltas».
+Ja matrica e plotë, me mënyrën e verifikimit shënuar për secilën.
+
+### A · PËRDORUESI
+
+| Vështrimi | Ç'shfaqet LIVE | Verifikuar me |
+|---|---|---|
+| **I brendshëm** `/profile` | Tabs: Profili · Shpalljet · Të ruajtura · Mesazhet · **Biznes**. Kartat: ✏️ Ndrysho · Ofertat · Analitika · Abonimi im · Siguri & privatësi · Fto miq. Plus «Dil ↗», «Ndaj», «Shiko publik» | **klikim** ✓ |
+| **I jashtëm — vizitori PRONAR** `/u/{vetja}` | Banderola «👁 Po e shikon profilin tënd publik», «✏️ Edito Profilin», «Kthehu te profili im», 4 stats, «🆕 I ri», «Trust Score 0/100» | **klikim** ✓ |
+| **I jashtëm — vizitor i kyçur JO-pronar** `/u/{tjetri}` | «💬 Dërgo Mesazh» · «＋ Ndiq» · «🏢 Shiko Biznesin»; 4 stats; «⚡ 135 pikë»; çipi «🏢 BIZNES»; PA banderolë, PA Edito | **pamje ekrani** ✓ |
+| **I jashtëm — vizitor I HUAJ** (pa sesion) | I njëjti degëzim: `isOwnProfile = user ? user.id===profile.id : !!initialIsOwn` → `false` → sheh Mesazh+Ndiq | **kod** ✓ · pamje ✗ (bllokuar, §D) |
+
+### B · BIZNESI
+
+| Vështrimi | Degëzimi në kod | Verifikuar me |
+|---|---|---|
+| **I brendshëm — paneli** | `isOwner && !asVisitor` (:475) → shiriti **«Vepro si: Unë / Biznesi»**, tabs Biznesi·Shpalljet·Vlerësimet·Mesazhet·Analitika, «Plani … trashëgim» | **kod** ✓ · pamje ✗ (kërkon sesionin e adminit) |
+| **I jashtëm — vizitori PRONAR** | `asVisitor=true` → «**Ti je pronari — profili yt →**» (:935) + «← Kthehu te menaxhimi» | **kod** ✓ |
+| **I jashtëm — vizitor i kyçur JO-pronar** | «**Pronari — shiko profilin →**» · Mesazh · Ndiq · ndaj · «Mbyllur tani» · «0% komision» · 4 stats · «👁 108 shikime · 🔴 1 duke shikuar» | **pamje ekrani** ✓ |
+| **I jashtëm — vizitor I HUAJ** | I njëjti si më sipër (`isOwner=false`) | **kod** ✓ |
+
+### C · RRUGËT — të dyja kahet
+
+| Rruga | Gjendja |
+|---|---|
+| `/profile` → «Shiko publik» → `/u/{vetja}` | ✅ **klikim** (butoni s'ka `href`, navigon me `window.location.href`) |
+| `/u/{vetja}` → «Kthehu te profili im» → `/profile` | ✅ kod (:352 banderola + butoni i kthimit) |
+| `/u/{id}` → «🏢 Shiko Biznesin» → `/biznese/{id}` | ✅ **klikim** |
+| `/biznese/{id}` → «★ Pronari — shiko profilin» → `/u/{owner}` | ✅ **klikim** (197×44) |
+| Paneli i biznesit → «Shiko faqen publike» ↔ «Kthehu te menaxhimi» | ✅ kod (`asVisitor`) |
+| kartë → shpallje → shitës → biznes → pronar | ✅ **klikim**, i plotë e dykahësh (O19-D §A) |
+
+**Rrugët ekzistojnë të gjitha.** Problemi nuk është rruga — është **çfarë bart karta gjatë rrugës** ([O25]).
+
+### D · GJETJE TË REJA nga ky kalim
+
+**1. Portat e kyçjes për vizitorin e huaj — TË SAKTA te «Ndiq», jo te «Mesazh»**
+```
+/u        toggleFollow:149  -> if (!user)   { location.href='/auth/login' }  ✅
+/biznese  toggleFollow:252  -> if (!userId) { location.href='/auth/login' }  ✅
+/u        «Dërgo Mesazh»:307 -> location.href='/messages?with=…'  (pa portë)
+```
+
+**2. Rrugët private kthejnë 200 te vizitori i huaj — portë vetëm në klient**
+```
+pa cookie:  /messages 200 · /profile 200 · /favorites 200 · /biznese/new 200
+```
+Vetëm `/admin` mbrohet te `middleware.ts`. Të dhënat mbrohen nga RLS, ndaj **s'është vrimë sigurie**,
+por prodhon një «flash» të faqes para ridrejtimit dhe i bën këto rrugë 200 për crawler-at.
+(Middleware:99 e thotë me qëllim: «faqja rendon si vizitor… Vetëm rifreskim, PA redirect».)
+
+**3. ⛔ Faqja RRËZOHET kur cookie/localStorage s'janë të arritshme**
+E provova me `iframe sandbox="allow-scripts"` (origjinë e errët → pa ruajtje):
+```
+/u/{id}  ->  «Diçka shkoi gabim! Gabimi u raportua automatikisht. Provo sërish ose rifresko faqen.»
+```
+Kjo prek përdorues realë: shfletues me **site-data të bllokuar**, modalitet privat strikt, ose
+politika ndërmarrjeje. Kërkon `try/catch` rreth çdo leximi/shkrimi te `localStorage`/`document.cookie`.
+
+**4. Devijime nga caku `03_Gjendja_Cak_Harmonizuar.html`**
+| Caku | Live |
+|---|---|
+| A/A1/A2: unazë «72 · I besueshëm» + «**Besueshmëria** 72/100» | vetëm tekst «**Trust Score** 0/100» (anglisht) — vendimi **G5** kërkon fjalën «Besueshmëria» |
+| B2: «📍 Harta» | **mungon** — vendimi **G5** e kërkon te `/biznese` |
+| B2: «📞 Telefono» · «⏱️ Përgjigjet ~1 orë» · «NIPT ✓» | **mungojnë të treja** |
+| A: 4 kuti stats te `/profile` (vendimi **B2**) | **3 kuti**: «Shpallje aktive · Shikime totale · Niveli» |
+
+**Jo defekt (verifikuar para se ta raportoja):** unaza e besueshmërisë nuk shfaqet te
+«Administratori Alpazar» sepse `trust_score_visible = **false**` në bazë (Martineli e ka `true`).
+Privatësia respektohet — korrekt.
+
+### E · Bllokues
+- Pamja e vizitorit **të huaj** kërkon një origjinë tjetër (alias-i `alpazar-personal-accaunt-s-projects.vercel.app`
+  → pa cookie, me ruajtje funksionale). Ekstensioni **kërkon leje për atë host** — pronari duhet ta japë.
+- Pamja e **panelit të biznesit (B i brendshëm)** dhe e **vizitorit-pronar të biznesit (B1)** kërkojnë
+  sesionin e llogarisë **Administratori Alpazar** në dritaren e ekstensionit.
