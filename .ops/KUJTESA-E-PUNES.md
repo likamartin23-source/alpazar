@@ -172,3 +172,39 @@ push-i i `e0b8114`. Kjo është arsyeja që pronari «nuk i shihte ndryshimet».
   («Shpallja nuk ekziston») ekzekutohet PARA `WITH CHECK` të RLS-së, ndaj prova s'dëshmon asgjë.
   Pret vendimin e pronarit (rekomandim: lexo `pg_policies`, zero efekt anësor).
 - **Bllokues i mbetur:** zgjatimi Claude-in-Chrome i palidhur → verifikimi vizual/mobil ende ZERO.
+
+## ═══ RILIDHJE E KUJTESËS (01 shtator ~16:47) — ANKORA AKTUALE, lexoje këtë të parën ═══
+
+**PROTOKOLLI (i pandryshuar):** medium = depoja (`.ops/`). Të dy sesionet e LEXOJNË në fillim
+të çdo cikli. **CLOUD** rregullon KODIN (një dorë mbi kod; shkrimet DB/env i bllokon klasifikuesi
+→ terminali). **TERMINAL + PRONARI** verifikojnë LIVE (sy, telefon, DB). "U bë" vlen vetëm me provë
+që e sheh pronari (kontrata §2.3). Autoriteti i pronarit mbartet nga kanali `.ops`.
+
+**RREGULL I RI (mësim me kosto, O19):** kurrë mos shkruaj "live" pa kontrolluar `/api/version`
+= SHA i main OSE `scripts/verifiko-live.mjs`. Vercel s'krijoi deployment për 136 min (push-e pa build);
+"landed në kod" ≠ "live" ≠ "e pa pronari". verifiko-deploy.yml dështon saktë por s'njofton.
+
+**LIVE tani:** `/api/version` = `d2dc643` (deploy pas main; main head = `7a4e5e4`). a11y-pass `8c372a4`
+ende s'ka zbritur — verifiko kur të zbresë.
+
+**MBYLLUR + VERIFIKUAR LIVE nga terminali:**
+- Pika online/offline te /messages → AlpazarAvatar poshtë-majtas, pa mbivendosje me ✓/🏢 (`4ace9b5`, verif. `32d6dc4`).
+- Defekti #2 "E promovuar" mbi çipin e shitësit — mbivendosja 65×14→0, çipi klikueshëm 0/2→2/2 (`5517efe`, verif. `6a429a2`). Hapi 2 i modelit 3-shkallësh punon te kartat e paguara.
+- O16/O17/O14.1 (invoice_autosend=false, migrimi C, grace=2). O18 hapi2 (kanoniku app_config.google_client_id).
+- /admin: ridrejtimi te / është KORREKT — llogaria e kyçur `afbe35fb` (Martinel Likaj) S'ËSHTË admin;
+  pronari i biznesit = `af3e3d5b`. NUK është defekt (mbyll shqetësimin e vjetër të /admin).
+
+**NË PRITJE deploy+verifikim:** pass-i a11y ≥44px (`8c372a4`): FavoriteButton (44 tejdukshme),
+footer social (44), Kthehu /biznese (44), install-float mbyll (44), ai-close (44).
+
+**PRIORITETI 2 (defekt i ri, terminali O19-D/E) — punë për cloud-in:**
+- **Galeria /listing:** 9 pika ndërrimi = butona 7×7px; `overflow-x:visible` në 5 nivele prindërish +
+  `scroll-snap:none` → PA SWIPE; zero shigjeta prev/next jashtë lightbox-it. Në telefon, fotot 2–9
+  arrihen vetëm me objektiv 7×7. Çdo shpallje me shumë foto e ka.
+- Prekje <44px të mbetura: butonat e zinxhirit ("Shiko biznesin →" 302×36, "Shiko profilin →" 302×36,
+  "🏢 Shiko Biznesin" 155×39; "★ Pronari" 197×44 = OK). `.card-seller-ov` 64×22 (lartësia).
+- **next/link:** karta = `div[role=link][tabindex=0]` (a11y OK) por pa `href` → s'hapet në skedë të re,
+  s'kopjohet lidhja, s'e ndjekin crawler-at. Kryefaqja: 19 ankera, 0 drejt /listing/.
+- Robustësi #2 (sugjerim terminali): `bottom:32` me hapësirë 4px është i ngushtë → `bottom:34` ose gap-variabël.
+
+**Shëndet (pa defekt):** /listing CLS=0, TTFB 87ms, 0 gabime konsole; 8 faqe: 0 img pa alt, 1 h1 secila.
