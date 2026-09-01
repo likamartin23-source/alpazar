@@ -121,7 +121,8 @@ export default function ListingPageClient({ params, initialListing, initialSelle
 
 
   async function submitReview() {
-    if (!user || !seller || reviewStars === 0) return
+    if (!user) { window.location.href = '/auth/login'; return }
+    if (!seller || reviewStars === 0) return
     setReviewSaving(true); setReviewMsg('')
     try {
       // Kontroll: a ka biseduar user-i me shitësin? (proxy për blerje të verifikuar)
@@ -530,7 +531,8 @@ export default function ListingPageClient({ params, initialListing, initialSelle
 
   async function sendMsg() {
     const text = draft.trim()
-    if (!text || !user || !seller || sending) return
+    if (!user) { window.location.href = '/auth/login'; return }
+    if (!text || !seller || sending) return
     setSending(true)
     setDraft('')
     if (inputRef.current) inputRef.current.style.height = 'auto'

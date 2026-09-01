@@ -7,6 +7,7 @@
 ## 0. Burimet e kujtesës (të lidhura)
 - **CLAUDE.md** — kujtesa KANONIKE e projektit (rregullorja §8, kontrata §2, kurthet). Mbi të gjitha.
 - **docs/** — autopsitë: `AUTOPSIA-BLLOKUT-2026-09-01.md`, `SUPERAUTOPSIA.md`, `MEGAAUTOPSIA-*`, `AUDITI-I-SISTEMEVE.md`.
+- **docs/bllok/** — MATERIALET E MIRATUARA TË BLLOKUT (imazhet HTML që dha pronari): `01_Blueprint_Autopsi_Perfundimtare.html`, `02_Autopsi_Realtime.html`, `03_Gjendja_Cak_Harmonizuar.html`. Hapi çdonjë në shfletues për pamjen-cak (A/B/C/D/E, organigramat). Rregull: imazhi fiton.
 - **.ops/** — kanali live: `ORDERS.md` (cloud→terminal), `RESULTS.md` (terminal→cloud), `DOREZIMI.md` (dorëzimi i terminalit), `PROTOKOLLI.md` (cikli).
 - **Notion** — burimi zyrtar i bllokut: "🏁 BLLOKU PËRFUNDIMTAR 2" + Gjendja-cak + 3 organigramat. Rregull: **imazhi fiton mbi kodin**.
 
@@ -35,6 +36,7 @@
 - **Kartat "Biznese Online" — RREGULLUAR (`a8d65db`):** query-t (page.tsx+HomeClient) merrnin fusha pa tier/verifikim → "⭐ Premium" i ngurtësuar + unazë "falas" + pa ✓ (kontradiktë). Tani marrin is_verified/is_premium/has_boost/expires; ylli gatohet me tier!=='free'.
   - **MBETET (harmonizim i thellë):** "Biznese Online" të burohet nga entiteti `businesses`, jo shtresa e vjetër shop_* mbi profil; lidhja tani përdor id-në e profilit me rënie te owner_id.
 - **Vulat VIP te shopet — RREGULLUAR (`2b14ff4`):** kryefaqe + kërkim mbanin vetëm ⭐ Premium (kërkimi i ngurtësuar); tani tier-aware (👑 VIP / ⭐ Premium); search merr has_boost. Mbetet: `.badge-vip` te ui-refine.css (VIP stilohet inline).
+- **Portat e kyçjes te /listing — RREGULLUAR (`+`):** "Dërgo vlerësimin" (:124) dhe "Dërgo mesazh" (:533) dështonin NË HESHTJE pa sesion; tani ridrejtojnë te /auth/login si pjesa tjetër e skedarit.
 - **UX i mbetur (jo defekt, vendim):** galeria nuk rrëshqitet në desktop-web — shigjetat vetëm brenda lightbox-it; autoplay vetëm për shpallje pa foto (me qëllim). Vendim pronari nëse duhet swipe/shigjeta në desktop.
 - **Konfirmime nga admin data-layer (jo defekte të reja):** nipt_mungon=true (§4.7), admin_pin i paziguar (§5), gjurmë admin 24h=0 vs audit=46 (§1.4 admin_log humbet), listings_total=7 por active=2 (5 jo-aktive s'duken).
 - **Borxh teknik i mbetur (nga terminali, jo urgjent):** (2) shtresa e navigimit `window.location.href` → `next/link` (SEO/UX); (3) `/profile` të hyjë te grupi i komponentëve (TrustBadge/useIsOnline/ListingCard); (4) `Badges.tsx` — hiq `isOnline`/`buildBadges`/komponentin (të vdekur), ruaj `getLevel`+`isNewMember`; (5) TrustBadge të marrë të njëjtat hyrje kudo (profili i pronarit, jo `biz.created_at`).

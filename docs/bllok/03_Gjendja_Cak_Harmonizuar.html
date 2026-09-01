@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ALPAZAR — Gjendja-cak e harmonizuar (vizualizim)</title>
+<style>
+  :root{--yellow:#F5C842;--yhi:#F8D24E;--ylo:#EEB828;--red:#E63312;--redd:#C42305;--ink:#141210;--cream:#FFFBEA;--line:#e7e0cf;--muted:#6d675e;--green:#0E7A35;--greenl:#16a34a;--blue:#185FA5;--gold:#D4AF37;}
+  *{box-sizing:border-box}
+  body{margin:0;background:#f0ece0;color:var(--ink);font-family:'Plus Jakarta Sans',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5;font-size:14px}
+  .wrap{max-width:1180px;margin:0 auto;padding:26px 16px 70px}
+  .doc-h{background:linear-gradient(160deg,#1a1712,#2a241c);color:#fff;border-radius:18px;padding:26px 26px;margin-bottom:8px}
+  .doc-h h1{margin:0 0 6px;font-size:23px}
+  .doc-h p{margin:4px 0 0;color:#d9d2c4;font-size:13px;max-width:80ch}
+  .badge-harm{display:inline-block;background:rgba(22,163,74,.18);color:#9ff0bd;border:1px solid rgba(22,163,74,.35);font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;margin-top:10px}
+  h2.sec{font-size:15px;font-weight:800;color:var(--redd);margin:34px 0 4px;padding:8px 12px;background:#fff;border-left:5px solid var(--red);border-radius:0 10px 10px 0}
+  .subt{font-size:12.5px;color:var(--muted);margin:2px 0 12px 12px}
+  .row{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+  .col{flex:1 1 320px;min-width:300px;max-width:360px}
+  .cap{font-size:12.5px;font-weight:800;color:var(--ink);margin:0 0 7px;display:flex;align-items:center;gap:7px}
+  .cap .n{background:var(--ink);color:var(--yellow);width:22px;height:22px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+  .cap .who{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px}
+  .who.own{background:#111;color:var(--yellow)} .who.vis{background:#eef4ff;color:#185FA5} .who.in{background:#EAF3DE;color:#3B6D11}
+  /* phone */
+  .phone{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 10px 30px -14px rgba(0,0,0,.3)}
+  .ph-head{background:linear-gradient(135deg,#151515,#1c1c1c);color:#fff;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;font-size:12px}
+  .ph-head .lk{color:var(--yellow);font-weight:700}
+  .cover{height:66px;background:linear-gradient(135deg,var(--yellow),var(--red));position:relative}
+  .banner{background:#111;color:var(--yellow);font-size:10.5px;font-weight:700;padding:7px 11px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .banner .bk{background:var(--yellow);color:#111;border-radius:6px;padding:3px 8px;font-size:10px;font-weight:800}
+  .vs-bar{background:#FFF8E1;border-bottom:1px solid #e8c878;padding:6px 11px;display:flex;align-items:center;gap:8px;font-size:11px}
+  .vs-seg{display:inline-flex;background:#fff;border:1px solid #e0c070;border-radius:999px;overflow:hidden}
+  .vs-seg b{background:#111;color:var(--yellow);padding:2px 9px;font-size:10px}
+  .vs-seg span{padding:2px 9px;font-size:10px;color:#7B5000}
+  .idbox{padding:0 12px 10px;margin-top:-26px}
+  .av{width:56px;height:56px;border-radius:50%;padding:4px;box-sizing:border-box;position:relative;display:inline-block;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+  .av.prem{background:linear-gradient(135deg,#F5C842,#E63312);animation:pp 2.6s ease-in-out infinite}
+  .av.vip{background:linear-gradient(135deg,#D4AF37,#E63312);animation:vp 2.2s ease-in-out infinite}
+  .av.free{background:#e2e2e2}
+  @keyframes pp{0%,100%{box-shadow:0 0 0 0 rgba(245,200,66,.55)}50%{box-shadow:0 0 0 6px rgba(245,200,66,0)}}
+  @keyframes vp{0%,100%{box-shadow:0 0 0 0 rgba(212,175,55,.6)}50%{box-shadow:0 0 0 7px rgba(212,175,55,0)}}
+  .av .in{width:100%;height:100%;border-radius:50%;background:#fff;padding:2px;box-sizing:border-box}
+  .av .ini{width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,#F5C842,#E63312);color:#fff;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center}
+  .av .bd{position:absolute;width:19px;height:19px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:9px}
+  .av .bd.biz{right:-3px;bottom:-3px;background:#111;color:#fff}
+  .av .bd.vrf{right:-3px;bottom:-3px;background:#16a34a;color:#fff}
+  .av .bd.crown{right:-3px;top:-3px;background:var(--gold);color:#fff}
+  .av .bd.star{right:-3px;top:-3px;background:#F5C842;color:#7A4A00}
+  .av .dot{position:absolute;left:-1px;bottom:-1px;width:13px;height:13px;border-radius:50%;border:2px solid #fff}
+  .av .dot.on{background:#16a34a}
+  .nm{font-size:16px;font-weight:800;margin:6px 0 2px;display:flex;align-items:center;gap:6px}
+  .uname{font-size:11.5px;color:#888;margin-bottom:5px}
+  .badges{display:flex;gap:5px;flex-wrap:wrap;margin:4px 0 8px}
+  .bg{font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:10px}
+  .bg.adm{background:#F3ECFE;color:#7C3AED}.bg.prem{background:#FEF6DA;color:#A87900}.bg.vip{background:linear-gradient(135deg,#FFE99A,#FBB000);color:#5a2600}.bg.biz{background:#E7F8F1;color:#0B8A5A}.bg.vrf{background:#EAF3DE;color:#3B6D11}.bg.lvl{background:#EEF4FF;color:#185FA5}.bg.act{background:#EEF4FF;color:#185FA5}.bg.rat{background:#FEF6DA;color:#A87900}
+  /* NEW harmonized reputation strip */
+  .rep{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:#FBF7EC;border:1px dashed #E8C878;border-radius:10px;padding:7px 10px;margin:6px 0 8px}
+  .rep .pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800}
+  .rep .pts{color:#185FA5}.rep .lvl{color:#3B6D11}
+  .trust{display:inline-flex;align-items:center;gap:7px}
+  .ring{width:34px;height:34px;border-radius:50%;background:conic-gradient(#185FA5 0 72%,#e0e0e0 72% 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .ring i{width:26px;height:26px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#185FA5;font-style:normal}
+  .trust .tl{font-size:10.5px;line-height:1.25}.trust .tl b{color:#185FA5}
+  .harm-tag{background:#16a34a;color:#fff;font-size:8px;font-weight:800;padding:1px 5px;border-radius:5px;vertical-align:middle;margin-left:4px}
+  .stats{display:flex;gap:16px;margin:6px 0 10px}
+  .stats .s{text-align:center}.stats .s b{font-size:15px;font-weight:800;display:block}.stats .s span{font-size:9.5px;color:#888}
+  .acts{display:flex;gap:6px;flex-wrap:wrap}
+  .btn{border:none;border-radius:20px;padding:8px 12px;font-size:11.5px;font-weight:700;font-family:inherit;display:inline-flex;align-items:center;gap:5px}
+  .btn.red{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff}.btn.y{background:#F5C842;color:#111}.btn.dk{background:#111;color:#F5C842}.btn.gh{background:#fff;border:1px solid #ddd;color:#333}
+  .tabs{display:flex;border-top:1px solid #eee;border-bottom:1px solid #eee;margin-top:6px}
+  .tabs .t{flex:1;text-align:center;padding:9px 4px;font-size:10.5px;font-weight:600;color:#666;border-bottom:2px solid transparent}
+  .tabs .t.on{color:var(--redd);border-bottom-color:var(--redd);font-weight:800}
+  .pcards{padding:9px}
+  .pc{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #eee;border-radius:11px;padding:9px 10px;margin-bottom:7px}
+  .pc .ic{width:30px;height:30px;border-radius:8px;background:#161616;color:#F5C842;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+  .pc .tx b{font-size:11.5px;display:block}.pc .tx span{font-size:9.5px;color:#888}
+  .pc .arw{margin-left:auto;color:#C42B0F}
+  .trav{background:#111;color:#F5C842;border-radius:11px;padding:9px 11px;margin:4px 9px 9px;font-size:11.5px;font-weight:800;display:flex;align-items:center;justify-content:space-between}
+  .info-row{display:flex;align-items:center;gap:6px;font-size:11px;color:#555;margin:3px 0}
+  /* listing card */
+  .lcard{width:200px;background:#fff;border:1px solid #eee;border-radius:14px;overflow:hidden;box-shadow:0 6px 18px -12px rgba(0,0,0,.2);animation:fl 6s ease-in-out infinite}
+  @keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  .lc-img{aspect-ratio:4/3;background:linear-gradient(135deg,#FBF7E8,#F2EAD0);position:relative;display:flex;align-items:center;justify-content:center;color:#cbb98a;font-size:26px}
+  .lc-badge{position:absolute;top:6px;left:6px;background:#111;color:#F5C842;font-size:9px;font-weight:700;padding:2px 7px;border-radius:999px}
+  .lc-vip{position:absolute;top:6px;right:6px;font-size:9px;font-weight:800;color:#fff;background:linear-gradient(135deg,#D4AF37,#E63312);padding:2px 8px;border-radius:999px}
+  .lc-star{position:absolute;top:6px;right:6px;width:20px;height:20px;border-radius:50%;background:#F5C842;color:#7A4A00;display:flex;align-items:center;justify-content:center;font-size:11px}
+  .lc-seller{position:absolute;left:6px;bottom:6px;display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.5);border-radius:999px;padding:2px 9px 2px 3px;color:#fff;font-size:10px;font-weight:600}
+  .lc-seller .sa{width:20px;height:20px;border-radius:50%;padding:2px;box-sizing:border-box;position:relative}
+  .lc-seller .sa .si{width:100%;height:100%;border-radius:50%;background:#E8792B;color:#fff;font-size:7px;display:flex;align-items:center;justify-content:center;font-weight:700}
+  .lc-seller .sa .sb{position:absolute;right:-2px;bottom:-2px;width:11px;height:11px;border-radius:50%;background:#111;border:1.5px solid #fff;font-size:6px;display:flex;align-items:center;justify-content:center;color:#fff}
+  .lc-seller .sa .sd{position:absolute;left:-1px;bottom:-1px;width:8px;height:8px;border-radius:50%;background:#16a34a;border:1.5px solid #000}
+  .lc-save{position:absolute;right:6px;bottom:6px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;font-size:13px}
+  .lc-body{padding:8px 10px 10px}
+  .lc-title{font-size:12.5px;font-weight:700}
+  .lc-price{font-size:13px;font-weight:800;color:var(--redd)}
+  .lc-meta{display:flex;justify-content:space-between;font-size:10px;color:#6B6B6B;margin-top:2px}
+  .lc-stats{display:flex;gap:9px;margin-top:4px;font-size:10px}
+  .lc-stats .e{color:#6B6B6B;font-weight:600}.lc-stats .l{color:#C42B0F;font-weight:700}
+  .arrow-note{font-size:11px;color:var(--muted);background:#fff;border:1px dashed var(--line);border-radius:10px;padding:8px 12px;margin:10px 0}
+  figure{margin:6px 0 0;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
+  figure svg{width:100%;height:auto;display:block}
+  .legend{font-size:11px;color:var(--muted);margin-top:8px;display:flex;gap:14px;flex-wrap:wrap}
+  .legend span{display:inline-flex;align-items:center;gap:5px}
+  .sw{width:22px;height:0;border-top:2px solid}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="doc-h">
+  <h1>🎯 ALPAZAR — Gjendja-cak pas harmonizimit</h1>
+  <p>Kështu do të dukej çdo element pasi të harmonizohej gjithçka (e vjetra + e reja): identiteti i saktë kudo, sistemet e vlerësimit të vjetra (pikë + Besueshmëria) TË DUKSHME te profilet, butonat e grupuar, dhe cikli i mbyllur me butona udhëtues. Elementët e rivendosur shënohen me <span class="harm-tag">HARMONIZUAR</span>.</p>
+  <span class="badge-harm">✓ Vizualizim para autorizimit — asgjë s'është ndryshuar ende në kod</span>
+</div>
+
+<!-- A · PERDORUESI -->
+<h2 class="sec">A · "Përdoruesi" — profil i brendshëm + i jashtëm (pronar / jo-pronar)</h2>
+<div class="subt">Cikli: paneli i brendshëm (/profile) ↔ profili i jashtëm (/u), me banderolën e pronarit dhe butonin udhëtues "Shiko Biznesin".</div>
+<div class="row">
+
+  <div class="col">
+    <div class="cap"><span class="n">A</span> I brendshëm — paneli <span class="who in">/profile</span></div>
+    <div class="phone">
+      <div class="ph-head"><span>Profili im</span><span class="lk">Shiko publik · Dil ↗</span></div>
+      <div class="cover"></div>
+      <div class="idbox">
+        <div class="av prem"><div class="in"><div class="ini">ML</div></div><div class="bd star">★</div></div>
+        <div class="nm">Martinel Likaj</div>
+        <div class="uname">@martinel</div>
+        <div class="badges"><span class="bg prem">👑 Premium</span><span class="bg lvl">⚡ Tregtar</span></div>
+        <div class="rep"><span class="pill pts">⚡ 95 pikë</span><span class="trust"><span class="ring"><i>72</i></span><span class="tl"><b>I besueshëm</b><br>Besueshmëria 72/100</span></span><span class="harm-tag">HARMONIZUAR</span></div>
+        <div class="stats"><div class="s"><b>3</b><span>Shpallje</span></div><div class="s"><b>1</b><span>Të shitura</span></div><div class="s"><b>54</b><span>Ndjekës</span></div><div class="s"><b>2026</b><span>Anëtar</span></div></div>
+      </div>
+      <div class="tabs"><div class="t on">Profili</div><div class="t">Shpalljet</div><div class="t">Të ruajtura</div><div class="t">Mesazhet</div><div class="t">Biznes</div></div>
+      <div class="pcards">
+        <div class="pc"><div class="ic">📝</div><div class="tx"><b>Të dhënat</b><span>emri · username · qytet · bio (inline)</span></div><div class="arw">✏️</div></div>
+        <div class="pc"><div class="ic">🎁</div><div class="tx"><b>Fto miq</b><span>+50 pikë për çdo mik · linku yt</span></div><div class="arw">→</div></div>
+        <div class="pc"><div class="ic">📊</div><div class="tx"><b>Analitika</b><span>pamje · kontakte · CTR</span></div><div class="arw">→</div></div>
+        <div class="pc"><div class="ic">👑</div><div class="tx"><b>Abonimi im</b><span>Planet · pagesa</span></div><div class="arw">→</div></div>
+        <div class="pc"><div class="ic">🛡️</div><div class="tx"><b>Siguri &amp; privatësi</b><span>fjalëkalim · GDPR · Takedown</span></div><div class="arw">→</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <div class="cap"><span class="n">A1</span> I jashtëm — <span class="who own">vizitori PRONAR</span></div>
+    <div class="phone">
+      <div class="cover"></div>
+      <div class="banner"><span>👁 Po e shikon profilin tënd publik — kështu e shohin vizitorët</span><span class="bk">← Kthehu</span></div>
+      <div class="idbox" style="margin-top:8px">
+        <div class="av prem"><div class="in"><div class="ini">ML</div></div><div class="bd star">★</div></div>
+        <div class="nm">Martinel Likaj <span style="font-size:14px">👑</span></div>
+        <div class="rep"><span class="pill pts">⚡ 95 pikë</span><span class="trust"><span class="ring"><i>72</i></span><span class="tl"><b>I besueshëm</b><br>72/100</span></span><span class="harm-tag">HARMONIZUAR</span></div>
+        <div class="stats"><div class="s"><b>3</b><span>Shpallje</span></div><div class="s"><b>1</b><span>Të shitura</span></div><div class="s"><b>54</b><span>Ndjekës</span></div><div class="s"><b>2026</b><span>Anëtar</span></div></div>
+        <div class="acts"><button class="btn y">✏️ Edito Profilin</button><button class="btn dk">🏢 Shiko Biznesin</button></div>
+      </div>
+      <div class="tabs"><div class="t on">Shpalljet</div><div class="t">Rreth &amp; Vlerësime</div></div>
+      <div style="padding:9px;color:#999;font-size:11px;text-align:center">📭 shpalljet personale (pa business_id)</div>
+    </div>
+  </div>
+
+  <div class="col">
+    <div class="cap"><span class="n">A2</span> I jashtëm — <span class="who vis">vizitor JO-pronar</span></div>
+    <div class="phone">
+      <div class="cover"></div>
+      <div class="idbox" style="margin-top:8px">
+        <div class="av prem"><div class="in"><div class="ini">ML</div></div><div class="bd star">★</div><div class="dot on"></div></div>
+        <div class="nm">Martinel Likaj <span style="font-size:14px">👑</span></div>
+        <div class="rep"><span class="pill pts">⚡ 95 pikë</span><span class="trust"><span class="ring"><i>72</i></span><span class="tl"><b>I besueshëm</b><br>72/100</span></span><span class="harm-tag">HARMONIZUAR</span></div>
+        <div class="stats"><div class="s"><b>3</b><span>Shpallje</span></div><div class="s"><b>1</b><span>Të shitura</span></div><div class="s"><b>54</b><span>Ndjekës</span></div><div class="s"><b>2026</b><span>Anëtar</span></div></div>
+        <div class="acts"><button class="btn red">💬 Dërgo Mesazh</button><button class="btn gh">＋ Ndiq</button><button class="btn dk">🏢 Shiko Biznesin</button></div>
+      </div>
+      <div class="tabs"><div class="t on">Shpalljet</div><div class="t">Rreth &amp; Vlerësime</div></div>
+      <div style="padding:9px;color:#999;font-size:11px;text-align:center">pa banderolë · pa Edito (vizitor)</div>
+    </div>
+  </div>
+</div>
+
+<!-- B · BIZNESI -->
+<h2 class="sec">B · "Biznesi" — profil i brendshëm + i jashtëm (pronar / jo-pronar)</h2>
+<div class="subt">Biznesi = Page; "Vepro si" = ndërrimi admin. Besueshmëria (unazë) + pikët e trashëguara nga pronari TANI TË DUKSHME. Butoni udhëtues ★ Pronari → profili i pronarit.</div>
+<div class="row">
+
+  <div class="col">
+    <div class="cap"><span class="n">B</span> I brendshëm — pasqyra <span class="who in">Vepro si</span></div>
+    <div class="phone">
+      <div class="ph-head"><span>bnvhvh</span><span class="lk">Ndaj · Biznesi im</span></div>
+      <div class="vs-bar"><span style="font-weight:700;color:#7B5000">Vepro si:</span><span class="vs-seg"><span>Unë</span><b>Biznesi ▾</b></span></div>
+      <div class="cover"></div>
+      <div class="idbox">
+        <div class="av vip"><div class="in"><div class="ini">BN</div></div><div class="bd crown">👑</div><div class="bd biz" style="left:-3px;bottom:-3px;right:auto">🏢</div></div>
+        <div class="nm">bnvhvh</div>
+        <div class="uname">@bnvhvh · ★ 4.9 (127)</div>
+        <div class="badges"><span class="bg vip">👑 VIP · Ekstra Boost</span><span class="bg biz">🏢 Biznes</span><span class="bg vrf">✓ Verifikuar</span></div>
+        <div class="rep"><span class="pill pts">⚡ 95 pikë</span><span class="trust"><span class="ring"><i>72</i></span><span class="tl"><b>I besueshëm</b><br>72/100</span></span><span class="harm-tag">HARMONIZUAR</span></div>
+        <div class="stats"><div class="s"><b>128</b><span>Shpallje</span></div><div class="s"><b>43</b><span>Të shitura</span></div><div class="s"><b>2.4K</b><span>Ndjekës</span></div><div class="s"><b>2024</b><span>Anëtar</span></div></div>
+      </div>
+      <div class="tabs"><div class="t on">Biznesi</div><div class="t">Shpalljet</div><div class="t">Vlerësimet</div><div class="t">Mesazhet</div><div class="t">Analitika</div></div>
+      <div class="pcards">
+        <div class="pc"><div class="ic">🏢</div><div class="tx"><b>Të dhënat e biznesit</b><span>logo · emri · kontakt · orar · ligjore</span></div><div class="arw">✏️</div></div>
+        <div class="pc"><div class="ic">📊</div><div class="tx"><b>Analitika e biznesit</b><span>metrika · kontakte (pa referral)</span></div><div class="arw">→</div></div>
+        <div class="pc"><div class="ic">⭐</div><div class="tx"><b>Vlerësimet</b><span>subjekt = biznes</span></div><div class="arw">→</div></div>
+        <div class="pc"><div class="ic">👑</div><div class="tx"><b>Plani</b><span>Ekstra Boost (trashëgim nga pronari)</span></div><div class="arw">→</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <div class="cap"><span class="n">B1</span> I jashtëm — <span class="who own">vizitori PRONAR</span></div>
+    <div class="phone">
+      <div class="cover"></div>
+      <div class="banner"><span>👁 Po e shikon faqen publike</span><span class="bk">← Kthehu te menaxhimi</span></div>
+      <div class="idbox" style="margin-top:8px">
+        <div class="av vip"><div class="in"><div class="ini">BN</div></div><div class="bd crown">👑</div><div class="bd biz" style="left:-3px;bottom:-3px;right:auto">🏢</div></div>
+        <div class="nm">bnvhvh</div>
+        <div class="uname">★ 4.9 (127) · 🟢 Online tani</div>
+        <div class="rep"><span class="pill pts">⚡ 95 pikë</span><span class="trust"><span class="ring"><i>72</i></span><span class="tl"><b>I besueshëm</b><br>72/100</span></span><span class="harm-tag">HARMONIZUAR</span></div>
+        <div class="info-row">👁 58K shikime · 🔴 7 duke shikuar · ⏱️ Përgjigjet ~1 orë</div>
+        <div class="trav">★ Ti je pronari <span style="color:#fff">— profili yt →</span></div>
+        <div class="acts"><button class="btn gh">✏️ Menaxho</button></div>
+      </div>
+      <div class="tabs"><div class="t on">Shpalljet</div><div class="t">Rreth &amp; Vlerësime</div></div>
+    </div>
+  </div>
+
+  <div class="col">
+    <div class="cap"><span class="n">B2</span> I jashtëm — <span class="who vis">vizitor JO-pronar</span></div>
+    <div class="phone">
+      <div class="cover"></div>
+      <div class="idbox" style="margin-top:8px">
+        <div class="av vip"><div class="in"><div class="ini">BN</div></div><div class="bd crown">👑</div><div class="bd biz" style="left:-3px;bottom:-3px;right:auto">🏢</div></div>
+        <div class="nm">bnvhvh</div>
+        <div class="uname">★ 4.9 (127) · 🟢 Online tani</div>
+        <div class="badges"><span class="bg vip">👑 VIP</span><span class="bg biz">🏢 Biznes</span><span class="bg act">📦 Shitës aktiv</span><span class="bg vrf">✓ Verifikuar</span></div>
+        <div class="rep"><span class="pill pts">⚡ 95 pikë</span><span class="trust"><span class="ring"><i>72</i></span><span class="tl"><b>I besueshëm</b><br>Besueshmëria 72/100</span></span><span class="harm-tag">HARMONIZUAR</span></div>
+        <div class="info-row">👁 58K shikime · 🔴 7 duke shikuar · ⏱️ Përgjigjet ~1 orë · 0% komision · NIPT ✓</div>
+        <div class="trav" style="background:#F3ECFE;color:#7C3AED"><span>★ Pronari · AA Administratori Alpazar</span><span>Shiko profilin →</span></div>
+        <div class="acts"><button class="btn red">💬 Mesazh</button><button class="btn gh">📞 Telefono</button><button class="btn gh">＋ Ndiq</button><button class="btn gh">📍 Harta</button></div>
+      </div>
+      <div class="tabs"><div class="t on">Shpalljet</div><div class="t">Rreth &amp; Vlerësime</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- C · KARTA -->
+<h2 class="sec">C · Karta e shpalljes — si biznes / si përdorues</h2>
+<div class="subt">E njëjta kartë e njësuar (notim · 👁+🔴 · Ruaj · vula ★/👑). Ndryshon vetëm çipi udhëtues i shitësit: biznes → /biznese (🏢) · person → /u (pikë online). KJO ËSHTË E NJËJTA KUDO (kryefaqe/kërkim/kategori/të ruajtura) — Gap 1/2 i mbyllur.</div>
+<div class="row" style="align-items:center">
+  <div>
+    <div class="cap"><span class="n">C1</span> Karta <span class="who in">SI BIZNES</span> → /biznese</div>
+    <div class="lcard">
+      <div class="lc-img">🖼️<span class="lc-vip">👑 VIP</span>
+        <div class="lc-seller"><span class="sa" style="background:linear-gradient(135deg,#D4AF37,#E63312)"><span class="si">BN</span><span class="sb">🏢</span></span> bnvhvh</div>
+        <div class="lc-save">🔖</div>
+      </div>
+      <div class="lc-body"><div class="lc-title">Konsulencë ligjore</div><div class="lc-price">6.000 L</div><div class="lc-meta"><span>📍 Lezhë</span><span>2d</span></div><div class="lc-stats"><span class="e">👁 128</span><span class="l">🔴 3</span></div></div>
+    </div>
+  </div>
+  <div>
+    <div class="cap"><span class="n">C2</span> Karta <span class="who vis">SI PËRDORUES</span> → /u</div>
+    <div class="lcard">
+      <div class="lc-img">🖼️<span class="lc-star">★</span>
+        <div class="lc-seller"><span class="sa" style="background:linear-gradient(135deg,#F5C842,#E63312)"><span class="si">AN</span><span class="sd"></span></span> Ana</div>
+        <div class="lc-save">🔖</div>
+      </div>
+      <div class="lc-body"><div class="lc-title">Laptop për shitje</div><div class="lc-price">45.000 L</div><div class="lc-meta"><span>📍 Durrës</span><span>5h</span></div><div class="lc-stats"><span class="e">👁 12</span><span class="l">🔴 1</span></div></div>
+    </div>
+  </div>
+  <div style="flex:1 1 300px;min-width:280px">
+    <div class="arrow-note"><b>Karta e biznesit është E VEÇANTË</b> — avatar me unazë sipas tier-it + shenja 🏢, emri i biznesit, link → <code>/biznese/[id]</code>. Karta e personit: unazë + pikë online, link → <code>/u/[id]</code>. Të dyja: notim, 👁+🔴, Ruaj 🔖, vula ★/👑. <br><br><b>E njëjta kartë biznesi shfaqet në DY vende:</b> te feed-i/kërkimi (si shpallje) DHE si vetë biznesi (te lista e bizneseve / faqja e vet).</div>
+  </div>
+</div>
+
+<!-- D · SHPALLJA NGA BRENDA -->
+<h2 class="sec">D · Shpallja nga brenda (/listing/[id]) — modeli aktual, i harmonizuar</h2>
+<div class="subt">Kur klikohet karta te kryefaqja, hapet shpallja e plotë me të gjitha të dhënat. Këtu e harmonizuar: butonat ekskluzivë TË GRUPUAR në një rresht (Gap 6), blloku i shitësit me pikë + Besueshmëri të dukshme (Gap 3/4), një lidhje e vetme biznesi (Gap 5), ★ Pronari udhëtues. Referral NUK është këtu (personal).</div>
+<div class="row">
+  <div class="col" style="max-width:400px">
+    <div class="cap"><span class="n">D</span> Shpallja e plotë <span class="who in">/listing/[id]</span></div>
+    <div class="phone">
+      <div class="ph-head"><span>← Shpallja</span><span class="lk">↗ Ndaj</span></div>
+      <div style="aspect-ratio:16/11;background:linear-gradient(135deg,#FBF7E8,#F2EAD0);position:relative;display:flex;align-items:center;justify-content:center;font-size:34px;color:#cbb98a">🖼️
+        <span class="lc-badge" style="top:8px;left:8px">▶ VIDEO</span>
+        <div class="lc-save" style="top:8px;right:8px;bottom:auto;width:30px;height:30px">🔖</div>
+      </div>
+      <div style="padding:11px 13px">
+        <div class="badges"><span class="bg" style="background:#dcfce7;color:#166534">🟢 Në shitje</span><span class="bg vip">👑 VIP</span></div>
+        <div class="nm" style="font-size:18px">Konsulencë ligjore</div>
+        <div style="display:flex;align-items:center;gap:8px;margin:2px 0 6px"><span class="lc-price" style="font-size:18px">6.000 L</span><span class="bg" style="background:#FFF0EE;color:#C42305">🔔 Njoftomë</span></div>
+        <div class="info-row">📍 Lezhë · 📅 06 gush 2026 · 👁 128 shikime</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin:9px 0;padding:8px;background:#FBF7EC;border:1px dashed #E8C878;border-radius:11px">
+          <button class="btn gh" style="flex:1 1 auto">⭐ Vlerëso</button>
+          <button class="btn gh" style="flex:1 1 auto">🔖 Ruaj</button>
+          <button class="btn gh" style="flex:1 1 auto">↗ Ndaj</button>
+          <button class="btn gh" style="flex:1 1 auto">⚑ Raporto</button>
+          <span class="harm-tag" style="align-self:center">HARMONIZUAR · grup</span>
+        </div>
+        <div style="border:1px solid #eee;border-radius:13px;padding:11px;background:#fff">
+          <div style="font-size:9.5px;font-weight:800;color:#888;letter-spacing:.5px">SHITËSI</div>
+          <div style="display:flex;align-items:center;gap:9px;margin:6px 0">
+            <div class="av vip" style="width:46px;height:46px"><div class="in"><div class="ini" style="font-size:12px">BN</div></div><div class="bd crown" style="width:16px;height:16px">👑</div><div class="bd biz" style="left:-3px;bottom:-3px;right:auto;width:16px;height:16px">🏢</div></div>
+            <div><div style="font-weight:800;font-size:13px">bnvhvh</div><div style="font-size:10px;color:#888">Anëtar nga qershor 2026 · 🟢 Online tani</div></div>
+          </div>
+          <div class="badges"><span class="bg vip">👑 VIP</span><span class="bg biz">🏢 Biznes</span><span class="bg act">📦 Shitës aktiv</span><span class="bg vrf">✓ Verifikuar</span></div>
+          <div class="rep"><span class="pill pts">⚡ 95 pikë</span><span class="trust"><span class="ring"><i>72</i></span><span class="tl"><b>I besueshëm</b><br>Besueshmëria 72/100</span></span><span class="harm-tag">HARMONIZUAR</span></div>
+          <div class="info-row">📊 128 shpallje aktive · ⏱️ Përgjigjet ~1 orë</div>
+          <div class="acts" style="margin-top:6px">
+            <button class="btn dk" style="flex:1">🏢 Shiko biznesin →</button>
+            <button class="btn gh" style="flex:1">★ Pronari →</button>
+          </div>
+          <div style="font-size:9px;color:#0c6a2e;margin-top:5px;text-align:center">✓ një lidhje e vetme biznesi (dublimi u hoq)</div>
+        </div>
+        <div style="margin-top:11px"><div style="font-size:9.5px;font-weight:800;color:#888;letter-spacing:.5px">PËRSHKRIMI</div><div style="font-size:12px;color:#444;margin-top:4px;line-height:1.55">Ofrojmë shërbime ligjore profesionale dhe të besueshme për individë dhe biznese. Përvojë e gjerë në të drejtën civile e tregtare…</div></div>
+        <div style="margin-top:11px;background:#FFF0EE;border-radius:11px;padding:9px;display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:#C42305;font-weight:700">💬 Bisedë private me shitësin</span><button class="btn red" style="margin-left:auto">Shkruaj</button></div>
+      </div>
+    </div>
+  </div>
+  <div style="flex:1 1 300px;min-width:280px">
+    <div class="arrow-note"><b>Çka ndryshon nga sot (harmonizuar):</b><br>• Butonat ekskluzivë (Vlerëso·Ruaj·Ndaj·Raporto·Njoftomë) në NJË rresht, jo të shpërndarë në ~2000px (Gap 6).<br>• Blloku i shitësit tregon <b>⚡ pikë</b> + <b>🛡️ Besueshmëria 72/100</b> (unazë) — sistemi i vjetër i ringjallur (Gap 3/4).<br>• NJË lidhje biznesi ("Shiko biznesin"), pa dublim (Gap 5).<br>• ★ Pronari udhëton te profili i pronarit (/u).<br>• Referral s'është këtu — është personal ("Fto miq" te paneli).<br>• Ruaj, video, çmim, kusht, 👁, bisedë private — si sot.</div>
+  </div>
+</div>
+
+<!-- E · ORGANIGRAMAT -->
+<h2 class="sec">E · Organigramat e ndërveprimit dhe udhëtimit</h2>
+<div class="subt">Cikli i mbyllur: objekti social (shpallja) → identitetet që e orbitojnë → butonat udhëtues që i lidhin. Karta e biznesit shfaqet te shpallja DHE te biznesi.</div>
+<figure>
+<svg viewBox="0 0 980 470" role="img" aria-label="Organigrama e ndërveprimit dhe udhëtimit">
+  <defs>
+    <marker id="g" markerWidth="11" markerHeight="11" refX="8" refY="3.2" orient="auto"><path d="M0,0 L8,3.2 L0,6.4 Z" fill="#0E7A35"/></marker>
+    <marker id="r" markerWidth="11" markerHeight="11" refX="8" refY="3.2" orient="auto"><path d="M0,0 L8,3.2 L0,6.4 Z" fill="#C42305"/></marker>
+    <marker id="b" markerWidth="11" markerHeight="11" refX="8" refY="3.2" orient="auto"><path d="M0,0 L8,3.2 L0,6.4 Z" fill="#185FA5"/></marker>
+  </defs>
+  <!-- object center -->
+  <rect x="410" y="200" width="170" height="70" rx="14" fill="#111"/><text x="495" y="228" text-anchor="middle" font-size="13" font-weight="800" fill="#F5C842">SHPALLJA</text><text x="495" y="248" text-anchor="middle" font-size="10" fill="#d9d2c4">objekti social</text>
+  <!-- FEED -->
+  <rect x="60" y="30" width="200" height="70" rx="12" fill="#fff" stroke="#e7e0cf"/><text x="160" y="56" text-anchor="middle" font-size="12" font-weight="800">FEED / KËRKIM / KATEGORI</text><text x="160" y="76" text-anchor="middle" font-size="10" fill="#0c6a2e">karta e njësuar · identitet i saktë ✓</text>
+  <path d="M215 100 C 300 150, 380 190, 410 215" stroke="#0E7A35" stroke-width="1.6" fill="none" marker-end="url(#g)"/>
+  <!-- business external -->
+  <rect x="720" y="70" width="210" height="76" rx="12" fill="#f1faf3" stroke="#0E7A35"/><text x="825" y="96" text-anchor="middle" font-size="12" font-weight="800">BIZNESI (i jashtëm) /biznese</text><text x="825" y="114" text-anchor="middle" font-size="9.5" fill="#0c6a2e">unazë+🏢 · Besueshmëria · pikë · 👁🔴</text><text x="825" y="130" text-anchor="middle" font-size="9.5" fill="#185FA5">★ Pronari → /u · Mesazh/Telefono/Ndiq</text>
+  <!-- person external -->
+  <rect x="720" y="320" width="210" height="76" rx="12" fill="#f1faf3" stroke="#0E7A35"/><text x="825" y="346" text-anchor="middle" font-size="12" font-weight="800">PËRDORUESI (i jashtëm) /u</text><text x="825" y="364" text-anchor="middle" font-size="9.5" fill="#0c6a2e">unazë+online · Besueshmëria · pikë</text><text x="825" y="380" text-anchor="middle" font-size="9.5" fill="#185FA5">🏢 Shiko Biznesin · Mesazh/Ndiq</text>
+  <!-- listing -> business (seller) -->
+  <path d="M580 225 C 650 190, 690 150, 720 120" stroke="#0E7A35" stroke-width="1.6" fill="none" marker-end="url(#g)"/><text x="648" y="168" font-size="9.5" fill="#0c6a2e">Shitësi → Shiko biznesin</text>
+  <!-- listing -> person (owner) -->
+  <path d="M580 250 C 650 300, 690 330, 720 350" stroke="#C42305" stroke-width="1.6" fill="none" marker-end="url(#r)"/><text x="628" y="322" font-size="9.5" fill="#C42305">★ Pronari → profili</text>
+  <!-- business <-> person traveling -->
+  <path d="M825 146 V 320" stroke="#185FA5" stroke-width="1.8" fill="none" marker-end="url(#b)"/><path d="M845 320 V 146" stroke="#7C3AED" stroke-width="1.8" fill="none" marker-end="url(#b)"/>
+  <text x="852" y="240" font-size="9.5" fill="#185FA5" transform="rotate(90 852 240)">★ Pronari ↕ Biznesi im</text>
+  <!-- internal (owner) -->
+  <rect x="360" y="360" width="260" height="80" rx="12" fill="#fff" stroke="#e7e0cf"/><text x="490" y="384" text-anchor="middle" font-size="12" font-weight="800">I BRENDSHËM (pronar · login)</text><text x="490" y="402" text-anchor="middle" font-size="9.5" fill="#6d675e">Panel /profile ⇄ "Vepro si biznes"</text><text x="490" y="418" text-anchor="middle" font-size="9.5" fill="#0c6a2e">Biznes tab: G1 Planet · G2 Krijo · G3 Vepro si</text><text x="490" y="434" text-anchor="middle" font-size="9.5" fill="#185FA5">"Shiko publik" → jashtëm (banderolë pronari)</text>
+  <path d="M620 380 C 690 380, 720 380, 745 380" stroke="#0E7A35" stroke-width="1.4" fill="none" marker-end="url(#g)"/>
+  <path d="M700 146 C 640 260, 560 330, 520 360" stroke="#0E7A35" stroke-width="1.2" fill="none" stroke-dasharray="4 4" marker-end="url(#g)"/>
+  <!-- business card appears twice note -->
+  <rect x="60" y="360" width="260" height="80" rx="12" fill="#FFF8E1" stroke="#E8C878"/><text x="190" y="386" text-anchor="middle" font-size="11.5" font-weight="800" fill="#7B5000">Karta e BIZNESIT shfaqet 2 herë</text><text x="190" y="404" text-anchor="middle" font-size="9.5" fill="#7B5000">(1) te FEED/shpalljet — si shpallje biznesi</text><text x="190" y="420" text-anchor="middle" font-size="9.5" fill="#7B5000">(2) te lista e Bizneseve — si vetë biznesi</text>
+  <path d="M190 360 C 190 300, 260 260, 410 240" stroke="#EEB828" stroke-width="1.4" fill="none" stroke-dasharray="5 4" marker-end="url(#g)"/>
+  <path d="M320 400 C 500 440, 700 420, 760 396" stroke="#EEB828" stroke-width="1.2" fill="none" stroke-dasharray="5 4"/>
+</svg>
+<div class="legend"><span><span class="sw" style="border-color:#0E7A35"></span> ndërveprim / lidhje</span><span><span class="sw" style="border-color:#C42305"></span> ★ Pronari (biznes→person)</span><span><span class="sw" style="border-color:#185FA5"></span> udhëtim (Biznesi im / Shiko Biznesin)</span><span><span class="sw" style="border-color:#EEB828"></span> karta e biznesit në 2 vende</span></div>
+</figure>
+
+<div class="arrow-note" style="margin-top:16px"><b>Përmbledhje e harmonizimit të vizualizuar:</b> (A) përdoruesi ka panel të brendshëm + profil të jashtëm me banderolë pronari dhe pikë/Besueshmëri të dukshme; (B) biznesi njësoj + "Vepro si" + ★ Pronari; (C) karta e njësuar me çip udhëtues biznes/person, e njëjta kudo; (D) shpallja nga brenda me butonat e grupuar + blloku i shitësit me pikë/Besueshmëri + një lidhje biznesi; (E) cikli i mbyllur ku shpallja është objekti social dhe butonat udhëtues lidhin identitetet — me kartën e biznesit që shfaqet te shpallja DHE te biznesi. Kjo është gjendja-cak; me autorizimin tënd, kodi do të përkthehej saktë kështu.</div>
+
+</div>
+</body>
+</html>

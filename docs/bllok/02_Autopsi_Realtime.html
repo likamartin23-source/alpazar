@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="sq">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ALPAZAR — Autopsi Totale e Publikimit në Kohë Reale</title>
+<style>
+  :root{
+    --kuq:#E63312; --kuq-thelle:#C42305; --zi:#141210; --verdhe:#F5C842; --krem:#FFFBEA;
+    --jeshile:#0E7A35; --portokall:#B8690A; --gri:#6b6b6b; --kufi:#e7e2cf;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Plus Jakarta Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--krem);color:var(--zi);line-height:1.55}
+  .wrap{max-width:1000px;margin:0 auto;padding:28px 20px 80px}
+  header{background:linear-gradient(135deg,var(--zi),#2a2620);color:#fff;border-radius:18px;padding:26px 26px 22px;box-shadow:0 6px 24px rgba(0,0,0,.18)}
+  header h1{margin:0 0 6px;font-size:26px;font-weight:800;color:var(--verdhe)}
+  header .sub{font-size:13.5px;color:#e9e4d5;opacity:.95}
+  header .meta{margin-top:12px;font-size:12px;color:#cfc9b8;display:flex;gap:16px;flex-wrap:wrap}
+  header .meta b{color:var(--verdhe)}
+  h2{font-size:19px;margin:34px 0 10px;padding-bottom:7px;border-bottom:2px solid var(--verdhe);font-weight:800}
+  h3{font-size:15.5px;margin:20px 0 6px;font-weight:800;color:var(--kuq-thelle)}
+  p{margin:8px 0}
+  .lead{font-size:15px;background:#fff;border:1px solid var(--kufi);border-left:5px solid var(--kuq);border-radius:12px;padding:14px 16px}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+  th,td{padding:8px 11px;text-align:left;border-bottom:1px solid #eee;vertical-align:top}
+  th{background:var(--zi);color:var(--verdhe);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+  tr:last-child td{border-bottom:none}
+  code{background:#f3efe0;padding:1.5px 6px;border-radius:5px;font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:#4a3b00}
+  .ok{color:var(--jeshile);font-weight:700}
+  .warn{color:var(--portokall);font-weight:700}
+  .bad{color:var(--kuq);font-weight:700}
+  .pill{display:inline-block;font-size:11px;font-weight:800;padding:2px 9px;border-radius:20px}
+  .pill.g{background:#e3f4e8;color:var(--jeshile)}
+  .pill.a{background:#fbecd2;color:var(--portokall)}
+  .pill.r{background:#fbe0da;color:var(--kuq)}
+  .card{background:#fff;border:1px solid var(--kufi);border-radius:12px;padding:14px 16px;margin:12px 0}
+  .card.risk{border-left:5px solid var(--portokall)}
+  .card.red{border-left:5px solid var(--kuq)}
+  .card.green{border-left:5px solid var(--jeshile)}
+  .card.fix{border-left:5px solid var(--kuq-thelle);background:#fffdf6}
+  .layers{display:flex;flex-direction:column;gap:0;margin:14px 0}
+  .layer{background:#fff;border:1px solid var(--kufi);border-radius:12px;padding:13px 15px;position:relative}
+  .layer h4{margin:0 0 4px;font-size:14px;font-weight:800}
+  .layer .tag{position:absolute;right:12px;top:12px;font-size:10.5px;font-weight:800;color:#fff;background:var(--zi);padding:2px 8px;border-radius:12px}
+  .arrow{align-self:center;color:var(--kuq);font-size:22px;line-height:1;margin:2px 0}
+  .flow{font-size:12.5px;color:#333;background:#fbf7e8;border:1px dashed var(--verdhe);border-radius:10px;padding:11px 13px;margin:10px 0}
+  .small{font-size:12px;color:var(--gri)}
+  ul{margin:6px 0 6px 2px;padding-left:20px}
+  li{margin:3px 0;font-size:13.5px}
+  .kpi{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+  .kpi div{flex:1;min-width:130px;background:var(--zi);color:#fff;border-radius:12px;padding:12px 13px}
+  .kpi .n{font-size:22px;font-weight:800;color:var(--verdhe)}
+  .kpi .l{font-size:11px;color:#d9d3c2;margin-top:2px}
+  .foot{margin-top:26px;font-size:11.5px;color:var(--gri);border-top:1px solid var(--kufi);padding-top:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Autopsi Totale e Publikimit në Kohë Reale</h1>
+  <div class="sub">ALPAZAR · analizë shkencore shumëdimensionale: Klient → Edge/Vercel → Postgres/Supabase Realtime · + performancë</div>
+  <div class="meta">
+    <span><b>Data:</b> 27 gusht 2026</span>
+    <span><b>Build prod:</b> a54d2a8</span>
+    <span><b>Metodë:</b> execute_sql (DB live) + lexim kodi (repo) + headers origin. Zero hamendje.</span>
+  </div>
+</header>
+
+<p class="lead"><b>Verdikti:</b> publikimi në kohë reale nuk është thjesht i konfiguruar — është <b>në punë tani</b>: <b>2 slot-e logjike replikimi aktive</b> po dekodojnë WAL-in dhe Realtime-i po transmeton, mbi një bazë me <b>RLS në 67/67 tabela</b> (zero rrjedhje) dhe një publikim të kuruar prej <b>30 tabelash</b>. Vercel-i mban freski me build-id = commit + pastrim CDN në çdo deploy. Sistemi është solid dhe i pjekur. Gjeta <b>2 rreziqe reale</b> (gabimet e tipit kalojnë në prodhim; publikimi s'është i pasqyruar në repo dhe po rritet) dhe <b>korrigjova 2 pohime të miat</b> të mëparshme. Notat lab të PageSpeed nuk u morën dot në këtë sesion (shpjeguar te §5).</p>
+
+<div class="kpi">
+  <div><div class="n">logical</div><div class="l">wal_level (kërkohet për realtime)</div></div>
+  <div><div class="n">2 / 2</div><div class="l">slot-e replikimi AKTIVE</div></div>
+  <div><div class="n">30</div><div class="l">tabela në publikim realtime</div></div>
+  <div><div class="n">67 / 67</div><div class="l">tabela publike me RLS</div></div>
+  <div><div class="n">6 / 7</div><div class="l">sipërfaqe me subscription live</div></div>
+</div>
+
+<h2>1 · Organigrama e rrjedhës — nga ndryshimi te ekrani</h2>
+<div class="layers">
+  <div class="layer green"><span class="tag">SHTRESA 3 · DB</span>
+    <h4>Postgres + Supabase Realtime</h4>
+    <p class="small">Një <code>UPDATE/INSERT/DELETE</code> shkruhet në WAL → <code>wal_level=logical</code> lejon dekodim → 2 slot-et aktive (<code>wal2json</code> + <code>pgoutput</code>) i lexojnë → serveri Realtime i filtron sipas <b>RLS</b> dhe publikimit (30 tabela) → i shpërndan.</p>
+  </div>
+  <div class="arrow">▼ WebSocket <code>wss://*.supabase.co</code> (i lejuar në CSP)</div>
+  <div class="layer"><span class="tag">SHTRESA 2 · EDGE</span>
+    <h4>Vercel — CDN + Middleware</h4>
+    <p class="small">HTML-ja shërbehet me disiplinë cache-i: kryefaqja e cache-uar 60s (e sigurt), pjesa tjetër <code>no-store</code>, assetet <code>immutable</code> 1 vit. WS-ja realtime kalon drejt te Supabase (jo përmes CDN). Build-id = commit → pa mospërputhje versioni; CDN pastrohet në çdo deploy.</p>
+  </div>
+  <div class="arrow">▼</div>
+  <div class="layer"><span class="tag">SHTRESA 1 · KLIENT</span>
+    <h4>Browser — React + hooks realtime</h4>
+    <p class="small"><code>useRealtimeTable</code> (riprovim auto 5s), <code>useRealtimeMessages</code>, <code>useRealtimeNotifications</code>, <code>OnlinePresence</code> (kanal i vetëm presence). Ndryshimi mbërrin → handler-i bën <code>setState</code> → ekrani përditësohet <b>pa rifreskim</b>. Rrjet sigurie: refetch i heshtur 60s te feed-i + poll 5min për numëruesit.</p>
+  </div>
+</div>
+<div class="flow"><b>Provë që tubi punon end-to-end:</b> <code>/api/health</code> hap një kanal dhe pret statusin <code>SUBSCRIBED</code> → kthen <code>realtime:ok (88ms)</code>; dhe të dy slot-et e replikimit janë <code>active=true</code> — pra WAL-i po dekodohet realisht, jo teorikisht.</div>
+
+<h2>2 · Shtresa DB (Supabase) — provat e matura</h2>
+<table>
+  <tr><th>Element</th><th>Gjendja reale</th><th>Vlerësim</th></tr>
+  <tr><td><code>wal_level</code></td><td><code>logical</code></td><td><span class="ok">✓ kusht i realtime</span></td></tr>
+  <tr><td>Slot-e replikimi</td><td>2 total, <b>2 aktive</b>: <code>supabase_realtime_replication_slot</code> (wal2json) + <code>…messages…</code> (pgoutput)</td><td><span class="ok">✓ Realtime po punon LIVE</span></td></tr>
+  <tr><td>Publikimi <code>supabase_realtime</code></td><td><b>30 tabela</b> (allow-list i kuruar, puballtables=false)</td><td><span class="ok">✓ i plotë</span></td></tr>
+  <tr><td>REPLICA IDENTITY FULL</td><td>conversations, listings, messages, notifications, profiles</td><td><span class="ok">✓ UPDATE/DELETE mbartin vlerat e vjetra</span></td></tr>
+  <tr><td>REPLICA IDENTITY default(PK)</td><td>gamification_events, listing_views, reviews</td><td><span class="ok">✓ OK (append-only)</span></td></tr>
+  <tr><td>RLS</td><td><b>67/67</b> tabela publike me RLS aktiv; 14/14 tabela realtime të kontrolluara = aktiv</td><td><span class="ok">✓ zero rrjedhje realtime</span></td></tr>
+  <tr><td>Kodifikimi</td><td>migrime CLI: <code>m10_realtime_setup</code>, <code>enable_full_replica_identity_realtime</code>, <code>realtime_add_price_alerts</code>, <code>unify_…_realtime_v2</code>, <code>realtime_for_payment_queues</code></td><td><span class="warn">◐ vetëm në DB, jo në repo (shih R2)</span></td></tr>
+</table>
+<p class="small"><b>30 tabelat:</b> app_config, blocks, businesses, categories, conversations, favorites, follows, gamification_events, invoices, listing_views, listings, message_reactions, messages, moderation_queue, notifications, offers, orders, premium_plans, premium_requests, price_alerts, profiles, reports, reviews, shares, subscriptions, takedown_requests, transactions, typing_indicators, user_badges, user_settings.</p>
+
+<h2>3 · Shtresa Edge (Vercel) — konfigurim & freski</h2>
+<table>
+  <tr><th>Element</th><th>Gjendja reale</th><th>Vlerësim</th></tr>
+  <tr><td>Build ID</td><td><code>generateBuildId = VERCEL_GIT_COMMIT_SHA</code>; <code>NEXT_PUBLIC_BUILD_ID</code>=commit</td><td><span class="ok">✓ deterministik, pa skew të rremë</span></td></tr>
+  <tr><td>Cache HTML (middleware — autoriteti real)</td><td>Kryefaqja <code>/</code> pa <code>?ref=</code>: <code>s-maxage=60, stale-while-revalidate=120</code>. Gjithçka tjetër: <code>no-store</code>. <code>/listing</code>: <b>kurrë</b> (cookie sesioni)</td><td><span class="ok">✓ freski + shpejtësi</span></td></tr>
+  <tr><td>Assete statike</td><td><code>_next/static/*</code>: <code>public, max-age=31536000, immutable</code></td><td><span class="ok">✓ optimale</span></td></tr>
+  <tr><td>CSP për realtime</td><td><code>connect-src</code> përfshin <code>wss://*.supabase.co</code> + supabase https</td><td><span class="ok">✓ WS realtime i lejuar</span></td></tr>
+  <tr><td>Siguri header-ash</td><td>HSTS 2 vjet preload, X-Content-Type nosniff, frame SAMEORIGIN, Referrer-Policy</td><td><span class="ok">✓ solide</span></td></tr>
+  <tr><td>Performancë edge</td><td>Supabase i rëndë <b>vetëm</b> për <code>/admin</code> (dynamic import); <code>compress</code>; images avif/webp</td><td><span class="ok">✓ edge i lehtë</span></td></tr>
+  <tr><td>Rikuperim/monitorim</td><td><code>/rifresko</code> (clear-site-data + çregjistrim SW), <code>sw.js</code> kill-switch, <code>/api/health</code>, Sentry + automaticVercelMonitors, 3 crons</td><td><span class="ok">✓ i pjekur</span></td></tr>
+  <tr><td>Ndalimi i gabimeve në build</td><td><code>typescript.ignoreBuildErrors:true</code> + <code>eslint.ignoreDuringBuilds:true</code></td><td><span class="bad">✗ gabimet kalojnë në prodhim (shih R1)</span></td></tr>
+</table>
+
+<h2>4 · Shtresa Klient — subscription-et per-sipërfaqe</h2>
+<table>
+  <tr><th>Sipërfaqja</th><th>Realtime</th><th>Gjendja</th></tr>
+  <tr><td>Kryefaqja / feed (<code>HomeClient</code>)</td><td><code>useRealtimeTable&lt;Listing&gt;('listings')</code> + refetch 60s + counts 5min</td><td><span class="pill g">LIVE</span></td></tr>
+  <tr><td><code>/listing/[id]</code></td><td>kanal <code>listing-status</code> (UPDATE listings) + kanal messages + presence</td><td><span class="pill g">LIVE</span></td></tr>
+  <tr><td><code>/biznese/[id]</code></td><td>1 kanal + postgres_changes + presence</td><td><span class="pill g">LIVE</span></td></tr>
+  <tr><td>Mesazhet</td><td><code>useRealtimeMessages</code> + <code>useUnreadCount</code></td><td><span class="pill g">LIVE</span></td></tr>
+  <tr><td>Njoftimet</td><td><code>useRealtimeNotifications</code></td><td><span class="pill g">LIVE</span></td></tr>
+  <tr><td>Prania online (globale)</td><td>1 kanal Supabase <i>presence</i></td><td><span class="pill g">LIVE</span></td></tr>
+  <tr><td><code>/u/[id]</code></td><td><b>vetëm pika online</b>; shpalljet/ndjekësit/pikët ngarkohen 1 herë — PA subscription</td><td><span class="pill a">PJESËRISHT</span></td></tr>
+</table>
+
+<h2>5 · Performanca (PageSpeed)</h2>
+<div class="card">
+<p><b>Të dhëna reale përdoruesish (CrUX):</b> <span class="warn">Nuk ka</span> — Google raporton "insufficient real-world speed data" për <code>alpazar.vercel.app</code>. Siti s'ka ende trafik të mjaftueshëm që CrUX të mbushet. Pra monitorimi i performancës reale (fusha) është bosh derisa të rritet trafiku.</p>
+<p><b>Notat lab (Lighthouse):</b> ekzistojnë te linku yt, por <b>nuk u morën dot në këtë sesion</b> — API-ja PSI ktheu përgjigje bosh nga këtu dhe shtesa Chrome është e shkëputur, kështu që s'i lexova dot numrat LCP/CLS/TBT. <b>Nuk do t'i shpik.</b></p>
+<p><b>Vlerësim nga arkitektura (i bazuar në kod, jo në hamendje):</b> qëndrimi i performancës është i mirë — kryefaqja e cache-uar 60s në CDN (TTFB i shpejtë për matjen), assete të hash-uar <code>immutable</code>, imazhe avif/webp, kompresim, middleware i lehtë (Supabase vetëm te /admin), SSR-seed (pa spinner/flash). Kompensimi: rrugët <code>no-store</code> (p.sh. <code>/listing</code>) e godasin funksionin serverless + DB në çdo ngarkim → TTFB varet nga DB (health e mati DB-në 370ms) — freski mbi shpejtësi, e qëllimshme.</p>
+<p class="small">Për t'i kthyer notat në numra: ose lidh shtesën Chrome dhe e nis Lighthouse-in live nga këtu, ose kopjoji nga faqja që ke hapur (Performance score, LCP, CLS, TBT) dhe t'i interpretoj + t'i akordoj.</p>
+</div>
+
+<h2>6 · Gjetjet — forcat</h2>
+<div class="card green"><b>F1.</b> Realtime <b>në punë</b>, jo vetëm i konfiguruar: 2 slot-e replikimi aktive po dekodojnë WAL-in.</div>
+<div class="card green"><b>F2.</b> <b>RLS 67/67</b> → realtime respekton RLS, asnjë klient s'merr rreshta që s'i lejohen.</div>
+<div class="card green"><b>F3.</b> Publikim i kuruar 30 tabela + <b>REPLICA IDENTITY FULL</b> te 5 kritiket → diffing i saktë (SHITUR, read-state, edit/fshirje, tier/online).</div>
+<div class="card green"><b>F4.</b> Build-id = commit + pastrim CDN në çdo deploy + <code>/api/health</code> + <code>/rifresko</code> → mbrojtje e fortë nga "versioni i vjetër".</div>
+<div class="card green"><b>F5.</b> Disiplinë cache-i tri-nivelëshe (immutable assets / no-store dinamik / 60s kryefaqe) — freski dhe shpejtësi njëkohësisht.</div>
+
+<h2>7 · Gjetjet — rreziqet</h2>
+<div class="card red"><span class="pill r">R1 · LARTË</span> <b>Gabimet e tipit dhe lint-i kalojnë në prodhim.</b> <code>ignoreBuildErrors:true</code> + <code>eslint.ignoreDuringBuilds:true</code>, dhe s'ka mjedis preview (çdo merge shkon live). Pra një gabim tipi mund të arrijë te siti live pa u kapur. Kjo bie ndesh me vetë rregullin e CLAUDE.md ("mos bëj commit me gabime tipi"). <b>Leva më e lartë e sigurisë.</b></div>
+<div class="card risk"><span class="pill a">R2 · MESATAR</span> <b>Publikimi realtime s'është i pasqyruar në repo dhe po rritet.</b> U konfigurua me migrime CLI që nuk janë në <code>supabase/migrations/</code>; dhe u rrit nga 28→30 (u shtuan <code>moderation_queue</code>, <code>takedown_requests</code>). Një rindërtim vetëm-nga-repo do e humbiste. Çdo listë hardcode vjetrohet (artefakti im u përditësua në 30, por problemi rrënjësor mbetet: duhet rigjeneruar ose skriptuar).</div>
+<div class="card risk"><span class="pill a">R3 · MESATAR</span> <b><code>/u/[id]</code> s'abonohet për të dhënat</b> (vetëm pika online). Infra gati; mungon vetëm përdorimi — shpalljet/ndjekësit/pikët s'live-përditësohen si sipërfaqet e tjera.</div>
+<div class="card risk"><span class="pill a">R4 · INFO</span> <b>CrUX bosh</b> → s'ka monitorim performance të përdoruesve realë derisa të rritet trafiku; dhe notat lab s'u kapën këtë sesion.</div>
+<div class="card risk"><span class="pill a">R5 · NUANCË</span> Kryefaqja e cache-uar 60s do të thotë që një shpallje krejt e re mund të vonohet deri ~60–120s për një ngarkim <i>të ftohtë</i> të kryefaqes; faqet e hapura e marrin menjëherë me realtime. Kompensim i pranueshëm, por i mirënjohur.</div>
+
+<h2>8 · Korrigjime ndaj vetes (ndershmëri intelektuale)</h2>
+<div class="card fix"><b>C1.</b> Kisha thënë "<code>no-store</code> në TË GJITHA rrugët, përfshirë kryefaqen". <b>Gabim.</b> Kryefaqja <code>/</code> (pa <code>?ref=</code>) është qëllimisht e cache-uar 60s (SWR 120s) në CDN. E saktë mbetet për pjesën tjetër.</div>
+<div class="card fix"><b>C2.</b> Kisha numëruar "28 tabela" në publikim. Tani janë <b>30</b> (u shtuan moderation_queue, takedown_requests). Artefakti reconcile u përditësua.</div>
+
+<h2>9 · Rekomandime (të prioritizuara) — për Code</h2>
+<table>
+  <tr><th>#</th><th>Veprim</th><th>Lane</th></tr>
+  <tr><td><b>P1</b></td><td>Vendos një <b>portë CI</b> (GitHub Action) që bllokon deploy-in kur <code>tsc</code>/lint dështon — meqë s'ka preview, CI është i vetmi rrjet sigurie. (Fillimisht CI, pastaj pastro gabimet legacy para se të fikësh <code>ignoreBuildErrors</code>.)</td><td>Code</td></tr>
+  <tr><td><b>P2</b></td><td>Ngul publikimin + replica identity në një migrim repo, <b>të rigjeneruar nga gjendja live</b> (30 tani) me shënim ri-sinkronizimi; ose skripto. Artefakti <code>ALPAZAR_realtime_publication_reconcile.sql</code> u përditësua në 30.</td><td>Code</td></tr>
+  <tr><td><b>P3</b></td><td>Shto subscription realtime te <code>/u/[id]</code> (simetrik me sipërfaqet e tjera; ruaj SSR-seed + opt-out).</td><td>Code</td></tr>
+  <tr><td><b>P4</b></td><td>Merr notat lab PSI (lidh Chrome ose kopjo numrat) → akordim LCP/CLS/TBT; aktivizo/verifiko Vercel Speed Insights për RUM ndërsa rritet trafiku.</td><td>Cowork + Code</td></tr>
+</table>
+
+<div class="foot">
+Të gjitha faktet e këtij raporti vijnë nga matje të drejtpërdrejta më 27 gusht 2026: <code>execute_sql</code> mbi projektin <code>sopafwfkrxpcdaljddoh</code> (wal_level, slots, publikimi, replica identity, RLS), lexim i kodit real në repo (<code>next.config.js</code>, <code>vercel.json</code>, <code>middleware.ts</code>, hooks-et realtime, klientët per-sipërfaqe), header-at e origjinës (<code>/api/health</code>), dhe fetch i PageSpeed (CrUX "No Data"). Nuk u krye test me dy klientë live (Chrome i shkëputur) as u morën notat lab PSI — të deklaruara hapur, jo të fshehura.
+</div>
+</div>
+</body>
+</html>

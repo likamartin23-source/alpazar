@@ -164,3 +164,18 @@ Ti raporto vetëm gjendjen aktuale që i informon, me screenshot:
 
 ### Dorëzimi
 Shkruaj `[O8] · done` te `.ops/RESULTS.md` me: (a) **PO/JO** për çdo pikë A/B me screenshot-in përkatës (`.ops/shot/O8-*.png`); (b) faktet aktuale për pikat C (sa kuti, etiketat, gjendja e TrustBadge/★Pronari/Harta). Nëse ndonjë pikë A/B del **JO**, shënoje si defekt me rrugën + pamjen. Cloud-i pastaj: rregullon defektet A/B + zbaton C (B2 4-kuti · B11 etiketat · G5), lë G4 funksional, secila CI-green.
+
+---
+
+## MATERIALET E BLLOKUT — tani në depo (`docs/bllok/`)
+
+Pronari dha imazhet/udhëzimet e miratuara; i vura në depo që t'i kesh gjithnjë:
+- `docs/bllok/01_Blueprint_Autopsi_Perfundimtare.html` — 6 dimensionet + checklist.
+- `docs/bllok/02_Autopsi_Realtime.html` — publikimi realtime, cache, performanca.
+- `docs/bllok/03_Gjendja_Cak_Harmonizuar.html` — **pamja-cak pixel** (A përdorues · B biznes ·
+  C karta · D shpallja nga brenda · E organigramat). **Kjo është referenca kryesore.**
+- Burimi zyrtar tekstual: Notion "🏁 BLLOKU PËRFUNDIMTAR 2" (BP2 §A–C, §B15 checklist).
+
+**Gjatë verifikimit (O8):** hap `03_Gjendja_Cak_Harmonizuar.html` në shfletues krah faqes live
+dhe krahaso pixel-për-pixel çdo sipërfaqe. Ku live ndryshon nga imazhi → **imazhi fiton** (BP2 §C6.6),
+raporto si defekt me screenshot te RESULTS. Kujtesa e përbashkët: `.ops/KUJTESA-E-PUNES.md`.

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ALPAZAR — Autopsi Përfundimtare + Blueprint i Unifikuar</title>
+<style>
+  :root{
+    --kuq:#E63312;--kuq-d:#C42305;--zi:#141210;--zi-2:#1a1a1a;--verdh:#F5C842;--verdh-hi:#F8D24E;--verdh-lo:#EEB828;
+    --krem:#FFFBEA;--ari:#D4AF37;--line:#e7e0cf;--muted:#6d675e;--green:#0E7A35;--blue:#185FA5;
+    --shadow:0 1px 3px rgba(0,0,0,.06),0 10px 30px -18px rgba(0,0,0,.28);
+  }
+  *{box-sizing:border-box}html{scroll-behavior:smooth}
+  body{margin:0;background:var(--krem);color:var(--zi);font-family:'Plus Jakarta Sans',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.6;font-size:15px}
+  .wrap{max-width:1020px;margin:0 auto;padding:28px 18px 76px}
+  header.top{background:var(--zi);color:#fff;border-radius:20px;padding:32px 30px;position:relative;overflow:hidden;box-shadow:var(--shadow);border-top:5px solid var(--kuq)}
+  header.top::after{content:"";position:absolute;right:-30px;top:-30px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(245,200,66,.3),transparent 66%)}
+  .kicker{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--verdh);font-weight:800;margin:0 0 8px}
+  header.top h1{margin:0 0 8px;font-size:25px;line-height:1.15}
+  header.top p{margin:6px 0 0;color:#d9d2c4;font-size:13.5px;max-width:80ch}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+  .chip{font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;background:rgba(255,255,255,.09);color:#f3ecdd;border:1px solid rgba(255,255,255,.14)}
+  .chip.k{background:rgba(230,51,18,.2);color:#ffb3a3;border-color:rgba(230,51,18,.4)}
+  .chip.v{background:rgba(245,200,66,.2);color:#ffe6a3;border-color:rgba(245,200,66,.4)}
+  h2.sec{font-size:16px;font-weight:800;color:#fff;margin:34px 0 8px;padding:10px 14px;background:var(--zi);border-radius:11px;border-left:5px solid var(--kuq);display:flex;align-items:center;gap:10px}
+  h2.sec .dn{background:var(--verdh);color:var(--zi);width:26px;height:26px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+  h3{font-size:18px;margin:6px 0 8px}h4{font-size:15px;margin:14px 0 4px}
+  p{margin:9px 0}.lead{font-size:15.5px;color:#3a352f}strong{color:var(--zi)}
+  code{background:#f0ead9;border:1px solid var(--line);border-radius:5px;padding:1px 5px;font-family:ui-monospace,Menlo,monospace;font-size:12.4px;color:#7a2410}
+  .card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:16px 18px;box-shadow:var(--shadow);margin:14px 0}
+  table.mx{border-collapse:collapse;width:100%;font-size:12.8px;margin-top:6px}
+  table.mx th,table.mx td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+  table.mx th{background:var(--zi);color:var(--verdh);font-size:11px;text-transform:uppercase;letter-spacing:.2px}
+  .v-ok{color:var(--green);font-weight:800}.v-fix{color:var(--kuq-d);font-weight:800}.v-part{color:#9a6a00;font-weight:800}
+  figure{margin:14px 0;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
+  figure svg{width:100%;height:auto;display:block}figcaption{font-size:12px;color:var(--muted);margin-top:8px;text-align:center}
+  .callout{border-left:4px solid var(--kuq);background:#fff6f2;border-radius:0 12px 12px 0;padding:12px 15px;margin:12px 0}
+  .callout.ok{border-left-color:var(--green);background:#f1faf3}.callout.v{border-left-color:var(--verdh-lo);background:#fffdf3}
+  /* palette swatches */
+  .pal{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0}
+  .sw{border-radius:12px;padding:12px 14px;min-width:120px;color:#fff;box-shadow:var(--shadow);font-size:12px}
+  .sw b{display:block;font-size:14px;font-weight:800}.sw code{background:rgba(255,255,255,.2);border:none;color:inherit}
+  /* avatar demo */
+  .avrow{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-end;margin:10px 0}
+  .avd{text-align:center;font-size:11px;color:var(--muted)}
+  .av{width:60px;height:60px;border-radius:50%;padding:4px;box-sizing:border-box;position:relative;margin:0 auto 6px}
+  .av.free{background:#e2e2e2}.av.prem{background:linear-gradient(135deg,#F5C842,#E63312);animation:pp 2.6s ease-in-out infinite}.av.vip{background:linear-gradient(135deg,#D4AF37,#E63312);animation:vp 2.2s ease-in-out infinite}
+  @keyframes pp{0%,100%{box-shadow:0 0 0 0 rgba(245,200,66,.55)}50%{box-shadow:0 0 0 6px rgba(245,200,66,0)}}
+  @keyframes vp{0%,100%{box-shadow:0 0 0 0 rgba(212,175,55,.6)}50%{box-shadow:0 0 0 7px rgba(212,175,55,0)}}
+  .av .in{width:100%;height:100%;border-radius:50%;background:#fff;padding:2px;box-sizing:border-box}
+  .av .ini{width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,#F5C842,#E63312);color:#fff;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center}
+  .av .bd{position:absolute;width:20px;height:20px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:10px}
+  .av .bd.crown{right:-3px;top:-3px;background:var(--ari);color:#fff}.av .bd.star{right:-3px;top:-3px;background:#F5C842;color:#7A4A00}.av .bd.biz{right:-3px;bottom:-3px;background:var(--zi);color:#fff}.av .dot{position:absolute;left:-1px;bottom:-1px;width:13px;height:13px;border-radius:50%;background:#16a34a;border:2px solid #fff}
+  .prin{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0}
+  .prin .p{flex:1 1 260px;background:#fff;border:1px solid var(--line);border-top:4px solid var(--kuq);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow)}
+  .prin .p b{color:var(--kuq-d)}
+  ol.ck{padding-left:20px}ol.ck li{margin:6px 0}
+  .pr{display:inline-block;font-size:10px;font-weight:800;padding:2px 8px;border-radius:999px}
+  .p1{background:#fde3dc;color:#a4200a}.p2{background:#fff0c2;color:#7a5200}.p3{background:#e4e0d4;color:#555}
+  footer{margin-top:38px;font-size:12px;color:var(--muted);text-align:center;border-top:1px solid var(--line);padding-top:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <p class="kicker">ALPAZAR · Autopsi përfundimtare + Blueprint</p>
+  <h1>Butona · Dizajn · Modalitete · Sinkronizim · Harmonizim · Unifikim</h1>
+  <p>Autopsia e fundit, vendimtare, mbi gjashtë dimensionet — me verdikte dhe rivizualizim për miratim. Ngjyrat dominuese (<b style="color:#ff9b86">kuq</b> · <b>zi</b> · <b style="color:#F5C842">verdhë</b>, krem sfond, ari për VIP) dhe sistemi i avatarit janë boshti i identitetit vizual dhe ruhen si zemra e dizajnit.</p>
+  <div class="meta">
+    <span class="chip">27 gusht 2026 · përfundimtare</span>
+    <span class="chip k">Triada: kuq · zi · verdhë</span>
+    <span class="chip v">Avatar = identiteti</span>
+    <span class="chip">Miratuar në parim → për sign-off</span>
+  </div>
+</header>
+
+<!-- 1 BUTONAT -->
+<h2 class="sec"><span class="dn">1</span> Butonat</h2>
+<p class="lead">Inventar i plotë sipas kontekstit. Verdikti: pothuajse të gjithë ekzistojnë e punojnë; mbeten dy rregullime — grupimi te shpallja dhe çipi udhëtues i kartës te feed-i.</p>
+<table class="mx">
+  <tr><th>Konteksti</th><th>Butonat</th><th>Gjendja</th><th>Verdikt</th></tr>
+  <tr><td>Karta (çip udhëtues)</td><td>shitësi → /biznese (🏢) ose /u (person)</td><td>Saktë te search/favorites; te feed-i shkon /u (person)</td><td class="v-fix">Rregullo (Gap1)</td></tr>
+  <tr><td>Shpallja — ekskluzivë</td><td>Vlerëso · Ruaj · Ndaj · Raporto · Njoftomë</td><td>Ekzistojnë por të shpërndarë ~2000px</td><td class="v-fix">Grupo (Gap6)</td></tr>
+  <tr><td>Shpallja — udhëtues</td><td>Shiko biznesin · ★ Pronari</td><td>Të pranishëm (dublim lidhjeje → hiq njërën)</td><td class="v-part">Dedublo (Gap5)</td></tr>
+  <tr><td>Referral</td><td>Fto miq (+50 pikë)</td><td>Te paneli personal — JO te shpallja</td><td class="v-ok">Saktë (imazhet #1/#20)</td></tr>
+  <tr><td>Paneli i përdoruesit</td><td>Të dhënat · Fto miq · Analitika · Abonimi · Siguri</td><td>Të plotë, inline</td><td class="v-ok">✓</td></tr>
+  <tr><td>Biznes tab (3 gjendje)</td><td>G1 Bëhu Premium · G2 Krijo · G3 Vepro si biznes</td><td>Të plotë</td><td class="v-ok">✓</td></tr>
+  <tr><td>Paneli i biznesit</td><td>Vepro si ▾ · Të dhënat · Analitika · Vlerësimet · Mesazhet</td><td>Të plotë (kod)</td><td class="v-ok">✓</td></tr>
+  <tr><td>Menaxhimi i shpalljes</td><td>Ndrysho · Ngjit lart · Shëno Shitur · Hiq/pauzo · Riaktivizo</td><td>Cikli i plotë</td><td class="v-ok">✓</td></tr>
+  <tr><td>Fshij biznesin</td><td>3 shkallë (paralajmërim → emri → final)</td><td>BusinessForm §3.9</td><td class="v-ok">✓</td></tr>
+  <tr><td>Udhëtues profil↔biznes</td><td>★ Pronari (/u) · Biznesi im / Shiko Biznesin</td><td>Të dy drejtimet</td><td class="v-ok">✓</td></tr>
+</table>
+
+<!-- 2 DIZAJNI + NGJYRAT -->
+<h2 class="sec"><span class="dn">2</span> Dizajni perfekt &amp; ngjyrat dominuese</h2>
+<p class="lead">Identiteti vizual është i shëndetshëm dhe RUHET. Triada dominuese + avatari janë zemra; e reja nuk i prek — vetëm heq divergjencën (seo-card).</p>
+<div class="pal">
+  <div class="sw" style="background:#E63312"><b>KUQ</b> veprimi <code>#E63312 / #C42305</code></div>
+  <div class="sw" style="background:#141210"><b>ZI</b> struktura/nav <code>#141210 / #1a1a1a</code></div>
+  <div class="sw" style="background:#F5C842;color:#5a2600"><b>VERDHË</b> brandi/theksi <code>#F5C842</code></div>
+  <div class="sw" style="background:#FFFBEA;color:#7a5200;border:1px solid #e8c878"><b>KREM</b> sfondi <code>#FFFBEA</code></div>
+  <div class="sw" style="background:linear-gradient(135deg,#D4AF37,#E63312)"><b>ARI→KUQ</b> VIP <code>#D4AF37</code></div>
+</div>
+<p class="fnote">Fontet: <b>Fraunces</b> (brand/logo, shqiponja) + <b>Plus Jakarta Sans</b> (trup). Radius 10/14/16 · fokus WCAG (outline kuq) · notim i lehtë · të gjitha të ruajtura.</p>
+
+<h4>Sistemi i avatarit = identiteti vizual (RUHET plotësisht)</h4>
+<div class="avrow">
+  <div class="avd"><div class="av free"><div class="in"><div class="ini" style="background:#bbb">AA</div></div></div>FALAS<br>unazë gri · pa vulë</div>
+  <div class="avd"><div class="av prem"><div class="in"><div class="ini">AA</div></div><div class="bd star">★</div></div>PREMIUM<br>unazë verdhë + ★ · pulson</div>
+  <div class="avd"><div class="av vip"><div class="in"><div class="ini">AA</div></div><div class="bd crown">👑</div></div>VIP<br>unazë ari→kuq + 👑 · shkëlqen</div>
+  <div class="avd"><div class="av vip"><div class="in"><div class="ini">BN</div></div><div class="bd crown">👑</div><div class="bd biz" style="left:-3px;bottom:-3px;right:auto">🏢</div></div>BIZNES VIP<br>e njëjta unazë + 🏢</div>
+  <div class="avd"><div class="av prem"><div class="in"><div class="ini">AN</div></div><div class="bd star">★</div><div class="dot"></div></div>PERSON online<br>+ pikë jeshile</div>
+</div>
+<div class="callout ok"><strong>Verdikt dizajni:</strong> pothuajse perfekt. Triada kuq/zi/verdhë + krem + ari, fontet, dhe sistemi i avatarit (unazë sipas tier + 🏢/★/👑 + pikë online) janë koherente dhe të ruajtura. E vetmja plagë: karta <code>seo-card</code> e kategorive që del jashtë sistemit → hiqet.</div>
+
+<!-- 3 MODALITETE -->
+<h2 class="sec"><span class="dn">3</span> Struktura e modaliteteve</h2>
+<figure>
+<svg viewBox="0 0 920 250" role="img" aria-label="Stacku i 10 shtresave modalitare">
+  <text x="460" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#141210">10 SHTRESAT MODALITARE — statusi i koherencës</text>
+  <g font-size="11" font-weight="700">
+    <!-- row of layers -->
+    <g>
+      <rect x="20" y="40" width="132" height="44" rx="9" fill="#f1faf3" stroke="#0E7A35"/><text x="86" y="60" text-anchor="middle">2 Prania</text><text x="86" y="75" text-anchor="middle" font-size="9" fill="#0c6a2e">✓ real-time</text>
+      <rect x="162" y="40" width="132" height="44" rx="9" fill="#f1faf3" stroke="#0E7A35"/><text x="228" y="60" text-anchor="middle">4 Lidhja</text><text x="228" y="75" text-anchor="middle" font-size="9" fill="#0c6a2e">✓ follow</text>
+      <rect x="304" y="40" width="132" height="44" rx="9" fill="#f1faf3" stroke="#0E7A35"/><text x="370" y="60" text-anchor="middle">5 Komunikimi</text><text x="370" y="75" text-anchor="middle" font-size="9" fill="#0c6a2e">✓ një inbox</text>
+      <rect x="446" y="40" width="132" height="44" rx="9" fill="#f1faf3" stroke="#0E7A35"/><text x="512" y="60" text-anchor="middle">6 Njoftimet</text><text x="512" y="75" text-anchor="middle" font-size="9" fill="#0c6a2e">✓ 12 tipe</text>
+      <rect x="588" y="40" width="132" height="44" rx="9" fill="#f1faf3" stroke="#0E7A35"/><text x="654" y="60" text-anchor="middle">8 Cikli i jetës</text><text x="654" y="75" text-anchor="middle" font-size="9" fill="#0c6a2e">✓ i plotë</text>
+      <rect x="730" y="40" width="170" height="44" rx="9" fill="#f1faf3" stroke="#0E7A35"/><text x="815" y="60" text-anchor="middle">5 shtresa koherente</text><text x="815" y="75" text-anchor="middle" font-size="9" fill="#0c6a2e">✓✓✓✓✓</text>
+    </g>
+    <g>
+      <rect x="20" y="98" width="200" height="44" rx="9" fill="#fffaef" stroke="#EEB828"/><text x="120" y="118" text-anchor="middle">1 Identiteti</text><text x="120" y="133" text-anchor="middle" font-size="9" fill="#9a6a00">◐ i ngrirë te feed (Gap1)</text>
+      <rect x="230" y="98" width="200" height="44" rx="9" fill="#fffaef" stroke="#EEB828"/><text x="330" y="118" text-anchor="middle">7 Zbulimi</text><text x="330" y="133" text-anchor="middle" font-size="9" fill="#9a6a00">◐ feed/kategori (Gap1/2)</text>
+      <rect x="440" y="98" width="200" height="44" rx="9" fill="#fffaef" stroke="#EEB828"/><text x="540" y="118" text-anchor="middle">9 Sinkronizimi</text><text x="540" y="133" text-anchor="middle" font-size="9" fill="#9a6a00">◐ përhap gap-in</text>
+      <rect x="650" y="98" width="250" height="44" rx="9" fill="#fffaef" stroke="#EEB828"/><text x="775" y="118" text-anchor="middle">10 Dizajni</text><text x="775" y="133" text-anchor="middle" font-size="9" fill="#9a6a00">◐ seo-card (Gap2)</text>
+    </g>
+    <g>
+      <rect x="20" y="156" width="880" height="52" rx="10" fill="#fff6f2" stroke="#E63312" stroke-width="2"/><text x="460" y="178" text-anchor="middle" font-size="12" font-weight="800" fill="#a4200a">3 · REPUTACIONI — cikli i thyer: pikët fitohen + njoftohen POR s'shfaqen te profilet → sistemi i vjetër INERT</text><text x="460" y="196" text-anchor="middle" font-size="10" fill="#8a3a2a">leva më e madhe: mbylle lakun (shfaq pikë + Besueshmëri te /u & /biznese)</text>
+    </g>
+  </g>
+</svg>
+<figcaption>5 shtresa koherente · 4 me çështje identiteti/zbulimi/sinkronizimi/dizajni (Gap1/2) · 1 me cikël të thyer (reputacioni).</figcaption>
+</figure>
+
+<!-- 4 SINKRONIZIMI -->
+<h2 class="sec"><span class="dn">4</span> Sinkronizimi</h2>
+<p class="lead">I pranishëm kudo (<code>useRealtimeTable</code> te feed · channel te search/njoftime · visibilitychange · polling fallback). Teknikisht i shëndetshëm — POR streamon një projeksion jokoherent (identitetin e ngrirë). Ilaçi s'është më shumë sinkronizim, por një burim i vetëm projeksioni.</p>
+<div class="callout v"><strong>Parimi:</strong> sinkronizo mbi një <b>projeksion të vetëm</b> (<code>LISTING_SELECT</code> kanonik). Kur çdo sipërfaqe rrjedh nga i njëjti projeksion, real-time-i shpërndan koherencë, jo mospërputhje.</div>
+
+<!-- 5 HARMONIZIMI -->
+<h2 class="sec"><span class="dn">5</span> Harmonizimi (e vjetra + e reja)</h2>
+<table class="mx">
+  <tr><th>Ruaj</th><th>Përshtat</th><th>Hiq</th></tr>
+  <tr>
+    <td>Paleta kuq/zi/verdhë/krem/ari · fontet · avatari · pikë/nivel/TrustBadge/⭐ · notim/online/favorites · matrica 4-kuti · kufijtë (special-visitor, RLS, pagesat, Skema 1, charm 999.9)</td>
+    <td>Vendosja e pikë+TrustBadge te /u & /biznese (unazë e plotë) · grupimi i butonave të shpalljes · join-i i biznesit te feed · (Avatar tashmë i bërë)</td>
+    <td>Karta <code>seo-card</code> · mbetjet (Statistikat/Abonimi te Shpalljet) · dublimi i lidhjes · query-ja e vjetër person-only e feed-it</td>
+  </tr>
+</table>
+
+<!-- 6 UNIFIKIMI -->
+<h2 class="sec"><span class="dn">6</span> Unifikimi — blueprint-i i arkitekturës</h2>
+<p class="lead">Karta u unifikua (ListingCard), POR query-t që e ushqejnë jo. Unifikimi i vërtetë = një projeksion identiteti që çdo sipërfaqe e respekton + laku i reputacionit i mbyllur.</p>
+<figure>
+<svg viewBox="0 0 920 340" role="img" aria-label="Blueprint i unifikimit">
+  <defs><marker id="g" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#141210"/></marker></defs>
+  <!-- canonical projection -->
+  <rect x="350" y="20" width="220" height="60" rx="13" fill="#141210"/><text x="460" y="44" text-anchor="middle" font-size="13" font-weight="800" fill="#F5C842">LISTING_SELECT kanonik</text><text x="460" y="62" text-anchor="middle" font-size="9.5" fill="#d9d2c4">business:business_id(...) + author + rank_tier + views + status</text>
+  <!-- surfaces -->
+  <g font-size="10.5" font-weight="700" fill="#141210" text-anchor="middle">
+    <rect x="30" y="130" width="150" height="46" rx="10" fill="#fff" stroke="#E63312" stroke-width="1.6"/><text x="105" y="150">Kryefaqe</text><text x="105" y="166" font-size="9" fill="#a4200a">+ SSR-seed (Gap1)</text>
+    <rect x="200" y="130" width="150" height="46" rx="10" fill="#fff6f2" stroke="#EEB828"/><text x="275" y="150">Kategoritë</text><text x="275" y="166" font-size="9" fill="#9a6a00">seo-card→ListingCard (Gap2)</text>
+    <rect x="385" y="130" width="150" height="46" rx="10" fill="#f1faf3" stroke="#0E7A35"/><text x="460" y="150">Kërkim</text><text x="460" y="166" font-size="9" fill="#0c6a2e">✓ tashmë</text>
+    <rect x="570" y="130" width="150" height="46" rx="10" fill="#f1faf3" stroke="#0E7A35"/><text x="645" y="150">Shpallja/Biznes</text><text x="645" y="166" font-size="9" fill="#0c6a2e">✓ tashmë</text>
+    <rect x="740" y="130" width="150" height="46" rx="10" fill="#f1faf3" stroke="#0E7A35"/><text x="815" y="150">Profil/Të ruajtura</text><text x="815" y="166" font-size="9" fill="#0c6a2e">✓ tashmë</text>
+  </g>
+  <g stroke="#141210" stroke-width="1.4" fill="none">
+    <path d="M410 80 C 300 105, 160 115, 105 130" marker-end="url(#g)"/>
+    <path d="M420 80 C 360 108, 300 118, 275 130" marker-end="url(#g)"/>
+    <path d="M460 80 V130" marker-end="url(#g)"/>
+    <path d="M500 80 C 560 108, 620 118, 645 130" marker-end="url(#g)"/>
+    <path d="M510 80 C 640 105, 760 115, 815 130" marker-end="url(#g)"/>
+  </g>
+  <!-- reputation loop -->
+  <rect x="230" y="235" width="460" height="70" rx="13" fill="#fff6f2" stroke="#E63312" stroke-width="1.8"/>
+  <text x="460" y="260" text-anchor="middle" font-size="12" font-weight="800" fill="#a4200a">LAKU I REPUTACIONIT — mbylle</text>
+  <text x="460" y="280" text-anchor="middle" font-size="10" fill="#8a3a2a">fito pikë → njoftohesh (badge_earned) → SHFAQ te /u &amp; /biznese (pikë + Besueshmëri unazë)</text>
+  <text x="460" y="296" text-anchor="middle" font-size="10" fill="#8a3a2a">→ progres i dukshëm → më shumë aktivitet (Gap3/4)</text>
+  <path d="M215 176 C 200 210, 260 230, 320 235" stroke="#C42305" stroke-width="1.4" fill="none" marker-end="url(#g)"/>
+</svg>
+<figcaption>Një projeksion i vetëm ushqen të gjitha sipërfaqet (identitet i njëjtë kudo) + laku i reputacionit i mbyllur. Ky është unifikimi i vërtetë.</figcaption>
+</figure>
+
+<!-- VENDIMI -->
+<h2 class="sec"><span class="dn">✓</span> Vendimi përfundimtar &amp; checklist</h2>
+<div class="prin">
+  <div class="p"><b>Parimi 1 · Një projeksion identiteti</b><br><span class="fnote">LISTING_SELECT kanonik + SSR-seed → një fytyrë e objektit social kudo. Mbyll Gap1/2 + sinkronizimin + unifikimin.</span></div>
+  <div class="p"><b>Parimi 2 · Mbyll lakun e reputacionit</b><br><span class="fnote">Shfaq pikë + Besueshmëri (unazë) te /u & /biznese → ringjall sistemin e vjetër. Mbyll Gap3/4.</span></div>
+  <div class="p"><b>Parimi 3 · Grupim + pastrim</b><br><span class="fnote">Butonat e shpalljes në një rresht; hiq seo-card/mbetjet/dublimin. Mbyll Gap5/6.</span></div>
+</div>
+<div class="card">
+<h4 style="margin-top:2px">Checklist zbatimi (renditur)</h4>
+<ol class="ck">
+  <li><span class="pr p1">P1</span> Nxirr <code>LISTING_SELECT</code> kanonik te <code>lib/listingSelect.ts</code>; përdore te <code>app/page.tsx</code> (SSR) + <code>HomeClient</code> + <code>/kategori</code>.</li>
+  <li><span class="pr p1">P1</span> SSR-seed i biznesit te kryefaqja (si /listing, /biznese).</li>
+  <li><span class="pr p2">P2</span> Shto <code>gamification_points</code> te query-t e /u & /biznese; kalo te <code>&lt;TrustBadge&gt;</code> (unazë e plotë) + "N pikë".</li>
+  <li><span class="pr p2">P2</span> Zëvendëso <code>seo-card</code> me <code>ListingCard</code> te kategoritë.</li>
+  <li><span class="pr p2">P2</span> Grupo butonat e shpalljes (Vlerëso·Ruaj·Ndaj·Raporto·Njoftomë) në një rresht.</li>
+  <li><span class="pr p3">P3</span> Hiq mbetjet (Statistikat/Abonimi te Shpalljet) + dedublo lidhjen e biznesit te shpallja + badge "Shitës aktiv".</li>
+</ol>
+<p class="fnote" style="margin-bottom:0">Të gjitha aditive, të kthyeshme, pa prekur pagesat/RLS/special-visitor/Të ruajtura/dizajnin. PR i vogël → verifikim live → merge → revert gati.</p>
+</div>
+
+<div class="callout ok"><strong>Për miratim.</strong> Pamja pixel-për-pixel e gjendjes-cak (A përdoruesi · B biznesi · C kartat · D shpallja nga brenda · E organigramat) është te dokumenti <em>ALPAZAR_Vizualizim_Gjendja_Cak_Harmonizuar.html</em>. Ky dokument është arkitektura + verdiktet + checklist-i. Me miratimin tënd final, zbatohet P1→P3 saktësisht kështu.</div>
+
+<footer>
+© 2026 ALPAZAR · Autopsi përfundimtare + blueprint · 6 dimensionet (butona · dizajn/ngjyra · modalitete · sinkronizim · harmonizim · unifikim) · Triada kuq·zi·verdhë + avatari të ruajtura · Kontratë operative e zbatuar.
+</footer>
+
+</div>
+</body>
+</html>
