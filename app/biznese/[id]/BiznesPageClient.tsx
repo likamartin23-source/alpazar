@@ -838,6 +838,18 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           {/* Reputacioni (RESTAURIMI FINAL, dëshifrimi B — zëvendëson BP2 C4): koka publike e
               biznesit shfaq ★ rating + "📦 Shitës aktiv" + "⚡ pikë" + TrustBadge unazë "X/100". */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
+            {/* 👑 VIP / Premium (tier i trashëguar nga pronari) + 🏢 Biznes — më parë vetëm te
+                paneli i pronarit, jo te pamja publike (gjetje audit: badge-t mungonin te vizitori). */}
+            {tierLabel && (
+              <span style={tier === 'vip'
+                ? { display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 800, color: '#7C3AED', background: '#F3E8FF', border: '1px solid #7C3AED33', borderRadius: 9, padding: '4px 10px' }
+                : { display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 800, color: '#7A4A00', background: '#FFF3D6', border: '1px solid #F5C84255', borderRadius: 9, padding: '4px 10px' }}>
+                <span aria-hidden="true">👑</span> {tierLabel}
+              </span>
+            )}
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 700, color: '#0B8A5A', background: '#E7F8F1', border: '1px solid #0B8A5A33', borderRadius: 9, padding: '4px 10px' }}>
+              <span aria-hidden="true">🏢</span> Biznes
+            </span>
             {rating.count > 0 && rating.avg != null && (
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#FFF8E1', color: '#7B5000', border: '1px solid #F5C84255', borderRadius: 9, padding: '4px 10px', fontSize: 12.5, fontWeight: 800 }}>
                 <span aria-hidden="true">★</span> {rating.avg.toFixed(1)}

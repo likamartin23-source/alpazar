@@ -46,6 +46,10 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
   // Ndjekesit e personit (tabela `follows`, following_id = ky profil) —
   // kutia e 4-te e matrices se ngrire (BLLOKU Imazhi 5), identike me biznesin.
   const [followers, setFollowers] = useState(0)
+  // Ndjekja (rrjet social): a e ndjek perdoruesi aktual kete profil. `follows` ka RLS publike
+  // (insert follower_id=auth.uid(), delete i vetes) — pa RPC. Butoni mungon me pare (gjetje audit).
+  const [isFollowing, setIsFollowing] = useState(false)
+  const [followBusy, setFollowBusy] = useState(false)
 
   // Shpalljet personale — një burim i vetëm fetch-i, i ripërdorur nga ngarkimi fillestar dhe
   // nga realtime. `condition`/`rank_tier`/`video_poster` për ListingCard (shenjat + kopertina video).
@@ -131,6 +135,34 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
     }
     load()
   }, [params.id])
+
+  // A e ndjek perdoruesi aktual kete profil — kontroll i vecante (varet nga sesioni).
+  useEffect(() => {
+    const target = profile?.id
+    if (!user || !target || user.id === target) { setIsFollowing(false); return }
+    supabase.from('follows').select('id', { head: true, count: 'exact' })
+      .eq('follower_id', user.id).eq('following_id', target)
+      .then(({ count }) => setIsFollowing((count || 0) > 0), () => {})
+  }, [user, profile?.id])
+
+  async function toggleFollow() {
+    if (!user) { window.location.href = '/auth/login'; return }
+    const target = profile?.id
+    if (!target || user.id === target || followBusy) return
+    setFollowBusy(true)
+    const wasFollowing = isFollowing
+    // Optimist: pasqyro menjehere, ktheje mbrapsht ne gabim.
+    setIsFollowing(!wasFollowing)
+    setFollowers((n) => Math.max(0, n + (wasFollowing ? -1 : 1)))
+    const { error } = wasFollowing
+      ? await supabase.from('follows').delete().eq('follower_id', user.id).eq('following_id', target)
+      : await supabase.from('follows').insert({ follower_id: user.id, following_id: target })
+    if (error) {
+      setIsFollowing(wasFollowing)
+      setFollowers((n) => Math.max(0, n + (wasFollowing ? 1 : -1)))
+    }
+    setFollowBusy(false)
+  }
 
   if (loading) return (
     <div style={{ minHeight: '100vh', background: '#FFFBEA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -240,13 +272,19 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
           {/* Reputacioni (GAP 3+4 — mbyllja e lakut): TrustBadge i plotë (unazë "X/100") +
               "⚡ N pikë" reale. Pikët fitohen e njoftohen por s'shfaqeshin te profili — tani po.
               Respekton opt-out-in `trust_score_visible` (Ligji 124/2024). */}
-          {profile.trust_score_visible !== false && (
+          {((profile.trust_score_visible !== false) || (profile.gamification_points || 0) > 0) && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
-              <TrustBadge
-                createdAt={profile.created_at}
-                listingsActive={listings.length}
-                gamificationPoints={profile.gamification_points || 0}
-              />
+              {/* Besueshmëria (unazë) respekton opt-out-in `trust_score_visible` (Ligji 124/2024).
+                  Pikët e gamifikimit JANË sinjal publik — shfaqen gjithnjë kur > 0, njësoj si te
+                  /biznese dhe /listing. Më parë e gjithë shiriti fshihej nga opt-out-i i besueshmërisë,
+                  ndaj 135 pikët e llogarisë nuk dukeshin te /u ndërsa dukeshin te /biznese (çharmonizim). */}
+              {profile.trust_score_visible !== false && (
+                <TrustBadge
+                  createdAt={profile.created_at}
+                  listingsActive={listings.length}
+                  gamificationPoints={profile.gamification_points || 0}
+                />
+              )}
               {(profile.gamification_points || 0) > 0 && (
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 700, color: '#7A4A00', background: '#FFF8E1', border: '1px solid #F5C84255', borderRadius: 9, padding: '4px 10px' }}>
                   <span aria-hidden="true">⚡</span> {profile.gamification_points} pikë
@@ -267,6 +305,17 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
                 style={{ flex: 1, minWidth: 120, padding: '10px 16px', background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
               >
                 <><span aria-hidden="true">💬</span> Dërgo Mesazh</>
+              </button>
+            )}
+            {!isOwnProfile && (
+              <button
+                type="button"
+                onClick={toggleFollow}
+                disabled={followBusy}
+                aria-pressed={isFollowing}
+                style={{ padding: '10px 16px', minWidth: 110, background: isFollowing ? '#111' : '#fff', color: isFollowing ? '#F5C842' : '#111', border: isFollowing ? 'none' : '1.5px solid #ddd', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: followBusy ? 'default' : 'pointer', opacity: followBusy ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+              >
+                {isFollowing ? <><span aria-hidden="true">✓</span> Duke ndjekur</> : <><span aria-hidden="true">＋</span> Ndiq</>}
               </button>
             )}
             {isOwnProfile && (
