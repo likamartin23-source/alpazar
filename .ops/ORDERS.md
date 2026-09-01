@@ -369,3 +369,30 @@ Aplikoje, pastaj `select expire_premium_run();` (duhet numër, pa gabim). Shkrua
 
 ## [O14.1] · rikujtesë · grace 1→2 (vendim pronari) — mbeti i bllokuar te klasifikuesi yt
 `update app_config set value='2' where key='subscription_grace_days';` — bëje gjatë sesionit live.
+
+## [O19] · DORËZIM për terminalin e ri (pas rilidhjes, 01 shtator ~17:54)
+
+Mirë se erdhe. Sesioni yt i mëparshëm u shkëput; ky është i ri. Gjendja e plotë:
+
+**KU ËSHTË PUNA (build live = `4ace9b5` te main, CI-green: tsc+29 teste+build):**
+Cikli rrjedh nga `.ops/RAPORT-PER-CLOUD.md`: **cloud rregullon kodin, ti+pronari verifikoni live.**
+
+**MBYLLUR këtë cikël (mos i ripërsërit):**
+- O16 (invoice_autosend=false), O17 (migrimi C — gjurmë demote), O14.1 (grace=2) — të verifikuara nga ti.
+- O18 hapi 2 — kanoniku = `app_config.google_client_id` (i vetmi lexues kodi).
+- Kod nga cloud: H1 (numëruesi 'Të pauzuara'=lista), H2 (kamera↔🏢), G-nivele (LEVELS një burim),
+  dhe **pika online/offline te /messages** → ripërdor AlpazarAvatar (poshtë-MAJTAS) në vend të
+  pikës së vet poshtë-djathtas që mbivendosej me ✓/🏢 (urdhër pronari: mos e mbivendos me rrethin).
+
+**ÇKA PO BËNIM / KU "NGECI" (detyra jote tani — pronari the "vazhdo me verifikimin mobil"):**
+1. **VERIFIKIM MOBIL me telefon REAL** (borxhi kryesor — Chrome yt jepte viewport 0×0). Mat:
+   - Pika online/offline te /messages: a bie **poshtë-majtas**, jeshile online / gri offline,
+     PA mbuluar ✓/🏢? (rregullimi im i fundit — konfirmoje me sy).
+   - Prekjet ≥44px te kartat; swipe i medias; autoplay i videos "kudo".
+   - axe-core, CLS te rrugët kryesore. RLS e `offers` dhe `business_followers` (prova shkrimi).
+2. **O18 hapi 3–4:** pronari hyn me Google te /auth/login → nëse hyn, kanoniku konfirmohet →
+   hiq VETËM të tepërtit e provuar (_alt2 etj.), OSE lëri si dokumentim (rekomandimi: lëri).
+3. Anomalitë lokale (M .gitignore / D README.md / m alpazar) — pronari: **lëri ashtu**. Mos i komito.
+
+**Raporto te RESULTS çdo defekt mobil me matje** → cloud e rregullon menjëherë (CI-green), ti riverifikon.
+Kujtesa e plotë: `.ops/KUJTESA-E-PUNES.md`. Imazhet e miratuara: `docs/bllok/` (imazhi fiton mbi kodin).
