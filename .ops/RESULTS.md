@@ -407,3 +407,74 @@ Asnje `permission denied` / `PGRST1` / `row-level security` ne asnje prej tyre.
 `"birth_year"`, `"marketing_opt_in"`, `"referred_by"`, `"suspended_reason"` ne
 HTML-ne e `/`, `/listing/<id>`, `/u/<id>`, `/biznese/<id>` si anonim →
 **asnje shfaqje**. Ngushtimi mban edhe nga jashte, jo vetem ne baze.
+
+## [O7] · BLLOKUAR PJESERISHT · CRON_SECRET (Vercel) + Cloudinary upload preset
+
+### Gjendja PARA (matur te `/api/health`, build `97c2ef6`)
+    checks.env.ok = false
+      kritike qe mungojne: NEXT_PUBLIC_SITE_URL, CRON_SECRET, IP_HASH_SALT
+    checks.media.ok = false, transkodim = false
+      mungon: cloudinary_upload_preset
+      kufi_mb = 50, premtohen_sekonda = 300
+Baza: `app_config.cloudinary_cloud_name = dltc3o5y3` ekziston;
+`cloudinary_upload_preset` **nuk ekziston fare** (jo bosh — mungon rreshti).
+
+### (A) CRON_SECRET te Vercel — NUK e bej dot. Tri rruge, te tria te mbyllura.
+1. **Vercel MCP nuk ka mjet per variablat e mjedisit.** I kontrollova te gjitha:
+   ka `get_project`, `list_deployments`, `deploy_to_vercel`, mbrojtjen e deploy-it,
+   log-et — asnje `env`. (Render-i ka `update_environment_variables`; Vercel-i jo.)
+2. **Vercel CLI s'eshte i instaluar dhe s'ka auth ne kete makine.** Verifikova:
+   s'ka `~/.vercel`, s'ka `com.vercel.cli/auth.json`, s'ka `VERCEL_TOKEN` ne mjedis.
+3. **Rruga e panelit web do te thote te shtypja nje sekret ne nje fushe forme** —
+   dhe kete nuk e bej. Nuk eshte kapriço: eshte kufi i imi per kredencialet, dhe
+   perkon me §8 te CLAUDE.md — *"Ekzekutuesi i kodit nuk i trajton sekretet; i
+   vendos Martineli."* Rregull i shkruar nga vete pronari.
+
+**Zgjidhja qe nuk ma kalon sekretin as mua as bisedes** (vlera gjenerohet dhe
+tubohet drejt e ne CLI, pa u shfaqur askund):
+
+    npm i -g vercel && vercel login && vercel link
+    openssl rand -hex 32 | vercel env add CRON_SECRET production
+    openssl rand -hex 32 | vercel env add CRON_SECRET preview
+    openssl rand -hex 32 | vercel env add CRON_SECRET development
+
+Pas kesaj duhet **redeploy** qe variabla te hyje ne fuqi (Vercel-i i lexon ne
+build). Redeploy-in mund ta nis une.
+
+**KUJDES — mos i ngaterro:** `admin_settings.embed_cron_secret` ekziston ne baze
+dhe eshte NJE SEKRET TJETER. `CRON_SECRET` i Vercel-it nuk zevendesohet prej tij.
+
+**Bonus i matur:** ne te njejtin bllok mungojne edhe `NEXT_PUBLIC_SITE_URL`
+(baza e canonical/og:url dhe e sitemap-it — prek SEO-n direkt) dhe `IP_HASH_SALT`
+(pa te perdoret nje kripe e paracaktuar PUBLIKE per hash-in e IP-ve te analitika —
+kjo eshte edhe ceshtje privatesie, jo vetem higjiene). Nuk ishin ne urdher; po i
+raportoj sepse jane ne te njejten liste dhe zgjidhen me te njejtin veprim.
+
+### (B) Cloudinary upload preset — hapi 1 i bllokuar, hapi 2 gati
+**(B1) Krijimi i preset-it:** provova `console.cloudinary.com/settings/upload_presets`
+me syte e Chrome → *"Permission denied for reading page content on this domain"*.
+Zgjatimi nuk ka leje per ate domen; lejen e jep pronari te vete zgjatimi.
+Rruga alternative (Admin API me `api_key:api_secret`) s'ekziston: kontrollova
+`admin_settings` dhe `app_config` — asnje kredencial Cloudinary i ruajtur, dhe
+`CLOUDINARY_URL`/`CLOUDINARY_API_KEY` mungojne ne mjedis. Edhe po te ekzistonin,
+perseri do te binte nen §8.
+
+**(B2) Shkrimi te `app_config` — GATI, e bej sapo te kem emrin.** Ky nuk eshte
+sekret (eshte emer preset-i unsigned), ndaj i takon `app_config` sipas §2.7.
+Komanda e pergatitur:
+
+    insert into public.app_config (key, value)
+    values ('cloudinary_upload_preset', '<emri>')
+    on conflict (key) do update set value = excluded.value, updated_at = now();
+
+Kur ta krijoje preset-in te Cloudinary, duhet **Signing Mode = Unsigned**.
+Rekomandoj edhe kufij ne vete preset-in (dosje e caktuar, formate te lejuara,
+madhesi maksimale) — nje preset unsigned pa kufij lejon ngarkim nga kushdo qe di
+emrin e cloud-it.
+
+### Verifikimi qe do te bej sapo te zhbllokohet
+`/api/health` → `checks.env.kritike.mungojne` pa `CRON_SECRET`, dhe
+`checks.media.transkodim = true`. Te dyja te matura, jo te supozuara.
+
+**[O7] mbetet i hapur.** Nuk shpika rruge dhe nuk raportova sukses te pjesshem si
+te plote.
