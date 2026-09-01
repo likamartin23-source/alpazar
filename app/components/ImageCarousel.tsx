@@ -240,12 +240,20 @@ export function ImageCarousel({ images, videos, poster, alt = '', aspectRatio = 
               aria-current={i === current ? 'true' : undefined}
               onClick={() => goTo(i)}
               aria-label={s.kind === 'video' ? `Video ${i + 1}` : `Foto ${i + 1}`}
+              /* Zona e prekjes zmadhohet me padding TEJDUKSHËM (pill-i vizual mbetet 7px); rrëshqitja
+                 native (scroll-snap x te track-u) është rruga kryesore për fotot 2–9. 44px×9 pika
+                 s'futen në 387px, ndaj tap ~25px (mbi minimumin WCAG 2.5.8) pa e prishur rreshtin. */
               style={{
-                width: i === current ? 18 : 7, height: 7, borderRadius: 4, border: 'none',
-                background: i === current ? '#E63312' : (s.kind === 'video' ? '#9a9a9a' : '#ccc'),
-                cursor: 'pointer', padding: 0, transition: 'all .2s',
+                background: 'none', border: 'none', cursor: 'pointer', padding: '9px 5px',
+                display: 'flex', alignItems: 'center', lineHeight: 0,
               }}
-            />
+            >
+              <span style={{
+                width: i === current ? 18 : 7, height: 7, borderRadius: 4, display: 'block',
+                background: i === current ? '#E63312' : (s.kind === 'video' ? '#9a9a9a' : '#ccc'),
+                transition: 'all .2s',
+              }} />
+            </button>
           ))}
         </div>
       )}
