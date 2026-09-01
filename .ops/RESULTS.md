@@ -4397,3 +4397,91 @@ Funksionalitet i shkruar në bazë që paneli s'e thërret: abonime, fiskalizim,
 (fshije kodin/tabelën). Rregulli i shtëpisë është «përshtat para se të fshish» — por një sistem
 i palidhur për muaj është borxh që rritet: dikush do e gjejë, do e besojë të gjallë, dhe do
 ndërtojë mbi të. `revokeConsent` dhe zinxhiri i `conversations` janë të parët për vendim.
+
+---
+
+# [O41] · INVENTAR I PLOTË I ELEMENTEVE — dhe SHKAKU pse "asgjë nuk harmonizohet"
+
+Nisur nga tri fotot e pronarit (Njoftomë · Raporto/Ndaj + karta e ngjashme · zemra mbi foto).
+Skanim element-për-element i të gjitha sipërfaqeve. **Gjeta shkakun rrënjësor, jo simptoma.**
+
+## 🔴 SHKAKU RRËNJËSOR — një klasë e vetme mban DY kuptime të papajtueshme
+
+`.card-title` përdoret **37 herë**. Vetëm **2** janë tituj kartash
+(`ListingCard.tsx:319`, `BusinessCard.tsx:109`). **35 janë KOKA SEKSIONI** në 7 skedarë:
+
+```
+app/profile/page.tsx            "Informacioni personal", "Trust Score — Privatësia",
+                                "Ndrysho Fjalëkalimin", "Gjendja 3 — Me biznes" …
+app/biznese/[id]/…              "Rreth biznesit", "Vendndodhja & Kontakti", "Informacion ligjor"
+app/listing/new/…  ×3           "Kategoria *", "Vendndodhja *", "Informacioni bazë"
+app/listing/[id]/edit/page.tsx  "Fotot (max N)" …
+app/referral/page.tsx           "Statistikat e Tua", "Linku yt i Referimit" …
+```
+
+Dhe klasa u imponon të gjithëve rregullin e një **titulli karte**:
+```css
+.card-title{font-size:13px; -webkit-line-clamp:1; overflow:hidden; min-height:1.3em;}
+```
+
+**Pasoja e drejtpërdrejtë — kjo shpjegon ankesën "ndryshimet kthehen tek e vjetra":**
+kush rregullon kartën, deformon 35 koka seksioni; kush rregullon kokat, deformon kartat.
+Dy sesione që punojnë paralel mbi të njëjtën klasë e kthejnë njëri-tjetrin **pafundësisht**.
+Kjo nuk është defekt CSS-je — është **fjalor i mbingarkuar**. Pa e ndarë (`.card-title`
+për karta ≠ `.section-title` për koka), asnjë harmonizim s'mund të qëndrojë.
+**Anësore:** çdo kokë seksioni sot pritet në NJË rresht me `overflow:hidden` — teksti i gjatë
+zhduket në heshtje.
+
+## 🔴 E njëjta klasë, dy pamje — «madhësia s'është e njëjtë» (foto 3)
+
+`BusinessCard.tsx:115` e mbishkruan klasën e përbashkët me stil inline:
+| | ListingCard | BusinessCard |
+|---|---|---|
+| `.card-price` | 14px · `var(--action-red-deep)` | **12.5px · `#7A4A00`** (inline) |
+
+Dy karta krah për krah në të njëjtin grid, me të njëjtën klasë, **çmimi shfaqet ndryshe**.
+Pikërisht ajo që raportuat: *"madhsia sesht e njejt"*.
+
+## 🟠 Kontrolli «Ruaj» — i njëjti pozicion, tri divergjenca të vogla
+
+| | Zemra (shpallje) | Bookmark (biznes) |
+|---|---|---|
+| zona e prekjes | 44×44 ✔ | 44×44 ✔ |
+| rrethi | `rgba(255,255,255,**.95**)` | `rgba(255,255,255,**.92**)` |
+| hija | `0 1px 6px rgba(0,0,0,**.28**)` | `0 1px 6px rgba(0,0,0,**.12**)` |
+| korniza | `1px solid rgba(0,0,0,.08)` | **asnjë** |
+| ikona | SVG 15px | `ti-bookmark` **16px** |
+
+Të dyja duan të jenë "i njëjti buton". Nuk janë. Duhet **një komponent i vetëm**.
+
+## 🔴 Foto që dështon → kuti bosh, pa vend-mbajtës (foto 2 — karta pa asgjë)
+
+`ListingCard.tsx:212-219`:
+```jsx
+cover ? <Image onError={e => e.currentTarget.style.display='none'} …/>
+      : <i className="ti ti-photo" …/>      ← vend-mbajtësi renderohet VETËM kur cover mungon
+```
+Kur `cover` **ekziston por dështon** (404/CORS), `onError` e fsheh foton dhe vend-mbajtësi
+**nuk hyn kurrë në lojë** — mbetet vetëm sfondi krem i `.card-img`. Kjo është saktësisht
+karta bosh te «Shpallje të ngjashme» në foton tuaj. Klasa F5 e taksonomisë:
+*mekanizmi i saktë, njësia e gabuar* — `onError` fsheh, por s'aktivizon zëvendësimin.
+
+## ✅ Çfarë VERIFIKOVA se është e rregullt në depo (foto 1 dhe 2)
+
+- `.njofto-btn` **është** i unifikuar me `.safety-btn`: `#f4f4f4` · `1px #b0b0b0` ·
+  `min-height:44px` · `radius 11px` · `12.5px/700` · `:active`. Byte për byte të njëjtat.
+- `.safety-btn` (Raporto · Kërkesë heqjeje · Ndaj): po ashtu, kontrast i rregulluar.
+- «Shpallje të ngjashme» përdor **të njëjtin `ListingCard`** me `showSeller`+`mounted` ✔
+- Trupi i të dy kartave ka **të njëjtat 5 elemente** në të njëjtin rend ✔
+
+**Nëse pronari i sheh ende të zbehtë, ai po shikon paketimin e vjetër** — problemi
+i UpdatePrompt-it (banner opt-in, pa rifreskim automatik), i regjistruar te [O38].
+Kjo është prova e dytë e pavarur për të njëjtin defekt.
+
+## Renditja e punës
+1. **Ndaj `.card-title`** → `.card-title` (karta) + `.section-title` (35 koka, 7 skedarë).
+   Pa këtë, çdo harmonizim tjetër kthehet mbrapsht.
+2. **Hiq mbishkrimin inline** të `.card-price` te `BusinessCard:115`.
+3. **Një komponent i vetëm** «Ruaj» për zemrën dhe bookmark-un.
+4. **Vend-mbajtës në `onError`** te `ListingCard`, jo `display:none`.
+5. **UpdatePrompt me rifreskim automatik** — përndryshe asnjë rregullim s'shihet.
