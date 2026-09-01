@@ -2265,3 +2265,60 @@ Dhe `.cam{position:absolute}` ekziston (`BiznesPageClient:489`), ndaj `top/left`
 inline zbatohen vërtet — kontrollova që rregullimi të mos jetë i heshtur.
 
 **Verdikti: të dyja të pranuara.** Ripërdorim, jo rishkrim; asnjë sistem ekzistues i prekur.
+
+## [VERIFIKIM · d45c29d] · Pika G — E PRANUAR, plus një gjetje e re
+
+### Bashkimi i shkallëve — i saktë, dhe pa dëm te përdoruesit
+Rreziku i vërtetë i këtij refaktori nuk ishte kodi, ishte **që përdoruesve t'u
+ndryshonte niveli i shfaqur**. E kontrollova pikërisht atë:
+
+| | Kopja e vjetër te /referral | `LEVELS` i ri te Badges |
+|---|---|---|
+| pragjet | 0 / 100 / 400 / 1000 | **0 / 100 / 400 / 1000** |
+| emrat | Fillestar/Tregtar/Ekspert/Master | **identikë** |
+| ikonat | 🌱 ⚡ 🏆 💎 | **identike** |
+
+**Asnjë përdorues nuk ndryshon nivel.** Ngjyrat te /referral po ndryshojnë
+(Fillestar gri→jeshile, Ekspert ambër→e kuqe), por drejt paletës që Badges e përdor
+tashmë kudo tjetër — pra i çuditshmi ishte /referral. Kjo është harmonizim i saktë.
+
+`getLevel` u rishkrua si cikël mbi `LEVELS` (ngjitje sipas `min`, i fundit që përputhet
+fiton) — ekuivalent me zinxhirin e vjetër `if`, përfshirë rastin `points=0`.
+
+Fusha `max` u hoq. Kontrollova: `getLevelProgress` përdor **vetëm `.min`**, dhe s'ka
+asnjë përdorim tjetër të `.max` në faqe. Heqja është e sigurt, jo `undefined` i fshehur.
+
+### KORRIGJIM I RAPORTIT TIM: TrustBadge NUK ishte sistem i tretë nivelesh
+Raporti im (pika G) listoi tri sisteme nivelesh dhe përfshiu `TrustBadge.getLevel`.
+Cloud-i preku vetëm dy dhe e la TrustBadge-in. **Kishte të drejtë; unë e kisha gabim.**
+
+`TrustBadge` llogarit një **rezultat besueshmërie 0–100** nga tre faktorë (mosha e
+llogarisë + shpalljet aktive + pikët), me pragje 30/55/80 mbi atë shkallë, dhe etiketa
+reputacioni ("I ri", "I Besueshëm", "I Verifikuar", "Shitës Ekspert"). Kjo është
+madhësi tjetër nga niveli i pikëve. Bashkimi do të kishte prishur dy koncepte.
+
+Ky është i njëjti gabim si me `tierNgaProfili`: pashë emra të ngjashëm funksionesh dhe
+i quajta dublim pa matur **çfarë masin**. E shtoj te lista e tërheqjeve.
+
+### 🔴 GJETJE E RE — një kopje e vjetër e aplikacionit rri brenda depos
+Gjatë `npx tsc --noEmit` dolën **5 gabime**. Asnjë prej tyre te `app/`, `lib/` ose
+`components/` — **të pesta te `./alpazar/`**, një drejtori që:
+- është **depo git e veçantë** brenda depos kryesore
+- është regjistruar te `origin/main` si **gitlink** (`160000 commit 8bfa688…`) **pa `.gitmodules`** → `git submodule status` jep `fatal: no submodule mapping found`
+- përmban një kopje të vjetër të aplikacionit (10 `.tsx`, `admin_page.tsx`, `layout.tsx`, `page.tsx`, madje edhe një `alpazar/alpazar/` të mbivendosur)
+- ndryshimi i fundit: **22 maj 2026** — mbi tre muaj e ndenjur
+- `tsconfig.json` e përfshin (`include: ["**/*.ts","**/*.tsx"]`, `exclude` ka vetëm `node_modules` dhe `supabase/functions`)
+
+**Pse ka rëndësi për cloud-in:** protokolli i tij kërkon `tsc --noEmit = 0` para se një
+rregullim të quhet i verifikuar. Ai portë **nuk kalohet dot sot** për arsye që s'kanë
+lidhje me asnjë ndryshim. Rreziku i vërtetë s'është gabimi — është që dikush të mësojë
+ta shpërfillë daljen e `tsc`, dhe të humbasë një gabim të vërtetë ndër to.
+
+Kjo është gjithashtu përgjigje e drejtpërdrejtë e kërkesës së pronarit *"audito sistemet
+e vjetra që ranë ndesh me bllokun dhe nuk u hoqën"* — kjo është pikërisht një e tillë,
+dhe më e madhja: një version i tërë i hershëm i aplikacionit.
+
+**Nuk e preka.** Heqja e një gitlink-u nga `origin/main` është veprim i pakthyeshëm
+mbi historinë e përbashkët; kërkon vendim pronari. Dy rrugë:
+- e shpejtë dhe e sigurt: shto `"alpazar"` te `exclude` i `tsconfig.json` → porta e tipeve rikthehet menjëherë, kopja mbetet për referencë
+- e plotë: hiqe gitlink-un nga indeksi dhe arkivoje drejtorinë jashtë depos
