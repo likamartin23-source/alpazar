@@ -4330,3 +4330,70 @@ quan**. Nuk ka një komponent të vetëm «shenjat e identitetit».
 që kthen të njëjtin grup vulash kudo, me të njëjtat emërtime shqip — dhe faqja të vendosë vetëm
 **sa** të shfaqë (kompakte te karta, e plotë te profili), jo **cilat**. Përndryshe zbatimi i gjashtë
 do lindë me faqen tjetër (§4-bis).
+
+---
+
+# [O40] · AUDIT I KOMPONENTËVE TË NDËRTUAR QË S'U LIDHËN KURRË
+
+Skanim i plotë në tri shtresa. **Çdo gjetje u verifikua dy herë** — heuristika ime nxori dy false
+pozitive (`MESSAGES`, `SkeletonCard/Row/Text`) dhe i hoqa para raportimit.
+
+## 1. KODI — tetë eksporte plotësisht të vdekura (0 referenca askund, as brenda skedarit)
+
+| Simboli | Skedari | Shënim |
+|---|---|---|
+| `isOnline` | `components/Badges.tsx` | i vdekur i vërtetë (KUJTESA e kishte konfirmuar) |
+| `UserBadges` | `components/Badges.tsx` | komponent koherent, **askush s'e rendon** |
+| `buildBadges` | `components/Badges.tsx` | thirret vetëm nga `UserBadges` → **i vdekur një nivel më lart** |
+| `useOnlineUsers` | `components/OnlinePresence.tsx` | hook i ndërtuar, i palidhur |
+| `revokeConsent` | `lib/consent.ts` | GDPR — **funksion i tërheqjes së pëlqimit që s'thirret kurrë** |
+| `getStoredRef` | `lib/referral.ts` | leximi i kodit të referimit |
+| `supabaseAdmin` | `lib/supabase-admin.ts` | klienti service-role; rrugët e API-së krijojnë klientin e tyre inline |
+| `initAuthSync` · `supabaseErrorToMessage` | `lib/error-handler.tsx` | sinkronizim sesioni + përkthim gabimesh |
+
+**⚠ `revokeConsent` peshon më shumë se të tjerat:** është detyrim ligjor (GDPR — tërheqja e pëlqimit
+duhet po aq e lehtë sa dhënia). Ndërtuar, kurrë e lidhur me ndërfaqen.
+**⚠ `supabaseAdmin` i vdekur + klientë inline** = dublim; nëse dikush ndryshon konfigurimin te
+`lib/supabase-admin.ts`, asgjë s'ndryshon në prodhim.
+
+**FALSE POZITIVE që hoqa (mos i prek):** `MESSAGES` (përdoret te `i18n.tsx:159`) ·
+`SkeletonCard/Row/Text` (përdoren brenda `SkeletonGrid/List/Profile`) · `CONSENT_KEY`.
+Këto s'janë të vdekura — thjesht **eksportohen pa nevojë**.
+
+## 2. BAZA — katër tabela të ndërtuara PLOTËSISHT, me ZERO lidhje në kod
+
+| Tabela | Politika RLS | Rreshta | Referenca në kod |
+|---|---|---|---|
+| `posts` | **4** | 0 | **0** |
+| `conversations` | **3** | 0 | **0** |
+| `typing_indicators` | **4** | 0 | **0** |
+| `message_reactions` | **3** | 0 | **0** |
+
+**14 politika RLS të shkruara, të testuara, të vendosura — për tabela që kodi s'i prek fare.**
+Dhe `conversation_id` **nuk shkruhet asnjëherë** (`grep insert|update conversation_id` → bosh),
+ndaj `conversations` s'do mbushet kurrë vetvetiu → `typing_indicators` dhe `message_reactions`
+s'do punojnë kurrë. **Zinxhir i vdekur i plotë**, siç e kishte regjistruar KUJTESA §4.
+
+**Të gjalla, thjesht bosh (jo defekt):** `follows` (4 ref) · `business_followers` (7 ref) ·
+`reviews` (2 ref) · `offers` (3 ref, 1 rresht).
+
+## 3. RPC-të ADMIN — të dhjetat ende të palidhura
+
+```
+admin_adjust_subscription · admin_cancel_subscription · admin_change_subscription
+admin_fiscal_queue · admin_fiscal_retry · admin_attach_invoice_file
+admin_send_invoices_bulk · admin_bulk_user_flag · admin_list_businesses · admin_list_reports
+```
+**0 referenca në kod për të dhjetat** — konfirmim i KUJTESA-s §4 (klasa F1), pa asnjë ndryshim.
+Funksionalitet i shkruar në bazë që paneli s'e thërret: abonime, fiskalizim, fatura, moderim masiv.
+
+## Përmbledhje — sa punë ekziston pa u parë kurrë
+- **8 eksporte** kodi të vdekura (nga të cilat 1 me peshë ligjore: `revokeConsent`)
+- **4 tabela** me 14 politika RLS, zero lidhje me kodin
+- **10 funksione RPC** admin, zero thirrje
+- **1 zinxhir i plotë i vdekur**: `conversation_id` s'shkruhet → 3 tabela s'punojnë kurrë
+
+**Vendimi i pronarit kërkohet për secilën:** *lidhe* (ndërto ndërfaqen që mungon) ose *hiqe*
+(fshije kodin/tabelën). Rregulli i shtëpisë është «përshtat para se të fshish» — por një sistem
+i palidhur për muaj është borxh që rritet: dikush do e gjejë, do e besojë të gjallë, dhe do
+ndërtojë mbi të. `revokeConsent` dhe zinxhiri i `conversations` janë të parët për vendim.
