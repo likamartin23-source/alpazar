@@ -87,6 +87,15 @@ Cikli i auditit të terminalit PËRFUNDOI. Renditja e mbetur sipas peshës:
 - **eb57551:** terminali korrigjoi dy raporte të vetat (Vepro si + referral) — ndarja biznes/llogari e zbatuar.
 
 - **URGJENTE — /admin i paarritshëm — RREGULLUAR (`4b5c03d`):** middleware.ts (rrënjë) lexonte `is_admin` të ngushtuar → pronari locked out. Tani `rpc('is_admin')`. Regres i shkaktuar nga cloud-i; auditi §0-bis kishte humbur `middleware.ts`. Mësimi u shtua te CLAUDE.md §0-bis (fshesa duhet të mbulojë rrënjën: middleware.ts/instrumentation.ts/next.config.js/app/api).
+  · **Verifikuar live (01 shtator 11:43 UTC):** `/api/version`=`4b5c03d` (deploy zbriti); `/admin` pa sesion → `/auth/login` (fail-closed i saktë, stamp `4b5c03d`); `is_admin()` në DB = SECURITY DEFINER + EXECUTE për `authenticated`. Rruga pozitive (admin i kyçur hap /admin) = klik i pronarit [O10].
+
+- **AUDIT i modelit 3-shkallësh (01 shtator, matur link-për-link mbi `origin/main` + krahasuar me imazhin E `03_Gjendja_Cak_Harmonizuar.html`):** modeli social 3-shkallësh është **I PLOTË dhe DYKAHËSH** — jo defekt.
+  · Karta→shpallja: `ListingCard.open()`→`/listing/{id}` ✓
+  · Shpallësi→biznesi/personi: overlay→`/biznese/{biz.id}` (biznes) / `/u/{author.id}` (person) ✓
+  · Biznesi→★ Pronari→`/u/{owner_id}` (BiznesPageClient rr.921–936, prekje 44px) ✓
+  · Përdoruesi→🏢 Shiko Biznesin→`/biznese/{biz.id}` (UserProfileClient rr.336) ✓
+  · Karta e biznesit në 2 vende (feed + lista bizneseve) ✓
+  · **Mësim matjeje (§9.2):** raportova fillimisht "Pronari→/u mungon" nga një `grep|head -40` i cunguar që preu para rreshtit 921. Leximi i burimit real e korrigjoi PARA çdo prekjeje. Instrumenti gënjeu, jo kodi.
 
 ## 5. Mësime të vërtetuara (shtoji këtu, mos i harro)
 - **Device flow** = rrugë autentikimi që s'ia kalon sekretin agjentit (Vercel CLI). Sekretet i vë pronari (§8).
