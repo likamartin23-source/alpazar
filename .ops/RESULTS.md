@@ -668,3 +668,83 @@ ndajne analitiken e preview/development nga ajo e prodhimit — izolim, jo defek
 kufiri i videos 50 -> 100 MB.
 
 **[O7] KALON I PLOTE.** Asnje pike e hapur.
+
+## [O8-AUDIT] · Sistemet e reja të bllokut × sistemet e vjetra
+
+### ⚠️ DEFEKT PRIVATËSIE — opt-out-i i Trust Score anashkalohet te `/biznese`
+
+**Fakti në bazë:**
+
+    Administratori Alpazar (af3e3d5b) : trust_score=0, trust_score_visible=FALSE, pikë=135
+    Martinel Likaj      (afbe35fb) : trust_score=0, trust_score_visible=true,  pikë=0
+    businesses: ASNJË kolonë trust/score (kontrolluar information_schema)
+
+**Kodi — tri faqe, dy sjellje:**
+
+| Rruga | Rreshti | Kushti |
+|---|---|---|
+| `app/u/[id]/UserProfileClient.tsx` | 281 | `profile.trust_score_visible !== false &&` ✅ |
+| `app/listing/[id]/ListingPageClient.tsx` | 963 | `seller.trust_score_visible !== false &&` ✅ |
+| `app/biznese/[id]/BiznesPageClient.tsx` | **571, 869** | **PA ASNJË KUSHT** ❌ |
+
+Te `/biznese` TrustBadge thirret si
+`<TrustBadge createdAt={biz.created_at} listingsActive={…} gamificationPoints={pronari?.gamification_points} />`
+— pa `score` dhe pa kontrollin e opt-out-it, ndaj e **llogarit vetë** nga data e
+krijimit, shpalljet dhe pikët e PRONARIT.
+
+**Konfirmuar LIVE:** `/biznese/ffb19071…` shfaq `Trust Score 2/100` për një pronar
+që e ka çaktivizuar shfaqjen. `/u/likamartin23` dhe `/listing/<id>` e fshehin
+saktë — pra opt-out-i punon në dy rrugë nga tri.
+
+**Pse ka peshë:** faqja `/profile → Siguri & privatësi` i premton përdoruesit:
+*"Nëse e çaktivizoni, Trust Score juaj nuk do të shfaqet te profili publik dhe
+kartat e shpalljeve."* Premtimi shkelet te faqja e biznesit. Ligji 124/2024 neni 19
+(kundërshtimi i profilizimit automatik) — dhe §2.1 e CLAUDE.md.
+
+**Rregullimi:** shto të njëjtin kusht te të dy vendet e `BiznesPageClient.tsx`,
+duke lexuar `pronari?.trust_score_visible !== false`.
+
+### Harta: cilat tabela të vjetra i gjallëroi blloku
+
+Ballafaqim i tabelave që §6 i quante "me politika, pa ndërfaqe", kundër kodit live:
+
+| Tabela | Gjendja tani | Ku |
+|---|---|---|
+| `offers` | **GJALLË** (blloku i ri) | `components/OfferBox.tsx`, `app/oferta/page.tsx` |
+| `verification_requests` | **GJALLË** (blloku i ri) | `components/VerificationBox.tsx` |
+| `business_followers` | **GJALLË** (blloku i ri) | `biznese/[id]/BiznesPageClient.tsx` |
+| `follows` | **GJALLË** (blloku i ri) | `u/[id]/UserProfileClient.tsx` |
+| `posts` · `orders` · `disputes` · `listing_comments` · `push_tokens` · `conversations` · `badges` · `user_badges` · `referral_rewards` · `typing_indicators` · `message_reactions` | ende të vdekura | — |
+
+Pra blloku i ri **nuk krijoi dublikatë** — i lidhi katër tabela që rrinin të
+ndërtuara e të paarritshme. Ky është modeli i duhur dhe ia vlen të shënohet.
+
+### Integrimi i ndjekjes — i rregullt, i verifikuar
+Dy sisteme, të dyja me triger që mban numëruesin:
+
+    follows            → trg_follow_counts       → update_follow_counts  → profiles.followers_count
+    business_followers → trg_business_follow_count → fn_business_follow_count → businesses.followers_count
+
+Prova live: Ndiq te `/u` → `0→1`, qëndroi pas rifreskimit, `1→0` pas çkyçjes.
+**Vërejtje modeli (jo defekt):** për një llogari biznesi vizitori has DY butona
+"Ndiq" të palidhur — një te `/u` (ndjek personin) dhe një te `/biznese` (ndjek
+biznesin), me dy numërues të veçantë dhe pa asgjë që ia shpjegon ndryshimin.
+
+### Zinxhiri i vdekur — konfirmuar përsëri
+`conversation_id` **nuk shkruhet nga asnjë rresht kodi** (kërkim i plotë mbi
+`origin/main`). Rrjedhimisht `conversations` mbetet bosh, dhe `typing_indicators`
+me `message_reactions` — që varen prej tij — **nuk mund të punojnë kurrë**.
+Tri tabela të vdekura nga një shkrim që mungon.
+
+### Paneli i adminit — 10 sisteme vërtet të vdekura
+55 RPC `admin_*`; 43 i thërret kodi. Nga 11 që s'i thërret, `admin_log` NUK është
+jetim (thirret nga **34 funksione** brenda bazës). Mbeten **10 të vdekura**:
+
+    admin_adjust_subscription   admin_cancel_subscription   admin_change_subscription_plan
+    admin_attach_invoice_file   admin_send_invoices_bulk
+    admin_fiscal_queue          admin_fiscal_retry
+    admin_bulk_user_flag        admin_list_businesses       admin_list_reports
+
+Grupet flasin vetë: **tre për abonimet** (rregullo/anulo/ndrysho plan), **dy për
+fiskalizimin** (§3 — radha dhe riprovimi brenda 48 orëve), **dy lista** që paneli
+s'i përdor. Klasë F1 e §9.1: e ndërtuar plotësisht në bazë, e paprekur nga kodi.
