@@ -187,7 +187,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   const [pronari, setPronari]       = useState<{
     is_premium?: boolean | null; premium_expires_at?: string | null
     has_boost?: boolean | null; boost_expires_at?: string | null
-    gamification_points?: number | null
+    gamification_points?: number | null; trust_score_visible?: boolean | null
   } | null>(null)
 
   // Syte live te faqja e biznesit (BLLOKU Imazhi 4: "👁+🔴") — e njejta presence
@@ -286,7 +286,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
       // Profili i pronarit — vetem fushat e tier-it, per unazen e avatarit.
       const { data: pr } = await supabase
         .from('profiles')
-        .select('is_premium,premium_expires_at,has_boost,boost_expires_at,gamification_points')
+        .select('is_premium,premium_expires_at,has_boost,boost_expires_at,gamification_points,trust_score_visible')
         .eq('id', b.owner_id)
         .maybeSingle()
       setPronari(pr)
@@ -568,7 +568,10 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
             {/* Reputacioni (GAP 3+4 — mbyllja e lakut): TrustBadge i plotë (unazë "X/100") +
                 "⚡ N pikë" reale të pronarit; pikët fitohen e njoftohen por s'shfaqeshin këtu. */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', margin: '10px 0 2px' }}>
-              <TrustBadge createdAt={biz.created_at} listingsActive={listings.length} gamificationPoints={pronari?.gamification_points || 0} />
+              {/* Opt-out i Trust Score (Ligji 124/2024 neni 19 · CLAUDE.md §2.1) — si /u & /listing */}
+              {pronari?.trust_score_visible !== false && (
+                <TrustBadge createdAt={biz.created_at} listingsActive={listings.length} gamificationPoints={pronari?.gamification_points || 0} />
+              )}
               {(pronari?.gamification_points || 0) > 0 && (
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 700, color: '#7A4A00', background: '#FFF8E1', border: '1px solid #F5C84255', borderRadius: 9, padding: '4px 10px' }}>
                   <span aria-hidden="true">⚡</span> {pronari?.gamification_points} pikë
@@ -866,7 +869,9 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
                 <span aria-hidden="true">⚡</span> {pronari?.gamification_points} pikë
               </span>
             )}
-            <TrustBadge createdAt={biz.created_at} listingsActive={listings.length} gamificationPoints={pronari?.gamification_points || 0} />
+            {pronari?.trust_score_visible !== false && (
+              <TrustBadge createdAt={biz.created_at} listingsActive={listings.length} gamificationPoints={pronari?.gamification_points || 0} />
+            )}
           </div>
 
           {/* Stats row — matrica e ngrire (BLLOKU Imazhi 4): Shpallje / Të shitura /
