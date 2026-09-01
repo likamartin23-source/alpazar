@@ -134,3 +134,20 @@ dead code isOnline/buildBadges (përshtat para se të fshish), Google OAuth 4-ç
 - **SSR vs klient:** disa blloqe (reputacioni i shitësit te /listing, pikët te /biznese) renderohen vetëm-klient → s'duken në SSR/crawler; matu PAS hidratimit.
 - **ID-të e Notion-it janë historike** (biznesi `dc070b0f` u fshi me testin B7); biznesi aktual = `ffb19071`.
 - **Regex mbi HTML e React:** `<!-- -->` ndërmjet numrit dhe njësisë prish `[0-9]+ fjalë` — kërko veç.
+
+## 4-quater. MBYLLJE (terminali, verifikuar — commit 9b4fc9e)
+- **O17 (migrimi C):** aplikuar; terminali krahasoi me LIVE para aplikimit (v_vip_lost, 2 insert-e
+  notifications, 2 skip_privilege_guard, _sub_event, grace int — asnjë DROP/DELETE/REVOKE).
+  `expire_premium_run()`→0 pa gabim; gjurma 'expire_premium.demote_failed' në përkufizim.
+- **O16:** `invoice_autosend=false`; fiscal_enabled/Resend/NIPT të paprekura. Rrjedha: manual+DM.
+- **O14.1:** `subscription_grace_days=2` (verifikuar si int nga cron).
+- **O18:** kanoniku = `app_config.google_client_id` (i vetmi lexues: auth/login:179,184,185).
+  admin_settings.google_oauth_client_id/_alt1/_alt2 = ZERO lexues kodi. POR mund të jenë
+  DOKUMENTIM i konfigurimit të providerit te paneli Supabase (jashtë bazës; signInWithIdToken
+  validon `aud` te Supabase). Fshirja s'prish kod por humbet gjurmën → MOS FSHI pa vendim pronari.
+  Pret provën live të hyrjes me Google nga pronari.
+- **isOnline (Badges.tsx):** 0 referenca kudo → i vdekur i vërtetë (standalone).
+  **buildBadges/UserBadges:** NUK dead në kuptimin e kalbjes — UserBadges(Badges.tsx:69) ka 0 refs
+  por është komponent koherent që ndërton distinktivë nga `LEVELS` (burimi i unifikuar). "Përshtat
+  para se të fshish" → LËRE. getLevel/LEVELS përdoren gjallërisht — mos i prek.
+- Mbetet BORXHI I VERIFIKIMIT MOBIL (telefon i vërtetë; Chrome i terminalit jep viewport 0x0).
