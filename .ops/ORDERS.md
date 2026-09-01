@@ -464,3 +464,21 @@ Pas aplikimit shkruaj `[O25] · done` me numrat.
   vula tier/verifikim); /biznese + "Biznese Online" ta përdorin. FILLO PAS FK-së (embed businesses⇄profiles).
 - **Butonat (O24):** shkallë e vetme dytësore (kontrast kufi ≥3:1, lartësi 44, `:active` scale) për
   .safety-btn + "Njoftomë" (hiq stilin inline) + zemra me hije mbi media. §4-bis: tre gjuhë → një fjalor.
+
+## [O28] · KRITIKE · APLIKO migrimin — rikthe përditësimin e profilit (regres O6/O7)
+
+`supabase/migrations/20260901_profiles_update_pa_select_tabelar.sql`. Gjetja jote O22-2 (42501):
+politika `profiles_update` WITH CHECK kishte 6 nën-SELECT-e mbi profiles që kërkonin SELECT
+tabelar (të hequr nga ngushtimi) → ÇDO update profili dështonte për çdo përdorues.
+
+Verifikova te baza (§9.3): `trg_guard_profile_privileges` (guard_profile_privileges, SECURITY
+DEFINER) TASHMË i bllokon plotësisht ato kolona (+ premium_expires_at/boost/trust_score), me
+përjashtime për service_role/skip_privilege_guard/lejet. Pra nën-SELECT-et janë të tepërta.
+Migrimi VETËM heq nën-SELECT-et nga WITH CHECK (`has_perm('users.moderate') OR auth.uid()=id`);
+trigeri mbetet roja. **JO `grant select on profiles`** (rihap §4.6-bis).
+
+Apliko me pronarin. Provë POZITIVE: `update profiles set last_seen=now() where id=auth.uid()` → OK.
+Provë NEGATIVE: `update profiles set is_premium=true where id=auth.uid()` → BLLOKUAR nga trigeri.
+Shkruaj `[O28] · done` me të dyja provat.
+
+**Rikujtesë:** O22-3 (HEAD 503) — e tërhoqe (matje e ekstensionit, jo defekt). Numëruesit OK.
