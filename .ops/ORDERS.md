@@ -280,3 +280,21 @@ Auditin panel-2 e mora. Të gjitha gjetjet janë **vlera konfigurimi** → vendi
 
 Për fiskalizimin/NIPT: §10 — ndërtohet GATI për konformitet, kurrë për shmangie; ndezja
 është akt i pronarit. Unë s'prek asgjë këtu pa vendimin e tij.
+
+## [O14] · VENDIME TË PRONARIT (01 shtator, live) — zbato gjatë verifikimit live me të
+
+**1. Grace + njoftime (vendimi: "2 ditë + njoftime të vazhdueshme para skadimit"):**
+- Njoftimet PARA skadimit **ekzistojnë dhe janë LIVE** — `premium_grace_notices_run()`
+  (cron jobid 5, çdo ditë 08:00): kujtesa në 7/3/1 ditë para skadimit, dedup 9-ditor.
+  Asnjë ndërtim. (Verifikova: cron aktiv, funksioni fut te `notifications`.)
+- Grace: `app_config.subscription_grace_days` `1 → 2`. Lexohet nga `expire_premium_run()`
+  (jobid 1, çdo 15 min) — pa ngurtësim. **Terminali e vendos gjatë sesionit live me pronarin.**
+    update app_config set value='2' where key='subscription_grace_days';
+
+**2. Dedup i konfigurimit (O12): PRONARI THA HOLD.** Mos fshi asgjë ende
+(`admin_settings.site_slogan`, google_*). Do bëhet PASI të mbarojë auditi dhe do
+verifikohet live BASHKË me pronarin. Mbaji të matura, mos i prek.
+
+**3. React #418 (/auth/login): pronari do HAPË politikën e rrjetit.** Kur egress-i
+(alpazar.vercel.app + supabase) të hapet, cloud-i e riprodhon live me Chromium dhe e ndreq
+me provë (Rregulli 11). Deri atëherë: pa prekje verbërisht të faqes së hyrjes.
