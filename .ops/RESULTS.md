@@ -382,3 +382,28 @@ vete pronarit): para cdo `revoke`/ngushtimi te te drejtave do te vazhdoje kontro
 `git show origin/main:<skedari>` per cdo lexues qe preket. Sot pikerisht ai kontroll
 nxori se rendi A→C ishte i detyrueshem; pa te, `/referral` do te kishte rene per te
 gjithe perdoruesit. Kontrolli qendron, pyetja jo.
+
+### [O6-shtese] · Verifikim i vizitorit ANONIM pas (C) — boshllek qe s'e kishte urdheruar askush
+Migrimi (C) ngushtoi edhe rolin `anon`, jo vetem `authenticated`, ndersa lista e
+verifikimit e O6 mbulonte vetem rruget e kycura. E mbylla vete.
+
+**Instrumenti i pare genjeu** (§9.2): detektori im "Faqja nuk u gjet" u ndez ne te
+10 rruget — sepse ai varg ndodhet ne bundle-in e cdo faqeje, jo sepse faqja ishte
+404. Kalova te kontrolle POZITIVE (a permban faqja permbajtjen qe pritet).
+
+| Rruga (anonim) | Kontroll pozitiv | Rezultati |
+|---|---|---|
+| `/` | permban `Makine` | PO |
+| `/listing/<id>` | permban `Zejmen` dhe `likamartin23` | PO |
+| `/biznese/<id>` | permban `shpallje aktive` | PO |
+| `/biznese` | permban `Biznes` | PO |
+| `/u/<uuid>` | permban `Administratori Alpazar` | PO |
+| `/u/likamartin23` | permban `Administratori Alpazar` | PO |
+| `/kategori/automjete` | permban `Makine` | PO |
+
+Asnje `permission denied` / `PGRST1` / `row-level security` ne asnje prej tyre.
+
+**Prove rrjedhjeje:** kerkova vargjet `"phone"`, `"admin_role"`, `"is_admin"`,
+`"birth_year"`, `"marketing_opt_in"`, `"referred_by"`, `"suspended_reason"` ne
+HTML-ne e `/`, `/listing/<id>`, `/u/<id>`, `/biznese/<id>` si anonim →
+**asnje shfaqje**. Ngushtimi mban edhe nga jashte, jo vetem ne baze.
