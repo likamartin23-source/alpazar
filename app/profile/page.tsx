@@ -689,17 +689,23 @@ export default function ProfilePage() {
         </div>
 
         <div className="stats-row">
+          {/* 4-kuti IDENTIK me /u dhe panelin e biznesit (Vendimi B2): Shpallje · Të shitura ·
+              Ndjekës · Anëtar. "Shikime"/"Niveli" rrinë te Analitika/Badge, jo këtu (harmonizim). */}
           <div className="stat">
             <div className="stat-n">{myListings.filter(l => l.is_active).length}</div>
-            <div className="stat-l">Shpallje aktive</div>
+            <div className="stat-l">Shpallje</div>
           </div>
           <div className="stat">
-            <div className="stat-n">{myListings.reduce((s, l) => s + (l.views_count || 0), 0).toLocaleString()}</div>
-            <div className="stat-l">Shikime totale</div>
+            <div className="stat-n" style={myListings.some(l => l.status === 'sold') ? { color: '#0E7A35' } : undefined}>{myListings.filter(l => l.status === 'sold').length}</div>
+            <div className="stat-l">Të shitura</div>
           </div>
           <div className="stat">
-            <div className="stat-n">{getLevel(profile?.gamification_points || 0).name}</div>
-            <div className="stat-l">Niveli</div>
+            <div className="stat-n">{profile?.followers_count ?? 0}</div>
+            <div className="stat-l">Ndjekës</div>
+          </div>
+          <div className="stat">
+            <div className="stat-n" style={{ fontSize: 12 }}>{profile?.created_at ? monthYear(profile.created_at) : '—'}</div>
+            <div className="stat-l">Anëtar</div>
           </div>
         </div>
 
