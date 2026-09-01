@@ -748,3 +748,73 @@ jetim (thirret nga **34 funksione** brenda bazës). Mbeten **10 të vdekura**:
 Grupet flasin vetë: **tre për abonimet** (rregullo/anulo/ndrysho plan), **dy për
 fiskalizimin** (§3 — radha dhe riprovimi brenda 48 orëve), **dy lista** që paneli
 s'i përdor. Klasë F1 e §9.1: e ndërtuar plotësisht në bazë, e paprekur nga kodi.
+
+## [O8-KOHERENCA] · Pse disa faqe profili janë "të vjetra" e disa "të reja"
+
+Pronari e emërtoi problemin; ky është mekanizmi i matur pas tij.
+
+### A. Tre fjalorë nivelesh, dy funksione me TË NJËJTIN emër
+
+| Funksioni | Skedari | Hyrja | Vlerat |
+|---|---|---|---|
+| `getLevel(points)` | `components/Badges.tsx` | pikët e gamifikimit | Fillestar · **Tregtar** · Ekspert · Master |
+| `getLevel(score)` | `components/TrustBadge.tsx` | trust score 0–100 | Fillestar · **I Besueshëm** · I Verifikuar · Shitës Ekspert |
+| `tierNgaProfili(p)` | `components/Avatar.tsx` | is_premium + has_boost | free · premium · vip |
+
+**Dy funksione të ndryshme quhen `getLevel`**, marrin hyrje të ndryshme dhe japin
+fjalorë të ndryshëm. `tierNgaProfili` NUK është dublikatë e tyre — mat planin e
+paguar (e kontrollova para se ta shkruaja; hipoteza ime e parë ishte e gabuar).
+
+**Pasoja e dukshme LIVE te `/biznese/ffb19071…`:** i njëjti person shfaqet
+njëkohësisht si **"⚡ 135 pikë"** (që sipas `Badges.getLevel` = *Tregtar*) dhe si
+**"🆕 Fillestar · Trust Score 2/100"** (sipas `TrustBadge.getLevel`). Dy etiketa
+niveli që kundërshtojnë njëra-tjetrën, në të njëjtin bllok.
+
+### B. I njëjti person merr Trust Score TË NDRYSHËM sipas faqes
+
+TrustBadge ushqehet me hyrje të ndryshme nga secila faqe:
+
+| Rruga | `score` | `createdAt` | `listingsActive` |
+|---|---|---|---|
+| `/u/[id]` | `profile.trust_score` | profilit | — |
+| `/listing/[id]` | `seller.trust_score` | shitësit | — |
+| `/biznese/[id]` | **nuk jepet** | **`biz.created_at`** (i biznesit!) | `listings.length` |
+
+Meqë `profiles.trust_score = 0` për të dy përdoruesit (DEFAULT, i papopulluar),
+pragu `> 0` i bie heuristikës kudo — dhe heuristika llogaritet mbi **data të
+ndryshme krijimi**. Pra numri "X/100" nuk është i njëjti person-i-njëjtë-numër;
+varet nga faqja ku ndodhesh.
+
+### C. `/profile` është faqja që mbeti pas — e matur me komponentë
+
+Koherenca matet me komponentë të përbashkët, jo me përshtypje:
+
+| Komponent | `/profile` | `/u` | `/biznese` | `/listing` | `ListingCard` |
+|---|---|---|---|---|---|
+| `TrustBadge` | **JO** | PO | PO | PO | JO |
+| `useIsOnline` | **JO** | PO | PO | PO | JO |
+| `ListingCard` | **JO** | PO | PO | PO | — |
+| `tierNgaProfili` | PO | PO | PO | PO | **JO** |
+| `monthYear` | PO | **JO** | PO | PO | JO |
+| `getLevel` (Badges) | **PO** | JO | JO | JO | JO |
+
+Dy përfundime:
+1. **`/profile` është e vetmja faqe profili pa TrustBadge, pa treguesin online dhe
+   pa `ListingCard`** — dhe e vetmja që përdor `getLevel` të vjetër. Kjo është
+   fjalë-për-fjalë ajo që përshkroi pronari: brenda saj mbizotëron sistemi i vjetër.
+2. **`/u` s'përdor `monthYear`** — prandaj shfaq `2026 Anëtar`, ndërsa `/listing`
+   dhe `/biznese` shfaqin muaj+vit. E vura re LIVE para se ta gjeja në kod.
+
+### D. `ListingCard` — dekor pa sistem
+Karta nuk importon as `tierNgaProfili`, as `TrustBadge`. Çipat `🏢`/`★` mbi të
+janë `<span>` të thjeshtë. Matur: **karta s'ka asnjë `<a href>`**, ndaj klikimi
+mbi `🏢` e çon vizitorin te **shpallja**, jo te `/biznese`. Konfirmuar me klikim
+real në `/` dhe `/kategori/automjete`.
+
+### E. Renditja e rregullimeve (nga pesha, jo nga vështirësia)
+1. Opt-out-i i Trust Score te `/biznese` — shkelje premtimi + Ligji 124/2024.
+2. Një burim i vetëm për "nivelin": të riemërtohet njëri `getLevel` dhe të vendoset
+   cili fjalor shfaqet ku; sot dy fjalorë bien ndesh në të njëjtin bllok.
+3. TrustBadge të marrë të njëjtat hyrje kudo (profili i pronarit, jo biznesi).
+4. `/profile` të marrë të njëjtat komponentë si tri faqet e tjera.
+5. `ListingCard`: çipi `🏢` të bëhet lidhje e vërtetë drejt `/biznese/<id>`.
