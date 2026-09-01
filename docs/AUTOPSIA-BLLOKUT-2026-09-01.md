@@ -83,3 +83,42 @@ Commit `0d140fe` (main): tsc 0 · 29 teste · `next build` OK · aditive/të kth
   `LISTING_SELECT` te favorites/u/biznese.
 
 Rendi: verifikim vizual i RF1-RF3 live → G4 → G5. Çdo hap CI-green + verifikim.
+
+---
+
+## 5. Ballafaqim me burimin ZYRTAR (Notion BP2) — faqe për faqe, ku gabova
+
+> Lexova *"🏁 BLLOKU PËRFUNDIMTAR 2"* (Notion) + 3 organigramat + *Gjendja-cak*.
+> Rregull: **"ku kodi ndryshon nga imazhi, fiton imazhi"** (BP2 §C6.6).
+
+### 5.1 Ku GABOVA unë (korrigjim i ndershëm)
+- **G4 (grupimi i butonave) — mbivlerësim.** BP2 §B17 e thotë qartë: butonat
+  ekskluzivë vendosen **sipas funksionit** (Ruaj vetëm te shpalljet e të tjerëve;
+  Ndaj publik+menaxhim; Raporto publik + te pronari "Statusi i raporteve") — jo të
+  detyruar në një rresht. Grupimi vinte nga *Gjendja-cak* (vizatim para-autorizimi).
+  Vendosja funksionale aktuale mund të jetë e saktë; grupimi = vendim yti, jo defekt.
+- **ID-të historike.** Auditova mbi biznesin aktual `ffb19071` (i saktë);
+  `dc070b0f`/`ba7ecf6a` të Notion-it janë fshirë (testi B7). S'ishte gabim entiteti.
+
+### 5.2 Checklist BP2 §B15 — verdikt i matur
+| Pika BP2 | Verdikt | Shënim |
+|---|---|---|
+| B2 · panel biznesi = pasqyrë e /profile | ✅ (bërthama) | shell i veçantë (BiznesPageClient:474); devijim i vogël: 3 tabe jo 5, stats 4-kuti vs 3-kuti te /profile |
+| B3.1 · shiriti "Vepro si" te të dy panelet | ✅ **RESTAURUAR TANI** | mungonte te /profile; u shtua (commit 3369dda) |
+| B7 · fshirja humbje e plotë | ✅ | `dc070b0f` u fshi realisht (verifikuar DB) |
+| B5 · "Rreth & Vlerësime" | ✅ | agjenti 2 |
+| B6 · 12 kolonat kanonike jsonb | ✅ | (punë e mëparshme) |
+| B10 · rrathë/karta kudo · Ruaj i paprekur | ✅ | agjenti 4 |
+| B11 · Analitika ekran; biznesi fsheh referral | ✅ | variancë emri (Pasqyrë vs Përmbledhje) |
+| B12 · Siguria një ekran, 4 seksione | ✅ | 6 karta në një ekran |
+| B16 · hequr "Statistikat e Shpalljeve" + "Abonimi im" | ✅ | koment shprehimor page.tsx:1012 |
+| B17 · butonat ekskluzivë sipas funksionit | ✅ | (jo grupim — shih 5.1) |
+| Reputacioni i harmonizuar (Gjendja-cak) | ✅ **RESTAURUAR** | RF1 pikët te /u; RF2 Ndiq; RF3 badge-t biznes |
+
+### 5.3 Mbetet (vendim pronari / kalim vizual i terminalit)
+- **B2 pixel-mirror:** /profile stats 3-kuti vs biznesi 4-kuti; tabe vs karta për
+  Analitika/Mesazhe. A i duash pixel-identikë apo devijimi i tanishëm pranohet?
+- **B11 etiketat:** "Pasqyrë/Shpalljet—Krahasim" vs "Përmbledhje/Përmbajtja".
+- **G4 grupimi:** vendim — funksional (B17) apo grup pamor (Gjendja-cak)?
+- **G5 të vogla:** TrustBadge me `trust_score` real + "Besueshmëria"; ★ Pronari
+  udhëtues te /listing; Harta buton; SSR-seed i reputacionit; unifikim LISTING_SELECT.
