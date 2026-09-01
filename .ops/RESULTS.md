@@ -1961,3 +1961,93 @@ Kthimi: `revoke select (is_admin) on public.profiles from authenticated;`
 
 **Rekomandimi im: rregullimi në kod, jo rikthimi i grant-it.** Është një rresht dhe
 s'ka kosto privatësie. Vendimi është i pronarit.
+
+## [PANELI] · Audit i panelit të adminit nga 14 pamje të pronarit
+
+Regresioni u rregullua nga cloud-i (`4b5c03d`) — `middleware.ts:80` përdor tani
+`rpc('is_admin')`, siç e propozova. Paneli u hap dhe pronari e fotografoi të tërin.
+
+### ✅ KONFIRMIME të gjetjeve të mia — nga vetë paneli
+Ekrani **"Sot"** shfaq bllokun *"Konfigurim ligjor i paplotësuar"* me pikërisht të
+tria pikat që kisha nxjerrë nga `admin_health`:
+- NIPT-i i kompanisë mungon — fatura s'e përmbush **ligjin 87/2019**
+- Adresa e kompanisë mungon — e detyrueshme në faturë
+- **PIN-i i panelit është ende i parazgjedhur**
+
+Te *Konfigurime* duket edhe pse: `admin_pin` = `••••••0000` dhe
+**`admin_pin_disabled` është NDEZUR**. Pra PIN-i s'është thjesht i dobët — është i çaktivizuar.
+
+Konfirmuar gjithashtu: **`cloudinary_upload_preset = alpazar_unsignet`** — shkrimi im
+i O7-B është live dhe i dukshëm në panel.
+
+### ⚠️ KORRIGJIM I RAPORTIT TIM MBI `admin_log`
+Tabela *"Veprimet e fundit të administratës"* është **PLOT** — ~16 zëra
+(`business_is_visible`, `njoftim_pranuar`, `moderim_hiq`, `denoncim_autoritet`,
+`premium.grant`, `invoice.sent`, `invoice.fiscalized`, `invoice.tax_delivered`),
+me datë 11–18 gusht, të gjitha nga `Administratori Alpazar`.
+
+Unë kisha raportuar `gjurmë admin 24h = 0 vs audit = 46` si provë se `admin_log()`
+humbet. **Ai interpretim ishte i dobët:** 0-në-24-orë do të thotë thjesht se s'ka
+pasur veprime admini në 24 orët e fundit. Gjurma historike ekziston dhe punon.
+Kurthi i §1.4 (humbje nga rrugët e automatizuara pa `auth.uid()`) mbetet i vlefshëm
+si rrezik, por **nuk e provova me atë metrikë**. E tërheq si provë.
+
+### 🔴 GJETJE TË REJA nga paneli
+
+**1. Përplasje konfigurimi, e raportuar nga vetë paneli.**
+Ekrani *Konfigurime* shfaq një kuti **"Përplasje mes dy depove"**:
+> *"I njëjti koncept ruhet në dy vende me vlera të ndryshme:*
+> **`google_client_id` ↔ `google_oauth_client_id`**"
+Plus ekzistojnë `google_oauth_client_id_alt1` dhe `_alt2` — **katër çelësa për një
+koncept**. Kjo është e njëjta gjurmë e dyfishimit që gjeta te nivelet, kartat dhe
+ngjyrat — këtu e pranuar nga vetë sistemi.
+
+**2. `site_slogan` shfaqet DY HERË** te *Pamja dhe njoftimet publike*, me të
+njëjtën vlerë. Çelës i dublikuar në render.
+
+**3. Kufiri i videos: konfigurimi thotë 50, health-i thotë 100.**
+`video_max_mb = 50` te Konfigurime, ndërsa `/api/health` raporton `kufi_mb: 100`
+pas ndezjes së transkodimit. Dy burime për të njëjtin kufi — duhet vendosur cili fiton.
+
+**4. `referral_reward_all = 00`** — vlerë e dyshimtë (dy zero si varg, jo `50` siç
+premton faqja `/referral`: *"50 pikë për çdo mik"*). Kërkon verifikim.
+
+**5. Sekretet shfaqen pjesërisht të pambuluara.** Shumica janë të maskuara
+(`••••••bAAA`), por **`google_client_id`, `google_oauth_client_id`, `_alt1`, `_alt2`,
+`sms_gateway_login` dhe `vercel_env_supabase_anon` (JWT i plotë) duken të plota**
+në fusha teksti. Për §8 (paralajmërimi i sigurisë) ia vlen të vendoset nëse këto
+duhen maskuar si të tjerat.
+
+**6. `stories_enabled = ON`** — por asnjë vecori "stories" s'u has gjatë auditit
+të ndërfaqes. Kandidat për tabelë/flamur jetim.
+
+**7. AI Health nxjerr gabime REALE të prodhimit** — dimensioni që s'e kisha parë kurrë:
+
+| Ashpërsia | Gabimi | Rruga | Herë |
+|---|---|---|---|
+| NEW | **`Cannot read properties of null (reading 'toLocaleString')`** | `/u/af3e3d5b…` | ×3 |
+| HIGH | `cannot add 'postgres_changes' callbacks … after subscribe()` | `/messages` | ×1 |
+| NEW | React **#418** (hidratim) | `/auth/login` | ×6 |
+| NEW | React **#422** (hidratim) | `/listing/ba7ecf6a…` | ×19 |
+| NEW | React **#425** (hidratim) | `/` | ×13 |
+
+Dy vëzhgime:
+- **Tre gabimet React janë të familjes së hidratimit** (#418/#422/#425 = mospërputhje
+  server↔klient). Kjo lidhet drejtpërdrejt me gjetjen time se disa blloqe
+  render-ohen vetëm-klient dhe me flash-in e guaskës — janë simptoma të së njëjtës
+  shtresë.
+- **`toLocaleString` mbi `null` te `/u/[id]`** është një përplasje reale në rrugën
+  e profilit publik, dhe pikërisht te profili që auditova. Kandidat i fortë: një
+  numër (shikime/pikë/datë) që vjen `null` pas ngushtimit të kolonave.
+
+**8. Roli i vetëm.** *Rolet*: 1 Pronar, 0 Administrator/Financa/Moderator/Mbështetje.
+Matrica e lejeve është e dokumentuar dhe teksti thotë saktë:
+*"Lejet zbatohen në bazën e të dhënave, jo në pamje"* dhe *"Platforma nuk mbetet
+kurrë pa Pronar"*. Kjo është arkitekturë e shëndoshë.
+
+### Vlerësim i përgjithshëm i panelit
+Paneli është **ndër pjesët më të plota të platformës**: 13 seksione, gjurmë e
+vërtetë veprimesh, matrica rolesh e zbatuar në bazë, sinkronizim çmimesh pa
+ngurtësim në kod (§2.9 e respektuar), dhe një ekran AI Health që raporton gabime
+reale me shkak e propozim rregullimi. Gjetjet e mësipërme janë përmirësime, jo
+dyshime mbi themelin.
