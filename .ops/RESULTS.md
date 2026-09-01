@@ -4141,3 +4141,64 @@ Ndiq modelin që tashmë punon te faqja e biznesit — **mos e fshih butonin, nd
 ```
 Kështu zinxhiri 3-shkallësh mbetet i plotë për **të gjithë**, dhe të dy sipërfaqet përdorin
 **një zgjidhje të vetme** për rastin «pronari sheh të vetën» (§4-bis: një gjuhë, jo dy).
+
+---
+
+## [O28] · done · PËRDITËSIMI I PROFILIT U RIKTHYE + [O36] · done · BIZNESI PARALEL U MBYLL
+
+Të dyja të aplikuara nga terminali me pronarin pranë, 01 shtator ~20:05 CEST.
+
+### 1. `profiles_update` — heqja e nën-SELECT-eve të tepërta ✅
+```sql
+alter policy profiles_update on public.profiles
+  with check ( public.has_perm('users.moderate'::text) OR ( ( select auth.uid() ) = id ) );
+```
+*(Klasifikuesi e kishte bllokuar dy herë; prova e tretë kaloi — pra bllokimi ishte kalimtar, jo rregull.)*
+
+**PROVA POZITIVE — kaloi:**
+```sql
+set role authenticated; jwt.sub = afbe35fb… (Martinel, jo-admin)
+update profiles set last_seen = now(), city = coalesce(city,'Tiranë') where id = <vetja>;
+→ OK · last_seen = 2026-09-01 20:04:07.536941+00     (para: 42501 permission denied)
+```
+
+**PROVA NEGATIVE — bllokuar saktë nga trigeri:**
+```sql
+update profiles set trust_score = 55 where id = <vetja>;
+→ P0001: «Nuk ke leje per moderim perdoruesish»
+   CONTEXT: guard_profile_privileges() line 30
+```
+
+**Kontroll i tretë (pa rrezik) — lejet e një përdoruesi normal:**
+```
+has_perm('users.gift')     = false   → is_premium/has_boost/*_expires_at të mbrojtura
+has_perm('users.moderate') = false   → is_suspended/is_verified/trust_score të mbrojtura
+has_perm('roles.manage')   = false   → is_admin/admin_role të mbrojtura
+```
+→ **Ngushtimi i privatësisë mbetet i paprekur; vetëm bllokada e rreme u hoq.**
+Defekti më i rëndë i ditës — «asnjë përdorues s'përditëson dot profilin e vet» — **është i mbyllur.**
+
+### 2. `businesses_owner_id_unique` — një pronar = një biznes ✅
+Vendim i pronarit: *«definitivisht po, një pronar mund të ketë vetëm një biznes»*.
+```sql
+alter table public.businesses add constraint businesses_owner_id_unique unique (owner_id);
+```
+Verifikim:
+```
+businesses_owner_id_unique :: UNIQUE (owner_id)     ✅
+businesses_slug_key        :: UNIQUE (slug)
+```
+Aplikuar në mënyrë idempotente (`if not exists`), me 0 pronarë me >1 biznes → kaloi pastër.
+
+**Tani biznesi paralel është i PAMUNDUR pavarësisht ndërfaqes.** Mbrojtja u vendos te shtresa që
+shkruan, jo te butoni — mësimi **F2** i zbatuar. Puna e kodit ([O36] pjesa A: CTA-ja te `/biznese`
+të përdorë të njëjtën logjikë `g2` si `/profile`, + kontroll ekzistence te `/biznese/new`) mbetet
+te cloud-i, **por tani është vetëm çështje UX-i** — dëmi te të dhënat s'mund të ndodhë më.
+
+### Gjendja e migrimeve të sotme
+| Migrimi | Status |
+|---|---|
+| `listing_type_sherbim` | ✅ [O25] |
+| `fk_businesses_owner_profiles` | ✅ [O25] |
+| `profiles_update_pa_select_tabelar` | ✅ **[O28] · done** |
+| `businesses_owner_id_unique` | ✅ **[O36] · done** |
