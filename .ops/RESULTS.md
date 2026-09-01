@@ -3002,3 +3002,70 @@ Aplikacioni provon të përditësojë profilin e vet (ka gjasa `last_seen`/prani
 (O6/O7) e refuzon. Dështim i heshtur, i përsëritur në çdo faqe.
 Kjo mund të jetë edhe shkaku pse **pika online/offline s'u shfaq askund te kartat** —
 nëse `last_seen` s'shkruhet dot, prania s'përditësohet kurrë.
+
+---
+
+## [O22] · KORRIGJIM I VETES + dy matje të reja — 01 shtator, 20:00 CEST
+
+### 1. ❌ KORRIGJOHEM: swipe-i i galerisë **NUK** është i prishur — cloud-i kishte të drejtë
+
+Te [O19-D] shkrova «overflow-x = visible NË TË 5 NIVELET → PA SWIPE». **Gabim i imi.**
+Unë ngjita zinxhirin e prindërve duke nisur nga **pikat** (`[aria-label="Foto N"]`), pra nga rreshti
+i treguesve — jo nga shiriti i fotove. Matja e saktë, duke skanuar ÇDO element të faqes:
+
+```
+.carousel-track  ->  overflow-x: auto · scroll-snap-type: x mandatory
+                     scrollWidth 5724 vs clientWidth 636 · 9 fëmijë
+fëmijët          ->  scroll-snap-align: start · width 636 · flex-shrink: 0
+scrollTo(636, 'instant') -> scrollLeft mbetet 636 (snap-i mban) ✓
+```
+**Rrëshqitja punon nativisht.** Ngjarja e parë ku m'u duk se s'punonte ishte artefakt i imi:
+track-u ka `scroll-behavior: smooth`, ndaj `tr.scrollLeft = X` e lexuar menjëherë kthen ende 0.
+
+E njëjta klasë gabimi si §9.2 («instrumenti gënjeu, jo kodi») dhe si [O19-B] §3 (localStorage vs cookie).
+**Mësim i shtuar për vete: mos e ndërto zinxhirin e prindërve nga një element ndihmës —
+skano të gjithë faqen për vetinë që kërkon.**
+
+### 2. ⚠ DEFEKT I VËRTETË te galeria: treguesi NUK ndjek rrëshqitjen
+
+```
+scrollTo(636*3) -> scrollLeft = 1908 ✓ · foto e dukshme = #3 (index 3) ✓
+pika aktive (18px) mbetet te index 0  ✗
+```
+Rrëshqet, foto ndryshon — **por pika e kuqe rri te foto 1 gjithmonë**. Meqë pikat janë i vetmi
+sinjal «ku ndodhesh», përdoruesi humbet orientimin. Kërkon lidhjen e `current` me ngjarjen `scroll`
+të track-ut (p.sh. `IntersectionObserver` mbi fëmijët, ose `scrollend`).
+Rregullimi `9d1f74a` (zonë prekjeje ~25px) e prek madhësinë e pikave, **jo** këtë sinkronizim.
+
+### 3. ⛔ «Kartat e biznesit s'kanë asnjë element të kartave» — pronari ka të drejtë, matur
+
+Inventar element-për-element, kryefaqja, i njëjti viewport:
+
+| Element | `.listing-card` (250×407) | `.shop-mini` (255×272) |
+|---|---|---|
+| Foto | ✅ | ❌ |
+| Titull (`.card-title`) | ✅ | ❌ |
+| Çmim | ✅ | ❌ |
+| Qytet | ✅ | ✅ |
+| «Ruaj» (favorites) | ✅ | ❌ |
+| Çipi i shitësit | ✅ | ❌ |
+| Badge «I ri / I përdorur» | ✅ | ❌ |
+| Badge «Premium» | ✅ | ❌ |
+| «E promovuar» | ✅ | ❌ |
+| Avatar me vulë ✓/🏢 | ✅ | ✅ |
+
+**8 nga 10 elemente mungojnë.** Përmasat ndryshojnë (250×407 vs 255×272). Nuk është «e njëjta kartë
+në dy vende» — janë dy komponentë të ndryshëm që ndajnë vetëm avatarin dhe qytetin.
+
+Bashkë me [O21], gjendja reale e §3-MODELI është:
+- **Te BIZNESET (`/biznese`):** ZERO karta — faqja dështon me PGRST200 (mungon FK).
+- **Te SHPALLJET (rrjedha):** ZERO karta biznesi — `.listings-grid` përmban vetëm `.listing-card`.
+- **Te kryefaqja «🏢 Biznese Online»:** `.shop-mini`, komponent i tretë, i burimit `profiles`, pa 8/10 elementet.
+
+Pra karta e biznesit **nuk noton askund**; ekziston vetëm si tre paraqitje të ndryshme e të cunguara.
+Ky është K2 i KUJTESA §4-bis në formën e tij të plotë, tani i matur.
+
+**Rregullimi kërkon vendim pronari + rrugë:** `ListingCard` të mësojë një variant «biznes»
+(e njëjta kornizë, të njëjtat vula, foto = kopertina/logoja, titulli = emri, çmimi → kategoria),
+dhe të dyja vendet ta përdorin atë — pas rregullimit të FK-së së [O21], që `businesses` të bëhet
+burimi i vetëm në vend të `profiles.is_premium`.
