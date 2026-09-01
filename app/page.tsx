@@ -40,11 +40,13 @@ async function fetchHome(): Promise<{ listings: Listing[]; categories: Category[
         .order('last_bumped_at', { ascending: false })
         .limit(20),
       sb.from('categories').select('*').eq('is_active', true).order('sort_order'),
-      // I njejti projeksion dhe i njejti kufi si `fetchShops()` te HomeClient —
-      // ndryshe SSR-ja dhe klienti do te jepnin dy lartesi te ndryshme.
-      sb.from('profiles')
-        .select('id,full_name,username,avatar_url,city,shop_name,shop_description,shop_category,shop_banner_url,is_verified,is_premium,has_boost,premium_expires_at,boost_expires_at')
-        .eq('is_premium', true)
+      // I njejti projeksion dhe kufi si `fetchShops()` te HomeClient (burimi = `businesses`,
+      // BusinessCard) — ndryshe SSR-ja dhe klienti do te jepnin dy forma/lartesi te ndryshme.
+      sb.from('businesses')
+        .select('id,name,logo_url,cover_url,type,city,is_verified,owner:owner_id(is_premium,has_boost,premium_expires_at,boost_expires_at)')
+        .eq('is_active', true)
+        .eq('is_visible', true)
+        .order('is_verified', { ascending: false })
         .limit(6),
       // Numrat publikë të hero-t merren KËTU (SSR), jo në klient. Më parë nisnin
       // nga 0 dhe kërcenin te vlera reale pas fetch-it të klientit — flash-i

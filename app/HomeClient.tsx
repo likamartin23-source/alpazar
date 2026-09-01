@@ -9,6 +9,7 @@ import { LISTING_SELECT } from '../lib/listingSelect'
 import { SkeletonGrid } from './components/Skeleton'
 import Avatar, { tierNgaProfili } from './components/Avatar'
 import ListingCard from './components/ListingCard'
+import BusinessCard from './components/BusinessCard'
 import { getLevel } from './components/Badges'
 import { PremiumUpsellModal } from './components/PremiumUpsell'
 import { Onboarding } from './components/Onboarding'
@@ -467,12 +468,16 @@ export default function HomeClient({ initialListings = [], initialCategories = [
   }
 
   async function fetchShops() {
+    // Burimi = entiteti `businesses` (jo profiles.is_premium): karta e biznesit tregon biznesin
+    // e vërtetë, me tier-in e pronarit përmes embed-it (FK businesses.owner_id→profiles, O25).
     const { data } = await supabase
-      .from('profiles')
-      .select('id,full_name,username,avatar_url,city,shop_name,shop_description,shop_category,shop_banner_url,is_verified,is_premium,has_boost,premium_expires_at,boost_expires_at')
-      .eq('is_premium', true)
+      .from('businesses')
+      .select('id,name,logo_url,cover_url,type,city,is_verified,owner:owner_id(is_premium,has_boost,premium_expires_at,boost_expires_at)')
+      .eq('is_active', true)
+      .eq('is_visible', true)
+      .order('is_verified', { ascending: false })
       .limit(6)
-    if (data) setShops(data)
+    if (data) setShops(data as any)
   }
 
   async function fetchListings(catSlug = activeCategory, filter = activeFilter, opts?: { silent?: boolean; keepSeedOnEmpty?: boolean }) {
@@ -984,29 +989,12 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                 <h3><span aria-hidden="true">🏢</span> Biznese Online</h3>
                 <a role="button" tabIndex={0} onClick={() => go('/biznese')} onKeyDown={e => { if (e.key === 'Enter') go('/biznese') }} style={{ cursor: 'pointer' }}>Të gjitha →</a>
               </div>
-              <div className="shops-grid">
-                {shops.map((shop, idx) => {
-                  const col = SHOP_COLORS[idx % SHOP_COLORS.length]
-                  const initials = (shop.shop_name || shop.full_name || '?').slice(0, 2).toUpperCase()
-                  return (
-                    <div key={shop.id} role="link" tabIndex={0} className="shop-mini" onClick={() => go(`/biznese/${shop.id}`)} onKeyDown={e => { if (e.key === 'Enter') go(`/biznese/${shop.id}`) }}>
-                      <div className="shop-top" style={{ background: `linear-gradient(135deg,${col}22,${col}44)` }}>
-                        <div className="shop-av" style={{ background: 'transparent' }}>
-                          <Avatar src={shop.avatar_url} name={shop.shop_name || shop.full_name} type="business" tier={tierNgaProfili(shop)} verified={shop.is_verified} size={40} />
-                        </div>
-                        {(() => { const t = tierNgaProfili(shop); return t === 'vip' ? <span className="shop-prem" aria-label="VIP">👑</span> : t === 'premium' ? <span className="shop-prem" aria-label="Premium">⭐</span> : null })()}
-                      </div>
-                      <div className="shop-info">
-                        <div className="shop-nm">{shop.shop_name || shop.full_name}</div>
-                        <div className="shop-ct">{shop.city || 'Shqipëri'}</div>
-                      </div>
-                    </div>
-                  )
-                })}
-                <div role="link" tabIndex={0} className="shop-mini" onClick={() => go('/biznese')} onKeyDown={e => { if (e.key === 'Enter') go('/biznese') }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#fff', border: '1.5px dashed #F5C842', cursor: 'pointer' }}>
-                  <i className="ti ti-arrow-right" style={{ fontSize: 14, color: '#C42B0F' }} aria-hidden="true" />
-                  <div style={{ fontSize: 7, color: '#C42B0F', fontWeight: 700, marginTop: 3, textAlign: 'center', padding: '0 4px' }}>Shiko të gjitha</div>
-                </div>
+              {/* E njëjta KARTË e njësuar si te feed-i i shpalljeve (BusinessCard mbi klasat
+                  `.listing-card`), me burim entitetin `businesses` (jo profiles.is_premium). */}
+              <div className="listings-grid">
+                {shops.map((shop, idx) => (
+                  <BusinessCard key={shop.id} business={shop as any} index={idx} />
+                ))}
               </div>
             </>
           )}
