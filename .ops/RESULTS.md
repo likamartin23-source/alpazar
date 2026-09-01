@@ -3773,3 +3773,67 @@ e shënoj qartë, sipas §9.2, që të mos ngatërrohet me matje vizuale.
 
 **Ende të pashqyrtuara me sy:** `/biznese` (lista me BusinessCard), butonat e rinj (O24),
 middleware-i i rrugëve private, dhe pariteti i profileve pas ndryshimeve.
+
+---
+
+## [O32] · «Ndryshimet kthehen te e vjetra» — auditi im i parë iu përgjigj SIMPTOMËS SË GABUAR
+
+Pronari: «ndryshimet sërish po kthehen tek e vjetra, problemi nuk u zgjidh nga autopsia juaj». Ka të drejtë.
+Te [O30] unë audituat **«nuk reflektohet»** (mungesë). Ai raporton **«kthehet»** (rikthim). Simptoma tjetër,
+mekanizëm tjetër. E rifillova nga zeroja.
+
+### Ç'E PËRJASHTOVA me matje (jo me arsyetim)
+
+**1. Vercel NUK bën rikthim.** Kronologjia e 14 deployment-eve të fundit nga API e GitHub-ut,
+sipas kohës së PËRFUNDIMIT (jo krijimit):
+```
+e0b8114 → 829c3cc → f9f3bd3 → 32d6dc4 → 5517efe → d2dc643 → 8c372a4 → 1198389
+        → 4d1a397 → fa7544d → d3aff61 → 6b3c58a → 4aaf730 → 5f0ed84
+```
+**Rreptësisht përpara — zero inversione.** Asnjë deployment i vjetër s'u promovua pas një të riu.
+
+**2. Serveri shërben gjithnjë të renë.** 6 prova: build i HTML == `/api/version`, `X-Vercel-Cache: MISS`, `Age: 0`.
+
+**3. Chunk-et nuk mungojnë.** Të **17** burimet `/_next/static/*` që referon HTML-ja live kthejnë **200**.
+(Një chunk i munguar do prodhonte `ChunkLoadError` → skripti i rikuperimit → ringarkim → dukje «kthimi».)
+
+**4. Service Worker-i s'ndërhyn.** `public/sw.js` është **kill-switch**: `skipWaiting` → fshin çdo cache →
+`clients.claim` → `unregister`, **pa fetch-handler dhe pa ringarkim**. App-i **s'regjistron më asnjë SW**.
+Te `layout.tsx:219-241` ka edhe pastrim në çdo ngarkim faqeje (çregjistrim + fshirje cache).
+
+**5. `/rifresko` punon** — HTTP 200 me `Clear-Site-Data: "cache", "storage"`.
+
+### Ç'MBETET — dhe pse s'e mat dot vetë
+
+Komenti i vetë `sw.js` e thotë: *«Për muaj të tërë app-i shërbente versionin e vjetër me flake që
+kthehej te i vjetri»*, dhe `layout.tsx` e emërton rastin kokëfortë: **«tipike iOS»**, ku pastrimi
+automatik provon **NJË herë** (rojtari `sessionStorage._alpz_swr`) dhe pastaj **heq dorë me qëllim**,
+për të mos e nxjerrë përdoruesin nga llogaria.
+
+Pra vektori i vetëm i mbetur është **gjendja e pajisjes**: një Service Worker i vjetër ende i
+regjistruar në **PWA-në e instaluar** (ekrani kryesor i telefonit) ose në një shfletues me pastrim
+agresiv (Brave/DDG). Aty app-i shërbehet nga shell-i i vjetër, dhe pastrimi automatik dorëzohet pas
+një provë. **Kjo prodhon saktësisht «kthehet te e vjetra».**
+
+**Nuk e mat dot** sepse ekstensioni s'ka leje për hostin (screenshot → «must request permission»)
+dhe sepse PWA-ja e telefonit është jashtë arritjes sime.
+
+### VEPRIMI I MENJËHERSHËM për pronarin
+Hap **një herë** në pajisjen që kthehet te e vjetra:
+```
+https://alpazar.vercel.app/rifresko
+```
+Kjo fshin cache-t, Cache Storage, SW-në dhe storage-in. **Të nxjerr nga llogaria — me qëllim.**
+Nëse pas kësaj problemi zhduket, shkaku ishte pajisja, jo tubacioni — dhe e provuam.
+
+### PYETJA QË E MBYLL DIAGNOZËN (s'guxoj të hamendësoj më tej)
+1. **Cila faqe dhe cili element** u kthye te e vjetra?
+2. **Ku:** aplikacioni i instaluar në telefon, skedë Chrome në telefon, apo Chrome në kompjuter?
+3. **A ndodhi pas një «Rifresko»**, apo vetvetiu ndërsa lundroje?
+Pa këto tri, çdo rregullim tjetër do ishte gjuajtje — dhe kam gabuar tashmë katër herë sot duke
+u nisur nga instrumenti në vend të gjestit.
+
+### Mësim për vete (i shtuar)
+**Mos audito simptomën që kupton — audito simptomën që përshkruan pronari.**
+«Nuk reflektohet» ≠ «kthehet te e vjetra». E para është tubacion; e dyta është gjendje e klientit.
+E humba një cikël të plotë sepse s'e dallova.
