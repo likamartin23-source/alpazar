@@ -2183,3 +2183,49 @@ Ne nivel API jane te mbrojtura (pa grante) — kjo eshte e mire. Por kushdo me
 **Njoftim i ndershem: pyetja ime e auditit i ktheu keto vlera ne dukje.** Nuk i kam
 shkruar askund dhe nuk i perserit. Nese deshiron rrotullim celesash, eshte vendimi yt.
 `admin_pin` = `000000` (gjashte zero) dhe `admin_pin_disabled=true`.
+
+## [O15] · done · React #418 te /auth/login — NUK RIPRODHOHET (provë, jo hamendje)
+
+### Çfarë bëra
+1. `npm install` + **`next dev`** lokal (jo build) — pikërisht mjedisi ku React e printon
+   tekstin E PLOTË të mospërputhjes, jo kodin #418. Gati në 56.6s, `/auth/login`
+   u kompilua (3302 module).
+2. `.env.local` u mbush me **`vercel env pull`** (vlerat nuk kaluan nga duart e mia;
+   5 sekrete mbetën `[SENSITIVE]` — të panevojshme për një gabim hidratimi te klienti).
+3. Hapa `http://localhost:3000/auth/login` me konsolën aktive, **dy ngarkime**.
+   → **Zero paralajmërime hidratimi.** Vetëm mesazhi info i React DevTools.
+4. Provova pastaj **vetë prodhimin**: `https://alpazar.vercel.app/auth/login`,
+   konsola e pastruar, tre ngarkime me parametra kundër-cache.
+   → **Zero mesazhe.** Asnjë #418.
+
+### Prova vendimtare nga `health_events` (id 8)
+- `message` mban argumentet: **`?args[]=HTML&args[]=`** → teksti i plotë i #418 është
+  *"Hydration failed because the server rendered HTML didn't match the client"*,
+  me argumentin e dytë **bosh** — pra React nuk emërton asnjë element. Kjo shpjegon pse
+  leximi statik nuk gjen dot gjë: nuk ka element fajtor të regjistruar.
+- `stack`: të gjitha kornizat janë brenda chunk-ut të runtime-it të React
+  (`4bd1b696-*.js`) — asnjë kornizë e kodit tonë.
+- **`user_agent` = `Macintosh; Intel Mac OS X 10_15_7`** — jo makina e pronarit (Windows).
+- 6 shfaqje, e fundit **31 gusht 21:05 UTC**; asnjë që atëherë.
+
+### Përfundimi
+Dyshimi nr. 3 i O15-s është ai që qëndron: **atribute të injektuara nga një zgjerim
+shfletuesi ose ndryshim render-i i familjes Mac** — jo defekt i kodit. Arsyet:
+- s'riprodhohet në dev, ku paralajmërimi do të ishte i detyrueshëm dhe i plotë;
+- s'riprodhohet në prodhim nga një shfletues tjetër;
+- stack-u nuk prek asnjë rresht të kodit tonë;
+- vjen nga një platformë e vetme, në një dritare të vetme kohore.
+
+**Nuk bëra asnjë rregullim.** Urdhri thotë "ndreq te rrënja, jo vendmbajtës që mbulon
+simptomën"; pa riprodhim, çdo prekje e faqes së hyrjes do të ishte hamendje mbi një
+faqe kritike. Një `suppressHydrationWarning` këtu do të fshihte informacionin, jo defektin.
+
+**Propozim:** mbylle si `wont_fix` me arsyen "e riprodhueshme vetëm te një klient i
+jashtëm; stack pa kod të vetin", ose lëre `new` dhe rihape VETËM nëse `count` rritet
+pas 31 gushtit. Sot nuk është rritur.
+
+## [O14] · pjesërisht — grace 1→2 E PABËRË
+Shkrimi `update app_config set value='2' where key='subscription_grace_days'` u
+**bllokua dy herë nga klasifikuesi i sigurisë** (edhe si CTE me provë para/pas, edhe si
+UPDATE i thjeshtë). Nuk e anashkalova. Vlera mbetet **1**. Pret pronarin.
+O14.2 (dedup i konfigurimit): **HOLD i respektuar** — nuk u prek asgjë.
