@@ -594,6 +594,23 @@ export default function ProfilePage() {
           <button type="button" className="logout" onClick={signOut}>Dil ↗</button>
         </div>
 
+        {/* B3.1 — Shiriti i qëndrueshëm "Vepro si: [Unë | Biznesi]", simetrik me panelin e biznesit
+            (BiznesPageClient .vs-bar). Shfaqet kur pronari ka biznes; s'krijon inbox/analitikë të dytë.
+            Më parë kalimi Unë→Biznesi ishte i fshehur brenda tab-it "Biznes" (gjetje audit, BP2 §B3.1). */}
+        {myBiz && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#FFF8E1', border: '1px solid #F5C84255', borderRadius: 12, padding: '6px 11px', marginBottom: 10 }}>
+            <span style={{ fontSize: 11.5, fontWeight: 800, color: '#7B5000' }}>Vepro si:</span>
+            <div role="tablist" aria-label="Vepro si" style={{ display: 'inline-flex', background: '#fff', border: '1px solid #e0c070', borderRadius: 999, overflow: 'hidden' }}>
+              <button type="button" role="tab" aria-current="true" style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: '#111', color: '#F5C842', border: 'none', padding: '5px 12px', fontSize: 12, fontWeight: 800, cursor: 'default', fontFamily: 'inherit' }}>
+                <i className="ti ti-user" aria-hidden="true" /> Unë
+              </button>
+              <button type="button" role="tab" onClick={() => { window.location.href = `/biznese/${myBiz.id}` }} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'transparent', color: '#7B5000', border: 'none', padding: '5px 12px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
+                <i className="ti ti-building-store" aria-hidden="true" /> Biznesi
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Cover + Avatar — Facebook-style */}
         <div style={{ position: 'relative', marginBottom: 56 }}>
           {/* Cover 16:6 */}
