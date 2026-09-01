@@ -49,7 +49,13 @@ export default function UpdatePrompt() {
         const b = j?.build
         if (!b || b === 'dev' || b === mine) return // njësoj → asgjë
         if (cancelled) return
-        // U zbulua build i ri → VETËM banderolë opt-in (asnjë ringarkim automatik).
+        // U zbulua build i ri. Skedë PA shkrim aktiv (asnjë input/textarea/contenteditable në fokus)
+        // → RINGARKO VETË: shkaku gjithëditor ishte pikërisht skeda e vjetër që mbetej derisa klikohej
+        // banderola, ndaj pronari rrinte gjithnjë në bundle të vjetruar. Fushë aktive → banderolë,
+        // që të mos ndërpritet një formë në mes.
+        const ae = document.activeElement as HTMLElement | null
+        const typing = !!ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.isContentEditable)
+        if (!typing) { location.reload(); return }
         try { if (sessionStorage.getItem('_alpz_upd_dismiss') === b) return } catch { /* ignore */ }
         setLive(b)
       } catch { /* rrjeti — provo herën tjetër */ }
