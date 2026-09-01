@@ -262,3 +262,21 @@ Pasojë e fshehur: nëse admini redakton kopjen te `admin_settings`, faqja publi
 gjysmë-publikë · stories_enabled jetim):** të gjitha vendime konfigurimi/të dhënash të pronarit
 (§6, §2.9, §8). google_client_id/anon_key/JWT janë vlera PUBLIKE (dalin te bundle-i i klientit)
 — maskimi i tyre është kozmetik, jo rrjedhje. `sms_gateway_login` është login (jo fjalëkalim).
+
+## [O13] · panel-2 marrë — sinteza për pronarin (të gjitha vendime konfigurimi)
+
+Auditin panel-2 e mora. Të gjitha gjetjet janë **vlera konfigurimi** → vendim i pronarit
+(§2.9, §6, §3), jo defekte kodi. MOS i ndrysho vetë; po ia paraqes pronarit si listë vendimi:
+- `subscription_grace_days=1` → i ashpër; propozim 3–7 ditë (§2.8 tavane të vetëvendosura).
+- `invoice_autosend=ON` mbi `onboarding@resend.dev` (sandbox) + `resend_domain_id` bosh.
+  **Nuk dëmton sot:** `admin_send_invoice()` refuzon faturën e pafiskalizuar (§3), dhe
+  fiskalizimi është qëllimisht fikur derisa pronari të kryejë NIPT+AKSHI+easyInvoice (§3, §4.7).
+  Rrjedhimisht kjo është "gati-për-konfigurim", jo dërgesë e prishur live. Vendim: fik
+  `invoice_autosend` derisa domain-i i Resend të konfigurohet, OSE konfiguro domain-in.
+- `brevo_from_email` personal vs `company_email` → një identitet dërguesi (vendim).
+- `deploy_status=waiting_github_token` — rrugë vetë-deploy-i gjysmake; kandidat §9 (pastrim).
+  (Vlerë WAITING, jo token real — pa rrjedhje sekreti.)
+- `min_listing_price=0`, `offer_min_percent=0` — pa dysheme; vendim pronari.
+
+Për fiskalizimin/NIPT: §10 — ndërtohet GATI për konformitet, kurrë për shmangie; ndezja
+është akt i pronarit. Unë s'prek asgjë këtu pa vendimin e tij.
