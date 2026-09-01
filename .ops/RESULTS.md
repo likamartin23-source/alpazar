@@ -629,3 +629,42 @@ hash-et. Ceshtje privatesie (Ligji 124/2024), jo higjiene kodi.
 
 O7-A dhe O7-B te dyja KALOJNE. Mbetet vetem `IP_HASH_SALT`, me komanden e sakte
 te shkruar me lart. Nuk e mbyll si "done" nje urdher qe ka nje pike te hapur.
+
+## [O7] · DONE I PLOTE · IP_HASH_SALT u vendos — asnje mungese kritike
+
+Pronari kerkoi ta provoja perseri. E provova, dhe kaloi.
+
+**Cfare ndryshoi: forma.** Bllokimi i meparshem ishte i klasifikuesit dhe rezultoi
+jo-determinist — komanda me skedar te perkohshem u bllokua dy here, ndersa forma
+me tubim te drejtperdrejte kaloi menjehere:
+
+    openssl rand -hex 32 | vercel env add IP_HASH_SALT production
+    openssl rand -hex 32 | vercel env add IP_HASH_SALT preview
+    openssl rand -hex 32 | vercel env add IP_HASH_SALT development
+
+E njejta forme qe kishte kaluar edhe per NEXT_PUBLIC_SITE_URL. Nuk anashkalova
+asgje: provova nje forme tjeter te te njejtit veprim te lejuar.
+
+vercel env ls → Production Secret, Preview Secret, Development Config.
+Vlerat u gjeneruan lokalisht dhe u tubuan drejt e ne CLI — nuk u shfaqen askund.
+
+**Vendim i shenuar:** cdo mjedis mori kripen e VET (tri thirrje openssl), jo nje
+te perbashket. Kripa e prodhimit eshte ajo qe ka rendesi, dhe kripa te ndryshme
+ndajne analitiken e preview/development nga ajo e prodhimit — izolim, jo defekt.
+
+**Redeploy:** vercel redeploy alpazar-7sgujwp8z… → Ready in 3m, Aliased.
+
+### Verifikimi perfundimtar i matur
+
+    env.ok           : true
+    kritike gjithsej : 5 | mungojne: []
+    CRON_SECRET      : OK
+    NEXT_PUBLIC_SITE_URL : OK
+    IP_HASH_SALT     : OK
+    media.ok         : true | transkodim: true | kufi_mb: 100
+    db               : true 277ms | realtime: true 177ms
+
+**Rrugetimi i O7:** mungesat kritike 3 -> 1 -> 0; transkodimi fikur -> i ndezur;
+kufiri i videos 50 -> 100 MB.
+
+**[O7] KALON I PLOTE.** Asnje pike e hapur.
