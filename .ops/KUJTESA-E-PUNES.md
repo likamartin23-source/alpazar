@@ -78,6 +78,14 @@ Cikli i auditit të terminalit PËRFUNDOI. Renditja e mbetur sipas peshës:
 
 - **Fshirja e biznesit (mbyllje-2):** Çarja 1 (pa gjurmë) REALE → migrim i shkruar `20260901_gjurme_fshirja_biznesit.sql` (insert te audit_logs para shkatërrimit); terminali e aplikon [O9]. Çarja 2 (reviews) NUK është defekt — funksioni LIVE i fshin reviews (hapi 1); terminali skanoi migrimin e vjetër (drift DB↔repo, i mbyllur nga i njëjti migrim).
 
+- **Bug pauzimi — RREGULLUAR (`4ddbfd8`):** shpalljet `deleted`/`expired` dilnin te "Të pauzuara" me buton Riaktivizo (fshirja jo e pakthyeshme); tani përjashtohen.
+- **Cikle të hapura / vecori të pandërtuara (a7cc9a6 — jo bug, ndërtim/vendim):**
+  · **Ndjekja:** `get_feed` ekziston, thirret 0 herë; s'ka feed/njoftim/listë "Duke ndjekur" → butoni Ndiq s'prodhon pasojë. Kërkon ndërtim feed-i + njoftime.
+  · **Mesazhet:** s'ka filtër biznes/person; identiteti nga `shop_name` (shkel BP2 "kurrë hasShop") — duhet `business_id`. Fix i vogël + query; vizual.
+  · **Postimet:** tabela `posts` (FK CASCADE) e projektuar, kurrë e ndërtuar (dead).
+  · Dy butona "Ndiq" për të njëjtin shitës — vendim produkti.
+- **eb57551:** terminali korrigjoi dy raporte të vetat (Vepro si + referral) — ndarja biznes/llogari e zbatuar.
+
 ## 5. Mësime të vërtetuara (shtoji këtu, mos i harro)
 - **Device flow** = rrugë autentikimi që s'ia kalon sekretin agjentit (Vercel CLI). Sekretet i vë pronari (§8).
 - **Rendi A→C** te privatësia: `my_referrals()` PARA ngushtimit të `profiles`; pamja s'e dallon dështimin — provoje në bazë.
