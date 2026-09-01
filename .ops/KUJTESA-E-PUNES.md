@@ -27,7 +27,11 @@
 - **G5:** TrustBadge me `trust_score` real + fjala **"Besueshmëria"**; buton **"★ Pronari →"** te /listing; **Harta** buton te /biznese.
 
 ## 4. Punët e hapura
-- **[O8]** — verifikim live i detajuar (terminali). Pas tij: cloud rregullon defektet A/B + zbaton C.
+- **[O8]** — verifikim live i detajuar (terminali). Seksioni A + audit u dorëzua (`3c7c7cf`); mbetet B (ndërveprime/të kyçura) + C (faktet).
+- **DEFEKT PRIVATËSIE — RREGULLUAR (`86a81dc`):** /biznese shfaqte Trust Score pa nderuar `trust_score_visible` (rreshtat 571+869); tani gatohet si /u & /listing. Verifiko live.
+- **Zinxhir i vdekur (konfirmuar sërish):** `conversation_id` s'shkruhet nga asnjë rresht → `conversations` bosh → `typing_indicators` + `message_reactions` s'punojnë kurrë. Vendim: ose lidh conversation_id, ose fshi tri tabelat.
+- **10 RPC admin të vdekura:** 3 abonime (`admin_adjust/cancel/change_subscription`), 2 fiskale (`admin_fiscal_queue/retry`), `admin_attach_invoice_file`, `admin_send_invoices_bulk`, `admin_bulk_user_flag`, `admin_list_businesses`, `admin_list_reports`. Klasë F1 — të ndërtuara, të palidhura te paneli.
+- **Model (jo defekt):** vizitori sheh DY butona "Ndiq" të palidhur (person te /u + biznes te /biznese), dy numërues, pa shpjegim.
 - O4 (i pavendosur nga pronari): `/profile/security` & `/profile/subscription` si rrugë të ndashme apo tabe?
 
 ## 5. Mësime të vërtetuara (shtoji këtu, mos i harro)
