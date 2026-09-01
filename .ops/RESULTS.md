@@ -3705,3 +3705,71 @@ kjo klasë ka goditur më parë.
 Derisa (1)–(5) të zbatohen, rregulli praktik: **rifresko fort skedën (Ctrl+Shift+R) para se të thuash
 «nuk reflektohet»** — dhe kontrollo `alpazar.vercel.app/api/version` kundrejt SHA-së së fundit.
 Serveri, sipas matjes, reflekton menjëherë; ajo që ngec është ose deployment-i ose skeda jote.
+
+---
+
+## [O31] · VERIFIKIM LIVE I NJËSIMIT — matur nga HTML-ja e shërbyer (build `5f0ed84`)
+
+Të katër commit-et e mbetura zbritën: `e9cb89b` (K2 pjesa 2) · `4e10524` (middleware) ·
+`f69f68e` (butonat) · `f422e98` («Pazarin»). Live = `5f0ed84`.
+
+### A. ✅ Shkaku rrënjësor ([O25]) — I RREGULLUAR, provuar live
+```
+badge «VIDEO» te HTML-ja:   /  → 1        /biznese/{id} → 1
+```
+Para rregullimit, `/biznese/{id}` s'e kishte fare (`ka_img:false`, kuti bosh gri).
+**Shpallja vetëm-video tani rendohet njësoj në të dyja faqet.**
+Faqja e biznesit fitoi edhe: `badge-premium`=2 · `badge-new`=1 · «E promovuar»=2 · «Ruaj»=2 —
+të gjitha mungonin më parë sepse projeksioni s'i kërkonte.
+
+### B. ✅ K2 — KARTA E BIZNESIT ËSHTË E NJËSUAR
+
+`app/components/BusinessCard.tsx` ndërtohet **mbi të njëjtën kornizë**:
+```
+className="listing-card"  ·  .card-img  ·  .card-body  ·  .card-title (emri i biznesit)
+.card-price (lloji)       ·  .card-meta/.card-loc      ·  .card-stats
+.badge-premium (👑 VIP / ★ Premium)  ·  .card-seller-ov (🏢 / ✓ Verifikuar)
+butoni «Ruaj këtë biznes» (= ndiq biznesin, poshtë-djathtas si zemra e shpalljes)
+```
+Përdoret te **të dyja vendet** që kërkon caku §C:
+- `HomeClient.tsx:996` — «🏢 Biznese Online», brenda `.listings-grid`
+- `biznese/page.tsx:179` — lista e bizneseve (zëvendësoi rreshtat me chevron)
+
+### C. ✅ PARITETI I ELEMENTEVE — matur në HTML-në live të kryefaqes
+
+3 karta të rendura (1 biznes + 2 shpallje):
+
+| Element | Numri | Verdikt |
+|---|---|---|
+| `.card-img` · `.card-body` · `.card-title` · `.card-price` · `.card-loc` | **3** | ✅ të treja |
+| `.card-seller-ov` | **3** | ✅ të treja |
+| `.badge-premium` | **3** | ✅ të treja |
+| butoni «Ruaj» | **3** (2× «…të preferuara» + 1× «…këtë biznes») | ✅ të treja |
+| «E promovuar» | 2 | ✅ korrekt — vetëm shpalljet e paguara |
+| `.card-stats` | **2 / 3** | ⚠ një kartë s'e ka |
+
+**Krahasimi me [O22] (para njësimit): `.shop-mini` kishte 2 nga 10 elemente. Tani 3 kartat kanë
+të njëjtat elemente bazë.** Ankesa «kartat e bizneseve nuk kanë asnjë element të kartave» —
+**e zgjidhur dhe e provuar**.
+
+### D. ⚠ Mbeturina dhe mangësi të vogla
+1. **`.shop-mini` CSS i vdekur** — 3 rregulla te `HomeClient.tsx:672-674`. Komponenti s'rendohet më
+   (HomeClient përdor `BusinessCard`), por CSS-ja mbeti. **Kjo është pikërisht §4-bis: e reja u bë e
+   detyrueshme, e vjetra s'u hoq.** Hiqe, përndryshe dikush do e ringjallë.
+2. **`.card-stats` 2/3** — një kartë s'e shfaq bllokun e statistikave. Kërkon sy për të parë cila.
+3. **`/biznese` renderohet 100% te klienti** — SSR kthen 0 karta. Nuk e verifikoj dot nga HTML-ja;
+   kërkon shfletues.
+
+### E. ⛔ BLLOKUES — ekstensioni s'ka leje për hostin
+```
+computer screenshot → «Cannot access contents of the page. Extension manifest must request
+                       permission to access the respective host.»
+javascript_tool     → timeout
+```
+Rifreskimi i ekstensionit **nuk** i rikthen lejet e hostit. Pronari duhet të japë lejen për
+**`alpazar.vercel.app`** te ikona e ekstensionit (jo vetëm ta rifreskojë).
+Derisa atëherë, verifikimi im është nga **HTML-ja live + kodi**, jo nga DOM-i pas hidratimit —
+e shënoj qartë, sipas §9.2, që të mos ngatërrohet me matje vizuale.
+
+**Ende të pashqyrtuara me sy:** `/biznese` (lista me BusinessCard), butonat e rinj (O24),
+middleware-i i rrugëve private, dhe pariteti i profileve pas ndryshimeve.
