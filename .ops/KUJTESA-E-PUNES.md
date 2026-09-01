@@ -46,6 +46,14 @@
 - **Model (jo defekt):** vizitori sheh DY butona "Ndiq" të palidhur (person te /u + biznes te /biznese), dy numërues, pa shpjegim.
 - O4 (i pavendosur nga pronari): `/profile/security` & `/profile/subscription` si rrugë të ndashme apo tabe?
 
+## 4-bis. DIAGNOZA E VETME (terminali, autopsi dizajni `9d11214`)
+Në të pesta shtresat — sisteme · nivele · organogramë · karta · dizajn — e njëjta gjurmë:
+**çdo rafinim u shtua si shtresë e RE pranë të vjetrës, pa u hequr e vjetra dhe pa u bërë e reja e detyrueshme.**
+Prandaj "të vjetrat në disa faqe, të rejat në të tjera" — të dyja të gjalla, cila fiton varet nga faqja.
+- Dizajn: 236 përdorime të një të kuqeje jo-token (`#c42b0f`×176, `#c42a0e`×60 — drift i `--az-red-deep #c42305`); tokenat e dyfishuar (`--az-red`=`--action-red`); adoptim ~1% (32 tokena vs 2057 hex).
+- **Zgjidhja = FAZË KONSOLIDIMI** (jo fikse të vetme): heq të vjetrën + bën të renë të detyrueshme. Prek pamje/përmbajtje → kërkon plan + verifikim vizual per-sipërfaqe (Rregulli 11), JO zëvendësim masiv verbër.
+- Nën-fazat: (K1) tokena ngjyrash — konsolido `#c42b0f/#c42a0e`→token; (K2) 3 kartat e biznesit → një; (K3) sistemet e vdekura (isOnline/buildBadges/10 RPC/conversation_id); (K4) navigimi `next/link`; (K5) `getLevel`/`LEVELS` një fjalor. Secila CI-green + sy.
+
 ## 5. Mësime të vërtetuara (shtoji këtu, mos i harro)
 - **Device flow** = rrugë autentikimi që s'ia kalon sekretin agjentit (Vercel CLI). Sekretet i vë pronari (§8).
 - **Rendi A→C** te privatësia: `my_referrals()` PARA ngushtimit të `profiles`; pamja s'e dallon dështimin — provoje në bazë.
