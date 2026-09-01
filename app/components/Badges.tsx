@@ -1,13 +1,22 @@
 'use client'
 
-// Sistemi i niveleve — llogaritet nga gamification_points (pa ndryshime në DB)
-export type LevelInfo = { key: string; name: string; icon: string; color: string; bg: string }
+// Sistemi i niveleve — llogaritet nga gamification_points (pa ndryshime në DB).
+// `min` = pragu i pikëve; e ekspozuar që shiriti i progresit te /referral ta ripërdorë
+// (më parë /referral kishte një `LEVELS` të vetën me ngjyra të ndryshme — jashtë harmonisë).
+// BURIM I VETËM i shkallës: emra, ikona, ngjyra, pragje — një vend.
+export type LevelInfo = { key: string; name: string; icon: string; color: string; bg: string; min: number }
+
+export const LEVELS: LevelInfo[] = [
+  { key: 'fillestar', name: 'Fillestar', icon: '🌱', color: '#3B6D11', bg: '#EAF3DE', min: 0 },
+  { key: 'tregtar',   name: 'Tregtar',   icon: '⚡', color: '#185FA5', bg: '#EEF4FF', min: 100 },
+  { key: 'ekspert',   name: 'Ekspert',   icon: '🏆', color: '#C42B0F', bg: '#FFF0EE', min: 400 },
+  { key: 'master',    name: 'Master',    icon: '💎', color: '#7C3AED', bg: '#F3ECFE', min: 1000 },
+]
 
 export function getLevel(points = 0): LevelInfo {
-  if (points >= 1000) return { key: 'master',    name: 'Master',    icon: '💎', color: '#7C3AED', bg: '#F3ECFE' }
-  if (points >= 400)  return { key: 'ekspert',   name: 'Ekspert',   icon: '🏆', color: '#C42B0F', bg: '#FFF0EE' }
-  if (points >= 100)  return { key: 'tregtar',   name: 'Tregtar',   icon: '⚡', color: '#185FA5', bg: '#EEF4FF' }
-  return                     { key: 'fillestar', name: 'Fillestar', icon: '🌱', color: '#3B6D11', bg: '#EAF3DE' }
+  let lvl = LEVELS[0]
+  for (const l of LEVELS) if (points >= l.min) lvl = l
+  return lvl
 }
 
 // A është anëtar i ri (< 30 ditë)

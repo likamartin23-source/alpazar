@@ -4,17 +4,12 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
-import { getLevel } from '../components/Badges'
+import { LEVELS } from '../components/Badges'
 import { SharePanel } from '../components/SharePanel'
 import { SITE_URL as SITE } from '../../lib/siteConfig'
 
-const LEVELS = [
-  { name: 'Fillestar', icon: '🌱', min: 0,   max: 99,  color: '#555',    bg: '#f5f5f5' },
-  { name: 'Tregtar',   icon: '⚡', min: 100, max: 399, color: '#185FA5', bg: '#EEF4FF' },
-  { name: 'Ekspert',   icon: '🏆', min: 400, max: 999, color: '#856404', bg: '#FFF4E5' },
-  { name: 'Master',    icon: '💎', min: 1000, max: Infinity, color: '#7C3AED', bg: '#F5F3FF' },
-]
-
+// Shkalla e niveleve vjen nga `LEVELS` te components/Badges (burim i vetëm) —
+// që etiketat, ikonat dhe ngjyrat të jenë identike kudo (harmoni).
 function getLevelProgress(pts: number) {
   const idx = LEVELS.findIndex((l, i) => pts >= l.min && (i === LEVELS.length - 1 || pts < LEVELS[i + 1].min))
   const current = LEVELS[idx]
