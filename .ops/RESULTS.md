@@ -3974,3 +3974,30 @@ gjithë kolona. Kartë e njëjtë, **grid i ndryshëm** — pamja s'është «e 
 | 5 ❌ | D3 grid-i i kartave i ndryshëm mes faqeve | cloud + vendim |
 | 6 ⚠ | porta CI për `LISTING_SELECT` · `.shop-mini` CSS i vdekur | cloud |
 | 7 ⚠ | 7 devijimet nga caku ([O33]) — tabs, stats, «Besueshmëria», Harta… | cloud + vendim |
+
+---
+
+## [O35] · «Butoni i bizneseve është rrugë krijimi pa plan» — E VERIFIKUAR: porta MBAHET, në tri shtresa
+
+Pronari ngriti shqetësimin se rruga e krijimit të biznesit kalon **pa plan**. E mata në të tria shtresat.
+
+| Shtresa | Mekanizmi | Gjendja |
+|---|---|---|
+| **1. CTA-ja te `/biznese`** | `biznese/page.tsx`: `krijoDest = gated ? '/premium' : '/biznese/new'`, ku `gated = business_requires_premium==='true' && tier==='free'` | ✅ falas → `/premium` |
+| **2. Faqja `/biznese/new`** | `biznese/new/page.tsx:24`: `if (kerkohetPremium && tierNgaProfili(prof)==='free') { location.href='/premium'; return }` + gjendja `ok` që mban trupin e formularit | ✅ ridrejtim |
+| **3. RLS te baza** | `biz_owner_ins` WITH CHECK: `auth.uid()=owner_id AND ( app_config.business_requires_premium <> 'true' OR coalesce(owner_rank_tier(auth.uid()),0) >= 1 )` | ✅ **INSERT-i bllokohet** |
+
+`app_config.business_requires_premium = **true**` (matur).
+Formulari m'u hap sepse jam i kyçur si **Administrator · Premium** — sjellje e saktë, jo vrimë.
+
+**Pra pretendimi nuk qëndron: porta e të ardhurave është e mbyllur edhe në bazë**, jo vetëm në pamje.
+Kjo është e rëndësishme ta dish saktë — një «rregullim» këtu do prishte diçka që punon.
+
+**Dy vërejtje të vogla (jo vrima):**
+1. Porta e faqes është **në klient** — një përdorues falas sheh kokën e faqes për një çast para
+   ridrejtimit. Trupi i formularit mbrohet nga gjendja `ok`, ndaj s'ka rrjedhje përmbajtjeje.
+2. `/biznese/new` kthen **200** te crawler-at (si të gjitha rrugët private, `4e10524` e ndryshoi këtë
+   për disa — kontrollo nëse e mbulon edhe këtë).
+
+Klasa: kjo **NUK** është F2 («mbrojtja te fusha, jo te rruga») — këtu mbrojtja është te **të tria**:
+rruga, faqja dhe shkrimi. Rast i rrallë ku shtresat përputhen.
