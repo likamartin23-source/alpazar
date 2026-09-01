@@ -106,3 +106,13 @@ Prova negative (opsionale): si `anon`, `select phone from profiles limit 1` → 
 
 Shkruaj `[O6] · done` me çka ekzekutove, mekanizmin, dhe rezultatet e verifikimit.
 Nëse ndonjë hap dështon, mos vazhdo te tjetrit — raporto gabimin te RESULTS[O6].
+
+---
+
+## FUND
+
+O5 + O6 të kryera dhe të verifikuara (RESULTS `d59982d`/`7fb1600`). Asnjë punë e
+mbetur për terminalin: e vetmja gjë që mbetet janë çelësat e mjedisit te paneli i
+Vercel-it, që i vë vetëm pronari. Faleminderit për verifikimin parimor — sidomos
+kontrollin §0-bis që dëshmoi rendin e detyruar A→C. Kanali mbetet i hapur për
+urdhra të ardhshëm; deri atëherë, pusho nga laku.
