@@ -70,12 +70,15 @@ export async function middleware(req: NextRequest) {
       if (!session) {
         return NextResponse.redirect(new URL('/auth/login', req.url))
       }
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('is_admin')
-        .eq('id', session.user.id)
-        .single()
-      if (!profile?.is_admin) {
+      // `is_admin()` SECURITY DEFINER — përgjigjet VETËM për thirrësin, s'ekspozon
+      // rolin e askujt tjetër. Leximi i drejtpërdrejtë i kolonës `profiles.is_admin`
+      // u bllokua nga migrimi `profiles_ngushtimi_pas_deploy` (O6-C) → më parë ky
+      // gjykim rrëzonte pronarin jashtë `/admin` (regres §0-bis: fshesa fillestare
+      // humbi `middleware.ts` në rrënjë). I njëjti burim si app/admin/page.tsx + api/email.
+      // MOS ktheje te `grant select (is_admin)`: RLS e profiles është public_read → do
+      // të rihapte §4.6-bis (çdo i kyçur numëron adminët).
+      const { data: eshteAdmin } = await supabase.rpc('is_admin')
+      if (!eshteAdmin) {
         return NextResponse.redirect(new URL('/', req.url))
       }
     } catch {
