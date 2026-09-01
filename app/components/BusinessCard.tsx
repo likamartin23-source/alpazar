@@ -40,6 +40,8 @@ export default function BusinessCard({ business, index = 0 }: { business: Busine
   const [uid, setUid] = useState<string | null>(null)
   const [following, setFollowing] = useState(false)
   const [busy, setBusy] = useState(false)
+  // Foto qe deshton (404/CORS): shfaq vend-mbajtesin, mos e fshih ne kuti bosh (F5).
+  const [imgFailed, setImgFailed] = useState(false)
 
   useEffect(() => {
     let alive = true
@@ -79,8 +81,8 @@ export default function BusinessCard({ business, index = 0 }: { business: Busine
       onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') open() }}
     >
       <div className="card-img">
-        {cover
-          ? <img src={cover} alt={b.name} loading={index < 3 ? 'eager' : 'lazy'} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
+        {cover && !imgFailed
+          ? <img src={cover} alt={b.name} loading={index < 3 ? 'eager' : 'lazy'} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} onError={() => setImgFailed(true)} />
           : <i className="ti ti-building-store" style={{ fontSize: 30, color: '#c9b47a' }} aria-hidden="true" />
         }
         {/* Vula e tier-it (lart-djathtas) — i njëjti sistem si te ListingCard. */}
@@ -100,7 +102,10 @@ export default function BusinessCard({ business, index = 0 }: { business: Busine
           aria-label={following ? 'Mos e ruaj më këtë biznes' : 'Ruaj këtë biznes'}
           style={{ position: 'absolute', right: 6, bottom: 6, zIndex: 3, width: 44, height: 44, minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', border: 'none', padding: 0, cursor: 'pointer' }}
         >
-          <span style={{ width: 30, height: 30, borderRadius: '50%', background: 'rgba(255,255,255,.92)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 1px 6px rgba(0,0,0,.12)' }}>
+          {/* I njejti rreth si `FavoriteButton` (zemra e shpalljes): bg .95 · hije .28 · unaza .08 —
+              me pare ndryshonte (.92/.12/pa unaze). Ikona mbetet bookmark: "ndiq biznesin" ≠
+              "ruaj shpalljen" (zemer) — dallim semantik i qellimshem, e njejta kornize vizuale. */}
+          <span style={{ width: 30, height: 30, borderRadius: '50%', background: 'rgba(255,255,255,.95)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 1px 6px rgba(0,0,0,.28)', border: '1px solid rgba(0,0,0,.08)' }}>
             <i className={`ti ti-bookmark${following ? '-filled' : ''}`} style={{ fontSize: 16, color: following ? '#E63312' : '#888' }} aria-hidden="true" />
           </span>
         </button>
@@ -112,7 +117,7 @@ export default function BusinessCard({ business, index = 0 }: { business: Busine
           <div style={{ fontSize: 11, color: '#6B6B6B', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>{b.tagline}</div>
         )}
         {/* Në vend të çmimit → kategoria/tipi i biznesit. */}
-        <div className="card-price" style={{ fontSize: 12.5, color: '#7A4A00' }}>{tipLabel}</div>
+        <div className="card-subtype">{tipLabel}</div>
         <div className="card-meta">
           <span className="card-loc">
             <i className="ti ti-map-pin" aria-hidden="true" />

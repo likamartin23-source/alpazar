@@ -213,6 +213,11 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
    thyhet ne dy rreshta e prish raportin. Elipsa eshte rrjete sigurie per raste
    te paparashikuara (monedhe e gjate, shifra shume te medha), jo gjendja normale. */
 .card-price{font-size:14px;font-weight:800;color:var(--action-red-deep);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* [O41] Karta e biznesit e perdorte `.card-price` per KATEGORINE (jo cmim), me nje
+   mbishkrim inline (12.5px/kafe) — po ai mbingarkim klase: nese dikush ndryshon `.card-price`,
+   kategoria e biznesit ndryshon bashke me te. `.card-subtype` = slot i pavarur per tipin e
+   biznesit ne pozicionin e cmimit; kategoria s'duhet te duket si cmim i kuq. */
+.card-subtype{font-size:12.5px;font-weight:700;color:#7A4A00;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .card-meta{display:flex;align-items:center;justify-content:space-between;}
 .card-loc{font-size:11px;color:#6B6B6B;display:flex;align-items:center;gap:3px;}
 .card-loc i{font-size:11px;}

@@ -151,6 +151,8 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
   // VETËM kur karta është kryesisht në pamje → shumë më pak video shkarkohen/luhen njëkohësisht në
   // feed (ul payload-in ~8MB dhe punën e main-thread), pa e prekur pamjen. Presence/impression rrinë 10%.
   const [videoVisible, setVideoVisible] = useState(false)
+  // Foto qe deshton (404/CORS): shfaq vend-mbajtesin, mos e fshih ne kuti bosh (F5).
+  const [imgFailed, setImgFailed] = useState(false)
   useEffect(() => {
     const el = cardRef.current
     if (!el || typeof IntersectionObserver === 'undefined') return
@@ -205,7 +207,7 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
               aria-label={l.title}
               style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', background: '#0e0e0e' }}
             />
-          : (cover
+          : (cover && !imgFailed
               ? <Image
                   src={cover}
                   alt={l.title}
@@ -213,7 +215,7 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
                   sizes="(max-width: 640px) 50vw, 300px"
                   priority={index < 3}
                   style={{ objectFit: 'cover' }}
-                  onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+                  onError={() => setImgFailed(true)}
                 />
               : <i className="ti ti-photo" style={{ fontSize: 26, color: '#ccc' }} aria-hidden="true" />
             )
