@@ -2086,3 +2086,100 @@ pa adrese -> e padorezuar (sandbox) -> e pafiskalizuar. Asnje hallke s'eshte e p
   — nje rruge vete-deploy-i e nisur dhe e lene pergjysme. Kandidat per §9.
 - `min_listing_price` = 0 dhe `offer_min_percent` = 0 — te dyja pa kufi. Te vetedijshme
   apo te pavendosura? Kerkon vendim pronari.
+
+## [PANELI-3] Audit i thelle i panelit — i matur DREJTPERDREJT ne baze (1 shtator 2026)
+
+Metoda: nuk u mjaftova me pamjet. Cdo pretendim i panelit u testua me pyetje mbi
+bazen reale. Ku prisja defekt dhe nuk e gjeta, e them.
+
+### 1. Dy tabelat e konfigurimit — NUK jane dublim, jane MBROJTJE
+Paneli i quan "dy depo per arsye historike". Kjo e nenvlereson vete projektimin.
+Realiteti i matur:
+- `admin_settings` — **ZERO grante** per `anon`/`authenticated`. E paarritshme nga API.
+  Aty rrine sekretet.
+- `app_config` — SELECT publik (`USING (true)`), shkrimet te gjitha te mbyllura me
+  `has_perm('config.write')`.
+- Mbi `app_config` rri trigeri **`trg_app_config_no_secrets`**, qe REFUZON cdo celes
+  qe i ngjan sekreti (`secret|token|password|_pin$|api_key|private_key|credential`)
+  me mesazhin: *"app_config lexohet publikisht nga kushdo. Vendose te admin_settings."*
+
+Pra ndarja eshte kufi sigurie i zbatuar ne baze. **Nuk duhet "bashkuar".**
+Kontroll i plote i mbivendosjes: **asnje celes i vetem nuk ndodhet ne te dyja tabelat.**
+Pra rasti qe paneli paralajmeron ("kur i njejti celes eshte ne te dyja") sot s'ekziston.
+
+**Por perplasja e google-it eshte REALE dhe me e keqe se sa e emerton paneli:**
+`app_config.google_client_id` = `…umu48bc9go3a7pegsn5…`, qe eshte **i njejti me
+`admin_settings.google_oauth_client_id_alt1`**, jo me `google_oauth_client_id`
+(`…i8gh90bu2ve4sgha3u4f…`). Dy klientë OAuth te ndryshem; rruga e login-it perdor alt1.
+
+### 2. Sistemi i pauzimit — I PLOTE dhe I PROVUAR nga fundi ne fund
+Zinxhiri u ndoq hallke per hallke:
+
+`cron alpazar_expire_premium` (cdo 15 min, aktiv)
+ -> `expire_premium_run()` (SECURITY DEFINER)
+ -> lexon `subscription_grace_days` nga app_config
+ -> skadon abonimet, shkruan `_sub_event`
+ -> `UPDATE profiles SET is_premium=false`
+ -> **trigeri `trg_business_dim_on_premium`** (AFTER UPDATE OF is_premium ON profiles, i ndezur)
+ -> `_apply_business_dimming()` -> biznesi erresohet + njoftim
+
+Cilesi qe ia vlen te thuhet:
+- VIP-i bie bashke me Premium-in (`has_boost` kerkon `is_premium`) — njoftime te ndara
+  per "Premium & VIP" dhe per "vetem VIP".
+- `_apply_business_dimming` **respekton `admin_visibility_override`**: vendimi manual i
+  administrates nuk mbishkruhet kurre nga automatizmi.
+- Rikthimi ndodh vetem per bizneset qe e erresoi VETE automatizmi (`dim_reason like prefiks%`),
+  keshtu qe nje biznes i fshehur me dore nuk rihapet gabimisht.
+
+**Shendeti i cron-it:** 7 pune aktive, **2 877 ekzekutime ne 7 dite, ZERO deshtime.**
+
+Perputhja e gjendjes reale: biznesi ekzistues `is_visible=true`, pronari premium,
+`business_should_be_visible=true` -> perputhet. **Kufizim i ndershem: ka vetem 1 biznes
+ne baze, ndaj kjo eshte konfirmim, jo prove statistikore.**
+
+Mbetet e vlefshme e vetmja verejtje: **`subscription_grace_days = 1`** eshte e ashper
+kur pagesa aprovohet me dore. Rekomandim 3–7 dite.
+
+Nje defekt i vogel real: te `expire_premium_run`, thirrja
+`demote_free_keep_newest(v_u)` eshte e mbeshtjelle me `exception when others then null`
+— nje deshtim aty zhduket pa gjurme (§9: gabim i gelltitur).
+
+### 3. Cmimet — prisja rrjedhje, nuk ka
+`premium_plans` dhe `app_config` mbajne te dyja cmime. I krahasova: **perputhen te gjitha**
+(9.99 / 99.50 / 19.99 dhe versionet ALL). Dhe ka mekanizem qe i mban te perputhura:
+trigerin `trg_sync_pricing_settings` mbi `premium_plans` dhe `trg_sync_plan_limits`
+mbi `app_config` — sinkronizim **ne te dy drejtimet**.
+Pretendimi i panelit *"Asnje cmim nuk eshte i shkruar ne kod"* qendron.
+Hipoteza ime e rrjedhjes ra pas matjes.
+
+### 4. Matrica e roleve — pretendimi i panelit u verifikua
+Paneli thote *"Lejet zbatohen ne bazen e te dhenave, jo ne pamje"*. E matur:
+- **77 politika RLS** mbi **39 tabela** thirrin `has_perm(...)`
+- **55 funksione** e perdorin gjithashtu
+- nga 183 politika gjithsej ne skema `public`
+Pra jo dekor: eshte shtylle e vertete.
+
+### 5. Faturat — zinxhir i thyer, por ende i papreckur
+**`invoices` = 0.** Asnje fature s'eshte krijuar ndonjehere. Prandaj:
+- `invoice_autosend=true` mbi `resend_from_email=onboarding@resend.dev` (sandbox
+  i Resend: dergon VETEM te vetja) — do te deshtoje **ne perdorimin e pare**, jo sot
+- NIPT bosh, adrese boshe -> shkelje e ligjit 87/2019 kur te leshohet e para
+- `fiscal_enabled=false`, 0 te fiskalizuara
+7 metoda pagese aktive, 1 abonim aktiv, 0 fatura.
+
+### 6. Gjurma e administrates — pretendimi im i mehershem bie perfundimisht
+`admin_logs` = **16 rreshta gjithsej**, i fundit 18.8.2026. `audit_logs` = **586**.
+Te 16-tat jane pikerisht ata qe shfaqen ne panel. Nuk ka humbje: **ka pasur vetem 16
+veprime administrate.** Pretendimi im per "admin_log() humbet gjurme" nuk mbeshtetet
+nga asnje mates. E terheq perfundimisht.
+`admin_logs` ka SELECT te mbyllur me `has_perm('audit.view')` dhe **asnje politike
+INSERT/UPDATE/DELETE** -> shkrimi i drejtperdrejte i mohuar; vetem RPC SECURITY DEFINER.
+
+### 7. SIGURI — kerkon vendim te pronarit
+Sekretet (Anthropic, Brevo, Resend, Google Maps, fjalekalimi SMS, moderation_secret,
+embed_cron_secret, health_feed_token) ruhen **tekst i thjeshte** ne `admin_settings`.
+Ne nivel API jane te mbrojtura (pa grante) — kjo eshte e mire. Por kushdo me
+`service_role` ose akses ne baze i lexon te plote.
+**Njoftim i ndershem: pyetja ime e auditit i ktheu keto vlera ne dukje.** Nuk i kam
+shkruar askund dhe nuk i perserit. Nese deshiron rrotullim celesash, eshte vendimi yt.
+`admin_pin` = `000000` (gjashte zero) dhe `admin_pin_disabled=true`.
