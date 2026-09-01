@@ -2865,3 +2865,55 @@ i çipit ose shtohet një rresht i dytë, mbivendosja kthehet pa u vënë re. Nj
 `gap`-i i shprehur si variabël do ta bënte të pathyeshëm. (Sugjerim, jo defekt.)
 
 **Prioriteti 1 → i MBYLLUR. Prioriteti 2 tani: galeria e `/listing` (9 pika 7×7, pa swipe, pa shigjeta).**
+
+---
+
+## [O20] · VERIFIKIM I `8c372a4` (pass a11y) — 01 shtator, 19:20 CEST · build live `8c372a4`
+
+### ✅ Pika 1 — çipi i shitësit te kartat e paguara (klikim i vërtetë)
+```
+elementFromPoint në qendër të çipit -> element brenda çipit (jo badge-i)
+chip.click() -> /biznese/ffb19071-7042-4f8b-b485-00bd10049f3b  ("Biznes — ALPAZAR")
+```
+**Hapi 2 punon te karta e promovuar.** Konfirmuar me navigim, jo me gjeometri.
+
+### ✅ Pika 2 — zonat e prekjes (matur me `getBoundingClientRect`, 387px)
+
+| Element | Para | Tani |
+|---|---|---|
+| `FavoriteButton` «Ruaj» | 29×29 | **44 × 44** ✓ (computed `44px`, `box-sizing:border-box`) |
+| Ikonat social (×6) | 19×24 | **44 × 44** ✓ (të gjashta) |
+| «Mbyll» te `div.install-float` | **6×7** | **44 × 44** ✓ |
+| `.ai-close-btn` «Mbyll sugjerimin» | 13×11 | **44 × 44** ✓ |
+| Gjithsej nën 44px te `/` | 57 / 67 | **49 / 67** |
+
+**Sjellja e toggle-it (kërkesa e O20):**
+```
+klik mbi «Ruaj» -> aria-label bëhet «Hiq nga të preferuarat», URL mbetet "/"  ->  NUK hap shpalljen ✓
+klik i dytë -> kthehet «Ruaj në të preferuara»  (gjendja u rikthye, s'la mbeturina)
+```
+
+Shënim: mbetet një `<button aria-label="Mbyll">` me `0×0` — por ka `display:none`, pra i fshehur, jo defekt.
+
+### ❌ MANGËSI E PIKËS 2 — «Kthehu mbrapa» ekziston në TRE zbatime, u rregullua VETËM NJË
+
+| Faqja | Madhësia tani | Verdikt |
+|---|---|---|
+| `/biznese/{id}` | **44 × 44** | ✓ i rregulluar |
+| `/biznese` (lista) | **22 × 23** | ❌ i paprekur — `padding:0`, `min-width/height:0`, pa `::after` |
+| `/listing/{id}` | **32 × 32** | ❌ i paprekur |
+
+O20 e përshkroi si «Kthehu /biznese (38→44)» — rregullimi zbriti te faqja e biznesit të vetëm,
+jo te lista, dhe as te shpallja. **Është pikërisht §4-bis sërish:** i njëjti kontroll, tre zbatime,
+rregullimi prek një prej tyre dhe të tjerat mbeten. Kërkon njësim, jo tre rregullime.
+
+### Mbetja te `/` (49 elemente nën 44px)
+Të gjitha janë **lidhje teksti të footer-it** me lartësi 14–17px («Kërko», «Siguria», «Kontakt»,
+«Bizneset», «Cookie-t», «Privatësia», «Kategoritë», «Rreth Nesh», «Kushtet e Përdorimit»,
+«IP / Takedown», «Të dhënat e mia», «🎁 Referral») plus `skip-link` 32×16.
+WCAG 2.5.8 i përjashton lidhjet inline brenda një blloku teksti — pra **nuk janë defekt formal**,
+por në telefon një lidhje 14px e lartë mbetet e vështirë. Vendim pronari nëse footer-i të marrë
+`padding` vertikal (do rrisë lartësinë e footer-it).
+
+### Prioriteti 2 mbetet i paprekur
+Galeria e `/listing`: **9 pika 7×7**, `overflow-x:visible` në të 5 nivelet, `scroll-snap:none`, zero shigjeta.
