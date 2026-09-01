@@ -107,6 +107,25 @@ Cikli i auditit të terminalit PËRFUNDOI. Renditja e mbetur sipas peshës:
 - **Prit raportin PËRfundimtar të terminalit para se të nisë faza e re** (urdhër i drejtpërdrejtë).
 - **Vendimet e mbajtura HOLD:** dedup konfig (O12/O13) — pas auditit, verifikim live me pronarin.
 
+## 4-ter. FAZA E RE (cloud punon, pronari+terminali verifikojnë) — nga RAPORT-PER-CLOUD.md
+Landuar CI-green (tsc+29 teste+build), sipas "përshtat para se të ndryshosh":
+- **H1 (f3b1a06, VERIFIKUAR nga terminali 927ac47):** numëruesi "Të pauzuara" përjashtonte
+  deleted/expired vs lista → një predikat `eshtePauzuar` (burim i vetëm). 5→0 matur në bazë.
+- **H2 (f3b1a06, verifikuar):** kamera `.cam` e logos nga bottom-right (mbi 🏢) → top-left
+  (cepi i vetëm që Avatar-i s'e përdor).
+- **G-nivele (d45c29d):** shkalla e niveleve = një burim (`LEVELS` te Badges); /referral e
+  ripërdor. TrustBadge NUK u prek (bosht tjetër: trust_score, jo dublim — si tërheqja #5).
+
+KORRIGJIME të pretendimeve të raportit (matur në kod, mos i vepro):
+- "shop-prem ⭐ i ngurtësuar te HomeClient:991" → STALE: është VIP-aware (`t==='vip'?👑:⭐`).
+- "hasShop te /messages:119" → INERTE: query-t s'e ngarkojnë `shop_name` → gjithmonë 'person'.
+  Identiteti biznes në chat = veçori e re (kërkim biznesi, rrezik N+1) → vendim dizajni pronari.
+- `HomeClient.fetchShops` lexon profiles jo businesses, POR navigon te /biznese që zgjidh me
+  owner_id → punon; MOS E PREK (do prishte sistem të bukur).
+
+MBETEN (vendim/verifikim, jo blind): media swipe/autoplay (borxh verifikimi — telefon),
+dead code isOnline/buildBadges (përshtat para se të fshish), Google OAuth 4-çelësa (HOLD/O12).
+
 ## 5. Mësime të vërtetuara (shtoji këtu, mos i harro)
 - **Device flow** = rrugë autentikimi që s'ia kalon sekretin agjentit (Vercel CLI). Sekretet i vë pronari (§8).
 - **Rendi A→C** te privatësia: `my_referrals()` PARA ngushtimit të `profiles`; pamja s'e dallon dështimin — provoje në bazë.
