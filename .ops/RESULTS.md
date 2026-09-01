@@ -1266,3 +1266,78 @@ kryefaqja lexon edhe tabelën e gabuar.
 Kjo shpjegon pse pronari sheh "sisteme të vjetra në disa faqe": `ListingCard`
 është sistemi i ri; `.shop-mini` dhe rreshtat e `/biznese` janë dy mbetje të
 vjetra që s'u shkrinë me të.
+
+## [O8-DIZAJNI] · Autopsi e thellë: dizajni i vjetër kundër rafinimeve të reja
+
+Kjo shtresë s'ishte matur ende. Rezultati është i njëjti model si te sistemet dhe
+organograma — shtresa e re ekziston, por s'e zëvendësoi të vjetrën.
+
+### 1. Shtresa e re e dizajnit ekziston — dhe është praktikisht e paadoptuar
+
+| Matja | Vlera |
+|---|---|
+| CSS të vërteta në projekt | **3** (`ui-refine.css` 269 rreshta · `fonts.css` 18 · `tabler-icons-subset.css` 88) |
+| Tokena dizajni të përkufizuar te `ui-refine.css` | **32** (`--az-*`, `--sp-*`, `--r-*`, `--action-*`) |
+| Përdorime `var(--…)` në gjithë `app/` | **26** |
+| Ngjyra hex të ngurtësuara në `app/` | **2057** |
+| Skedarë `.tsx` me bllok `<style>` inline | **45** |
+
+Pra për çdo përdorim tokeni ka **~79 ngjyra të ngurtësuara**. Sistemi i ri i
+tokenave mbulon rreth **1%** të vendimeve vizuale; 99% qeverisen ende nga CSS-ja
+inline për-faqe — dizajni i vjetër.
+
+### 2. Drift ngjyre: e kuqja e markës ekziston në KATËR variante
+
+Tokenat kanonikë:
+
+    --az-red / --action-red           = #E63312
+    --az-red-deep / --action-red-deep = #C42305
+
+Përdorimi real, i numëruar:
+
+| Hex | rgb | Herë | Vlerësimi |
+|---|---|---|---|
+| `#e63312` | (230, 51, 18) | **174** | ✅ = `--az-red` |
+| `#c42b0f` | (196, 43, 15) | **176** | ❌ drift |
+| `#c42305` | (196, 35, 5) | **72** | ✅ = `--az-red-deep` |
+| `#c42a0e` | (196, 42, 14) | **60** | ❌ drift (1 njësi larg `#c42b0f`) |
+
+**Varianti i gabuar `#c42b0f` përdoret më shumë (176) se kanoniku `#c42305` (72).**
+Dhe `#c42a0e` është një mutacion kopjo-ngjit i `#c42b0f`, i ndarë vetëm nga 1 njësi
+në G dhe B — sy njeriu s'i dallon, por sistemi nuk i njeh si të njëjtin.
+Gjithsej **236 përdorime** të një të kuqeje që nuk ekziston në asnjë token.
+
+Gjithsej **256 ngjyra unike** në aplikacion.
+
+E verdha është më e shëndetshme: `#f5c842` (271) · `#f8d24e` (36) · `#eeb828` (23)
+përputhen saktë me `--az-yellow`, `-hi`, `-lo` — pra ato TRE janë gradienti i
+qëllimshëm, jo drift. Kjo tregon se problemi s'është kudo; është te e kuqja.
+
+### 3. Vetë sistemi i tokenave është i dyfishuar
+`--az-red` dhe `--action-red` mbajnë të NJËJTËN vlerë `#E63312`.
+`--az-red-deep` dhe `--action-red-deep` mbajnë të njëjtën `#C42305`.
+
+Dy skema emërtimi paralele për të njëjtat ngjyra — pikërisht i njëjti model si:
+- dy funksione `getLevel`,
+- tre karta biznesi,
+- dy sisteme ndjekjeje,
+- `isOnline` kundrejt `useIsOnline`.
+
+Shtresa e re nuk e hoqi të vjetrën; u vendos pranë saj.
+
+### 4. Përfundimi i autopsisë
+Në të katër shtresat e matura sot — **sisteme, organogramë, karta, dizajn** —
+gjendet e njëjta gjurmë:
+
+| Shtresa | E reja | E vjetra që mbeti | Rezultati |
+|---|---|---|---|
+| Sisteme | `offers`, `follows`, `verification_requests` të lidhura | `isOnline`, `buildBadges`, 10 RPC admin | bashkëjetesë |
+| Nivele | `TrustBadge.getLevel` | `Badges.getLevel` + `referral.LEVELS` | tre fjalorë |
+| Organogramë | `<a href>` te `/biznese → /u` | `location.href` kudo tjetër | një brinjë e vetme |
+| Karta | `ListingCard` + `LISTING_SELECT` | `.shop-mini`, rreshtat e `/biznese`, select-i i `/favorites` | tre zbatime |
+| Dizajn | 32 tokena te `ui-refine.css` | 2057 hex, 45 blloqe `<style>` | adoptim ~1% |
+
+**Diagnoza e vetme:** çdo rafinim u shtua si shtresë e re pranë të vjetrës, pa u
+hequr e vjetra dhe pa u bërë e reja e detyrueshme. Prandaj pronari sheh "sisteme
+të vjetra në disa faqe dhe të reja në të tjera" — të dyja janë të gjalla njëkohësisht,
+dhe cila fiton varet nga faqja.
