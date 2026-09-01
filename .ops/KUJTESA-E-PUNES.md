@@ -76,6 +76,8 @@ Cikli i auditit të terminalit PËRFUNDOI. Renditja e mbetur sipas peshës:
 - **Të matura si të sigurta:** npm audit = 5 cenueshmëri POR të gjitha dev-only (vitest/vite/esbuild) — s'prekin prodhimin.
 - Defektet diskrete në dorën e cloud-it: TË GJITHA të rregulluara (7). Mbetja kërkon ose pronarin, ose shkrim DB (terminali), ose sy telefoni (terminali), ose vendim dizajni.
 
+- **Fshirja e biznesit (mbyllje-2):** Çarja 1 (pa gjurmë) REALE → migrim i shkruar `20260901_gjurme_fshirja_biznesit.sql` (insert te audit_logs para shkatërrimit); terminali e aplikon [O9]. Çarja 2 (reviews) NUK është defekt — funksioni LIVE i fshin reviews (hapi 1); terminali skanoi migrimin e vjetër (drift DB↔repo, i mbyllur nga i njëjti migrim).
+
 ## 5. Mësime të vërtetuara (shtoji këtu, mos i harro)
 - **Device flow** = rrugë autentikimi që s'ia kalon sekretin agjentit (Vercel CLI). Sekretet i vë pronari (§8).
 - **Rendi A→C** te privatësia: `my_referrals()` PARA ngushtimit të `profiles`; pamja s'e dallon dështimin — provoje në bazë.

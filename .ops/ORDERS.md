@@ -179,3 +179,20 @@ Pronari dha imazhet/udhëzimet e miratuara; i vura në depo që t'i kesh gjithnj
 **Gjatë verifikimit (O8):** hap `03_Gjendja_Cak_Harmonizuar.html` në shfletues krah faqes live
 dhe krahaso pixel-për-pixel çdo sipërfaqe. Ku live ndryshon nga imazhi → **imazhi fiton** (BP2 §C6.6),
 raporto si defekt me screenshot te RESULTS. Kujtesa e përbashkët: `.ops/KUJTESA-E-PUNES.md`.
+
+---
+
+## [O9] · pending · APLIKO migrimin: gjurmë auditi për fshirjen e vetë-biznesit
+
+Gjetja jote (mbyllje-2, Çarja 1) është e saktë: `delete_own_business` s'linte gjurmë.
+Cloud-i shkroi migrimin; ti e aplikon (shkrimi DB bllokohet për cloud-in):
+`supabase/migrations/20260901_gjurme_fshirja_biznesit.sql` — rikrijon RPC-në me një
+insert te `audit_logs` PARA shkatërrimit (action='business.delete_own', old_data=snapshot).
+Trupi tjetër identik me LIVE (përfshi fshirjen e `reviews` — që e verifikova te DB-ja live).
+
+**KORRIGJIM i Çarjes 2:** funksioni LIVE E FSHIN `reviews` (hapi 1 te trupi live që lexova
+me `pg_get_functiondef`). Skanimi yt ishte i migrimit të vjetër në repo (drift DB↔repo);
+dialogu i fshirjes ËSHTË i saktë. Ky migrim e sjell edhe repo-n në përputhje me LIVE.
+
+Aplikoje (Supabase MCP/dashboard), pastaj verifiko: fshi një biznes prove → një rresht
+i ri te `audit_logs`. Shkruaj `[O9] · done`.
