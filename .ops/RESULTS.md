@@ -3134,3 +3134,65 @@ Mësim: pamja e ekranit përmban një screenshot brenda vetes; çdo pretendim u 
 2. Çipi **«🛠️ Shërbime»** + një fushë/konvencion shërbimi te `listings` (ose `condition IS NULL` → shërbim),
    që shpalljet-shërbim të mos bien jashtë çdo filtri.
 3. Rreshti i filtrave të mos jetë varg i ngurtësuar — të burohet nga i njëjti fjalor si vulat.
+
+---
+
+## [O24] · VENDIME PRONARI + «butonat janë të shpërndarë, të padukshëm, pa ngjyra e animacione»
+
+### A. Vendimet e pronarit (01 shtator, ~20:20)
+1. **Çipi «🛠 Shërbim»** → **fushë e re `listing_type` (`produkt` | `sherbim`)** — varianti (b) i
+   `[KERKESE-FILTRAT]`. Modelim i pastër; prek formularin, skemën dhe të dhënat ekzistuese.
+2. **Migrimi i FK-së `businesses.owner_id → profiles.id`** → **«jepje code»** — pra NUK e aplikoj unë;
+   ia kaloj cloud-it. Kontrolli paraprak u krye: **1 biznes · 1 owner_id · 1 profil · ZERO jetimë**
+   → constraint-i kalon pa problem kur të vendoset ta aplikojë dikush.
+
+### B. Butonat — pronari ka të drejtë, matur në burim
+
+Pronari rrethoi tri vende: zemra mbi median, rreshti «Raporto · Kërkesë heqjeje · Ndaj», dhe «🔔 Njoftomë».
+
+**1. `.safety-btn` — Raporto · Kërkesë heqjeje · Ndaj** (`ListingPageClient.tsx:650`)
+```
+background:#fff · border:1px solid #e6e6e6 · color:#5a5a5a
+font-size:11.5px · min-height:36px · box-shadow: ASNJË
+transition: border-color .15s, color .15s   ← VETËM :hover
+```
+- Korniza `#e6e6e6` mbi `#fff` = **≈1,2:1** kontrast. Nën çdo prag — **butoni s'ka formë të dukshme.**
+  (Teksti `#5a5a5a` mbi të bardhë është ≈7:1, pra teksti lexohet; **kutia jo.** Prandaj duken si
+  tekst i shpërndarë, jo si butona.)
+- `min-height:36px` → nën 44 (Vendimi 8).
+- Animacioni ekziston vetëm te `:hover` — **në telefon `:hover` nuk ekziston**, ndaj shtypja
+  s'jep asnjë kthim vizual. Pa `:active`, pa `transform`, pa `box-shadow`.
+
+**2. «🔔 Njoftomë»** (`ListingPageClient.tsx:885-890`, stil inline)
+```
+background:#F0F7FF · color:#185FA5 · border:1.5px solid #C3DAFB
+padding:5px 11px · font-size:12px · transition: ASNJË
+```
+- `#F0F7FF` mbi sfondin e faqes `#FFFBEA` → **≈1,05:1** — kutia praktikisht e padukshme.
+- Lartësia efektive ≈ **24px** → shumë nën 44.
+- **Zero animacion**, as hover as active.
+
+**3. `.share-btn`** (`:652`) — `background: rgba(0,0,0,.1)`, **32×32**, pa kufi, pa tranzicion.
+
+**4. Zemra (FavoriteButton)** — rreth i bardhë i vendosur MBI median. Kur foto/video është e
+ndritshme (rasti i pronarit: kabinë makine në diell) rrethi i bardhë humbet në sfond.
+S'ka hije as kufi që ta ndajë nga imazhi.
+
+### C. Diagnoza: tre gjuhë vizuale për të njëjtin nivel veprimi
+| Butoni | Vendi | Madhësia | Sfondi | Kufiri | Animacion |
+|---|---|---|---|---|---|
+| Zemra (Ruaj) | pluskon mbi media | 44 rreth | i bardhë | asnjë | asnjë |
+| «Njoftomë» | inline pas çmimit | ~24px | #F0F7FF | #C3DAFB | **asnjë** |
+| Raporto/Heqje/Ndaj | të qendërzuar në fund | 36px | #fff | #e6e6e6 | vetëm hover |
+
+Tre vendosje, tre madhësi, tre sfonde, zero kthim vizual në prekje. Kjo është arsyeja e vërtetë
+pse duken «të shpërndarë dhe të çrregullt» — nuk është pozicionim i gabuar, është **mungesë e një
+shkalle të vetme butonash** (parësor / dytësor / tretësor) me kontrast e gjendje prekjeje.
+
+### D. Kërkesa për cloud-in
+1. **Shkallë e vetme butonash dytësorë:** kufi me kontrast ≥3:1 ndaj sfondit (p.sh. `#c9c9c9`
+   në vend të `#e6e6e6`), lartësi 44, dhe **gjendje `:active`** (`transform: scale(.97)` +
+   ndryshim sfondi) që prekja të japë kthim — `:hover` i vetëm s'ekziston në telefon.
+2. **«Njoftomë»** të hyjë në të njëjtën shkallë (44px, kontrast, `:active`), jo stil inline i veçuar.
+3. **Zemra mbi media** të marrë hije ose kufi gjysmë-të-tejdukshëm që të mos humbasë mbi foto të ndritshme.
+4. Të tria të burohen nga i njëjti fjalor stilesh, jo tre përkufizime paralele (§4-bis).
