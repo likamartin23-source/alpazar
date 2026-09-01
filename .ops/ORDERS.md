@@ -482,3 +482,18 @@ Provë NEGATIVE: `update profiles set is_premium=true where id=auth.uid()` → B
 Shkruaj `[O28] · done` me të dyja provat.
 
 **Rikujtesë:** O22-3 (HEAD 503) — e tërhoqe (matje e ekstensionit, jo defekt). Numëruesit OK.
+
+## [O29] · TERMINALI (idle) — bëj `git pull` dhe apliko [O28] (KRITIKE) + verifiko deploy-et
+
+Radha jote ishte bosh; ndërkohë cloud-i shtyu shumë. Bëj `git pull origin main`, pastaj:
+1. **[O28] KRITIKE — apliko `20260901_profiles_update_pa_select_tabelar.sql`** (defekti më i rëndë:
+   çdo update profili dështon 42501 që nga ngushtimi). Heq 6 nën-SELECT-et e tepërta nga
+   `profiles_update` WITH CHECK; trigeri `guard_profile_privileges` mbetet roja (verifikuar).
+   Provë POZITIVE: `update profiles set last_seen=now() where id=auth.uid()` → OK.
+   Provë NEGATIVE: `update profiles set is_premium=true where id=auth.uid()` → BLLOKUAR nga trigeri.
+   Shkruaj `[O28]·done`.
+2. **Verifiko live** (kur të zbresin): `fa7544d` (LISTING_SELECT — kartat identike kudo),
+   `238e0cb` (kriza e ruajtjes /u në privat), K2 (`6b3c58a`+`e9cb89b` — BusinessCard te "Biznese
+   Online" + lista /biznese, me "Ruaj"/ndiq), filtrat VIP/Shërbim, middleware rrugët private
+   (`4e10524`), butonat (O24), `f422e98` ("Pazarin"→riindekso me /api/indexnow).
+Migrimet DB të tjera janë aplikuar ([O25]). K2/butonat/middleware janë KOD (pa DB).
