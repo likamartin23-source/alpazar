@@ -2917,3 +2917,88 @@ por në telefon një lidhje 14px e lartë mbetet e vështirë. Vendim pronari n�
 
 ### Prioriteti 2 mbetet i paprekur
 Galeria e `/listing`: **9 pika 7×7**, `overflow-x:visible` në të 5 nivelet, `scroll-snap:none`, zero shigjeta.
+
+---
+
+## [O21] · ⛔⛔ DEFEKT KRITIK — `/biznese` NUK NGARKON ASNJË BIZNES — 01 shtator, 19:45 CEST
+
+Pronari raportoi: **«kartat e bizneseve nuk notojnë»**. E mata. Nuk është çështje notimi —
+**faqja e bizneseve është krejtësisht e prishur në prodhim.**
+
+### Ç'shfaqet live
+```
+/biznese  ->  "⚠️  Gabim gjatë ngarkimit  /  Rifresko"
+Zero karta biznesi. Zero rreshta. Vetëm filtrat + CTA "Krijo Biznesin Tënd".
+```
+
+### Shkaku rrënjë (provuar me kërkesa të drejtpërdrejta REST)
+
+`app/biznese/page.tsx:59-62` bën:
+```
+.from('businesses')
+.select('id,name,type,logo_url,city,description,is_verified,
+         owner:owner_id(is_premium,premium_expires_at,has_boost,boost_expires_at)')
+```
+Prova:
+
+| # | Kërkesa | HTTP | Rezultati |
+|---|---|---|---|
+| A | query-ja e plotë e `/biznese` | **400** | `PGRST200 — Could not find a relationship between 'businesses' and 'owner_id'` |
+| B | `businesses?select=id,name,type,is_verified` (pa join) | **200** | kthen biznesin `ffb19071 "Biznes"` ✓ |
+| C | vetëm `owner:owner_id(is_premium)` | **400** | i njëjti PGRST200 |
+| D | `profiles?select=is_premium,premium_expires_at,has_boost,boost_expires_at` | **200** | kolonat ekzistojnë e lexohen ✓ |
+
+Variantet e tjera të embed-it, të gjitha **400**:
+```
+owner:profiles(...)          -> "no matches"; hint: "Perhaps you meant 'posts' instead of 'profiles'"
+profiles!owner_id(...)       -> "no matches ... using the hint 'owner_id'"
+profiles(...)                -> "no matches"
+profiles?select=businesses() -> "no matches"; hint: "Perhaps you meant 'business_followers'"
+```
+
+**Përfundim: kolona `businesses.owner_id` EKZISTON dhe ka vlerë**
+(`businesses?select=*` kthen `owner_id: af3e3d5b-0f49-4ad5-a83d-281733fed433`),
+**por NUK ka çelës të huaj `businesses.owner_id → profiles.id`.**
+Pa FK, PostgREST-i s'e ndërton dot embed-in → 400 → `setLoadError(true)` → ekrani i gabimit.
+
+Hint-i i PostgREST-it («Perhaps you meant 'posts'») tregon se e vetmja lidhje e regjistruar nga
+`businesses` është drejt `posts` — pikërisht tabela që KUJTESA e quan «e projektuar, kurrë e ndërtuar».
+
+### Pse s'u kap më parë
+- `/biznese/{id}` (biznesi i vetëm) **punon** — s'e përdor atë embed.
+- Kryefaqja «🏢 Biznese Online» **punon** — sepse burohet nga `profiles?is_premium=eq.true`,
+  jo nga `businesses` (pikërisht mospërputhja K2 e KUJTESA §4).
+- Audit-i im i mëparshëm i `/biznese` numëroi elementet interaktive, por s'e lexoi tekstin e gabimit.
+  **Mësim:** çdo auditim faqeje duhet të lexojë PARË gjendjen e ngarkimit (error/empty/loaded).
+
+### Dy rrugë rregullimi
+- **(a) DB (e drejta):** shto FK-në
+  `alter table businesses add constraint businesses_owner_id_fkey foreign key (owner_id) references profiles(id) on delete cascade;`
+  pastaj rifresko cache-in e skemës së PostgREST-it (`notify pgrst, 'reload schema'`).
+  Kjo e riparon embed-in kudo dhe e bën `businesses` qytetar të parë.
+  **Kërkon shkrim DB → terminali/pronari, klasifikuesi e bllokon cloud-in.**
+- **(b) Kod (zgjidhje e shpejtë):** hiqe embed-in dhe merri pronarët në një kërkesë të dytë
+  (`profiles?id=in.(…)`), pastaj bashkoji në klient. Punon pa prekur DB-në.
+
+Rekomandimi: **(a)**, sepse pa FK edhe çdo embed i ardhshëm `businesses ⇄ profiles` do dështojë njësoj;
+(b) si arnë e menjëhershme derisa FK-ja të aplikohet.
+
+### Dy defekte të tjera të kapura në të njëjtin skanim rrjeti
+
+**1. `HEAD` (count) kthen 503 SISTEMATIKISHT** — në çdo faqe:
+```
+HEAD listings?select=*&is_active=eq.true          -> 503
+HEAD profiles?select=id                            -> 503
+HEAD favorites?select=listing_id&user_id=eq.…      -> 503
+HEAD messages?select=*&receiver_id=eq.…&read=false -> 503
+HEAD notifications?select=*&user_id=eq.…           -> 503
+```
+Të njëjtat tabela me `GET` kthejnë **200**. Pra numëruesit (shpallje/përdorues te kryefaqja,
+mesazhe të palexuara, njoftime, gjendja e «Ruaj») ose janë të rremë ose dështojnë në heshtje.
+Kjo është **e pavarur nga RLS** — dështon vetëm metoda `HEAD`.
+
+**2. `PATCH /profiles?id=eq.<vetja>` kthen 403** — në çdo ngarkim faqeje, për të dy llogaritë.
+Aplikacioni provon të përditësojë profilin e vet (ka gjasa `last_seen`/prania) dhe RLS-ja e ngushtuar
+(O6/O7) e refuzon. Dështim i heshtur, i përsëritur në çdo faqe.
+Kjo mund të jetë edhe shkaku pse **pika online/offline s'u shfaq askund te kartat** —
+nëse `last_seen` s'shkruhet dot, prania s'përditësohet kurrë.
