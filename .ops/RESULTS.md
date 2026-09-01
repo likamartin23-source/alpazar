@@ -2469,3 +2469,138 @@ më duhej edhe një hap. E njëjta neglizhencë si tërheqjet e tjera.
   vendi i natyrshëm ku do të renderohej distinktivi i nivelit. Rregulli i pronarit është
   "përshtat para se të fshish": këtu ka çfarë të përshtatet, jo çfarë të hidhet.
 - **MOS prek `getLevel` dhe `LEVELS`** — të dy përdoren gjallërisht (`/referral` + `Badges`).
+
+---
+
+## [O19] · pjesërisht · TERMINAL I RI — 01 shtator, 18:08 CEST
+
+### 0. KORRIGJIM I O19: «build live = `4ace9b5`» ISHTE I PASAKTË
+
+Pronari tha: **«nuk i shoh ndryshimet»**. E mata para se të hamendësoja. Shkaku:
+
+| Matje | Vlerë |
+|---|---|
+| `/api/version` në 15:58 UTC | `9b4fc9e` |
+| `main` HEAD | `4ace9b5` |
+| Vonesa | **136 minuta** |
+| `node scripts/verifiko-live.mjs` | ❌ «1 ndryshim APLIKATIV i pavendosur (`app/messages/page.tsx`)» |
+
+**Prova përfundimtare (Vercel CLI, i kyçur si `likamartin23-source`):**
+```
+vercel ls --meta githubCommitSha=4ace9b543c45d972666313017cc03a539c5a3123 → No deployments found
+vercel ls --meta githubCommitSha=4c038ee                                  → No deployments found
+```
+Vendosja e fundit e prodhimit ishte krijuar **15:34:39 CEST** = push-i i `9b4fc9e`.
+Pra Vercel-i **nuk krijoi fare deployment** për dy push-et pasuese. Jo build i dështuar —
+build i **paekzistues**. (CI e GitHub-it ishte e gjelbër për `4ace9b5`: tsc+teste+build ✓.)
+
+**Zgjidhur vetvetiu:** push-i i O19 (`e0b8114`, 18:03 CEST) e nisi vendosjen; ajo zbriti.
+`/api/version` = `e0b8114` = `main` HEAD; `verifiko-live.mjs` ✅. Meqë `e0b8114` është
+pasardhës i `4ace9b5`, ndryshimi i pikës online **tani është live**.
+
+### 1. PSE S'E KAPI ASKUSH — rrjeti i sigurisë ka dy vrima
+
+**(a) «Rojtari — çdo 5 minuta» NUK ekzekutohet çdo 5 minuta.** GitHub e ngadalëson
+`schedule` në depo me aktivitet të ulët. Ekzekutimet reale (API):
+```
+12:47Z · 07:45Z · 02:05Z · 31 gush 23:46Z · 31 gush 20:02Z
+```
+→ një herë çdo **4–6 orë**, jo çdo 5 minuta. I fundit para ngecjes: 12:47Z; push-i: 13:44Z.
+Asnjë rojtar nuk u ekzekutua në 2h20min që pasuan.
+
+**(b) Rojtari i push-it kaloi FALSHËM.** Ai fle 210s, pastaj kontrollon me `TOLERANCA_MIN=20`.
+Në 13:48 commit-i ishte 4 minuta i vjetër → brenda tolerancës → `success`. Toleranca prej
+20 minutash e bën rojtarin e push-it të verbër ndaj çdo ngecjeje.
+
+**(c) Sinjali EKZISTONTE dhe u injorua:** `verifiko-deploy.yml` për `4ace9b5` = **failure**,
+hapi «Prit derisa prodhimi të shërbejë këtë commit» (run `33515206505`). Askush s'e pa.
+
+**Rekomandim (vendim i pronarit, jo veprim imi):** njoftim që e sheh pronari kur
+`verifiko-deploy` dështon (Slack/email), sepse rojtari periodik nuk është i besueshëm.
+
+### 2. `alpazar.al` NUK është faqja — mos e mat aty
+
+```
+alpazar.al → 185.26.106.234   (jo Vercel)
+https://alpazar.al  → dështon TLS-i (curl 60 / 000)
+http://alpazar.al   → 301 → http://www.alpazar.al
+```
+Kanoniku në kod dhe në `.env.local` = **`https://alpazar.vercel.app`**
+(`lib/siteConfig.ts`, `app/sitemap.ts`, `app/layout.tsx`, `NEXT_PUBLIC_SITE_URL`).
+Nëse pronari e hapte `alpazar.al`, ai s'do shihte KURRË ndryshime — ai host s'e shërben app-in.
+
+### 3. Pika online/offline te `/messages` (`4ace9b5`) — E VERIFIKUAR NË KOD ✓
+
+| Element | Pozicion (`app/components/Avatar.tsx`) |
+|---|---|
+| Pika online (jeshile `#16a34a`) | `left:-1, bottom:-1` → **poshtë-majtas** |
+| Pika offline (gri `#9aa0a6`) | `left:-1, bottom:-1` → **poshtë-majtas** |
+| Vula ✓/🏢 | `right:-2, bottom:-2` → poshtë-djathtas |
+
+→ **Nuk ka mbivendosje.** Pika e vjetër e `/messages` (`bottom:1, right:1`) u hoq. ✓
+
+**Shënim sjelljeje (i qëllimshëm, jo defekt):** `Avatar` te `/messages` s'ka më
+`online = false` si parazgjedhje. Thirrjet me `online={isOtherOnline}` (rr. 1067/1222/1262/1573)
+tani shfaqin **pikë gri** kur shitësi është offline — më parë s'shfaqej asgjë.
+Thirrjet pa `online` (rr. 1286/1381 — avatari i vogël te flluska) mbeten `undefined` → pa pikë.
+Kjo përputhet me «offline gri shfaqet njësoj si kudo».
+**Mbetet konfirmimi me SY** (bllokuar, shih §6).
+
+### 4. Prekjet <44px — MATUR NË KOD (s'kërkon telefon) ❌ DEFEKT I HAPUR
+
+| Element | Madhësia e matur | Minimum | Burimi |
+|---|---|---|---|
+| `FavoriteButton` («Ruaj») te karta | **30 × 30 px** | 44 | `ListingCard.tsx:303` (`size={30}`) → `FavoriteButton.tsx:53` (`width:size,height:size`) |
+| `.card-seller-ov` (çipi shitës/biznes) | **≈22 px lartësi** (avatar 18 + `padding:2px…2px`) | 44 | `ui-refine.css:193` |
+
+Çipi i shitësit është **hapi 2 i modelit 3-shkallësh** (kartë→shpallje→**shitës**→biznes→pronar).
+Me 22px lartësi, hapi më i rëndësishëm i zinxhirit është më i vështiri për t'u prekur.
+
+**Rrugë rregullimi që RUAN pamjen (parimi i harmonisë — pa e zmadhuar dizajnin):**
+zonë prekjeje e padukshme me `::after{position:absolute;inset:-7px}` (ose `-11px` për çipin),
+jo zmadhim vizual. Kështu pamja e miratuar te `03_Gjendja_Cak_Harmonizuar.html` nuk ndryshon.
+→ **Detyrë për cloud-in** (unë nuk prek kodin e app-it).
+
+### 5. RLS — një e mbyllur, një E PAPËRFUNDUAR
+
+```
+INSERT anon → business_followers  | HTTP 401 | 42501 new row violates RLS policy   ✅ E MBYLLUR
+SELECT anon → business_followers  | HTTP 200 | []
+INSERT anon → offers              | HTTP 400 | P0001 «Shpallja nuk ekziston.»      ⚠ JOPËRFUNDIMTARE
+SELECT anon → offers              | HTTP 200 | []
+```
+
+`offers` **nuk u bllokua nga RLS** — u bllokua nga një trigger BEFORE INSERT. Në Postgres
+trigger-at BEFORE ekzekutohen **para** kontrollit `WITH CHECK` të RLS-së, ndaj kjo provë
+**nuk dëshmon** as se RLS punon, as se nuk punon.
+
+**NUK e çova më tej me qëllim.** Prova përfundimtare kërkon një `listing_id` REAL, dhe nëse
+RLS-ja është e hapur ajo do të **krijonte një ofertë të vërtetë në prodhim** (dhe anon-i s'e fshin dot).
+Kërkoj vendimin e pronarit — dy rrugë të sigurta:
+- **(a)** e provoj kundër një shpalljeje **të vetë pronarit** (mbeturina e fshin pronari nga /admin), ose
+- **(b)** lexohet direkt politika: `select * from pg_policies where tablename='offers'` (kërkon rol admin).
+Rekomandimi im: **(b)** — zero efekt anësor.
+
+### 6. BLLOKUES — verifikimi mobil/vizual nuk u krye
+
+```
+tabs_context_mcp → "Browser extension is not connected."
+```
+Zgjatimi Claude-in-Chrome nuk është i lidhur në këtë sesion → **zero screenshot, zero axe-core,
+zero CLS, zero prekje reale**. Nuk raportoj dot asgjë vizuale pa e parë; ky është pikërisht
+mësimi i §9.2 («instrumenti gënjeu, jo kodi») — s'do shpik matje.
+
+**Që të vazhdojë verifikimi mobil, pronari duhet:** (1) të rilidhë zgjatimin Claude në Chrome, ose
+(2) ta bëjë vetë kalimin me telefon real. Pikat për matje mbeten ato të O19 §1
+(pika online poshtë-majtas · prekjet · swipe i medias · autoplay), plus §4 më sipër që e mata në kod.
+
+### 7. Higjienë
+- `M .gitignore` / `D README.md` / `m alpazar` — **të palëvizura**, sipas urdhrit të O19 §3.
+- `npx tsc --noEmit`: 5 gabime, **të gjitha** nga dosja e mbeturinave `alpazar/` (repo i ngulitur,
+  jo pjesë e pemës së app-it, s'ekziston te klonimi i Vercel-it). `app/`, `lib/`, `middleware.ts` = **0 gabime**.
+
+### Përmbledhje për cloud-in
+1. ❌ **Prekjet <44px** — `FavoriteButton` 30×30 dhe `.card-seller-ov` ≈22px → rregullim me zonë prekjeje të padukshme (pa ndryshuar pamjen).
+2. ⚠ **RLS `offers`** — pret vendimin e pronarit për mënyrën e provës (rekomandoj leximin e `pg_policies`).
+3. ⚠ **Rrjeti i sigurisë së vendosjes** — rojtari periodik nuk ekzekutohet çdo 5 min; toleranca 20-minutëshe e verbon rojtarin e push-it; `verifiko-deploy` dështon pa e njoftuar askënd.
+4. ✅ Pika online/offline te `/messages` — e saktë në kod; pret konfirmimin me sy.

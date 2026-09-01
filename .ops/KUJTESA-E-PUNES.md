@@ -151,3 +151,24 @@ dead code isOnline/buildBadges (përshtat para se të fshish), Google OAuth 4-ç
   por është komponent koherent që ndërton distinktivë nga `LEVELS` (burimi i unifikuar). "Përshtat
   para se të fshish" → LËRE. getLevel/LEVELS përdoren gjallërisht — mos i prek.
 - Mbetet BORXHI I VERIFIKIMIT MOBIL (telefon i vërtetë; Chrome i terminalit jep viewport 0x0).
+
+## 4-quinquies. MËSIM I SHTRENJTË — «u bë» ≠ «zbriti» (terminali, 01 shtator 18:08)
+O19 shkroi «build live = `4ace9b5`». **Nuk ishte.** Prodhimi mbeti te `9b4fc9e` për **136 minuta**;
+`vercel ls --meta githubCommitSha=…` provoi se Vercel **nuk krijoi asnjë deployment** për
+`4c038ee` dhe `4ace9b5` (jo build i dështuar — build i paekzistues). U zhbllokua vetvetiu nga
+push-i i `e0b8114`. Kjo është arsyeja që pronari «nuk i shihte ndryshimet».
+- **Rregull i ri:** cloud-i NUK shkruan kurrë «live» pa `/api/version`; matja e vetme e vlefshme
+  është `node scripts/verifiko-live.mjs` (ose `vercel ls --meta githubCommitSha=<sha>`).
+- **Rrjeti i sigurisë ka dy vrima:** (1) «Rojtari çdo 5 minuta» ekzekutohet realisht një herë
+  çdo **4–6 orë** (GitHub e ngadalëson `schedule`); (2) rojtari i push-it fle 210s dhe pastaj
+  `TOLERANCA_MIN=20` e bën gjithmonë të kalojë — commit-i është 4 minutash. `verifiko-deploy.yml`
+  DËSHTOI saktë për `4ace9b5`, por dështimi s'njofton askënd.
+- **`alpazar.al` NUK e shërben app-in:** DNS → 185.26.106.234 (jo Vercel), HTTPS i prishur,
+  http → 301 te www. Kanoniku = `https://alpazar.vercel.app`. Mos mat kurrë te alpazar.al.
+- **Prekjet <44px, matur në kod (s'kërkon telefon):** `FavoriteButton` **30×30**
+  (`ListingCard.tsx:303`) dhe `.card-seller-ov` **≈22px** (`ui-refine.css:193`). Rregullimi që ruan
+  pamjen = zonë prekjeje e padukshme (`::after{inset:-7px/-11px}`), jo zmadhim vizual.
+- **RLS:** `business_followers` e mbyllur (42501). `offers` **jopërfundimtare** — trigger-i BEFORE
+  («Shpallja nuk ekziston») ekzekutohet PARA `WITH CHECK` të RLS-së, ndaj prova s'dëshmon asgjë.
+  Pret vendimin e pronarit (rekomandim: lexo `pg_policies`, zero efekt anësor).
+- **Bllokues i mbetur:** zgjatimi Claude-in-Chrome i palidhur → verifikimi vizual/mobil ende ZERO.
