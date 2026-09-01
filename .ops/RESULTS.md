@@ -1772,3 +1772,70 @@ vdekura). Nëse "postimet" ishin pjesë e misionit të biznesit, ato mungojnë t
 3. **Kalimi i mesazheve nga `shop_name` te `business_id`**
 4. **Postimet e biznesit** (nëse mbeten në plan)
 5. Sqarimi i dy butonave "Ndiq" për të njëjtin shitës (vendim produkti)
+
+## [KERKESE-FILTRAT] · Shto "Shërbim" dhe "VIP" te rreshti i filtrave
+
+**Kërkesa e pronarit:** rreshti nga `Të gjitha · 🆕 I ri · I përdorur · ⭐ Premium`
+→ `Të gjitha · I ri · I përdorur · **Shërbim** · Premium · **VIP**`.
+
+### Gjendja e sotme e filtrave (`HomeClient.tsx:492–494`)
+
+    if (filter === 'new')     query.eq('condition', 'i_ri')
+    if (filter === 'used')    query.eq('condition', 'i_perdorur')
+    if (filter === 'premium') query.eq('is_premium', true)
+
+### Tri gjetje që duhen zgjidhur PARA se të shtohen filtrat
+
+**1. Enum-i `listing_condition` është i vdekur.**
+Kolona `listings.condition` është **`text`**, jo enum. Enum-i ekziston me vlera
+angleze `new · like_new · good · fair · for_parts`, ndërsa të dhënat reale janë
+`i_ri · i_perdorur`. Pra kolona s'ka asnjë kufizim — mund të marrë çfarëdo vargu.
+Kjo është një mbetje tjetër e vjetër (§9.1 F1: e ndërtuar, e paprekur).
+
+**2. "Shërbim" NUK është gjendje (`condition`) — është kategori.**
+Ekziston kategoria `sherbime` ("Shërbime") me 1 shpallje, plus `pune` ("Pune").
+Ta futësh si vlerë të `condition` do të ishte e lehtë (kolona është text) por
+semantikisht e gabuar: një shërbim s'është "i ri" apo "i përdorur" — nuk ka gjendje.
+**Dy rrugë:**
+  - (a) filtri "Shërbim" të filtrojë **kategorinë** `sherbime` (± `pune`) —
+    zero ndryshim skeme, por rreshti i filtrave përzien dy koncepte, dhe çipi
+    "Shërbime" ekziston tashmë te rreshti i kategorive sipër;
+  - (b) shtohet një fushë e vërtetë `listing_type` (`produkt` | `sherbim`) —
+    modelim i pastër, por prek formularin, skemën dhe të dhënat ekzistuese.
+  **Rekomandimi im: (b)** nëse shërbimet janë pjesë e qëndrueshme e produktit;
+  (a) vetëm si zgjidhje e përkohshme.
+
+**3. "Premium" dhe "VIP" duhet të vijnë nga I NJËJTI burim — sot nuk vijnë.**
+Filtri Premium përdor `is_premium`, ndërsa renditja dhe vulat (⭐/👑) përdorin
+`rank_tier` (`:484`, dhe `tierNgaRankTier` te karta). Pra një shpallje mund të
+mbajë vulën 👑 dhe të mos dalë te filtri "Premium", ose e kundërta.
+Në bazë sot: `rank_tier` ka vetëm vlerën **1** — asnjë shpallje VIP s'ekziston ende,
+ndaj filtri i ri do të dalë bosh derisa të ketë një.
+
+**Zbatimi i saktë:**
+
+    filter 'premium' → query.eq('rank_tier', 1)   // jo is_premium
+    filter 'vip'     → query.eq('rank_tier', 2)
+
+Kështu filtri, renditja dhe vula flasin të njëjtën gjuhë.
+
+### Rendi i propozuar i çipave
+`Të gjitha · 🆕 I ri · I përdorur · 🛠 Shërbim · ⭐ Premium · 👑 VIP`
+(gjendja → lloji → niveli i paguar; VIP pas Premium, si te matrica e vulave)
+
+---
+
+## [NGA-PAMJA-E-PRONARIT] · Vëzhgime nga screenshot-i celular — për verifikim
+Pronari dërgoi një pamje nga telefoni, i kyçur si **Administrator (Premium)**.
+Këto NUK janë matjet e mia — janë vëzhgime nga ajo pamje, të shënuara për t'u provuar:
+
+1. **Dy flluska "Keni nevojë për ndihmë?" njëkohësisht** në të njëjtin ekran, plus
+   **dy butona roboti**. Komponenti `AiFloat` render-ohet një herë në kod (1 përputhje),
+   ndaj dyfishimi duhet të vijë nga montim i dyfishtë (layout + faqe) — për verifikim.
+2. **Butonat pezull "Instalo" dhe "Ndaj" mbulojnë kartën e parë** të shpalljeve.
+3. Kartat në telefon dalin **2 për rresht** — përputhet me `minmax(150px,1fr)`.
+4. Karta e parë shfaq brenda saj një **mesazh gabimi ngarkimi** ("Rrjeti u nderpre
+   gjatë ngarkimit") — konfirmon që fotot janë screenshot-e testimi.
+
+Pika 1 dhe 2 janë defekte të mundshme mobile-only; s'i mata dot vetë sepse dritarja
+e Chrome-it rri 0×0. Këto janë provat e para reale nga telefoni në gjithë auditin.
