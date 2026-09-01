@@ -3415,3 +3415,87 @@ prodhojnë titullin SEO dhe manifestin — prandaj e sheh Google-i.
 
 **Zëvendësimi:** `Bëj Pazrin Tënd` → `Bëj Pazarin Tënd` (dhe `Bëj Pazrin` → `Bëj Pazarin` te manifesti).
 Punë kodi → cloud. Pas deploy-it duhet edhe **riindeksim** (`/api/indexnow`) që Google ta marrë titullin e ri.
+
+---
+
+## [O22-2] · ⛔⛔⛔ DEFEKT KRITIK — ASNJË PËRDORUES S'MUND TË PËRDITËSOJË PROFILIN E VET
+
+Cloud-i (O22 §2) kërkoi «trupin e plotë të gabimit PostgREST… mos ndrysho RLS pa atë provë».
+E riprodhova te baza si roli `authenticated`. Ja trupi i saktë:
+
+```
+ERROR: 42501: permission denied for table profiles
+HINT:  Grant the required privileges to the current role with:
+       GRANT SELECT ON public.profiles TO authenticated;
+```
+
+Dështon **edhe pa `RETURNING`**:
+```sql
+set role authenticated; set request.jwt.claims '{"sub":"afbe35fb…","role":"authenticated"}';
+update public.profiles set last_seen = now() where id = 'afbe35fb…';   -- 42501
+```
+
+### Shkaku i saktë — politika kërkon SELECT-in që ngushtimi e hoqi
+
+`profiles_update` · `WITH CHECK` përmban **gjashtë nën-SELECT-e mbi vetë `profiles`**:
+```sql
+NOT (is_admin      IS DISTINCT FROM (select p.is_admin      from profiles p where p.id = auth.uid()))
+NOT (admin_role    IS DISTINCT FROM (select p.admin_role    from profiles p where p.id = auth.uid()))
+NOT (is_premium    IS DISTINCT FROM (select p.is_premium    from profiles p where p.id = auth.uid()))
+NOT (has_boost     IS DISTINCT FROM (select p.has_boost     from profiles p where p.id = auth.uid()))
+NOT (is_suspended  IS DISTINCT FROM (select p.is_suspended  from profiles p where p.id = auth.uid()))
+NOT (is_verified   IS DISTINCT FROM (select p.is_verified   from profiles p where p.id = auth.uid()))
+```
+Këto nën-query kërkojnë **SELECT në nivel TABELE**. Ngushtimi (O6/O7) e hoqi:
+```
+has_table_privilege('authenticated','profiles','SELECT') = FALSE
+kolona me SELECT për authenticated = 36 (grant vetëm në nivel kolone)
+```
+Dhe pikërisht `is_admin`, `admin_role`, `is_suspended` janë **nga 16 kolonat PA SELECT**
+(`admin_role, age, age_confirmed_16, birth_year, deleted_at, gdpr_consent, gdpr_consent_at,
+is_admin, is_suspended, marketing_opt_in, metadata, phone, referred_by, search_vector,
+social_links, suspended_reason`).
+
+→ **Çdo `UPDATE` i një përdoruesi mbi profilin e vet dështon me 42501.**
+
+### PASOJA — shumë më e madhe se `last_seen`
+`WITH CHECK` vlerësohet për ÇDO update, pavarësisht cilën kolonë prek. Pra dështojnë të gjitha:
+- «✏️ Ndrysho» / «✏️ Edito Profilin» — **emri, username, qyteti, bio, avatari, kopertina**
+- cilësimet e dyqanit (`shop_name`, `shop_description`, `shop_category`, `shop_is_open`…)
+- `trust_score_visible`, `marketing_opt_in`, `social_links`, `website`
+- `last_seen` (prania) — ajo që e nxori në dritë
+
+Dy vëzhgime të pavarura që përputhen: **403 te rrjeti i shfletuesit** në çdo ngarkim faqeje
+(`PATCH /profiles?id=eq.<vetja>`), dhe **42501 te baza** kur e riprodhova. I njëjti shkak.
+
+### RREGULLIMI — dy rrugë të sigurta, dhe një që NUK duhet marrë
+- ❌ **MOS** `GRANT SELECT ON profiles TO authenticated` — kjo zhbën ngushtimin e privatësisë
+  (§4.6-bis: çdo i kyçur do numëronte adminët). Hint-i i Postgres-it është i saktë teknikisht,
+  i gabuar për këtë projekt.
+- ✅ **(a)** Nxirri gjashtë nën-SELECT-et në një funksion **`SECURITY DEFINER`**
+  (p.sh. `public.my_immutable_flags()` që kthen një rresht me të gjashtat), dhe politika ta
+  krahasojë me të. Thirrësi s'ka më nevojë për SELECT në tabelë.
+- ✅ **(b)** Zëvendëso ruajtjen me një **trigger `BEFORE UPDATE`** që i rikthen me forcë ato gjashtë
+  kolona te vlerat e vjetra (`OLD`), dhe hiqi nën-SELECT-et nga `WITH CHECK`. Triggeri ekzekutohet
+  me të drejtat e pronarit të tabelës → pa nevojë granti.
+
+Rekomandimi im: **(b)** — më e shpejtë, më e lexueshme, dhe e pamundur ta anashkalosh nga klienti.
+
+**Kërkon shkrim DB → unë e aplikoj kur cloud-i ta shkruajë migrimin dhe pronari ta miratojë.**
+Nuk e prek RLS-në pa migrimin e shkruar (§9).
+
+---
+
+## [O22-3] · HEAD 503 — INSTRUMENTI GËNJEU, jo API-ja
+
+Cloud-i kërkoi: «a është i qëndrueshëm apo kalimtar?». Matur nga terminali, 6 prova radhazi:
+```
+prova 1..6:  HEAD = 200   GET(Range 0-0) = 206
+```
+**HEAD kthen 200 në të 6 rastet.** Gjithashtu `public/sw.js` (32 rreshta) **s'ka fetch-handler**
+— komenti i vet e thotë: «PA fetch-handler: SW-ja nuk ndërhyn në asnjë kërkesë». Pra as
+Service Worker-i s'i prek.
+
+→ **503-shi që pashë ishte lexim i regjistruesit të rrjetit të ekstensionit, jo dështim i vërtetë.**
+E tërheq pretendimin nga [O21] §2: numëruesit NUK janë të prishur. Klasa §9.2, hera e tretë
+(pas swipe-it dhe localStorage-vs-cookie). **Mos u shpenzo kod për këtë.**
