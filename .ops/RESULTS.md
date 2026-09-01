@@ -4001,3 +4001,52 @@ Kjo është e rëndësishme ta dish saktë — një «rregullim» këtu do prish
 
 Klasa: kjo **NUK** është F2 («mbrojtja te fusha, jo te rruga») — këtu mbrojtja është te **të tria**:
 rruga, faqja dhe shkrimi. Rast i rrallë ku shtresat përputhen.
+
+---
+
+## [O36] · ⛔ BIZNESE PARALELE — pronari ka të drejtë, e provova te baza
+
+Pronari: «të mbyllet kjo rrugë e krijimit të biznesit sepse **krijon biznese paralele**, nuk është
+e unifikuar me krijimin e biznesit te gjendja».
+
+### Prova — asgjë s'e ndalon biznesin e dytë
+```
+kufizim UNIQUE mbi businesses.owner_id : 0      ← NUK EKZISTON
+indekset                                : idx_businesses_owner = btree i thjeshtë, JO unik
+trigerat                                : trg_audit_* · trg_business_visibility · trg_businesses_updated_at
+                                          — asnjë që të bllokojë biznes të dytë
+RLS biz_owner_ins WITH CHECK            : owner_id = auth.uid() AND (premium)   ← pa kontroll ekzistence
+pronarë me >1 biznes sot                : 0  (ende — sepse ka vetëm 1 biznes gjithsej)
+```
+
+### Dy hyrje, vetëm njëra ruan — klasa **F1** («defekti rri në boshllëkun midis dy shtresave»)
+
+| Hyrja | Kontrolli i biznesit ekzistues |
+|---|---|
+| `/profile` → butoni **G2** «Krijo faqen e biznesit» (`profile/page.tsx:1334`) | ✅ **`disabled={!g2}`** — çaktivizohet kur ka biznes |
+| `/biznese` → CTA **«+ Krijo Biznesin Tënd»** (`biznese/page.tsx:55`) | ❌ **asnjë** — mbetet aktive gjithnjë |
+| Faqja `/biznese/new` (`:24`) | ❌ kontrollon **vetëm premium**, jo ekzistencën |
+| RLS `biz_owner_ins` | ❌ kontrollon **vetëm** owner_id + premium |
+
+→ **Një përdorues Premium që tashmë ka biznes, klikon CTA-n te `/biznese` dhe krijon një biznes të dytë.**
+Formulari është i njëjti (`BusinessForm`, i ripërdorur nga `/biznese/new` dhe `/biznese/[id]/edit`) —
+**problemi s'është formulari, është hyrja e paruajtur.**
+
+### Rregullimi — dy pjesë, dy role
+
+**A. Kodi (cloud):** mbyll rrugën e dytë. CTA-ja te `/biznese`:
+- nëse përdoruesi **ka** biznes → çoje te `/biznese/{id}` (faqja e vet), jo te `/biznese/new`;
+- ose fshihe/çaktivizoje CTA-n, si te `/profile` (**e njëjta logjikë `g2`, një burim i vetëm**);
+- shto te `/biznese/new:24` edhe kontrollin e ekzistencës → ridrejtim te biznesi ekzistues.
+Kështu krijimi mbetet **një rrugë e vetme**, ajo e panelit — siç kërkon pronari.
+
+**B. Baza (unë, me miratimin tënd):** kufizim **UNIQUE mbi `businesses.owner_id`**.
+Kjo e bën biznesin paralel **të pamundur**, pavarësisht se çfarë bën ndërfaqja — mbrojtja te shtresa
+që shkruan, jo te butoni (mësimi **F2**). Migrimi është një rresht:
+```sql
+alter table public.businesses
+  add constraint businesses_owner_id_unique unique (owner_id);
+```
+**Sot kalon pastër** (0 pronarë me >1 biznes). **Pret konfirmimin e rregullit:** «një pronar = një biznes».
+Nëse ndonjëherë do të lejohen disa biznese për pronar, ky kufizim nuk duhet vënë — prandaj s'e aplikoj
+pa fjalën tënde.
