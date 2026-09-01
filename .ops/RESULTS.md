@@ -1662,3 +1662,56 @@ biznesi është pikërisht ajo që e bën veprimin të qëllimshëm.
    lista e humbjeve duhet verifikuar kundër FK-ve para se të shkruhet.
 
 *(Zbatimi i takon cloud-it — terminali nuk prek kodin e aplikacionit, §2.)*
+
+## [DY-SUBJEKTE] · Ndarja biznes ↔ llogari: çfarë i takon misionit të biznesit
+
+Rregulli i BP2: *"Sisteme të përbashkëta, dy subjekte … **ekskluzivitetet e
+llogarisë s'transpozohen te biznesi**."* E mata në të dy drejtimet.
+
+### ✅ Ndarja është zbatuar — katër prova
+
+**1. Analitika e biznesit e përjashton referral-in me qëllim.**
+`app/biznese/[id]/analytics/page.tsx:9–12` e thotë shprehimisht:
+> *"Analitika e VET e biznesit … PA analytics_extra/referral — ato janë
+> ekskluzivitet i llogarisë personale."*
+Të dhënat vijnë nga `/api/analytics?biz=<id>`, shpalljet sipas `business_id`.
+**Kërkesa e O8 plotësohet.**
+
+**2. Abonimi trashëgohet, nuk dyfishohet.**
+`BiznesPageClient:636` shfaq: *"Plani: {tier} · **trashëgim** — Trashëguar nga
+llogaria — menaxhohet te 'Vepro si: Unë'."* Pagesa mbetet e personit; biznesi e
+trashëgon tier-in. Kjo është ndarja e saktë (Vendimi 1: identiteti është i
+biznesit, abonimi është i personit).
+
+**3. Paneli i biznesit përmban VETËM gjëra të misionit tregtar:**
+Detaje · Rreth biznesit · Vendndodhja & Kontakti · Galeria · **Informacion ligjor** ·
+Kategoritë. Veprimet: Ndrysho logon/kopertinën · Ndaj biznesin · Filtro shpalljet ·
+Hiq (pauzo) · Riaktivizo · Rifresko · Shëno si të shitur.
+**Asnjë ekskluzivitet llogarie nuk ka rrjedhur brenda** — pa fjalëkalim, pa GDPR,
+pa siguri, pa referral, pa abonim të menaxhueshëm.
+
+**4. Kontaktet janë të biznesit, jo të personit.** `biz.email`, `biz.phone`,
+`biz.whatsapp` — fusha të veta të entitetit, jo të marra nga profili i pronarit.
+
+### ⚠️ KORRIGJIM I DYFISHTË I RAPORTIT TIM
+**(a) Shiriti "Vepro si" NUK mungon te `/profile`.** E kisha raportuar si të
+munguar te [O8]. Është aty — `app/profile/page.tsx:597–603`, i mbrojtur me
+`{myBiz && (…)}`, pra shfaqet **vetëm kur pronari ka biznes**. Llogaria me të cilën
+testova (Martinel Likaj) nuk ka biznes, ndaj s'u shfaq — **sjellje e saktë, jo defekt**.
+B3.1 është zbatuar te të DY panelet, siç kërkon BP2.
+
+**(b) Shkaku i gabimit tim:** grep-i im përdori `head -8`, dhe të tetë rreshtat e
+parë ishin nga `BiznesPageClient`. Përfundova "s'ekziston te /profile" nga një
+listë të cilën e kisha prerë vetë. Kjo është hera e tretë në këtë sesion që
+**truncation-i i daljes** më çon në përfundim të gabuar (§9.2 — instrumenti gënjen).
+
+Gjithashtu edhe dyshimi im për referral-in te analitika e biznesit ra: dy përputhjet
+ishin **komente që shpjegojnë përjashtimin**, jo përmbajtje e rrjedhur.
+
+### Mbetet e hapur (e vetmja çarje e ndarjes)
+**Dy sisteme ndjekjeje të palidhura.** Vizitori has dy butona "Ndiq" për të njëjtin
+shitës — një te `/u` (ndjek personin, tabela `follows`) dhe një te `/biznese`
+(ndjek biznesin, tabela `business_followers`) — me dy numërues të veçantë dhe pa
+asgjë që ia shpjegon ndryshimin. Nga ana teknike të dyja janë të sakta dhe secila
+me trigerin e vet; nga ana e produktit, përdoruesi nuk e kupton pse ndjek dy herë.
+Vendim i pronarit, jo defekt.
