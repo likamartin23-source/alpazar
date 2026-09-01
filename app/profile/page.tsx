@@ -790,7 +790,7 @@ export default function ProfilePage() {
                     { ike: 'ti-hand-click',     titull: 'Ofertat',              nen: 'Oferta çmimi të marra dhe të dërguara · prano, refuzo ose tërhiq', vepro: () => { window.location.href = '/oferta' } },
                     { ike: 'ti-chart-bar',      titull: 'Analitika',            nen: 'Pamje, kontaktime (WhatsApp/Viber), CTR — 7 ose 30 ditë', vepro: () => { window.location.href = '/profile/analytics' } },
                     { ike: 'ti-crown',          titull: 'Abonimi im',           nen: (() => { const t = tierNgaProfili(profile); return t === 'vip' ? 'VIP Ekstra Boost aktiv · shiko / menaxho' : t === 'premium' ? 'Premium aktiv · shiko / menaxho / anulo' : 'Kalo në Premium — biznes online, VIP, pa limit' })(), vepro: () => { window.location.href = tierNgaProfili(profile) !== 'free' ? '/billing' : '/premium' } },
-                    { ike: 'ti-shield-lock',    titull: 'Siguri & privatësi',   nen: 'Fjalëkalimi, email-i, GDPR, Trust Score, Takedown, fshirja', vepro: () => setProfSub('siguri') },
+                    { ike: 'ti-shield-lock',    titull: 'Siguri & privatësi',   nen: 'Fjalëkalimi, email-i, GDPR, Besueshmëria, Takedown, fshirja', vepro: () => setProfSub('siguri') },
                     { ike: 'ti-gift',           titull: 'Fto miq',              nen: `50 pikë për çdo mik të regjistruar${(profile?.gamification_points ?? 0) > 0 ? ` · ke ${profile.gamification_points} pikë` : ''}`, vepro: () => { window.location.href = '/referral' } },
                   ] as const).map(b => (
                     <button
@@ -832,18 +832,18 @@ export default function ProfilePage() {
 
               {profSub === 'siguri' && (
               <>
-              {/* ── Trust Score — Kundërshtim Profilizimit (Ligj 124/2024 n.19) ── */}
+              {/* ── Besueshmëria — Kundërshtim Profilizimit (Ligj 124/2024 n.19) ── */}
               <div className="card">
                 <div className="card-hdr">
-                  <span className="card-title"><span aria-hidden="true">🔵</span> Trust Score — Privatësia</span>
+                  <span className="card-title"><span aria-hidden="true">🔵</span> Besueshmëria — Privatësia</span>
                 </div>
                 <p style={{ fontSize: 12, color: '#555', lineHeight: 1.6, marginBottom: 12 }}>
-                  <strong>Ç'është Trust Score?</strong> Është një vlerë 0–100 që tregon besueshmërinë
+                  <strong>Ç'është Besueshmëria?</strong> Është një vlerë 0–100 që tregon besueshmërinë
                   e llogarisë bazuar në: moshën e llogarisë, numrin e shpalljeve aktive dhe pikët e
                   aktivitetit. <strong>Nuk lidhet me pagesa, gjini, racë apo karakteristika sensitive.</strong>
                   <br /><br />
                   Sipas Ligjit Nr. 124/2024 (neni 19), keni të drejtë të kundërshtoni profilizimin
-                  automatik. Nëse e çaktivizoni, Trust Score juaj <em>nuk do të shfaqet</em> te profili
+                  automatik. Nëse e çaktivizoni, Besueshmëria juaj <em>nuk do të shfaqet</em> te profili
                   publik dhe kartat e shpalljeve.
                 </p>
                 <label style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer', padding: '10px 0' }}>
@@ -854,23 +854,23 @@ export default function ProfilePage() {
                       const visible = e.target.checked
                       await supabase.from('profiles').update({ trust_score_visible: visible }).eq('id', user?.id)
                       setProfile((prev: any) => ({ ...prev, trust_score_visible: visible }))
-                      setMsg(`ok:Trust Score ${visible ? 'aktivizuar' : 'çaktivizuar'} me sukses.`)
+                      setMsg(`ok:Besueshmëria ${visible ? 'aktivizuar' : 'çaktivizuar'} me sukses.`)
                       setTimeout(() => setMsg(''), 3000)
                     }}
                     style={{ width: 18, height: 18, accentColor: '#E63312', cursor: 'pointer' }}
                   />
                   <span style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>
-                    Shfaq Trust Score tim te profili publik
+                    Shfaq Besueshmërinë time te profili publik
                   </span>
                 </label>
                 {profile?.trust_score_visible !== false && (
                   <div style={{ background: '#F0FDF4', border: '1px solid #86EFAC', borderRadius: 8, padding: '8px 12px', fontSize: 11.5, color: '#166534', marginTop: 4 }}>
-                    <span aria-hidden="true">✅</span> Trust Score aktiv — vizitorët mund ta shohin besueshmërinë tuaj
+                    <span aria-hidden="true">✅</span> Besueshmëria aktive — vizitorët mund ta shohin besueshmërinë tuaj
                   </div>
                 )}
                 {profile?.trust_score_visible === false && (
                   <div style={{ background: '#FEF9C3', border: '1px solid #FDE047', borderRadius: 8, padding: '8px 12px', fontSize: 11.5, color: '#713F12', marginTop: 4 }}>
-                    <span aria-hidden="true">⚠️</span> Trust Score i fshehur — profili publik nuk e shfaq
+                    <span aria-hidden="true">⚠️</span> Besueshmëria e fshehur — profili publik nuk e shfaq
                   </div>
                 )}
               </div>
