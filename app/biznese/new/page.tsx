@@ -16,10 +16,14 @@ export default function BiznesNewPage() {
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/auth/login'; return }
-      const [{ data: prof }, { data: cfg }] = await Promise.all([
+      const [{ data: prof }, { data: cfg }, { data: myBiz }] = await Promise.all([
         supabase.from('profiles').select('is_premium,premium_expires_at,has_boost,boost_expires_at').eq('id', session.user.id).single(),
         supabase.from('app_config').select('value').eq('key', 'business_requires_premium').maybeSingle(),
+        // NJË pronar = NJË biznes (rregulli i /profile g2). Kjo rrugë e dytë s'e kontrollonte
+        // ekzistencën → krijonte biznes PARALEL (F1). Nëse ka biznes → çoje tek ai, mos krijo të dytë.
+        supabase.from('businesses').select('id').eq('owner_id', session.user.id).limit(1).maybeSingle(),
       ])
+      if (myBiz?.id) { window.location.href = `/biznese/${myBiz.id}`; return }
       const kerkohetPremium = ((cfg?.value ?? 'true') === 'true')
       if (kerkohetPremium && tierNgaProfili(prof) === 'free') { window.location.href = '/premium'; return }
       setOk(true)

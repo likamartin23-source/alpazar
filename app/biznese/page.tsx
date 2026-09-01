@@ -39,17 +39,22 @@ export default function BiznestPage() {
   // Gate-i i vertete eshte RLS + ridrejtimi te /biznese/new; ky routing CTA eshte per UX.
   const [krijoDest, setKrijoDest]       = useState('/biznese/new')
   const [ftesePremium, setFtesePremium] = useState(false)
+  const [kaBiznes, setKaBiznes]         = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) return // vizitor: CTA -> /biznese/new (aty vendoset login + gate)
-      const [{ data: prof }, { data: cfg }] = await Promise.all([
+      const [{ data: prof }, { data: cfg }, { data: myBiz }] = await Promise.all([
         supabase.from('profiles')
           .select('is_premium,premium_expires_at,has_boost,boost_expires_at')
           .eq('id', session.user.id).single(),
         supabase.from('app_config').select('value')
           .eq('key', 'business_requires_premium').maybeSingle(),
+        // NJË pronar = NJË biznes: nëse KA biznes, CTA-ja çon TE biznesi (jo te krijimi i dytë).
+        // Rruga e vetme e krijimit mbetet ajo e panelit /profile (g2). §4-bis: një burim, jo dy.
+        supabase.from('businesses').select('id').eq('owner_id', session.user.id).limit(1).maybeSingle(),
       ])
+      if (myBiz?.id) { setKrijoDest(`/biznese/${myBiz.id}`); setKaBiznes(true); return }
       const gated = ((cfg?.value ?? 'true') === 'true') && tierNgaProfili(prof) === 'free'
       setFtesePremium(gated)
       setKrijoDest(gated ? '/premium' : '/biznese/new')
@@ -132,8 +137,10 @@ export default function BiznestPage() {
       {/* Create business CTA */}
       <div role="link" tabIndex={0} style={{ margin: '12px 16px 4px', background: 'linear-gradient(135deg,#151515,#1c1c1c 60%,#231a0a)', borderRadius: 12, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', boxShadow: '0 6px 18px -8px rgba(0,0,0,.4)' }} onClick={() => window.location.href = krijoDest} onKeyDown={e => { if (e.key === 'Enter') window.location.href = krijoDest }}>
         <div>
-          <div style={{ color: '#F5C842', fontWeight: 800, fontSize: 14, marginBottom: 2 }}>+ Krijo Biznesin Tënd</div>
-          <div style={{ color: '#aaa', fontSize: 11 }}>{ftesePremium
+          <div style={{ color: '#F5C842', fontWeight: 800, fontSize: 14, marginBottom: 2 }}>{kaBiznes ? '🏢 Shiko biznesin tënd' : '+ Krijo Biznesin Tënd'}</div>
+          <div style={{ color: '#aaa', fontSize: 11 }}>{kaBiznes
+            ? <>Ke tashmë një biznes · hape për ta menaxhuar</>
+            : ftesePremium
             ? <><span aria-hidden="true">👑</span> Veçori Premium · Prezencë profesionale</>
             : <>Prezencë profesionale online</>}</div>
         </div>

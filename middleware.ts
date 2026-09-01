@@ -89,7 +89,7 @@ export async function middleware(req: NextRequest) {
     pathname === '/messages' || pathname.startsWith('/messages/') ||
     pathname === '/profile'  || pathname.startsWith('/profile/')  ||
     pathname === '/favorites'|| pathname.startsWith('/favorites/')||
-    pathname === '/biznese/new'
+    pathname === '/biznese/new' || pathname === '/listing/new'
   ) {
     // Rrugë PRIVATE: kërkojnë sesion. Pa këtë, faqja kthehej 200 dhe rendohej për një çast
     // (flash) para se klienti të ridrejtonte te hyrja — dhe ishte e indeksueshme nga crawler-at.

@@ -980,24 +980,24 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                   <div className="seller-bio">{seller.bio || seller.shop_description}</div>
                 )}
 
-                {/* Profile / Business button */}
-                {!isOwner && bizHref && (
+                {/* Profile / Business button. Për PRONARIN nuk e FSHEHIM (do vdiste hapi 2 i
+                    modelit 3-shkallësh pikërisht për personin që i hap më shpesh shpalljet e veta);
+                    ndryshojmë ETIKETËN — njësoj si BiznesPageClient (§4-bis: një zgjidhje, jo dy). */}
+                {bizHref && (
                   <button type="button" className="view-profile-btn"
                     onClick={() => { window.location.href = bizHref }}>
                     <i className="ti ti-building-store" aria-hidden="true" />
-                    Shiko biznesin →
+                    {isOwner ? 'Biznesi yt →' : 'Shiko biznesin →'}
                   </button>
                 )}
                 {/* Profili i personit del edhe kur shitesi eshte biznes:
                     dyqani dhe njeriu pas tij jane dy faqe te ndryshme dhe
                     blerësi mund te doje te dyja (§4.5 — lidhje dydrejtimeshe). */}
-                {!isOwner && (
-                  <button type="button" className="view-profile-btn"
-                    onClick={() => window.location.href = `/u/${seller.id}`}>
-                    <i className="ti ti-user" aria-hidden="true" />
-                    Shiko profilin →
-                  </button>
-                )}
+                <button type="button" className="view-profile-btn"
+                  onClick={() => window.location.href = `/u/${seller.id}`}>
+                  <i className="ti ti-user" aria-hidden="true" />
+                  {isOwner ? 'Profili yt →' : 'Shiko profilin →'}
+                </button>
 
                 {/* Shop link — vetem per shitesit e vjeter me `shop_name` pa
                     `business_id`; kur shpallja ka biznes, BusinessMiniCard e
