@@ -2051,3 +2051,38 @@ vërtetë veprimesh, matrica rolesh e zbatuar në bazë, sinkronizim çmimesh pa
 ngurtësim në kod (§2.9 e respektuar), dhe një ekran AI Health që raporton gabime
 reale me shkak e propozim rregullimi. Gjetjet e mësipërme janë përmirësime, jo
 dyshime mbi themelin.
+
+### [PANELI-2] Pauzimi dhe faturat — vlerat LIVE nga Konfigurime
+
+**Sistemi i pauzimit është i NDEZUR dhe i dokumentuar në panel.**
+Te *Të tjera* gjendet:
+- **`business_requires_premium` = NDEZUR**, me përshkrimin e vetë panelit:
+  *"Kur Premium-i bie, profili i biznesit errësohet vetvetiu"*
+- **`dim_business_on_expiry` = NDEZUR**
+- **`subscription_grace_days` = 1** (te *Çmimet dhe faturimi*)
+
+Kjo konfirmon zinxhirin që kisha pershkruar ne auditin e pauzimit: skadim -> 1 dite
+tolerance -> erresim automatik i biznesit. Vlera **1 dite** eshte e ashper; per nje
+treg ku pagesa aprovohet manualisht (shih me poshte), nje deshtim pagese te
+premten do t'i fikte biznesit profilin te shtunen. Rekomandim: 3-7 dite.
+
+**FATURAT AUTOMATIKE DO TE DESHTOJNE TE KLIENTI.**
+- `invoice_autosend` = NDEZUR — *"Fatura shkon vete ne inbox kur aprovohet pagesa"*
+- por **`resend_from_email` = `onboarding@resend.dev`** dhe **`resend_domain_id` = bosh**
+
+`onboarding@resend.dev` eshte adresa **sandbox** e Resend-it: lejon dergim VETEM te
+adresa e vete llogarise Resend. Cdo fature drejtuar nje klienti tjeter refuzohet.
+Pra `invoice_autosend` eshte i ndezur mbi nje kanal qe nuk dorezon.
+Kjo bashkohet me tre gjetjet e mia te meparshme (NIPT mungon, adresa mungon,
+`fiscal_enabled` fikur) — **te katerta bien mbi te njejten rruge: faturen**.
+
+Rrjedha reale sot: pagese -> aprovim manual (webhook i palidhur) -> fature pa NIPT e
+pa adrese -> e padorezuar (sandbox) -> e pafiskalizuar. Asnje hallke s'eshte e plote.
+
+**Vezhgime dytesore:**
+- `brevo_from_email` = `likamartin23@gmail.com` (adrese personale) ndersa
+  `company_email` = `alpazarsuport@gmail.com`. Dy identitete derguesi.
+- `deploy_status` = `waiting_github_token`, `waiting_for` = `classic_github_token_ghp_`
+  — nje rruge vete-deploy-i e nisur dhe e lene pergjysme. Kandidat per §9.
+- `min_listing_price` = 0 dhe `offer_min_percent` = 0 — te dyja pa kufi. Te vetedijshme
+  apo te pavendosura? Kerkon vendim pronari.
