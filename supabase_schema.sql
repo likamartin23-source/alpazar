@@ -240,7 +240,7 @@ on conflict do nothing;
 -- Konfigurimet e aplikacionit
 insert into admin_settings (key, value) values
   ('site_name', 'ALPAZAR'),
-  ('site_slogan', 'Shit · Bli · Bëj Pazrin Tënd'),
+  ('site_slogan', 'Shit · Bli · Bëj Pazarin Tënd'),
   ('primary_color', '#F5C842'),
   ('accent_color', '#E63312'),
   ('premium_monthly_price', '9.99'),

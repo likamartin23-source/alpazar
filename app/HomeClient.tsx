@@ -933,7 +933,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
           <div className="hero">
             <div>
               <h1 style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', margin: 0 }}>Alpazar — Treg Online Shqipëri</h1>
-              <h2><span aria-hidden="true">🦅</span> {cfg('site_slogan', 'Shit · Bli · Bëj Pazrin Tënd')}</h2>
+              <h2><span aria-hidden="true">🦅</span> {cfg('site_slogan', 'Shit · Bli · Bëj Pazarin Tënd')}</h2>
               <p><span style={{color: '#C42B0F',fontWeight:800}}>Platforma #1 shqiptare<br />e tregtisë online</span></p>
             </div>
             {(cfg('show_listing_count','true') !== 'false' || cfg('show_user_count','true') !== 'false') && (

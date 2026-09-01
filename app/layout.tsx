@@ -24,7 +24,7 @@ const AlpazarProviderDyn     = dynamic(() => import('../lib/context').then(m => 
 const GlobalErrorBoundaryDyn = dynamic(() => import('../lib/error-handler').then(m => ({ default: m.GlobalErrorBoundary })))
 
 export const metadata: Metadata = {
-  title: 'ALPAZAR — Shit · Bli · Bëj Pazrin Tënd',
+  title: 'ALPAZAR — Shit · Bli · Bëj Pazarin Tënd',
   description: 'Platforma #1 shqiptare e tregtisë dhe shpalljeve online. Zero reklama. Zero pagesa mes përdoruesve. Shit, bli dhe bëj pazarin tënd falas.',
   keywords: 'marketplace shqiperi, shpallje online, shit bli shqiperi, alpazar, tregti online, bazar shqip, shpallje falas',
   authors: [{ name: 'ALPAZAR', url: SITE_URL }],

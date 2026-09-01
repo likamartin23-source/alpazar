@@ -51,7 +51,7 @@ export default function RrethNesh() {
         <div className="hero">
           <img src="/icons/eagle.svg" alt="" className="hero-logo" aria-hidden="true" />
           <h1>ALPAZAR</h1>
-          <p>Shit · Bli · Bëj Pazrin Tënd<br />Platforma #1 shqiptare e tregtisë online</p>
+          <p>Shit · Bli · Bëj Pazarin Tënd<br />Platforma #1 shqiptare e tregtisë online</p>
         </div>
 
         <div className="body">

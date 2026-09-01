@@ -14,7 +14,7 @@ import { LISTING_SELECT } from '../lib/listingSelect'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'ALPAZAR — Shit · Bli · Bëj Pazrin Tënd',
+  title: 'ALPAZAR — Shit · Bli · Bëj Pazarin Tënd',
   description: 'Platforma #1 shqiptare e tregtisë online. Bli dhe shit shpallje të reja e të përdorura — makina, elektronikë, shtëpi, veshje e më shumë — falas, në të gjithë Shqipërinë.',
   alternates: { canonical: '/' },
 }

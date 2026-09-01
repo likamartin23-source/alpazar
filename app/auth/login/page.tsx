@@ -976,7 +976,7 @@ export default function Auth() {
           {mode === 'login' && step === 'form' && (
             <form onSubmit={e => { e.preventDefault(); login() }}>
               <h2>Mirë se vini në ALPAZAR</h2>
-              <p className="sub">Shit · Bli · Bëj Pazrin Tënd</p>
+              <p className="sub">Shit · Bli · Bëj Pazarin Tënd</p>
 
               <div className="field">
                 <label htmlFor="login-identifier">Email ose Numër Telefoni</label>

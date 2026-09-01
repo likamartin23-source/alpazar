@@ -65,7 +65,7 @@ export const MESSAGES: Record<string, Dict> = {
 }
 
 const UI_KEYS = [
-  'Shit · Bli · Bëj Pazrin Tënd', 'Platforma #1 shqiptare', 'e tregtisë online',
+  'Shit · Bli · Bëj Pazarin Tënd', 'Platforma #1 shqiptare', 'e tregtisë online',
   'Përdorues', 'Shpallje', 'Shitës', 'Të gjitha', 'Hyr / Regjistrohu',
   'Kreu', 'Kërko', 'Mesazhe', 'Profili', 'Shitës të verifikuar', 'Vlerësime ⭐',
   'Pa reklama — për të gjithë gjithmonë falas', 'Kërko çdo gjë në Shqipëri...',
