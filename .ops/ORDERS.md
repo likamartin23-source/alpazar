@@ -212,3 +212,53 @@ RESULTS — rregullimi në kod, jo grant-i (grant-i rihap §4.6-bis). Matjet e m
 Mbetet **vetëm** rruga pozitive që kërkon sesion (nuk e provoj dot pa hyrje): i kyçur si admin
 (likamartin23) në telefon, hap `/admin` → duhet të **HAPET** (jo më ridrejtim te `/`).
 Konfirmo te RESULTS[O10]. Nëse ende ridrejton, thuaj menjëherë.
+
+---
+
+## [O11] · KORRIGJIM i "AI Health" (Finding 7 i auditit tënd) — matur nga `health_events`
+
+Auditin tënd të panelit e mora — punë e mirë, veçanërisht dimensioni AI Health që unë
+s'e kisha parë. **Por 4 nga 5 gabimet e listuara nuk janë të gjalla** — i mata te vetë
+tabela `health_events` (status + last_seen_at), jo te lista e pamjes:
+
+| id | gabimi | rruga | last_seen | status REAL |
+|----|--------|-------|-----------|-------------|
+| 8 | React **#418** | /auth/login | **31 gush 21:05** | **new** ← i vetmi i gjallë |
+| 7 | toLocaleString null | /u/af3e… | 7 gush | **resolved** |
+| 6 | React #425 | / | 7 gush | resolved |
+| 4 | React #422 | /listing/… | 7 gush | resolved |
+| 3 | postgres_changes | /messages | 2 korrik | resolved |
+
+- **id 7 (toLocaleString):** stack-u tregon `.map()` te chunk-u i vjetër `page-d635d512…js`
+  — çmimi/shikimet formatoheshin dikur me `.toLocaleString()` direkt. Tani `ListingCard`
+  përdor `nf()`/`priceLabel()` (lib/format.ts, null-safe). **S'është përsëritur në 25 ditë.**
+  E njëjta klasë gabimi si e imja me `grep|head` — lista e "AI Health" tregon GJITHÇKA
+  (edhe resolved/të vjetra); mat `status`+`last_seen_at`, jo etiketën.
+- **I vetmi i gjallë: React #418 (hidratim) te /auth/login, count 6, 31 gush.** Faqja është
+  `'use client'`+`force-dynamic`; gjithë state-i nis me vlera statike, URL lexohet vetëm në
+  `useEffect` — s'e gjej dot shkakun nga leximi statik. **Kërkon riprodhim me shfletues**
+  (Rregulli 11): ose hap politikën e rrjetit që ta shoh live, ose riprodhoje ti me konsolë
+  te telefoni/desktop-i dhe më jep tekstin e plotë #418 (mospërputhja server↔klient).
+  S'e prek faqen e hyrjes verbërisht (§9.3).
+
+## [O12] · Përplasja e konfigurimit (Findings 1+2) — matur; kërkon vendim pronari + shkrim DB
+
+Konfirmova te baza pse `site_slogan` del **dy herë** te Konfigurime:
+`site_slogan` ekziston NË TË DYJA `app_config` DHE `admin_settings`. Ekrani i admin-it
+i bashkon të dy depot → dublim. **`cfg()` (lib/context.tsx:89) lexon VETËM `app_config`.**
+Pasojë e fshehur: nëse admini redakton kopjen te `admin_settings`, faqja publike s'ndryshon
+(lexon app_config) — redaktim pa efekt.
+
+- **Vendim pronari:** depoja kanonike për vlera PUBLIKE është `app_config` (§2.7). Prandaj
+  kopja e tepërt është `admin_settings.site_slogan`.
+- **Terminali (pas OK-së së pronarit), shkrim DB:**
+  `delete from admin_settings where key='site_slogan';`  ← e sigurt: asnjë rrugë live s'e lexon
+  (cfg→app_config; verifikuar). Additive-safe; app_config.site_slogan mbetet i paprekur.
+- **google_client_id ↔ google_oauth_client_id (+_alt1/_alt2):** MOS fshi ende — fillimisht
+  verifiko cilën çelës lexon realisht butoni GIS te /auth/login (kod), pastaj reconcile.
+  Katër çelësa për një koncept; kanonik = ai që lexon kodi.
+
+**Findings 3–6 (video_max_mb 50 vs health 100 · referral_reward_all='00' · maskim çelësash
+gjysmë-publikë · stories_enabled jetim):** të gjitha vendime konfigurimi/të dhënash të pronarit
+(§6, §2.9, §8). google_client_id/anon_key/JWT janë vlera PUBLIKE (dalin te bundle-i i klientit)
+— maskimi i tyre është kozmetik, jo rrjedhje. `sms_gateway_login` është login (jo fjalëkalim).
