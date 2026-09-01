@@ -298,3 +298,39 @@ verifikohet live BASHKË me pronarin. Mbaji të matura, mos i prek.
 **3. React #418 (/auth/login): pronari do HAPË politikën e rrjetit.** Kur egress-i
 (alpazar.vercel.app + supabase) të hapet, cloud-i e riprodhon live me Chromium dhe e ndreq
 me provë (Rregulli 11). Deri atëherë: pa prekje verbërisht të faqes së hyrjes.
+
+## [O15] · TERMINALI: riprodho + ndreq React #418 (hidratim) te /auth/login
+
+Pronari vendosi: e bën terminali (ke shfletues + `next dev` lokal jo-të-minifikuar).
+Ky është i vetmi gabim i GJALLË te `health_events` (id 8, count 6, last_seen 31 gush;
+katër të tjerët janë `resolved`/të vjetër — mos u merr me ta).
+
+### Çfarë kam matur unë (pikënisja jote — mos e ripërsërit)
+- `app/auth/login/page.tsx` është `'use client'` + `export const dynamic='force-dynamic'`.
+- I GJITHË state-i nis me vlera STATIKE (`useState('login')`, `'form'`, `''` …) — s'ka
+  window/Date/random/localStorage në inicializues.
+- `window.*`, `URLSearchParams(location.search)`, `localStorage` përdoren VETËM në
+  `useEffect`/handler (pas montimit) — pra teorikisht render-i i parë server==klient.
+- Prandaj shkaku s'duket nga leximi statik → **duhet mesazhi i plotë #418** (jo i minifikuar).
+
+### Metoda (Rregulli 11 — sy live, jo hamendje)
+1. `next dev` lokal (jo `next build` mbi një `.next` që dev-i e serviron — kurthi i higjienës).
+   React në dev e printon tekstin E PLOTË të mospërputhjes (cili element/tekst ndryshon
+   server↔klient), jo kodin #418.
+2. Hap `http://localhost:3000/auth/login` me konsolën hapur. Lexo warning-un e hidratimit
+   dhe shëno ELEMENTIN + tekstin që s'përputhet.
+3. Dyshohu me radhë (nga më e mundshmja):
+   - **Butoni Google GIS** — a injekton përmbajtje/atribute te një kontejner që React e pret bosh?
+     (Nëse po: jepi kontejnerit `suppressHydrationWarning` OSE render-o vetëm pas montimit.)
+   - **Intl/`toLocaleString('sq-AL')`** diku në render — ICU e Node-it ≠ ICU e Chromium-it
+     të kontejnerit (kurthi i njohur: data shqip ndryshon Node vs shfletues). Në login s'gjeta
+     `toLocaleString`, por verifiko `detectType`/`toE164` (lib/authHelpers) mos formatojnë tekst.
+   - **Atribute nga zgjerime shfletuesi** (rrallë por reale) — provoje në dritare inkognito
+     pa zgjerime; nëse zhduket, s'është defekt kodi.
+4. Ndreq te RRËNJA (jo vendmbajtës që mbulon simptomën). Verifiko: warning-u zhduket në dev,
+   `tsc --noEmit`=0, `next build`=0.
+5. Shkruaj te RESULTS `[O15] · done` me: tekstin e plotë të mospërputhjes + shkakun + rregullimin.
+
+**Kujdes:** dega e punës është `claude/loving-wright-kBMgT` (= main). Puno mbi të, mos hap degë
+tjetër. Nëse rregullimi është i qartë dhe i vogël, bëje dhe verifikoje; nëse prek arkitekturë,
+raporto te RESULTS dhe prit.
