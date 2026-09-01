@@ -443,3 +443,24 @@ Nëse i qëndrueshëm, opsion kodi: hiq `head:true` nga count-et (GET me content
 i lidhur te track-u. "Treguesi s'ndjek" ka gjasa artefakt kohor (lexim pas `scrollTo` para se scroll-event
 + render të kryhen — po ai gabim si swipe). Rimatje: prit `scrollend` ose 400ms, pastaj lexo pikën aktive.
 Pikat morën edhe zonë prekjeje ~25px (`9d1f74a`). Swipe = OK (ti e korrigjove).
+
+## [O25] · APLIKO dy migrime (vendime pronari) — terminali, DB
+
+Kontrollova te baza: ASNJËRI s'është aplikuar (fk_to_profiles=false, listing_type=false). Pa dopio.
+
+1. **`20260901_listing_type_sherbim.sql` — APLIKOJE SA MË SHPEJT** (additive, i sigurt, s'varet nga kodi).
+   Shton `listings.listing_type` (default 'produkt', CHECK produkt/sherbim) + backfill. **Kujdes rendi:**
+   kodi (9c0980d) tashmë ka filtrin `sherbim -> listing_type='sherbim'`; derisa kolona të mos ekzistojë,
+   klikimi "🛠 Shërbim" jep 400 (lista mbetet e pandryshuar, jo rrëzim). Aplikimi e zgjidh. Verifiko:
+   `select listing_type,count(*) from listings group by 1;` → 'produkt' për të gjitha.
+2. **`20260901_fk_businesses_owner_profiles.sql` — pronari miratoi ("aplikoj").** 0 jetimë (konfirmuar).
+   Apliko + `notify pgrst,'reload schema';`. /biznese punon tashmë nga arna e kodit; kjo hap embed-et K2.
+
+Pas aplikimit shkruaj `[O25] · done` me numrat.
+
+## [O26] · për cloud (vetes) — radha e punës pas filtrave
+- **K2 (pronari + terminali):** karta e biznesit s'ka elementet e kartës së shpalljes (.shop-mini 2/10) →
+  ListingCard të mësojë variant "biznes" (kornizë e njëjtë, foto=logo/kopertinë, titull=emër, çmim→kategori,
+  vula tier/verifikim); /biznese + "Biznese Online" ta përdorin. FILLO PAS FK-së (embed businesses⇄profiles).
+- **Butonat (O24):** shkallë e vetme dytësore (kontrast kufi ≥3:1, lartësi 44, `:active` scale) për
+  .safety-btn + "Njoftomë" (hiq stilin inline) + zemra me hije mbi media. §4-bis: tre gjuhë → një fjalor.
