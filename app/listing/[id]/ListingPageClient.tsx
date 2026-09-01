@@ -648,10 +648,20 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         .topbar-title{font-size:15px;font-weight:700;color:#111;flex:1;}
         /* Butonat e sigurise (§7.4): terciar i vogel, gjithmone i arritshem,
            lartesi prekjeje 36px dhe kontrast qe kalon WCAG AA. */
-        .safety-btn{display:inline-flex;align-items:center;gap:4px;min-height:36px;padding:0 12px;background:#fff;border:1px solid #e6e6e6;border-radius:10px;color:#5a5a5a;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:border-color .15s ease,color .15s ease;}
+        /* SHKALLË E VETME për butonat dytësorë (O24): kufi me kontrast ≥3:1 + mbushje e lehtë
+           (që kutia të KETË formë, jo tekst i shpërndarë), lartësi 44px (Vendimi 8), dhe gjendje
+           :active (transform+sfond) — sepse :hover NUK ekziston në telefon. Të tria (safety/njoftim/
+           ndaj) nga i njëjti fjalor. */
+        .safety-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:44px;padding:0 14px;background:#f4f4f4;border:1px solid #b0b0b0;border-radius:11px;color:#3d3d3d;font-size:12.5px;font-weight:700;font-family:inherit;cursor:pointer;text-decoration:none;transition:transform .12s ease,border-color .15s ease,background .15s ease;}
         .safety-btn:hover{border-color:#C42305;color:#C42305;}
-        .share-btn{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-        .share-btn i{font-size:16px;color:#111;}
+        .safety-btn:active{transform:scale(.97);background:#e9e9e9;border-color:#C42305;}
+        .share-btn{width:44px;height:44px;background:#f4f4f4;border:1px solid #b0b0b0;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .12s ease,background .15s ease;}
+        .share-btn:active{transform:scale(.94);background:#e9e9e9;}
+        .share-btn i{font-size:17px;color:#333;}
+        /* "Njoftomë" hyn te e njëjta shkallë; gjendja aktive (alarm i vendosur) e verdhë. */
+        .njofto-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:44px;padding:0 14px;background:#f4f4f4;border:1px solid #b0b0b0;border-radius:11px;color:#3d3d3d;font-size:12.5px;font-weight:700;font-family:inherit;cursor:pointer;transition:transform .12s ease,border-color .15s ease,background .15s ease;}
+        .njofto-btn:active{transform:scale(.97);background:#e9e9e9;}
+        .njofto-btn.on{background:#FFF8E1;color:#856404;border-color:#FFCf5a;}
 
         /* Gallery */
         .img-wrap{width:100%;height:230px;background:linear-gradient(135deg,#FBF7E8,#F2EAD0);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
@@ -881,14 +891,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                 type="button"
                 aria-label={priceAlert ? 'Ndrysho alarmin e çmimit' : 'Vendos alarm çmimi'}
                 onClick={() => { trackEvent('notify', listing.id); setAlertOpen(true) }}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 5,
-                  background: priceAlert ? '#FFF8E1' : '#F0F7FF',
-                  color: priceAlert ? '#856404' : '#185FA5',
-                  border: `1.5px solid ${priceAlert ? '#FFE082' : '#C3DAFB'}`,
-                  borderRadius: 9, padding: '5px 11px', fontSize: 12,
-                  fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
-                }}>
+                className={`njofto-btn${priceAlert ? ' on' : ''}`}>
                 <i className={`ti ti-bell${priceAlert ? '-ringing' : ''}`} style={{ fontSize: 14 }} aria-hidden="true" />
                 {priceAlert ? <><span aria-hidden="true">🔔</span> {priceAlert.target_price} ALL</> : 'Njoftomë'}
               </button>
