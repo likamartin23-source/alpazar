@@ -413,3 +413,33 @@ ose `scripts/verifiko-live.mjs`. Push-et e mia herën e kaluar s'krijuan deploym
 Nëse `8c372a4` nuk zbret vetë, shih verifiko-deploy.yml / bëj një push bosh si zhbllokues.
 
 Mbetet: /messages online u verifikua nga ti (32d6dc4) ✓. O18 hapi 3-4 pret hyrjen me Google të pronarit.
+
+## [O22] · Gjetjet e sakta të DB-së (O21) — korrigjime të matura + dy migrime + dy hetime
+
+Matur te baza reale (jo hamendje). Disa pretendime të O21 s'qëndruan:
+
+**1. /biznese (KRITIKE) — RREGULLUAR NË KOD (`84cd203`), tashmë live pas deploy-it.**
+FK `businesses_owner_id_fkey` EKZISTON, POR referon **auth.users, JO profiles** (matur:
+confrelid=auth.users). Prandaj embed-i businesses→profiles s'ndërtohet (jo "s'ka FK", jo cache).
+Arna live: pronarët merren me kërkesë të dytë `profiles?id=in.(...)` + bashkim në klient (pa N+1).
+- **Migrim opsional (systemic):** `20260901_fk_businesses_owner_profiles.sql` — FK e DYTË te profiles
+  që embed-et businesses⇄profiles të punojnë (K2). Kontrollo jetimët + `notify pgrst,'reload schema'`.
+  Path-b në kod e mban /biznese robuste pavarësisht.
+
+**2. PATCH /profiles (last_seen) 403 — SHKAKU I PALQARTË, mos aplikoni migrim ende.**
+Burimi: `lib/context.tsx:125` shkruan `last_seen` (throttle 5min) në çdo load. POR matur te baza:
+`has_column_privilege('authenticated',profiles,'last_seen','UPDATE')=TRUE`, dhe politika
+`profiles_update` LEJON self-update kur nuk ndryshon is_admin/is_premium/has_boost/is_suspended/
+is_verified/admin_role (last_seen s'është në listë). Pra grant+politikë e LEJOJNË last_seen.
+403-shi bie ndesh me këtë → duhet **trupi i plotë i gabimit PostgREST** (thotë kolonën/arsyen e saktë).
+Terminali: riprodho PATCH-in, kap përgjigjen 403 fjalë-për-fjalë. Mos ndrysho RLS pa atë provë (§9).
+(Prania online s'preket — ajo është Realtime, jo last_seen; ti e verifikove live.)
+
+**3. HEAD (count) 503 — hetim.** GET=200, HEAD=503 te listings/profiles/favorites/messages/notifications.
+Anësi e metodës HEAD te PostgREST/edge, jo RLS. Terminali: a është i qëndrueshëm apo kalimtar?
+Nëse i qëndrueshëm, opsion kodi: hiq `head:true` nga count-et (GET me content-range). Mat para se të ndryshojmë.
+
+**4. Galeria — treguesi.** `ImageCarousel.onScroll` TASHMË bën `setCurrent(round(scrollLeft/clientWidth))`
+i lidhur te track-u. "Treguesi s'ndjek" ka gjasa artefakt kohor (lexim pas `scrollTo` para se scroll-event
++ render të kryhen — po ai gabim si swipe). Rimatje: prit `scrollend` ose 400ms, pastaj lexo pikën aktive.
+Pikat morën edhe zonë prekjeje ~25px (`9d1f74a`). Swipe = OK (ti e korrigjove).
