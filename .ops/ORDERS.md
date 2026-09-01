@@ -396,3 +396,20 @@ Cikli rrjedh nga `.ops/RAPORT-PER-CLOUD.md`: **cloud rregullon kodin, ti+pronari
 
 **Raporto te RESULTS çdo defekt mobil me matje** → cloud e rregullon menjëherë (CI-green), ti riverifikon.
 Kujtesa e plotë: `.ops/KUJTESA-E-PUNES.md`. Imazhet e miratuara: `docs/bllok/` (imazhi fiton mbi kodin).
+
+## [O20] · Kod nga cloud për verifikim (dy slice, CI-green) — pas raportit O19-B/C
+
+Miratime pronari të zbatuara. Verifiko live në telefon (387px) kur deploy-i të zbresë:
+1. **Defekti #2 (prioritet 1) — `5517efe`:** "E promovuar" te kartat premium/VIP ngjitet MBI çipin
+   e shitësit (bottom 32 kur ka shitës) → çipi i shitësit i DUKSHËM + i KLIKUESHËM sërish
+   (hapi 2 i modelit 3-shkallësh). Verifiko: te 2/2 kartat e paguara, kliko shitësin → hapet /u ose /biznese.
+2. **Pass a11y ≥44px (Vendimi 8) — `8c372a4`:** FavoriteButton (zonë 44 e tejdukshme, rreth 30 i dukshëm,
+   toggle ndal përhapjen — s'hap shpalljen), ikonat social te footer (44, gap 18→4), Kthehu /biznese (38→44),
+   mbyllja install-float (6×7→44), ai-close-btn (44 me margin negativ që bulla të mos rritet).
+   Rimat me getBoundingClientRect: të gjitha ≥44×44.
+
+**KUJDES deploy (mësimi O19):** para se ta quash "live", kontrollo `/api/version` = SHA i main
+ose `scripts/verifiko-live.mjs`. Push-et e mia herën e kaluar s'krijuan deployment për 136 min.
+Nëse `8c372a4` nuk zbret vetë, shih verifiko-deploy.yml / bëj një push bosh si zhbllokues.
+
+Mbetet: /messages online u verifikua nga ti (32d6dc4) ✓. O18 hapi 3-4 pret hyrjen me Google të pronarit.
