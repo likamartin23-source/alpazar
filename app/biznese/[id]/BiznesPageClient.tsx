@@ -790,7 +790,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
         </div>
 
         {/* Floating buttons */}
-        <button type="button" aria-label="Kthehu mbrapa" onClick={() => window.history.back()} style={{ position: 'absolute', top: 12, left: 12, background: 'rgba(0,0,0,.45)', border: 'none', borderRadius: '50%', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+        <button type="button" aria-label="Kthehu mbrapa" onClick={() => window.history.back()} style={{ position: 'absolute', top: 12, left: 12, background: 'rgba(0,0,0,.45)', border: 'none', borderRadius: '50%', width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
           <i className="ti ti-arrow-left" aria-hidden="true" style={{ fontSize: 18, color: '#fff' }} />
         </button>
         <div style={{ position: 'absolute', top: 12, right: 12, display: 'flex', gap: 8 }}>

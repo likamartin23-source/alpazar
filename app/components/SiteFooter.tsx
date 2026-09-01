@@ -29,9 +29,9 @@ export function SiteFooter() {
     <footer style={{ background: '#111', padding: '22px 16px 28px', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
       <div style={{ maxWidth: 480, margin: '0 auto', textAlign: 'center' }}>
         <div style={{ color: '#F5C842', fontWeight: 700, fontSize: 13, letterSpacing: 1, marginBottom: 14 }}><img src="/icons/eagle.svg" alt="" aria-hidden="true" style={{ height: '0.9em', verticalAlign: '-0.12em', display: 'inline-block' }} /> ALPAZAR</div>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 18, marginBottom: 14 }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 4, marginBottom: 14 }}>
           {soc.map(s => (
-            <a key={s.label} href={s.href} aria-label={s.label} target="_blank" rel="noopener noreferrer" style={{ color: '#555', fontSize: 19, textDecoration: 'none' }}><i className={`ti ${s.icon}`} aria-hidden="true" /></a>
+            <a key={s.label} href={s.href} aria-label={s.label} target="_blank" rel="noopener noreferrer" style={{ color: '#555', fontSize: 19, textDecoration: 'none', width: 44, height: 44, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><i className={`ti ${s.icon}`} aria-hidden="true" /></a>
           ))}
         </div>
         <nav aria-label="Footer" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '6px 14px', marginBottom: 14 }}>

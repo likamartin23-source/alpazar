@@ -123,7 +123,8 @@ function InstallBanner() {
         <i className="ti ti-device-mobile-down float-icon-main" aria-hidden="true" />
         <span className="float-label">Instalo</span>
       </button>
-      <button type="button" aria-label="Mbyll" onClick={() => setDismissed(true)} style={{ background: 'none', border: 'none', color: 'rgba(34,197,94,.7)', cursor: 'pointer', fontSize: 7, padding: 0, lineHeight: 1, alignSelf: 'center' }}>✕</button>
+      {/* Zonë prekjeje ≥44px (Vendimi 8): më parë fontSize:7 → 6×7px, praktikisht e paprekshme. */}
+      <button type="button" aria-label="Mbyll" onClick={() => setDismissed(true)} style={{ background: 'none', border: 'none', color: 'rgba(34,197,94,.8)', cursor: 'pointer', fontSize: 13, lineHeight: 1, alignSelf: 'center', width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
     </div>
   )
 }

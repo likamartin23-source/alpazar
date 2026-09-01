@@ -50,18 +50,25 @@ export function FavoriteButton({ listingId, size = 32, style, onUnfavorite }: Pr
       onClick={toggle}
       aria-label={saved ? 'Hiq nga të preferuarat' : 'Ruaj në të preferuara'}
       style={{
-        width: size, height: size, borderRadius: '50%',
-        background: 'rgba(255,255,255,.92)', border: 'none',
+        // Zonë prekjeje ≥44px (Vendimi 8) e TEJDUKSHME; rrethi i bardhë i dukshëm mbetet `size`
+        // (p.sh. 30) brenda saj → prekja e madhe pa e fryrë pamjen te cepi i kartës.
+        width: Math.max(size, 44), height: Math.max(size, 44), borderRadius: '50%',
+        background: 'transparent', border: 'none', padding: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        cursor: 'pointer', boxShadow: '0 1px 6px rgba(0,0,0,.12)',
-        transition: 'transform .15s',
+        cursor: 'pointer', transition: 'transform .15s',
         ...style,
       }}
     >
-      {saved
-        ? <svg aria-hidden="true" width={size * 0.5} height={size * 0.5} viewBox="0 0 24 24" fill="#E63312"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-        : <svg aria-hidden="true" width={size * 0.5} height={size * 0.5} viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      }
+      <span style={{
+        width: size, height: size, borderRadius: '50%', background: 'rgba(255,255,255,.92)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        boxShadow: '0 1px 6px rgba(0,0,0,.12)',
+      }}>
+        {saved
+          ? <svg aria-hidden="true" width={size * 0.5} height={size * 0.5} viewBox="0 0 24 24" fill="#E63312"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          : <svg aria-hidden="true" width={size * 0.5} height={size * 0.5} viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        }
+      </span>
     </button>
   )
 }
