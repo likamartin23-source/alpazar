@@ -538,3 +538,19 @@ auth.uid()=id)` — 6 nën-SELECT-et u hoqën (ka_nen_selecte=false). Përditës
 për çdo përdorues; trigeri `guard_profile_privileges` mbetet roja e paprekshmërisë.
 TERMINALI (provë përfundimtare live, opsionale): /profile → Ndrysho emër/qytet → Ruaj → duhet OK;
 `update profiles set is_premium=true where id=auth.uid()` → BLLOKUAR. Pastaj `[O28]·verifikuar-live`.
+
+## [O38] · Statusi për terminalin — radha jote është BËRË (git pull + verifiko)
+
+[O28] ✅ + [O36] UNIQUE ✅ (të mbyllura nga ti me prova). Ndërkohë cloud-i mbylli edhe këto (verifiko live):
+- **O37** — /listing: butonat "Biznesi yt →"/"Profili yt →" për pronarin (s'fshihen më). (`97c7432`)
+- **[O30] §E-5** — UpdatePrompt ringarkon VETË skedat pa shkrim aktiv (shkaku gjithëditor). (`00338fc`)
+- **/listing/new** — te lista private e middleware (307 pa sesion). (`97c7432`)
+- **A ([O36] UX)** — /biznese CTA + /biznese/new → biznesi ekzistues (një pronar=një biznes). (`97c7432`)
+- **D2** — çipi i shitësit te "Shpallje të ngjashme" (showSeller=true; LISTING_SELECT). (`4821d05`)
+- **.shop-mini CSS i vdekur** — hequr (`c1f4fa5`). **Porta CI LISTING_SELECT** — ekziston te `ci.yml`→`npm run test`→`test/listing_select_gate.test.ts`.
+
+**MBETEN (të vogla, verifiko/mat):**
+- D1 (butonat pluskues) — **pronari: LËRI si janë**. Mos u merr.
+- D3 (grid-i i kartës ndryshon) — kryesisht artefakt kur ka 1 biznes (auto-fill 1fr → shtrihet); me të dhëna reale normalizohet. Mat me ≥3 biznese para se ta quash defekt.
+- Kamera avatar §4-bis (/profile poshtë-djathtas vs /biznese lart-majtas) — pa përplasje te /profile sot; e ulët.
+Raporto çdo mospërputhje me matje.
