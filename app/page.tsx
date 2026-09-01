@@ -43,7 +43,7 @@ async function fetchHome(): Promise<{ listings: Listing[]; categories: Category[
       // I njejti projeksion dhe i njejti kufi si `fetchShops()` te HomeClient —
       // ndryshe SSR-ja dhe klienti do te jepnin dy lartesi te ndryshme.
       sb.from('profiles')
-        .select('id,full_name,username,avatar_url,city,shop_name,shop_description,shop_category,shop_banner_url')
+        .select('id,full_name,username,avatar_url,city,shop_name,shop_description,shop_category,shop_banner_url,is_verified,is_premium,has_boost,premium_expires_at,boost_expires_at')
         .eq('is_premium', true)
         .limit(6),
       // Numrat publikë të hero-t merren KËTU (SSR), jo në klient. Më parë nisnin

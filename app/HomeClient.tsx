@@ -468,7 +468,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
   async function fetchShops() {
     const { data } = await supabase
       .from('profiles')
-      .select('id,full_name,username,avatar_url,city,shop_name,shop_description,shop_category,shop_banner_url')
+      .select('id,full_name,username,avatar_url,city,shop_name,shop_description,shop_category,shop_banner_url,is_verified,is_premium,has_boost,premium_expires_at,boost_expires_at')
       .eq('is_premium', true)
       .limit(6)
     if (data) setShops(data)
@@ -988,7 +988,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                         <div className="shop-av" style={{ background: 'transparent' }}>
                           <Avatar src={shop.avatar_url} name={shop.shop_name || shop.full_name} type="business" tier={tierNgaProfili(shop)} verified={shop.is_verified} size={40} />
                         </div>
-                        <span className="shop-prem" aria-label="Premium">⭐</span>
+                        {tierNgaProfili(shop) !== 'free' && <span className="shop-prem" aria-label="Premium">⭐</span>}
                       </div>
                       <div className="shop-info">
                         <div className="shop-nm">{shop.shop_name || shop.full_name}</div>
