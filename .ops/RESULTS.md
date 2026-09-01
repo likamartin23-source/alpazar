@@ -3355,3 +3355,63 @@ Privatësia respektohet — korrekt.
   → pa cookie, me ruajtje funksionale). Ekstensioni **kërkon leje për atë host** — pronari duhet ta japë.
 - Pamja e **panelit të biznesit (B i brendshëm)** dhe e **vizitorit-pronar të biznesit (B1)** kërkojnë
   sesionin e llogarisë **Administratori Alpazar** në dritaren e ekstensionit.
+
+---
+
+## [O25] · done · DY MIGRIMET U APLIKUAN — 01 shtator, ~20:55 CEST
+
+Kontroll PARA aplikimit (asnjë dopio, siç paralajmëroi cloud-i):
+```
+ka_listing_type = 0 · ka_fk_profiles = 0 · jetimë = 0 · shpallje = 7 · biznese = 1
+```
+
+### 1. `listing_type_sherbim` — APLIKUAR ✅
+```
+alter table listings add column if not exists listing_type text not null default 'produkt'
++ constraint listings_listing_type_chk check (listing_type in ('produkt','sherbim'))
+```
+Verifikim: `kolona_listing_type = 1` · **shpërndarja = `produkt=7`** (të 7-ta, asnjë NULL) · `check_constraint = 1`.
+
+### 2. `fk_businesses_owner_profiles` — APLIKUAR ✅
+```
+alter table businesses add constraint businesses_owner_id_profiles_fkey
+  foreign key (owner_id) references profiles(id) on delete cascade
+```
+Verifikim: `fk_profiles = businesses_owner_id_profiles_fkey`. Pastaj `notify pgrst, 'reload schema'`.
+
+### Provë live pas aplikimit — të tria kalimet nga 400 → 200
+| Kërkesa | Para | Pas |
+|---|---|---|
+| `businesses?select=id,name,owner:owner_id(is_premium,has_boost)` | **400** PGRST200 | **200** → `{"owner":{"has_boost":false,"is_premium":true}}` |
+| `listings?listing_type=eq.sherbim` | **400** (kolona s'ekzistonte) | **200** → `[]` (bosh, e pritshme) |
+| `listings?listing_type=eq.produkt` | — | **200** → 2 shpallje |
+
+**Embed-i `businesses⇄profiles` u hap → K2 (karta e njësuar e biznesit) tani është e mundur.**
+**Filtri «🛠 Shërbim» s'jep më 400** — do jetë bosh derisa të krijohet shpallja e parë shërbim.
+
+---
+
+## [O27] · «redakto Pazarin» — gabim drejtshkrimor te TITULLI SEO
+
+Pronari dërgoi pamje nga Google: rezultati i kërkimit shfaq
+**«ALPAZAR — Shit · Bli · Bëj Pazrin Tënd»** — duhet **«Pazarin»** (pazar → pazar**in**).
+
+**Baza është E SAKTË:** `app_config.site_slogan` = «Shit, bli dhe bëj **pazarin** tënd — falas» ✓
+→ **asnjë ndryshim DB-je nuk duhet.** Gabimi jeton VETËM në kod, dhe pikërisht te vendet që
+prodhojnë titullin SEO dhe manifestin — prandaj e sheh Google-i.
+
+| # | Skedari | Rreshti | Pesha |
+|---|---|---|---|
+| 1 | `app/layout.tsx` | 27 | **titulli SEO global** — ky del te Google |
+| 2 | `app/page.tsx` | 17 | **titulli SEO i kryefaqes** |
+| 3 | `public/manifest.json` | 2 | **emri i PWA-së** (ekrani kryesor i telefonit) |
+| 4 | `lib/i18n.tsx` | 68 | përkthimi |
+| 5 | `app/HomeClient.tsx` | 936 | fallback i `site_slogan` (baza e mbivendos, por mbetet i gabuar) |
+| 6 | `app/auth/login/page.tsx` | 979 | nën-titulli i hyrjes |
+| 7 | `app/rreth-nesh/page.tsx` | 54 | faqja «Rreth nesh» |
+| 8 | `supabase_schema.sql` | 243 | seed-i i `site_slogan` (do e rifuste gabimin te një bazë e re) |
+
+(Plus 5 përsëritje te dosja e mbeturinave `alpazar/`, e cila **nuk vendoset** — mos i prek.)
+
+**Zëvendësimi:** `Bëj Pazrin Tënd` → `Bëj Pazarin Tënd` (dhe `Bëj Pazrin` → `Bëj Pazarin` te manifesti).
+Punë kodi → cloud. Pas deploy-it duhet edhe **riindeksim** (`/api/indexnow`) që Google ta marrë titullin e ri.
