@@ -4050,3 +4050,58 @@ alter table public.businesses
 **Sot kalon pastër** (0 pronarë me >1 biznes). **Pret konfirmimin e rregullit:** «një pronar = një biznes».
 Nëse ndonjëherë do të lejohen disa biznese për pronar, ky kufizim nuk duhet vënë — prandaj s'e aplikoj
 pa fjalën tënde.
+
+---
+
+## [O30-T] · VERIFIKIM I URDHRAVE C · D · E — build `c8fea42`
+
+### ✅ E) `/profile` stats = **4 kuti** — VENDIMI B2 U ZBATUA
+```
+2 Shpallje · 0 Të shitura · 0 Ndjekës · qershor 2026 Anëtar
+```
+Të njëjtat etiketa si `/u` — simetria u arrit. Para: 3 kuti («Shpallje aktive · Shikime totale · Niveli»).
+**Shtesë e mirë e pavërejtur:** shiriti **«Vepro si: [👤 Unë] [🏢 Biznesi]»** tani është edhe te `/profile`,
+simetrik me panelin e biznesit (B3.1). Plus: 5 tabs (Profili · Shpalljet · Të ruajtura · Mesazhet · Biznes),
+çipat «🛡 Admin · 👑 Premium · 🏢 Biznes · ⚡ Tregtar · 📦 Shitës aktiv», «⚡ 135 pikë», «Paneli i Adminit».
+
+### ✅ C) Middleware — rrugët private mbrohen tani (pa flash)
+```
+PA cookie:  /messages 307→/auth/login · /profile 307→ · /favorites 307→ · /biznese/new 307→
+Publike:    / 200 · /biznese 200 · /search 200        (pa regres)
+```
+Para `4e10524` të katërta ktheheshin **200**. ✅
+
+**❌ POR: `/listing/new` kthen ende 200.** Dy lista rrugësh private që NUK përputhen:
+| Burimi | Përmban `/listing/new`? |
+|---|---|
+| `middleware.ts:89-92` | **JO** |
+| `layout.tsx:118` (lista e rrugëve private) | **PO** |
+**§4-bis sërish: dy burime të vërtete për të njëjtin koncept.** Njësoji.
+
+### ✅ D) Butonat e `/listing` — verifikuar nga CSS-ja e SHËRBYER
+```
+live: .safety-btn{ … min-height:44px; background:#f4f4f4; border:1px solid #b0b0b0; … }
+      .safety-btn:active  → 1 shfaqje
+      #e6e6e6 (kufiri i vjetër) → 0 shfaqje
+```
+Kontrasti i kufirit u ngrit nga ≈1,2:1 në një vlerë të dukshme; lartësia 36→44; `:active` u shtua.
+**Kufizim i matjes:** s'i pashë dot me sy sepse jam i kyçur si **pronar i shpalljes**, dhe
+`.safety-btn` shfaqet vetëm te `!isOwner`. Verifikimi vizual kërkon një llogari jo-pronare.
+
+### ❌ GJETJE E RE — kamera e avatarit, dy vendosje për të njëjtin kontroll
+| Sipërfaqja | Pozicioni i 📷 |
+|---|---|
+| Paneli i biznesit `/biznese/{id}` | **lart-majtas** (rregullimi **H2**, `f3b1a06`) |
+| `/profile` | **poshtë-djathtas** |
+Poshtë-djathtas është **pikërisht cepi i vulës ✓/🏢** te `AlpazarAvatar`. Sot s'ka përplasje te `/profile`
+sepse ai avatar shfaq ★ lart-djathtas, jo 🏢 — **por rreziku është i njëjti që H2 e rregulloi**, dhe
+rregullimi u zbatua vetëm te njëra sipërfaqe. §4-bis.
+
+### Gjendja e urdhrave
+| Urdhri | Status |
+|---|---|
+| A · [O28] përditësimi i profilit | ⛔ pret pronarin (SQL Editor) — klasifikuesi bllokon `alter policy` |
+| B · K2 karta e biznesit | ✅ verifikuar te kryefaqja + `/biznese` ([O34]) |
+| C · middleware | ✅ 4/5 · ❌ `/listing/new` |
+| D · butonat | ✅ nga CSS-ja e shërbyer · ⚠ pa sy (duhet llogari jo-pronare) |
+| E · `/profile` 4 kuti | ✅ |
