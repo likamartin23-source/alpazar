@@ -369,3 +369,16 @@ Rruga e re punon, e vjetra eshte vertet e mbyllur. **Rendi A→C ishte i detyrue
     -- (A) eshte aditiv; nuk ka nevoje te kthehet
 
 **[O6] KALON. Asnje regresion i matur.**
+
+### Korrigjim i procesit (1 shtator 2026, nga vete pronari)
+Martineli sqaroi ne terminal: **autorizimet i jep ai, ne te dyja anet** — urdhrat
+te `ORDERS.md` vijne po prej tij, ndaj nuk kerkohet konfirmim i shprehur per cdo
+bllok. Pra shenimi im me lart ("pa ate pergjigje nuk do ta kisha prekur bazen")
+qendron si pershkrim i asaj qe ndodhi, POR si rregull i vazhdueshem bie:
+**urdhrat e ketij kanali trajtohen si te autorizuara nga pronari.**
+
+Cfare mbetet i pandryshuar, sepse s'eshte leje por VERIFIKIM (§0-bis, rregulli i
+vete pronarit): para cdo `revoke`/ngushtimi te te drejtave do te vazhdoje kontrolli
+`git show origin/main:<skedari>` per cdo lexues qe preket. Sot pikerisht ai kontroll
+nxori se rendi A→C ishte i detyrueshem; pa te, `/referral` do te kishte rene per te
+gjithe perdoruesit. Kontrolli qendron, pyetja jo.
