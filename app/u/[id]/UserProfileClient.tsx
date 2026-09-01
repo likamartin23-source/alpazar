@@ -8,7 +8,7 @@ import Avatar, { tierNgaProfili } from '../../components/Avatar'
 import { useIsOnline } from '../../components/OnlinePresence'
 import ListingCard from '../../components/ListingCard'
 import { LISTING_SELECT } from '../../../lib/listingSelect'
-import { TrustBadge } from '../../components/TrustBadge'
+import { IdentityBadges } from '../../components/IdentityBadges'
 
 function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime()
@@ -270,29 +270,13 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
             </div>
           </div>
 
-          {/* Reputacioni (GAP 3+4 — mbyllja e lakut): TrustBadge i plotë (unazë "X/100") +
-              "⚡ N pikë" reale. Pikët fitohen e njoftohen por s'shfaqeshin te profili — tani po.
-              Respekton opt-out-in `trust_score_visible` (Ligji 124/2024). */}
-          {((profile.trust_score_visible !== false) || (profile.gamification_points || 0) > 0) && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
-              {/* Besueshmëria (unazë) respekton opt-out-in `trust_score_visible` (Ligji 124/2024).
-                  Pikët e gamifikimit JANË sinjal publik — shfaqen gjithnjë kur > 0, njësoj si te
-                  /biznese dhe /listing. Më parë e gjithë shiriti fshihej nga opt-out-i i besueshmërisë,
-                  ndaj 135 pikët e llogarisë nuk dukeshin te /u ndërsa dukeshin te /biznese (çharmonizim). */}
-              {profile.trust_score_visible !== false && (
-                <TrustBadge
-                  createdAt={profile.created_at}
-                  listingsActive={listings.length}
-                  gamificationPoints={profile.gamification_points || 0}
-                />
-              )}
-              {(profile.gamification_points || 0) > 0 && (
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 700, color: '#7A4A00', background: '#FFF8E1', border: '1px solid #F5C84255', borderRadius: 9, padding: '4px 10px' }}>
-                  <span aria-hidden="true">⚡</span> {profile.gamification_points} pikë
-                </span>
-              )}
-            </div>
-          )}
+          {/* Shenjat e identitetit — komponenti i VETËM (IdentityBadges), i njëjti fjalor kudo
+              ([O39]): Besueshmëria (unazë, opt-out §124/2024) · niveli · ⚡ pikë · 📦 Shitës aktiv ·
+              👑/⭐. Më parë ky bllok ishte i shkruar me dorë vetëm me TrustBadge+pikë (mungonin
+              niveli, Shitës aktiv, tier-i) — çharmonizim me /profile e /listing. */}
+          <div style={{ marginBottom: 12 }}>
+            <IdentityBadges subject={profile} activeListings={listings.length} isBusiness={false} density="full" />
+          </div>
 
           {/* Action buttons */}
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
