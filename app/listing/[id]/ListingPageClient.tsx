@@ -4,7 +4,7 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import { supabase } from '../../../lib/supabase'
 import { nf, dateShort, dayMonth, monthYear, clockTime, priceLabel } from '../../../lib/format'
-import { isNewMember } from '../../components/Badges'
+import { identitySignals } from '../../components/identitySignals'
 import OfferBox from '../../components/OfferBox'
 import { SocialProofBar, SellerPremiumUpsell } from '../../components/PremiumUpsell'
 import { ReportSheet } from '../../components/ReportSheet'
@@ -950,25 +950,28 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                   </div>
                 </div>
 
-                {/* Badges */}
+                {/* Badges — [O46] nga RREGULLI I VETËM (identitySignals) me lëkurën .schip; grupi i plotë
+                    del si te /profile (fiton ⚡ Nivel + ⚡ pikë që mungonin). "Bisedë private" është kontekst
+                    (jo identitet) → mbetet lokale. isSelf=isOwner gate-on Admin (§4.6-bis). ✓ e Avatar-it
+                    (trust≥60) mbetet te Avatar; niveli i reputacionit rri te TrustBadge poshtë. */}
                 <div className="seller-chips">
-                  {seller.is_admin   && <span className="schip sch-admin"><span aria-hidden="true">🛡</span> Admin</span>}
-                  {sellerTier !== 'free' && <span className="schip sch-prem"><span aria-hidden="true">👑</span> {sellerTier === 'vip' ? 'VIP Ekstra Boost' : 'Premium'}</span>}
-                  {isBusinessListing && <span className="schip sch-shop"><span aria-hidden="true">🏢</span> Biznes</span>}
-                  {sellerCount > 0 && <span className="schip sch-seller"><span aria-hidden="true">📦</span> Shitës aktiv</span>}
-                  {isNewMember(seller.created_at) && <span className="schip sch-new"><span aria-hidden="true">🆕</span> Anëtar i ri</span>}
+                  {(() => {
+                    const KLASA: Record<string, string> = { admin: 'sch-admin', verified: 'sch-seller', vip: 'sch-prem', premium: 'sch-prem', biznes: 'sch-shop', active: 'sch-seller', new: 'sch-new', points: 'sch-prem' }
+                    return identitySignals(seller, { isSelf: isOwner, isBusiness: isBusinessListing, activeListings: sellerCount, density: 'full' }).map(s =>
+                      s.tone === 'level'
+                        ? <span key={s.key} className="schip" style={{ background: s.levelBg, color: s.levelColor }}><span aria-hidden="true">{s.icon}</span> {s.label}</span>
+                        : s.tone === 'points'
+                          ? <span key={s.key} className="schip" style={{ background: '#FFF8E1', color: '#7A4A00' }}><span aria-hidden="true">{s.icon}</span> {s.label}</span>
+                          : <span key={s.key} className={`schip ${KLASA[s.tone]}`}><span aria-hidden="true">{s.icon}</span> {s.label}</span>
+                    )
+                  })()}
                   {!isOwner && <span className="schip sch-priv"><span aria-hidden="true">🔒</span> Bisedë private</span>}
-                  {/* H1: "I verifikuar" hiqet — Avatar-i tashmë e shfaq vulën ✓ (verified) me të njëjtin
-                      prag. "Përgjigjet shpejt" hiqet — ishte proxy i rremë nga trust_score, jo kohë reale.
-                      Niveli i reputacionit shfaqet vetëm nga TrustBadge (një burim, poshtë). */}
                 </div>
 
-                {/* Stats */}
+                {/* Stats — vetëm statistika (jo vula identiteti; pikët tani vula te rreshti sipër). */}
                 <div className="seller-stats">
                   <span className="stat-chip"><i className="ti ti-package" aria-hidden="true" />{sellerCount} shpallje aktive</span>
                   {seller.username && <span className="stat-chip"><i className="ti ti-at" aria-hidden="true" />{seller.username}</span>}
-                  {seller.gamification_points > 0 &&
-                    <span className="stat-chip"><i className="ti ti-bolt" aria-hidden="true" />{seller.gamification_points} pikë</span>}
                 </div>
 
                 {/* Trust Score — respekto opt-out (Ligj 124/2024 n.19) */}
