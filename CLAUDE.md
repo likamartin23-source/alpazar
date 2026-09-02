@@ -112,6 +112,14 @@ Puna e vlefshme ketu eshte **auditim dhe konsolidim**, jo ndertim.
    kerkon njeri — neni 20, ligji 124/2024. Sanksioni deri 2 mld leke ose 4%.
 2. **Asnje vendim pa arsyetim faktik.** Ai mban vendimin ne rast ankimi.
 3. **Fshirja e llogarise e bute, 30 dite** — neni 20/3, ligji 10128.
+   **E ZBATUAR 2 shtator 2026:** `request_account_deletion()` shenon afatin 30-ditor dhe
+   fsheh shpalljet (snapshot per rikthim); `cancel_account_deletion()` e anulon brenda 30
+   diteve (rikthen shpalljet); `my_deletion_status()` + `RikthimiFshirjes` (banderole globale)
+   e bejne rikthimin aq te lehte sa kerkesen; `purge_deleted_accounts_run()` + cron
+   `alpazar_purge_deleted` (03:40) e fshin perfundimisht pas 30 ditesh (auth.users → profiles
+   cascade). UI-ja (`/profile`) therret RPC-ne e bute, jo me fshirjen e forte. Edge function
+   `delete-account` u ridrejtua te fshirja e bute (s'ka me anashkalim te forte). Migrimi:
+   `20260902_fshirja_e_bute_30_ditore.sql`.
 4. **Ankesen nuk e shqyrton kush mori vendimin e pare.**
 5. **Rastet kritike:** miratim i dyte + njoftim autoriteti — neni 20/2,
    ligji 10128; mosnjoftimi 200 000 leke (neni 22/1/ç).

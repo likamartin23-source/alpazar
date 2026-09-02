@@ -1,6 +1,8 @@
-// Supabase Edge Function: `delete-account` (GDPR Art.17 / Ligji 124/2024)
-// Fshin llogarinë me service_role (i injektuar automatikisht) — zgjidh 500-in që
-// jepte /api/delete-account në Vercel (getSupabaseAdmin pa SERVICE_ROLE_KEY).
+// Supabase Edge Function: `delete-account` (GDPR Art.17 / Ligji 124/2024, neni 20/3)
+// §2.3 — FSHIRJE E BUTË 30-DITORE. Më parë kjo bënte fshirje TË FORTË menjëherë me
+// service_role; kjo anashkalonte të drejtën 30-ditore të rikthimit dhe mbetej e thirrshme
+// me token-in e çdo përdoruesi. Tani ridrejton te RPC-ja `request_account_deletion`
+// (fshirje e butë, e rikthyeshme; purge nga cron-i pas 30 ditësh). Asnjë fshirje e fortë këtu.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -15,8 +17,10 @@ const json = (o: unknown, s = 200) =>
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
   try {
+    // Token nga trupi ose nga koka Authorization (të dyja pranohen).
     const body = await req.json().catch(() => ({}))
-    const token = String(body.token ?? '')
+    const hdr = req.headers.get('Authorization') ?? ''
+    const token = String(body.token ?? (hdr.startsWith('Bearer ') ? hdr.slice(7) : ''))
     if (!token) return json({ error: 'Pa autorizim' }, 401)
 
     const url = Deno.env.get('SUPABASE_URL')!
@@ -26,22 +30,11 @@ Deno.serve(async (req: Request) => {
     const { data: { user }, error: authErr } = await userClient.auth.getUser()
     if (authErr || !user) return json({ error: 'Token i pavlefshëm' }, 401)
 
-    const admin = createClient(url, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
-    const uid = user.id
+    // FSHIRJE E BUTË: shënon afatin 30-ditor; cron-i e fshin përfundimisht më vonë.
+    const { data: purgeAt, error } = await userClient.rpc('request_account_deletion')
+    if (error) return json({ error: error.message }, 500)
 
-    await admin.from('listings').update({ is_active: false }).eq('user_id', uid)
-    await admin.from('favorites').delete().eq('user_id', uid)
-    await admin.from('saved_searches').delete().eq('user_id', uid)
-    await admin.from('saved_listings').delete().eq('user_id', uid)
-    await admin.from('price_alerts').delete().eq('user_id', uid)
-    await admin.from('notifications').delete().eq('user_id', uid)
-    await admin.from('messages').delete().eq('sender_id', uid)
-    await admin.from('conversations').delete().or(`user1_id.eq.${uid},user2_id.eq.${uid}`)
-
-    const { error: delErr } = await admin.auth.admin.deleteUser(uid)
-    if (delErr) return json({ error: delErr.message }, 500)
-
-    return json({ ok: true })
+    return json({ ok: true, soft: true, purge_at: purgeAt })
   } catch (e) {
     return json({ error: String((e as Error).message ?? e) }, 500)
   }

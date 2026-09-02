@@ -8,6 +8,7 @@ import { SITE_URL } from '../lib/siteConfig'
 import { LanguageProvider } from '../lib/i18n'
 import { SiteFooter } from './components/SiteFooter'
 import { OnlinePresenceProvider } from './components/OnlinePresence'
+import RikthimiFshirjes from './components/RikthimiFshirjes'
 // AgeGate mbështjell TË GJITHA `children`. I ngarkuar në mënyrë statike (jo `dynamic`) që përmbajtja
 // të mos presë një chunk të veçantë — përndryshe në Slow-4G LCP-ja vonohet (overlay-i i moshës del si
 // elementi LCP ~7s). Është 'use client' + SSR-safe (overlay vetëm pas mount), ndaj importi statik s'prish gjë.
@@ -256,6 +257,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <GlobalErrorBoundaryDyn>
           <OnlinePresenceProvider>
           <MaintenanceBanner />
+          <RikthimiFshirjes />
           <AnnouncementBar />
           <NotificationToast />
           <AgeGate><main id="main-content">{children}</main></AgeGate>

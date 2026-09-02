@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState, useRef } from 'react'
 import Avatar, { tierNgaProfili, avatarVerified } from '../components/Avatar'
-import { supabase, SUPABASE_ANON_KEY } from '../../lib/supabase'
+import { supabase } from '../../lib/supabase'
 import { SITE_URL } from '../../lib/siteConfig'
 import { isNewMember } from '../components/Badges'
 import { IdentityBadges } from '../components/IdentityBadges'
@@ -13,7 +13,6 @@ import FshirjeShkallezuar from '../components/FshirjeShkallezuar'
 import { monthYear } from '../../lib/format'
 import { SkeletonProfile, SkeletonList } from '../components/Skeleton'
 
-const FN_URL = 'https://sopafwfkrxpcdaljddoh.supabase.co/functions/v1'
 
 function BizUpsellBanner({ userId, isPremium }: { userId?: string; isPremium?: boolean }) {
   const [hasBiz, setHasBiz] = useState<boolean | null>(null)
@@ -332,26 +331,17 @@ export default function ProfilePage() {
   }
 
   // Fshirja e llogarisë përmes komponentit të përbashkët FshirjeShkallezuar (tip='fjalëkalimi').
-  // Kthen mesazh gabimi ose null në sukses. DEFEKTI I RREGULLUAR (2 shtator 2026):
-  // Edge Function-i e pret token-in te TRUPI (body.token); klienti e thërriste PA trup →
-  // gjithmonë "Pa autorizim". Tani token-i dërgohet te trupi (dhe apikey te koka).
+  // §2.3 — FSHIRJE E BUTË 30-DITORE (neni 20/3, ligji 10128): NUK fshihet menjëherë; shënohet
+  // me afat 30-ditor gjatë të cilit mund të anulohet. Pas 30 ditësh, cron-i (purge_deleted_accounts_run)
+  // e fshin përfundimisht. Fjalëkalimi verifikohet para kërkesës (ri-auth). Kthen gabim ose null.
   async function deleteAccount(password: string): Promise<string | null> {
     try {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) return 'Sesioni ka skaduar.'
       const { error: authErr } = await supabase.auth.signInWithPassword({ email: session.user.email!, password })
       if (authErr) return 'Fjalëkalimi është i gabuar.'
-      const res = await fetch(`${FN_URL}/delete-account`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${session.access_token}`,
-          apikey: SUPABASE_ANON_KEY,
-        },
-        body: JSON.stringify({ token: session.access_token }),
-      })
-      const data = await res.json().catch(() => ({} as { error?: string }))
-      if (!res.ok || data.error) return data.error ?? 'Gabim gjatë fshirjes.'
+      const { error } = await supabase.rpc('request_account_deletion')
+      if (error) return `Gabim gjatë fshirjes: ${error.message}`
       await supabase.auth.signOut()
       window.location.href = '/?deleted=1'
       return null
@@ -1011,9 +1001,9 @@ export default function ProfilePage() {
                     paralajmërim → konfirmim me FJALËKALIM → duke fshirë. */}
                 <FshirjeShkallezuar
                   butoniHapja="Fshi Llogarinë"
-                  titull="Fshirje e llogarisë — e pakthyeshme"
+                  titull="Fshirje e llogarisë — me afat 30-ditor"
                   tip="fjalëkalimi"
-                  paralajmerim={<>Do të fshihet <b>përgjithmonë</b> llogaria jote dhe të dhënat e saj; shpalljet e tua çaktivizohen. <b>Ky veprim nuk kthehet.</b> Konfirmohet me fjalëkalimin tënd.</>}
+                  paralajmerim={<>Llogaria jote hyn në <b>fshirje me afat 30-ditor</b>: shpalljet fshihen menjëherë dhe pas <b>30 ditësh</b> llogaria fshihet <b>përgjithmonë</b>. Brenda 30 ditësh mund ta <b>anulosh</b> thjesht duke u kyçur sërish (e drejta jote, neni 20/3). Konfirmohet me fjalëkalimin tënd.</>}
                   onFshi={deleteAccount}
                 />
               </div>
