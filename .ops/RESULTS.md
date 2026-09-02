@@ -5210,3 +5210,64 @@ merr ngjyrat e njërit prej tyre pa matje, shkelja udhëton bashkë me unifikimi
 Për gradientet marr **ngjyrën e parë** të stopit; kur të dyja skajet dështojnë (si `.sch-shop`)
 përfundimi është i sigurt, kur vetëm njëra dështon (si `.badge-new`) e shënoj si kufitare.
 Nuk mata: `/profile`, `/u`, `/biznese`, dhe asnjë faqe në 390px.
+
+---
+
+# [O53] · TELEFONI × PROFILET — boshllëku i deklaruar te [O52], i mbyllur
+
+Të tria sipërfaqet e profilit, të para në **390px** (iframe nga i njëjti origjin), i kyçur si
+**Martinel Likaj** (pra: `/u` dhe `/biznese` = pamje vizitori, `/profile` = pamje pronari).
+
+## 1. Profilet në telefon janë të shëndetshme — problemi mobil është te FEED-i
+
+Të tria rrinë mirë: vulat mbështillen në dy rreshta pa dalë jashtë, butonat renditen
+(`Dërgo Mesazh` + `Ndiq`, pastaj `Shiko Biznesin`), statistikat hyjnë në një rresht,
+asnjë tejmbushje horizontale.
+
+**Pra defektet mobile të [O51] — dy overlay-e mbi kartë dhe prekja 22px — janë të feed-it,
+jo të profileve.** Kjo e ngushton punën: `/`, `/biznese` (lista) dhe çdo rrjet kartash.
+
+## 2. 🔴 Të njëjtat katër statistika, dy trajtime — i matur
+
+```
+/profile   .stats-row  →  background: rgb(26,26,26)   (bandë e zezë, numra të verdhë)
+/u         të njëjtat  →  mbi të bardhë
+/biznese   të njëjtat  →  mbi të bardhë
+```
+`Shpallje · Të shitura · Ndjekës · Anëtar` — i njëjti grup, i njëjti kuptim, **dy pamje krejt
+të ndryshme**. Kjo s'është çështje shijeje: kur pronari kalon nga paneli te publiku i vet,
+i njëjti informacion ndërron sfond nga i zi në të bardhë. Shto këtë te hapi 6 i [O46]
+(unifikimi i numrave/etiketave) — nuk mjafton teksti, duhet edhe trajtimi.
+
+## 3. Kontrasti te `/profile` në 390px — 4 shkelje, 0 të pamatshme
+
+| Elementi | Raporti | Pragu | Shënim |
+|---|---|---|---|
+| `ML` (inicialet e avatarit) | **1.59** | 3.0 | 30px/800 → prag i madh, dhe prapë dështon |
+| `Gjuha` | **2.33** | 4.5 | fundfaqja |
+| `✕` | 3.29 | 4.5 | mbyllja e njoftimit |
+| `📷` | 4.33 | 4.5 | butoni «Kopertina», kufitar |
+
+`/profile` është **më i pastër se `/listing`** (4 kundrejt 9). Shkeljet e rënda mbeten te
+`/listing`: `⭐ Dërgo vlerësimin` 1.61 dhe `.sch-shop` 2.15.
+
+## 4. 🔴 I njëjti komponent, dy kontraste në dy faqe
+
+```
+"Gjuha" (fundfaqja)   /listing → 1.21      /profile → 2.33
+```
+I njëjti element, dy raporte — sepse **sfondi i fundfaqes ndryshon nga faqja në faqe**.
+Kjo është e njëjta sëmundje si vulat, e zbatuar te fundfaqja: komponenti nuk e mban dot
+kontrastin e vet sepse konteksti nuk është i njëjtë. Ndreqja: jepi fundfaqes sfond të
+deklaruar, jo të trashëguar.
+
+## 5. Konfirmim mobil i [O49]
+I njëjti person, i njëjti çast, në 390px:
+- `/profile` → `🌱 Fillestar` · `🆕 Anëtar i ri` · **pa TrustBadge**
+- `/u` → `🆕 I ri` · `Besueshmëria 0/100` · **pa Fillestar**
+
+Mospërputhja nuk është artefakt desktopi. Është kudo.
+
+## Kufi
+Nuk mata gjeste reale prekjeje (iframe-i jep gjerësinë, jo prekjen), as CLS, as
+`/listing` në 390px.
