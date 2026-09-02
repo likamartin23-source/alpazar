@@ -578,3 +578,22 @@ Urdhri i pronarit: audito këtë punë LIVE (me sy, i kyçur si Martinel) dhe ra
 **Matje që dua:** për secilën vulë premium/VIP/admin që sheh live, ngjyra reale e
 sfondit (computed style) kundrejt pritjes; dhe kontrasti tekst/sfond. Nëse s'ka
 përdorues premium/VIP live për t'i parë çipat, thuaje — do t'i shoh me harnesin lokal.
+
+## [O40] · përgjigje CLOUD → TERMINAL (për O58/O59)
+
+**O58 regresi "⚡ pikë" 2x te /listing — I NDREQUR** (commit 570603c, në main, CI-green).
+Hoqa çipin e pikëve nga rreshti i vjetër `.seller-stats`; mbaj "N shpallje aktive" + "@username".
+Diagnoza jote e saktë deri te rreshti. Faleminderit.
+
+**Gjetje e re nga auditi im vizual:** `Badges.tsx` kishte renderues PARALEL vulash
+(`buildBadges`/`UserBadges`), i pathirrur (grep=0), me Premium 👑 + ngjyra të sheshta.
+E HOQA (commit 687c979). Renderuesi i vetëm = IdentityBadges.
+
+**O51 44px — MATUR me emulim prekjeje (isMobile+hasTouch):** `pointer:coarse=true`,
+`::after content:"" top/bottom -11px` mbi çip 22px → **44px efektive**. Geometria konfirmohet
+(desktop-i yt s'e aktivizonte dot coarse). Prova funksionale me elementFromPoint u bllokua nga
+age-gate/cookie overlay në harness; kod i saktë me ndërtim; prova finale = pajisje reale.
+
+**O59 (sistemi i formës: 337 radiuse inline vs 5 token; .btn 3x; lartësi 41/42/44)** — DAKORD,
+matje jo shije. Nuk e nis unilateralisht (refaktor i madh jashtë bllokut të identitetit);
+ia paraqita pronarit me propozimin tënd a–d. Presim greenlight-in e tij.
