@@ -680,7 +680,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         .status-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:4px 11px;border-radius:999px;}
         .sc-active{background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7;}
         .sc-sold{background:#F3F3F3;color:#555;border:1px solid #ccc;}
-        h1{font-size:18px;font-weight:800;color:#1a1a1a;margin-bottom:6px;line-height:1.3;letter-spacing:-.2px;}
+        h1{font-size:var(--fs-2xl);font-weight:800;color:#1a1a1a;margin-bottom:6px;line-height:1.3;letter-spacing:-.2px;}
         .price{font-size:25px;font-weight:800;color:#C42B0F;margin-bottom:12px;letter-spacing:-.5px;}
         .meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
         .meta-item{display:flex;align-items:center;gap:4px;font-size:11px;color:#555;background:#f5f3eb;padding:5px 10px;border-radius:999px;font-weight:600;}

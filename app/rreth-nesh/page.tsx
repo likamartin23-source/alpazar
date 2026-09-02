@@ -12,7 +12,7 @@ export default function RrethNesh() {
     .hero{background:#111;padding:36px 20px;text-align:center;position:relative;overflow:hidden;}
     .hero::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#E63312,#F5C842);}
     .hero-logo{font-size:56px;display:block;margin-bottom:14px;}
-    .hero h1{color:#F5C842;font-size:24px;font-weight:700;letter-spacing:2px;margin-bottom:8px;}
+    .hero h1{color:#F5C842;font-size:var(--fs-3xl);font-weight:700;letter-spacing:2px;margin-bottom:8px;}
     .hero p{color:#9A9A9A;font-size:13px;line-height:1.7;}
     .body{padding:20px 16px 40px;}
     .section{background:#fff;border-radius:12px;padding:20px;border:0.5px solid #eee;margin-bottom:14px;}

@@ -11,7 +11,7 @@ export default function Siguria() {
     .topbar-title{font-size:15px;font-weight:700;color:#111;}
     .hero{background:#C42B0F;padding:28px 20px;text-align:center;}
     .hero-icon{font-size:48px;display:block;margin-bottom:12px;}
-    .hero h1{color:#fff;font-size:20px;font-weight:700;margin-bottom:6px;}
+    .hero h1{color:#fff;font-size:var(--fs-3xl);font-weight:700;margin-bottom:6px;}
     .hero p{color:#FFFFFF;font-size:13px;line-height:1.6;}
     .body{padding:16px 14px 40px;}
     .alert{background:#FFF0EE;border:1px solid #F09595;border-radius:10px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;}

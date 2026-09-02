@@ -52,7 +52,7 @@ export default function Kontakt() {
     .topbar-title{font-size:15px;font-weight:700;color:#111;}
     .hero{background:#111;padding:32px 20px;text-align:center;}
     .hero-icon{font-size:52px;display:block;margin-bottom:12px;}
-    .hero h1{color:#F5C842;font-size:22px;font-weight:700;margin-bottom:8px;}
+    .hero h1{color:#F5C842;font-size:var(--fs-3xl);font-weight:700;margin-bottom:8px;}
     .hero p{color:#9A9A9A;font-size:13px;line-height:1.6;}
     .body{padding:20px 16px 40px;}
     .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}

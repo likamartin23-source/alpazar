@@ -11,7 +11,7 @@ export default function Kushtet() {
     .topbar-title{font-size:15px;font-weight:700;color:#111;}
     .content{padding:24px 20px 40px;}
     .ver{font-size:11px;color:#6E6E6E;margin-bottom:20px;background:#FFFBEA;padding:8px 12px;border-radius:8px;display:inline-block;}
-    h1{font-size:22px;font-weight:700;color:#111;margin-bottom:8px;}
+    h1{font-size:var(--fs-3xl);font-weight:700;color:#111;margin-bottom:8px;}
     h2{font-size:14px;font-weight:700;color:#111;margin:22px 0 8px;padding-bottom:5px;border-bottom:2px solid #F5C842;}
     p{font-size:13px;color:#444;line-height:1.85;margin-bottom:10px;}
     ul{font-size:13px;color:#444;line-height:1.85;padding-left:18px;margin-bottom:10px;}

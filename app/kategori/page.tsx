@@ -78,7 +78,7 @@ const SEO_CSS = `
 .seo-crumb{font-size:12px;color:#555;margin-bottom:14px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
 .seo-crumb a{color:#C42B0F;text-decoration:none;}
 .seo-crumb span[aria-current]{color:#555;}
-.seo-h1{font-size:24px;font-weight:800;color:#1a1a1a;margin:0 0 6px;}
+.seo-h1{font-size:var(--fs-3xl);font-weight:800;color:#1a1a1a;margin:0 0 6px;}
 .seo-sub{font-size:14px;color:#666;margin:0 0 22px;line-height:1.5;}
 .seo-h2{font-size:18px;font-weight:700;color:#1a1a1a;margin:34px 0 14px;}
 .seo-cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;}

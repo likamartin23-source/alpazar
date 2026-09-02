@@ -205,7 +205,7 @@ export default function SearchPage() {
         .body{padding:12px;}
         .initial{text-align:center;padding:50px 20px;}
         .initial i{font-size:50px;color:#e0b030;display:block;margin-bottom:14px;}
-        .initial h1{font-size:15px;font-weight:700;color:#1a1a1a;margin-bottom:6px;}
+        .initial h1{font-size:var(--fs-xl);font-weight:700;color:#1a1a1a;margin-bottom:6px;}
         .initial p{font-size:12px;color:#555;}
       ` }} />
 
