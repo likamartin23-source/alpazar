@@ -40,7 +40,7 @@ function trustLevel(score: number): { label: string; color: string; bg: string; 
   if (score >= 80) return { label: 'Besim elitar',     color: '#7C3AED', bg: '#F3EEFF', icon: '🤝' }
   if (score >= 55) return { label: 'Shumë i besuar',   color: '#0E7A35', bg: '#E8F5E9', icon: '🌟' }
   if (score >= 30) return { label: 'I Besueshëm',      color: '#185FA5', bg: '#EEF4FF', icon: '🔵' }
-  return               { label: 'Pa histori',          color: '#B45309', bg: '#FFF4E5', icon: '⏳' }
+  return               { label: 'Besim në rritje',     color: '#B45309', bg: '#FFF4E5', icon: '📈' }
 }
 
 export function TrustBadge({ score: scoreProp, createdAt, listingsActive = 0, gamificationPoints = 0, compact = false }: TrustBadgeProps) {
