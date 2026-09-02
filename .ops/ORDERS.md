@@ -554,3 +554,27 @@ TERMINALI (provë përfundimtare live, opsionale): /profile → Ndrysho emër/qy
 - D3 (grid-i i kartës ndryshon) — kryesisht artefakt kur ka 1 biznes (auto-fill 1fr → shtrihet); me të dhëna reale normalizohet. Mat me ≥3 biznese para se ta quash defekt.
 - Kamera avatar §4-bis (/profile poshtë-djathtas vs /biznese lart-majtas) — pa përplasje te /profile sot; e ulët.
 Raporto çdo mospërputhje me matje.
+
+## [O39] · pending · AUDITO LIVE punën e cloud-it (bllloku i identitetit, 2 shtator)
+
+Cloud-i shtyri 6 commit-e në `main` (build live tani: `git rev-parse origin/main`).
+Urdhri i pronarit: audito këtë punë LIVE (me sy, i kyçur si Martinel) dhe raporto
+çdo mospërputhje me MATJE te `.ops/RESULTS.md`.
+
+**Commit-et për t'u audituar (të gjitha CI-green lokalisht: tsc+roja+build=0):**
+- `56f8a5d` — A11y telefon: prekja 44px `.card-seller-ov[role=link]` (O51) + `.listings-grid` padding-bottom 104px te ≤430px (D1). *Prit: karta e fundit s'mbulohet nga install-float/Albi në telefon; çipi shitës prekshëm 44px.*
+- `e3a5bac` — Kontrast a11y [O52]: butoni "Dërgo vlerësimin" (aktiv) dhe `.badge-new` nga `#E63312` (4.33) → `#C42305` (5.85). *Prit: kontrast ≥4.5:1 mbi të dyja; "Gjuha" dhe butoni i çaktivizuar u LANË me arsye (skini i hequr / WCAG exempt).*
+- `af8343c` — Rikthimi i bukurisë: IdentityBadges Premium ⭐ gradient ari `#F8D24E→#F5C842`, VIP 👑 ari→qelibar `#F5C842→#E8892E`, Admin 🛡 vjollcë `#7C3AED`. Fjalori i vetëm ruhet (roja=0). *Prit: çipat e artë duken si skini i vjetër, jo pastel; kontrast tekst OK.*
+- `3f9454d` — ✓ Verifikuar një përkufizim i vetëm `avatarVerified()` (person=is_verified||trust≥60, biznes=is_verified) në 8 unaza + 4 çipa; /profile-it iu hoq mbi-pohimi email/telefon. *Prit: ✓ (unazë) = ✓ (çip) në të njëjtin avatar; asnjë ndryshim pamjeje sot (0 verifikuar/0 trust≥60).*
+- `1b936f7` — Dok: `docs/INVENTARI-I-IDENTITETIT-2026-09-02.md` (matricë + defaultet e matura).
+
+**Ku të shohësh me sy (i kyçur):**
+1. `/profile` — çipat e identitetit: a duket Premium/VIP me gradient ari (kur pronari është premium/VIP)? A ka ✓ nga email-i (S'DUHET më)?
+2. `/u/<id>` — të njëjtat çipa; ✓ vetëm nëse is_verified ose trust≥60.
+3. `/biznese/<id>` (panel DHE publik ?public=1) — çipat, ✓ = biz.is_verified, rating ★.
+4. `/listing/<id>` — çipi kompakt i shitësit; 🔒 vetëm kur s'je pronari.
+5. Telefon (DevTools 390px): karta e fundit e `/` s'mbulohet; çipi shitës prekshëm.
+
+**Matje që dua:** për secilën vulë premium/VIP/admin që sheh live, ngjyra reale e
+sfondit (computed style) kundrejt pritjes; dhe kontrasti tekst/sfond. Nëse s'ka
+përdorues premium/VIP live për t'i parë çipat, thuaje — do t'i shoh me harnesin lokal.
