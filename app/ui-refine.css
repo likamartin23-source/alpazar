@@ -289,6 +289,10 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
 
    KONTRASTET, TE MATURA mbi #1A1A1A (WCAG 2.1):
      numri #FF4433 -> 5.1:1     etiketa #A0A0A0 -> 6.7:1     e shitur #4ADE80 -> 10.0:1
+   MADHESIA e numrit rri PA !important me qellim: /profile e ul ne 12px per "gusht 2026"
+   (dy fjale) permes stilit inline, dhe ai duhet ta fitoje. Vetem .stat-l e mban !important,
+   sepse ui-refine.css:47/61 kane rregulla globale me !important mbi te.
+
    Jeshilja e drites #0E7A35 jep vetem 3.2:1 mbi te erret — mbetet #4ADE80 ketu, dhe #0E7A35
    kudo tjeter ku sfondi eshte i celet.
 
@@ -299,6 +303,6 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
 .alpz-stats{display:flex;align-items:stretch;border:2px solid transparent;border-radius:14px;padding:11px 6px;
   background:linear-gradient(#1A1A1A,#1A1A1A) padding-box,linear-gradient(135deg,#F5C842,#E63312) border-box;}
 .alpz-stats .stat,.alpz-stats .stat-pill{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
-.alpz-stats .stat-n{display:block;font-size:18px !important;font-weight:800;color:#FF4433;line-height:1.15;}
+.alpz-stats .stat-n{display:block;font-size:18px;font-weight:800;color:#FF4433;line-height:1.15;}
 .alpz-stats .stat-l{display:block;font-size:10px !important;font-weight:500;color:#A0A0A0 !important;margin-top:2px;}
 .alpz-stats .stat-div{width:1px;flex:0 0 1px;background:#333;align-self:stretch;}
