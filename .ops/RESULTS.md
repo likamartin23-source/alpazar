@@ -5413,3 +5413,79 @@ ndryshme për të njëjtin udhëtim.**
 **Ndreqja — një kontroll, i njëjti kudo:** shiriti «Vepro si» te `/profile` dhe `/u`, saktësisht
 si te `/biznese`. Atëherë çipi «Shiko publik», butoni «Edito Profilin» dhe banderola pushojnë
 së qeni tri gjëra që bëjnë gjysmën e së njëjtës punë.
+
+---
+
+# [O58] · AUDIT I PUNËS SË CLOUD-IT (9 commit-e, 2 shtator) — matur, jo lexuar
+
+Urdhër i pronarit: *audito punën e code-it, por mos vepro — jepja atij ta shqyrtojë sërish.*
+Prandaj **nuk ndreqa asgjë**; më poshtë janë matjet.
+
+Prodhimi = `main` = `87d85bd` ✔
+
+## ✅ Ç'qëndron — i verifikuar
+
+| Pretendimi | Matja |
+|---|---|
+| `[O41]` `.card-title` → `.section-title` | roja: **35 → 0**; `.section-title` = **35 përdorime** ✔ |
+| Fjalori i vetëm ruhet | `fjalore_vulash_paralele` = **0** ✔ |
+| tsc + roja të gjelbra | tsc **0 gabime** (jashtë submodulit); roja **e gjelbër** ✔ |
+| `npm audit fix` | **0 cenueshmëri** (ishte 1 e rëndë) · `browserslist 4.28.8` ✔ |
+| `[D1]` hapësirë poshtë rrjetit | `.listings-grid` `padding-bottom: 104px` në 390px ✔ **matur live** |
+| P0 Trust Score | `/biznese` live: **`Besueshmëria` mungon** në DOM ✔ |
+| `[O52]` kontrast | `#C42305` present (5 shfaqje te `ui-refine.css`) ✔ |
+| `/api/health` s'gënjen për Sentry | 4 referenca rezerve te `route.ts` ✔ |
+
+**Vendimi i ikonës është më i mirë se imi.** Unë zgjodha `👑 Premium` me arsyen "shumica e
+sipërfaqeve". Cloud-i zgjodhi **`⭐ Premium` / `👑 VIP`** sepse ashtu i dallon **unaza e
+Avatar-it** — që është pikërisht ajo që kërkoi pronari me *"stili avatar"*. Arsyetimi i tij
+i përgjigjet urdhrit; imi i përgjigjej numrave. Pranoj korrigjimin.
+
+## 🔴 NJË REGRES I MATUR — `⚡ 135 pikë` shfaqet DY HERË te `/listing`
+
+Matur live (numërim në DOM, prodhimi `87d85bd`):
+```
+/listing   "135 pikë" ×2      "Shitës aktiv" ×1   "Tregtar" ×1
+/u         "135 pikë" ×1      gjithçka ×1          ✔ e pastër
+/biznese   "135 pikë" ×1      gjithçka ×1          ✔ e pastër
+```
+Burimi: `ListingPageClient.tsx:957-962` — rreshti i vjetër `.seller-stats` **ende** e mban:
+```jsx
+<div className="seller-stats">
+  <span className="stat-chip">…{sellerCount} shpallje aktive</span>
+  {seller.username && <span className="stat-chip">…{seller.username}</span>}
+  {seller.gamification_points > 0 &&
+    <span className="stat-chip">…{seller.gamification_points} pikë</span>}   ← DYFISHIM
+</div>
+```
+Ndërsa `IdentityBadges` (i sapolidhur) e jep tashmë `⚡ 135 pikë`.
+**Vetëm `/listing` e ka**, sepse vetëm aty ekziston ky rresht i dytë.
+**Ndreqja e propozuar:** hiq vetëm çipin e pikëve nga `.seller-stats`; mbaj
+«N shpallje aktive» dhe «@username», që s'i jep komponenti.
+
+## ⚠️ Ç'NUK e verifikova dot — kufi i instrumentit, jo defekt
+
+**Prekja 44px (`[O51]`).** Mata `22px` te çipi, POR:
+```
+pointer_coarse = false      hover_none = false      (iframe desktop, mi jo prekje)
+```
+Rregulla e cloud-it është `@media (pointer: coarse)`, ndaj **nuk aktivizohet** te instrumenti im.
+Lexuar në kod, zgjidhja është **e saktë me ndërtim**: `::after` me `top/bottom: -11px`
+mbi një çip 22px jep saktësisht 44px, `.card-seller-ov` është `position:absolute` (pra
+kontekst i vlefshëm), dhe varianti jo-interaktiv i `BusinessCard`-it është përjashtuar me
+qëllim. **Kërkon telefon të vërtetë ose emulim prekjeje për t'u provuar.**
+
+## 🟡 Vërejtje, jo defekte
+
+1. **Overlay-t ende kryqëzohen me kartat** në 390px (`Ndaj`, `Instalo`, shiriti i poshtëm).
+   Padding-u 104px e mbron **kartën e fundit**, jo ato në mes. Por ORDERS thotë
+   *"D1 — pronari: LËRI si janë"*, ndaj e regjistroj si **vendim**, jo si defekt.
+2. **`Premium` shfaqet 2× te `/listing`** — një për SHPALLJEN (`Në shitje · ⭐ Premium`),
+   një për SHITËSIN. Subjekte të ndryshme, pra logjikisht e saktë; por çipat duken
+   **identikë** dhe rrinë afër. Ia lë cloud-it të gjykojë a duhen dalluar.
+
+## Mbeten nga radha e mëparshme (të paprekura)
+`[O46]` hapi 2 (modeli si artefakt) · hapi 5 (shiriti «Vepro si» te `/profile` dhe `/u`) ·
+hapi 6 (tekstet: «Anëtar» kundër «Anëtar prej»; «Shpallje» 0 te `/u`) ·
+`[O50]` rojet asimetrike të kartave · `[O52]` «Dërgo vlerësimin» 1.61 e «Gjuha» 1.21 ·
+`imazh_qe_deshton_pa_vendmbajtes` = 9.
