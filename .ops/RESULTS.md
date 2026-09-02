@@ -4994,3 +4994,58 @@ Dyshimi u përjashtua me matje, jo me mendim.
 Hapi 3 (*zgjero `IdentityBadges`*) duhet të përfshijë edhe **vendimin për ikonën**:
 `👑` (si 4 sipërfaqet ekzistuese) apo `⭐` (si komponenti). Pa këtë vendim, migrimi ndërron
 pamjen e Premium-it kudo pa e vendosur askush.
+
+---
+
+# [O49] · TË DY ANËT, TË MATURA — pronar dhe vizitor i huaj
+
+Pronari sqaroi se të dy llogaritë janë të hapura **që unë të verifikoj nga të dyja anët**.
+Matur me pritje 5s pas çdo navigimi.
+
+**Kufi i deklaruar:** te `alpazar-personal-accaunt-s-projects.vercel.app` ky shfletues **nuk
+është i kyçur** — `/profile` ridrejton te `/auth/login`. Nuk fut kredenciale. Prandaj anën e
+pronarit e mata me llogarinë që kontrolloj (**Martinel Likaj**, `afbe35fb…`), dhe anën e
+vizitorit ndaj llogarisë tjetër (**Administratori Alpazar**, `af3e3d5b…`). Të dy domenet
+shërbejnë të njëjtin ndërtim `7e75fb1`, ndaj krahasimi qëndron.
+
+## `/u` — i njëjti komponent, dy shikues
+
+| | Pronari (Martinel te profili i vet) | Vizitori (ndaj Administratorit) |
+|---|---|---|
+| Vulat | `🆕 I ri` · **`Besueshmëria 0/100`** | `⭐ Premium` · `⚡ Tregtar` · `⚡ 135 pikë` |
+| Veprimet | `🖊 Edito Profilin` (verdhë, i plotë) | `💬 Dërgo Mesazh` (kuq) · `+ Ndiq` · `🏢 Shiko Biznesin` |
+| Banderola | `👁 Po e shikon profilin tënd publik` + `← Kthehu te profili` | — (saktë) |
+
+Kjo anë funksionon si duhet. Problemi është krahasimi me panelin.
+
+## 🔴 Tri mospërputhje TË REJA — i njëjti person, paneli kundrejt publikut
+
+Martinel Likaj, i njëjti çast, dy faqe:
+
+| | `/profile` (paneli i tij) | `/u/{id}` (publiku i tij) |
+|---|---|---|
+| Vula e re | **`🆕 Anëtar i ri`** | **`🆕 I ri`** |
+| Niveli | **`🌱 Fillestar`** | *(mungon)* |
+| Besueshmëria | *(mungon)* | **`Besueshmëria 0/100`** |
+| Anëtar | `gusht 2026` | `2026` |
+
+1. **E njëjta vulë, dy etiketa:** «Anëtar i ri» kundrejt «I ri».
+2. **Dy politika për Nivelin:** `/profile` e shfaq «Fillestar»; `IdentityBadges:65` e fsheh nën
+   100 pikë me arsyetimin e shkruar *"«🌱 Fillestar» për këdo është zhurmë"*. I njëjti
+   `getLevel()`, dy vendime të kundërta — tani e **parë**, jo e lexuar.
+3. **TrustBadge-i i munguar te `/profile`, i parë live te `/u`.** Deri tani gjetja ime ishte
+   teorike sepse Administratori e ka opt-out. Martineli e ka `trust_score_visible = true`, ndaj
+   `Besueshmëria 0/100` **shfaqet** te `/u` dhe **mungon** te `/profile`. Pronari nuk e sheh dot
+   pikën e vet të besueshmërisë nga paneli i vet, ndërsa çdo vizitor e sheh.
+
+## Vendosja e banderolës — asimetria, tani e parë
+- `/u`: banderola rri **në mes të faqes**, poshtë butonit «Edito Profilin», mbi skedat.
+- `/biznese`: banderola rri **në krye të faqes**, para gjithçkaje.
+Njësoj në tekst, ndryshe në vend — dhe syri e kap menjëherë si "dy faqe të ndryshme".
+
+## Gjendja e matricës pas kësaj
+Shto te [O48] këto rreshta të konfirmuar me sy:
+- `Anëtar i ri` / `I ri` — dy etiketa
+- `Fillestar` — vetëm `/profile`
+- `Besueshmëria X/100` — `/u` po, `/profile` jo
+- Ikona e Premium-it: `⭐` te `/u`, `👑` kudo tjetër
