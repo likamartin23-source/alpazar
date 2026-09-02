@@ -6,8 +6,8 @@ import { useEffect, useState, useRef } from 'react'
 import Avatar, { tierNgaProfili } from '../components/Avatar'
 import { supabase } from '../../lib/supabase'
 import { SITE_URL } from '../../lib/siteConfig'
-import { getLevel, isNewMember } from '../components/Badges'
 import { TrustBadge } from '../components/TrustBadge'
+import { identitySignals } from '../components/identitySignals'
 import { monthYear } from '../../lib/format'
 import { SkeletonProfile, SkeletonList } from '../components/Skeleton'
 
@@ -676,17 +676,19 @@ export default function ProfilePage() {
           </div>
           {profile?.city && <div style={{ fontSize: 11, color: '#555', marginBottom: 4 }}><span aria-hidden="true">📍</span> {profile.city}{profile?.created_at ? ` · Anëtar që nga ${monthYear(profile.created_at)}` : ''}</div>}
           <div className="email-row" style={{ justifyContent: 'flex-start' }}><i className="ti ti-mail" aria-hidden="true" />{user?.email}</div>
+          {/* [O46] Grupi i vulave vjen nga RREGULLI I VETËM (`identitySignals`), vizatuar me lëkurën
+              `.badge` të /profile. /profile është REFERENCA (isSelf=true → sheh edhe Admin + Verifikuar);
+              faqet e tjera marrin të njëjtin rregull me lëkurën e vet. Emrat/pragjet/radha — një burim. */}
           <div className="badges-row" style={{ justifyContent: 'flex-start', marginTop: 8 }}>
-            {profile?.is_admin && <span className="badge b-admin"><span aria-hidden="true">🛡</span> Admin</span>}
-            {(user?.email_confirmed_at || user?.phone_confirmed_at) && <span className="badge b-verif"><span aria-hidden="true">✓</span> Verifikuar</span>}
-            {(() => { const t = tierNgaProfili(profile); return t !== 'free' && <span className="badge b-prem"><span aria-hidden="true">👑</span> {t === 'vip' ? 'VIP Ekstra Boost' : 'Premium'}</span> })()}
-            {profile?.shop_name && <span className="badge b-shop"><span aria-hidden="true">🏢</span> Biznes</span>}
-            {/* Niveli vetëm kur ka kaluar Fillestarin (pts≥100) — i njëjti rregull si IdentityBadges/[O43]:
-                "🌱 Fillestar për këdo është zhurmë". Më parë /profile e shfaqte GJITHMONË (kontradiktë). */}
-            {(profile?.gamification_points || 0) >= 100 && (() => { const l = getLevel(profile.gamification_points); return <span className="badge" style={{ background: l.bg, color: l.color }}><span aria-hidden="true">{l.icon}</span> {l.name}</span> })()}
-            {myListings.some(l => l.is_active) && <span className="badge b-seller"><span aria-hidden="true">📦</span> Shitës aktiv</span>}
-            {isNewMember(profile?.created_at) && <span className="badge b-new"><span aria-hidden="true">🆕</span> Anëtar i ri</span>}
-            {profile?.gamification_points > 0 && <span className="badge b-pts"><span aria-hidden="true">⚡</span> {profile.gamification_points} pikë</span>}
+            {(() => {
+              const emailVerified = !!(user?.email_confirmed_at || user?.phone_confirmed_at)
+              const KLASA: Record<string, string> = { admin: 'b-admin', verified: 'b-verif', vip: 'b-prem', premium: 'b-prem', biznes: 'b-shop', active: 'b-seller', new: 'b-new', points: 'b-pts' }
+              return identitySignals(profile, { isSelf: true, emailVerified, activeListings: myListings.filter(l => l.is_active).length, density: 'full' }).map(s =>
+                s.tone === 'level'
+                  ? <span key={s.key} className="badge" style={{ background: s.levelBg, color: s.levelColor }}><span aria-hidden="true">{s.icon}</span> {s.label}</span>
+                  : <span key={s.key} className={`badge ${KLASA[s.tone]}`}><span aria-hidden="true">{s.icon}</span> {s.label}</span>
+              )
+            })()}
           </div>
           {/* Besueshmëria (TrustBadge) — [O43]: /profile ishte E VETMJA siperfaqe pa te, pikerisht ku
               pronari do te shihte piken e vet. I njejti komponent si /u · /listing · /biznese, i njejti
