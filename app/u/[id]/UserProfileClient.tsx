@@ -249,9 +249,27 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
             <div style={{ color: '#666', fontSize: 13, marginBottom: 6 }}><span aria-hidden="true">📍</span> {profile.city}</div>
           )}
 
-          {/* Stats row — matrica e ngrire (BLLOKU Imazhi 5): Shpallje / Të shitura /
-              Ndjekës / Anëtar, IDENTIKE me kutine e biznesit. Rating u zhvendos
-              te vlerësimet (seksioni "Rreth"), Besueshmëria te "Informacion". */}
+          {/* KOHERENCË (urdhër pronari, sy live 2 shtator): vulat e identitetit rrinë SIPËR
+              tabelës së statistikave, njësoj si te /profile — jo poshtë saj. Elementet e
+              identitetit trashëgohen njësoj nga çdo përdorues; ndryshon vetëm vlera.
+              Komponenti i VETËM (IdentityBadges): Besueshmëria (opt-out §124/2024) · niveli ·
+              ⚡ pikë · 📦 Shitës aktiv · ✓ · 👑/⭐. isActiveSeller vjen nga IDENTITETI, jo numri:
+              kjo faqe numëron vetëm shpalljet PERSONALE (Vendimi 7). */}
+          <div style={{ marginBottom: 12 }}>
+            <IdentityBadges
+              subject={profile}
+              activeListings={listings.length}
+              isBusiness={!!biz || !!profile.shop_name}
+              density="full"
+              isAdmin={!!profile.is_admin}
+              isVerified={avatarVerified(profile)}
+              isNewMember={isNewMember(profile.created_at)}
+              isActiveSeller={listings.length > 0 || !!biz}
+            />
+          </div>
+
+          {/* Stats row — matrica e ngrirë (BLLOKU Imazhi 5): Shpallje / Të shitura /
+              Ndjekës / Anëtar, IDENTIKE me kutinë e biznesit dhe me /profile. */}
           <div className="alpz-stats" style={{ marginBottom: 12 }}>
             <div className="stat">
               <div className="stat-n">{listings.length}</div>
@@ -269,26 +287,6 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
               <div className="stat-n">{memberSince}</div>
               <div className="stat-l">Anëtar</div>
             </div>
-          </div>
-
-          {/* Shenjat e identitetit — komponenti i VETËM (IdentityBadges), i njëjti fjalor kudo
-              ([O39]): Besueshmëria (unazë, opt-out §124/2024) · niveli · ⚡ pikë · 📦 Shitës aktiv ·
-              👑/⭐. Më parë ky bllok ishte i shkruar me dorë vetëm me TrustBadge+pikë (mungonin
-              niveli, Shitës aktiv, tier-i) — çharmonizim me /profile e /listing. */}
-          <div style={{ marginBottom: 12 }}>
-            {/* isActiveSeller vjen nga IDENTITETI, jo nga numri: kjo faqe numeron vetem
-                shpalljet PERSONALE (business_id is null, Vendimi 7), ndaj nje pronar qe
-                shet permes biznesit ka 0 ketu por ESHTE shites aktiv — [O55] §1. */}
-            <IdentityBadges
-              subject={profile}
-              activeListings={listings.length}
-              isBusiness={!!biz || !!profile.shop_name}
-              density="full"
-              isAdmin={!!profile.is_admin}
-              isVerified={avatarVerified(profile)}
-              isNewMember={isNewMember(profile.created_at)}
-              isActiveSeller={listings.length > 0 || !!biz}
-            />
           </div>
 
           {/* Action buttons */}
