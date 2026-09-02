@@ -321,3 +321,11 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
 .alpz-stats .stat-n{display:block;font-size:18px !important;font-weight:800;color:#FF4433;line-height:1.15;}
 .alpz-stats .stat-l{display:block;font-size:10px !important;font-weight:500;color:#A0A0A0 !important;margin-top:2px;}
 .alpz-stats .stat-div{width:1px;flex:0 0 1px;background:#333;align-self:stretch;}
+
+/* [D1] Telefon (≤430px): hapësirë poshtë rrjetit të kartave që karta e fundit të mos mbulohet nga
+   elementet notuese të poshtme (install-float, flluska Albi, bottom-nav). Vendim pronari: zgjidhet
+   me HAPËSIRË — butonat NUK preken (as hiqen, as ndryshojnë). Mbulimi në mes të skrollit nga një
+   FAB fiks mbetet i mundur (natyra e position:fixed), por përmbajtja e fundit s'fshihet më. */
+@media (max-width: 430px) {
+  .listings-grid { padding-bottom: 104px; }
+}
