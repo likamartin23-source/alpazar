@@ -1,3 +1,5 @@
+import { CookieConsentControl } from '../components/CookieConsentControl'
+
 const LS = { color: '#666' as const, fontSize: 11, textDecoration: 'none' as const }
 
 export default function Cookies() {
@@ -143,7 +145,8 @@ export default function Cookies() {
             <li><strong>Mode Incognito/Private</strong> — cookie-t fshihen automatikisht pas mbylljes së browser-it</li>
             <li><strong>Fshirja manuale e localStorage</strong> — Developer Tools → Application → Local Storage → alpazar.vercel.app</li>
           </ul>
-          <p>Nëse bllokoni cookie-t thelbësorë (autentikimi), nuk do të mund të kyçeni në Alpazar. Cookie-t opsionale mund të çaktivizohen pa ndikuar në funksionalitetin kryesor.</p>
+          <p>Nëse bllokoni cookie-t thelbësorë (autentikimi), nuk do të mund të kyçeni në Alpazar. Cookie-t opsionale mund të çaktivizohen pa ndikuar në funksionalitetin kryesor — drejtpërdrejt këtu:</p>
+          <CookieConsentControl />
 
           <h2>5. Cookie-t e Palëve të Treta</h2>
           <p>Alpazar nuk integron shërbime të palëve të treta që vendosin cookie-t pa konsentimin tuaj. Lidhjet externe (Facebook, Instagram, TikTok etj.) hapen në browser të veçantë dhe ato platforma kanë politikat e tyre të pavarura të cookie-ve.</p>

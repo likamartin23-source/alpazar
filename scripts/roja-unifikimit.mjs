@@ -112,7 +112,9 @@ mat('imazh_qe_deshton_pa_vendmbajtes',
 mat('radiuse_inline',
   'border-radius i shkruar me dore inline (jo token var(--r-*)) — shtresa e formes e paunifikuar',
   'Perdor token-in: borderRadius: var(--r-btn|--r-card|--r-panel|--r-pill). Shto token te ui-refine.css nese mungon.',
-  (_f, t) => numero(t, /borderRadius:\s*(?!var\()/g))
+  // Total i borderRadius inline MINUS ata që përdorin token (var), me/pa thonjëza.
+  // (Lookahead-i i thjeshtë dështon: \s* bën backtracking dhe kalon te hapësira — §9.2.)
+  (_f, t) => numero(t, /borderRadius:/g) - numero(t, /borderRadius:\s*['"]?var\(/g))
 
 let baza
 try { baza = JSON.parse(readFileSync(BAZA, 'utf8')) } catch { baza = null }
