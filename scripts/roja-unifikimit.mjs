@@ -17,7 +17,7 @@
  * E njëjta sëmundje, pesë raste të matura:
  *   · `.card-title`      — një klasë, dy kuptime ([O41])
  *   · `.card-price`      — klasë e përbashkët, e mbishkruar inline ([O41])
- *   · vulat e identitetit — KATËR fjalorë paralelë për të njëjtat vula ([O43])
+ *   · vulat e identitetit — PESË fjalorë paralelë për të njëjtat vula ([O43])
  *   · `LISTING_SELECT`   — projeksioni i vetëm, dikur i kopjuar me dorë ([O19])
  *   · `onError` që fsheh imazhin pa vendosur vend-mbajtës ([O41])
  *
@@ -91,7 +91,7 @@ mat('klasa_e_perbashket_e_mbishkruar_inline',
 mat('fjalore_vulash_paralele',
   'Vula identiteti të ndërtuara me dorë krahas `IdentityBadges`',
   'Migro te `<IdentityBadges …/>` — një fjalor i vetëm ([O43]).',
-  (_f, t) => numero(t, /className="schip sch-|className="badge b-/g))
+  (_f, t) => numero(t, /className="schip sch-|className="badge b-|className="bdg"/g))
 
 mat('projeksione_te_dyfishuara',
   'Projeksioni i shpalljes i shkruar me dorë në vend të `LISTING_SELECT`',

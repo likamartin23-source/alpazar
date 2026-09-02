@@ -4798,3 +4798,66 @@ Rreshti që prodhon raportimin e gabuar: `app/api/health/route.ts:52`
 Ndreqja e saktë nuk është heqja e rreshtit — është që `/api/health` të dallojë
 *"mungon dhe s'ka rezervë"* nga *"mungon por ka rezervë të ngurtësuar"*. Ndryshe dritarja
 e vetme e pronarit do të vazhdojë t'i thotë "i fikur" diçkaje që punon.
+
+---
+
+# [O46] · DY PANELET E BRENDSHME NUK JANË SIMETRIKE — dhe `/profile` është modeli
+
+Nga fotot e pronarit (2 shtator). Urdhri i tij: *"karta dhe profili i adminit pothuajse i kanë
+të gjithë komponentët"* → **`/profile` është REFERENCA; të tjerat ngrihen deri tek ai, nuk
+zbritet ai deri tek ata.**
+
+## 1. Fjalori i PESTË i vulave — dhe roja ime nuk e numëronte
+
+`/biznese/[id]:570-573` përdor `className="bdg"` + stile inline — **një sistem i pestë**,
+që s'e kisha parë te [O43]:
+
+| # | Sipërfaqja | Sistemi |
+|---|---|---|
+| 1 | `/listing` | `.schip .sch-*` |
+| 2 | `/profile` | `.badge .b-*` |
+| 3 | **`/biznese/[id]` panel i brendshëm** | **`.bdg` + inline** ← i ri |
+| 4 | `/biznese/[id]` pamje publike | inline i pastër |
+| 5 | `/u` | `chip()` te `IdentityBadges` |
+
+**Roja ime numëronte vetëm 1 dhe 2.** E zgjerova me `className="bdg"`;
+`fjalore_vulash_paralele` **13 → 16**. Vetë instrumenti im kishte pikën e verbër që po mat.
+*Kjo është hera e dytë që roja korrigjon veten — prandaj koka e skriptit e mban këtë mësim.*
+
+## 2. Dy panelet e brendshme: e njëjta shirit «Vepro si», çdo detaj tjetër ndryshe
+
+Të dy kanë shiritin `Vepro si: [Unë | Biznesi]`, pra janë **projektuar si simetrikë**. Nuk janë:
+
+| Aspekti | `/profile` (Unë) | `/biznese/[id]` (Biznesi) |
+|---|---|---|
+| Etiketa drejt publikut | **«Shiko publik»** | **«Shiko faqen publike»** |
+| Pozicioni | te rreshti i vulave (`:669`) | poshtë statistikave (`:605`) |
+| Mekanizmi | `location.href='/u/{id}'` — **del nga paneli** | `?public=1` → `asVisitor` — **rri në faqe** |
+| Kthimi | ringarkim i plotë te `/profile` | `setAsVisitor(false)`, pa ringarkim |
+| Banderola | «Po e shikon **profilin tënd publik** — kështu e shohin vizitorët» | «Po e shikon **faqen publike të biznesit**» |
+| Kthimi (etiketa) | «← Kthehu te profili» | «← Kthehu te menaxhimi» |
+| **Kushti i banderolës** | `isOwnProfile` — **gjithmonë** | `isOwner && asVisitor` — **vetëm pas klikimit** |
+| Statistika e 4-t | «Anëtar» · `qershor 2026` | «Anëtar prej» · `2026` |
+| Vulat | **7** | **3** |
+
+**Dallimi më i thellë është rreshti i kushtit.** Te biznesi, pamja publike është një
+**MËNYRË PARAPAMJEJE** që pronari e ndez vetë. Te personi, banderola del **sa herë** pronari
+bie te `/u/{id}` — nga kërkimi, nga një lidhje, nga «Profili yt →» te shpallja. Nuk është
+parapamje; është etiketë e përhershme. Dy modele mendore për të njëjtin veprim.
+
+## 3. Grupi referencë — çfarë ka `/profile` sot (foto 1)
+
+`🛡 Admin` · `⚡ 135 pikë` · `⭐ Premium` · `🏢 Biznes` · `⚡ Tregtar` (nivel) · `📦 Shitës aktiv`
+(+ `✓ Verifikuar` dhe `🆕 Anëtar i ri` me kusht) · veprimi `👁 Shiko publik`
+Statistika: `Shpallje · Të shitura · Ndjekës · Anëtar`
+I mungon vetëm: **TrustBadge**.
+
+**Pasoja për [O43]:** migrimi te `IdentityBadges` ashtu siç është do t'i **HIQTE** `/profile`-it
+tri vula (`Admin`, `Verifikuar`, `Anëtar i ri`). Prandaj rendi është i detyrueshëm:
+1. **Zgjero `IdentityBadges`** që të mbulojë tërë grupin e `/profile` + `TrustBadge`
+   (props: `isAdmin`, `isVerified`, `isNewMember`, `rating`).
+2. **Pastaj** migro `/profile` — dhe ai fiton TrustBadge-in që i mungon.
+3. **Pastaj** ngri `/listing`, `/biznese` panel, `/biznese` publik dhe `/u` në të njëjtin grup.
+4. Unifiko rrugën publike: **një etiketë, një pozicion, një mekanizëm** — dhe zgjidh
+   nëse `/u` është parapamje (kusht `?public=1`, si biznesi) apo etiketë e përhershme.
+5. Unifiko statistikat: «Anëtar» me muaj+vit, ose «Anëtar prej» me vit — jo të dyja.
