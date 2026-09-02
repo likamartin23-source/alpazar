@@ -259,7 +259,7 @@ export default function AlbiChat({ variant = 'page', onClose }: { variant?: 'pag
         .albi-page{max-width:480px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;background:#0e0e0e;position:relative;font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
         .albi-panel-root{display:flex;flex-direction:column;height:100%;background:#0e0e0e;font-family:'Plus Jakarta Sans',system-ui,sans-serif;border-radius:16px;overflow:hidden;}
         .albi-header{background:linear-gradient(135deg,#E63312,#b02a0c);padding:${isPanel ? '12px' : (isPWA ? '44px' : '12px')} 14px 12px;flex-shrink:0;display:flex;align-items:center;gap:10px;}
-        .albi-back-btn{width:34px;height:34px;background:rgba(255,255,255,.15);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .albi-back-btn{width:44px;height:44px;background:rgba(255,255,255,.15);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
         .albi-back-btn i{font-size:18px;color:#fff;}
         .albi-ai-avatar{width:40px;height:40px;background:#F5C842;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 0 3px rgba(245,200,66,.3);}
         .albi-ai-avatar i{font-size:20px;color:#111;}

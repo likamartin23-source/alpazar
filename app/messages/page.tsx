@@ -871,7 +871,7 @@ export default function MessagesPage() {
         @keyframes tdot{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
 
         /* Scroll btn */
-        .scroll-btn{position:absolute;bottom:68px;right:12px;width:36px;height:36px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 12px rgba(0,0,0,.2);border:none;cursor:pointer;z-index:5;animation:fadeIn .2s;}
+        .scroll-btn{position:absolute;bottom:68px;right:12px;width:44px;height:44px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 12px rgba(0,0,0,.2);border:none;cursor:pointer;z-index:5;animation:fadeIn .2s;}
         .scroll-btn i{font-size:18px;color:#555;}
 
         /* Reply strip */

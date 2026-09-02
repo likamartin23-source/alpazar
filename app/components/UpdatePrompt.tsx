@@ -149,7 +149,7 @@ export default function UpdatePrompt() {
         type="button"
         onClick={dismiss}
         aria-label="Mbyll njoftimin"
-        style={{ background: 'transparent', color: 'rgba(255,255,255,.6)', border: 'none', fontSize: 18, cursor: 'pointer', fontFamily: 'inherit', lineHeight: 1, padding: 4, minHeight: 40, minWidth: 32 }}
+        style={{ background: 'transparent', color: 'rgba(255,255,255,.6)', border: 'none', fontSize: 18, cursor: 'pointer', fontFamily: 'inherit', lineHeight: 1, padding: 4, minHeight: 44, minWidth: 44 }}
       >
         <span aria-hidden="true">✕</span>
       </button>

@@ -450,7 +450,7 @@ const [searchError, setSearchError] = useState(false)
         .search-wrap i{font-size:14px;color:#bbb;}
         .search-wrap input{border:none;background:transparent;font-size:13px;color:#111;outline:none;flex:1;padding:9px 0;font-family:inherit;}
         .search-wrap input::placeholder{color:#bbb;}
-        .filter-btn{position:relative;width:36px;height:36px;background:rgba(0,0,0,.1);border:none;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .filter-btn{position:relative;width:44px;height:44px;background:rgba(0,0,0,.1);border:none;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
         .filter-btn i{font-size:17px;color:#111;}
         .filter-badge{position:absolute;top:-3px;right:-3px;width:16px;height:16px;background:#E63312;border-radius:50%;font-size:9px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;border:2px solid #F5C842;}
 

@@ -89,7 +89,7 @@ export default function OfertatPage() {
     <div style={{ maxWidth: 480, margin: '0 auto', padding: '16px 0 80px' }}>
       <div style={{ padding: '12px 16px 0', display: 'flex', alignItems: 'center', gap: 10 }}>
         <button type="button" aria-label="Kthehu mbrapa" onClick={() => window.history.back()}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <i className="ti ti-arrow-left" aria-hidden="true" style={{ fontSize: 22, color: '#111' }} />
         </button>
         <h1 style={{ fontSize: 18, fontWeight: 800, color: '#111', margin: 0 }}>Ofertat <span aria-hidden="true">🤝</span></h1>
@@ -125,7 +125,7 @@ export default function OfertatPage() {
           <div style={{ fontSize: 32, marginBottom: 12 }} aria-hidden="true">⚠️</div>
           <div style={{ fontSize: 14, color: '#C42B0F', marginBottom: 16 }}>Nuk u ngarkuan ofertat. Kontrollo lidhjen dhe provo sërish.</div>
           <button type="button" onClick={() => window.location.reload()}
-            style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
+            style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', minHeight: 44, boxSizing: 'border-box', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
         </div>
       ) : duke ? (
         /*  Lartesia e skeletit NUK eshte e zgjedhur me sy: karta reale u mat
@@ -149,7 +149,7 @@ export default function OfertatPage() {
               : 'Hap një shpallje që të pëlqen dhe propozo çmimin tënd.'}
           </div>
           <a href={drejtimi === 'marra' ? '/profile' : '/'}
-            style={{ display: 'inline-block', background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', textDecoration: 'none', borderRadius: 10, padding: '11px 24px', fontSize: 13, fontWeight: 700 }}>
+            style={{ display: 'inline-flex', alignItems: 'center', background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', textDecoration: 'none', borderRadius: 10, padding: '11px 24px', minHeight: 44, boxSizing: 'border-box', fontSize: 13, fontWeight: 700 }}>
             {drejtimi === 'marra' ? 'Shpalljet e mia' : 'Shfleto shpalljet'}
           </a>
         </div>

@@ -672,7 +672,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         .img-dot.on{background:#fff;}
         .img-nav{position:absolute;top:50%;transform:translateY(-50%);width:30px;height:30px;background:rgba(0,0,0,.4);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .img-nav i{color:#fff;font-size:14px;}
-        .like-btn{position:absolute;top:10px;right:10px;width:34px;height:34px;background:#fff;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+        .like-btn{position:absolute;top:6px;right:6px;width:44px;height:44px;background:#fff;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.15);}
 
         /* Info */
         .info{padding:12px 12px 0;}

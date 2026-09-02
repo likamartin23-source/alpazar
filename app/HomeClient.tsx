@@ -582,7 +582,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .logo{display:flex;align-items:center;gap:8px;cursor:pointer;}
         .brand{font-size:20px;font-weight:800;color:#111;letter-spacing:2px;text-shadow:0 1px 0 rgba(255,255,255,.3);}
         .nav{display:flex;gap:5px;align-items:center;}
-        .icon-btn{width:34px;height:34px;background:rgba(0,0,0,.10);border-radius:50%;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:background .15s;}
+        .icon-btn{width:44px;height:44px;background:rgba(0,0,0,.10);border-radius:50%;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:background .15s;}
         .icon-btn:hover{background:rgba(0,0,0,.18);}
         .icon-btn i{font-size:17px;color:#111;}
         .login-btn{background:#111;color:#F5C842;border:none;border-radius:8px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s;}

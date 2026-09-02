@@ -143,7 +143,7 @@ const [loadError, setLoadError] = useState(false)
         .ctr-pill{background:#E8F5E9;color:#2e7d32;border-radius:6px;padding:2px 6px;font-size:10px;font-weight:700;}
         .empty-state{text-align:center;padding:40px 20px;color:#555;}
         .topbar{display:flex;align-items:center;gap:10px;padding:14px 12px 10px;background:#fff;position:sticky;top:0;z-index:10;border-bottom:1px solid #f0f0f0;}
-        .back-btn{width:34px;height:34px;border:none;background:#f5f5f5;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+        .back-btn{width:44px;height:44px;border:none;background:#f5f5f5;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
       ` }} />
 
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
