@@ -65,6 +65,14 @@ const CSS = `
   .step-dot.done{background:#97C459;}
   .terms{font-size:10px;color:#555;text-align:center;margin-top:10px;line-height:1.6;}
   .terms a{color:#555;text-decoration:underline;}
+  /* Aprovimi i detyrueshëm — pëlqim eksplicit para regjistrimit. Ngjyrat nga tokenat --az-* (pa hex të ri). */
+  .consent-box{border:1.5px solid var(--az-line);border-radius:var(--r-btn);padding:12px 13px;margin:6px 0 12px;background:var(--az-white);}
+  .consent-law{display:flex;gap:8px;align-items:flex-start;font-size:11px;line-height:1.55;color:var(--az-gray-1);margin-bottom:10px;}
+  .consent-law>span:first-child{flex-shrink:0;} /* vetëm ikona s'tkurret; teksti mbështillet brenda kartës */
+  .consent-law>span:last-child{min-width:0;}
+  .consent-check{display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:12px;line-height:1.5;color:var(--az-black);}
+  .consent-check input{width:20px;height:20px;flex-shrink:0;margin:0;accent-color:var(--az-red-deep);cursor:pointer;}
+  .consent-check a{color:var(--az-red-deep);font-weight:700;text-decoration:underline;}
   .pass-wrap{position:relative;}
   .pass-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#aaa;font-size:13px;padding:4px;}
   .contact-wrap{position:relative;}
@@ -100,6 +108,9 @@ export default function Auth() {
   // register password fields
   const [regPass, setRegPass] = useState('')
   const [regPass2, setRegPass2] = useState('')
+  // Aprovimi i DETYRUESHËM (urdhër pronari, 2 shtator 2026): pëlqim EKSPLICIT para regjistrimit,
+  // jo njoftim pasiv (Ligji 124/2024 — pëlqim i qartë). Regjistrimi bllokohet derisa të pranohet.
+  const [consent, setConsent] = useState(false)
   const [showRegPass, setShowRegPass] = useState(false)
   const [showRegPass2, setShowRegPass2] = useState(false)
 
@@ -371,6 +382,8 @@ export default function Auth() {
       if (!age || ageN < 16 || ageN > 120) { setMsg('err:Mosha duhet të jetë minimumi 16 vjeç!'); return }
       if (regPass.length < 8) { setMsg('err:Fjalëkalimi duhet të ketë minimumi 8 karaktere!'); return }
       if (regPass !== regPass2) { setMsg('err:Fjalëkalimet nuk përputhen!'); return }
+      // Pëlqim i DETYRUESHËM — pa të, regjistrimi nuk vazhdon (pëlqim eksplicit, jo pasiv).
+      if (!consent) { setMsg('err:Duhet të pranosh kushtet, politikat dhe rregullat për të vazhduar.'); return }
     }
 
     const type = detectType(raw)
@@ -499,6 +512,8 @@ export default function Auth() {
   async function sendOtpViaEmail() {
     const email = smsFailEmail.trim()
     if (!email || !email.includes('@')) { setMsg('err:Fut adresën e emailit të vlefshëm!'); return }
+    // I njëjti pëlqim i detyrueshëm edhe në rrugën alternative email për regjistrimin.
+    if (mode === 'register' && !consent) { setMsg('err:Duhet të pranosh kushtet, politikat dhe rregullat për të vazhduar.'); return }
     setLoading(true); setMsg('')
     setResolvedId(email)
     try {
@@ -1120,11 +1135,24 @@ export default function Auth() {
                 )}
               </div>
 
+              {/* APROVIMI I DETYRUESHËM (urdhër pronari, 2 shtator 2026): pëlqim eksplicit,
+                  jo njoftim pasiv. Butoni bllokohet derisa kutia të pranohet. */}
+              <div className="consent-box">
+                <div className="consent-law">
+                  <span aria-hidden="true">⚖️</span>
+                  <span>Kjo platformë është në përputhje të plotë me të gjithë ligjet e Republikës së Shqipërisë dhe ligjet e Bashkimit Evropian.</span>
+                </div>
+                <label className="consent-check">
+                  <input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} aria-required="true" />
+                  <span>Ju po pranoni <a href="/kushtet" target="_blank" rel="noopener">kushtet</a>, <a href="/privatesia" target="_blank" rel="noopener">politikat</a> dhe rregullat e përdorimit të këtij aplikacioni.</span>
+                </label>
+              </div>
+
               {!smsFailMode ? (
                 <>
                   {/* Regjistrimi përdor GJITHMONË kod 6-shifror (email → Brevo/Resend; telefon → SMS),
                       jo link. Kështu fluksi është i njëjtë dhe i parashikueshëm. */}
-                  <button type="button" className="btn" onClick={sendOtp} disabled={loading}>
+                  <button type="button" className="btn" onClick={sendOtp} disabled={loading || !consent}>
                     {loading ? <><span aria-hidden='true'>⏳</span> Duke dërguar...</> : <><span aria-hidden='true'>📨</span> Dërgo Kodin e Konfirmimit</>}
                   </button>
                   {/* Alternativë e garantuar për numra telefoni: konfirmim me email pa pritur
@@ -1135,11 +1163,6 @@ export default function Auth() {
                     </button>
                   )}
                   <div className="sec-row">Ke llogari? &nbsp;<a role="button" tabIndex={0} onClick={() => switchMode('login')} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') switchMode('login') }} style={{ cursor: 'pointer' }}>Hyr →</a></div>
-                  <p className="terms">
-                    Duke u regjistruar pranon{' '}
-                    <a href="/kushtet">Kushtet e Përdorimit</a> dhe{' '}
-                    <a href="/privatesia">Politikën e Privatësisë</a>
-                  </p>
                 </>
               ) : (
                 <div className="sms-fail-box">
