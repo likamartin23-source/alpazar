@@ -4689,3 +4689,94 @@ jo defekt i një komponenti.
 
 *"Kur një mjet të thotë 'në rregull', pyet çfarë mat SAKTËSISHT"* — vlen edhe për mjetin
 që sapo shkrove. Kjo është arsyeja pse koka e skriptit e mban këtë mësim brenda vetes.
+
+---
+
+# [O45] · AUDIT ME INSTRUMENTE TË REJA — portat, varësitë, observabiliteti
+
+*"Auditova edhe një herë" nuk prodhon asgjë; "auditova me një mjet tjetër" prodhon gjithmonë.*
+Ndryshova instrumentet: **GitHub Actions API · npm audit · pema e varësive · analiza e
+paketimit të servuar · `/api/health`.** Asnjëri s'ishte përdorur në këtë sesion.
+
+## 1. ✅ Roja ime u provua në CI REAL, jo vetëm lokalisht
+
+`391682c` → **`TypeScript + Build` = success**, dhe brenda tij hapi **`Roja e unifikimit` = success**.
+Të katër workflow-t janë të gjelbra. Kjo mbyll §9.3 si duhet: mekanizmi i rregullimit u provua
+pas aplikimit, në mjedisin real.
+
+## 2. 🔴 Porta nuk mbyll — çdo shtytje e anashkalon me leje
+
+Çdo `git push` imi kthen nga GitHub:
+```
+remote: Bypassed rule violations for refs/heads/main:
+remote: - Required status check "TypeScript + Build" is expected.
+```
+Rregulli ekziston, por llogaria ka të drejtë anashkalimi, ndaj **CI-ja nuk BLLOKON kurrë një
+shtytje të drejtpërdrejtë te `main` — vetëm raporton pas saj.**
+
+Pasoja për rojën që sapo ndërtova: ajo është **alarm tymi, jo bravë.** Nëse dikush shton borxh
+të ri, shtytja kalon dhe CI-ja skuqet pas. Kjo nuk e zhvlerëson — e ndryshon rolin: dikush duhet
+ta shohë të kuqen. Vendim i pronarit: (a) hiq të drejtën e anashkalimit që porta të mbyllë
+vërtet, ose (b) prano rolin e alarmit dhe siguro që alarmi arrin.
+
+## 3. 🟠 Alarmi i rojtarit fliste gabim — i ndrequr
+
+`rojtari.yml` dërgonte në Slack **"🔴 prodhimi nuk pasqyron main"** për *çdo* dështim hapi —
+përfshirë kontratën kod↔bazë dhe rojën time. Do të kishte dërguar një shkak të rremë.
+Tani: *"rojtari dështoi — një nga: prodhimi≠main · kontrata kod↔bazë · roja e unifikimit."*
+**Kufi i matjes:** `jq` s'ekziston lokalisht, s'e provova dot shprehjen; struktura është
+identike me rreshtin që punonte, ndryshon vetëm teksti.
+
+## 4. 🟠 `npm audit` — 1 e rëndë, me një burim të vetëm
+
+`browserslist ≤4.28.6` — rritje memorie pa kufi (OOM) + shkrim prototipi.
+Pema: **vjen VETËM nga `@sentry/nextjs`** → `webpack`/`@babel/core`. Domethënë **ndërtim-koha**,
+jo runtime; shfrytëzimi kërkon `browserslist-stats.json` të pabesuar, që këtu s'ekziston.
+`npm audit fix` e mbyll. Rrezik real i ulët, por është e vetmja e rëndë e mbetur.
+
+## 5. 🔴 DSN-i i Sentry-t është I NGURTËSUAR — dhe `/api/health` e raporton gabim
+
+`sentry.client.config.ts:3-5`:
+```ts
+const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN
+  || 'https://244ab…@o4511440664723456.ingest.de.sentry.io/4511548220768336'
+```
+`NEXT_PUBLIC_SENTRY_DSN` **mungon te Vercel**, pra prodhimi përdor rezervën e ngurtësuar.
+
+**PROVË EMPIRIKE** — kërkova te 16 chunk-et e faqes së parë:
+`/_next/static/chunks/main-app-6f65663ff654ae12.js` **e përmban DSN-in**. Pra Sentry
+është **aktiv** dhe dërgon, nga një DSN i shkruar në një **depo publike**.
+
+**Gënjeshtra e instrumentit (klasa F4 / §9.2):** `/api/health` e liston
+`NEXT_PUBLIC_SENTRY_DSN` te *"mungojnë"* me arsyen *"Raportimi i gabimeve"* — që i thotë
+pronarit se raportimi është i fikur. **Është i ndezur.** `/api/health` është dritarja e vetme
+e pronarit mbi konfigurimin, dhe pikërisht këtu e gënjen.
+
+Dhe KUJTESA §5 thotë *"Sentry (org `alpazar`, bosh)"*. Nëse raportimi punon, atëherë ose
+s'ka gabime, ose **ngjarjet shkojnë te projekti `o4511440664723456/4511548220768336`, jo te
+ai që sheh pronari.** Kjo duhet kontrolluar para se të merret vendimi Sentry-kundër-`health_events`.
+*(Një DSN është publik nga natyra — s'është sekret. Rreziku real është kuota: kushdo mund t'i
+dërgojë ngjarje të rreme projektit.)*
+
+## 6. 🟠 Shtatë variabla vecorish mungojnë në prodhim
+
+`/api/health` → kritike **5/5 të pranishme** ✔, por mungojnë:
+
+| Variabla | Pasoja e matur |
+|---|---|
+| `SUPABASE_SERVICE_ROLE_KEY` | veprimet me privilegj + webhook pagesash |
+| `PAYMENT_WEBHOOK_SECRET` | **webhook-u i pagesave kthen 503 (fail-closed)** |
+| `NOTIFY_WEBHOOK_SECRET` | njoftimet nga CI kthejnë 500 |
+| `ADMIN_EMAIL` | njoftimet e administratës pa marrës |
+| `SLACK_WEBHOOK_URL` | alarmet e monitorit të app-it nuk dalin |
+| `PERPLEXITY_API_KEY` · `GOOGLE_SITE_VERIFICATION` | kërkimi me AI · Search Console |
+
+**Lidhje me pikën 2:** porta nuk bllokon, alarmi i app-it s'ka Slack. *(Sekreti i Slack-ut te
+GitHub Actions është depo tjetër nga Vercel — s'e verifikova dot nga këtu.)* Nëse edhe ai mungon,
+një dështim i rojës nuk e njofton askënd. **Kjo duhet mbyllur para se roja të quhet mbrojtje.**
+
+## Ç'kërkon vendim të pronarit
+1. Anashkalimi i portës: ta heqim (porta mbyll vërtet) apo e mbajmë (roja = alarm)?
+2. `NEXT_PUBLIC_SENTRY_DSN` te Vercel + kontroll: a është `o4511440664723456` projekti që sheh?
+3. `PAYMENT_WEBHOOK_SECRET` + `SUPABASE_SERVICE_ROLE_KEY` — pagesat janë fail-closed sot.
+4. `npm audit fix` për `browserslist`.

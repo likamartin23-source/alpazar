@@ -70,5 +70,5 @@ jobs:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           [ -n "$SLACK_WEBHOOK_URL" ] || { echo "::notice::SLACK_WEBHOOK_URL mungon."; exit 0; }
-          payload=$(jq -nc --arg u "$RUN_URL" '{text:("🔴 *ALPAZAR — prodhimi nuk pasqyron main* \n" + $u)}')
+          payload=$(jq -nc --arg u "$RUN_URL" '{text:("🔴 *ALPAZAR — rojtari deshtoi* \nNjë nga: prodhimi≠main · kontrata kod↔bazë · roja e unifikimit.\n" + $u)}')
           curl -sS -X POST "$SLACK_WEBHOOK_URL" -H "Content-Type: application/json" -d "$payload" >/dev/null
