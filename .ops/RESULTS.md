@@ -5390,3 +5390,26 @@ vizitor. E verifikova: me llogarinë time të pronarit, të dyja shfaqen.
 «Edito Profilin» premton **redaktim**, jo kalim te paneli. Dhe banderola s'është kontroll —
 është njoftim. Prandaj pronari e ndjen si të munguar edhe kur teknikisht është aty.
 **Ndreqja:** i njëjti shirit «Vepro si» te `/u`, si te `/biznese` — hapi 5 i [O46].
+
+### [O55] §4 — Rrethi i plotë panel ↔ publik, i matur në të dy drejtimet
+
+Pronari: *"dhe anasjelltas, butonin për te profili i jashtëm."* E mata. **Të dy drejtimet
+ekzistojnë për të dyja entitetet.** Problemi nuk është mungesa — janë **katër forma të
+ndryshme për të njëjtin udhëtim.**
+
+| Entiteti | Paneli → Publiku | Publiku → Paneli | Shirit «Vepro si» |
+|---|---|---|:--:|
+| **Personi** | `/profile:672` — çip i vogël `👁 Shiko publik`, pranë «Ndaj» | `/u:312` `✏️ Edito Profilin` (verdhë, i plotë) **+** `:344` banderolë `← Kthehu te profili` | **❌ 0 herë** |
+| **Biznesi** | `:608` `Shiko faqen publike` → `?public=1` (pa dalë nga faqja) | `:530` **shirit i qëndrueshëm «Vepro si: Biznesi \| Unë»** | **✅** |
+
+**Tri asimetri të matura:**
+1. **Personi s'ka shirit «Vepro si».** Biznesi e ka të qëndrueshëm në krye; personi ka
+   një banderolë njoftuese dhe një buton që thotë «Edito». *Banderola s'është kontroll.*
+2. **Etiketa premton gjë tjetër.** «Edito Profilin» premton **redaktim**, jo kalim te paneli.
+   Pronari kërkon një derë, jo një laps.
+3. **Mekanizmi ndryshon.** Biznesi rri në të njëjtën URL (`?public=1`, parapamje që ndizet e
+   fiket); personi kërcen mes dy URL-ve.
+
+**Ndreqja — një kontroll, i njëjti kudo:** shiriti «Vepro si» te `/profile` dhe `/u`, saktësisht
+si te `/biznese`. Atëherë çipi «Shiko publik», butoni «Edito Profilin» dhe banderola pushojnë
+së qeni tri gjëra që bëjnë gjysmën e së njëjtës punë.
