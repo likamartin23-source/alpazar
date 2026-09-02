@@ -8,6 +8,7 @@ import { supabase } from '../../lib/supabase'
 import { SITE_URL } from '../../lib/siteConfig'
 import { isNewMember } from '../components/Badges'
 import { IdentityBadges } from '../components/IdentityBadges'
+import { useIsOnline } from '../components/OnlinePresence'
 import { monthYear } from '../../lib/format'
 import { SkeletonProfile, SkeletonList } from '../components/Skeleton'
 
@@ -105,6 +106,10 @@ export default function ProfilePage() {
 
   const listingsChRef = useRef<any>(null)
   const pollRef       = useRef<any>(null)
+
+  // Prania LIVE e VETES — koherencë me /u, /listing, /biznese (avatari mban rrethin online).
+  // Fillon nga një element i gjallë edhe kur llogaria s'ka ende histori (profil i ri s'del "bosh").
+  const isOnline = useIsOnline(profile?.id)
 
   useEffect(() => {
     let cancelled = false
@@ -622,22 +627,25 @@ export default function ProfilePage() {
             </label>
           </div>
 
-          {/* Avatar — positioned to overlap cover */}
-          <div style={{ position: 'absolute', bottom: -48, left: 16 }}>
-            <div style={{ position: 'relative' }}>
-              <Avatar
-                src={profile?.avatar_url}
-                name={profile?.full_name || profile?.username}
-                type={profile?.shop_name ? 'business' : 'person'}
-                tier={tierNgaProfili(profile)}
-                verified={avatarVerified(profile)}
-                size={96}
-              />
-              <label style={{ position: 'absolute', bottom: 0, right: 0, background: '#E63312', color: '#fff', width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, cursor: 'pointer', border: '2px solid #fff', boxShadow: '0 1px 4px rgba(0,0,0,.2)', zIndex: 2 }}>
-                <span aria-hidden="true">{avatarUploading ? '⏳' : '📷'}</span>
-                <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) uploadProfileImage(f, 'avatar') }} />
-              </label>
-            </div>
+          {/* Avatar — positioned to overlap cover.
+              MBIVENDOSJA (urdhër pronari, 2 shtator 2026): cepat e avatarit u përkasin
+              SISTEMEVE TË IDENTITETIT — tier (lart-djathtas), ✓/🏢 (poshtë-djathtas),
+              online (poshtë-majtas). Kontrolli i ngarkimit është VEPRIM, jo identitet:
+              rri JASHTË avatarit (djathtas tij), që të mos mbulojë asnjë vulë. */}
+          <div style={{ position: 'absolute', bottom: -48, left: 16, display: 'flex', alignItems: 'flex-end', gap: 10 }}>
+            <Avatar
+              src={profile?.avatar_url}
+              name={profile?.full_name || profile?.username}
+              type={profile?.shop_name ? 'business' : 'person'}
+              tier={tierNgaProfili(profile)}
+              verified={avatarVerified(profile)}
+              online={isOnline}
+              size={96}
+            />
+            <label style={{ display: 'inline-flex', alignItems: 'center', gap: 5, minHeight: 40, padding: '0 12px', marginBottom: 4, background: 'var(--az-white,#fff)', color: 'var(--az-black,#111)', border: '1.5px solid var(--az-line,#e5e5e5)', borderRadius: 999, fontSize: 12, fontWeight: 700, cursor: 'pointer', boxShadow: '0 1px 4px rgba(0,0,0,.12)', whiteSpace: 'nowrap' }}>
+              <span aria-hidden="true">{avatarUploading ? '⏳' : '📷'}</span> Ndrysho foton
+              <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) uploadProfileImage(f, 'avatar') }} />
+            </label>
           </div>
         </div>
 

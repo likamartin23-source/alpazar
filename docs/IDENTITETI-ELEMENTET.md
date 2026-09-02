@@ -42,17 +42,20 @@ i freskuar LIVE me triggera (vlerësime · referime · porosi · moderim) + cron
 
 | Përbërës | Peshë | Sistemi |
 |---|---|---|
-| Cilësia e vlerësimeve | ≤22 | `reviews.rating` |
-| Porositë e dorëzuara | ≤18 | `orders (delivered)` |
+| Cilësia e vlerësimeve | ≤20 | `reviews.rating` |
 | Verifikimi me dokument | 18 | `is_verified` |
+| Porositë e dorëzuara | ≤16 | `orders (delivered)` |
 | Mosha e llogarisë | ≤12 | `created_at` |
 | Numri i vlerësimeve | ≤8 | `reviews` |
 | Shpejtësia e përgjigjes | ≤8 | `response_rate` |
-| **Referimet** | ≤8 | `referrals (completed)` |
+| **Referimet** | ≤6 | `profiles.referred_by` (burim real) |
 | **Pikët** | ≤6 | `gamification_points` |
+| **👁 Shikimet e shumta** | ≤6 | `listings.views_count` (log-scaled) |
 | Raportime të hapura (−) | −10 secili, ≤−30 | `moderation_queue (ref_type=user)` |
 
-Të gjitha FALAS. Kur mungon historia, bie te heuristika (moshë+shpallje+pikë) derisa modeli të mbushet.
+Max-i pozitiv = 100 (i matur). Të gjitha FALAS. Shikimet log-scaled (jo linear): trafik i
+vërtetë shpërblehet, por s'gamohet me rifreskime (§1.7); PA trigger per-view — freskohen nga
+cron-i javor. Kur mungon historia, bie te heuristika (moshë+shpallje+pikë) derisa modeli të mbushet.
 
 ## 3-bis. Sistemet SOCIALE të bllokut (të reja) — reale, funksionale, kudo ku duhen
 
