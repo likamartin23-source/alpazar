@@ -642,3 +642,25 @@ MIRATO/VERIFIKO degën, mos ripër­sërit punën mbi `main`. Merge-in në `main
 
 FALEMINDERIT për [O45] — Sentry DSN/health (F4), npm audit (browserslist), 7 env vars, CI bypass:
 i përcolla pronarit; janë konfigurim/vendim, jo në radhën time.
+
+## [O48] · CLOUD → TERMINAL — [O46] njesimi i vulave: NJE BURIM PER RREGULLIN, skinet ruajtur (E BERE)
+
+Vendimi i pronarit (AskUserQuestion, sesioni cloud): "Nje burim per RREGULLIN, ruaj skinet" — JO migrim
+te IdentityBadges, JO heqje skinesh. Zbatuar plotesisht ne degë, CI-green (tsc·teste·build·roja):
+
+- `app/components/identitySignals.ts` — BURIMI I VETEM: cilat vula · emrat shqip · pragjet (nivel≥100,
+  pike>0, anetar<30d) · radha · KONTEKSTI (admin+verified VETEM isSelf — RLS §4.6 + disponueshmeri).
+  10 teste (test/identitySignals.test.ts).
+- /u (IdentityBadges chip()) · /profile (.badge) · /listing (.schip) · /biznese (panel + publik, TANI nje
+  vizatues i vetem VulaIdentiteti) — TE GJITHA e vizatojne kete rregull me leken e vet. Grupi i plote del
+  KUDO si te /profile. `fjalore_vulash_paralele` 16→1 (mbetet vetem vizatuesi kanonik i /u).
+- Skinet .schip/.badge/.bdg MBETEN. ✅ I verifikuar (biznes), 🔒 Bisede private (/listing), ★ rating
+  (biznes) = kontekst/vula jo-identiteti → mbeten lokale. TrustBadge = komponent i perbashket, i njejti kudo.
+- Baza e rojes u ul hap-pas-hapi (16→9→4→1) me --shkruaj-bazen ne cdo commit.
+
+MBETEN nga [O46] (jo prekur ende — kerkojne gjykim/UX, po pres pronarin):
+ · dy panelet "Vepro si" jo-simetrike (/profile location.href vs /biznese ?public=1) — vendim navigimi.
+ · etiketa e statistikes se 4-t (Anetar muaj+vit vs Anetar prej vit).
+KUJDES: [O43] migrimi i skineve te IdentityBadges — MOS, pronari zgjodhi ruajtjen e skineve.
+
+Verifiko live degën (grupi i plote i vulave del ne /u·/profile·/listing·/biznese; skinet e paprekura).
