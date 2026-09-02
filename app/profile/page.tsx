@@ -508,7 +508,6 @@ export default function ProfilePage() {
         .b-verif{background:#EAF3DE;color:#3B6D11;}
         .b-seller{background:#EEF4FF;color:#185FA5;}
         .b-new{background:#FFF4E5;color:#B45309;}
-        .stats-row{display:flex;justify-content:space-around;padding:14px 0;background:#1a1a1a;}
         .stat{text-align:center;}
         .stat-n{font-size:18px;font-weight:800;color:#F5C842;}
         .stat-l{font-size:9px;color:#666;margin-top:2px;}
@@ -688,7 +687,7 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <div className="stats-row">
+        <div className="alpz-stats" style={{ margin: "12px 12px 0" }}>
           {/* 4-kuti IDENTIK me /u dhe panelin e biznesit (Vendimi B2): Shpallje · Të shitura ·
               Ndjekës · Anëtar. "Shikime"/"Niveli" rrinë te Analitika/Badge, jo këtu (harmonizim). */}
           <div className="stat">
@@ -696,7 +695,7 @@ export default function ProfilePage() {
             <div className="stat-l">Shpallje</div>
           </div>
           <div className="stat">
-            <div className="stat-n" style={myListings.some(l => l.status === 'sold') ? { color: '#0E7A35' } : undefined}>{myListings.filter(l => l.status === 'sold').length}</div>
+            <div className="stat-n" style={myListings.some(l => l.status === 'sold') ? { color: '#4ADE80' } : undefined}>{myListings.filter(l => l.status === 'sold').length}</div>
             <div className="stat-l">Të shitura</div>
           </div>
           <div className="stat">

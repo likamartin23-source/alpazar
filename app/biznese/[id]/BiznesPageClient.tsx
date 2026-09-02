@@ -496,8 +496,6 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           .bizp-badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
           .bdg{font-size:11px;font-weight:800;padding:3px 9px;border-radius:8px;display:inline-flex;align-items:center;gap:4px;}
           /* Shirit statistikash i zi — pasqyrë e panelit /profile (BP2: paneli identik në formë). */
-          .bizp-stats{display:flex;background:#111;border-radius:14px;padding:14px 6px;margin-top:12px;}
-          .bizp-stats .stat-div{width:1px;background:#333;}
           .stat-pill{display:flex;flex-direction:column;align-items:center;flex:1;}
           .stat-n{font-size:18px;font-weight:800;color:#F5C842;}
           .stat-l{font-size:10px;color:#555;font-weight:500;margin-top:1px;}
@@ -588,7 +586,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
             </div>
 
             {/* Statistika (Shpallje · Të shitura · Ndjekës · Anëtar) */}
-            <div className="bizp-stats">
+            <div className="alpz-stats" style={{ marginTop: 12 }}>
               <div className="stat-pill"><span className="stat-n">{listings.length}</span><span className="stat-l">Shpallje</span></div>
               <div className="stat-div" />
               <div className="stat-pill"><span className="stat-n" style={soldCount > 0 ? { color: '#4ADE80' } : undefined}>{soldCount}</span><span className="stat-l">Të shitura</span></div>
@@ -882,22 +880,22 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
 
           {/* Stats row — matrica e ngrire (BLLOKU Imazhi 4): Shpallje / Të shitura /
               Ndjekës / Anëtar, PA Shikime (ato zbresin te rreshti 👁+🔴 poshtë). */}
-          <div style={{ display: 'flex', borderTop: '1px solid #f0f0f0', paddingTop: 14, marginBottom: 8 }}>
+          <div className="alpz-stats" style={{ marginBottom: 8 }}>
             <div className="stat-pill">
               <span className="stat-n">{listings.length}</span>
               <span className="stat-l">Shpallje</span>
             </div>
-            <div style={{ width: 1, background: '#f0f0f0' }} />
+            <div className="stat-div" />
             <div className="stat-pill">
-              <span className="stat-n" style={soldCount > 0 ? { color: '#0E7A35' } : undefined}>{soldCount}</span>
+              <span className="stat-n" style={soldCount > 0 ? { color: '#4ADE80' } : undefined}>{soldCount}</span>
               <span className="stat-l">Të shitura</span>
             </div>
-            <div style={{ width: 1, background: '#f0f0f0' }} />
+            <div className="stat-div" />
             <div className="stat-pill">
               <span className="stat-n">{followers}</span>
               <span className="stat-l">Ndjekës</span>
             </div>
-            <div style={{ width: 1, background: '#f0f0f0' }} />
+            <div className="stat-div" />
             <div className="stat-pill">
               <span className="stat-n">{new Date(biz.created_at).getFullYear()}</span>
               <span className="stat-l">Anëtar prej</span>

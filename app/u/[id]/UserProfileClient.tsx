@@ -251,22 +251,22 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
           {/* Stats row — matrica e ngrire (BLLOKU Imazhi 5): Shpallje / Të shitura /
               Ndjekës / Anëtar, IDENTIKE me kutine e biznesit. Rating u zhvendos
               te vlerësimet (seksioni "Rreth"), Besueshmëria te "Informacion". */}
-          <div style={{ display: 'flex', gap: 20, marginBottom: 12 }}>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontWeight: 800, fontSize: 17, color: '#111' }}>{listings.length}</div>
-              <div style={{ fontSize: 11, color: '#6b6b6b' }}>Shpallje</div>
+          <div className="alpz-stats" style={{ marginBottom: 12 }}>
+            <div className="stat">
+              <div className="stat-n">{listings.length}</div>
+              <div className="stat-l">Shpallje</div>
             </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontWeight: 800, fontSize: 17, color: soldCount > 0 ? '#0E7A35' : '#111' }}>{soldCount}</div>
-              <div style={{ fontSize: 11, color: '#6b6b6b' }}>Të shitura</div>
+            <div className="stat">
+              <div className="stat-n" style={soldCount > 0 ? { color: '#4ADE80' } : undefined}>{soldCount}</div>
+              <div className="stat-l">Të shitura</div>
             </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontWeight: 800, fontSize: 17, color: '#111' }}>{followers}</div>
-              <div style={{ fontSize: 11, color: '#6b6b6b' }}>Ndjekës</div>
+            <div className="stat">
+              <div className="stat-n">{followers}</div>
+              <div className="stat-l">Ndjekës</div>
             </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontWeight: 800, fontSize: 17, color: '#111' }}>{memberSince}</div>
-              <div style={{ fontSize: 11, color: '#6b6b6b' }}>Anëtar</div>
+            <div className="stat">
+              <div className="stat-n">{memberSince}</div>
+              <div className="stat-l">Anëtar</div>
             </div>
           </div>
 
