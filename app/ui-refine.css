@@ -312,3 +312,16 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
 .alpz-stats .stat-n{display:block;font-size:18px;font-weight:800;color:#FF4433;line-height:1.15;}
 .alpz-stats .stat-l{display:block;font-size:10px !important;font-weight:500;color:#A0A0A0 !important;margin-top:2px;}
 .alpz-stats .stat-div{width:1px;flex:0 0 1px;background:#333;align-self:stretch;}
+
+/* [O51] Rruga KARTE→SHITES (.card-seller-ov[role=link]) ishte 22px ne telefon — nen 44px (WCAG 2.5.5).
+   Zone prekjeje 44px me pseudo-element, PA e fryre pamjen e cipit (madhesia s'ndryshon).
+   VETEM varianti-lidhje: te BusinessCard-i cipi eshte <span> jo-interaktiv (cursor:default) dhe nje
+   zone e padukshme mbi te do te hante prekjet e lidhjes se kartes. */
+@media (pointer: coarse) {
+  .card-seller-ov[role="link"]::after { content: ''; position: absolute; top: -11px; right: -11px; bottom: -11px; left: -11px; }
+}
+/* [D1] Telefon (≤430px): hapesire poshte rrjetit te kartave qe karta e fundit te mos mbulohet nga
+   elementet notuese te poshtme (install-float, flluska Albi). Butonat NUK preken (vendim pronari). */
+@media (max-width: 430px) {
+  .listings-grid { padding-bottom: 104px; }
+}
