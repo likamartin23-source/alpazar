@@ -116,6 +116,16 @@ mat('radiuse_inline',
   // (Lookahead-i i thjeshtë dështon: \s* bën backtracking dhe kalon te hapësira — §9.2.)
   (_f, t) => numero(t, /borderRadius:/g) - numero(t, /borderRadius:\s*['"]?var\(/g))
 
+// NGJYRA INLINE ([O60], 2 shtator 2026): ngjyra hex #RRGGBB/#RGB të shkruara me dorë në rreshta
+// jo-koment, në vend të token-ave (var(--az-*)). Terminali mati katër të kuqe marke të përdorura
+// si literale në qindra vende (#C42B0F, #E63312, #C42305, #C42A0E) sepse s'kishte nga çfarë të
+// zgjidhej. Kjo porte e numeron; zëvendësimi me token e ul bazën — njësoj si vulat/radiuset.
+mat('ngjyra_hex_inline',
+  'ngjyrë hex e shkruar me dorë (#RRGGBB/#RGB) në vend të token-it var(--az-*) — paleta e paunifikuar',
+  'Përdor token-in: var(--az-red|--az-red-deep|--az-yellow|--az-black|…). Shto te ui-refine.css nëse mungon.',
+  (_f, t) => t.split(RRESHT).filter(r => !eshteKoment(r))
+    .reduce((n, r) => n + (r.match(/#[0-9a-fA-F]{6}\b|#[0-9a-fA-F]{3}\b/g) || []).length, 0))
+
 let baza
 try { baza = JSON.parse(readFileSync(BAZA, 'utf8')) } catch { baza = null }
 
