@@ -9,6 +9,7 @@ import { useIsOnline } from '../../components/OnlinePresence'
 import ListingCard from '../../components/ListingCard'
 import { LISTING_SELECT } from '../../../lib/listingSelect'
 import { IdentityBadges } from '../../components/IdentityBadges'
+import { isNewMember } from '../../components/Badges'
 
 function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime()
@@ -275,7 +276,19 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
               👑/⭐. Më parë ky bllok ishte i shkruar me dorë vetëm me TrustBadge+pikë (mungonin
               niveli, Shitës aktiv, tier-i) — çharmonizim me /profile e /listing. */}
           <div style={{ marginBottom: 12 }}>
-            <IdentityBadges subject={profile} activeListings={listings.length} isBusiness={false} density="full" />
+            {/* isActiveSeller vjen nga IDENTITETI, jo nga numri: kjo faqe numeron vetem
+                shpalljet PERSONALE (business_id is null, Vendimi 7), ndaj nje pronar qe
+                shet permes biznesit ka 0 ketu por ESHTE shites aktiv — [O55] §1. */}
+            <IdentityBadges
+              subject={profile}
+              activeListings={listings.length}
+              isBusiness={!!biz || !!profile.shop_name}
+              density="full"
+              isAdmin={!!profile.is_admin}
+              isVerified={!!profile.is_verified}
+              isNewMember={isNewMember(profile.created_at)}
+              isActiveSeller={listings.length > 0 || !!biz}
+            />
           </div>
 
           {/* Action buttons */}

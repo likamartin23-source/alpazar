@@ -8,6 +8,7 @@ import dynamicImport from 'next/dynamic'
 import Avatar, { tierNgaProfili } from '../../components/Avatar'
 import ListingCard from '../../components/ListingCard'
 import { TrustBadge } from '../../components/TrustBadge'
+import { IdentityBadges } from '../../components/IdentityBadges'
 import { useSyteLive } from '../../components/PremiumUpsell'
 import { useIsOnline } from '../../components/OnlinePresence'
 import { BackButton } from '../../components/BackButton'
@@ -494,7 +495,6 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           .cam{position:absolute;background:rgba(0,0,0,.55);border:none;border-radius:999px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;}
           .bizp-card{background:#fff;border-radius:0 0 20px 20px;padding:0 16px 16px;margin-bottom:8px;}
           .bizp-badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
-          .bdg{font-size:11px;font-weight:800;padding:3px 9px;border-radius:8px;display:inline-flex;align-items:center;gap:4px;}
           /* Shirit statistikash i zi — pasqyrë e panelit /profile (BP2: paneli identik në formë). */
           .stat-pill{display:flex;flex-direction:column;align-items:center;flex:1;}
           .stat-n{font-size:18px;font-weight:800;color:#F5C842;}
@@ -564,25 +564,20 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               {biz.is_verified && <span aria-hidden="true" style={{ fontSize: 17 }}>✅</span>}
             </div>
 
-            {/* Bexhat (VIP Ekstra Boost / Premium · Biznes · I verifikuar) */}
+            {/* Vulat e identitetit — komponenti i VETEM ([O56]). Me pare tri .bdg + nje bllok
+                reputacioni inline. subject bie te { trust_score_visible: false } kur pronari
+                s@eshte ngarkuar ende: roja DESHTON E MBYLLUR, cka mbyll P0-ne e rrjedhjes se
+                Trust Score-it te renderimi i serverit (docs/AUTOPSIA-E-BLLOKUT.md §4). */}
             <div className="bizp-badges">
-              {tierLabel && <span className="bdg" style={tier === 'vip' ? { background: '#F3E8FF', color: '#7C3AED' } : { background: '#FFF3D6', color: '#7A4A00' }}><span aria-hidden="true">👑</span> {tierLabel}</span>}
-              <span className="bdg" style={{ background: '#E7F0FF', color: '#1D4ED8' }}><span aria-hidden="true">🏢</span> Biznes</span>
-              {biz.is_verified && <span className="bdg" style={{ background: '#dcfce7', color: '#16a34a' }}>✅ I verifikuar</span>}
-            </div>
-
-            {/* Reputacioni (GAP 3+4 — mbyllja e lakut): TrustBadge i plotë (unazë "X/100") +
-                "⚡ N pikë" reale të pronarit; pikët fitohen e njoftohen por s'shfaqeshin këtu. */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', margin: '10px 0 2px' }}>
-              {/* Opt-out i Trust Score (Ligji 124/2024 neni 19 · CLAUDE.md §2.1) — si /u & /listing */}
-              {pronari?.trust_score_visible !== false && (
-                <TrustBadge createdAt={biz.created_at} listingsActive={listings.length} gamificationPoints={pronari?.gamification_points || 0} />
-              )}
-              {(pronari?.gamification_points || 0) > 0 && (
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 700, color: '#7A4A00', background: '#FFF8E1', border: '1px solid #F5C84255', borderRadius: 9, padding: '4px 10px' }}>
-                  <span aria-hidden="true">⚡</span> {pronari?.gamification_points} pikë
-                </span>
-              )}
+              <IdentityBadges
+                subject={pronari ?? { trust_score_visible: false }}
+                activeListings={listings.length}
+                isBusiness
+                density="full"
+                isVerified={!!biz.is_verified}
+                isActiveSeller={listings.length > 0}
+                rating={rating.count > 0 && rating.avg != null ? { avg: rating.avg, count: rating.count } : null}
+              />
             </div>
 
             {/* Statistika (Shpallje · Të shitura · Ndjekës · Anëtar) */}
@@ -842,40 +837,18 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
             </div>
           )}
 
-          {/* Reputacioni (RESTAURIMI FINAL, dëshifrimi B — zëvendëson BP2 C4): koka publike e
-              biznesit shfaq ★ rating + "📦 Shitës aktiv" + "⚡ pikë" + TrustBadge unazë "X/100". */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
-            {/* 👑 VIP / Premium (tier i trashëguar nga pronari) + 🏢 Biznes — më parë vetëm te
-                paneli i pronarit, jo te pamja publike (gjetje audit: badge-t mungonin te vizitori). */}
-            {tierLabel && (
-              <span style={tier === 'vip'
-                ? { display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 800, color: '#7C3AED', background: '#F3E8FF', border: '1px solid #7C3AED33', borderRadius: 9, padding: '4px 10px' }
-                : { display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 800, color: '#7A4A00', background: '#FFF3D6', border: '1px solid #F5C84255', borderRadius: 9, padding: '4px 10px' }}>
-                <span aria-hidden="true">👑</span> {tierLabel}
-              </span>
-            )}
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 700, color: '#0B8A5A', background: '#E7F8F1', border: '1px solid #0B8A5A33', borderRadius: 9, padding: '4px 10px' }}>
-              <span aria-hidden="true">🏢</span> Biznes
-            </span>
-            {rating.count > 0 && rating.avg != null && (
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#FFF8E1', color: '#7B5000', border: '1px solid #F5C84255', borderRadius: 9, padding: '4px 10px', fontSize: 12.5, fontWeight: 800 }}>
-                <span aria-hidden="true">★</span> {rating.avg.toFixed(1)}
-                <span style={{ fontWeight: 600, color: '#9a7b2a' }}>({rating.count})</span>
-              </span>
-            )}
-            {listings.length > 0 && (
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 700, color: '#0E7A35', background: '#E7F6EC', border: '1px solid #0E7A3533', borderRadius: 9, padding: '4px 10px' }}>
-                <span aria-hidden="true">📦</span> Shitës aktiv
-              </span>
-            )}
-            {(pronari?.gamification_points || 0) > 0 && (
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 700, color: '#7A4A00', background: '#FFF8E1', border: '1px solid #F5C84255', borderRadius: 9, padding: '4px 10px' }}>
-                <span aria-hidden="true">⚡</span> {pronari?.gamification_points} pikë
-              </span>
-            )}
-            {pronari?.trust_score_visible !== false && (
-              <TrustBadge createdAt={biz.created_at} listingsActive={listings.length} gamificationPoints={pronari?.gamification_points || 0} />
-            )}
+          {/* Vulat e identitetit — I NJEJTI komponent si te paneli dhe si te /profile, /u,
+              /listing ([O56]). Me pare pese blloqe inline. Fail-closed te Trust Score-i. */}
+          <div style={{ marginBottom: 12 }}>
+            <IdentityBadges
+              subject={pronari ?? { trust_score_visible: false }}
+              activeListings={listings.length}
+              isBusiness
+              density="full"
+              isVerified={!!biz.is_verified}
+              isActiveSeller={listings.length > 0}
+              rating={rating.count > 0 && rating.avg != null ? { avg: rating.avg, count: rating.count } : null}
+            />
           </div>
 
           {/* Stats row — matrica e ngrire (BLLOKU Imazhi 4): Shpallje / Të shitura /

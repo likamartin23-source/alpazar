@@ -10,6 +10,7 @@ import { SocialProofBar, SellerPremiumUpsell } from '../../components/PremiumUps
 import { ReportSheet } from '../../components/ReportSheet'
 import { saveRefFromUrl, buildShareUrl } from '../../../lib/referral'
 import { TrustBadge } from '../../components/TrustBadge'
+import { IdentityBadges } from '../../components/IdentityBadges'
 import { SharePanel } from '../../components/SharePanel'
 import { ImageCarousel } from '../../components/ImageCarousel'
 import { BackButton } from '../../components/BackButton'
@@ -699,13 +700,6 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         .seller-name{font-size:14px;font-weight:700;color:#111;}
         .seller-sub{font-size:11px;color:#555;margin-top:2px;}
         .seller-chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px;}
-        .schip{font-size:9.5px;font-weight:700;padding:3px 8px;border-radius:6px;}
-        .sch-prem{background:linear-gradient(135deg,#F8D24E,#F5C842);color:#111;box-shadow:0 1px 4px rgba(245,200,66,.45);}
-        .sch-shop{background:linear-gradient(135deg,#12c98a,#10B981);color:#fff;box-shadow:0 1px 4px rgba(16,185,129,.35);}
-        .sch-admin{background:linear-gradient(135deg,#8b4bf0,#7C3AED);color:#fff;}
-        .sch-priv{background:#EEF4FF;color:#185FA5;border:1px solid #C3DAFB;}
-        .sch-seller{background:#EEF4FF;color:#185FA5;}
-        .sch-new{background:#FFF4E5;color:#B45309;}
         .seller-stats{display:flex;gap:6px;margin-bottom:7px;flex-wrap:wrap;}
         .stat-chip{display:flex;align-items:center;gap:4px;background:#f8f6f0;border:0.5px solid #ececec;border-radius:10px;padding:5px 10px;font-size:11px;color:#555;}
         .stat-chip i{font-size:11px;color:#999;}
@@ -942,17 +936,21 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                   </div>
                 </div>
 
-                {/* Badges */}
+                {/* Vulat e identitetit — komponenti i VETEM ([O56]). Me pare gjashte .schip
+                    te shkruara me dore, me kontrast 2.15:1 te .sch-shop ([O52]). density="compact"
+                    sepse ky eshte cip i ngushte: Niveli shfaqet vetem mbi 100 pike. */}
                 <div className="seller-chips">
-                  {seller.is_admin   && <span className="schip sch-admin"><span aria-hidden="true">🛡</span> Admin</span>}
-                  {sellerTier !== 'free' && <span className="schip sch-prem"><span aria-hidden="true">👑</span> {sellerTier === 'vip' ? 'VIP Ekstra Boost' : 'Premium'}</span>}
-                  {isBusinessListing && <span className="schip sch-shop"><span aria-hidden="true">🏢</span> Biznes</span>}
-                  {sellerCount > 0 && <span className="schip sch-seller"><span aria-hidden="true">📦</span> Shitës aktiv</span>}
-                  {isNewMember(seller.created_at) && <span className="schip sch-new"><span aria-hidden="true">🆕</span> Anëtar i ri</span>}
-                  {!isOwner && <span className="schip sch-priv"><span aria-hidden="true">🔒</span> Bisedë private</span>}
-                  {/* H1: "I verifikuar" hiqet — Avatar-i tashmë e shfaq vulën ✓ (verified) me të njëjtin
-                      prag. "Përgjigjet shpejt" hiqet — ishte proxy i rremë nga trust_score, jo kohë reale.
-                      Niveli i reputacionit shfaqet vetëm nga TrustBadge (një burim, poshtë). */}
+                  <IdentityBadges
+                    subject={seller}
+                    activeListings={sellerCount}
+                    isBusiness={isBusinessListing}
+                    density="compact"
+                    isAdmin={!!seller.is_admin}
+                    isVerified={!!seller.is_verified}
+                    isNewMember={isNewMember(seller.created_at)}
+                    isActiveSeller={sellerCount > 0}
+                    isPrivateChat={!isOwner}
+                  />
                 </div>
 
                 {/* Stats */}
