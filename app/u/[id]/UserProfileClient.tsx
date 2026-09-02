@@ -266,7 +266,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
             </div>
             <div className="stat">
               <div className="stat-n">{memberSince}</div>
-              <div className="stat-l">Anëtar</div>
+              <div className="stat-l">Anëtar prej</div>
             </div>
           </div>
 

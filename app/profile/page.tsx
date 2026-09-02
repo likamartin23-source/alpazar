@@ -721,8 +721,8 @@ export default function ProfilePage() {
             <div className="stat-l">Ndjekës</div>
           </div>
           <div className="stat">
-            <div className="stat-n" style={{ fontSize: 12 }}>{profile?.created_at ? monthYear(profile.created_at) : '—'}</div>
-            <div className="stat-l">Anëtar</div>
+            <div className="stat-n">{profile?.created_at ? new Date(profile.created_at).getFullYear() : '—'}</div>
+            <div className="stat-l">Anëtar prej</div>
           </div>
         </div>
 

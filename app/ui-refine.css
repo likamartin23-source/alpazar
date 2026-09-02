@@ -277,6 +277,14 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
   button[type="submit"] {
     min-height: 44px;
   }
+  /* [O51] Rruga KARTE→SHITES (.card-seller-ov, role=link brenda kartes) eshte gurthemeli i modelit
+     3-shkallesh dhe ne telefon ishte 22px — nen 44px (WCAG 2.5.5). Zone prekjeje 44px me nje
+     pseudo-element (si FavoriteButton), PA e fryre pamjen e cipit (D3: madhesia s'ndryshon). */
+  .card-seller-ov::after {
+    content: '';
+    position: absolute;
+    top: -11px; right: -11px; bottom: -11px; left: -11px;
+  }
 }
 
 /* ═══════════ RRYPI I IDENTITETIT — nje trajtim i vetem ═══════════
