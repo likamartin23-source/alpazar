@@ -5161,3 +5161,52 @@ Krahaso: `FavoriteButton` e respekton (`Math.max(size,44)`), sepse dikush e mend
 ## Ç'mbetet i pamatur në telefon
 Kontrasti (axe-core), zhvendosja e paraqitjes (CLS) dhe gjestet reale të prekjes.
 Iframe-i jep gjerësinë, jo prekjen e vërtetë.
+
+---
+
+# [O52] · KONTRASTI, I MATUR — «butonat e padukshëm» me numra
+
+Pronari e ka thënë tri herë: *"butonat janë të shpërndarë, të çrregullt, të padukshëm."*
+Deri tani përgjigja ime ishte pamje. Tani është matje: raport kontrasti WCAG 2.1, te `/listing`
+në prodhim.
+
+## Instrumenti gënjeu DY herë para se t'i besoja
+
+Kjo është pjesë e rezultatit, jo shënim anash:
+
+| Kalimi | Rezultati | Pse ishte i rremë |
+|---|---|---|
+| 1 | 12 shkelje, disa me `cr = 1.00` | s'i lexoja sfondet **gradient** → i krahasoja të njëjtat ngjyra |
+| 2 | 10 shkelje | gradientet u ndreqën, por shtresat **gjysmë-të-tejdukshme** (`rgba(...,.5)`) i anashkaloja |
+| 3 | **9 shkelje, 0 të pamatshme** | kompozim i saktë alfa, shtresë mbi shtresë deri te ngjyra e errët |
+
+**`Shiko biznesin →` dhe `Shiko profilin →` dilnin me `1.59` te kalimi i parë.** Janë të
+rregullta — teksti i artë rri mbi sfond të errët; instrumenti im e humbte gradientin dhe e
+krahasonte me të bardhën. Po t'i kisha raportuar, do të kishit ndrequr diçka që nuk prishet.
+
+## Shkeljet reale (të matura pas ndreqjes)
+
+| Elementi | Raporti | Pragu | Madhësia | Burimi |
+|---|---|---|---|---|
+| `⭐ Dërgo vlerësimin` | **1.61** | 4.5 | 12px/700 | `ListingPageClient.tsx:1188` |
+| `🏢 Biznes` (`.sch-shop`) | **2.15** | 4.5 | 10px/700 | `:704` `linear-gradient(#12c98a,#10B981)` mbi `#fff` |
+| `Gjuha` (fundfaqja) | **1.21** | 4.5 | 16px | zgjedhësi i gjuhës |
+| `✕` | 3.29 | 4.5 | 13px | mbyllje overlay-i |
+| `I ri` (`.badge-new`) | 4.33 | 4.5 | 9px/700 | `ui-refine.css:195` |
+
+**`.sch-shop` është vula më e keqe e bllokut:** `2.15` — dhe është pikërisht një nga vulat e
+identitetit që po unifikohen. Të dyja skajet e gradientit dështojnë (`#12c98a` → 2.15,
+`#10B981` → 2.48), ndaj përfundimi s'varet nga cila skaj matet.
+
+**`badge-new` është kufitare:** e bardha mbi `#E63312` jep `4.33`, mbi `#c42a0e` jep `5.6`.
+Pra gjysma e vulës kalon dhe gjysma jo. Në 9px kjo është e lexueshme vetëm në një skaj.
+
+## Lidhja me punën e bllokut
+Kur `IdentityBadges` të zgjerohet (hapi 3 i [O46]), **ngjyrat e reja duhen matur, jo zgjedhur
+me sy.** Sot fjalorët paralelë kanë kontraste të ndryshme për të njëjtën vulë; nëse migrimi
+merr ngjyrat e njërit prej tyre pa matje, shkelja udhëton bashkë me unifikimin.
+
+## Kufi i deklaruar
+Për gradientet marr **ngjyrën e parë** të stopit; kur të dyja skajet dështojnë (si `.sch-shop`)
+përfundimi është i sigurt, kur vetëm njëra dështon (si `.badge-new`) e shënoj si kufitare.
+Nuk mata: `/profile`, `/u`, `/biznese`, dhe asnjë faqe në 390px.
