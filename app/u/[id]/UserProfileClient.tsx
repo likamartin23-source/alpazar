@@ -298,7 +298,10 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
                 onClick={toggleFollow}
                 disabled={followBusy}
                 aria-pressed={isFollowing}
-                style={{ padding: '10px 16px', minWidth: 110, background: isFollowing ? '#111' : '#fff', color: isFollowing ? '#F5C842' : '#111', border: isFollowing ? 'none' : '1.5px solid #ddd', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: followBusy ? 'default' : 'pointer', opacity: followBusy ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+                /* [O42] Ndjekja e njësuar me /biznese/[id] (i njëjti veprim, e njëjta gjuhë KUDO):
+                   NDIQ (thirrje) = i mbushur artë; DUKE NDJEKUR (konfirmuar) = kontur i kuq i qetë.
+                   Më parë /u e kishte të përmbysur (ndiq=gri, ndjek=e zezë/artë) → mospërputhje me biznesin. */
+                style={{ padding: '10px 16px', minWidth: 110, background: isFollowing ? '#fff' : 'linear-gradient(135deg,#F8D24E,#F5C842)', color: isFollowing ? '#C42305' : '#111', border: isFollowing ? '1.5px solid #C42305' : 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: followBusy ? 'default' : 'pointer', opacity: followBusy ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
               >
                 {isFollowing ? <><span aria-hidden="true">✓</span> Duke ndjekur</> : <><span aria-hidden="true">＋</span> Ndiq</>}
               </button>
