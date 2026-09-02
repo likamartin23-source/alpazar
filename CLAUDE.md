@@ -255,6 +255,12 @@ Deri atehere `fiscal_status='not_required'` dhe asgje nuk prishet.
   `admin_settings` (`anthropic_api_key`, `brevo_api_key`, `resend_api_key`,
   `sms_gateway_password`, `moderation_secret`, `embed_cron_secret`).
 - **`admin_pin = 000000`.**
+- **Deploy Vercel (matur 2 shtator 2026):** (a) Plani **Hobby** ka kufi **deploy-esh/ditë**
+  (ndryshe nga CPU/Fluid) — kur mbushet, push-et e reja s'ndërtojnë fare (0 deployime), por
+  **Promote/Redeploy manual PUNON** (ripërdor build ekzistues, s'kërkon ndërtim të ri). (b) Kur
+  i njëjti SHA shtyhet te dega (preview) DHE te `main`, Vercel e **deduplikon** → s'krijon deploy
+  prodhimi. Për deploy prodhimi të sigurt: main duhet SHA UNIK (shtyje te main te parë, ose commit
+  bosh vetëm te main), OSE pronari bën **Promote to Production** te deployimi i preview-t.
 - Mjete te lidhura e te papërdorura: **Sentry** (org `alpazar`, bosh — ke
   `health_events` shtepiak paralel; zgjidh njerin), **Cloudflare**, **Semrush**.
 - **Brevo:** plan falas, **300 email/dite**. Ne volum, email-et ligjore humbasin
