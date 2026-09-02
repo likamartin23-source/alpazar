@@ -5049,3 +5049,49 @@ Shto te [O48] këto rreshta të konfirmuar me sy:
 - `Fillestar` — vetëm `/profile`
 - `Besueshmëria X/100` — `/u` po, `/profile` jo
 - Ikona e Premium-it: `⭐` te `/u`, `👑` kudo tjetër
+
+---
+
+# [O50] · KARTAT, TË PARA KRAH PËR KRAH — pse ajo e biznesit "s'ka asnjë element"
+
+Matur live te `/` (Biznese Online + Shpallje të fundit), i njëjti ekran, i njëjti çast.
+
+## Ç'ka secila, në trup
+
+| Rreshti | `ListingCard` | `BusinessCard` |
+|---|---|---|
+| titull | `.card-title` | `.card-title` |
+| — | *(s'ka)* | `tagline` **opsionale** (11px) |
+| çmim | `.card-price` **14px · e kuqe** | `.card-price` **12.5px · `#7A4A00`** (mbishkrim inline) |
+| meta | vendndodhje **+ mosha** (`5d`) | vendndodhje **vetëm** |
+| statistika | `👁 shikime` + `🔴 live` | `👥 ndjekës` |
+
+## 🔴 Shkaku i vërtetë: dy roje të kundërta mbi të njëjtin rresht
+
+```
+ListingCard:315   {(l.views_count != null || live > 0) && <div className="card-stats">
+BusinessCard:123  {(b.followers_count ?? 0) > 0        && <div className="card-stats">
+```
+`views_count = 0` **nuk është null** → ListingCard e shfaq rreshtin edhe me zero (`👁 0`).
+`followers_count = 0` **nuk është > 0** → BusinessCard e **fsheh** rreshtin.
+
+Biznesi ka 0 ndjekës, ndaj rreshti humbet. Dhe meta-ja e tij s'ka moshë. Pra nga **katër**
+rreshtat e trupit, i mbeten **dy e gjysmë** — ndërsa `.card-body` ka lartësi **të ngurtë**
+(`flex: 0 0 var(--card-body-h)` = 98px). Rezultati nuk është kartë më e shkurtër: është
+**e njëjta kartë me hapësirë boshe poshtë.** Kjo është saktësisht *"kartat e bizneseve nuk
+kanë asnjë element"* — dhe s'është mangësi e dizajnit, është **rojë asimetrike**.
+
+## Konfirmim me sy i [O41] §2
+`🛠 Shërbime · 📦 Produkte` duket **dukshëm më e vogël** se `35.552 L` në të njëjtin ekran.
+Mbishkrimi inline i `.card-price` te `BusinessCard:115` nuk është teorik — shihet.
+
+## Ç'është e rregullt te kartat (mos e prekni)
+Të dyja: `★` premium lart-djathtas · çipi `🏢 Biznes` poshtë-majtas · kontrolli «ruaj»
+poshtë-djathtas · `E promovuar` mbi çipin e shitësit **pa e mbuluar** (rregullimi i mëparshëm
+punon) · të njëjtat përmasa grid.
+
+## Ndreqja
+1. `views_count != null` dhe `followers_count != null` — **e njëjta rojë**, që rreshti të
+   ekzistojë edhe me zero (ose të fshihet në të dyja; zgjidhni njërën).
+2. Shto moshën (`timeAgo`) te meta-ja e `BusinessCard`, ose hiqe nga `ListingCard`.
+3. Hiq mbishkrimin inline të `.card-price`; nëse duhet variant, bëje klasë modifikuese.
