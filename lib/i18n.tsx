@@ -132,11 +132,12 @@ function detect(): Lang {
     if (m && LANGS.some(l => l.code === m[1])) return m[1] as Lang
   } catch {}
   try { const s = localStorage.getItem('alpazar_lang'); if (s && LANGS.some(l => l.code === s)) return s as Lang } catch {}
-  // Paneli eshte mjet i brendshem shqip. Pa nje zgjedhje te shprehur te adminit
-  // nuk perkthehet nga gjuha e shfletuesit — perndryshe hapet gjithmone anglisht.
-  try { if (location.pathname.startsWith('/admin')) return 'sq' } catch {}
-  const nav = (navigator.language || 'sq').slice(0, 2).toLowerCase()
-  return (LANGS.some(l => l.code === nav) ? nav : 'sq') as Lang
+  // §6/§15 (Shqip gjithmonë): platformë shqiptare → parazgjedhja është SHQIP për ÇDO vizitor të ri.
+  // NUK kalojmë automatikisht te gjuha e shfletuesit (navigator.language): shumë shqiptarë e kanë
+  // shfletuesin në anglisht dhe do ta hapnin platformën anglisht — mospërputhje me identitetin.
+  // Gjuhën tjetër e zgjedh vetë përdoruesi nga ndërruesi (ruhet te cookie/localStorage më lart).
+  // Admini gjithashtu shqip.
+  return 'sq'
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
