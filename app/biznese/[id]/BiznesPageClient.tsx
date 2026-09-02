@@ -8,7 +8,7 @@ import dynamicImport from 'next/dynamic'
 import Avatar, { tierNgaProfili } from '../../components/Avatar'
 import ListingCard from '../../components/ListingCard'
 import { TrustBadge } from '../../components/TrustBadge'
-import { identitySignals, type IdentitySignal } from '../../components/identitySignals'
+import { identitySignals, showTrust, type IdentitySignal } from '../../components/identitySignals'
 import { useSyteLive } from '../../components/PremiumUpsell'
 import { useIsOnline } from '../../components/OnlinePresence'
 import { BackButton } from '../../components/BackButton'
@@ -611,7 +611,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
 
             {/* Besueshmëria (TrustBadge, unazë "X/100") — opt-out i Ligjit 124/2024 n.19, si /u·/listing·/profile. */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', margin: '10px 0 2px' }}>
-              {pronari?.trust_score_visible !== false && (
+              {showTrust(pronari) && (
                 <TrustBadge createdAt={biz.created_at} listingsActive={listings.length} gamificationPoints={pronari?.gamification_points || 0} />
               )}
             </div>
@@ -885,7 +885,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
                 <span style={{ fontWeight: 600, color: '#9a7b2a' }}>({rating.count})</span>
               </span>
             )}
-            {pronari?.trust_score_visible !== false && (
+            {showTrust(pronari) && (
               <TrustBadge createdAt={biz.created_at} listingsActive={listings.length} gamificationPoints={pronari?.gamification_points || 0} />
             )}
           </div>
