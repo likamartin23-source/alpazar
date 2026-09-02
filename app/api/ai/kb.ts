@@ -22,7 +22,7 @@ export const FAQ: Array<{ keys: string[]; answer: string }> = [
   },
   {
     keys: ['premium', 'gold', 'vip'],
-    answer: 'Planet Premium (emrat, çmimet, limitet) listohen te konteksti LIVE dhe te **/premium**. Abonimin e menaxhon te **/billing**. 👑',
+    answer: 'Planet Premium (emrat, çmimet, limitet) listohen te konteksti LIVE dhe te **/premium**. Abonimin e menaxhon te **/billing**. ⭐',
   },
   {
     keys: ['mesazh', 'kontakt', 'shkruaj', 'komunikoj'],

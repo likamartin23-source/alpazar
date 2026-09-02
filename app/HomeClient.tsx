@@ -839,7 +839,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                         <span className="user-chip-name">{nm}</span>
                         <span className="user-chip-lvl" style={{ color: lvl.color }}>
                           {(() => { const t = tierNgaProfili(profile); return t !== 'free'
-                            ? <><span aria-hidden='true'>👑</span> {t === 'vip' ? 'VIP Ekstra Boost' : 'Premium'}</>
+                            ? <><span aria-hidden='true'>{t === 'vip' ? '👑' : '⭐'}</span> {t === 'vip' ? 'VIP Ekstra Boost' : 'Premium'}</>
                             : <><span aria-hidden='true'>{lvl.icon}</span> {lvl.name}</> })()}
                         </span>
                       </span>
@@ -941,10 +941,15 @@ export default function HomeClient({ initialListings = [], initialCategories = [
 
           {/* 2. Premium CTA — vendosur ku ishte AI asistenti */}
           <div className="premium-cta">
-            <div className="prem-icon"><i className="ti ti-crown" aria-hidden="true" /></div>
+            <div className="prem-icon"><i className="ti ti-star" aria-hidden="true" /></div>
             <div className="prem-text">
-              <strong><span aria-hidden="true">👑</span> Bëhu Anëtar Premium</strong>
+              <strong><span aria-hidden="true">⭐</span> Bëhu Anëtar Premium</strong>
               <span>Biznes · Badge · Shpallje ∞ · {cfg('premium_monthly_price_all','') ? `${Number(cfg('premium_monthly_price_all','')).toLocaleString('sq-AL')} L/muaj` : ''}</span>
+              {/* VIP simbolizohet si HAP MBI premium: ⭐ → 👑 me Boost. Vetëm anëtari Premium
+                  bëhet VIP (tierNgaProfili: vip = premium DHE boost), ndaj rrjedha e tregon. */}
+              <span style={{ display: 'block', marginTop: 2, fontSize: 10, opacity: .85 }}>
+                <span aria-hidden="true">⭐</span> Premium <span aria-hidden="true" style={{ opacity: .6 }}>→</span> <span aria-hidden="true">👑</span> VIP me Boost
+              </span>
             </div>
             <button type="button" className="prem-btn" onClick={() => go('/premium')}>Shiko →</button>
           </div>

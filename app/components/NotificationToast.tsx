@@ -22,7 +22,7 @@ const TYPE_ICON: Record<string, string> = {
   follow:           '👤',
   badge_earned:     '🏅',
   referral_reward:  '🎁',
-  premium_expiring: '👑',
+  premium_expiring: '⭐',
   offer_received:   '💰',
   offer_accepted:   '✅',
   system:           '🔔',

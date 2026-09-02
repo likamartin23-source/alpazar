@@ -91,7 +91,7 @@ export function PlansTab() {
   return (
     <>
       <div className="ph">
-        <div className="pt"><span aria-hidden="true">👑</span> Planet</div>
+        <div className="pt"><span aria-hidden="true">⭐</span> Planet</div>
         {ok && <div className="live-dot">{ok}</div>}
       </div>
 

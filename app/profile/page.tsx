@@ -35,7 +35,7 @@ function BizUpsellBanner({ userId, isPremium }: { userId?: string; isPremium?: b
         <div style={{ fontSize: 13, fontWeight: 800, color: '#F5C842', marginBottom: 3 }}>Krijo Biznes Online</div>
         <div style={{ fontSize: 11, color: '#555', lineHeight: 1.5 }}>{isPremium
           ? <>Faqe e dedikuar · Shpallje pa limit · Badge <span aria-hidden="true">✓</span> Biznes</>
-          : <><span aria-hidden="true">👑</span> Veçori Premium · Faqe e dedikuar · Badge <span aria-hidden="true">✓</span> Biznes</>}</div>
+          : <><span aria-hidden="true">⭐</span> Veçori Premium · Faqe e dedikuar · Badge <span aria-hidden="true">✓</span> Biznes</>}</div>
       </div>
       <i className="ti ti-chevron-right" style={{ color: '#F5C842', fontSize: 18 }} aria-hidden="true" />
     </div>
@@ -820,7 +820,7 @@ export default function ProfilePage() {
 
               {profSub === 'menu' && tierNgaProfili(profile) === 'free' && (
                 <div className="prem-card">
-                  <h3><span aria-hidden="true">👑</span> Bëhu Premium</h3>
+                  <h3><span aria-hidden="true">⭐</span> Bëhu Premium</h3>
                   <p>Biznes online · Badge verifikimi · Shpallje të pakufizuara · Statistika të avancuara</p>
                   <button type="button" className="prem-cta" onClick={() => window.location.href = '/premium'}>Shiko planin →</button>
                 </div>
@@ -1045,7 +1045,7 @@ export default function ProfilePage() {
                     Shpalljet e mia
                     {maxListings != null && maxListings >= 0
                       ? <span style={{ marginLeft: 6, fontSize: 12, fontWeight: 700, color: myListings.filter(l => l.is_active).length >= maxListings ? '#C42305' : '#0E7A35' }}>{myListings.filter(l => l.is_active).length}/{maxListings}</span>
-                      : <span style={{ marginLeft: 6, fontSize: 12, fontWeight: 700, color: '#7A4A00' }}>{myListings.filter(l => l.is_active).length} · <span aria-hidden="true">👑</span> pa limit</span>}
+                      : <span style={{ marginLeft: 6, fontSize: 12, fontWeight: 700, color: '#7A4A00' }}>{myListings.filter(l => l.is_active).length} · <span aria-hidden="true">⭐</span> pa limit</span>}
                   </span>
                   <button type="button" className="edit-btn" onClick={() => window.location.href = '/listing/new'}>+ Shto</button>
                 </div>
@@ -1316,7 +1316,7 @@ export default function ProfilePage() {
                   </p>
                   <button type="button" disabled={!g1} onClick={() => { if (g1) window.location.href = '/premium' }}
                     style={{ width: '100%', minHeight: 46, background: g1 ? 'linear-gradient(135deg,#F8D24E,#F5C842)' : '#f0f0f0', color: g1 ? '#111' : '#aaa', border: 'none', borderRadius: 11, fontSize: 13, fontWeight: 800, cursor: g1 ? 'pointer' : 'not-allowed', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                    <span aria-hidden="true">👑</span> Bëhu Premium → Shiko Planet
+                    <span aria-hidden="true">⭐</span> Bëhu Premium → Shiko Planet
                   </button>
                 </div>
 

@@ -135,7 +135,7 @@ export function PremiumUpsellModal({
       ` }} />
       <div className="ups-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative' }}>
         <button type="button" className="ups-close" aria-label="Mbyll" onClick={close}><span aria-hidden="true">✕</span></button>
-        <span className="ups-crown" aria-hidden="true">👑</span>
+        <span className="ups-crown" aria-hidden="true">⭐</span>
         <div className="ups-h">Bëhu Premium Sot!</div>
         <div className="ups-sub">
           {trigger === 'limit'
@@ -163,7 +163,7 @@ export function PremiumUpsellModal({
           </div>
         </div>
         <button type="button" className="ups-cta" onClick={() => { window.location.href = '/premium'; close() }}>
-          <><span aria-hidden="true">👑</span> Aktivizo Premium Tani</>
+          <><span aria-hidden="true">⭐</span> Aktivizo Premium Tani</>
         </button>
         <button type="button" className="ups-skip" onClick={close}>Tani jo, ndoshta më vonë</button>
       </div>
@@ -234,7 +234,7 @@ export function SellerPremiumUpsell({ isPremium, price }: { isPremium: boolean; 
             padding: '7px 12px', fontSize: 11, fontWeight: 800, cursor: 'pointer', whiteSpace: 'nowrap',
           }}
         >
-          <span aria-hidden="true">👑</span> {shownPrice}/muaj
+          <span aria-hidden="true">⭐</span> {shownPrice}/muaj
         </button>
         <button type="button" aria-label="Mbyll ofertën" onClick={() => setVisible(false)} style={{
           background: 'none', border: 'none', color: '#555', fontSize: 9, cursor: 'pointer',
@@ -289,7 +289,7 @@ export function FreeTierBanner({
             padding: '7px 12px', fontSize: 11, fontWeight: 700, cursor: 'pointer', flexShrink: 0, marginLeft: 10,
           }}
         >
-          <span aria-hidden="true">👑</span> {shownPrice}/muaj
+          <span aria-hidden="true">⭐</span> {shownPrice}/muaj
         </button>
       </div>
     </div>

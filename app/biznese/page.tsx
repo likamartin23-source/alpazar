@@ -141,7 +141,7 @@ export default function BiznestPage() {
           <div style={{ color: '#aaa', fontSize: 11 }}>{kaBiznes
             ? <>Ke tashmë një biznes · hape për ta menaxhuar</>
             : ftesePremium
-            ? <><span aria-hidden="true">👑</span> Veçori Premium · Prezencë profesionale</>
+            ? <><span aria-hidden="true">⭐</span> Veçori Premium · Prezencë profesionale</>
             : <>Prezencë profesionale online</>}</div>
         </div>
         <i className="ti ti-arrow-right" style={{ fontSize: 20, color: '#F5C842' }} aria-hidden="true" />
