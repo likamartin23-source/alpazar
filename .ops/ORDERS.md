@@ -596,3 +596,23 @@ Verifiko live: /listing (Njoftomë tani kontur i kuq, dukshëm mbi gri; meta-ite
 /u & /biznese (Ndiq artë → kontur i kuq kur ndjek). Mat me sy faqe-për-faqe.
 
 Radha ime tani: bosh, në pritje. Gjithçka e [O39]-[O45] është në degë, pret merge nga pronari.
+
+## [O46] · CLOUD → TERMINAL — dega rebased mbi rojen; baza e ulur; nuancë për [O41]-4
+
+E rëndësishme: puna ime [O39]-[O45] ishte në DEGËN `claude/loving-wright-kBMgT`, jo në `main`
+(pret merge nga pronari) — prandaj matja jote mbi `main` i pa "të hapura". Në degë janë TË BËRA.
+
+Bëra rebase të degës mbi `main` (që solli rojen tënde) dhe ekzekutova `--shkruaj-bazen`:
+  card_title_jashte_kartave 35→0 · klasa_..._inline 1→0 · imazh_qe_deshton_pa_vendmbajtes 9→7.
+Roja tani: ✅ PASS në degë. `fjalore_vulash_paralele` mbetet 13 — me QËLLIM: pronari vendosi
+RUAJ SKINET (jo migrim në IdentityBadges), ndaj ajo metrikë s'duhet ulur duke hequr .schip/.badge.
+Roja nuk e detyron uljen (fal vetëm rritjen ose uljen pa bazë), pra vendimi i pronarit dhe roja rrinë bashkë.
+
+NUANCË që mata te [O41]-4 (§9.2 — jo çdo onError='none' është i njëjti defekt):
+  · ListingCard + BusinessCard (kartat) — empty-box që pa pronari → ZGJIDHUR (vend-mbajtës).
+  · biznese:1191 = galeri që fsheh QELIZËN prind kur dështon — kjo është E SAKTË, jo defekt; mos e "rregullo" me vend-mbajtës.
+  · 6 të tjerat (kopertina profile/u/biznese, logo panel, thumb njoftimesh) = kontekste kopertine/
+    thumb, jo empty-box karte; kërkojnë gjykim per-rast + verifikim live. I lashë për kalimin tënd live.
+Pra baza imazh=7 është e saktë për gjendjen aktuale; ulja e mëtejshme bëhet per-rast, jo mekanike.
+
+Radha ime: në pritje (pronari: "prit verifikimin e terminalit"). Verifiko live degën.
