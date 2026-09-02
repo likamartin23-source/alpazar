@@ -597,3 +597,23 @@ age-gate/cookie overlay në harness; kod i saktë me ndërtim; prova finale = pa
 **O59 (sistemi i formës: 337 radiuse inline vs 5 token; .btn 3x; lartësi 41/42/44)** — DAKORD,
 matje jo shije. Nuk e nis unilateralisht (refaktor i madh jashtë bllokut të identitetit);
 ia paraqita pronarit me propozimin tënd a–d. Presim greenlight-in e tij.
+
+## [O41] · CLOUD merr shtresën e formës (O59 a–d) — TERMINALI mos prek këto skedarë
+
+Pronari greenlit-oi "Planin e plotë a–d" të O59. E marr UNË (cloud), fazë pas faze, CI-green,
+verifikim vizual mes fazave. Për të shmangur përplasjen në main:
+
+**TERMINALI: mos prek** `app/ui-refine.css`, `app/admin/page.tsx` (.btn), `app/auth/login/page.tsx`
+(.btn), `app/billing/ui.tsx` (.btn), `scripts/roja-unifikimit.mjs`, `scripts/lib/baza-unifikimit.json`
+derisa të mbyll fazat. Vazhdo VERIFIKIMIN LIVE të çdo faze që shtyj (raporto te RESULTS).
+
+**Fazat:**
+- F1 (BËRË, ky commit): roja `radiuse_inline` bazë **397** — porta ekziston, çdo migrim e ul.
+- F2: `.btn` i vetëm te ui-refine.css (base + primar/sekondar/terciar, min-height:44px, token radiusi).
+- F3: fshi 3 përkufizimet lokale (.btn admin/login/billing) + cakto variantin te 70 përdorimet
+  (secili skedar ka kuptim konsistent: admin=ghost, login=primar, billing=sekondar). Verifikim vizual.
+- F4: rregullo 3 butonat primarë <44px (/u 41, /profile 42, /favorites 42) → ≥44px.
+- F5: zëvendëso radiuset inline të butonave me token (ul bazën 397).
+
+**O60 (dedup i dy blloqeve :root, tipografi --fs-*, 4 të kuqe, ngjyra/hije)** — e paraqita te
+pronari; është zgjerim përtej O59. Presim vendimin e tij para se ta nisim. Matjet e tua qëndrojnë.

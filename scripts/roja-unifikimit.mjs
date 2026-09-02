@@ -104,6 +104,16 @@ mat('imazh_qe_deshton_pa_vendmbajtes',
   'Mbaj një gjendje `imgFailed` dhe rendero vend-mbajtësin, mos përdor `display=none`.',
   (_f, t) => numero(t, /onError=\{[^}]{0,240}?\.style\.display\s*=\s*'none'/g))
 
+// SHTRESA E FORMES ([O59]/[O60], 2 shtator 2026): border-radius i shkruar me dore inline,
+// jo permes token-it var(--r-*). Matur: qindra vlera inline kundrejt pak perdorimesh token —
+// prandaj "butonat/kartat duken te crregullt" edhe kur secili eshte i sakte: askush s'zgjedh
+// nga e njejta liste. Kjo porte e numeron; cdo migrim ne token e ul bazen dhe mbyllet me celes,
+// njesoj si vulat (16->0). Numeron borderRadius INLINE me vlere qe NUK eshte var(...).
+mat('radiuse_inline',
+  'border-radius i shkruar me dore inline (jo token var(--r-*)) — shtresa e formes e paunifikuar',
+  'Perdor token-in: borderRadius: var(--r-btn|--r-card|--r-panel|--r-pill). Shto token te ui-refine.css nese mungon.',
+  (_f, t) => numero(t, /borderRadius:\s*(?!var\()/g))
+
 let baza
 try { baza = JSON.parse(readFileSync(BAZA, 'utf8')) } catch { baza = null }
 
