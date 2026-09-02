@@ -9,7 +9,7 @@ export function ListingMid({ p }: any) {
   return (
     <>
           <div className="card">
-            <div className="card-title"><i className="ti ti-category" aria-hidden="true" />Kategoria *</div>
+            <div className="section-title"><i className="ti ti-category" aria-hidden="true" />Kategoria *</div>
             <button
               type="button"
               onClick={suggestCategory}
@@ -45,7 +45,7 @@ export function ListingMid({ p }: any) {
           </div>
 
           <div className="card">
-            <div className="card-title"><i className="ti ti-map-pin" aria-hidden="true" />Vendndodhja *</div>
+            <div className="section-title"><i className="ti ti-map-pin" aria-hidden="true" />Vendndodhja *</div>
             <div className="field">
               <label htmlFor="listing-city">Qyteti *</label>
               <input

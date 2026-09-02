@@ -33,8 +33,8 @@ const CSS = `
   .hero p{color:rgba(255,255,255,.85);font-size:13px;line-height:1.7;}
   .body{padding:16px 12px;}
   .card{background:#fff;border-radius:12px;border:0.5px solid #ececec;padding:18px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 16px -10px rgba(0,0,0,.14);}
-  .card-title{font-size:13px;font-weight:700;color:#111;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
-  .card-title i{font-size:16px;color:#C42B0F;}
+  .section-title{font-size:13px;font-weight:700;color:#111;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+  .section-title i{font-size:16px;color:#C42B0F;}
   .stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:4px;}
   .stat{background:#FFFBEA;border-radius:12px;padding:14px 10px;text-align:center;}
   .stat-n{font-size:22px;font-weight:700;color:#C42B0F;}
@@ -193,7 +193,7 @@ export default function ReferralPage() {
             <div className="spinner" />
           ) : !user ? (
             <div className="card">
-              <div className="card-title"><i className="ti ti-lock" aria-hidden="true" />Hyr për të parë referalet</div>
+              <div className="section-title"><i className="ti ti-lock" aria-hidden="true" />Hyr për të parë referalet</div>
               <p style={{ fontSize: 12, color: '#555', marginBottom: 14 }}>Krijo llogari falas dhe fillo të fitosh pikë duke ftuar miqtë.</p>
               <button type="button" className="login-cta" onClick={() => window.location.href = '/auth/login'}>
                 <span aria-hidden="true">🔑</span> Hyr / Regjistrohu
@@ -258,7 +258,7 @@ export default function ReferralPage() {
 
               {/* Stats */}
               <div className="card">
-                <div className="card-title"><i className="ti ti-chart-bar" aria-hidden="true" />Statistikat e Tua</div>
+                <div className="section-title"><i className="ti ti-chart-bar" aria-hidden="true" />Statistikat e Tua</div>
                 <div className="stats-row">
                   <div className="stat">
                     <div className="stat-n">{referrals.length}</div>
@@ -277,7 +277,7 @@ export default function ReferralPage() {
 
               {/* Referral link + SharePanel */}
               <div className="card">
-                <div className="card-title"><i className="ti ti-link" aria-hidden="true" />Linku yt i Referimit</div>
+                <div className="section-title"><i className="ti ti-link" aria-hidden="true" />Linku yt i Referimit</div>
                 <div className="ref-box" style={{ marginBottom: 14, display: 'flex', alignItems: 'center', gap: 10 }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div className="ref-code">{refCode.toUpperCase()}</div>
@@ -303,7 +303,7 @@ export default function ReferralPage() {
 
               {/* How it works */}
               <div className="card">
-                <div className="card-title"><i className="ti ti-help-circle" aria-hidden="true" />Si Funksionon</div>
+                <div className="section-title"><i className="ti ti-help-circle" aria-hidden="true" />Si Funksionon</div>
                 <div className="step">
                   <div className="step-num">1</div>
                   <div className="step-text">
@@ -329,7 +329,7 @@ export default function ReferralPage() {
 
               {/* Rewards */}
               <div className="card">
-                <div className="card-title"><i className="ti ti-trophy" aria-hidden="true" />Shpërblimet</div>
+                <div className="section-title"><i className="ti ti-trophy" aria-hidden="true" />Shpërblimet</div>
                 {[
                   { at: 5,  badge: '🥉', label: '5 referalë → Anëtar Bronzi',   sub: '250 pikë · Badge special në profil' },
                   { at: 20, badge: '🥈', label: '20 referalë → Anëtar Argjendi', sub: '1000 pikë · Prioritet në lista' },
@@ -351,7 +351,7 @@ export default function ReferralPage() {
 
               {/* Referral list */}
               <div className="card">
-                <div className="card-title"><i className="ti ti-users" aria-hidden="true" />Të Ftuar ({referrals.length})</div>
+                <div className="section-title"><i className="ti ti-users" aria-hidden="true" />Të Ftuar ({referrals.length})</div>
                 {referrals.length === 0 ? (
                   <div className="empty-ref">
                     <div style={{ fontSize: 36, marginBottom: 8 }} aria-hidden="true">👥</div>

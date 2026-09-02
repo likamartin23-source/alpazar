@@ -29,7 +29,7 @@ export function ListingTop({ p }: any) {
           )}
 
           <div className="card">
-            <div className="card-title"><i className="ti ti-info-circle" aria-hidden="true" />Informacioni bazë</div>
+            <div className="section-title"><i className="ti ti-info-circle" aria-hidden="true" />Informacioni bazë</div>
 
             <div className="field">
               <label htmlFor="listing-title">Titulli *</label>
