@@ -540,7 +540,7 @@ export default function ProfilePage() {
         .prem-card{background:linear-gradient(135deg,#111,#1c1c1c);border-radius:12px;padding:18px;margin-bottom:12px;text-align:center;border:1px solid #333;}
         .prem-card h3{color:#F5C842;font-size:15px;font-weight:700;margin-bottom:8px;}
         .prem-card p{color:#777;font-size:11px;margin-bottom:16px;line-height:1.6;}
-        .prem-cta{background:linear-gradient(135deg,#F8D24E,#F5C842);color:#111;border:none;border-radius:10px;padding:12px 26px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .prem-cta{background:linear-gradient(135deg,#F8D24E,#F5C842);color:#111;border:none;border-radius:10px;padding:12px 26px;min-height:44px;box-sizing:border-box;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
         .admin-btn{background:linear-gradient(135deg,#7C3AED,#6d28d9);color:#fff;border:none;border-radius:10px;padding:11px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px;}
         /* Messages inbox */
         .tab-badge{display:inline-flex;align-items:center;justify-content:center;background:#E63312;color:#fff;font-size:8px;font-weight:700;width:15px;height:15px;border-radius:50%;margin-left:3px;vertical-align:middle;}

@@ -82,7 +82,7 @@ export default function FavoritesPage() {
           <button
             type="button"
             onClick={() => { window.location.href = '/search' }}
-            style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 24px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+            style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 24px', minHeight: 44, boxSizing: 'border-box', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
           >
             <span aria-hidden="true">🔍</span> Eksploro shpalljet
           </button>

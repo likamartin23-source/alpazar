@@ -300,7 +300,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
                   if (!user) { window.location.href = '/auth/login'; return }
                   window.location.href = `/messages?with=${profile.id}`
                 }}
-                style={{ flex: 1, minWidth: 120, padding: '10px 16px', background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+                style={{ flex: 1, minWidth: 120, minHeight: 44, boxSizing: 'border-box', padding: '10px 16px', background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
               >
                 <><span aria-hidden="true">💬</span> Dërgo Mesazh</>
               </button>
