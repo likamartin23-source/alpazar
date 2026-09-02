@@ -272,6 +272,12 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
    Urdher i pronarit, 2 shtator 2026: "gjej nje ngjyre te bukur qe ta integrosh kete rryp kudo",
    pastaj: "tekstin beje me te kuqe te ndezur".
 
+   UNAZA E AVATARIT (urdher i pronarit: "rrypi duhet te jete ne stilin avatar"): korniza 2px
+   mban linear-gradient(135deg,#F5C842,#E63312) — SAKTESISHT unaza premium e Avatar.tsx:103.
+   Teknika: dy sfonde — padding-box per brendesine e erret dhe border-box per gradientin —
+   ndaj korniza ndjek rrezen 14px pa e humbur. (border-image do ta prishte rrezen.)
+   Kur te ndryshoje unaza e avatarit, ndrysho edhe kete — jane i njejti fjalor.
+
    SFONDI I ERRET (#1A1A1A): rrypi eshte INFORMACION, jo veprim — nje sfond i erret e ndan
    identitetin nga permbajtja pa konkurruar me CTA-te, dhe i jep numrit vend te lexohet fort.
 
@@ -290,7 +296,8 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
    biznesit dhe /u mbi te bardhe. Tri arnime me !important ishin shtuar te ui-refine.css
    (rreshtat 47, 61, 73) pikerisht sepse .stat-l jetonte mbi te dy sfondet. Duke e bere
    rrypin te erret kudo, ajo nevoje bie. ═══════════════════════════════════════════════ */
-.alpz-stats{display:flex;align-items:stretch;background:#1A1A1A;border-radius:14px;padding:13px 6px;}
+.alpz-stats{display:flex;align-items:stretch;border:2px solid transparent;border-radius:14px;padding:11px 6px;
+  background:linear-gradient(#1A1A1A,#1A1A1A) padding-box,linear-gradient(135deg,#F5C842,#E63312) border-box;}
 .alpz-stats .stat,.alpz-stats .stat-pill{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
 .alpz-stats .stat-n{display:block;font-size:18px !important;font-weight:800;color:#FF4433;line-height:1.15;}
 .alpz-stats .stat-l{display:block;font-size:10px !important;font-weight:500;color:#A0A0A0 !important;margin-top:2px;}
