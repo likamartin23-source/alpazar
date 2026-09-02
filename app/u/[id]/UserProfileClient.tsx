@@ -275,7 +275,9 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
               👑/⭐. Më parë ky bllok ishte i shkruar me dorë vetëm me TrustBadge+pikë (mungonin
               niveli, Shitës aktiv, tier-i) — çharmonizim me /profile e /listing. */}
           <div style={{ marginBottom: 12 }}>
-            <IdentityBadges subject={profile} activeListings={listings.length} isBusiness={false} density="full" />
+            {/* [O55/F1] "Shpallje" = personale (listings.length, Vendimi 7 — pa dyfishim me /biznese).
+                Por "Shitës aktiv" është identitet: personi shet edhe përmes biznesit → isActiveSeller. */}
+            <IdentityBadges subject={profile} activeListings={listings.length} isActiveSeller={listings.length > 0 || !!biz} isBusiness={false} density="full" />
           </div>
 
           {/* Action buttons */}

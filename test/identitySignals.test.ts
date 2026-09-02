@@ -53,6 +53,11 @@ describe('identitySignals — burimi i vetëm i rregullit', () => {
     expect(identitySignals({}, { activeListings: 0 }).some(s => s.key === 'active')).toBe(false)
   })
 
+  it('[O55/F1] shitës aktiv me isActiveSeller edhe kur shpalljet personale = 0 (shet përmes biznesit)', () => {
+    expect(identitySignals({}, { activeListings: 0, isActiveSeller: true }).some(s => s.key === 'active')).toBe(true)
+    expect(identitySignals({}, { activeListings: 0, isActiveSeller: false }).some(s => s.key === 'active')).toBe(false)
+  })
+
   it('biznes: nga isBusiness ose shop_name', () => {
     expect(identitySignals({ shop_name: 'X' }).some(s => s.key === 'biznes')).toBe(true)
     expect(identitySignals({}, { isBusiness: true }).some(s => s.key === 'biznes')).toBe(true)

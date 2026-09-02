@@ -54,8 +54,12 @@ export type SignalOpts = {
   emailVerified?: boolean
   /** A është biznes (🏢). Kur s'jepet, bie te `subject.shop_name`. */
   isBusiness?: boolean
-  /** Numri i shpalljeve aktive (📦 Shitës aktiv kur >0). */
+  /** Numri i shpalljeve aktive PERSONALE (përdoret për statistikën "Shpallje"). */
   activeListings?: number
+  /** [O55/F1] "Shitës aktiv" është IDENTITET, jo numër: dikush shet përmes biznesit edhe kur
+   *  shpalljet personale = 0. Kur jepet `true`, vula "📦 Shitës aktiv" del pavarësisht activeListings.
+   *  Ndan pyetjen "sa shpallje personale?" (numri) nga "a është shitës aktiv?" (identiteti). */
+  isActiveSeller?: boolean
   /** 'full' = shfaq çipin e Nivelit (kur pts≥100); 'compact' = jo. */
   density?: 'full' | 'compact'
 }
@@ -89,7 +93,7 @@ export function identitySignals(subject: SignalSubject | null | undefined, opts:
     out.push({ key: 'level', tone: 'level', icon: l.icon, label: l.name, levelBg: l.bg, levelColor: l.color })
   }
 
-  if (activeListings > 0) out.push({ key: 'active', tone: 'active', icon: '📦', label: 'Shitës aktiv' })
+  if (activeListings > 0 || opts.isActiveSeller) out.push({ key: 'active', tone: 'active', icon: '📦', label: 'Shitës aktiv' })
   if (isNewMember(subject.created_at)) out.push({ key: 'new', tone: 'new', icon: '🆕', label: 'Anëtar i ri' })
   if (pts > 0) out.push({ key: 'points', tone: 'points', icon: '⚡', label: `${pts} pikë` })
 

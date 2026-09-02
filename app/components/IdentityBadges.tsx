@@ -40,6 +40,7 @@ export function IdentityBadges({
   density = 'full',
   isSelf = false,
   emailVerified = false,
+  isActiveSeller = false,
 }: {
   subject: IdentitySubject
   activeListings?: number
@@ -47,8 +48,9 @@ export function IdentityBadges({
   density?: 'full' | 'compact'
   isSelf?: boolean
   emailVerified?: boolean
+  isActiveSeller?: boolean
 }) {
-  const signals = identitySignals(subject, { isSelf, emailVerified, isBusiness, activeListings, density })
+  const signals = identitySignals(subject, { isSelf, emailVerified, isBusiness, activeListings, isActiveSeller, density })
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
