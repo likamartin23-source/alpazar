@@ -80,6 +80,22 @@ export function tierNgaRankTier(rank?: number | null): AvatarTier {
   return 'free'
 }
 
+/**
+ * Vula ✓ — NJE perkufizim i vetem per gjithe bllokun (A3, urdher pronari "stili avatar i sinkronizuar"):
+ *   biznes  → `is_verified` (verifikim biznesi nga admini)
+ *   person  → `trust_score >= 60` (pragu i Besueshmerise)
+ * Me pare secila faqe e llogariste ndryshe (trust≥60 / is_verified / OR / email), ndaj I NJEJTI biznes
+ * dilte ✓ te /listing (nga trust) e jo te /biznese (nga is_verified). Tani nje burim.
+ * ("Verifikuar" me email/telefon eshte vule VETEM-vetja te /profile, jo kjo ✓ e Avatar-it.)
+ */
+export function avatarVerified(
+  p?: { is_verified?: boolean | null; trust_score?: number | null } | null,
+  type: AvatarType = 'person',
+): boolean {
+  if (!p) return false
+  return type === 'business' ? !!p.is_verified : (p.trust_score ?? 0) >= 60
+}
+
 function getInitials(name?: string | null): string {
   if (!name) return '?'
   const clean = name.replace(/[_\-.]/g, ' ').trim()

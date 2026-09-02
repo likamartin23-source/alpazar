@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../../../lib/supabase'
 import dynamicImport from 'next/dynamic'
-import Avatar, { tierNgaProfili } from '../../components/Avatar'
+import Avatar, { tierNgaProfili, avatarVerified } from '../../components/Avatar'
 import ListingCard from '../../components/ListingCard'
 import { TrustBadge } from '../../components/TrustBadge'
 import { identitySignals, showTrust, type IdentitySignal } from '../../components/identitySignals'
@@ -586,7 +586,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           <div className="bizp-card">
             {/* Avatar unazë+🏢 (+kurorë kur VIP) + kamerë INLINE */}
             <div style={{ position: 'relative', width: 84, marginTop: -42, marginBottom: 10 }}>
-              <Avatar src={biz.logo_url} name={biz.name} type="business" tier={tier} verified={biz.is_verified} size={84} />
+              <Avatar src={biz.logo_url} name={biz.name} type="business" tier={tier} verified={avatarVerified(biz, 'business')} size={84} />
               {/* Kamera te CEPI LART-MAJTAS: i vetmi cep që Avatar-i s'e përdor kurrë
                   (djathtas-lart=vula e abonimit, djathtas-poshtë=🏢/✓, majtas-poshtë=pika online).
                   Më parë rrinte poshtë-djathtas dhe përplasej me vulën 🏢 (raporti terminal, H). */}
@@ -844,7 +844,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
             name={biz.name}
             type="business"
             tier={tierNgaProfili(pronari)}
-            verified={biz.is_verified}
+            verified={avatarVerified(biz, 'business')}
             online={ownerOnline}
             size={84}
           />

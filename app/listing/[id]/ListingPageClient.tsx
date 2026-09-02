@@ -14,7 +14,7 @@ import { SharePanel } from '../../components/SharePanel'
 import { ImageCarousel } from '../../components/ImageCarousel'
 import { BackButton } from '../../components/BackButton'
 import { LISTING_SELECT } from '../../../lib/listingSelect'
-import Avatar, { tierNgaProfili } from '../../components/Avatar'
+import Avatar, { tierNgaProfili, avatarVerified } from '../../components/Avatar'
 import { useIsOnline } from '../../components/OnlinePresence'
 import ListingCard from '../../components/ListingCard'
 import { trackEvent } from '../../../lib/track'
@@ -934,7 +934,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                     name={seller.shop_name || seller.full_name || seller.username}
                     type={isBusinessListing ? 'business' : 'person'}
                     tier={tierNgaProfili(seller)}
-                    verified={(seller.trust_score ?? 0) >= 60}
+                    verified={avatarVerified(seller, isBusinessListing ? 'business' : 'person')}
                     online={sellerOnline}
                     size={44}
                   />
@@ -1343,7 +1343,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                 name={seller.shop_name || seller.full_name || seller.username}
                 type={isBusinessListing ? 'business' : 'person'}
                 tier={tierNgaProfili(seller)}
-                verified={(seller.trust_score ?? 0) >= 60}
+                verified={avatarVerified(seller, isBusinessListing ? 'business' : 'person')}
                 size={36}
               />
               <span className="cs-seller-name">

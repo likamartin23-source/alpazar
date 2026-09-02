@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState, useRef } from 'react'
-import Avatar, { tierNgaProfili } from '../components/Avatar'
+import Avatar, { tierNgaProfili, avatarVerified } from '../components/Avatar'
 import { supabase } from '../../lib/supabase'
 import { SITE_URL } from '../../lib/siteConfig'
 import { TrustBadge } from '../components/TrustBadge'
@@ -637,7 +637,7 @@ export default function ProfilePage() {
                 name={profile?.full_name || profile?.username}
                 type={profile?.shop_name ? 'business' : 'person'}
                 tier={tierNgaProfili(profile)}
-                verified={(profile?.trust_score ?? 0) >= 60}
+                verified={avatarVerified(profile, 'person')}
                 size={96}
               />
               <label style={{ position: 'absolute', bottom: 0, right: 0, background: '#E63312', color: '#fff', width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, cursor: 'pointer', border: '2px solid #fff', boxShadow: '0 1px 4px rgba(0,0,0,.2)', zIndex: 2 }}>

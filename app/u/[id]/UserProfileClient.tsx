@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { useRealtimeTable } from '../../../hooks/useRealtimeTable'
 import { useAlpazar } from '../../../lib/context'
-import Avatar, { tierNgaProfili } from '../../components/Avatar'
+import Avatar, { tierNgaProfili, avatarVerified } from '../../components/Avatar'
 import { useIsOnline } from '../../components/OnlinePresence'
 import ListingCard from '../../components/ListingCard'
 import { LISTING_SELECT } from '../../../lib/listingSelect'
@@ -225,7 +225,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
             name={name}
             type={isBusiness ? 'business' : 'person'}
             tier={tierNgaProfili(profile)}
-            verified={profile.is_verified || (profile.trust_score ?? 0) >= 60}
+            verified={avatarVerified(profile, 'person')}
             online={ownerOnline}
             size={96}
           />
