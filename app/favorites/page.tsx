@@ -70,7 +70,7 @@ export default function FavoritesPage() {
         <div style={{ textAlign: 'center', padding: '40px 24px' }}>
           <div style={{ fontSize: 32, marginBottom: 12 }} aria-hidden="true">⚠️</div>
           <div style={{ fontSize: 14, color: '#C42B0F', marginBottom: 16 }}>Nuk u ngarkuan të dhënat. Kontrollo lidhjen dhe provo sërish.</div>
-          <button type="button" onClick={() => window.location.reload()} style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
+          <button type="button" onClick={() => window.location.reload()} style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', minHeight: 44 }}>Rifresko</button>
         </div>
       ) : loading ? (
         <div style={{ padding: '16px' }}><SkeletonGrid count={4} /></div>

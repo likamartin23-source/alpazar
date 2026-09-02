@@ -3,7 +3,7 @@ export const NEW_LISTING_CSS = `
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA;}
         .wrap{max-width:480px;margin:0 auto;background:#FFFBEA;min-height:100vh;padding-bottom:100px;}
         .topbar{background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%);padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
-        .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+        .back{width:44px;height:44px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .back i{font-size:18px;color:#111;}
         .topbar-title{font-size:15px;font-weight:700;color:#111;}
         .body{padding:14px;}
@@ -23,7 +23,7 @@ export const NEW_LISTING_CSS = `
         .price-row input{flex:1;}
         .price-row select{width:90px;flex-shrink:0;}
         .cond-row{display:flex;gap:8px;}
-        .cond-btn{flex:1;border:1.5px solid #e0e0e0;border-radius:12px;padding:9px;font-size:12px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;}
+        .cond-btn{flex:1;border:1.5px solid #e0e0e0;border-radius:12px;padding:9px;font-size:12px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;min-height:44px;display:flex;align-items:center;justify-content:center;}
         .cond-btn.active{border-color:#E63312;background:#FFF0EE;color:#C42B0F;}
         .img-zone{border:2px dashed #e0b030;border-radius:10px;padding:20px;text-align:center;cursor:pointer;background:#FFFBEA;}
         .img-zone input{display:none;}

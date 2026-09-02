@@ -5,11 +5,11 @@ export const PREMIUM_CSS = `
 body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA}
 .wrap{max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:90px;background:#FFFBEA}
 .topbar{background:linear-gradient(165deg,#F8D24E,#F5C842 52%,#EEB828);padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50}
-.back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;font-size:17px;color:#111}
+.back{width:44px;height:44px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;font-size:17px;color:#111;display:flex;align-items:center;justify-content:center;}
 .tt{font-size:15px;font-weight:700;color:#111}
 .body{padding:14px}
 .tiers{display:flex;gap:8px;margin-bottom:12px}
-.tr{flex:1;border:2px solid #eee;background:#fff;border-radius:12px;padding:10px 8px;cursor:pointer;font-family:inherit;text-align:center}
+.tr{flex:1;border:2px solid #eee;background:#fff;border-radius:12px;padding:10px 8px;cursor:pointer;font-family:inherit;text-align:center;min-height:44px;display:flex;flex-direction:column;justify-content:center;}
 .tr b{display:block;font-size:13px;font-weight:800;color:#111}
 .tr span{display:block;font-size:10px;color:#555;margin-top:2px}
 .tr.on{border-color:#E63312;background:#FFFDF6}
@@ -18,7 +18,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA}
 .hero-t{font-size:18px;font-weight:800;color:#F5C842;margin-bottom:5px;line-height:1.3}
 .hero-s{font-size:12px;color:#ddd;line-height:1.55}
 .seg{display:flex;gap:6px;background:#f2ecd6;border-radius:999px;padding:4px;margin-bottom:14px}
-.sg{flex:1;border:none;background:transparent;border-radius:999px;padding:9px 4px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;color:#7a6a30;white-space:nowrap}
+.sg{flex:1;border:none;background:transparent;border-radius:999px;padding:9px 4px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;color:#7a6a30;white-space:nowrap;min-height:44px;}
 .sg.on{background:#fff;color:#111;box-shadow:0 1px 4px rgba(0,0,0,.08)}
 .save{background:#C42B0F;color:#fff;font-size:8px;font-weight:800;padding:2px 4px;border-radius:5px;margin-left:3px;vertical-align:middle}
 .plan{width:100%;text-align:left;background:#fff;border:2px solid #eee;border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;font-family:inherit;display:block}
@@ -39,7 +39,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA}
 .feat-list li:before{content:'\\2713';position:absolute;left:0;color:#3B6D11;font-weight:800}
 .card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;border:.5px solid #eee}
 .sec-t{font-size:13px;font-weight:700;color:#111;margin-bottom:10px}
-.pm{width:100%;display:flex;align-items:center;gap:9px;border:1.5px solid #e8e8e8;background:#fff;border-radius:10px;padding:11px 12px;margin-bottom:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:#333}
+.pm{width:100%;display:flex;align-items:center;gap:9px;border:1.5px solid #e8e8e8;background:#fff;border-radius:10px;padding:11px 12px;margin-bottom:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:#333;min-height:44px;}
 .pm.on{border-color:#E63312;background:#FFF7F5}
 .pm .ok{margin-left:auto;color:#C42B0F}
 .total{display:flex;justify-content:space-between;align-items:center;padding:11px 2px;margin-top:6px;border-top:.5px solid #eee;font-size:12px;color:#666}

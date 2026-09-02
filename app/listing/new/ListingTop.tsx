@@ -50,6 +50,7 @@ export function ListingTop({ p }: any) {
                   borderRadius: 8, padding: '7px 12px', fontSize: 11, fontWeight: 700,
                   cursor: descLoading ? 'not-allowed' : 'pointer', display: 'flex',
                   alignItems: 'center', gap: 5, opacity: descLoading ? 0.7 : 1, fontFamily: 'inherit',
+                  minHeight: 44,
                 }}
               >
                 {descLoading ? <span aria-hidden='true'>⏳</span> : <span aria-hidden='true'>🤖</span>} {descLoading ? 'Duke gjeneruar...' : 'Gjenero përshkrim me Albi'}
@@ -75,6 +76,7 @@ export function ListingTop({ p }: any) {
                   borderRadius: 8, padding: '7px 12px', fontSize: 11, fontWeight: 700,
                   cursor: priceLoading ? 'not-allowed' : 'pointer', display: 'flex',
                   alignItems: 'center', gap: 5, opacity: priceLoading ? 0.7 : 1, fontFamily: 'inherit',
+                  minHeight: 44,
                 }}
               >
                 {priceLoading ? <span aria-hidden='true'>⏳</span> : <span aria-hidden='true'>🤖</span>} {priceLoading ? 'Duke menduar...' : 'Sugjero çmimin me Albi'}

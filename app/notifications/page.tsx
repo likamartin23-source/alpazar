@@ -137,7 +137,7 @@ export default function NotificationsPage() {
       <div style={{ minHeight: '100dvh', background: '#FFFBEA', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24 }}>
         <div style={{ fontSize: 48 }} aria-hidden="true">🔔</div>
         <div style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>Kyçu për të parë njoftimet</div>
-        <button type="button" onClick={() => window.location.href = '/auth/login'} style={{ background: '#F5C842', border: 'none', borderRadius: 12, padding: '12px 28px', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>
+        <button type="button" onClick={() => window.location.href = '/auth/login'} style={{ background: '#F5C842', border: 'none', borderRadius: 12, padding: '12px 28px', fontWeight: 700, fontSize: 15, cursor: 'pointer', minHeight: 44 }}>
           Kyçu
         </button>
       </div>
@@ -158,7 +158,7 @@ export default function NotificationsPage() {
           type="button"
           aria-label="Kthehu mbrapa"
           onClick={() => window.history.length > 1 ? window.history.back() : window.location.href = '/'}
-          style={{ background: 'none', border: 'none', color: '#F5C842', fontSize: 22, cursor: 'pointer', padding: '0 4px', lineHeight: 1, display: 'flex', alignItems: 'center' }}
+          style={{ background: 'none', border: 'none', color: '#F5C842', fontSize: 22, cursor: 'pointer', padding: '0 4px', lineHeight: 1, display: 'flex', alignItems: 'center', minWidth: 44, minHeight: 44, justifyContent: 'center' }}
         >
           <i className="ti ti-arrow-left" style={{ fontSize: 22 }} aria-hidden="true" />
         </button>
@@ -174,7 +174,7 @@ export default function NotificationsPage() {
           <button
             type="button"
             onClick={markAllRead}
-            style={{ background: 'none', border: '1px solid #333', borderRadius: 8, color: '#aaa', fontSize: 11, fontWeight: 600, padding: '5px 10px', cursor: 'pointer', whiteSpace: 'nowrap' }}
+            style={{ background: 'none', border: '1px solid #333', borderRadius: 8, color: '#aaa', fontSize: 11, fontWeight: 600, padding: '5px 10px', cursor: 'pointer', whiteSpace: 'nowrap', minHeight: 44, display: 'inline-flex', alignItems: 'center', gap: 4 }}
           >
             <><span aria-hidden="true">✓</span> Gjitha lexuar</>
           </button>
@@ -318,7 +318,7 @@ function NotifRow({ n, onClick, onDismiss, isLast }: { n: Notif; onClick: (n: No
         <button
           type="button"
           onClick={e => { e.stopPropagation(); onDismiss(n.id) }}
-          style={{ background: 'none', border: 'none', color: '#ccc', cursor: 'pointer', padding: '2px 4px', fontSize: 14, lineHeight: 1, display: 'flex', alignItems: 'center' }}
+          style={{ background: 'none', border: 'none', color: '#ccc', cursor: 'pointer', padding: '2px 4px', fontSize: 14, lineHeight: 1, display: 'flex', alignItems: 'center', minWidth: 44, minHeight: 44, justifyContent: 'center' }}
           aria-label="Fshij njoftimin"
         >
           <i className="ti ti-x" style={{ fontSize: 14 }} aria-hidden="true" />

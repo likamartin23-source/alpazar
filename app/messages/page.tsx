@@ -71,7 +71,7 @@ function AudioPlayer({ url, mine }: { url: string; mine: boolean }) {
   return (
     <div style={{ display:'flex', alignItems:'center', gap:10, minWidth:200 }}>
       <button type="button" aria-label={playing ? 'Pauzë' : 'Luaj'} onClick={toggle} style={{
-        width:40, height:40, borderRadius:'50%', border:'none', cursor:'pointer', flexShrink:0,
+        width:44, height:44, borderRadius:'50%', border:'none', cursor:'pointer', flexShrink:0,
         background: mine ? 'rgba(245,200,66,.22)' : 'rgba(230,51,18,.12)',
         display:'flex', alignItems:'center', justifyContent:'center',
       }}>

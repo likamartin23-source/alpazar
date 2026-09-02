@@ -465,7 +465,7 @@ export default function ProfilePage() {
     <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
       <div style={{ fontSize: 40 }} aria-hidden="true">⚠️</div>
       <div style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
-      <button type="button" onClick={() => window.location.reload()} style={{ padding: '10px 24px', background: '#F5C842', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Rifresko</button>
+      <button type="button" onClick={() => window.location.reload()} style={{ padding: '10px 24px', background: '#F5C842', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer', minHeight: 44 }}>Rifresko</button>
     </div>
   )
 
@@ -488,7 +488,7 @@ export default function ProfilePage() {
         .back{width:44px;height:44px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .back i{font-size:18px;color:#111;}
         .topbar-title{font-size:15px;font-weight:700;color:#111;flex:1;}
-        .logout{background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;border:none;border-radius:10px;padding:7px 13px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s ease;}
+        .logout{background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;border:none;border-radius:10px;padding:7px 13px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s ease;min-height:44px;display:inline-flex;align-items:center;}
         .hero{background:linear-gradient(180deg,#111,#1c1c1c);padding:24px 16px;text-align:center;}
         .avatar{width:76px;height:76px;border-radius:50%;background:#F5C842;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 12px;border:3px solid #F5C842;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.3);}
         .avatar img{width:100%;height:100%;object-fit:cover;}
@@ -502,7 +502,7 @@ export default function ProfilePage() {
         .stat-l{font-size:9px;color:#666;margin-top:2px;}
         /* Tabs */
         .tabs{display:flex;background:#fff;border-bottom:1.5px solid #eee;}
-        .tab{flex:1;padding:9px 2px;text-align:center;font-size:9.5px;font-weight:600;color:#6B6B6B;border:none;background:none;cursor:pointer;font-family:inherit;border-bottom:2.5px solid transparent;transition:all .15s cubic-bezier(.2,.8,.2,1);}
+        .tab{flex:1;padding:9px 2px;text-align:center;font-size:9.5px;font-weight:600;color:#6B6B6B;border:none;background:none;cursor:pointer;font-family:inherit;border-bottom:2.5px solid transparent;transition:all .15s cubic-bezier(.2,.8,.2,1);min-height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
         .tab.active{background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;border-bottom-color:transparent;font-weight:700;}
         .tab i{font-size:14px;display:block;margin-bottom:2px;}
         .body{padding:12px 12px;}
@@ -512,8 +512,8 @@ export default function ProfilePage() {
         .card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;border:0.5px solid #ececec;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 16px -10px rgba(0,0,0,.14);}
         .card-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
         .section-title{font-size:13px;font-weight:700;color:#1a1a1a;}
-        .edit-btn{background:linear-gradient(135deg,#1a1a1a,#000);border:none;border-radius:10px;padding:6px 13px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;color:#F5C842;transition:all .15s ease;}
-        .save-btn{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:10px;padding:6px 13px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(230,51,18,.4);transition:all .15s ease;}
+        .edit-btn{background:linear-gradient(135deg,#1a1a1a,#000);border:none;border-radius:10px;padding:6px 13px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;color:#F5C842;transition:all .15s ease;min-height:44px;display:inline-flex;align-items:center;}
+        .save-btn{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:10px;padding:6px 13px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(230,51,18,.4);transition:all .15s ease;min-height:44px;display:inline-flex;align-items:center;}
         .info-row{display:flex;align-items:flex-start;padding:8px 0;border-bottom:0.5px solid #f5f5f0;}
         .info-row:last-child{border:none;}
         .info-label{font-size:10px;color:#4A4A4A;width:90px;flex-shrink:0;margin-top:2px;}
@@ -530,13 +530,13 @@ export default function ProfilePage() {
         .listing-title{font-size:12px;font-weight:700;color:#1a1a1a;}
         .listing-price{font-size:13px;font-weight:800;color:#C42B0F;margin-top:2px;}
         .listing-meta{font-size:10px;color:#aaa;margin-top:2px;}
-        .del-btn{background:#FFF0EE;border:none;border-radius:10px;padding:6px 10px;font-size:12px;cursor:pointer;color:#C42B0F;font-family:inherit;}
-        .edit-listing-btn{background:#FFFBEA;border:1px solid #e0b030;border-radius:10px;padding:6px 10px;font-size:12px;cursor:pointer;color:#856404;font-family:inherit;}
+        .del-btn{background:#FFF0EE;border:none;border-radius:10px;padding:6px 10px;font-size:12px;cursor:pointer;color:#C42B0F;font-family:inherit;min-height:44px;display:inline-flex;align-items:center;}
+        .edit-listing-btn{background:#FFFBEA;border:1px solid #e0b030;border-radius:10px;padding:6px 10px;font-size:12px;cursor:pointer;color:#856404;font-family:inherit;min-height:44px;display:inline-flex;align-items:center;}
         .prem-card{background:linear-gradient(135deg,#111,#1c1c1c);border-radius:12px;padding:18px;margin-bottom:12px;text-align:center;border:1px solid #333;}
         .prem-card h3{color:#F5C842;font-size:15px;font-weight:700;margin-bottom:8px;}
         .prem-card p{color:#777;font-size:11px;margin-bottom:16px;line-height:1.6;}
         .prem-cta{background:linear-gradient(135deg,#F8D24E,#F5C842);color:#111;border:none;border-radius:10px;padding:12px 26px;min-height:44px;box-sizing:border-box;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
-        .admin-btn{background:linear-gradient(135deg,#7C3AED,#6d28d9);color:#fff;border:none;border-radius:10px;padding:11px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px;}
+        .admin-btn{background:linear-gradient(135deg,#7C3AED,#6d28d9);color:#fff;border:none;border-radius:10px;padding:11px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;}
         /* Messages inbox */
         .tab-badge{display:inline-flex;align-items:center;justify-content:center;background:#E63312;color:#fff;font-size:8px;font-weight:700;width:15px;height:15px;border-radius:50%;margin-left:3px;vertical-align:middle;}
         .conv-list{display:flex;flex-direction:column;gap:0;}
@@ -557,7 +557,7 @@ export default function ProfilePage() {
         .inbox-empty{text-align:center;padding:40px 20px;}
         .inbox-empty i{font-size:44px;color:#F5C842;display:block;margin-bottom:12px;}
         .inbox-empty p{font-size:12px;color:#555;margin-bottom:16px;line-height:1.6;}
-        .inbox-empty-btn{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:10px;padding:11px 22px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(230,51,18,.4);}
+        .inbox-empty-btn{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:10px;padding:11px 22px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(230,51,18,.4);min-height:44px;}
         .open-msgs-btn{width:100%;background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;transition:all .15s ease;}
         .open-msgs-btn i{font-size:17px;}
         /* Security section */
@@ -573,8 +573,8 @@ export default function ProfilePage() {
         .delete-confirm{background:#fff;border:1.5px solid #E63312;border-radius:12px;padding:14px;margin-top:10px;text-align:center;}
         .delete-confirm p{font-size:12px;color:#111;font-weight:600;margin-bottom:10px;line-height:1.6;}
         .delete-confirm-btns{display:flex;gap:8px;}
-        .delete-confirm-btns button:first-child{flex:1;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:10px;padding:11px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
-        .delete-confirm-btns button:last-child{flex:1;background:#eee;color:#555;border:none;border-radius:10px;padding:11px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;}
+        .delete-confirm-btns button:first-child{flex:1;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:10px;padding:11px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;min-height:44px;}
+        .delete-confirm-btns button:last-child{flex:1;background:#eee;color:#555;border:none;border-radius:10px;padding:11px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;min-height:44px;}
         .msg-sm{font-size:11px;padding:8px 12px;border-radius:10px;margin-top:8px;font-weight:600;}
       ` }} />
 
@@ -594,10 +594,10 @@ export default function ProfilePage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#FFF8E1', border: '1px solid #F5C84255', borderRadius: 12, padding: '6px 11px', marginBottom: 10 }}>
             <span style={{ fontSize: 11.5, fontWeight: 800, color: '#7B5000' }}>Vepro si:</span>
             <div role="tablist" aria-label="Vepro si" style={{ display: 'inline-flex', background: '#fff', border: '1px solid #e0c070', borderRadius: 999, overflow: 'hidden' }}>
-              <button type="button" role="tab" aria-current="true" style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: '#111', color: '#F5C842', border: 'none', padding: '5px 12px', fontSize: 12, fontWeight: 800, cursor: 'default', fontFamily: 'inherit' }}>
+              <button type="button" role="tab" aria-current="true" style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: '#111', color: '#F5C842', border: 'none', padding: '5px 12px', fontSize: 12, fontWeight: 800, cursor: 'default', fontFamily: 'inherit', minHeight: 44 }}>
                 <i className="ti ti-user" aria-hidden="true" /> Unë
               </button>
-              <button type="button" role="tab" onClick={() => { window.location.href = `/biznese/${myBiz.id}` }} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'transparent', color: '#7B5000', border: 'none', padding: '5px 12px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
+              <button type="button" role="tab" onClick={() => { window.location.href = `/biznese/${myBiz.id}` }} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'transparent', color: '#7B5000', border: 'none', padding: '5px 12px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', minHeight: 44 }}>
                 <i className="ti ti-building-store" aria-hidden="true" /> Biznesi
               </button>
             </div>

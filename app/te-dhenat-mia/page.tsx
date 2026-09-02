@@ -231,7 +231,7 @@ export default function TeDhenatMiaPage() {
                 <button
                   type="button"
                   onClick={() => setConfirmDelete(false)}
-                  style={{ flex: 1, background: '#f0f0f0', color: '#333', border: 'none', borderRadius: 10, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+                  style={{ flex: 1, background: '#f0f0f0', color: '#333', border: 'none', borderRadius: 10, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', minHeight: 44 }}
                 >
                   Anulo
                 </button>
@@ -239,7 +239,7 @@ export default function TeDhenatMiaPage() {
                   type="button"
                   onClick={deleteAccount}
                   disabled={deleting}
-                  style={{ flex: 1, background: '#C42305', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: deleting ? 'not-allowed' : 'pointer', opacity: deleting ? 0.7 : 1, fontFamily: 'inherit' }}
+                  style={{ flex: 1, background: '#C42305', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: deleting ? 'not-allowed' : 'pointer', opacity: deleting ? 0.7 : 1, fontFamily: 'inherit', minHeight: 44 }}
                 >
                   {deleting ? <><span aria-hidden='true'>⏳</span> Duke fshirë...</> : 'Po, fshi!'}
                 </button>
