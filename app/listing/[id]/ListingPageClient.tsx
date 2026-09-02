@@ -658,9 +658,14 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         .share-btn{width:44px;height:44px;background:#f4f4f4;border:1px solid #b0b0b0;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .12s ease,background .15s ease;}
         .share-btn:active{transform:scale(.94);background:#e9e9e9;}
         .share-btn i{font-size:17px;color:#333;}
-        /* "Njoftomë" hyn te e njëjta shkallë; gjendja aktive (alarm i vendosur) e verdhë. */
-        .njofto-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:44px;padding:0 14px;background:#f4f4f4;border:1px solid #b0b0b0;border-radius:11px;color:#3d3d3d;font-size:12.5px;font-weight:700;font-family:inherit;cursor:pointer;transition:transform .12s ease,border-color .15s ease,background .15s ease;}
-        .njofto-btn:active{transform:scale(.97);background:#e9e9e9;}
+        /* [O42] SHKALLA 2 — SEKONDAR. "Njoftomë" është veprim me qëllim të lartë (alarm çmimi që
+           mban blerësin), i vendosur te rreshti i çmimit. Më parë ndante lëkurën gri tercjare me
+           "Raporto"/"Ndaj" (peshë vizuale identike me raportimin e abuzimit). Tani kontur i kuq mbi
+           të bardhë: dukshëm i klikueshëm, dukshëm NËN primarin e mbushur ("Fillo biseden"), dukshëm
+           MBI tercjarët gri. Gjendja aktive (alarm i vendosur) mbetet e verdhë. */
+        .njofto-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:44px;padding:0 14px;background:#fff;border:1px solid #C42305;border-radius:11px;color:#C42305;font-size:12.5px;font-weight:700;font-family:inherit;cursor:pointer;transition:transform .12s ease,border-color .15s ease,background .15s ease;}
+        .njofto-btn:hover{background:#FFF5F3;}
+        .njofto-btn:active{transform:scale(.97);background:#FFEbe7;}
         .njofto-btn.on{background:#FFF8E1;color:#856404;border-color:#FFCf5a;}
 
         /* Gallery */
@@ -682,8 +687,11 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         h1{font-size:18px;font-weight:800;color:#1a1a1a;margin-bottom:6px;line-height:1.3;letter-spacing:-.2px;}
         .price{font-size:25px;font-weight:800;color:#C42B0F;margin-bottom:12px;letter-spacing:-.5px;}
         .meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
-        .meta-item{display:flex;align-items:center;gap:4px;font-size:11px;color:#555;background:#f5f3eb;padding:5px 10px;border-radius:999px;font-weight:600;}
-        .meta-item i{font-size:12px;color:#999;}
+        /* [O42] SHKALLA 4 — INFO STATIKE (qytet, datë, kategori). NUK është veprim: pa kufi, pa hover,
+           pa cursor, sfond i tejdukshëm dhe tekst i qetë → nuk ngatërrohet me asnjë buton. Më parë
+           ishte "chip" krem (#f5f3eb) shumë afër lëkurës gri të butonave. */
+        .meta-item{display:flex;align-items:center;gap:4px;font-size:11px;color:#6B6B6B;background:transparent;padding:4px 2px;border-radius:0;font-weight:600;}
+        .meta-item i{font-size:12px;color:#B0A98F;}
         .cond-new{background:#FFF0EE;color:#C42B0F;font-weight:700;}
         .cond-used{background:#F0F0F0;color:#555;font-weight:700;}
         .divider{height:1px;background:#f0f0f0;margin:10px 0;}
