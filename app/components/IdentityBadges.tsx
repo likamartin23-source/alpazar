@@ -36,10 +36,21 @@ export type IdentitySubject = {
   created_at?: string | null
 }
 
-const chip = (bg: string, color: string, border: string): React.CSSProperties => ({
-  display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 700,
-  borderRadius: 9, padding: '4px 10px', background: bg, color, border: `1px solid ${border}`, whiteSpace: 'nowrap',
+const chip = (bg: string, color: string, border: string, shadow?: string): React.CSSProperties => ({
+  display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 700,
+  borderRadius: 8, padding: '4px 10px', background: bg, color,
+  border: border === 'none' ? 'none' : `1px solid ${border}`, whiteSpace: 'nowrap',
+  ...(shadow ? { boxShadow: shadow } : {}),
 })
+
+/* FORMAT E BUKURA (urdhër pronari, 2 shtator 2026: "rikthe format e bukura që ishin").
+ * Skini i vjetër i /profile-it kishte gradientë të pasur — konsolidimi [O57] i rrafshoi
+ * në pastel. Këtu rikthehet bukuria PA thyer fjalorin e vetëm: Premium = gradient ari,
+ * VIP = ari→qelibar (më i ngrohtë, "më lart"), Admin = vjollcë e gjallë. Kontrasti u mat:
+ * #5A3A00 mbi ar ≈ 8:1, #fff mbi #7C3AED = 5.7:1. */
+const CHIP_PREMIUM = chip('linear-gradient(135deg,#F8D24E,#F5C842)', '#5A3A00', 'none', '0 1px 4px rgba(245,200,66,.5)')
+const CHIP_VIP     = chip('linear-gradient(135deg,#F5C842,#E8892E)', '#4A2400', 'none', '0 1px 5px rgba(232,137,46,.45)')
+const CHIP_ADMIN   = chip('#7C3AED', '#fff', 'none', '0 1px 4px rgba(124,58,237,.4)')
 
 export function IdentityBadges({
   subject,
@@ -88,14 +99,14 @@ export function IdentityBadges({
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
       {isAdmin && (
-        <span style={chip('#EDE9FE', '#6D28D9', '#6D28D933')} role="img" aria-label="Admin"><span aria-hidden="true">🛡</span> Admin</span>
+        <span style={CHIP_ADMIN} role="img" aria-label="Admin"><span aria-hidden="true">🛡</span> Admin</span>
       )}
       {verified && (
         <span style={chip('#DCFCE7', '#15803D', '#15803D33')} role="img" aria-label="I verifikuar"><span aria-hidden="true">✓</span> Verifikuar</span>
       )}
       {tier === 'vip'
-        ? <span style={chip('#F3E8FF', '#7C3AED', '#7C3AED33')} role="img" aria-label="VIP"><span aria-hidden="true">👑</span> VIP</span>
-        : tier === 'premium' && <span style={chip('#FFF3D6', '#7A4A00', '#F5C84255')} role="img" aria-label="Premium"><span aria-hidden="true">⭐</span> Premium</span>}
+        ? <span style={CHIP_VIP} role="img" aria-label="VIP"><span aria-hidden="true">👑</span> VIP</span>
+        : tier === 'premium' && <span style={CHIP_PREMIUM} role="img" aria-label="Premium"><span aria-hidden="true">⭐</span> Premium</span>}
       {isBusiness && (
         <span style={chip('#E7F0FF', '#1D4ED8', '#1D4ED833')} role="img" aria-label="Biznes"><span aria-hidden="true">🏢</span> Biznes</span>
       )}
