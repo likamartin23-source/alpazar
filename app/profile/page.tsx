@@ -6,7 +6,8 @@ import { useEffect, useState, useRef } from 'react'
 import Avatar, { tierNgaProfili } from '../components/Avatar'
 import { supabase } from '../../lib/supabase'
 import { SITE_URL } from '../../lib/siteConfig'
-import { getLevel, isNewMember } from '../components/Badges'
+import { isNewMember } from '../components/Badges'
+import { IdentityBadges } from '../components/IdentityBadges'
 import { monthYear } from '../../lib/format'
 import { SkeletonProfile, SkeletonList } from '../components/Skeleton'
 
@@ -500,14 +501,7 @@ export default function ProfilePage() {
         .handle{font-size:12px;color:#555;margin-top:4px;}
         .email-row{font-size:11px;color:#666;display:flex;align-items:center;gap:6px;margin-top:4px;justify-content:center;}
         .badges-row{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap;}
-        .badge{font-size:10px;padding:4px 10px;border-radius:6px;font-weight:700;}
-        .b-prem{background:linear-gradient(135deg,#F8D24E,#F5C842);color:#111;}
-        .b-pts{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;}
-        .b-admin{background:#7C3AED;color:#fff;}
-        .b-shop{background:#10B981;color:#fff;}
-        .b-verif{background:#EAF3DE;color:#3B6D11;}
-        .b-seller{background:#EEF4FF;color:#185FA5;}
-        .b-new{background:#FFF4E5;color:#B45309;}
+        /* .badge/.b-* u hoqen: vulat vijne nga IdentityBadges ([O56]). .badges-row mbetet si kontejner. */
         .stat{text-align:center;}
         .stat-n{font-size:18px;font-weight:800;color:#F5C842;}
         .stat-l{font-size:9px;color:#666;margin-top:2px;}
@@ -675,15 +669,19 @@ export default function ProfilePage() {
           </div>
           {profile?.city && <div style={{ fontSize: 11, color: '#555', marginBottom: 4 }}><span aria-hidden="true">📍</span> {profile.city}{profile?.created_at ? ` · Anëtar që nga ${monthYear(profile.created_at)}` : ''}</div>}
           <div className="email-row" style={{ justifyContent: 'flex-start' }}><i className="ti ti-mail" aria-hidden="true" />{user?.email}</div>
+          {/* Vulat e identitetit — komponenti i VETEM ([O43]/[O46]/[O55]). Te gjitha vlerat
+              vijne nga TE DHENAT e ketij perdoruesi, jo nga roli: cdo perdorues merr ato qe i
+              takojne. Me pare ishin tete vula te shkruara me dore (.badge .b-*). */}
           <div className="badges-row" style={{ justifyContent: 'flex-start', marginTop: 8 }}>
-            {profile?.is_admin && <span className="badge b-admin"><span aria-hidden="true">🛡</span> Admin</span>}
-            {(user?.email_confirmed_at || user?.phone_confirmed_at) && <span className="badge b-verif"><span aria-hidden="true">✓</span> Verifikuar</span>}
-            {(() => { const t = tierNgaProfili(profile); return t !== 'free' && <span className="badge b-prem"><span aria-hidden="true">👑</span> {t === 'vip' ? 'VIP Ekstra Boost' : 'Premium'}</span> })()}
-            {profile?.shop_name && <span className="badge b-shop"><span aria-hidden="true">🏢</span> Biznes</span>}
-            {(() => { const l = getLevel(profile?.gamification_points || 0); return <span className="badge" style={{ background: l.bg, color: l.color }}><span aria-hidden="true">{l.icon}</span> {l.name}</span> })()}
-            {myListings.some(l => l.is_active) && <span className="badge b-seller"><span aria-hidden="true">📦</span> Shitës aktiv</span>}
-            {isNewMember(profile?.created_at) && <span className="badge b-new"><span aria-hidden="true">🆕</span> Anëtar i ri</span>}
-            {profile?.gamification_points > 0 && <span className="badge b-pts"><span aria-hidden="true">⚡</span> {profile.gamification_points} pikë</span>}
+            <IdentityBadges
+              subject={profile || {}}
+              activeListings={myListings.filter(l => l.is_active).length}
+              isBusiness={!!profile?.shop_name}
+              density="full"
+              isAdmin={!!profile?.is_admin}
+              isVerified={!!(user?.email_confirmed_at || user?.phone_confirmed_at)}
+              isNewMember={isNewMember(profile?.created_at)}
+            />
           </div>
         </div>
 
