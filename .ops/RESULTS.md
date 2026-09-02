@@ -5271,3 +5271,57 @@ Mospërputhja nuk është artefakt desktopi. Është kudo.
 ## Kufi
 Nuk mata gjeste reale prekjeje (iframe-i jep gjerësinë, jo prekjen), as CLS, as
 `/listing` në 390px.
+
+---
+
+# [O54] · RRYPI I IDENTITETIT — i unifikuar, i vendosur, i verifikuar
+
+Urdhër i pronarit: *"te përdoruesi kanë rryp të zi ndërsa te biznesi nuk kanë asnjë rryp,
+gjej një ngjyrë të bukur që ta integrosh këtë rryp kudo."* **Zbatuar** — commit `7450e8e`.
+
+## Vendimi i ngjyrës — arsye, jo shije
+
+**`#1A1A1A` (i errët), jo i kuq.** Rrypi është **informacion**, jo veprim. E kuqja `#E63312`
+mban kuptimin *"vepro"* — «Fillo bisedën», «Dërgo Mesazh», çmimi. Po ta merrte rrypi, veprimi
+do të humbte peshën e vet dhe do të riprodhonim pikërisht **hierarkinë e sheshtë të [O42]**,
+ku «Njoftomë» dhe «Raporto» kanë të njëjtën peshë. E errëta e ndan identitetin nga përmbajtja
+pa konkurruar me asgjë — dhe e bën arin të lexohet fort.
+
+## Para → pas
+
+| | Para | Pas |
+|---|---|---|
+| `/profile` | `.stats-row` · `#1a1a1a` · etiketa `#666` | `.alpz-stats` |
+| `/biznese` panel | `.bizp-stats` · `#111` · etiketa `#555` | `.alpz-stats` |
+| `/biznese` publik | inline · **mbi të bardhë** · numri `#111` | `.alpz-stats` |
+| `/u` | inline · **mbi të bardhë** · numri `#111` | `.alpz-stats` |
+
+Katër zbatime → **një klasë** te `app/ui-refine.css`.
+
+## Verifikim live pas vendosjes (matur, jo besuar)
+```
+sfondi    rgb(26,26,26)      radius 14px      qeliza 4
+numri     rgb(245,200,66)    18px   →  kontrast 10.96 : 1
+etiketa   rgb(160,160,160)   10px   →  kontrast  6.66 : 1
+```
+Parashikimi im ishte 10.9 dhe 6.7. Matja e konfirmoi.
+
+**Etiketa ishte `#666` te `/profile` = 3.0:1 — nën pragun 4.5.** Tani 6.66:1.
+Dhe jeshilja e «Të shitura» (`#0E7A35`) jep vetëm **3.2:1** mbi të errët, ndaj te të tre rrypat
+u zëvendësua me `#4ADE80` = **10.0:1**. Kudo tjetër `#0E7A35` mbetet — aty sfondi është i çelët
+dhe është e saktë.
+
+## Higjiena — pse nuk lashë shtresë të re
+`.stats-row` (profile) dhe `.bizp-stats` (biznes) mbetën pa referenca → **i fshiva në të
+njëjtin commit.** Nëse do t'i kisha lënë, do të kishte qenë saktësisht §4-bis: shtresa e re
+pranë së vjetrës. `/referral` ka `.stats-row` të vetin, i paprekur.
+
+## Mbetet — dhe pse s'e bëra vetë
+`ui-refine.css` rreshtat **47, 61, 73** janë arnime `!important` mbi `.stat-l`, të shtuara
+pikërisht sepse `.stat-l` jetonte mbi **të dy** sfondet. Tani që rrypi është i errët kudo,
+ajo nevojë bie. Por `.stat-l`/`.stat-n` përdoren edhe te `HomeClient` (hero) dhe `/rreth-nesh`
+(`.stat-dark`), ndaj pastrimi kërkon verifikim në katër faqe. E lashë **shtesë, jo zëvendësim**,
+dhe ia kalova cloud-it me shpjegimin.
+
+**Mbetet gjithashtu teksti** (hapi 6 i [O46]): «Anëtar» kundrejt «Anëtar prej», dhe «Shpallje»
+që jep `0` te `/u` por `2` kudo tjetër. Trajtimi u unifikua; fjalët jo.
