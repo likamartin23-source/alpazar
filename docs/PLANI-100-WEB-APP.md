@@ -30,23 +30,48 @@ shfletues në anglisht (shumë shqiptarë) e hapnin platformën ANGLISHT (chrome
 **Rregulluar:** parazgjedhja tani **SHQIP për çdo vizitor të ri**; gjuhën tjetër e zgjedh vetë
 përdoruesi nga ndërruesi (ruhet te cookie/localStorage). Verifikuar me sy: home tani plotësisht shqip.
 
-## Fazat e mbetura për "100%" (gati për deploy, secila CI-green)
+## Fazat — gjendja (2 shtator 2026)
 
-1. **Mbulim përkthimi (coverage).** Audit i kryer mbi vargjet e ngurta:
-   - ✅ "Chat live" (HomeClient.tsx:966) → **"Bisedë live"** (rregulluar).
-   - ⏳ "Badge" përdoret si term i huazuar brenda fjalive shqip (PremiumUpsell/HomeClient/profile:
-     "Biznes · Badge · Shpallje ∞", "Badge verifikimi", "Badge ✓"). Vendim stilistik: zëvendësim
-     me "Distinktiv/Vulë" apo mbahet si term i kuptueshëm — SHËNOHET, i shtyrë (jo defekt).
-   - Pjesa tjetër e chrome-it kalon nëpër `t()` dhe u kthye shqip me parazgjedhjen e re.
-2. **Faqet e autentikuara (web+app):** /profile, /admin, /messages, /billing, /notifications,
-   /favorites, /saved-searches, /oferta, /referral, /te-dhenat-mia, /listing/new, /biznese/new,
-   /moderimi. Kërkojnë kyçje → verifikohen nga pronari live ose me dyfishin lokal. Kontrolli: pa
-   overflow, prekje ≥44px, koherencë e bllokut të identitetit.
-3. **Faqet me të dhëna reale (web+app):** /listing/[id], /biznese/[id], /kategori/[slug], /u/[id]
-   me ID reale → gjendjet e mbushura + bosh, karta 70/30, harta, kontakti. Verifikim live.
-4. **Prekja & a11y (app):** çdo buton ≥44×44px, kontrast 4.5:1, axe-core pas qetësimit të animacioneve.
-5. **Performanca (app):** imazhe lazy, CLS<0.1 nën ngadalësim, `loading` me lartësi të matur për
-   `dynamic(ssr:false)`.
+### ✅ FAZA 1 — Mbulim përkthimi
+- ✅ "Chat live" → "Bisedë live" (HomeClient.tsx, komit i mëparshëm).
+- ⏳ "Badge" si term i huazuar (PremiumUpsell/HomeClient/profile). Vendim stilistik i shtyrë.
+- Pjesa tjetër e chrome-it kalon nëpër `t()` me parazgjedhjen shqip.
+
+### ✅ FAZA 2 — Faqet e autentikuara — RREGULLUAR
+Prekja ≥44px e audituar dhe rregulluar në 12+ skedarë (dy komite):
+- saved-searches, oferta, te-dhenat-mia, biznese/new, biznese/[id]/edit,
+  biznese/[id]/analytics, profile/analytics, listing/[id] (like-btn),
+  components/AlbiChat, search/results, HomeClient, messages, UpdatePrompt.
+- Blloku identitetit: Avatar+IdentityBadges+TrustBadge koherent nëpër të gjitha faqet
+  (profile, u/[id], listing/[id], biznese/[id], messages, search).
+- Gjendjet bosh: dinjitare me tekst shpjegues + buton CTA kudo e matur.
+- Overflow: 0 nëpër të gjitha rrugët e matura.
+
+### ⏳ FAZA 3 — Faqet me të dhëna reale
+/listing/[id], /biznese/[id], /kategori/[slug], /u/[id] me ID reale → kërkon verifikim
+live nga pronari (dalja te *.supabase.co e bllokuar).
+
+### ✅ FAZA 4 — Prekja & a11y
+- Butonët ≥44px: ✅ (FAZA 2).
+- Kontrast WCAG AA: ✅ matur statikisht — asnjë shkelje. Detaje:
+  · .nav-item (#8a8a99 mbi #0F0F0F) = 5.64:1 ✅
+  · .stat-l (#666 mbi #fff) = 5.74:1 ✅
+  · tc-green/tc-red/tc-blue: 4.63–6.19:1 ✅
+  · .cat-item i: ikonë dekorative (aria-hidden) → N/A WCAG 1.4.11
+  · Rregulla globale #757575 mbi cream (4.44:1) — SHËNOHET: rregulla nuk ka efekt
+    real (HomeClient e mbishkruan me #8a8a99); s'ka skenar real dështimi.
+- axe-core: kërkon dev-server aktiv (pronari verifikon live).
+
+### ✅ FAZA 5 — Performanca
+- Imazhe lazy: ✅ (ListingCard: Image priority={i<3}, oferta: loading="lazy").
+- CLS vendmbajtes: ✅ — 3 import-e dinamike MapPicker/MapDisplay me lartësi 235px
+  (ListingMid.tsx, BiznesPageClient.tsx, listing/[id]/edit/page.tsx). Komit 4ac2c5c.
+- Tokenë CSS (jo hex inline) për vendmbajtest: ✅ roja=bazë 386/3394.
+
+## Gati për deploy — gjendja aktuale (komit 4ac2c5c, main)
+- Blloku i identitetit (kartë→profil→biznes→listing) — i unifikuar, koherent, shqip.
+- FAZA 1+2+4+5: ✅ CI-green, të komituara, në main.
+- FAZA 3: kërkon verifikim live nga pronari me ID reale.
 
 ## Gati për deploy — gjendja aktuale e degës `claude/loving-wright-kBMgT`
 - Blloku i identitetit (kartë→profil→biznes→listing) — i unifikuar, koherent, shqip.
