@@ -133,7 +133,7 @@ export default function SearchPage() {
 
         /* ── Topbar ── */
         .topbar{background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%);padding:10px 12px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:50;}
-        .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .back{width:44px;height:44px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
         .back i{font-size:18px;color:#111;}
         .search-wrap{flex:1;background:#fff;border-radius:12px;display:flex;align-items:center;padding:0 11px;gap:8px;border:0.5px solid #e0b030;transition:border-color .15s ease,box-shadow .15s ease;}
         .search-wrap i{font-size:14px;color:#bbb;transition:color .15s ease;}
@@ -141,21 +141,21 @@ export default function SearchPage() {
         .search-wrap input::placeholder{color:#bbb;}
         .search-wrap:focus-within{border-color:#111;box-shadow:0 4px 16px -4px rgba(0,0,0,.2);}
         .search-wrap:focus-within i{color:#C42B0F;}
-        .search-btn{background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;border:none;border-radius:12px;padding:9px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(0,0,0,.25);transition:transform .15s ease,box-shadow .15s ease;}
+        .search-btn{background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;border:none;border-radius:12px;padding:9px 14px;min-height:44px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(0,0,0,.25);transition:transform .15s ease,box-shadow .15s ease;}
         .search-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px -2px rgba(0,0,0,.35);}
 
         /* ── Filter toggle bar ── */
         .filter-toggle-bar{background:#fff;border-bottom:1px solid #ececec;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
-        .filter-toggle-btn{display:flex;align-items:center;gap:5px;background:transparent;border:1px solid #ececec;border-radius:999px;padding:5px 12px;font-size:11px;font-weight:700;color:#111;cursor:pointer;font-family:inherit;transition:background .15s ease,color .15s ease,border-color .15s ease;}
+        .filter-toggle-btn{display:flex;align-items:center;gap:5px;background:transparent;border:1px solid #ececec;border-radius:999px;padding:5px 14px;min-height:44px;font-size:11px;font-weight:700;color:#111;cursor:pointer;font-family:inherit;transition:background .15s ease,color .15s ease,border-color .15s ease;}
         .filter-toggle-btn:hover{background:#f5f5f5;}
         .filter-toggle-btn.active{background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;border-color:#111;}
         .filter-badge-inline{background:#E63312;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;}
-        .clear-link{font-size:11px;color:#C42B0F;font-weight:600;cursor:pointer;background:none;border:none;font-family:inherit;padding:4px 6px;}
+        .clear-link{font-size:11px;color:#C42B0F;font-weight:600;cursor:pointer;background:none;border:none;font-family:inherit;padding:4px 10px;min-height:44px;display:inline-flex;align-items:center;}
 
         /* ── Category chips ── */
         .cats{display:flex;gap:8px;overflow-x:auto;padding:10px 12px;background:#fff;border-bottom:1px solid #f0f0f0;}
         .cats::-webkit-scrollbar{display:none;}
-        .cb{background:#f5f5f5;border:none;border-radius:999px;padding:5px 12px;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit;color:#555;white-space:nowrap;transition:background .15s ease,color .15s ease;}
+        .cb{background:#f5f5f5;border:none;border-radius:999px;padding:5px 14px;min-height:44px;display:inline-flex;align-items:center;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit;color:#555;white-space:nowrap;transition:background .15s ease,color .15s ease;}
         .cb.on{background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;}
 
         /* ── Inline filter panel ── */
@@ -179,7 +179,7 @@ export default function SearchPage() {
 
         /* Condition chips */
         .cond-row{display:flex;gap:8px;}
-        .cond-chip{flex:1;border:1.5px solid #e0e0e0;border-radius:12px;padding:8px 4px;font-size:11px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;white-space:nowrap;transition:all .15s ease;}
+        .cond-chip{flex:1;border:1.5px solid #e0e0e0;border-radius:12px;padding:8px 4px;min-height:44px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;white-space:nowrap;transition:all .15s ease;}
         .cond-chip:hover{border-color:#aaa;}
         .cond-chip.on{border-color:#111;background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;}
 
