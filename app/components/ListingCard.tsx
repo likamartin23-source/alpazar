@@ -16,7 +16,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import Avatar, { tierNgaRankTier } from './Avatar'
+import Avatar, { tierNgaRankTier, avatarVerified } from './Avatar'
 import { FavoriteButton } from './FavoriteButton'
 import { useIsOnline } from './OnlinePresence'
 import { useSyteLive } from './PremiumUpsell'
@@ -274,7 +274,7 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
               name={biz.name}
               type="business"
               tier={tier}
-              verified={!!biz.is_verified}
+              verified={avatarVerified(biz, 'business')}
               size={18}
             />
             <span>{biz.name || 'Biznes'}</span>
@@ -294,7 +294,7 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
               name={author.full_name || author.username}
               type="person"
               tier={tier}
-              verified={(author.trust_score ?? 0) >= 60}
+              verified={avatarVerified(author)}
               online={authorOnline}
               size={18}
             />

@@ -6,7 +6,7 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { lidhjaEFirmosur, rrugaNgaUrl } from '../../lib/attachments'
 import { supabase } from '../../lib/supabase'
 import { useAlpazar } from '../../lib/context'
-import AlpazarAvatar, { tierNgaProfili } from '../components/Avatar'
+import AlpazarAvatar, { tierNgaProfili, avatarVerified } from '../components/Avatar'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -122,7 +122,7 @@ function Avatar({ profile, size = 46, online }: { profile: any; size?: number; o
         name={name}
         type={profile?.shop_name ? 'business' : 'person'}
         tier={tierNgaProfili(profile)}
-        verified={(profile?.trust_score ?? 0) >= 60}
+        verified={avatarVerified(profile)}
         online={online}
         size={size}
       />

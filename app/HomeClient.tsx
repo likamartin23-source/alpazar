@@ -7,7 +7,7 @@ import { useDraggable } from '../hooks/useDraggable'
 import type { Category, Listing } from '../lib/types'
 import { LISTING_SELECT } from '../lib/listingSelect'
 import { SkeletonGrid } from './components/Skeleton'
-import Avatar, { tierNgaProfili } from './components/Avatar'
+import Avatar, { tierNgaProfili, avatarVerified } from './components/Avatar'
 import ListingCard from './components/ListingCard'
 import BusinessCard from './components/BusinessCard'
 import { getLevel } from './components/Badges'
@@ -832,7 +832,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                   return (
                     <button type="button" className="user-chip" onClick={() => go('/profile')} aria-label="Profili im">
                       <span className="user-chip-av" style={{ overflow: 'visible' }}>
-                        <Avatar src={profile?.avatar_url} name={nm} type="person" tier={tierNgaProfili(profile)} verified={(profile?.trust_score ?? 0) >= 60} size={28} />
+                        <Avatar src={profile?.avatar_url} name={nm} type="person" tier={tierNgaProfili(profile)} verified={avatarVerified(profile)} size={28} />
                         <span className="user-chip-on" />
                       </span>
                       <span className="user-chip-txt">

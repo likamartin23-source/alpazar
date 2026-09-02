@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../../../lib/supabase'
 import dynamicImport from 'next/dynamic'
-import Avatar, { tierNgaProfili } from '../../components/Avatar'
+import Avatar, { tierNgaProfili, avatarVerified } from '../../components/Avatar'
 import ListingCard from '../../components/ListingCard'
 import { TrustBadge } from '../../components/TrustBadge'
 import { IdentityBadges } from '../../components/IdentityBadges'
@@ -574,7 +574,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
                 activeListings={listings.length}
                 isBusiness
                 density="full"
-                isVerified={!!biz.is_verified}
+                isVerified={avatarVerified(biz, 'business')}
                 isActiveSeller={listings.length > 0}
                 rating={rating.count > 0 && rating.avg != null ? { avg: rating.avg, count: rating.count } : null}
               />
@@ -846,7 +846,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               activeListings={listings.length}
               isBusiness
               density="full"
-              isVerified={!!biz.is_verified}
+              isVerified={avatarVerified(biz, 'business')}
               isActiveSeller={listings.length > 0}
               rating={rating.count > 0 && rating.avg != null ? { avg: rating.avg, count: rating.count } : null}
             />

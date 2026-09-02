@@ -80,6 +80,27 @@ export function tierNgaRankTier(rank?: number | null): AvatarTier {
   return 'free'
 }
 
+/**
+ * ✓ VERIFIKUAR — nje perkufizim i VETEM per unazen (Avatar) dhe cipin (IdentityBadges).
+ *
+ * Gjendja e gjetur (inventari i 2 shtatorit 2026): ✓-ja llogaritej ne KATER menyra —
+ * `trust≥60` te shumica e unazave, `is_verified||trust≥60` te /u, `is_verified` te cipat,
+ * dhe `email/telefon i konfirmuar` te /profile (mbi-pohim). Unaza dhe cipi mund te
+ * kundershtonin njeri-tjetrin ne te NJEJTIN avatar.
+ *
+ * Vendim pronari (2 shtator): person = **is_verified OSE trust≥60**; biznes = **is_verified**.
+ * Nje biznes verifikohet vetem me dokument; besueshmeria e llogarise personale nuk vlen per te.
+ * Kur perkufizimi te ndryshoje, ndryshohet KETU — jo ne 13 vende.
+ */
+export function avatarVerified(
+  s?: { is_verified?: boolean | null; trust_score?: number | null } | null,
+  type: AvatarType = 'person',
+): boolean {
+  if (!s) return false
+  if (type === 'business') return !!s.is_verified
+  return !!s.is_verified || (s.trust_score ?? 0) >= 60
+}
+
 function getInitials(name?: string | null): string {
   if (!name) return '?'
   const clean = name.replace(/[_\-.]/g, ' ').trim()
