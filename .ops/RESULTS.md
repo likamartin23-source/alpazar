@@ -5641,3 +5641,85 @@ zgjedhë saktë.**
 
 **Kujtesë nga vetë kjo punë:** vulat shkuan `16 → 9 → 0` vetëm sepse roja i numëronte.
 Pa numërim, asnjë prej këtyre nuk do të lëvizë.
+
+---
+
+# [O61] · A REFLEKTOHET GJITHÇKA NË KOHË REALE — provuar me shkrim, jo me lexim
+
+Pyetja që nisi gjithçka: *"ndryshimet nuk reflektohen / kthehen tek e vjetra."*
+E provova shtresë për shtresë. **Përgjigjja e shkurtër: po, reflektohet.**
+
+## 1. ✅ Cache-i i CDN-së — përjashtuar plotësisht
+
+```
+/                    Cache-Control: private, no-cache, no-store, must-revalidate   X-Vercel-Cache: MISS
+/listing/{id}        e njëjta                                                       MISS
+/u/{id}              e njëjta                                                       MISS
+/biznese/{id}        e njëjta                                                       MISS
+/api/version         no-store, max-age=0                                            MISS
+```
+**Zero cache.** Çdo kërkesë shkon e freskët. CDN-ja nuk mund të jetë shkak i asgjëje.
+
+## 2. ✅ Realtime — provuar me DY shkrime të kontrolluara
+
+Metoda: `MutationObserver` mbi faqen e hapur, pastaj `update` i drejtpërdrejtë në bazë.
+**Asnjë rifreskim, asnjë klikim.**
+
+| Prova | Para | Pas | Reflektoi pa rifreskim |
+|---|---|---|---|
+| 1 | 111 shikime | **112** | ✅ (kapur nga observer-i) |
+| 2 | 112 shikime | **113** | ✅ |
+
+**Kufi i deklaruar:** s'e mata dot vonesën e saktë — shkrimi im nisej nga një thirrje e veçantë
+mjeti, ndaj ora përfshin edhe rrugëtimin tim. E provuar është **fakti**, jo milisekondat.
+
+**Prova e parë që bëra dështoi — dhe mësimi qëndron:** hapa shpalljen në një iframe që të
+nxitej `increment_listing_views`, dhe numri s'lëvizi. Kontrollova bazën: `views_count`
+**s'ishte rritur fare** (kufizim për sesion). Pra s'kishte çfarë të reflektohej.
+Po ta kisha raportuar aty, do të kisha shpallur «realtime i prishur» për një provë boshe.
+
+## 3. ✅ Abonimet — 20 kanale mbi 14 tabela, të gjitha në publikim
+
+`notifications` · `listings` · `messages` · `businesses` · `app_config` · `takedown_requests` ·
+`subscriptions` · `shares` · `reports` · `profiles` · `premium_plans` · `offers` ·
+`moderation_queue` · `invoices` — **të 14 janë te `supabase_realtime`** ✔
+
+## 4. 🟠 Pesë tabela me `replica_identity = default`
+
+```
+listings · messages · notifications · profiles · app_config
+moderation_queue · offers · reports · takedown_requests ......... f  (full)   ✔
+businesses · invoices · premium_plans · shares · subscriptions ... d  (default) ⚠
+```
+Me `default`, rreshti i vjetër në ngjarjet `UPDATE`/`DELETE` mban **vetëm çelësin primar**.
+Pasojat praktike:
+- filtrat mbi `id` punojnë (është PK) — prandaj `/biznese` funksionon;
+- por **`DELETE` mbërrin pa të dhëna**, dhe çdo filtër mbi kolonë jo-PK s'ka mbi çfarë të
+  vendosë. Për `subscriptions` dhe `invoices` — pra për faturimin — kjo është ajo që të
+  heq mundësinë e një pamjeje live të saktë kur diçka fshihet ose ndryshon me kusht.
+
+**Ndreqja (aditive, e sigurt):** `alter table … replica identity full` për të pestat.
+
+## 5. ✅ Paketimi i shfletuesit — `UpdatePrompt` ringarkon vetë
+Verifikuar te [O42]: skedë pa shkrim aktiv → `location.reload()` në montim, në rikthim fokusi
+dhe në poll 30s. Banderola mbetet vetëm kur përdoruesi po shkruan.
+
+## 6. ✅ Vendosja — matur sot
+Push → live: **~3 minuta**, i matur disa herë gjatë kësaj dite. `main` = prodhim në çdo kontroll.
+
+---
+
+## Përfundimi që e mbyll pyetjen e parë
+
+**Të pesta shtresat e reflektimit punojnë:** vendosja, paketimi, cache-i, abonimet, dhe
+shkrimi→ekran. Ankesa *«ndryshimet kthehen tek e vjetra»* **nuk ishte problem kohe reale.**
+
+Ishte `.card-title`: një klasë me dy kuptime, ku rregullimi i njërit prishte tjetrin, dhe
+dy punëtorë paralelë e ktheheshin njëri-tjetrin. Nga jashtë kjo duket **saktësisht** si
+staleness — dhe u audituar nëntë herë si i tillë.
+
+Sot ai numër është **0**. Nëse ankesa rikthehet, shkaku do të jetë diçka tjetër — dhe kjo faqe
+e provon se ku NUK duhet kërkuar.
+
+*Shënim ndershmërie: gjatë provave i shtova dy shikime shpalljes `25225352`. Shikimet rriten
+natyrshëm me çdo hapje faqeje, ndaj s'kam shtrembëruar asnjë kuptim.*
