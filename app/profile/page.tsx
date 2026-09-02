@@ -622,11 +622,11 @@ export default function ProfilePage() {
               SISTEMEVE TË IDENTITETIT — tier (lart-djathtas), ✓/🏢 (poshtë-djathtas),
               online (poshtë-majtas). Kontrolli i ngarkimit është VEPRIM, jo identitet:
               rri JASHTË avatarit (djathtas tij), që të mos mbulojë asnjë vulë. */}
-          <div style={{ position: 'absolute', bottom: -48, left: 16, display: 'flex', alignItems: 'flex-end', gap: 10 }}>
+          <div style={{ position: 'absolute', bottom: -48, left: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
             <Avatar
               src={profile?.avatar_url}
               name={profile?.full_name || profile?.username}
-              type={profile?.shop_name ? 'business' : 'person'}
+              type={myBiz ? 'business' : 'person'}
               tier={tierNgaProfili(profile)}
               verified={avatarVerified(profile)}
               online={isOnline}
@@ -667,7 +667,7 @@ export default function ProfilePage() {
             <IdentityBadges
               subject={profile || {}}
               activeListings={myListings.filter(l => l.is_active).length}
-              isBusiness={!!myBiz || !!profile?.shop_name}
+              isBusiness={!!myBiz}
               density="full"
               isAdmin={!!profile?.is_admin}
               isVerified={avatarVerified(profile)}

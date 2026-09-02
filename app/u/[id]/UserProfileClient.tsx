@@ -186,8 +186,10 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
   // FIX-3: para se konteksti të zgjidhë `user`, përdor vlerën nga serveri (initialIsOwn)
   // => paraqitja e parë s'kërcen vizitor↔pronar. Kur `user` vjen, përputhet.
   const isOwnProfile = user ? user.id === profile.id : !!initialIsOwn
-  // Nje faqe biznesi e vertete peshon me shume se nje `shop_name` i mbetur.
-  const isBusiness = !!biz || !!profile.shop_name
+  // Vula "Biznes" varet nga rreshti REAL i `businesses`, JO nga `profiles.shop_name`:
+  // kur biznesi fshihet, shop_name mbetet dhe do të shfaqte një vulë që çon te një faqe
+  // biznesi që s'ekziston më (klasa F7 — rrjeta e sigurisë fsheh defektin). [O62]
+  const isBusiness = !!biz
 
   const tabs = [
     { key: 'listings', label: `Shpalljet (${listings.length})` },
@@ -259,7 +261,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
             <IdentityBadges
               subject={profile}
               activeListings={listings.length}
-              isBusiness={!!biz || !!profile.shop_name}
+              isBusiness={isBusiness}
               density="full"
               isAdmin={!!profile.is_admin}
               isVerified={avatarVerified(profile)}

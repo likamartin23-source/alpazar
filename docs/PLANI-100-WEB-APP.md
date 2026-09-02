@@ -73,6 +73,22 @@ live nga pronari (dalja te *.supabase.co e bllokuar).
 - FAZA 1+2+4+5: ✅ CI-green, të komituara, në main.
 - FAZA 3: kërkon verifikim live nga pronari me ID reale.
 
+## Gjetjet nga verifikimi live [O62] (terminali, 390px, si admin) — dhe zgjidhjet
+1. **Prodhimi prapa main-it** → deploy (pronari Promote / kufiri ditor). Jo defekt kodi.
+2. ✅ **Vula "Biznes" nga `shop_name` i mbetur** — kur biznesi fshihej, `profiles.shop_name`
+   mbetej → vula "Biznes" te dikush pa biznes (klasa F7). **Rregulluar:** `isBusiness` tani varet
+   VETËM nga rreshti REAL i `businesses` (`myBiz`/`biz`), jo nga `shop_name` — te `/profile` dhe `/u/[id]`
+   (edhe `type` i avatarit te /profile). shop_name mbetet vetëm te lista e bisedave (s'ka të dhëna biznesi aty).
+3. ✅ **/biznese/{id-i-fshirë} → 200** — faqja renderohej gjithsesi. **Rregulluar:** `notFound()` (404)
+   kur biznesi s'ekziston. `fetchBizData` u bë i vetëdijshëm për sesionin (RLS per-viewer): pronari
+   sheh biznesin e vet të fshehur, publiku vetëm të dukshmit, e fshira → 404. Pa regres për pronarin.
+4. ⏳ **Foto e shpalljes mungon** ([O44]): `onError` me `display=none` pa vend-mbajtës, ~9 vende/7 skedarë.
+   SHËNOHET — faza tjetër (vend-mbajtës me nismëtare/ikonë kur foto dështon).
+5. **Instalo/Ndaj mbulojnë kartën (390px)** — pronari vendosi "leri", pa veprim.
+6. ✅ **"Ndrysho foton" mbulonte emrin te /profile** — pill-i ishte `align flex-end` (fund i avatarit,
+   ngjitur me emrin). **Rregulluar:** `align center` → pill-i rri në qendër të avatarit, larg emrit.
+7. ℹ️ "Shitës aktiv" mungon te admini — SAKTË (0 shpallje aktive, 0 biznes). Mos e "ndreq".
+
 ## Gati për deploy — gjendja aktuale e degës `claude/loving-wright-kBMgT`
 - Blloku i identitetit (kartë→profil→biznes→listing) — i unifikuar, koherent, shqip.
 - §2.2 aprovimi ligjor te regjistrimi · §2.3 fshirja e butë 30-ditore · fshirja e unifikuar

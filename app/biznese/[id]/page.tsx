@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
+import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import BiznesPageClient from './BiznesPageClient'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../../lib/supabase'
@@ -15,7 +16,18 @@ export const dynamic = 'force-dynamic'
 const SITE_URL = 'https://alpazar.vercel.app'
 
 async function fetchBizData(id: string) {
-  const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  // I VETËDIJSHËM PËR SESIONIN (RLS per-viewer): biz_public_read = is_visible OR owner OR admin.
+  // Me anon, një biznes i fshehur i PRONARIT do jepte null → notFound() do ta 404-onte gabimisht
+  // edhe për pronarin (regres, §9.3). Me cookie-sesionin, pronari e sheh të vetin edhe kur
+  // is_visible=false; publiku sheh vetëm të dukshmet; e fshira/inekzistente → null → 404 [O62 #3].
+  // Fallback te anon nëse cookie-t s'lexohen (fail-soft, pa regres).
+  let sb
+  try {
+    const cookieStore = await cookies()
+    sb = createServerComponentClient({ cookies: () => cookieStore as any })
+  } catch {
+    sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  }
   // I njejti fallback si te klienti: id ose owner_id.
   let { data } = await sb.from('businesses').select('*').eq('id', id).maybeSingle()
   if (!data) {
@@ -139,6 +151,9 @@ export async function generateMetadata(props: { params: Promise<{ id: string }> 
 export default async function BiznesPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params
   const biz = await fetchBizData(params.id)
+  // 404 kur biznesi s'ekziston (ose u fshi): më parë faqja renderohej gjithsesi me 200
+  // dhe një bllok bosh — një vulë "Biznes" e mbetur të çonte te një faqe fantazmë. [O62 #3]
+  if (!biz) notFound()
   // Shpalljet + nen-kategoritë + identiteti i viewer-it SSR (paralel) vetem nese
   // biznesi ekziston (perdorim id-ne reale te biznesit, jo params.id).
   const [initialListings, initialSubcats, viewerId] = biz
