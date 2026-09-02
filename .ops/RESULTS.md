@@ -5489,3 +5489,80 @@ qëllim. **Kërkon telefon të vërtetë ose emulim prekjeje për t'u provuar.**
 hapi 6 (tekstet: «Anëtar» kundër «Anëtar prej»; «Shpallje» 0 te `/u`) ·
 `[O50]` rojet asimetrike të kartave · `[O52]` «Dërgo vlerësimin» 1.61 e «Gjuha» 1.21 ·
 `imazh_qe_deshton_pa_vendmbajtes` = 9.
+
+---
+
+# [O59] · SISTEMI I FORMËS — token-at ekzistojnë dhe përdoren 5 herë kundrejt 337
+
+Vazhdim i auditit ([O58]) me pyetjen e pronarit: *"mund të ketë gjëra të tjera të
+paharmonizuara."* Ka. Dhe është **e njëjta sëmundje si `.card-title`**, një shtresë më thellë.
+
+## 1. 🔴 Token-at e formës: 4 të përkufizuar, **5 përdorime**, kundrejt **337 vlerash me dorë**
+
+`ui-refine.css:148` e deklaron shkallën:
+```css
+--r-btn:10px;  --r-card:14px;  --r-panel:16px;  --r-pill:999px;
+```
+Matur në gjithë `app/`:
+
+| | Numri |
+|---|---|
+| Token-e të përkufizuar | **4** |
+| Përdorime të `var(--r-*)` | **5** |
+| `borderRadius` inline | **337** |
+| Vlera të ndryshme inline | **20** — `2 · 3 · 4 · 5 · 6 · 7 · 8 · 9 · 10 · 11 · 12 · 13 · 14 · 16 · 18 · 20 · 24 · 50 · 999 · 9999` |
+
+Sistemi i dizajnit **ekziston në letër** dhe përdoret pesë herë. Çdo gjë tjetër është shkruar
+me dorë. Kjo është përgjigjja sistemike e ankesës *"butonat janë të shpërndarë, të çrregullt"*:
+nuk është se dikush zgjodhi keq — është se **askush nuk zgjedh nga e njëjta listë.**
+
+Përqendrimi për faqe (radiuse të ndryshme brenda NJË skedari):
+```
+/biznese   11 vlera     /profile   10 vlera     /messages   8 vlera     /u   4 vlera
+```
+
+## 2. 🔴 `.btn` përkufizohet TRI herë, me tri kuptime
+
+```
+app/admin/page.tsx:54       .btn{ radius 10px · pa sfond · 12px }
+app/auth/login/page.tsx:33  .btn{ radius 12px · gradient i kuq · 100% gjerësi · 14px }
+app/billing/ui.tsx:45       .btn{ radius 10px · sfond i bardhë · kornizë 1.5px · 12px }
+```
+Përdoret **70 herë** në markup. Pra `className="btn"` do të thotë tri gjëra të ndryshme
+varësisht se ku ndodhesh. **Është `.card-title` sërish** — një emër, disa kuptime — vetëm se
+këtu emri është pikërisht ai i sistemit të butonave.
+
+## 3. 🟠 Butoni primar, i matur live në pesë faqe
+
+| Faqja | Butoni kryesor | Lartësia | Radiusi |
+|---|---|---|---|
+| `/u` | Dërgo Mesazh | **41px** | 24px |
+| `/biznese` | Mesazh | 44px | 12px |
+| `/biznese` | ★ Pronari — shiko | 44px | **999px** |
+| `/profile` | Shiko planin → | **42px** | **10px** |
+| `/messages` | Shfleto shpalljet | 44px | 12px |
+| `/favorites` | Eksploro shpallje | **42px** | 12px |
+
+Tri lartësi (41 · 42 · 44) dhe katër radiuse (10 · 12 · 24 · 999) për **të njëjtin rol**.
+Dhe **tri nga gjashtë janë nën 44px** — pragu i prekjes (WCAG 2.5.5) që vetë repoja e citon
+te `@media (pointer: coarse)`.
+
+## 4. 🟠 Koka e faqes — tri trajtime
+
+```
+/u  ·  /biznese     h1: 22px / 800
+/favorites          h1: 18px / 800
+/profile · /messages h1: 15px / 700
+```
+I njëjti rol («ku jam»), tri madhësi.
+
+## Përfundimi
+Blloku i identitetit u unifikua (vulat = 0 fjalorë paralelë, rrypi = një klasë). Por **shtresa
+poshtë tij — forma** — nuk është prekur kurrë. Derisa `--r-btn` e shokët të bëhen rruga e
+vetme, çdo faqe e re do të shtojë vlerën e vet dhe pamja do të vazhdojë të ndihet «e çrregullt»
+edhe kur çdo komponent veç e veç është i saktë.
+
+**Propozim për rendin:** (a) një `.btn` i vetëm te `ui-refine.css` me variantet
+primar/sekondar/tercjar dhe `min-height:44px`; (b) fshi tri përkufizimet lokale; (c) zëvendëso
+337 `borderRadius` inline me token-at, duke filluar nga butonat; (d) shto te roja një matje
+`radiuse_inline` që numri të mos rritet më.
