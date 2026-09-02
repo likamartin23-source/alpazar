@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { MapPicker } from './MapPicker'
 import { uploadSingleImage } from '../../lib/uploadImages'
+import FshirjeShkallezuar from './FshirjeShkallezuar'
 
 const MAIN_TYPES = [
   { id: 'sherbime',          icon: '🛠️', label: 'Shërbime' },
@@ -97,9 +98,7 @@ export default function BusinessForm({ mode, initial, onSaved }: {
     setGalleryItems(items => { const i = items.findIndex(x => x.id === id); const j = i + dir; if (i < 0 || j < 0 || j >= items.length) return items; const cp = [...items];[cp[i], cp[j]] = [cp[j], cp[i]]; return cp })
   }
 
-  // Fshirja 3-shkallëshe (§3.9)
-  const [delStage, setDelStage] = useState(0)      // 0 mbyllur · 1 paralajmërim · 2 shkruaj emrin · 3 duke fshirë
-  const [delConfirmName, setDelConfirmName] = useState('')
+  // Fshirja 3-shkallëshe (§3.9) — tani përmes komponentit të përbashkët FshirjeShkallezuar.
 
   const setV = (k: string, v: any) => setForm(s => ({ ...s, [k]: v }))
 
@@ -195,13 +194,14 @@ export default function BusinessForm({ mode, initial, onSaved }: {
     if (bizId) { if (onSaved) onSaved(bizId); else window.location.href = `/biznese/${bizId}` }
   }
 
-  async function doDelete() {
-    if (!initial?.id) return
-    setDelStage(3)
+  // onFshi për FshirjeShkallezuar: kthen mesazh gabimi ose null (sukses → ridrejton).
+  async function doDelete(): Promise<string | null> {
+    if (!initial?.id) return 'Biznesi mungon.'
     const { error } = await supabase.rpc('delete_own_business', { p_business_id: initial.id })
-    if (error) { setMsg(`err:Fshirja dështoi: ${error.message}`); setDelStage(0); return }
+    if (error) return `Fshirja dështoi: ${error.message}`
     // Pas fshirjes: tab Biznes → G2 (krijo). Kthehu te profili.
     window.location.href = '/profile?tab=shop'
+    return null
   }
 
   const lbl: React.CSSProperties = { fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }
@@ -389,41 +389,18 @@ export default function BusinessForm({ mode, initial, onSaved }: {
         {saving ? (uploading ? '⏳ Duke ngarkuar...' : '⏳ Duke ruajtur...') : (mode === 'edit' ? '✓ Ruaj ndryshimet' : '✓ Krijo Biznesin')}
       </button>
 
-      {/* §3.9 — Fshirja 3-shkallëshe (vetëm te editimi) */}
+      {/* §3.9 — Fshirja 3-shkallëshe (vetëm te editimi). I NJËJTI komponent si te
+          fshirja e llogarisë (urdhër pronari, 2 shtator 2026): konfirmim me EMRIN. */}
       {mode === 'edit' && initial?.id && (
         <div style={{ marginTop: 28, borderTop: '1px solid #eee', paddingTop: 16 }}>
-          {delStage === 0 && (
-            <button type="button" onClick={() => setDelStage(1)} style={{ background: 'none', border: '1px solid #E63312', color: '#C42305', borderRadius: 10, padding: '10px 14px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', width: '100%' }}>
-              <span aria-hidden="true">🗑</span> Fshij biznesin
-            </button>
-          )}
-          {delStage >= 1 && (
-            <div style={{ border: '1.5px solid #E63312', borderRadius: 12, padding: 14, background: '#FFF6F4' }}>
-              <div style={{ fontSize: 13, fontWeight: 800, color: '#C42305', marginBottom: 6 }}>⚠️ Fshirje e biznesit — e pakthyeshme</div>
-              {delStage === 1 && (
-                <>
-                  <p style={{ fontSize: 12, color: '#555', lineHeight: 1.6, marginBottom: 12 }}>
-                    Do të fshihen <b>përfundimisht</b>: faqja e biznesit, <b>shpalljet e tij, vlerësimet, ndjekësit</b> dhe kategoritë. <b>Këto humbasin dhe nuk kthehen</b> — shpalljet e biznesit çaktivizohen dhe <b>nuk</b> kalojnë te profili yt personal. Llogaria jote personale dhe të dhënat e saj nuk preken.
-                  </p>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <button type="button" onClick={() => setDelStage(0)} style={{ flex: 1, background: '#fff', border: '1px solid #ccc', borderRadius: 10, padding: '10px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Anulo</button>
-                    <button type="button" onClick={() => setDelStage(2)} style={{ flex: 1, background: '#E63312', color: '#fff', border: 'none', borderRadius: 10, padding: '10px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Vazhdo</button>
-                  </div>
-                </>
-              )}
-              {delStage === 2 && (
-                <>
-                  <p style={{ fontSize: 12, color: '#555', marginBottom: 8 }}>Për të konfirmuar, shkruaj emrin e biznesit: <b>{initial.name}</b></p>
-                  <input className="bf-input" value={delConfirmName} onChange={e => setDelConfirmName(e.target.value)} placeholder={initial.name} style={{ marginBottom: 10 }} />
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <button type="button" onClick={() => { setDelStage(0); setDelConfirmName('') }} style={{ flex: 1, background: '#fff', border: '1px solid #ccc', borderRadius: 10, padding: '10px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Anulo</button>
-                    <button type="button" disabled={delConfirmName.trim() !== (initial.name || '').trim()} onClick={doDelete} style={{ flex: 1, background: delConfirmName.trim() === (initial.name || '').trim() ? '#C42305' : '#e9a99f', color: '#fff', border: 'none', borderRadius: 10, padding: '10px', fontSize: 13, fontWeight: 800, cursor: delConfirmName.trim() === (initial.name || '').trim() ? 'pointer' : 'not-allowed', fontFamily: 'inherit' }}>Fshij përfundimisht</button>
-                  </div>
-                </>
-              )}
-              {delStage === 3 && <div style={{ fontSize: 13, color: '#C42305', fontWeight: 700 }}>⏳ Duke fshirë...</div>}
-            </div>
-          )}
+          <FshirjeShkallezuar
+            butoniHapja="Fshij biznesin"
+            titull="Fshirje e biznesit — e pakthyeshme"
+            tip="emri"
+            emriPritur={initial.name || ''}
+            paralajmerim={<>Do të fshihen <b>përfundimisht</b>: faqja e biznesit, <b>shpalljet e tij, vlerësimet, ndjekësit</b> dhe kategoritë. <b>Këto humbasin dhe nuk kthehen</b> — shpalljet e biznesit çaktivizohen dhe <b>nuk</b> kalojnë te profili yt personal. Llogaria jote personale dhe të dhënat e saj nuk preken.</>}
+            onFshi={doDelete}
+          />
         </div>
       )}
     </div>

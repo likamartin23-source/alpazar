@@ -4,11 +4,12 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState, useRef } from 'react'
 import Avatar, { tierNgaProfili, avatarVerified } from '../components/Avatar'
-import { supabase } from '../../lib/supabase'
+import { supabase, SUPABASE_ANON_KEY } from '../../lib/supabase'
 import { SITE_URL } from '../../lib/siteConfig'
 import { isNewMember } from '../components/Badges'
 import { IdentityBadges } from '../components/IdentityBadges'
 import { useIsOnline } from '../components/OnlinePresence'
+import FshirjeShkallezuar from '../components/FshirjeShkallezuar'
 import { monthYear } from '../../lib/format'
 import { SkeletonProfile, SkeletonList } from '../components/Skeleton'
 
@@ -88,10 +89,6 @@ export default function ProfilePage() {
   const [passMsg, setPassMsg] = useState('')
 
   // Account deletion
-  const [deleteConfirm, setDeleteConfirm] = useState(false)
-  const [deleting, setDeleting] = useState(false)
-  const [deleteMsg, setDeleteMsg] = useState('')
-  const [deletePassword, setDeletePassword] = useState('')
 
   const [profileCopied, setProfileCopied] = useState(false)
 
@@ -334,29 +331,32 @@ export default function ProfilePage() {
     setSavingPass(false)
   }
 
-  async function deleteAccount() {
-    if (!deletePassword) { setDeleteMsg('err:Shkruaj fjalëkalimin për të konfirmuar.'); return }
-    setDeleting(true); setDeleteMsg('')
+  // Fshirja e llogarisë përmes komponentit të përbashkët FshirjeShkallezuar (tip='fjalëkalimi').
+  // Kthen mesazh gabimi ose null në sukses. DEFEKTI I RREGULLUAR (2 shtator 2026):
+  // Edge Function-i e pret token-in te TRUPI (body.token); klienti e thërriste PA trup →
+  // gjithmonë "Pa autorizim". Tani token-i dërgohet te trupi (dhe apikey te koka).
+  async function deleteAccount(password: string): Promise<string | null> {
     try {
       const { data: { session } } = await supabase.auth.getSession()
-      if (!session) { setDeleteMsg('err:Sesioni ka skaduar.'); setDeleting(false); return }
-      const { error: authErr } = await supabase.auth.signInWithPassword({ email: session.user.email!, password: deletePassword })
-      if (authErr) { setDeleteMsg('err:Fjalëkalimi është i gabuar.'); setDeleting(false); return }
+      if (!session) return 'Sesioni ka skaduar.'
+      const { error: authErr } = await supabase.auth.signInWithPassword({ email: session.user.email!, password })
+      if (authErr) return 'Fjalëkalimi është i gabuar.'
       const res = await fetch(`${FN_URL}/delete-account`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${session.access_token}` },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+          apikey: SUPABASE_ANON_KEY,
+        },
+        body: JSON.stringify({ token: session.access_token }),
       })
-      const data = await res.json()
-      if (!res.ok || data.error) {
-        setDeleteMsg(`err:${data.error ?? 'Gabim gjatë fshirjes.'}`)
-        setDeleting(false)
-        return
-      }
+      const data = await res.json().catch(() => ({} as { error?: string }))
+      if (!res.ok || data.error) return data.error ?? 'Gabim gjatë fshirjes.'
       await supabase.auth.signOut()
       window.location.href = '/?deleted=1'
+      return null
     } catch {
-      setDeleteMsg('err:Gabim i papritur. Provo sërish.')
-      setDeleting(false)
+      return 'Gabim i papritur. Provo sërish.'
     }
   }
 
@@ -1007,35 +1007,15 @@ export default function ProfilePage() {
                 <div className="danger-desc">
                   Fshirja e llogarisë është <strong>e pakthyeshme</strong>. Të gjitha shpalljet dhe të dhënat tuaja do të fshihen përgjithmonë.
                 </div>
-                {deleteMsg && (
-                  <div className={`msg-box msg-sm ${deleteMsg.split(':')[0]}`} role="alert">{deleteMsg.split(/:(.+)/)[1]}</div>
-                )}
-                {!deleteConfirm ? (
-                  <button type="button" className="delete-btn" onClick={() => setDeleteConfirm(true)}>
-                    <span aria-hidden="true">🗑</span> Fshi Llogarinë
-                  </button>
-                ) : (
-                  <div className="delete-confirm">
-                    <p>Je i sigurt? Kjo veprim <strong>nuk mund të kthehet</strong>.<br />Të gjitha të dhënat fshihen përgjithmonë.</p>
-                    <input
-                      type="password"
-                      aria-label="Fjalëkalimi për konfirmim fshirjeje"
-                      placeholder="Shkruaj fjalëkalimin për të konfirmuar"
-                      value={deletePassword}
-                      onChange={e => setDeletePassword(e.target.value)}
-                      autoComplete="current-password"
-                      style={{ width: '100%', border: '1.5px solid #E63312', borderRadius: 8, padding: '8px 10px', fontSize: 13, fontFamily: 'inherit', marginBottom: 10, boxSizing: 'border-box', outline: 'none' }}
-                    />
-                    <div className="delete-confirm-btns">
-                      <button type="button" onClick={deleteAccount} disabled={deleting || !deletePassword}>
-                        {deleting ? <><span aria-hidden="true">⏳</span> Duke fshirë...</> : <><span aria-hidden="true">✅</span> Po, fshi llogarinë</>}
-                      </button>
-                      <button type="button" onClick={() => { setDeleteConfirm(false); setDeleteMsg(''); setDeletePassword('') }}>
-                        <span aria-hidden="true">✕</span> Anulo
-                      </button>
-                    </div>
-                  </div>
-                )}
+                {/* Fshirja 3-shkallëshe — I NJËJTI komponent si te biznesi (urdhër pronari):
+                    paralajmërim → konfirmim me FJALËKALIM → duke fshirë. */}
+                <FshirjeShkallezuar
+                  butoniHapja="Fshi Llogarinë"
+                  titull="Fshirje e llogarisë — e pakthyeshme"
+                  tip="fjalëkalimi"
+                  paralajmerim={<>Do të fshihet <b>përgjithmonë</b> llogaria jote dhe të dhënat e saj; shpalljet e tua çaktivizohen. <b>Ky veprim nuk kthehet.</b> Konfirmohet me fjalëkalimin tënd.</>}
+                  onFshi={deleteAccount}
+                />
               </div>
               </>
               )}
