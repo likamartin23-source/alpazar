@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
-import { tierNgaProfili } from './Avatar'
+import Avatar, { tierNgaProfili, avatarVerified } from './Avatar'
 
 // KARTA E BIZNESIT — e njëjta KORNIZË vizuale si `ListingCard` (të njëjtat klasa `.listing-card`/
 // `.card-img`/`.card-body`… nga ui-refine.css), që "e njëjta kartë të notojë te të dyja vendet"
@@ -89,10 +89,11 @@ export default function BusinessCard({ business, index = 0 }: { business: Busine
         {tier === 'vip'
           ? <span className="badge-premium" role="img" aria-label="VIP" style={{ background: 'linear-gradient(135deg,#D4AF37,#E63312)', color: '#fff' }}><span aria-hidden="true">👑</span> VIP</span>
           : tier === 'premium' && <span className="badge-premium" role="img" aria-label="Premium"><span aria-hidden="true">★</span></span>}
-        {/* 🏢 Biznes (poshtë-majtas) — identiteti; ✓ kur i verifikuar. */}
-        <span className="card-seller-ov" style={{ cursor: 'default' }} aria-label={b.is_verified ? 'Biznes i verifikuar' : 'Biznes'}>
-          <span aria-hidden="true" style={{ fontSize: 13 }}>🏢</span>
-          <span>{b.is_verified ? 'Biznes ✓' : 'Biznes'}</span>
+        {/* Identiteti (poshtë-majtas) — [A2] përmes <Avatar> të njësuar (unazë tier + vula 🏢/✓),
+            jo më vulë e rivizatuar me dorë. I njëjti Avatar si te overlay-i i shitësit te ListingCard. */}
+        <span className="card-seller-ov" style={{ cursor: 'default' }} aria-label={avatarVerified(b, 'business') ? 'Biznes i verifikuar' : 'Biznes'}>
+          <Avatar src={b.logo_url} name={b.name} type="business" tier={tier} verified={avatarVerified(b, 'business')} size={18} />
+          <span>{avatarVerified(b, 'business') ? 'Biznes ✓' : 'Biznes'}</span>
         </span>
         {/* "Ruaj" = ndiq biznesin (poshtë-djathtas, si zemra e shpalljes). Biznesi ruhet. */}
         <button
@@ -124,8 +125,10 @@ export default function BusinessCard({ business, index = 0 }: { business: Busine
             {b.city || 'Shqipëri'}
           </span>
         </div>
-        {/* Prova sociale (analoge me 👁 te karta e shpalljes): 👥 ndjekës, kur >0. */}
-        {(b.followers_count ?? 0) > 0 && (
+        {/* Prova sociale (analoge me 👁 te karta e shpalljes): 👥 ndjekës. [O50] Roja `!= null` si
+            ListingCard (jo `>0`) — rreshti ekziston edhe me 0, që karta të mos mbetet me hapësirë
+            boshe poshtë (card-body ka lartësi të ngurtë). Simetri e plotë me ListingCard. */}
+        {b.followers_count != null && (
           <div className="card-stats">
             <span className="cs-eye" aria-label={`${b.followers_count} ndjekës`}>
               <span aria-hidden="true">👥</span> {b.followers_count}
