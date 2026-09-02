@@ -289,6 +289,18 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
             </div>
           </div>
 
+          {/* Sytë (social-proof) — total shikimesh te shpalljet e këtij përdoruesi, si te biznesi
+              (urdhër pronari: "sytë kudo ku duhen"). Fail-soft: shfaqet vetëm kur ka shikime.
+              🔴 live nuk vlen për profil person (presence është për shpallje/biznes, jo për person). */}
+          {(() => {
+            const tv = listings.reduce((s, l) => s + (l.views_count || 0), 0)
+            return tv > 0 ? (
+              <div style={{ fontSize: 'var(--fs-sm)', color: 'var(--az-gray-1)', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span aria-hidden="true">👁</span> {tv.toLocaleString('sq-AL')} shikime te shpalljet
+              </div>
+            ) : null
+          })()}
+
           {/* Action buttons */}
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {!isOwnProfile && (

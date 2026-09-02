@@ -1332,6 +1332,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                 type={isBusinessListing ? 'business' : 'person'}
                 tier={tierNgaProfili(seller)}
                 verified={avatarVerified(seller)}
+                online={sellerOnline}
                 size={36}
               />
               <span className="cs-seller-name">
