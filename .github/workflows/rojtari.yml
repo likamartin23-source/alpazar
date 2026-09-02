@@ -47,6 +47,10 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://sopafwfkrxpcdaljddoh.supabase.co' }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
+      - name: Roja e unifikimit
+        if: always()
+        run: node scripts/roja-unifikimit.mjs
+
       # Rruga e shpetimit: nese prodhimi ka ngecur, provo ta nisesh vendosjen vete.
       - name: Nis vendosjen nese prodhimi ka ngecur
         if: failure() && github.event_name == 'schedule'

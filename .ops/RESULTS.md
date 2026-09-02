@@ -4619,3 +4619,73 @@ Commit-i `9abd6c9` e quajti veten **"1/n"**. Ky raport e mat **n = 3** dhe rendi
    `isAdmin` · `isNewMember` · `rating` — përndryshe migrimi i humbet ato.
 5. Pas migrimit, `.schip .sch-*` dhe `.badge .b-*` mbeten CSS e vdekur → fshiji
    (ndryshe rikthehet §4-bis).
+
+---
+
+# [O44] · VERIFIKIM I GJETJEVE + ROJA E UNIFIKIMIT (e ndërtuar dhe e provuar)
+
+## 1. Verifikim — çfarë u rregullua deri tani
+
+Matur drejt në kod më 2 shtator, jo nga mesazhet e commit-eve. **Cloud-i s'ka shtyrë
+kod që nga `9abd6c9`;** commit-et e mëpasme janë vetëm raportet e mia.
+
+| Gjetja | Matja | Gjendja |
+|---|---|:--:|
+| [O41]-1 `.card-title` i ndarë | 37 përdorime · `.section-title` = 0 | ❌ e hapur |
+| [O41]-2 inline `.card-price` te `BusinessCard:115` | 1 mbishkrim | ❌ e hapur |
+| [O41]-3 një komponent i vetëm «Ruaj» | 0 skedarë të rinj | ❌ e hapur |
+| [O41]-4 vend-mbajtës te `onError` | `display='none'` ende | ❌ e hapur |
+| [O42] koka e komentit te `UpdatePrompt:18` | ende thotë "Asnjë reload" | ❌ e hapur |
+| [O42] hierarkia e butonave | `njofto-btn` = `safety-btn` | ❌ e hapur |
+| [O43] `IdentityBadges` | 1 sipërfaqe · `.schip`=6 · `.badge`=7 | ❌ e hapur |
+| [O43] TrustBadge te `/profile` | 0 | ❌ e hapur |
+| `.shop-mini` CSS e vdekur | 0 | ✅ e bërë |
+| `/listing/new` te middleware | 1 | ✅ e bërë |
+| `LISTING_SELECT` i përhapur | **14 skedarë** | ✅ e bërë |
+| Portë CI për `LISTING_SELECT` | 0 | ❌ → **e bërë tani** |
+
+## 2. Roja e unifikimit — `scripts/roja-unifikimit.mjs`
+
+Mësimi i gjithë kësaj jave: **pa portë, çdo rregullim kthehet.** Nëntë autopsi e trajtuan
+si problem cache-i atë që ishte fjalor i mbingarkuar. Prandaj ndërtova rojën që numëron.
+
+**Bazë-raketë, jo ndalim absolut** — borxhi ekziston sot; ndalimi do të bllokonte depon:
+- numri **rritet** → dështon (borxh i ri)
+- numri **bie** → dështon me udhëzim *"ule bazën"* (përmirësimi mbyllet me çelës)
+- numri **i njëjtë** → kalon
+
+Pesë matjet, me bazën e matur sot:
+```
+card_title_jashte_kartave              35   (7 skedarë; profile=13, biznese=6, referral=6…)
+klasa_e_perbashket_e_mbishkruar_inline  1   (BusinessCard)
+fjalore_vulash_paralele                13   (listing=6, profile=7)
+projeksione_te_dyfishuara               0   ← LISTING_SELECT i mbyllur me çelës
+imazh_qe_deshton_pa_vendmbajtes         9   (7 skedarë)
+```
+
+**E provova kundër sulmit që pretendon se ndalon (§9.3), PAS aplikimit:**
+1. gjendja e paprekur → **kalon** (dalja 0) ✔
+2. shtova një `.card-title` të ri jashtë kartave → **dështon** `35→36` me `::error::` ✔
+3. bazë e ngritur artificialisht (përmirësim i pambyllur) → **dështon** me *"ule bazën"* ✔
+
+I lidhur te **`ci.yml`** (pas `tsc`, para testeve — dështon shpejt e lirë) dhe te
+**`rojtari.yml`** (`if: always()`).
+
+## 3. Dy korrigjime që roja m'i bëri MUA
+
+Kalimi i parë i saj nxori numra që i besova; të dy ishin pjesërisht të rremë:
+
+- **`projeksione_te_dyfishuara = 1`** → në fakt **0**. E vetmja ndeshje ishte një
+  **koment** te `ListingCard.tsx:37` që e përmend projeksionin. `LISTING_SELECT` është
+  i adoptuar plotësisht. E ndreqa: roja s'numëron rreshta komenti.
+- **`imazh_qe_deshton_pa_vendmbajtes`** kapte edhe `Avatar.tsx:168`, që bën gjënë e
+  **saktë** (`onError={() => setBroken(true)}`). E ndreqa: kërkon shprehimisht
+  `.style.display='none'` brenda të njëjtit handler.
+
+**Dhe një zgjerim i [O41]-4:** shkrova se problemi ishte te `ListingCard`. **Është 9 raste
+në 7 skedarë** — `BiznesPageClient` (3), `BusinessCard`, `ImageCarousel`, `ListingCard`,
+`notifications`, `profile`, `UserProfileClient`. Model i përsëritur në gjithë depon,
+jo defekt i një komponenti.
+
+*"Kur një mjet të thotë 'në rregull', pyet çfarë mat SAKTËSISHT"* — vlen edhe për mjetin
+që sapo shkrove. Kjo është arsyeja pse koka e skriptit e mban këtë mësim brenda vetes.

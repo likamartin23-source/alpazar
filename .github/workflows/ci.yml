@@ -27,6 +27,12 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://sopafwfkrxpcdaljddoh.supabase.co' }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || '' }}
 
+      # Roja e unifikimit: ndalon borxh TE RI fjalori (nje klase me dy kuptime,
+      # vula identiteti te ndertuara me dore, projeksion i dyfishuar). Baze-rakete —
+      # numrat levizin vetem poshte. Shih koken e skriptit per pse ekziston.
+      - name: Roja e unifikimit
+        run: node scripts/roja-unifikimit.mjs
+
       - name: Unit tests (Vitest)
         run: npm run test
 
