@@ -21,7 +21,7 @@ import { FavoriteButton } from './FavoriteButton'
 import { useIsOnline } from './OnlinePresence'
 import { useSyteLive } from './PremiumUpsell'
 import { trackEvent } from '../../lib/track'
-import { nf, dayMonth, priceLabel } from '../../lib/format'
+import { nf, priceLabel, timeAgo } from '../../lib/format'
 
 export type ListingCardAuthor = {
   id: string
@@ -99,18 +99,7 @@ type Props = {
  *  sipërfaqe tjetër — pra shkurtimi e UNIFIKON, s'e ndan. */
 const fmt = (price: number, cur: string) => priceLabel(price, cur)
 
-function timeAgo(iso: string): string {
-  const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000)
-  if (diff < 60)     return 'tani'
-  if (diff < 3600)   return `${Math.floor(diff / 60)}min`
-  if (diff < 86400)  return `${Math.floor(diff / 3600)}h`
-  if (diff < 604800) return `${Math.floor(diff / 86400)}d`
-  // `dayMonth` ne vend te `toLocaleDateString('sq-AL')`: ky i fundit varet nga
-  // te dhenat ICU te mjedisit dhe jep tekst te ndryshem ne server e ne
-  // shfletues — shkaku i mospershtatjeve te hidratimit qe dokumenton
-  // lib/format.ts.
-  return dayMonth(iso)
-}
+// `timeAgo` u zhvendos te lib/format.ts — BURIM I VETËM i përbashkët me BusinessCard (§4-bis).
 
 const go = (path: string) => { window.location.href = path }
 

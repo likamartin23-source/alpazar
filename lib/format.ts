@@ -94,3 +94,17 @@ export function clockTime(d: string | number | Date | null | undefined): string 
   if (!dt) return ''
   return `${String(dt.getHours()).padStart(2, '0')}:${String(dt.getMinutes()).padStart(2, '0')}`
 }
+
+/** Kohë relative kompakte: "tani" · "5min" · "3h" · "5d" · pastaj "12 Gusht" (dayMonth).
+ *  BURIM I VETËM — përdoret nga ListingCard DHE BusinessCard (kartat kanë të njëjtin format kohe).
+ *  Varet nga `Date.now()` → thirre VETËM pas mount-it (përndryshe mospërputhje hidratimi). */
+export function timeAgo(d: string | number | Date | null | undefined): string {
+  const dt = toDate(d)
+  if (!dt) return ''
+  const diff = Math.floor((Date.now() - dt.getTime()) / 1000)
+  if (diff < 60)     return 'tani'
+  if (diff < 3600)   return `${Math.floor(diff / 60)}min`
+  if (diff < 86400)  return `${Math.floor(diff / 3600)}h`
+  if (diff < 604800) return `${Math.floor(diff / 86400)}d`
+  return dayMonth(dt)
+}

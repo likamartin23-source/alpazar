@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import Avatar, { tierNgaProfili, avatarVerified } from './Avatar'
+import { timeAgo } from '../../lib/format'
 
 // KARTA E BIZNESIT — e njëjta KORNIZË vizuale si `ListingCard` (të njëjtat klasa `.listing-card`/
 // `.card-img`/`.card-body`… nga ui-refine.css), që "e njëjta kartë të notojë te të dyja vendet"
@@ -20,6 +21,7 @@ export type BusinessCardItem = {
   is_verified?: boolean | null
   tagline?: string | null
   followers_count?: number | null
+  created_at?: string | null
   owner?: { is_premium?: boolean | null; has_boost?: boolean | null; premium_expires_at?: string | null; boost_expires_at?: string | null } | null
 }
 
@@ -42,6 +44,9 @@ export default function BusinessCard({ business, index = 0 }: { business: Busine
   const [busy, setBusy] = useState(false)
   // Foto qe deshton (404/CORS): shfaq vend-mbajtesin, mos e fshih ne kuti bosh (F5).
   const [imgFailed, setImgFailed] = useState(false)
+  // timeAgo varet nga Date.now() → vetem pas mount-it (pa mospershtatje hidratimi), si ListingCard.
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => { setMounted(true) }, [])
 
   useEffect(() => {
     let alive = true
@@ -123,6 +128,10 @@ export default function BusinessCard({ business, index = 0 }: { business: Busine
           <span className="card-loc">
             <i className="ti ti-map-pin" aria-hidden="true" />
             {b.city || 'Shqipëri'}
+          </span>
+          {/* Mosha relative — simetri me ListingCard (qytet + kohë). */}
+          <span style={{ fontSize: 11, color: '#6B6B6B', flexShrink: 0 }}>
+            {mounted && b.created_at ? timeAgo(b.created_at) : ''}
           </span>
         </div>
         {/* Prova sociale (analoge me 👁 te karta e shpalljes): 👥 ndjekës. [O50] Roja `!= null` si
