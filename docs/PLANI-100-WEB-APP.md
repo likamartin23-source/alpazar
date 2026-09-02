@@ -32,9 +32,12 @@ përdoruesi nga ndërruesi (ruhet te cookie/localStorage). Verifikuar me sy: hom
 
 ## Fazat e mbetura për "100%" (gati për deploy, secila CI-green)
 
-1. **Mbulim përkthimi (coverage) — faza tjetër.** Disa vargje të vogla mbetën të pambuluara nga
-   `t()` (p.sh. "Chat live", "Badge", "No ads" te disa vende). Audit i vargjeve të ngurta angleze
-   → futje te fjalori i `t()`. Rrezik i ulët, aditiv.
+1. **Mbulim përkthimi (coverage).** Audit i kryer mbi vargjet e ngurta:
+   - ✅ "Chat live" (HomeClient.tsx:966) → **"Bisedë live"** (rregulluar).
+   - ⏳ "Badge" përdoret si term i huazuar brenda fjalive shqip (PremiumUpsell/HomeClient/profile:
+     "Biznes · Badge · Shpallje ∞", "Badge verifikimi", "Badge ✓"). Vendim stilistik: zëvendësim
+     me "Distinktiv/Vulë" apo mbahet si term i kuptueshëm — SHËNOHET, i shtyrë (jo defekt).
+   - Pjesa tjetër e chrome-it kalon nëpër `t()` dhe u kthye shqip me parazgjedhjen e re.
 2. **Faqet e autentikuara (web+app):** /profile, /admin, /messages, /billing, /notifications,
    /favorites, /saved-searches, /oferta, /referral, /te-dhenat-mia, /listing/new, /biznese/new,
    /moderimi. Kërkojnë kyçje → verifikohen nga pronari live ose me dyfishin lokal. Kontrolli: pa

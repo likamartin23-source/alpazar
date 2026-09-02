@@ -963,7 +963,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
               <i className="ti ti-star" aria-hidden="true" /><span>Vlerësime ⭐</span>
             </div>
             <div className="trust-card tc-red">
-              <i className="ti ti-message-circle" aria-hidden="true" /><span>Chat live</span>
+              <i className="ti ti-message-circle" aria-hidden="true" /><span>Bisedë live</span>
             </div>
           </div>
 
