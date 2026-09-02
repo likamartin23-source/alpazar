@@ -5325,3 +5325,68 @@ dhe ia kalova cloud-it me shpjegimin.
 
 **Mbetet gjithashtu teksti** (hapi 6 i [O46]): «Anëtar» kundrejt «Anëtar prej», dhe «Shpallje»
 që jep `0` te `/u` por `2` kudo tjetër. Trajtimi u unifikua; fjalët jo.
+
+---
+
+# [O55] · `/u` — vulat që mungojnë dhe rruga e pronarit. Shkaku i saktë.
+
+Pronari: *"harruat komponentët (shitës aktiv…) te profili i jashtëm i administratorit, si dhe
+butonin për të hyrë në profilin e brendshëm."* **Të dyja u verifikuan.**
+
+## 1. 🔴 `📦 Shitës aktiv` mungon te `/u` — dhe shkaku është një rresht i qëllimshëm
+
+```ts
+// UserProfileClient.tsx:60-64
+.from('listings').select(LISTING_SELECT)
+  .eq('user_id', uid)
+  .is('business_id', null)   // ← "vetëm shpallje personale … (Vendimi 7, pa dyfishim)"
+  .eq('is_active', true)
+```
+Pastaj `:278` → `<IdentityBadges activeListings={listings.length} …/>`
+
+Administratori i ka **të dyja shpalljet nën biznes**, ndaj `listings.length = 0`, ndaj
+`IdentityBadges` e fsheh `📦 Shitës aktiv` (kushti `activeListings > 0`).
+
+**Vendimi 7 është i saktë për SHPALLJET** — pa dyfishim mes `/u` dhe `/biznese`.
+**Por vula e trashëgoi të njëjtin numër pa e pyetur askush a është e njëjta pyetje.**
+- *"Sa shpallje personale ka?"* → 0 ✔ e saktë
+- *"A është ky person shitës aktiv?"* → **PO** — shet përmes biznesit, faqja vetë e thotë:
+  *"Ky përdorues shet përmes biznesit të tij."*
+
+Klasa **F1** — defekt në hapësirën mes dy shtresave, ku të dyja janë "të sakta" veç e veç.
+
+**Ndreqja:** ndaj numrin nga identiteti. Kalo te `IdentityBadges` një `isActiveSeller`
+(personale **ose** biznesi), duke e mbajtur `Shpallje` = personale.
+
+## 2. Vulat e tjera që mungojnë te `/u` — sipas inventarit
+
+| Vula | Te `/profile` | Te `/u` | Pse |
+|---|:--:|:--:|---|
+| `📦 Shitës aktiv` | ✅ | ❌ | numri, §1 më lart |
+| `🛡 Admin` | ✅ | ❌ | `IdentityBadges` s'ka `isAdmin` |
+| `🆕 Anëtar i ri` | ✅ | ❌ | s'ka `isNewMember` |
+| `✓ Verifikuar` | ✅ | ❌ | s'ka `isVerified` |
+| `🔒 Bisedë private` | (te `/listing`) | ❌ | s'ka `isPrivateChat` |
+
+Katër nga pesë janë **e njëjta shkak**: komponenti i vetëm nuk i mbulon ende. Kjo është
+saktësisht hapi 3 i [O46] — *zgjero para se të migrosh* — tani me provë live pse.
+
+## 3. Rruga drejt profilit të brendshëm — EKZISTON, por s'është ajo që pret pronari
+
+`/u` ka **dy** rrugë, të dyja të kushtëzuara me `isOwnProfile`:
+- `:309` → `✏️ Edito Profilin` → `/profile`
+- `:340` → `← Kthehu te profili` (brenda banderolës) → `/profile`
+
+**Pse pronari s'i sheh:** te `alpazar.vercel.app` shfletuesi është i kyçur si **Martinel Likaj**,
+jo si Administratori. Sesioni i adminit rri te domeni tjetër. Pra faqja e trajton saktë si
+vizitor. E verifikova: me llogarinë time të pronarit, të dyja shfaqen.
+
+**Por ankesa qëndron, në një nivel tjetër.** Krahaso afordancat:
+| | Rruga e pronarit |
+|---|---|
+| `/biznese` | shirit i qëndrueshëm **«Vepro si: Biznesi \| Unë»** në krye |
+| `/u` | banderolë + buton që thotë **«Edito»**, jo «hyr në panel» |
+
+«Edito Profilin» premton **redaktim**, jo kalim te paneli. Dhe banderola s'është kontroll —
+është njoftim. Prandaj pronari e ndjen si të munguar edhe kur teknikisht është aty.
+**Ndreqja:** i njëjti shirit «Vepro si» te `/u`, si te `/biznese` — hapi 5 i [O46].
