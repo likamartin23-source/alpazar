@@ -32,11 +32,15 @@ function calcTrustScore(createdAt: string, listingsActive: number, gamificationP
   return Math.round(ageFactor + listingFactor + pointsFactor)
 }
 
+// Shkalla e BESIMIT — terma të veçantë nga çipat e identitetit, që të mos dyfishohen
+// (urdhër pronari, 2 shtator 2026: "hiqe dyfishimin"). Më parë: '🆕 I ri' përplasej me çipin
+// '🆕 Anëtar i ri', dhe '✅ I Verifikuar' përplasej me çipin '✓ Verifikuar' (is_verified).
+// Kjo shkallë flet VETËM për besimin (histori/reputacion), jo për moshën apo verifikimin.
 function trustLevel(score: number): { label: string; color: string; bg: string; icon: string } {
-  if (score >= 80) return { label: 'Shitës Ekspert',   color: '#7C3AED', bg: '#F3EEFF', icon: '🏆' }
-  if (score >= 55) return { label: 'I Verifikuar',     color: '#0E7A35', bg: '#E8F5E9', icon: '✅' }
+  if (score >= 80) return { label: 'Besim elitar',     color: '#7C3AED', bg: '#F3EEFF', icon: '🤝' }
+  if (score >= 55) return { label: 'Shumë i besuar',   color: '#0E7A35', bg: '#E8F5E9', icon: '🌟' }
   if (score >= 30) return { label: 'I Besueshëm',      color: '#185FA5', bg: '#EEF4FF', icon: '🔵' }
-  return               { label: 'I ri',               color: '#B45309', bg: '#FFF4E5', icon: '🆕' }
+  return               { label: 'Pa histori',          color: '#B45309', bg: '#FFF4E5', icon: '⏳' }
 }
 
 export function TrustBadge({ score: scoreProp, createdAt, listingsActive = 0, gamificationPoints = 0, compact = false }: TrustBadgeProps) {
