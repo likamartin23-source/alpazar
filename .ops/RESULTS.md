@@ -4780,3 +4780,21 @@ një dështim i rojës nuk e njofton askënd. **Kjo duhet mbyllur para se roja t
 2. `NEXT_PUBLIC_SENTRY_DSN` te Vercel + kontroll: a është `o4511440664723456` projekti që sheh?
 3. `PAYMENT_WEBHOOK_SECRET` + `SUPABASE_SERVICE_ROLE_KEY` — pagesat janë fail-closed sot.
 4. `npm audit fix` për `browserslist`.
+
+### [O45] §5 — shtesë pas skanimit të plotë të rrënjës
+
+DSN-i i ngurtësuar nuk është vetëm te klienti. Është **i njëjti** në të tria mjediset:
+`sentry.client.config.ts` · `sentry.edge.config.ts` · `sentry.server.config.ts`
+→ të tria `o4511440664723456.ingest.de.sentry.io/4511548220768336`.
+
+Pra raportimi është aktiv për **shfletuesin, edge-in dhe serverin** njëkohësisht — jo vetëm
+për gabimet e klientit. Kjo e forcon pyetjen: nëse të tria dërgojnë dhe projekti që sheh
+pronari është bosh, atëherë ngjarjet po shkojnë diku tjetër.
+
+Rreshti që prodhon raportimin e gabuar: `app/api/health/route.ts:52`
+```ts
+['NEXT_PUBLIC_SENTRY_DSN', 'Raportimi i gabimeve.'],
+```
+Ndreqja e saktë nuk është heqja e rreshtit — është që `/api/health` të dallojë
+*"mungon dhe s'ka rezervë"* nga *"mungon por ka rezervë të ngurtësuar"*. Ndryshe dritarja
+e vetme e pronarit do të vazhdojë t'i thotë "i fikur" diçkaje që punon.
