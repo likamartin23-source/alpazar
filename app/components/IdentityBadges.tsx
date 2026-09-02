@@ -1,31 +1,31 @@
 'use client'
 
 import { TrustBadge } from './TrustBadge'
-import { getLevel } from './Badges'
-import { tierNgaProfili } from './Avatar'
+import { identitySignals, showTrust, type SignalSubject } from './identitySignals'
 
 /**
- * SHENJAT E IDENTITETIT — një fjalor i VETËM për të gjitha sipërfaqet (§4-bis / [O39]).
+ * SHENJAT E IDENTITETIT — lëkura chip() e /u mbi RREGULLIN E VETËM (`identitySignals`).
  *
- * Më parë secila faqe (/u, /profile, /biznese, /listing, kartat) vendoste VETË cilat vula
- * identiteti shfaqte dhe si i quante — i njëjti sistem dilte "Besueshmëria" te njëra dhe
- * "Trust Score" te tjetra, "⚡ Tregtar" vetëm te /profile, pikët vetëm te disa. Ky komponent
- * kthen TË NJËJTIN grup vulash kudo, me TË NJËJTAT emërtime shqip; faqja vendos vetëm DENSITETIN
- * (sa), jo CILAT. Burimet janë të njëjtat që përdoreshin: tierNgaProfili · trust_score ·
- * gamification_points · has active listings. (Motra e LISTING_SELECT për projeksionin.)
+ * §4-bis / [O46]: rregulli (CILAT vula · emrat shqip · pragjet · radha · konteksti) jeton NJË herë
+ * te `identitySignals.ts`; këtu vetëm e vizatojmë me lëkurën pastel të /u. Faqet e tjera (/profile
+ * .badge · /listing .schip · /biznese .bdg) e marrin TË NJËJTIN rregull dhe e vizatojnë me lëkurën
+ * e vet — pra grupi i plotë del kudo (si te /profile), skinet e bukura mbeten.
  *
- * Prania online NUK është këtu — ajo udhëton me rrethin te `Avatar` (pika poshtë-majtas).
+ * Prania online NUK është këtu — udhëton me rrethin te `Avatar`. TrustBadge (Besueshmëria) është
+ * komponent i përbashkët veç, i njëjti kudo, i qeverisur nga i njëjti kusht (`showTrust`).
  */
-export type IdentitySubject = {
-  is_premium?: boolean | null
-  has_boost?: boolean | null
-  premium_expires_at?: string | null
-  boost_expires_at?: string | null
-  is_verified?: boolean | null
-  trust_score?: number | null
-  trust_score_visible?: boolean | null
-  gamification_points?: number | null
-  created_at?: string | null
+export type IdentitySubject = SignalSubject
+
+// Lëkura e /u: një ngjyrë çip për secilin `tone` të rregullit. (Niveli i merr ngjyrat nga getLevel.)
+const TONE: Record<string, { bg: string; color: string; border: string }> = {
+  admin:    { bg: '#EDE9FE', color: '#6D28D9', border: '#6D28D933' },
+  verified: { bg: '#E8F5E9', color: '#0E7A35', border: '#0E7A3533' },
+  vip:      { bg: '#F3E8FF', color: '#7C3AED', border: '#7C3AED33' },
+  premium:  { bg: '#FFF3D6', color: '#7A4A00', border: '#F5C84255' },
+  biznes:   { bg: '#E7F0FF', color: '#1D4ED8', border: '#1D4ED833' },
+  active:   { bg: '#E7F6EC', color: '#0E7A35', border: '#0E7A3533' },
+  new:      { bg: '#FFF4E5', color: '#B45309', border: '#F5C84255' },
+  points:   { bg: '#FFF8E1', color: '#7A4A00', border: '#F5C84255' },
 }
 
 const chip = (bg: string, color: string, border: string): React.CSSProperties => ({
@@ -38,38 +38,32 @@ export function IdentityBadges({
   activeListings = 0,
   isBusiness = false,
   density = 'full',
+  isSelf = false,
+  emailVerified = false,
 }: {
   subject: IdentitySubject
   activeListings?: number
   isBusiness?: boolean
   density?: 'full' | 'compact'
+  isSelf?: boolean
+  emailVerified?: boolean
 }) {
-  const tier = tierNgaProfili(subject)
-  const pts = subject.gamification_points || 0
-  const lvl = getLevel(pts)
-  const showTrust = subject.trust_score_visible !== false
+  const signals = identitySignals(subject, { isSelf, emailVerified, isBusiness, activeListings, density })
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-      {tier === 'vip'
-        ? <span style={chip('#F3E8FF', '#7C3AED', '#7C3AED33')} role="img" aria-label="VIP Ekstra Boost"><span aria-hidden="true">👑</span> VIP Ekstra Boost</span>
-        : tier === 'premium' && <span style={chip('#FFF3D6', '#7A4A00', '#F5C84255')} role="img" aria-label="Premium"><span aria-hidden="true">⭐</span> Premium</span>}
-      {isBusiness && (
-        <span style={chip('#E7F0FF', '#1D4ED8', '#1D4ED833')} role="img" aria-label="Biznes"><span aria-hidden="true">🏢</span> Biznes</span>
-      )}
-      {showTrust && (
-        <TrustBadge createdAt={subject.created_at} listingsActive={activeListings} gamificationPoints={pts} />
-      )}
-      {/* Niveli (⚡ Tregtar/Ekspert/Master) vetëm në densitet të plotë dhe kur ka kaluar Fillestarin
-          (pts≥100) — përndryshe "🌱 Fillestar" për këdo është zhurmë. */}
-      {density === 'full' && pts >= 100 && (
-        <span style={chip(lvl.bg, lvl.color, lvl.color + '33')} role="img" aria-label={`Niveli ${lvl.name}`}><span aria-hidden="true">{lvl.icon}</span> {lvl.name}</span>
-      )}
-      {pts > 0 && (
-        <span style={chip('#FFF8E1', '#7A4A00', '#F5C84255')} aria-label={`${pts} pikë`}><span aria-hidden="true">⚡</span> {pts} pikë</span>
-      )}
-      {activeListings > 0 && (
-        <span style={chip('#E7F6EC', '#0E7A35', '#0E7A3533')} role="img" aria-label="Shitës aktiv"><span aria-hidden="true">📦</span> Shitës aktiv</span>
+      {signals.map(s => {
+        const c = s.tone === 'level'
+          ? { bg: s.levelBg || '#F1F5F9', color: s.levelColor || '#334155', border: (s.levelColor || '#334155') + '33' }
+          : TONE[s.tone]
+        return (
+          <span key={s.key} style={chip(c.bg, c.color, c.border)} role="img" aria-label={s.label}>
+            <span aria-hidden="true">{s.icon}</span> {s.label}
+          </span>
+        )
+      })}
+      {showTrust(subject) && (
+        <TrustBadge createdAt={subject.created_at} listingsActive={activeListings} gamificationPoints={subject.gamification_points || 0} />
       )}
     </div>
   )
