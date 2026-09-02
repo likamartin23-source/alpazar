@@ -16,8 +16,8 @@ import { tierNgaProfili } from './Avatar'
  * `isAdmin`, `isVerified`, `isNewMember`, `isActiveSeller`, `isPrivateChat`, `rating` —
  * PARA se ndonjë sipërfaqe të migrojë. Migrimi pa këtë zgjerim do të hiqte vula = regres.
  *
- * IKONA e Premium-it është `👑`, jo `⭐`: kështu e kanë sot `/profile`, `/listing` dhe
- * `/biznese` (tri nga katër). Ndryshimi do të ishte i dukshëm pa e kërkuar askush.
+ * IKONA (vendim pronari, 2 shtator): Premium = `⭐`, VIP = `👑` — si unaza e Avatar-it
+ * (★ premium, 👑 VIP). Dallon qartë dy nivelet ("stili avatar").
  *
  * NIVELI ndjek densitetin: te profilet (`full`) shfaqet gjithmonë, si te `/profile`;
  * te çipat e ngushtë (`compact`) vetëm mbi 100 pikë, që «🌱 Fillestar» të mos bëhet zhurmë.
@@ -95,7 +95,7 @@ export function IdentityBadges({
       )}
       {tier === 'vip'
         ? <span style={chip('#F3E8FF', '#7C3AED', '#7C3AED33')} role="img" aria-label="VIP"><span aria-hidden="true">👑</span> VIP</span>
-        : tier === 'premium' && <span style={chip('#FFF3D6', '#7A4A00', '#F5C84255')} role="img" aria-label="Premium"><span aria-hidden="true">👑</span> Premium</span>}
+        : tier === 'premium' && <span style={chip('#FFF3D6', '#7A4A00', '#F5C84255')} role="img" aria-label="Premium"><span aria-hidden="true">⭐</span> Premium</span>}
       {isBusiness && (
         <span style={chip('#E7F0FF', '#1D4ED8', '#1D4ED833')} role="img" aria-label="Biznes"><span aria-hidden="true">🏢</span> Biznes</span>
       )}
