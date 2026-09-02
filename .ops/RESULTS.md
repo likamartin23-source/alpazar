@@ -4861,3 +4861,67 @@ tri vula (`Admin`, `Verifikuar`, `Anëtar i ri`). Prandaj rendi është i detyru
 4. Unifiko rrugën publike: **një etiketë, një pozicion, një mekanizëm** — dhe zgjidh
    nëse `/u` është parapamje (kusht `?public=1`, si biznesi) apo etiketë e përhershme.
 5. Unifiko statistikat: «Anëtar» me muaj+vit, ose «Anëtar prej» me vit — jo të dyja.
+
+---
+
+# [O47] · VERIFIKIM ME SY I RENDERUAR — matje, jo lexim kodi
+
+Pronari: *"auditet tuaja nuk e kapën që komponentët nuk u vendosën asnjëherë."*
+**Kritika është e drejtë në metodë.** Të gjitha auditet e mia deri tani lexuan **burimin** dhe
+nga një `import` + JSX nxora "është i vendosur". Kurrë s'e pashë faqen e renderuar. Kjo është
+saktësisht F4-a që kjo depo paralajmëron — *"mat pohimin, mos e lexo"* — dhe e përsërita.
+
+Tani e mata te prodhimi, i kyçur si pronar, në katër sipërfaqe.
+
+## Matrica LIVE (jo nga kodi)
+
+| Vula | `/profile` | `/u` | `/listing` | `/biznese` panel |
+|---|:--:|:--:|:--:|:--:|
+| ⭐/👑 Premium | ✅ | ✅ | ✅ | ✅ |
+| 🏢 Biznes | ✅ | ✅ | ✅ | ✅ |
+| ⚡ **135 pikë** | ✅ | ✅ | ✅ | ✅ |
+| ⚡ **Nivel «Tregtar»** | ✅ | ✅ | **❌** | **❌** |
+| 📦 **Shitës aktiv** | ✅ | **❌** | ✅ | **❌** |
+| 🛡 **Admin** | ✅ | ❌ | ❌ | ❌ |
+| **TrustBadge** | ❌ | ❌ | ❌ | ❌ |
+
+## Korrigjim i pronarit — një pjesë e pohimit nuk qëndron
+
+**`IdentityBadges` ËSHTË i vendosur dhe renderohet.** Teksti i marrë live nga `/u`:
+```
+⭐ Premium · ⚡ Tregtar · ⚡ 135 pikë
+```
+Kjo është pikërisht dalja e tij. Nuk është "kurrë i vendosur" — është **i vendosur në një
+sipërfaqe të vetme nga pesë**, çka e bën efektin praktikisht të padukshëm. Pjesa e vërtetë e
+ankesës është kjo, dhe qëndron plotësisht.
+
+**TrustBadge nuk shfaqet askund — dhe shkaku nuk është kodi.** Baza:
+`profiles.trust_score_visible = false` për këtë llogari. Është **zgjedhje e vetë pronarit**
+(opt-out, neni 19). Pra gjetja ime te [O43] *"/profile është e vetmja pa TrustBadge"* është
+e saktë në kod, por **e parëndësishme për këtë pronar** — ai s'e sheh askund me qëllim.
+
+## Tri gjetje TË REJA që vetëm pamja live i nxori
+
+**1. I njëjti person, dy numra shpalljesh.**
+`/profile` → **2 Shpallje** · `/u` → **0 Shpallje** · `/biznese` → **2** · çipi te `/listing` → **2 shpallje aktive**.
+`/u` e shpjegon me *"Ky përdorues shet përmes biznesit të tij"*, pra është me qëllim — por
+pasoja është që **profili publik i pronarit i shfaqet vizitorit si i pazënë me punë (0)**,
+ndërsa çdo sipërfaqe tjetër thotë 2. Asnjë audit kodi s'do ta kapte: të dy numrat janë "të saktë".
+
+**2. Tri formate për të njëjtën fushë «Anëtar».**
+`/profile` → `qershor 2026 · Anëtar` · `/u` → `2026 · Anëtar` · `/biznese` → `2026 · Anëtar prej`.
+
+**3. Dy topologji URL-je për të njëjtin koncept "shiko publikun".**
+- Personi: paneli `/profile` → publiku është një **URL TJETËR** (`/u/{id}`), me banderolë të
+  ngjitur sa herë pronari bie aty.
+- Biznesi: paneli `/biznese/{id}` → publiku është **E NJËJTA URL** me `?public=1`, si mënyrë
+  parapamjeje që ndizet dhe fiket.
+
+Kjo është arsyeja pse pronari e ndjen si "rrugë e paharmonizuar": nuk janë vetëm etiketat —
+janë **dy modele të ndryshme navigimi** për të njëjtin veprim.
+
+## Ndryshimi i metodës që marr përsipër
+Nga tani asnjë gjetje unifikimi nuk raportohet nga leximi i kodit. Rendi: **shih të renderuarën →
+pastaj gjej rreshtin në kod → pastaj raporto.** Rregulli 11 i RREGULLORES e thoshte qysh më parë
+(«sy live → kod → tjetër»); unë e ktheva mbrapsht. Kjo është arsyeja pse tri gjetjet e mësipërme
+mungonin nga [O43] dhe [O46].
