@@ -794,7 +794,8 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
         /* Grid-i .ig-* (katror 1/1, vetem foto + cmim) u zevendesua nga
            .listings-grid + ListingCard — stilet e tyre rrine te
            app/ui-refine.css, seksioni 8. */
-        .action-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 0;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;border:none;box-shadow:0 2px 8px -2px rgba(0,0,0,.25);transition:transform .15s ease,box-shadow .15s ease;}
+        .action-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 0;min-height:44px;box-sizing:border-box;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;border:none;box-shadow:0 2px 8px -2px rgba(0,0,0,.25);transition:transform .15s ease,box-shadow .15s ease;}
+        .action-btn:active{transform:scale(.97);}
         .action-btn:hover{transform:translateY(-1px);}
         .action-btn:active{opacity:.8;}
         .info-row{display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid #f0f0f0;}
@@ -971,15 +972,18 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               </div>
             ) : (
               <>
+                {/* [D] Shkalla 3-nivelesh: MESAZH = PRIMAR i kuq i mbushur (i njëjti rol si "Dërgo
+                    Mesazh"/"Fillo bisedën" te /u e /listing — kanali kryesor i platformës, mban bisedën
+                    brenda app-it). TELEFONO = SEKONDAR kontur i kuq (kontakt i drejtpërdrejtë, nën primarin). */}
+                <button type="button" aria-label="Dërgo mesazh" onClick={() => { if (!userId) { window.location.href = '/auth/login'; return } window.location.href = `/messages?with=${biz.owner_id}` }}
+                  className="action-btn" style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff' }}>
+                  <i className="ti ti-message" style={{ fontSize: 15 }} aria-hidden="true" /> Mesazh
+                </button>
                 {biz.phone && (
-                  <a href={`tel:${biz.phone}`} className="action-btn" style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff' }}>
+                  <a href={`tel:${biz.phone}`} className="action-btn" style={{ background: '#fff', color: '#C42305', border: '1.5px solid #C42305' }}>
                     <i className="ti ti-phone" style={{ fontSize: 15 }} aria-hidden="true" /> Telefono
                   </a>
                 )}
-                <button type="button" aria-label="Dërgo mesazh" onClick={() => { if (!userId) { window.location.href = '/auth/login'; return } window.location.href = `/messages?with=${biz.owner_id}` }}
-                  className="action-btn" style={{ background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842' }}>
-                  <i className="ti ti-message" style={{ fontSize: 15 }} aria-hidden="true" /> Mesazh
-                </button>
                 <button
                   type="button"
                   onClick={toggleFollow}
