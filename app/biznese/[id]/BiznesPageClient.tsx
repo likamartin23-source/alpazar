@@ -595,8 +595,8 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
                 sinjale trust/marketingu për vizitorin (rrinë vetëm te faqja publike, më poshtë);
                 pronari i sheh pamjet te "Analitika". (Vendim Martinel + verifikim live, 26 gusht.) */}
 
-            {/* Shiko faqen publike */}
-            <button type="button" onClick={() => setAsVisitor(true)}
+            {/* [B1] Shiko faqen publike — NAVIGIM REAL (?public=1), jo simulim në vend (si /profile→/u). */}
+            <button type="button" onClick={() => { window.location.href = `/biznese/${biz.id}?public=1` }}
               style={{ width: '100%', marginTop: 14, minHeight: 44, background: '#fff', border: '1.5px solid #e5e5e5', borderRadius: 11, fontSize: 13, fontWeight: 800, color: '#111', cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
               <i className="ti ti-eye" aria-hidden="true" /> Shiko faqen publike
             </button>
@@ -757,7 +757,8 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
         /* Grid-i .ig-* (katror 1/1, vetem foto + cmim) u zevendesua nga
            .listings-grid + ListingCard — stilet e tyre rrine te
            app/ui-refine.css, seksioni 8. */
-        .action-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 0;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;border:none;box-shadow:0 2px 8px -2px rgba(0,0,0,.25);transition:transform .15s ease,box-shadow .15s ease;}
+        .action-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 0;min-height:44px;box-sizing:border-box;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;border:none;box-shadow:0 2px 8px -2px rgba(0,0,0,.25);transition:transform .15s ease,box-shadow .15s ease;}
+        .action-btn:active{transform:scale(.97);}
         .action-btn:hover{transform:translateY(-1px);}
         .action-btn:active{opacity:.8;}
         .info-row{display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid #f0f0f0;}
@@ -931,15 +932,17 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               </div>
             ) : (
               <>
+                {/* [D] Shkalla 3-nivelesh: MESAZH = PRIMAR i kuq i mbushur (i njëjti rol si /u & /listing,
+                    kanali kryesor i platformës); TELEFONO = SEKONDAR kontur i kuq (kontakt i drejtpërdrejtë). */}
+                <button type="button" aria-label="Dërgo mesazh" onClick={() => { if (!userId) { window.location.href = '/auth/login'; return } window.location.href = `/messages?with=${biz.owner_id}` }}
+                  className="action-btn" style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff' }}>
+                  <i className="ti ti-message" style={{ fontSize: 15 }} aria-hidden="true" /> Mesazh
+                </button>
                 {biz.phone && (
-                  <a href={`tel:${biz.phone}`} className="action-btn" style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff' }}>
+                  <a href={`tel:${biz.phone}`} className="action-btn" style={{ background: '#fff', color: '#C42305', border: '1.5px solid #C42305' }}>
                     <i className="ti ti-phone" style={{ fontSize: 15 }} aria-hidden="true" /> Telefono
                   </a>
                 )}
-                <button type="button" aria-label="Dërgo mesazh" onClick={() => { if (!userId) { window.location.href = '/auth/login'; return } window.location.href = `/messages?with=${biz.owner_id}` }}
-                  className="action-btn" style={{ background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842' }}>
-                  <i className="ti ti-message" style={{ fontSize: 15 }} aria-hidden="true" /> Mesazh
-                </button>
                 <button
                   type="button"
                   onClick={toggleFollow}
@@ -995,7 +998,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
       {isOwner && asVisitor && (
         <div style={{ background: '#111', color: '#F5C842', margin: '0 0 8px', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, fontSize: 12.5, fontWeight: 700 }}>
           <span><i className="ti ti-eye" aria-hidden="true" /> Po e shikon faqen publike të biznesit</span>
-          <button type="button" onClick={() => setAsVisitor(false)}
+          <button type="button" onClick={() => { window.location.href = `/biznese/${biz.id}` }}
             style={{ background: '#F5C842', color: '#111', border: 'none', borderRadius: 8, padding: '6px 12px', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' }}>
             ← Kthehu te menaxhimi
           </button>
