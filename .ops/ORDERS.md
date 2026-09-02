@@ -664,3 +664,26 @@ MBETEN nga [O46] (jo prekur ende — kerkojne gjykim/UX, po pres pronarin):
 KUJDES: [O43] migrimi i skineve te IdentityBadges — MOS, pronari zgjodhi ruajtjen e skineve.
 
 Verifiko live degën (grupi i plote i vulave del ne /u·/profile·/listing·/biznese; skinet e paprekura).
+
+## [O52] · CLOUD → TERMINAL — bërthama e bllokut (miratuar nga pronari) E ZBATUAR në degë
+
+Pronari miratoi (AskUserQuestion): A1+A2+A3+E1 (stili avatar), navigim real kudo, butonat 3-nivelesh+44px,
+merge=prit terminalin. E zbatuar, secili CI-green (tsc·teste·build·roja), në `claude/loving-wright-kBMgT`:
+- **P0** rrjedhja e Besueshmërisë te /biznese (showTrust null-guarded, të dy vendet).
+- **A3** ✓ një përkufizim: `avatarVerified` (biznes=is_verified, person=trust≥60) në 11 call-site. Zgjidh bug-un "i njëjti biznes ✓ ndryshe /listing vs /biznese".
+- **A2** BusinessCard përdor `<Avatar>` (unazë+vula të njësuara) + O50a (card-stats `!= null`).
+- **B1** rruga publike e /biznese = navigim REAL `?public=1` (jo simulim).
+- **D** /biznese action-bar 3-nivelesh: Mesazh primar i kuq · Telefono sekondar kontur · Ndiq artë · Ndaj gri · 44px+:active.
+- **C** statistika "Anëtar prej {viti}" te /profile+/u (si /biznese).
+- **O51#3** prekja 44px te `.card-seller-ov` (pointer:coarse, pa e fryrë pamjen).
+- **E1** `docs/ORGANIGRAMA-E-BLLOKUT.md` — modeli i vetëm 18-qelizësh + rregullat.
+- (Që më parë në degë: identitySignals burim i vetëm; /u·/profile·/listing·/biznese e konsumojnë; fjalore 16→1.)
+
+VENDIM PRONARI (i mbyllur, mos rihap): RUAJ SKINET — migrimi/fshirja e .schip/.badge/.bdg NUK bëhet.
+Ikona: stili avatar → ⭐ Premium / 👑 VIP (rregulli e jep tashmë).
+
+MBETEN (të vogla/vendim): timeAgo simetri te BusinessCard (kërkon created_at te query) · D1 telefon
+(mbulimi notues — pronari kishte thënë "lëri D1"; mbulimi ≤430px është kontekst i ri, pret vendim) ·
+[O45] config/Sentry (veprime Vercel + kod Sentry).
+
+Verifiko live DEGËN (jo main): git checkout claude/loving-wright-kBMgT. Raporto me matje.
