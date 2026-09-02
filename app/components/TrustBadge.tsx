@@ -55,8 +55,8 @@ export function TrustBadge({ score: scoreProp, createdAt, listingsActive = 0, ga
         display: 'inline-flex', alignItems: 'center', gap: 4,
         background: level.bg, color: level.color,
         border: `1px solid ${level.color}33`,
-        borderRadius: 9, padding: '2px 8px',
-        fontSize: 9.5, fontWeight: 700,
+        borderRadius: 'var(--r-btn)', padding: '2px 8px',
+        fontSize: 'var(--fs-2xs)', fontWeight: 700,
       }}>
         <span aria-hidden="true">{level.icon}</span> {level.label}
       </span>
@@ -67,7 +67,7 @@ export function TrustBadge({ score: scoreProp, createdAt, listingsActive = 0, ga
     <div style={{
       display: 'flex', alignItems: 'center', gap: 10,
       background: level.bg, border: `1px solid ${level.color}33`,
-      borderRadius: 10, padding: '9px 12px',
+      borderRadius: 'var(--r-btn)', padding: '9px 12px',
     }}>
       {/* Score ring */}
       <div style={{
@@ -85,15 +85,15 @@ export function TrustBadge({ score: scoreProp, createdAt, listingsActive = 0, ga
         <span style={{
           position: 'absolute', inset: 0,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 10, fontWeight: 800, color: level.color,
+          fontSize: 'var(--fs-xs)', fontWeight: 800, color: level.color,
         }}>{score}</span>
       </div>
 
       <div>
-        <div style={{ fontSize: 11, fontWeight: 700, color: level.color }}>
+        <div style={{ fontSize: 'var(--fs-sm)', fontWeight: 700, color: level.color }}>
           <span aria-hidden="true">{level.icon}</span> {level.label}
         </div>
-        <div style={{ fontSize: 10, color: '#555', marginTop: 2 }}>
+        <div style={{ fontSize: 'var(--fs-xs)', color: '#555', marginTop: 2 }}>
           Besueshmëria {score}/100
         </div>
       </div>

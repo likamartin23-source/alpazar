@@ -148,6 +148,11 @@ button[aria-label="Ndaj aplikacionin"]{box-shadow:0 4px 13px -5px rgba(0,0,0,.22
   --gold-ink:#856404; --ok:#16a34a;
   --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px; --sp-6:24px; --sp-8:32px;
   --r-btn:10px; --r-card:14px; --r-panel:16px; --r-pill:999px;
+  /* [O60] Shkalla tipografike — deri sot s'ekzistonte fare, ndaj 39 madhësi fontesh të
+     shkruara me dorë (koka e faqes doli 22/18/15 pa nga çfarë të zgjidhte). Këtu është
+     shkalla e vetme; adoptimi nis nga modeli i identitetit (Avatar/IdentityBadges/TrustBadge). */
+  --fs-2xs:9px; --fs-xs:10px; --fs-sm:11px; --fs-base:12px; --fs-md:13px;
+  --fs-lg:14px; --fs-xl:16px; --fs-2xl:19px; --fs-3xl:22px;
 }
 a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="button"]:focus-visible, [tabindex]:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible{
   outline:2px solid var(--action-red) !important; outline-offset:2px !important;

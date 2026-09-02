@@ -37,8 +37,8 @@ export type IdentitySubject = {
 }
 
 const chip = (bg: string, color: string, border: string, shadow?: string): React.CSSProperties => ({
-  display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 700,
-  borderRadius: 8, padding: '4px 10px', background: bg, color,
+  display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 'var(--fs-base)', fontWeight: 700,
+  borderRadius: 'var(--r-btn)', padding: '4px 10px', background: bg, color,
   border: border === 'none' ? 'none' : `1px solid ${border}`, whiteSpace: 'nowrap',
   ...(shadow ? { boxShadow: shadow } : {}),
 })
