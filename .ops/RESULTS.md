@@ -5095,3 +5095,69 @@ punon) · të njëjtat përmasa grid.
    ekzistojë edhe me zero (ose të fshihet në të dyja; zgjidhni njërën).
 2. Shto moshën (`timeAgo`) te meta-ja e `BusinessCard`, ose hiqe nga `ListingCard`.
 3. Hiq mbishkrimin inline të `.card-price`; nëse duhet variant, bëje klasë modifikuese.
+
+---
+
+# [O51] · TELEFONI (390px) — boshllëku që KUJTESA e paralajmëronte
+
+Gjithë blloku deri tani u mat në **desktop 1568px**. KUJTESA §6 e thotë: *"Playwright-i nis në
+desktop nëse s'i thua ndryshe — telefoni, ku është përdoruesi shqiptar, nuk u pa për katër
+kalime."* E bëra të pestin gabim. Tani u mat.
+
+**Metoda:** `resize_window` raporton sukses por pamja mbetet 1568px (kufi i njohur i mjetit).
+Zgjidhja: një **iframe 390×844 nga i njëjti origjin** (lejohet — `frame-ancestors 'self'`),
+pastaj matje me `getBoundingClientRect()`, jo me sy.
+
+## 🔴 1. Dy elemente notuese rrinë FIZIKISHT mbi kartën e parë
+
+Kryqëzim i matur i drejtkëndëshave, jo përshtypje:
+```
+Ndaj ✕      36×44   →  mbi kartën "Biznes"
+Instalo ✕   44×91   →  mbi kartën "Biznes"
+```
+Në 390px ka **katër shtresa fixed** njëkohësisht: shiriti i poshtëm i navigimit ·
+`Ndaj` · `Instalo` · flluska `💬 Keni nevojë për ndihmë`. Dy prej tyre bien mbi rrjetin e
+kartave. Në desktop kjo **nuk duket** — hapësira mjafton.
+
+Kjo është pjesa që mungonte te D1 (raportuar më parë vetëm si «jashtë palete»): në telefon
+nuk është çështje ngjyre, është **mbulim përmbajtjeje**.
+
+## 🔴 2. Trupi i kartës — hapësira boshe, e matur
+
+| Karta | trupi | rreshta | e përdorur | **boshë** | çmimi |
+|---|---|---|---|---|---|
+| **Biznes** | 98px | **3** | 47px | **51px — 52%** | **12.5px** |
+| Makine | 98px | 4 | 63px | 35px — 36% | 14px |
+| Makine | 98px | 4 | 63px | 35px — 36% | 14px |
+
+Karta e biznesit harxhon **gjysmën e trupit të vet për asgjë**. Kjo është matja numerike e
+[O50]: lartësi e ngurtë 98px + rreshti i statistikave i fshehur kur ndjekësit = 0.
+Dhe `12.5px` kundrejt `14px` — mbishkrimi inline, i matur.
+
+## 🔴 3. Objektiv prekjeje 22px në rrugën kryesore të modelit 3-shkallësh
+
+```
+"Biznesi Biznes"  →  65 × 22 px   (në të dyja kartat e shpalljes)
+```
+Ky është `.card-seller-ov` — **hapi kartë → shitës**, gurthemeli i modelit
+kartë → shpallje → shitës → biznes → pronar. Në telefon është **22px i lartë**.
+
+Dhe ky nuk është boshllëk i paditur — rregulla ekziston dhe e citon standardin:
+```css
+/* Referenca: WCAG 2.1 AAA 2.5.5 (44x44 CSS px) dhe udhezimet e Apple/Google. */
+@media (pointer: coarse) { .btn, .empty-cta, .plan, button[type="submit"] { min-height: 44px } }
+```
+`.card-seller-ov` **nuk është në listë**. Klasa **F2** — *mbrojtja te fusha, jo te rruga*:
+rregulla u shkrua, por s'e mbulon pikërisht elementin që mban rrugën.
+Krahaso: `FavoriteButton` e respekton (`Math.max(size,44)`), sepse dikush e mendoi veç për të.
+
+## Ndreqja
+1. Shto `.card-seller-ov` (dhe çdo `role="link"` brenda kartës) te blloku `pointer: coarse`,
+   ose jepi vetes një zonë prekjeje 44px si `FavoriteButton`.
+2. Në ≤430px, lejo **një** shtresë notuese njëherësh — jo katër. `Instalo` dhe `Ndaj` duhet
+   të hyjnë në menynë e poshtme ose të dalin pas shfaqjes së parë.
+3. Rregullimi i [O50] (rojet e njëjta) e mbyll gjysmën boshe të kartës së biznesit.
+
+## Ç'mbetet i pamatur në telefon
+Kontrasti (axe-core), zhvendosja e paraqitjes (CLS) dhe gjestet reale të prekjes.
+Iframe-i jep gjerësinë, jo prekjen e vërtetë.
