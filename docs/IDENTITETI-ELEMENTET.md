@@ -54,6 +54,24 @@ i freskuar LIVE me triggera (vlerësime · referime · porosi · moderim) + cron
 
 Të gjitha FALAS. Kur mungon historia, bie te heuristika (moshë+shpallje+pikë) derisa modeli të mbushet.
 
+## 3-bis. Sistemet SOCIALE të bllokut (të reja) — reale, funksionale, kudo ku duhen
+
+Të gjitha FALAS, të verifikuara në bazë (2 shtator 2026):
+
+| Sistem | Person (/u, /profile) | Biznes (/biznese) | Burimi (real) |
+|---|---|---|---|
+| **Ndjekje (follow) + Ndjekës** | `follows` (Ndiq te /u; numër te statistikat) | `business_followers` (Ndiq; numër) | tabela reale, insert/delete |
+| **👁 Shikime** | agregat te /u; per-kartë | agregat + per-kartë | `listings.views_count` |
+| **🔴 Duke shikuar (live)** | — (presence s'ka kanal personi) | po (biz-<id>) + per-kartë | Supabase presence |
+| **🟢 Online/offline** | po (avatar) | pronari (avatar) | `last_seen` |
+| **★ Vlerësime** | "Rreth" (numër+mesatare) | tab "Rreth & Vlerësime" | `reviews` |
+| **Përgjigjet ~N orë** | — | po | `business_response_time` RPC |
+| **Hapur tani** | — | po | `businesses.hours` |
+
+Person vs biznes: follow-i ekziston te TË DYJA (tabela të veçanta, sepse ndiqet person kundrejt
+biznesi). Orari/koha-e-përgjigjes janë specifike biznesi (person s'ka orar). 🔴 live është
+per-shpallje/biznes (jo per-person). Të gjitha pa portë premium.
+
 ## 4. Pse çështja e elementeve S'DUHET të përsëritet
 
 1. **Një komponent i vetëm** (IdentityBadges/Avatar) — çdo sipërfaqe (kartë/profil/biznes/listing)
