@@ -5566,3 +5566,78 @@ edhe kur çdo komponent veç e veç është i saktë.
 primar/sekondar/tercjar dhe `min-height:44px`; (b) fshi tri përkufizimet lokale; (c) zëvendëso
 337 `borderRadius` inline me token-at, duke filluar nga butonat; (d) shto te roja një matje
 `radiuse_inline` që numri të mos rritet më.
+
+---
+
+# [O60] · SISTEMI I DIZAJNIT — 20 përdorime kundrejt 4 760 vlerash me dorë
+
+Mbyllje e auditit të harmonizimit. [O59] mati radiusin; këtu matet **e gjitha**.
+
+## Tabela e plotë
+
+| Dimensioni | Token-e të deklaruar | **Përdorime token-esh** | Vlera inline | Vlera **të ndryshme** |
+|---|:--:|:--:|:--:|:--:|
+| **Ngjyra** | 14 | **10** | **1 896** | **245** |
+| **Hapësira** (`--sp-*`) | 7 | **5** | **1 606** | — |
+| **Tipografia** | **0** *(s'ka shkallë)* | — | **921** | **39** |
+| **Radiusi** (`--r-*`) | 4 | 5 | 337 | 20 |
+| **Hijet** (`--az-shadow-*`) | 3 | **0** | 42 | — |
+| **GJITHSEJ** | **28** | **20** | **4 802** | — |
+
+**Sistemi i dizajnit përdoret njëzet herë në gjithë aplikacionin.** Gjithçka tjetër —
+mbi katër mijë e tetëqind vlera — është shkruar me dorë, çdo herë nga e para.
+Hijet kanë token-e që **nuk i përdor askush** (0 nga 42).
+
+## 🔴 Marka ka KATËR të kuqe, të gjitha të përdorura shumë
+
+```
+#C42B0F   169 herë
+#E63312   165 herë        ← token-i --az-red / --action-red
+#C42305    73 herë        ← token-i --az-red-deep / --action-red-deep
+#C42A0E    57 herë
+                          464 përdorime, katër ngjyra, një markë
+```
+`#C42B0F` — **më e përdorura nga të katrat** — nuk është token fare.
+Dhe e verdha: `#F5C842` (253) · `#F8D24E` (31) · `#EEB828` (20) — të tria janë token,
+por përdoren si literale në 304 vende në vend të emrit.
+
+## 🔴 Vetë token-at janë të dyfishuar
+
+`ui-refine.css` ka **dy blloqe `:root`** që deklarojnë të njëjtat vlera me emra të ndryshëm:
+```
+--az-red:#E63312        dhe   --action-red:#E63312
+--az-red-deep:#C42305   dhe   --action-red-deep:#C42305
+--az-radius:14px        dhe   --r-card:14px
+```
+Pra edhe **fjalori i token-ave është i dyfishuar** — e njëjta sëmundje, në rrënjë të saj.
+Kjo shpjegon pse adoptimi është 20: kur ka dy emra për një ngjyrë, askush s'di cilin të marrë,
+dhe të gjithë shkruajnë hex-in.
+
+## 🟠 39 madhësi fontesh, pa asnjë shkallë
+
+Nuk ekziston asnjë token tipografie. 921 `fontSize` inline me **39 vlera të ndryshme**.
+Prandaj koka e faqes doli `22/800`, `18/800` dhe `15/700` te [O59] — s'ka nga çfarë të zgjedhësh.
+
+## Ç'do të thotë kjo për harmonizimin
+
+Blloku i identitetit tani është i pastër: **0 fjalorë vulash paralelë, 0 `.card-title` të
+mbingarkuar, rrypi një klasë e vetme.** Ajo punë qëndron.
+
+Por ajo ishte **shtresa e sipërme**. Poshtë saj, çdo komponent i ri ende zgjedh nga hiçi:
+katër të kuqe, 39 madhësi, 20 radiuse, 245 ngjyra. Prandaj ankesa *«asgjë nuk harmonizohet»*
+do të rikthehet sa herë të shtohet një faqe — jo se dikush gabon, por se **nuk ka nga çfarë të
+zgjedhë saktë.**
+
+## Radha e propozuar — nga rrënja lart
+
+1. **Bashko dy blloqet `:root`** në një fjalor të vetëm token-esh, me emra unikë. *Pa këtë,
+   çdo hap tjetër ndërtohet mbi dy burime.*
+2. **Shto shkallën tipografike** (`--fs-*`), sepse sot s'ekziston fare — 39 vlera dëshmojnë
+   se mungesa prodhon kaos.
+3. **Zgjidh një të kuqe** nga të katrat dhe zëvendëso tri të tjerat (464 vende, por mekanike).
+4. **Një `.btn` i vetëm** ([O59] §2) me `min-height:44px` dhe tri shkallë.
+5. **Roja**: shto matjet `ngjyra_hex_inline` (bazë 1896) dhe `radiuse_inline` (bazë 337).
+   Sapo të vendosen, numri s'rritet më dhe çdo ulje mbyllet me çelës — njësoj si vulat.
+
+**Kujtesë nga vetë kjo punë:** vulat shkuan `16 → 9 → 0` vetëm sepse roja i numëronte.
+Pa numërim, asnjë prej këtyre nuk do të lëvizë.
