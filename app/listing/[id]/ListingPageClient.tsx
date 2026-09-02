@@ -954,11 +954,12 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                 </div>
 
                 {/* Stats */}
+                {/* Pikët hiqen nga këtu: IdentityBadges më lart i jep tashmë "⚡ N pikë"
+                    (dyfishim i matur nga terminali [O58], vetëm /listing e kishte). Mbeten
+                    "N shpallje aktive" dhe "@username" — s'i jep komponenti, pa dyfishim. */}
                 <div className="seller-stats">
                   <span className="stat-chip"><i className="ti ti-package" aria-hidden="true" />{sellerCount} shpallje aktive</span>
                   {seller.username && <span className="stat-chip"><i className="ti ti-at" aria-hidden="true" />{seller.username}</span>}
-                  {seller.gamification_points > 0 &&
-                    <span className="stat-chip"><i className="ti ti-bolt" aria-hidden="true" />{seller.gamification_points} pikë</span>}
                 </div>
 
                 {/* Trust Score — respekto opt-out (Ligj 124/2024 n.19) */}
