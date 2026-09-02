@@ -631,8 +631,9 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
                 sinjale trust/marketingu për vizitorin (rrinë vetëm te faqja publike, më poshtë);
                 pronari i sheh pamjet te "Analitika". (Vendim Martinel + verifikim live, 26 gusht.) */}
 
-            {/* Shiko faqen publike */}
-            <button type="button" onClick={() => setAsVisitor(true)}
+            {/* [B1] Shiko faqen publike — NAVIGIM REAL (?public=1), jo simulim në vend. Njësoj si
+                /profile → /u: URL i vërtetë, i ndashëm, RLS reale; pikërisht ç'sheh vizitori. */}
+            <button type="button" onClick={() => { window.location.href = `/biznese/${biz.id}?public=1` }}
               style={{ width: '100%', marginTop: 14, minHeight: 44, background: '#fff', border: '1.5px solid #e5e5e5', borderRadius: 11, fontSize: 13, fontWeight: 800, color: '#111', cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
               <i className="ti ti-eye" aria-hidden="true" /> Shiko faqen publike
             </button>
@@ -1034,7 +1035,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
       {isOwner && asVisitor && (
         <div style={{ background: '#111', color: '#F5C842', margin: '0 0 8px', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, fontSize: 12.5, fontWeight: 700 }}>
           <span><i className="ti ti-eye" aria-hidden="true" /> Po e shikon faqen publike të biznesit</span>
-          <button type="button" onClick={() => setAsVisitor(false)}
+          <button type="button" onClick={() => { window.location.href = `/biznese/${biz.id}` }}
             style={{ background: '#F5C842', color: '#111', border: 'none', borderRadius: 8, padding: '6px 12px', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' }}>
             ← Kthehu te menaxhimi
           </button>
