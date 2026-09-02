@@ -49,7 +49,7 @@ const ENV_VECORI: Array<[string, string]> = [
   ['GROQ_API_KEY',              'Albi — modeli paresor.'],
   ['ANTHROPIC_API_KEY',         'Albi — rezerva.'],
   ['PERPLEXITY_API_KEY',        'Kerkimi me AI.'],
-  ['NEXT_PUBLIC_SENTRY_DSN',    'Raportimi i gabimeve.'],
+  ['NEXT_PUBLIC_SENTRY_DSN',    'Raportimi i gabimeve — AKTIV edhe pa këtë (DSN rezervë e ngurtësuar te sentry.*.config.ts). Vendose te Vercel për ta kontrolluar/çaktivizuar; pastaj fshihet rezerva (depo publike).'],
   ['SLACK_WEBHOOK_URL',         'Alarmet e monitorit.'],
   ['GOOGLE_SITE_VERIFICATION',  'Verifikimi i Search Console.'],
   ['INDEXNOW_KEY',              'IndexNow. Ka vlere te paracaktuar.'],
