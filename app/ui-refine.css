@@ -15,7 +15,7 @@
   --az-shadow-sm:0 1px 3px rgba(0,0,0,.08);
   --az-shadow-md:0 2px 10px -6px rgba(0,0,0,.22);
   --az-shadow-lg:0 10px 34px -14px rgba(0,0,0,.30);
-  --az-radius:14px;
+  --az-radius:var(--r-card); /* [O60] dedup: e njëjta 14px si --r-card — një burim, jo dy vlera */
 }
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
 body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;}
@@ -142,7 +142,9 @@ button[aria-label="Ndaj aplikacionin"]{box-shadow:0 4px 13px -5px rgba(0,0,0,.22
 
 /*  7) SISTEMI I DIZAJNIT: tokens semantike + aksesueshmeri (harmoni + WCAG/EAA)  */
 :root{
-  --action-red:#E63312; --action-red-deep:#C42305; --flag-red:#E01F26;
+  /* [O60] dedup: --action-red* nuk ripërsërisin vlerën — aliasojnë fjalorin bazë --az-*.
+     Kështu e kuqja e markës ka NJË burim (--az-red = #E63312), jo dy hex identike me dy emra. */
+  --action-red:var(--az-red); --action-red-deep:var(--az-red-deep); --flag-red:#E01F26;
   --gold-ink:#856404; --ok:#16a34a;
   --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px; --sp-6:24px; --sp-8:32px;
   --r-btn:10px; --r-card:14px; --r-panel:16px; --r-pill:999px;
