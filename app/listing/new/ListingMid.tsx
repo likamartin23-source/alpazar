@@ -2,7 +2,10 @@
 
 import nextDynamic from 'next/dynamic'
 
-const MapPicker = nextDynamic(() => import('../../components/MapPicker').then(m => ({ default: m.MapPicker })), { ssr: false })
+const MapPicker = nextDynamic(() => import('../../components/MapPicker').then(m => ({ default: m.MapPicker })), {
+  ssr: false,
+  loading: () => <div aria-hidden="true" style={{ height: 235, borderRadius: 'var(--r-card)', background: 'var(--az-cream)' }} />,
+})
 
 export function ListingMid({ p }: any) {
   const { form, set, setForm, msg, mt, mm, uploadProgress, videoPreview, videoUploading, videoPct, handleVideo, removeVideo, handleImages, imagePreviews, maxImages, categories, catLoading, catSuggested, suggestCategory, priceLoading, priceSuggestion, suggestPrice, descLoading, generateDescription, loading, submit, draftRestored, setDraftRestored, myListingCount, freeLimit, showUpsell } = p

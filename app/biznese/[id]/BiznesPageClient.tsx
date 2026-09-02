@@ -16,7 +16,10 @@ import { LISTING_SELECT } from '../../../lib/listingSelect'
 import { nf, monthYear } from '../../../lib/format'
 import { uploadSingleImage } from '../../../lib/uploadImages'
 
-const MapDisplay = dynamicImport(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), { ssr: false })
+const MapDisplay = dynamicImport(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), {
+  ssr: false,
+  loading: () => <div aria-hidden="true" style={{ height: 235, borderRadius: 'var(--r-card)', background: 'var(--az-cream)' }} />,
+})
 
 // "Hapur tani" — llogaritet nga hours.days ({mon..sun:{closed,open,close}}) i shkruar nga
 // BusinessForm. Thirret VETËM pas montimit (mounted) sepse varet nga ora → pa mospërputhje SSR.

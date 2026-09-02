@@ -182,7 +182,7 @@ export default function OfertatPage() {
                   background: '#f5f3eb', borderRadius: 10, padding: 9, marginBottom: 10,
                 }}>
                   {o.shpallja?.foto
-                    ? <img src={o.shpallja.foto} alt="" width={40} height={40}
+                    ? <img src={o.shpallja.foto} alt="" width={40} height={40} loading="lazy"
                         style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 8, flex: '0 0 auto' }} />
                     : <div aria-hidden="true" style={{ width: 40, height: 40, borderRadius: 8, background: '#e8e0c8', flex: '0 0 auto' }} />}
                   <div style={{ minWidth: 0 }}>

@@ -9,7 +9,10 @@ import { supabase } from '../../../../lib/supabase'
 import { uploadImages, UploadProgress } from '../../../../lib/uploadImages'
 import { useVideos } from '../../new/useVideos'
 
-const MapPicker = nextDynamic(() => import('../../../components/MapPicker').then(m => ({ default: m.MapPicker })), { ssr: false })
+const MapPicker = nextDynamic(() => import('../../../components/MapPicker').then(m => ({ default: m.MapPicker })), {
+  ssr: false,
+  loading: () => <div aria-hidden="true" style={{ height: 235, borderRadius: 'var(--r-card)', background: 'var(--az-cream)' }} />,
+})
 
 
 export default function EditListing() {
