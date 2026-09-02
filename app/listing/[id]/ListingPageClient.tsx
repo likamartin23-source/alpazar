@@ -756,7 +756,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         .cs-input-wrap:focus-within{border-color:#E63312;background:#fff;}
         .cs-input-wrap textarea{border:none;background:transparent;font-size:13px;color:#111;outline:none;flex:1;resize:none;min-height:20px;max-height:80px;line-height:1.5;padding:9px 0;font-family:inherit;}
         .cs-input-wrap textarea::placeholder{color:#bbb;}
-        .cs-send-btn{width:42px;height:42px;background:linear-gradient(135deg,#E63312,#c42a0e);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(230,51,18,.3);}
+        .cs-send-btn{width:44px;height:44px;background:linear-gradient(135deg,#E63312,#c42a0e);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(230,51,18,.3);}
         .cs-send-btn:disabled{opacity:.4;box-shadow:none;}
         .cs-send-btn i{color:#fff;font-size:18px;}
         .login-prompt{background:#FFF0EE;padding:18px;text-align:center;}

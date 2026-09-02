@@ -749,13 +749,13 @@ export default function MessagesPage() {
         /* Topbar */
         .topbar{background:linear-gradient(135deg,#151515,#1c1c1c);padding:0 12px;display:flex;align-items:center;gap:9px;height:58px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.06);z-index:10;}
         .topbar.chat{background:linear-gradient(135deg,#1a1a1a 0%,#222 100%);}
-        .back-btn{width:36px;height:36px;background:rgba(255,255,255,.06);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#F5C842;font-size:19px;}
+        .back-btn{width:44px;height:44px;background:rgba(255,255,255,.06);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#F5C842;font-size:19px;}
         .t-meta{flex:1;min-width:0;}
         .t-name{font-size:15px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
         .t-sub{font-size:10px;color:#888;margin-top:1px;display:flex;align-items:center;gap:4px;}
         .online-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;flex-shrink:0;}
         .t-actions{display:flex;gap:4px;}
-        .t-action-btn{width:34px;height:34px;background:rgba(255,255,255,.06);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:17px;}
+        .t-action-btn{width:44px;height:44px;background:rgba(255,255,255,.06);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:17px;}
         .t-action-btn:hover{background:rgba(255,255,255,.12);}
 
         /* Search */

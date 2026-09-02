@@ -154,7 +154,7 @@ export function PremiumUpsellModal({
           {[
             ['building-store', 'Biznes online'],
             ['infinity', 'Shpallje ∞'],
-            ['shield-check', 'Badge ✓'],
+            ['shield-check', 'Vulë ✓'],
             ['photo', 'Foto pa limit'],
             ['star', 'Prioritet listimi'],
             ['chart-bar', 'Statistika live'],

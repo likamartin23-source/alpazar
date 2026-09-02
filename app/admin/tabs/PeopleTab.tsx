@@ -99,7 +99,7 @@ export function PeopleTab() {
     <>
       <div className="ph">
         <div className="pt"><span aria-hidden="true">👥</span> Njerëzit</div>
-        {ok ? <div className="live-dot">{ok}</div> : <div className="live-dot"><span aria-hidden="true">●</span> Live</div>}
+        {ok ? <div className="live-dot">{ok}</div> : <div className="live-dot"><span aria-hidden="true">●</span> Drejtpërdrejt</div>}
       </div>
 
       <div className="stats">

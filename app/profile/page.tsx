@@ -35,8 +35,8 @@ function BizUpsellBanner({ userId, isPremium }: { userId?: string; isPremium?: b
       <div style={{ flex: 1 }}>
         <div style={{ fontSize: 13, fontWeight: 800, color: '#F5C842', marginBottom: 3 }}>Krijo Biznes Online</div>
         <div style={{ fontSize: 11, color: '#555', lineHeight: 1.5 }}>{isPremium
-          ? <>Faqe e dedikuar · Shpallje pa limit · Badge <span aria-hidden="true">✓</span> Biznes</>
-          : <><span aria-hidden="true">⭐</span> Veçori Premium · Faqe e dedikuar · Badge <span aria-hidden="true">✓</span> Biznes</>}</div>
+          ? <>Faqe e dedikuar · Shpallje pa limit · Vulë <span aria-hidden="true">✓</span> Biznes</>
+          : <><span aria-hidden="true">⭐</span> Veçori Premium · Faqe e dedikuar · Vulë <span aria-hidden="true">✓</span> Biznes</>}</div>
       </div>
       <i className="ti ti-chevron-right" style={{ color: '#F5C842', fontSize: 18 }} aria-hidden="true" />
     </div>
@@ -485,7 +485,7 @@ export default function ProfilePage() {
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA;}
         .wrap{max-width:480px;margin:0 auto;background:#FFFBEA;min-height:100vh;padding-bottom:30px;}
         .topbar{background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%);padding:10px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);}
-        .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+        .back{width:44px;height:44px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .back i{font-size:18px;color:#111;}
         .topbar-title{font-size:15px;font-weight:700;color:#111;flex:1;}
         .logout{background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;border:none;border-radius:10px;padding:7px 13px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s ease;}
@@ -824,7 +824,7 @@ export default function ProfilePage() {
               {profSub === 'menu' && tierNgaProfili(profile) === 'free' && (
                 <div className="prem-card">
                   <h3><span aria-hidden="true">⭐</span> Bëhu Premium</h3>
-                  <p>Biznes online · Badge verifikimi · Shpallje të pakufizuara · Statistika të avancuara</p>
+                  <p>Biznes online · Vulë verifikimi · Shpallje të pakufizuara · Statistika të avancuara</p>
                   <button type="button" className="prem-cta" onClick={() => window.location.href = '/premium'}>Shiko planin →</button>
                 </div>
               )}

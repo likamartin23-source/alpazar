@@ -24,7 +24,7 @@ const CSS = `
   body{background:#FFFBEA;}
   .wrap{max-width:480px;margin:0 auto;background:#FFFBEA;min-height:100vh;padding-bottom:60px;}
   .topbar{background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%);padding:10px 12px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;box-shadow:0 4px 16px -8px rgba(190,130,0,.4);}
-  .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .back{width:44px;height:44px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
   .back i{font-size:18px;color:#111;}
   .topbar-title{font-size:15px;font-weight:700;color:#111;}
   .hero{background:linear-gradient(135deg,#E63312,#c42a0e);padding:28px 20px 32px;text-align:center;}
