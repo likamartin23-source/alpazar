@@ -8,6 +8,7 @@ import dynamicImport from 'next/dynamic'
 import Avatar, { tierNgaProfili } from '../../components/Avatar'
 import ListingCard from '../../components/ListingCard'
 import { TrustBadge } from '../../components/TrustBadge'
+import { identitySignals, type IdentitySignal } from '../../components/identitySignals'
 import { useSyteLive } from '../../components/PremiumUpsell'
 import { useIsOnline } from '../../components/OnlinePresence'
 import { BackButton } from '../../components/BackButton'
@@ -119,6 +120,37 @@ function BizReviews({ rating, reviews }: { rating: { count: number; avg: number 
           <div style={{ fontSize: 12, color: '#555', lineHeight: 1.6 }}>Klientët që blejnë nga ky biznes do të mund të lënë vlerësimin këtu.</div>
         </div>
       )}
+    </>
+  )
+}
+
+// [O46] Vizatuesi i vetëm i vulave për /biznese — konsumon RREGULLIN (identitySignals) dhe e jep
+// me lëkurën e vet. Përdoret te TË DY blloqet (paneli i pronarit DHE pamja publike), që të mos ketë
+// më dy fjalorë brenda së njëjtës faqe (gjetja e "fjalorit të 5-të" [O46]). ✅ I verifikuar (biznesi)
+// dhe ★ rating rrinë veç — janë vula biznesi, jo identiteti; TrustBadge është komponent i përbashkët.
+const VULA_TONE: Record<string, { bg: string; color: string; border: string }> = {
+  admin:    { bg: '#EDE9FE', color: '#6D28D9', border: '#6D28D933' },
+  verified: { bg: '#dcfce7', color: '#16a34a', border: '#16a34a33' },
+  vip:      { bg: '#F3E8FF', color: '#7C3AED', border: '#7C3AED33' },
+  premium:  { bg: '#FFF3D6', color: '#7A4A00', border: '#F5C84255' },
+  biznes:   { bg: '#E7F8F1', color: '#0B8A5A', border: '#0B8A5A33' },
+  active:   { bg: '#E7F6EC', color: '#0E7A35', border: '#0E7A3533' },
+  new:      { bg: '#FFF4E5', color: '#B45309', border: '#F5C84255' },
+  points:   { bg: '#FFF8E1', color: '#7A4A00', border: '#F5C84255' },
+}
+function VulaIdentiteti({ signals }: { signals: IdentitySignal[] }) {
+  return (
+    <>
+      {signals.map(s => {
+        const c = s.tone === 'level'
+          ? { bg: s.levelBg || '#F1F5F9', color: s.levelColor || '#334155', border: (s.levelColor || '#334155') + '33' }
+          : VULA_TONE[s.tone]
+        return (
+          <span key={s.key} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 700, color: c.color, background: c.bg, border: `1px solid ${c.border}`, borderRadius: 9, padding: '4px 10px' }}>
+            <span aria-hidden="true">{s.icon}</span> {s.label}
+          </span>
+        )
+      })}
     </>
   )
 }
@@ -472,6 +504,12 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   const openNow   = mounted ? openNowFromHours(biz.hours) : null
   const tier      = tierNgaProfili(pronari)
   const tierLabel = tier === 'vip' ? 'VIP Ekstra Boost' : tier === 'premium' ? 'Premium' : null
+  // [O46] Grupi i vulave nga RREGULLI i vetëm: tier (i trashëguar nga pronari) · 🏢 Biznes · ⚡ Nivel ·
+  // 📦 Shitës aktiv · ⚡ pikë. I njëjti burim si /profile·/u·/listing; përdoret te të dy blloqet e /biznese.
+  const bizSignals = identitySignals(
+    { ...(pronari || {}), created_at: biz?.created_at, shop_name: biz?.name },
+    { isBusiness: true, activeListings: (listings?.length || 0), density: 'full' },
+  )
 
   // ── BP2 §B2 — PANELI I BRENDSHËM I BIZNESIT = PASQYRË e panelit /profile ──────────────
   // Guaskë e veçantë biznesi (e pavarur; /profile s'preket). Pronari default sheh KËTË panel;
@@ -564,24 +602,17 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               {biz.is_verified && <span aria-hidden="true" style={{ fontSize: 17 }}>✅</span>}
             </div>
 
-            {/* Bexhat (VIP Ekstra Boost / Premium · Biznes · I verifikuar) */}
+            {/* Bexhat — [O46] nga RREGULLI i vetëm (tier · 🏢 Biznes · ⚡ Nivel · 📦 Shitës aktiv · ⚡ pikë),
+                + ✅ I verifikuar (vulë biznesi, veç). Grupi i plotë si te /profile; ⚡ pikë tani te rregulli. */}
             <div className="bizp-badges">
-              {tierLabel && <span className="bdg" style={tier === 'vip' ? { background: '#F3E8FF', color: '#7C3AED' } : { background: '#FFF3D6', color: '#7A4A00' }}><span aria-hidden="true">👑</span> {tierLabel}</span>}
-              <span className="bdg" style={{ background: '#E7F0FF', color: '#1D4ED8' }}><span aria-hidden="true">🏢</span> Biznes</span>
-              {biz.is_verified && <span className="bdg" style={{ background: '#dcfce7', color: '#16a34a' }}>✅ I verifikuar</span>}
+              <VulaIdentiteti signals={bizSignals} />
+              {biz.is_verified && <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 700, color: '#16a34a', background: '#dcfce7', border: '1px solid #16a34a33', borderRadius: 9, padding: '4px 10px' }}><span aria-hidden="true">✅</span> I verifikuar</span>}
             </div>
 
-            {/* Reputacioni (GAP 3+4 — mbyllja e lakut): TrustBadge i plotë (unazë "X/100") +
-                "⚡ N pikë" reale të pronarit; pikët fitohen e njoftohen por s'shfaqeshin këtu. */}
+            {/* Besueshmëria (TrustBadge, unazë "X/100") — opt-out i Ligjit 124/2024 n.19, si /u·/listing·/profile. */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', margin: '10px 0 2px' }}>
-              {/* Opt-out i Trust Score (Ligji 124/2024 neni 19 · CLAUDE.md §2.1) — si /u & /listing */}
               {pronari?.trust_score_visible !== false && (
                 <TrustBadge createdAt={biz.created_at} listingsActive={listings.length} gamificationPoints={pronari?.gamification_points || 0} />
-              )}
-              {(pronari?.gamification_points || 0) > 0 && (
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 700, color: '#7A4A00', background: '#FFF8E1', border: '1px solid #F5C84255', borderRadius: 9, padding: '4px 10px' }}>
-                  <span aria-hidden="true">⚡</span> {pronari?.gamification_points} pikë
-                </span>
               )}
             </div>
 
@@ -845,32 +876,13 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           {/* Reputacioni (RESTAURIMI FINAL, dëshifrimi B — zëvendëson BP2 C4): koka publike e
               biznesit shfaq ★ rating + "📦 Shitës aktiv" + "⚡ pikë" + TrustBadge unazë "X/100". */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
-            {/* 👑 VIP / Premium (tier i trashëguar nga pronari) + 🏢 Biznes — më parë vetëm te
-                paneli i pronarit, jo te pamja publike (gjetje audit: badge-t mungonin te vizitori). */}
-            {tierLabel && (
-              <span style={tier === 'vip'
-                ? { display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 800, color: '#7C3AED', background: '#F3E8FF', border: '1px solid #7C3AED33', borderRadius: 9, padding: '4px 10px' }
-                : { display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 800, color: '#7A4A00', background: '#FFF3D6', border: '1px solid #F5C84255', borderRadius: 9, padding: '4px 10px' }}>
-                <span aria-hidden="true">👑</span> {tierLabel}
-              </span>
-            )}
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 700, color: '#0B8A5A', background: '#E7F8F1', border: '1px solid #0B8A5A33', borderRadius: 9, padding: '4px 10px' }}>
-              <span aria-hidden="true">🏢</span> Biznes
-            </span>
+            {/* [O46] Grupi i vulave nga RREGULLI i vetëm (i njëjti si paneli sipër — një fjalor, jo dy);
+                ★ rating është vulë biznesi (veç). Më parë kjo pamje kishte një bllok inline të veçantë. */}
+            <VulaIdentiteti signals={bizSignals} />
             {rating.count > 0 && rating.avg != null && (
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#FFF8E1', color: '#7B5000', border: '1px solid #F5C84255', borderRadius: 9, padding: '4px 10px', fontSize: 12.5, fontWeight: 800 }}>
                 <span aria-hidden="true">★</span> {rating.avg.toFixed(1)}
                 <span style={{ fontWeight: 600, color: '#9a7b2a' }}>({rating.count})</span>
-              </span>
-            )}
-            {listings.length > 0 && (
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 700, color: '#0E7A35', background: '#E7F6EC', border: '1px solid #0E7A3533', borderRadius: 9, padding: '4px 10px' }}>
-                <span aria-hidden="true">📦</span> Shitës aktiv
-              </span>
-            )}
-            {(pronari?.gamification_points || 0) > 0 && (
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 700, color: '#7A4A00', background: '#FFF8E1', border: '1px solid #F5C84255', borderRadius: 9, padding: '4px 10px' }}>
-                <span aria-hidden="true">⚡</span> {pronari?.gamification_points} pikë
               </span>
             )}
             {pronari?.trust_score_visible !== false && (
