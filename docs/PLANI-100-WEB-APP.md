@@ -89,9 +89,28 @@ live nga pronari (dalja te *.supabase.co e bllokuar).
    ngjitur me emrin). **Rregulluar:** `align center` → pill-i rri në qendër të avatarit, larg emrit.
 7. ℹ️ "Shitës aktiv" mungon te admini — SAKTË (0 shpallje aktive, 0 biznes). Mos e "ndreq".
 
+## ✅ DETYRA 1 — Pikë-prekje ≥44px (komit a074b78, 2 shtator 2026)
+
+Të gjithë objektivat nën 44px u rregulluan nëpër 12 faqe:
+- billing, premium, listing/new (stilet + ListingTop), te-dhenat-mia,
+  notifications, referral, favorites, messages, profile (CSS + inline).
+- Metodë: `min-height`/`min-width` + `display:flex/inline-flex` — pa ngjyra hex të reja,
+  pa radius të ri, pa ndryshime radhës (roja = bazë).
+
+## ✅ DETYRA 2 — Madhësi h1 me token (komit 2f5bd13, 2 shtator 2026)
+
+Të gjitha rregullat CSS që vendosin `font-size` mbi `h1`, `.hero h1`, `.seo-h1`
+tani përdorin token nga `var(--fs-*)`:
+- cookies, privatesia, kushtet: 22px → `var(--fs-3xl)`
+- siguria, referral, kontakt, rreth-nesh: 20-24px → `var(--fs-3xl)`
+- listing/[id]: 18px → `var(--fs-2xl)`
+- search .initial h1: 15px → `var(--fs-xl)`
+- kategori (page + _shared): 23-24px → `var(--fs-3xl)`
+
 ## Gati për deploy — gjendja aktuale e degës `claude/loving-wright-kBMgT`
 - Blloku i identitetit (kartë→profil→biznes→listing) — i unifikuar, koherent, shqip.
 - §2.2 aprovimi ligjor te regjistrimi · §2.3 fshirja e butë 30-ditore · fshirja e unifikuar
   llogari/biznes · shikimet si besueshmëri · online kudo · rregullimi listing_type.
 - **Themeli web+app: 0 overflow · gjuha shqip parazgjedhje.**
+- **DETYRA 1: pikë-prekje ≥44px në 12 faqe · DETYRA 2: h1 me token `var(--fs-*)`.**
 - Porta: tsc 0 · vitest 30/30 · build 0 · roja bazë. E gjitha CI-green, gati për deploy.
