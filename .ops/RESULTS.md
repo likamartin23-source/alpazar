@@ -4925,3 +4925,72 @@ Nga tani asnjë gjetje unifikimi nuk raportohet nga leximi i kodit. Rendi: **shi
 pastaj gjej rreshtin në kod → pastaj raporto.** Rregulli 11 i RREGULLORES e thoshte qysh më parë
 («sy live → kod → tjetër»); unë e ktheva mbrapsht. Kjo është arsyeja pse tri gjetjet e mësipërme
 mungonin nga [O43] dhe [O46].
+
+---
+
+# [O48] · VERIFIKIM ME SY KUNDREJT DY INVENTARËVE — matrica përfundimtare
+
+Matur me shfletues, me **pritje 4s pas çdo navigimi** (mësim: pa pritje mat gjendjen para
+hidratimit — shih korrigjimet më poshtë). Subjekti i njëjtë kudo: *Administratori Alpazar / Biznes*.
+Shikuesi: **vizitor i kyçur** (Martinel Likaj).
+
+## Matrica LIVE — inventari 1 (vulat e identitetit)
+
+| Vula | `/u` vizitor | `/listing` vizitor | `/biznese` panel | `/biznese` publik |
+|---|:--:|:--:|:--:|:--:|
+| Premium | ✅ **⭐** | ✅ **👑** | ✅ **👑** | ✅ **👑** |
+| Biznes | ✅ | ✅ | ✅ | ✅ |
+| ⚡ 135 pikë | ✅ | ✅ | ✅ | ✅ |
+| ⚡ Nivel «Tregtar» | ✅ | ❌ | ❌ | ❌ |
+| 📦 Shitës aktiv | ❌ | ✅ | ✅ | ✅ |
+| 🔒 Bisedë private | ❌ | ✅ | ❌ | ❌ |
+| TrustBadge | ❌ | ❌ | flash | flash |
+| 🆕 Anëtar i ri | ❌ | ❌ | ❌ | ❌ |
+
+### 🔴 Gjetje që VETËM syri e nxjerr: dy ikona për të njëjtin fakt
+**Premium është `⭐` te `/u` dhe `👑` kudo tjetër.**
+`IdentityBadges:55` përdor `⭐`; `.schip sch-prem`, `.badge b-prem` dhe `.bdg` përdorin `👑`.
+Pra **komponenti "fjalor i vetëm" ndryshon nga të katër ata që synon të zëvendësojë.**
+Migrimi i [O43]/[O46] do ta ndërronte kurorën në yll në gjithë platformën — **vendim i pronarit,
+jo detaj zbatimi.** Asnjë numërim klasash s'do ta kishte kapur.
+
+Dhe te `/u` shfaqen **të dyja njëkohësisht**: `👑` pranë emrit (nga unaza e `Avatar`-it) plus
+`⭐ Premium` si çip poshtë. I njëjti fakt, dy ikona, në të njëjtën pamje.
+
+### Statistikat — konfirmim i [O47] me sy
+`/u` → **0 Shpallje** · çipi te `/listing` → **2 shpallje aktive** · `/biznese` → **2 Shpallje**.
+I njëjti shitës, në të njëjtin çast.
+
+## Inventari 2 (komponentët e ndërtuar që s'u lidhën) — verifikim live
+`IdentityBadges` **renderohet vërtet** te `/u` (pashë `⭐ Premium · ⚡ Tregtar · ⚡ 135 pikë`).
+Të tri sipërfaqet e tjera ende ndërtojnë vulat me dorë. Pra inventari 2 qëndron: komponenti
+ekziston, punon, dhe është i lidhur në **një nga pesë**.
+
+## Tri korrigjime të matjeve të mia — të gjitha nga mungesa e pritjes
+
+**1. TrustBadge te `/biznese` ËSHTË flash, jo i përhershëm.**
+Një mesazh më parë thashë *"jo si flash"*. Gabim. Pamja e parë (menjëherë pas navigimit) e
+tregonte; pas 4 sekondash u zhduk. Autopsia e shkruar (`docs/AUTOPSIA-E-BLLOKUT.md §4`) e
+thoshte saktë — *"del në burimin e HTML-së … dhe çdo vizitor e sheh për çastin para hidratimit"*.
+**Defekti mbetet real** (burimi i HTML-së e mban përgjithmonë; e lexon çdo scraper), por nuk
+qëndron në ekran. Ndreqja mbetet e njëjtë.
+
+**2. Banderola «Po e shikon profilin tënd publik» NUK i shfaqet vizitorit.**
+Te [O47] e lista sikur `/u` ta kishte për pronarin dhe e mata pa pritje. E rimata me 4s si
+vizitor: **nuk del** ✔. `initialIsOwn` llogaritet saktë te serveri
+(`page.tsx:109` → `!!(profile && viewerId && viewerId === profile.id)`).
+Leximi im i parë ishte gjendje para-hidratimi ose sesion tjetër.
+
+**3. Hipoteza «dy domene = ndërtime të ndryshme» — E RRËZUAR.**
+Pronari ka dy origjina të hapura me dy llogari: `alpazar.vercel.app` (Martinel Likaj) dhe
+`alpazar-personal-accaunt-s-projects.vercel.app` (Administratori Alpazar) — dy kavanoza
+cookie-sh, prandaj matjet e mia përzienin këndvështrimet. Mendova se domeni i dytë mund të
+shërbente ndërtim të vjetër dhe të ishte shkaku i *"kthehet tek e vjetra"*.
+**Nuk është:** të dy kthejnë `7e75fb1…` = `main` HEAD. Domeni i dytë është pas SSO-së së
+Vercel-it (`curl` merr 302 → `vercel.com/login`); e mata përmes shfletuesit të autorizuar.
+Dyshimi u përjashtua me matje, jo me mendim.
+
+## Ç'ndryshon për rendin e [O46]
+Hapi 3 (*zgjero `IdentityBadges`*) duhet të përfshijë edhe **vendimin për ikonën**:
+`👑` (si 4 sipërfaqet ekzistuese) apo `⭐` (si komponenti). Pa këtë vendim, migrimi ndërron
+pamjen e Premium-it kudo pa e vendosur askush.
