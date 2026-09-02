@@ -192,7 +192,9 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
 .card-img i{font-size:28px;color:#d0c9a0;}
 .card-seller-ov{position:absolute;left:6px;bottom:6px;display:flex;align-items:center;gap:5px;max-width:calc(100% - 48px);background:rgba(0,0,0,.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border-radius:var(--r-pill);padding:2px 9px 2px 2px;z-index:2;cursor:pointer;}
 .card-seller-ov span{font-size:10px;color:#fff;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.badge-new{position:absolute;top:6px;left:6px;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;font-size:9px;padding:3px 7px;border-radius:var(--r-pill);font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(230,51,18,.4);letter-spacing:.2px;}
+/* [O52] Teksti bardhë 9px kërkonte 4.5:1 (WCAG 1.4.3); #fff mbi #E63312 jepte vetëm 4.33.
+   E kuqja a11y #C42305 (5.85:1) → kalon, pa shpikur ngjyrë të tretë. */
+.badge-new{position:absolute;top:6px;left:6px;background:linear-gradient(135deg,#C42305,#a81f04);color:#fff;font-size:9px;padding:3px 7px;border-radius:var(--r-pill);font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(196,35,5,.4);letter-spacing:.2px;}
 .badge-used{position:absolute;top:6px;left:6px;background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;font-size:9px;padding:3px 7px;border-radius:var(--r-pill);font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(0,0,0,.3);letter-spacing:.2px;}
 .badge-premium{position:absolute;top:6px;right:6px;background:linear-gradient(135deg,#F8D24E,#F5C842);color:#111;font-size:9px;padding:3px 7px;border-radius:var(--r-pill);font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(245,200,66,.5);}
 /* `box-sizing:border-box` NUK eshte dekor: pa te, `flex-basis` matet mbi kutine

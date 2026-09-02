@@ -1182,7 +1182,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                     type="button"
                     onClick={submitReview}
                     disabled={reviewStars === 0 || reviewSaving}
-                    style={{ marginTop: 8, width: '100%', background: reviewStars ? '#E63312' : '#ccc', color: '#fff', border: 'none', borderRadius: 9, padding: '10px', fontSize: 12, fontWeight: 700, cursor: reviewStars ? 'pointer' : 'not-allowed', fontFamily: 'inherit' }}>
+                    style={{ marginTop: 8, width: '100%', background: reviewStars ? '#C42305' : '#ccc', color: '#fff', border: 'none', borderRadius: 9, padding: '10px', fontSize: 12, fontWeight: 700, cursor: reviewStars ? 'pointer' : 'not-allowed', fontFamily: 'inherit' }}>
                     {reviewSaving ? <><span aria-hidden='true'>⏳</span> Duke ruajtur...</> : <><span aria-hidden='true'>⭐</span> Dërgo vlerësimin</>}
                   </button>
                 </div>
