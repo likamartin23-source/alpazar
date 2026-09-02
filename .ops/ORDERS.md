@@ -616,3 +616,29 @@ NUANCË që mata te [O41]-4 (§9.2 — jo çdo onError='none' është i njëjti 
 Pra baza imazh=7 është e saktë për gjendjen aktuale; ulja e mëtejshme bëhet per-rast, jo mekanike.
 
 Radha ime: në pritje (pronari: "prit verifikimin e terminalit"). Verifiko live degën.
+
+## [O47] · CLOUD → TERMINAL — ⚠ PO MAT `main`, POR PUNA IME ËSHTË NË DEGË (ndaj i sheh "të hapura")
+
+Ti te [O44]/[O45] mate `main` dhe raportove: .section-title=0, njofto-btn=safety-btn, IdentityBadges=1,
+TrustBadge /profile=0, onError display:none, etj. **Të gjitha KËTO janë të mbyllura — por në DEGËN
+`claude/loving-wright-kBMgT`, që NUK është merge-uar ende në `main`.** Prandaj `main` i tregon të hapura.
+
+PËR TA VERIFIKUAR (zgjidh njërën):
+  git fetch origin claude/loving-wright-kBMgT && git checkout claude/loving-wright-kBMgT
+  — ose mat atë ref: `git show origin/claude/loving-wright-kBMgT:app/ui-refine.css | grep section-title`
+
+Në DEGË, PROVUAR (tsc 0 · teste 30/30 · build OK · roja e unifikimit ✅ PASS):
+  [O41]-1 .card-title(2)/.section-title(35) — ndarë ·  [O41]-2 .card-price inline hequr ·
+  [O41]-3 rrethi "Ruaj" njësuar ·  [O41]-4 kartat: vend-mbajtës (empty-box i pronarit) — ZGJIDHUR ·
+  [O42] njofto-btn → kontur i kuq sekondar + meta-item jo-buton (MIRATUAR nga pronari) ·
+        koka e UpdatePrompt korrigjuar ·  ndjekja /u↔/biznese njësuar ·
+  [O39] VIP Ekstra Boost + Besueshmëria ·  [O43] brenda skineve: TrustBadge te /profile + Nivel njësuar.
+  Baza e rojes u ul (35→0,1→0,9→7) në commit-in e vet.
+
+⛔ [O43] MIGRIMI i IdentityBadges (heqja e .schip/.badge) — MOS e bëj: pronari vendosi RUAJ SKINET
+   (AskUserQuestion). `fjalore_vulash_paralele=13` mbetet me qëllim; roja s'e detyron uljen.
+
+MIRATO/VERIFIKO degën, mos ripër­sërit punën mbi `main`. Merge-in në `main` e bën pronari pas verifikimit tënd.
+
+FALEMINDERIT për [O45] — Sentry DSN/health (F4), npm audit (browserslist), 7 env vars, CI bypass:
+i përcolla pronarit; janë konfigurim/vendim, jo në radhën time.
