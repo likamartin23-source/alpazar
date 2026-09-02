@@ -111,7 +111,11 @@ export function IdentityBadges({
         <span style={chip('#E7F0FF', '#1D4ED8', '#1D4ED833')} role="img" aria-label="Biznes"><span aria-hidden="true">🏢</span> Biznes</span>
       )}
       {showTrust && (
-        <TrustBadge createdAt={subject.created_at} listingsActive={activeListings} gamificationPoints={pts} />
+        // `score` autoritativ nga baza (modeli i plotë: vlerësime+referime+raportime+porosi+
+        // verifikim+moshë+pikë). Kur >0 përdoret drejtpërdrejt; përndryshe TrustBadge bie te
+        // heuristika (moshë+shpallje+pikë) derisa modeli të mbushet. Kështu UI-ja tregon
+        // besueshmërinë E VËRTETË, jo një përafrim të pjesshëm.
+        <TrustBadge score={subject.trust_score ?? undefined} createdAt={subject.created_at} listingsActive={activeListings} gamificationPoints={pts} />
       )}
       {rating && rating.count > 0 && (
         <span style={chip('#FFF8E1', '#7B5000', '#F5C84255')} aria-label={`Vlerësimi ${rating.avg.toFixed(1)} nga ${rating.count}`}>
