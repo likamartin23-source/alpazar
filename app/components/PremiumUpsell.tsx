@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useAlpazar } from '../../lib/context'
 import { supabase } from '../../lib/supabase'
 import { moneyDec, nf } from '../../lib/format'
+import { CHIP_PREMIUM, CHIP_VIP } from './IdentityBadges'
 
 // Cmimi vjen LIVE nga paneli. Asnje vlere e kodifikuar: nese konfigurimi ende
 // s'eshte ngarkuar, nuk shfaqim cmim te gabuar — e heshtim derisa te vije.
@@ -141,6 +142,13 @@ export function PremiumUpsellModal({
           {trigger === 'limit'
             ? 'Ke arritur kufirin falas. Premium të hap mundësi të pakufizuara.'
             : 'Shpallja jote shfaqet e para. Biznes online. Badge verifikimi.'}
+        </div>
+        {/* Simbolika premium→VIP (urdhër pronari): oferta tregon se VIP është hapi MBI premium
+            (tierNgaProfili: vip = premium DHE boost). Vetëm anëtari Premium bëhet VIP. */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+          <span style={CHIP_PREMIUM}><span aria-hidden="true">⭐</span> Premium</span>
+          <span aria-hidden="true" style={{ color: 'var(--gold-ink)', fontWeight: 800 }}>→</span>
+          <span style={CHIP_VIP}><span aria-hidden="true">👑</span> VIP me Boost</span>
         </div>
         <div className="ups-feats">
           {[

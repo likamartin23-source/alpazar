@@ -48,8 +48,8 @@ const chip = (bg: string, color: string, border: string, shadow?: string): React
  * në pastel. Këtu rikthehet bukuria PA thyer fjalorin e vetëm: Premium = gradient ari,
  * VIP = ari→qelibar (më i ngrohtë, "më lart"), Admin = vjollcë e gjallë. Kontrasti u mat:
  * #5A3A00 mbi ar ≈ 8:1, #fff mbi #7C3AED = 5.7:1. */
-const CHIP_PREMIUM = chip('linear-gradient(135deg,#F8D24E,#F5C842)', '#5A3A00', 'none', '0 1px 4px rgba(245,200,66,.5)')
-const CHIP_VIP     = chip('linear-gradient(135deg,#F5C842,#E8892E)', '#4A2400', 'none', '0 1px 5px rgba(232,137,46,.45)')
+export const CHIP_PREMIUM = chip('linear-gradient(135deg,#F8D24E,#F5C842)', '#5A3A00', 'none', '0 1px 4px rgba(245,200,66,.5)')
+export const CHIP_VIP     = chip('linear-gradient(135deg,#F5C842,#E8892E)', '#4A2400', 'none', '0 1px 5px rgba(232,137,46,.45)')
 const CHIP_ADMIN   = chip('#7C3AED', '#fff', 'none', '0 1px 4px rgba(124,58,237,.4)')
 
 export function IdentityBadges({

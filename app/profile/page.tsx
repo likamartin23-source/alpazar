@@ -659,13 +659,6 @@ export default function ProfilePage() {
               <i className={`ti ti-${profileCopied ? 'check' : 'share-2'}`} aria-hidden="true" style={{ fontSize: 11 }} />
               {profileCopied ? 'Kopjuar!' : 'Ndaj'}
             </button>
-            {/* Shiko profilin nga JASHTË (si e sheh vizitori) — harmonizim me "Shiko faqen publike" te biznesi. */}
-            {profile?.id && (
-              <button type="button" aria-label="Shiko profilin publik" onClick={() => { window.location.href = `/u/${profile.id}` }}
-                style={{ background: '#111', color: '#F5C842', border: 'none', borderRadius: 6, padding: '3px 8px', fontSize: 10, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 3 }}>
-                <i className="ti ti-eye" aria-hidden="true" style={{ fontSize: 11 }} /> Shiko publik
-              </button>
-            )}
           </div>
           {profile?.city && <div style={{ fontSize: 11, color: '#555', marginBottom: 4 }}><span aria-hidden="true">📍</span> {profile.city}{profile?.created_at ? ` · Anëtar që nga ${monthYear(profile.created_at)}` : ''}</div>}
           <div className="email-row" style={{ justifyContent: 'flex-start' }}><i className="ti ti-mail" aria-hidden="true" />{user?.email}</div>
@@ -706,6 +699,18 @@ export default function ProfilePage() {
             <div className="stat-l">Anëtar</div>
           </div>
         </div>
+
+        {/* Shiko faqen publike — I NJËJTI buton prominent si te biznesi (koherencë, urdhër pronari:
+            "ekziston vetëm te biznesi, jo te përdoruesi ku ai sheh profilin e vet të jashtëm").
+            Navigim real te /u/[id] — pamja që sheh vizitori. Stil = butoni i biznesit, i tokenizuar. */}
+        {profile?.id && (
+          <div style={{ padding: '0 12px' }}>
+            <button type="button" aria-label="Shiko faqen publike të profilit" onClick={() => { window.location.href = `/u/${profile.id}` }}
+              style={{ width: '100%', marginTop: 14, minHeight: 44, background: 'var(--az-white)', border: '1.5px solid var(--az-line)', borderRadius: 'var(--r-btn)', fontSize: 'var(--fs-md)', fontWeight: 800, color: 'var(--az-black)', cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              <i className="ti ti-eye" aria-hidden="true" /> Shiko faqen publike
+            </button>
+          </div>
+        )}
 
         {/* Tabs */}
         <div className="tabs" role="tablist" aria-label="Seksionet e profilit">
