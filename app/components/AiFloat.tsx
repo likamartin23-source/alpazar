@@ -152,7 +152,15 @@ export default function AiFloat() {
       {/* Butoni FAB i Albit — fshihet kur paneli është hapur */}
       {!open && (
         <div className="fab-albi">
-          <span className="fab-label">Albi</span>
+          {/* `aria-hidden`: kjo etiketë është dublim pamor i emrit që butoni
+              ngjitur e mban tashmë te `aria-label`. Pa të, axe e shënon si
+              tekst jashtë çdo landmark-u (`region`) NË ÇDO FAQE, sepse
+              `<AiFloat />` montohet te `layout.tsx` si MOTËR e `<main>`-it —
+              jo si pasardhës i tij. (`Instalo`/`Ndaj` te HomeClient nuk
+              shënohen, sepse ato vijnë si `children` dhe rrinë brenda `<main>`.)
+              Matur: 12 nyje `region` → 0, në 12 kombinime faqe×gjerësi.
+              Lexuesi i ekranit nuk humbet asgjë — emri vjen nga butoni. */}
+          <span className="fab-label" aria-hidden="true">Albi</span>
           <button
             type="button"
             className="fab-albi-btn"
