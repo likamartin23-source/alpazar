@@ -131,7 +131,9 @@ export default function NotificationsPage() {
 
   const handleClick = useCallback((n: Notif) => {
     if (!n.is_read) markRead(n.id)
-    if (n.link?.startsWith('/')) window.location.href = n.link
+    // Hap NJOFTIMIN E PLOTË te /notifications/[id] (jo drejt te `link`) — që përdoruesi
+    // ta lexojë njoftimin, e prej andej të vazhdojë te konteksti (urdhër pronari).
+    window.location.href = `/notifications/${n.id}`
   }, [markRead])
 
   // Not logged in
@@ -229,7 +231,7 @@ export default function NotificationsPage() {
 
 function NotifRow({ n, onClick, onDismiss, isLast }: { n: Notif; onClick: (n: Notif) => void; onDismiss: (id: string) => void; isLast: boolean }) {
   const icon = TYPE_ICON[n.type] ?? '🔔'
-  const isClickable = !!n.link
+  const isClickable = true // çdo njoftim hapet i plotë te /notifications/[id]
 
   return (
     <div
