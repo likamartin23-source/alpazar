@@ -128,8 +128,16 @@ export function ImageCarousel({ images, videos, poster, alt = '', aspectRatio = 
     <>
       <style dangerouslySetInnerHTML={{ __html: `.carousel-track::-webkit-scrollbar{display:none}` }} />
       <div style={{ position: 'relative', borderRadius: rounded ? 16 : 0, overflow: 'hidden', background: '#0e0e0e' }}>
+        {/* `tabIndex`/`role`/`aria-label`: rripi rrëshqet horizontalisht, ndaj kush
+            lëviz VETËM me tastierë duhet të mund të hyjë brenda tij dhe ta shtyjë
+            me shigjeta. Pa këto, fotot 2–9 nuk arriheshin dot fare pa mi.
+            (axe `scrollable-region-focusable`, 2 nyje / 1 faqe — e fundit që kishte
+            mbetur nga ai rregull pas rregullimit të cloud-it te `.table-wrap`.) */}
         <div
           ref={trackRef}
+          tabIndex={0}
+          role="region"
+          aria-label="Fotot e shpalljes — rrëshqit me shigjetat majtas/djathtas"
           onScroll={onScroll}
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
