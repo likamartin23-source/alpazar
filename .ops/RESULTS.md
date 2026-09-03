@@ -5723,3 +5723,439 @@ e provon se ku NUK duhet kërkuar.
 
 *Shënim ndershmërie: gjatë provave i shtova dy shikime shpalljes `25225352`. Shikimet rriten
 natyrshëm me çdo hapje faqeje, ndaj s'kam shtrembëruar asnjë kuptim.*
+
+---
+
+# [O62] · VERIFIKIM TOPOGRAFIK ME PAMJE — 5 sipërfaqe në 390px, i kyçur si pronar
+> **I PASHTYRË me qëllim** — pronari: *"mos bëj deploy (ka arritur limitin)"*.
+> Shtyje kur kufiri ditor i Vercel-it të lirohet.
+
+## 🔴 P0 — PRODHIMI ËSHTË **9 COMMIT-E** PRAPA `main`-it
+
+```
+main = afa2992          prodhimi = 069703d          9 commit-e · 20+ skedarë aplikativë
+```
+**Prova vizuale, jo teori:** te `/` shfaqet ende **«Chat live»**, ndërsa commit-i `c5c12e0`
+e ka kthyer në **«Bisedë live»**. Nëse do të ishte vendosur, do të lexohej shqip.
+
+Të pavendosura mbeten mes të tjerash: `FAZA 1+2 target-e prekje ≥44px` · `parazgjedhja shqip` ·
+`fshirja e butë 30-ditore` (`RikthimiFshirjes.tsx`) · `UpdatePrompt.tsx`.
+
+✔ **Rregullimi kritik i `listing_type` NUK varet nga vendosja** — e verifikova te baza:
+`has_column_privilege('authenticated','listings','listing_type','INSERT') = true`. Krijimi punon.
+
+## Topografia — 5 sipërfaqe, 390px, i kyçur si Administratori
+
+| # | Sipërfaqja | Gjendja |
+|---|---|---|
+| 1 | `/` kreu | çipat e filtrit, kartat, **«Chat live» ende anglisht** |
+| 2 | `/listing/{id}` | `✅ Shitur` · `⭐ Premium` · **fotoja MUNGON** (vend-mbajtës bosh) |
+| 3 | `/u/{id}` pronar | `⭐Premium · 🏢Biznes · Besueshmëria 15/100 · ⚡Tregtar · ⚡135 pikë` · banderolë + «Kthehu te profili» ✔ |
+| 4 | `/profile` pronar | `🛡Admin · ⭐Premium · 🏢Biznes · Besueshmëria · ⚡Tregtar · ⚡135 pikë` · **«Shiko faqen publike»** ✔ |
+| 5 | `/biznese` | «Asnjë biznes ende» + CTA |
+
+### ✅ Ç'u konfirmua se punon
+- **Rrypi i identitetit**: unaza gradient ar→e kuqe + numra të kuq — i njëjtë te `/u` dhe `/profile`.
+- **Fjalori i vetëm i vulave**: të njëjtat çipa, i njëjti stil, në të dyja sipërfaqet.
+- **Etiketa u unifikua**: `/profile` thotë tani **«Shiko faqen publike»**, si biznesi
+  (ishte «Shiko publik» — [O55] §4 i mbyllur nga cloud-i).
+- **`🛡 Admin` vjollcë** dhe **`⭐ Premium` gradient ari** — siç i premtoi cloud-i te [O39].
+- **TrustBadge** shfaqet tani (pronari e ka rikthyer `trust_score_visible`).
+
+### ✅ «Shitës aktiv» mungon — dhe kjo është E SAKTË
+Kontrollova para se ta quaja defekt: `businesses = 0` (biznesi u fshi) dhe **të 7 shpalljet
+janë joaktive**. `isActiveSeller = listings>0 || !!biz` → false. Sjellje korrekte, jo defekt.
+
+---
+
+## PLANI I PROBLEMEVE TË GJETURA
+
+| # | Problemi | Provë | Kush |
+|---|---|---|---|
+| **1** | **Prodhimi 9 commit-e prapa** | «Chat live» live vs «Bisedë live» në `main` | pronari (Promote / kufiri ditor) |
+| **2** | **`🏢 Biznes` nga fushë e vjetruar** | `shop_name` = 1 profil · `businesses` = **0** | cloud |
+| **3** | **`/biznese/{id-i-fshirë}` → 200** | biznesi s'ekziston, faqja renderohet | cloud |
+| **4** | **Fotoja e shpalljes mungon** | vend-mbajtës bosh te `/listing` | cloud ([O44] `onError`, 9 vende) |
+| **5** | **`Instalo`/`Ndaj` mbulojnë kartën** | kryqëzim i matur në 390px | pronari vendosi «lëri» |
+| **6** | **«Ndrysho foton» mbulon emrin** | pamja 4 | cloud |
+
+**2 dhe 3 janë të lidhura:** kur biznesi fshihet, `profiles.shop_name` mbetet dhe faqja e
+biznesit vazhdon të kthejë 200. Pra vula «Biznes» të çon te një faqe biznesi që s'ekziston më.
+Kjo është klasa **F7** — rrjeta e sigurisë fsheh defektin: asgjë s'dështon, thjesht gënjen.
+
+## Kufij të deklaruar
+Vetëm 390px, vetëm pamja e pronarit (sesioni i vizitorit s'është më i disponueshëm te ky domen),
+pa CLS, pa gjeste reale prekjeje. Të dhënat ndryshuan gjatë sesionit (biznesi u fshi,
+shpalljet u shitën), ndaj krahasimet me matjet e mëparshme nuk qëndrojnë 1:1.
+
+---
+
+# [O63] · FAZA 2+3+4 e `PLANI-100-WEB-APP` — matje live në 390px (app)
+> **E PASHTYRË** — pronari: mos bëj deploy. Cloud-i e merr nga mesazhi.
+> **Matur mbi ndërtimin E VENDOSUR `069703d`, JO mbi `main`** — pra kjo është gjendja **PARA**
+> fazës 1+2 të cloud-it (target-e prekje), që rri e pavendosur.
+
+## Mbulimi — përgjigje e ndershme e pyetjes së pronarit
+Aplikacioni ka **38 faqe**. Blloku i identitetit prek **10** prej tyre.
+Sot u matën **14 faqe** (autentikuara + me të dhëna reale) + **30 me sweep HTTP**.
+Më parë kisha parë me sy vetëm **6**. Pra jo — nuk ishin verifikuar të gjitha.
+
+## ✅ Themeli responsiv — KALON në të 14 faqet
+```
+overflow horizontal = 0   në ÇDO faqe të matur (390px)
+<main> present            në ÇDO faqe
+HTTP: 24×200 · 6×307 (të mbrojtura, saktë) · 0 gabime
+```
+Pretendimi i cloud-it (§ *"ZERO overflow"*) **qëndron** — e riprodhova në 14 faqe të reja,
+përfshirë ato të autentikuara që ai s'i arrinte dot.
+
+## 🔴 Prekja — 61% e elementeve nën 44px
+
+| Faqja | <44px / gjithsej | | Faqja | <44px / gjithsej |
+|---|---|---|---|---|
+| **/search** | **54 / 63 · 86%** | | /referral | 18 / 33 · 55% |
+| **/kategori/automjete** | **36 / 46 · 78%** | | /oferta | 14 / 25 · 56% |
+| /billing | 18 / 27 · 67% | | /messages | 14 / 25 · 56% |
+| /te-dhenat-mia | 16 / 24 · 67% | | /profile | 19 / 39 · 49% |
+| /premium | 24 / 36 · 67% | | /notifications | 14 / 34 · 41% |
+| /listing/new | 31 / 48 · 65% | | /favorites | 13 / 23 · 57% |
+| /biznese/new | 18 / 29 · 62% | | /saved-searches | 14 / 23 · 61% |
+
+**Totali: 289 nga 475 elemente ndërveprues janë nën 44×44px — 61%.**
+
+`/search` është më i keqi (86%) dhe s'është prekur nga asnjë fazë. `/kategori/[slug]` (78%)
+gjithashtu. Të dyja janë rrugë kryesore blerjeje.
+
+*Ky është baseline-i PARA fazës 1+2 të cloud-it. Pas vendosjes duhet rimatur me të njëjtën metodë.*
+
+## 🟠 `h1` — gjashtë madhësi për të njëjtin rol
+```
+15px ×6   ·   16px   ·   18px ×3   ·   21px ×2   ·   23px
+```
+Lidhet drejtpërdrejt me [O60]: s'ka shkallë tipografie, ndaj s'ka nga çfarë të zgjedhësh.
+
+## 🔴 Gjuha — një varg i mbetur në prodhim
+Sweep mbi 30 rrugë: **vetëm `/` ka tekst ndërfaqeje anglisht** — **«Chat live»**.
+Cloud-i e ka ndrequr te `c5c12e0` («Bisedë live») por **s'është vendosur**.
+Pra §6 «Shqip gjithmonë» është i plotë në `main`, jo në prodhim.
+
+## Plani i shtuar (nga kjo matje)
+| # | Puna | Kush |
+|---|---|---|
+| 7 | `/search` — 54 target prekjeje nën 44px | cloud (faza 4) |
+| 8 | `/kategori/[slug]` — 36 target | cloud (faza 4) |
+| 9 | Shkalla `--fs-*` → një madhësi `h1` | cloud ([O60] hapi 2) |
+| 10 | Rimatje e të 14 faqeve pas vendosjes së fazës 1+2 | terminali |
+
+## Ç'MBETET E PAMATUR — deklaruar
+- **1280px (web)** — sot u mat vetëm 390px (app). Faza «100% web» kërkon të dyja.
+- **Kontrasti** në këto 14 faqe (u mat vetëm te `/listing` dhe `/profile`).
+- **CLS / performanca nën ngadalësim** — faza 5, e paprekur.
+- **`/admin`, `/moderimi/[id]`, `/auth/callback`, `/biznese/[id]/edit`, `/biznese/[id]/analytics`,
+  `/listing/[id]/edit`, `/profile/analytics`, `/asistent`** — 8 faqe pa matje ende.
+
+---
+
+# [O64] · AUDIT + AUTOPSI PAS DEPLOY-IT — 3 shtator 2026
+Prodhimi = `main` = `9a8296e` ✔ · roja e gjelbër · zero overflow në të dyja gjerësitë.
+
+## A. Ç'BËRI SAKTË CLOUD-I — matur para/pas, e njëjta metodë
+
+| Faqja | PARA `069703d` | PAS `9a8296e` | Ndryshimi |
+|---|---|---|---|
+| `/search` | 54/63 · **86%** | 15/62 · **24%** | **−39** |
+| `/kategori/automjete` | 36/46 · 78% | 17/45 · **38%** | −19 |
+| `/premium` | 24/36 · 67% | 14/36 · **39%** | −10 |
+| `/profile` | 19/39 · 49% | 14/38 · 37% | −5 |
+| `/listing/new` | 31/48 · 65% | 26/47 · 55% | −5 |
+| `/billing` | 18/27 · 67% | 14/26 · 54% | −4 |
+| `/te-dhenat-mia` | 16/24 · 67% | 14/24 · 58% | −2 |
+
+**Nga 70% në 41% mesatarisht.** `/search` u përmirësua më shumë se të gjitha të tjerat bashkë.
+Dhe **overflow = 0 në të 16 faqet × 2 gjerësi** — themeli responsiv qëndron edhe në web.
+
+## B. KU GABON CLOUD-I
+
+### B1 · 🔴 `/` — faqja hyrëse, e paprekur nga të dyja valët
+```
+390px (app):  47/66 = 71% nën 44px
+1280px (web): 52/66 = 79% nën 44px
+```
+**Është faqja që sheh çdo përdorues i parë, dhe është më e keqja e platformës.** Të dyja valët
+e prekjes shkuan te faqet e brendshme; hyrja mbeti jashtë. Kjo është klasa **F1** — puna u bë
+mirë brenda kufirit, dhe kufiri ishte i gabuar.
+
+### B2 · 🔴 `/asistent` — pa `<h1>` fare
+```
+h1 = 0 (nuk ekziston)   ·   20/28 = 71% nën 44px
+```
+Faqe pa `h1` është defekt bazë a11y/SEO — lexuesit e ekranit s'kanë titull, dhe as motorët.
+
+### B3 · 🟠 Tetë faqe ende me shumicë nën pragun
+`/saved-searches` 59% · `/favorites` 59% · `/te-dhenat-mia` 58% · `/messages` 58% ·
+`/referral` 56% · `/listing/new` 55% · `/oferta` 54% · `/billing` 54%
+
+### B4 · 🟠 `h1` — gjashtë madhësi, njëra prej tyre zero
+`0 · 15 · 16 · 18 · 22 · 32` — dhe **vetëm `/` shkallëzohet** (32px); të tjerat mbeten 15px
+edhe në web 1280px. Pra tipografia s'është as e unifikuar, as responsive.
+
+## C. AUTOPSI E VETES — çfarë më shpëtoi MUA
+
+1. **Nuk e mata kurrë `/` për prekje deri sot.** Auditova bllokun e identitetit në thellësi
+   ndërsa faqja më e vizituar rrinte pa matje. Mata atë që dija të matja, jo atë që ka peshë.
+2. **Dymbëdhjetë raporte me vetëm 390px.** «100% web» e supozova, s'e mata. Kur e mata sot,
+   `/` doli 79% — më keq se në telefon.
+3. **Nuk kontrollova kurrë praninë e `<h1>`.** Kontroll elementar; e shtova vetëm sot dhe
+   nxori menjëherë një faqe të plotë pa titull.
+4. **Sweep-i im i gjuhës pa vetëm HTML-në e serverit.** Vargjet e renderuara nga klienti
+   s'i sheh; pra «gjithçka shqip» nuk është provuar, është pjesërisht e provuar.
+5. **Raportova «61% nën 44px» pa e ndarë sipas gjerësisë** — numri ishte i vërtetë, por
+   pa dimensionin që pronari e kërkoi qartë (kompjuter *dhe* telefon).
+
+## D. Ç'NUK U TRANSPOZUA 100% WEB / 100% APP
+| Dimensioni | Gjendja |
+|---|---|
+| Overflow | ✅ 0 në të dyja gjerësitë |
+| `<main>` | ✅ kudo |
+| Gjuha (SSR) | ✅ 0 vargje anglisht |
+| **Prekja ≥44px** | 🔴 **41% ende nën** · `/` 71–79% |
+| **Tipografia** | 🔴 6 madhësi `h1`, s'ka shkallë, pa përgjigje ndaj gjerësisë |
+| **`<h1>` i detyrueshëm** | 🔴 mungon te `/asistent` |
+| CLS / performanca | ⬜ e pamatur (faza 5) |
+| Kontrasti në 16 faqe | ⬜ e pamatur |
+
+## E. PLANI I PËRDITËSUAR
+| # | Puna | Kush |
+|---|---|---|
+| 11 | **`/` — 47 target në app, 52 në web** (prioritet 1: faqja hyrëse) | cloud |
+| 12 | **`/asistent` — shto `<h1>`** + 20 target | cloud |
+| 13 | Tetë faqet me shumicë nën pragun (B3) | cloud |
+| 14 | Shkalla `--fs-*` + `h1` responsive (web ≠ app) | cloud ([O60] hapi 2) |
+| 15 | Kontrast në 16 faqe × 2 gjerësi | terminali |
+| 16 | CLS nën ngadalësim (faza 5) | terminali |
+
+---
+
+# [O65] · 🔴 TËRHEQJE: matjet e [O63] dhe [O64] ISHIN TË GABUARA — instrumenti im ishte i thyer
+
+## Ç'ndodhi
+Sweep-i im **ripërdorte NJË iframe** duke ndërruar `src`. `f.onload` kishte ndezur tashmë për
+faqen e mëparshme, ndaj matja ekzekutohej mbi **DOM-in e faqes së kaluar** para se e reja të
+renderohej.
+
+**Dëshmia ishte brenda vetë të dhënave të mia, dhe nuk e pashë:**
+```
+sweep 1:  /saved-searches 13/22 · /favorites 13/22 · /oferta 13/24 · /notifications 13/34
+sweep 2:  /billing 14/26 · /te-dhenat-mia 14/24 · /messages 14/24 · /profile 14/38 · /premium 14/36
+```
+**Numëruesi mbeti i ngurtë (13, pastaj 14) ndërsa emëruesi ndryshoi.** Pesë faqe të ndryshme
+me saktësisht «14» s'është koincidencë — është i njëjti DOM i matur pesë herë.
+
+## Numrat e vërtetë — iframe i RI për çdo faqe, `await` mbi `onload`-in e VET
+
+| Faqja @390 | Raportova | **E vërteta** |
+|---|---|---|
+| `/` | 47/66 · 71% | **6/67 · 9%** |
+| `/search` | 15/62 · 24% | **3/63 · 5%** |
+| `/kategori/automjete` | 17/45 · 38% | **4/46 · 9%** |
+| `/favorites` | 13/23 · 59% | **1/23 · 4%** |
+| `/saved-searches` | 13/23 · 59% | **1/23 · 4%** |
+| `/messages` | 14/24 · 58% | **1/25 · 4%** |
+| `/profile` | 14/38 · 37% | **2/39 · 5%** |
+| `/te-dhenat-mia` | 14/24 · 58% | **2/25 · 8%** |
+| `/billing` | 14/26 · 54% | **2/27 · 7%** |
+
+**Platforma është në 4–9% nën 44px, jo 41–79%.** Puna e cloud-it është shumë më e plotë
+seç raportova.
+
+Dhe mbetjet janë kryesisht **të përjashtueshme**: `Kalo tek përmbajtja kryesore` (lidhje
+kapërcimi, e fshehur vizualisht, 16px) dhe logoja `ALPAZAR` (34px). Reale mbeten 2–4 për faqe.
+
+## Gjithashtu e gabuar: `/asistent`
+Raportova *«pa `<h1>` fare, 20/28 nën 44px»*. **E pavërtetë.** Matja e drejtpërdrejtë:
+`h1` = «Albi — Asistenti virtual i Alpazar», dhe **1/28 nën 44px**. Ishte e njëjta racë.
+
+## Prova që e mbylli pyetjen
+Mata `/asistent` në tri mënyra njëkohësisht:
+```
+iframe@1536 → 28 · 1 · h1 po      iframe@390 → 28 · 1 · h1 po      direkt@1536 → 28 · 1 · h1 po
+```
+Identike. Pra **teknika e iframe-it s'ishte faji — ripërdorimi i tij ishte.**
+
+---
+
+# [O66] · EKSTENSIONI — shkaku i gjetur dhe zgjidhja
+
+## Simptoma
+`Couldn't determine which page this action targets` në **thirrjen e parë të çdo mesazhi**;
+e njëjta thirrje e përsëritur menjëherë **punon**.
+
+## Shkaku
+`tabs_context_mcp` e zbulon: **`selectedTabId` është skeda e Claude Code**, jo imja.
+Kur skeda ime nuk është në plan të parë, lidhja e ekstensionit vjetrohet mes rradhëve;
+thirrja e parë e rindërton atë duke dështuar.
+
+## Zgjidhja (e provuar 4 herë radhazi sot)
+1. **`tabs_context_mcp` si veprim i PARË i shfletuesit në çdo mesazh** — e ri-sinkronizon lidhjen.
+2. **Iframe i ri për çdo faqe**, `await` mbi `onload`-in e vet — kurrë ripërdorim `src`.
+3. **`f.remove()` pas çdo matjeje** — dy iframe-a me faqe të plota rrëzonin renderuesin.
+4. **Mbyll skedat ndihmëse** — kisha lënë 9 të hapura; Chrome-i po i vriste.
+
+Pas këtyre: një batch me 4 veprime, navigim, JS dhe dy pamje — **pa asnjë dështim**.
+
+---
+
+# [O67] · AUTOPSIA TOPOGRAFIKE — 36 rrugë × 2 gjerësi × 4 instrumente
+
+Raporti i plotë: **`docs/AUTOPSIA-TOPOGRAFIKE.md`**
+Artefaktet: `.ops/autopsi/` — 144 screenshot + `matjet.json`, `axe.json`,
+`prekja.json`, `performanca.json`.
+
+## Metoda ndryshoi — dhe kjo ka rëndësi
+Ekstensioni Chrome ngriu (Chrome i ngrin skedat në sfond). Kalova te
+**Playwright + Chromium lokal**: kontekst i pastër faqeje për çdo matje,
+390×844 dhe 1280×900. U instaluan `axe-core`, `@axe-core/playwright`,
+`lighthouse` (`--no-save`).
+
+## Matësi im i kontrastit gënjeu edhe tri herë sot
+1. `cr=1.00` mbi butonat ari — lexonte vetëm `backgroundColor`; gradienti është
+   `backgroundImage`. **I njëjti shkak si [O52].**
+2. Emoji si dështim — glifi nuk e ndjek `color`.
+3. Etiketa `left:-9999` (vetëm-lexues-ekrani) si dështim.
+
+Pas tri rregullimeve raportonte **81–147**. **axe-core raporton 25.**
+→ **Çdo numër aksesueshmërie në raport është i axe-core, jo i imi.**
+Shkrova `scripts/prova-kontrastit.mjs`: asnjë numër kontrasti nuk raportohet
+pa kaluar provën kundrejt vlerave të llogaritura me dorë.
+
+## Mbulimi i ndershëm
+Pa pëlqim, **13 nga 36 rrugët** japin faqen e hyrjes (gjurmë DOM identike
+33/49). Matjet janë me pëlqimin e dhënë, ku 36/36 japin përmbajtje.
+Faqet pas hyrjes nuk maten dot — **pronari hyn, jo unë.**
+
+## Gjetjet kryesore
+| # | Gjetja | Dëshmia |
+|---|---|---|
+| P0 | `AgeGate.tsx:73` → `/terms` = **404**; rruga reale `/kushtet`. Nën një deklaratë pëlqimi. 100% e vizitorëve | `curl` 404 vs 200; e vetmja shfaqje në kod |
+| P0 | **Tri shtresa pëlqimi njëherësh** (AgeGate 99999 + Onboarding + CookieBanner 9999) | `390-_.png`, `1280-_.png` |
+| P1 | `<main>` i dyfishuar te 3 faqet e kategorive (`layout.tsx:263` + `seo-wrap`) | 3 rregulla axe, 18 nyje, **një shkak** |
+| P1 | Video **7.32 MB** = 98% e peshës. Vonimi është bërë mirë; `autoPlay` + `q_auto` pa `w_`/`br_` e prish | `autopsia-peshes.mjs` |
+| P1 | 26 shkelje WCAG 2.5.8 AA → **tre shkaqe** (`.forgot-link` 15, fundi 11px 8, `.card-seller-ov` 3) | `prekja.json` |
+| P2 | **257 hex me dorë, 14 tokene** (94.6% jashtë sistemit); **35 grupe që syri s'i dallon**, 887 përdorime. `#C42B0F` vs `#C42A0E` dE **0.41** | `autopsia-ngjyrave.mjs` (CIE76) |
+| P2 | **20 madhësi shkronjash**; `.float-label` **7px në telefon**, 11px në kompjuter — përmbys | `HomeClient.tsx:710` |
+| P2 | 6 shtresa lundruese mbulojnë kartën; "Hyr" **dy herë** për vizitorin e dalogur | `pas-pelqimit/1280-_.png` |
+
+## E bërë mirë — thuhet edhe kjo
+Asnjë shkelje `critical`. 0 imazhe pa `alt`, **0/1090** kontrolle pa emër,
+**0/49** fusha pa etiketë, `lang="sq"` 36/36, asnjë dalje horizontale.
+**CLS ≤ 0.074 kudo — synimi i fazës 5 është ARRITUR.**
+Vonimi i videos me IntersectionObserver është i saktë.
+`lib/consent.ts` është pëlqim i vërtetë me pasojë.
+
+## CI-ja është e kuqe në `main` — dhe deploy-i ndodhi
+Hapi që dështon: **"Roja e unifikimit"**. `tsc`, build, E2E, kontrata — **kalojnë**.
+`▼ radiuse_inline 385/386`, `▼ ngjyra_hex_inline 3389/3394` — përmirësime të
+pambyllura me çelës. `--shkruaj-bazen` prek `scripts/lib/baza-unifikimit.json`,
+në listën **[O41]** → **e lë për code.**
+Pyetja e hapur: **Vercel bën deploy edhe me CI-në të kuqe.**
+
+## Korrigjim terminologjie (kërkuar nga pronari)
+WCAG është standard teknik, **jo ligj**. "Ligjore" i referohet vetëm akteve të
+**Republikës së Shqipërisë (prioritet maksimal)** dhe të **BE-së (sekondar)**.
+Hartëzimi është te §10 i raportit — me shënimin se kërkon konfirmim juristi.
+Aktet përkatëse: Ligji 9902/2008, 10128/2009, 9918/2008 neni 123, 93/2014;
+BE: Direktiva 2019/882 (EAA, mbulon tregtinë elektronike, referon WCAG 2.1 AA
+përmes EN 301 549), 2002/58/KE, GDPR.
+
+## Vetauditim para dorëzimit
+Gjeta dhe korrigjova **katër** pasaktësi të miat në draftin e raportit:
+"19 madhësi"→20, "291 përdorime"→233, "0/79 imazhe"→0 shkelje `image-alt`,
+"18 nga 33"→18 nga 53 nyje moderate. Dhe saktësova pretendimin e videos.
+
+## Nuk u deployua asgjë
+Asnjë shtytje. Vetëm skedarë të rinj lokalë: raporti, 7 skriptet e matjes,
+artefaktet.
+
+## Korrigjim [O67] — artefakti i performancës
+E listova `performanca.json` si ekzistues ndërsa nuk ishte: Lighthouse i mati të
+16 rreshtat por u rrëzua me `EPERM` te pastrimi i Chrome-it **para** shkrimit
+(`krom.kill()` para `writeFileSync`). Rregullimi është në skript. Skedari u
+rindërtua nga dalja e shtypur e po asaj ekzekutimi dhe e deklaron këtë te fusha
+`burimi` — mban vetëm fushat e shtypura. Numrat e raportit u konfirmuan nga
+rindërtimi: CLS max **0.074**, LCP max telefon **7.8s**, peshë max **7.84 MB**.
+Artefaktet e tjera u verifikuan dhe qëndrojnë: **144 screenshot** (72+72),
+`matjet.json`, `axe.json`, `prekja.json`.
+
+---
+
+# [O68] · ZBATIM I URDHRAVE TË CLOUD-IT (HANDOFF-TERMINAL-VERIFIKIMI.md)
+
+Prodhimi = main = `4d533d7`. **CI plotësisht e gjelbër** (5/5 fluksa).
+Roja e gjelbër: `radiuse_inline 384/384`, `ngjyra_hex_inline 2721/2721`
+(ra **3389 → 2721**, pra 668 ngjyra u bënë token).
+
+## §3 — Bajtët e videos: VERIFIKUAR, dhe parashikimi im ishte i gabuar
+URL live: `f_mp4,vc_h264,q_auto:eco,w_640,c_limit` — saktësisht sipas C1.
+
+| Transformimi | Pesha | Ndryshimi |
+|---|---|---|
+| origjinali (para C1) | 7.32 MB | — |
+| **C1 sot** (`w_640`) | **2.71 MB** | **−63%** |
+| `w_480` | 1.76 MB | −76% |
+| `w_360` | 1.19 MB | −84% |
+| `w_640 + br_800k` | 1.99 MB | −73% |
+| `w_480 + br_600k` | 1.52 MB | −79% |
+
+Videoja e dorëzuar: **640×1136, 17.5s**. Karta e shfaq **171×229**.
+Pra `w_640` është ~3.7× mbi nevojën e kartës.
+
+**Gabimi im:** te [O67] parashikova "~0.4 MB" për `w_640` pa e matur. Doli
+2.71 MB — ~7× gabim. Pesha varet nga kohëzgjatja dhe bit-rate, jo vetëm nga
+gjerësia; dhe `br_` që rekomandova nuk u përfshi. Mësimi i njëjtë si te
+instrumenti i kontrastit: mat, mos parashiko.
+
+## §4 — Bashkimi i të kuqeve: PROVUAR I SIGURT
+Gjendja pas C4: `#E63312` 174→**6**, `#C42305` 76→**2** (u bënë token).
+`#C42B0F` (175) dhe `#C42A0E` (58) mbetën, siç tha cloud-i.
+
+**Rolet janë të ndryshme, dhe kjo ka rëndësi:**
+- `#C42B0F` → **74× `color:` (tekst)**, 3× sfond
+- `#C42A0E` → **31× fundi i errët i një gradienti**, i çiftuar me `var(--az-red)`
+
+Prova (`scripts/prova-bashkimit-te-kuqeve.mjs`): axe mbi prodhim, pastaj
+mbivendosje që i detyron TË GJITHA të kuqet në një, në po ato faqe, axe sërish.
+**18/18 kombinime faqe×gjerësi: 11 shkelje para, 11 pas. Delta 0.**
+→ Bashkimi nuk e prek kontrastin. I sigurt.
+Rekomandim: nëse mbahen të ndara, ndaji **sipas rolit** (`--az-red-text` vs
+fundi i gradientit), jo rastësisht.
+
+## GJETJE E RE — REGRES nga Grupi C, i rregulluar dhe i provuar
+Krahasim axe para/pas punës së cloud-it:
+
+| Rregulli | Para | Pas |
+|---|---|---|
+| `color-contrast` | 25 / 11 faqe | **19 / 7** ✅ |
+| `landmark-no-duplicate-main` | 6 / 3 | **0** ✅ |
+| `landmark-main-is-top-level` | 6 / 3 | **0** ✅ |
+| `landmark-unique` | 6 / 3 | **0** ✅ |
+| `scrollable-region-focusable` | 4 / 3 | 4 / 3 — **e paprekur** |
+| `page-has-heading-one` | 2 / 1 | 2 / 1 — **e paprekur** (`/notifications`) |
+| **`region`** | 33 / 19 faqe | **70 / 35 faqe** ⚠️ **U DYFISHUA** |
+
+Të 70 nyjet janë **e njëjta gjë**: `<span class="fab-label">Albi</span>`.
+Shkaku: `layout.tsx:264` e monton `<AiFloat />` si **motër** të
+`<main id="main-content">`. Kontroll i kryqëzuar që e vërteton: `Instalo`/`Ndaj`
+te `HomeClient` NUK shënohen, sepse vijnë si `children` dhe rrinë brenda `<main>`.
+
+Rregullimi: `aria-hidden="true"` mbi etiketën — dublim pamor i emrit që butoni
+e mban te `aria-label`. Provë (`scripts/prova-regresit-region.mjs`, rregullimi
+aplikuar në DOM mbi prodhim para matjes): **12 nyje → 0**, 12 kombinime.
+Commit `1948ba7` te dega `fix/region-fab-label`. tsc: 5 gabime para = 5 pas
+(të mëparshme, nën-moduli `alpazar/`). Roja: e gjelbër. **Nuk u shtyt.**
+
+## §1 dhe §2 — TË BLLOKUARA
+Kërkojnë hyrje me Google. **Unë nuk autentikohem — pronari hyn.**
+Dyfishi lokal i `docs/VERIFIKIMI-VIZUAL.md` (që i gjeti `NaN`/`Invalid Date`)
+**nuk është në depo** — u shkrua ad hoc dhe s'u regjistrua kurrë.
+Dy rrugë: (a) pronari hyn dhe unë mas menjëherë; (b) e rindërtoj dyfishin
+(~120 rreshta + `next dev` + cookie sesioni i sajuar). Pres vendimin.
