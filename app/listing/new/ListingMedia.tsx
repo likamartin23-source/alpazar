@@ -18,7 +18,7 @@ export function ListingMedia({ p }: any) {
       <div className="card">
         <div className="section-title">
           <i className="ti ti-photo" aria-hidden="true" />Fotot{' '}
-          <span style={{ fontWeight: 400, color: (maxImages >= 0 && imagePreviews.length >= maxImages) ? '#C42305' : '#888', fontSize: 12 }}>
+          <span style={{ fontWeight: 400, color: (maxImages >= 0 && imagePreviews.length >= maxImages) ? 'var(--az-red-deep)' : '#888', fontSize: 12 }}>
             ({imagePreviews.length}/{imgCap})
           </span>
         </div>
@@ -34,7 +34,7 @@ export function ListingMedia({ p }: any) {
               <div key={i} style={{ position: 'relative', display: 'inline-block' }}>
                 <img src={src} className="img-prev" alt={`Foto ${i + 1}`} loading="lazy" />
                 {i === 0 && (
-                  <span style={{ position: 'absolute', top: 4, left: 4, background: '#F5C842', color: '#111', fontSize: 8, fontWeight: 800, padding: '2px 5px', borderRadius: 4, lineHeight: 1.4, pointerEvents: 'none' }}>
+                  <span style={{ position: 'absolute', top: 4, left: 4, background: 'var(--az-yellow)', color: '#111', fontSize: 8, fontWeight: 800, padding: '2px 5px', borderRadius: 4, lineHeight: 1.4, pointerEvents: 'none' }}>
                     Kryesore
                   </span>
                 )}
@@ -47,7 +47,7 @@ export function ListingMedia({ p }: any) {
       <div className="card">
         <div className="section-title">
           <i className="ti ti-video" aria-hidden="true" />Video{' '}
-          <span style={{ fontWeight: 400, color: full ? '#C42305' : '#888', fontSize: 12 }}>
+          <span style={{ fontWeight: 400, color: full ? 'var(--az-red-deep)' : '#888', fontSize: 12 }}>
             ({vid.count}/{vidCap})
           </span>
         </div>

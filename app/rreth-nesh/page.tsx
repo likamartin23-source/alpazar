@@ -3,16 +3,16 @@ const LS = { color: '#666' as const, fontSize: 11, textDecoration: 'none' as con
 export default function RrethNesh() {
   const css = `
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA;}
-    .wrap{max-width:640px;margin:0 auto;background:#FFFBEA;min-height:100vh;}
-    .topbar{background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
+    body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--az-cream);}
+    .wrap{max-width:640px;margin:0 auto;background:var(--az-cream);min-height:100vh;}
+    .topbar{background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
     .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0;}
     .back i{font-size:18px;color:#111;}
     .topbar-title{font-size:15px;font-weight:700;color:#111;}
     .hero{background:#111;padding:36px 20px;text-align:center;position:relative;overflow:hidden;}
-    .hero::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#E63312,#F5C842);}
+    .hero::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--az-red),var(--az-yellow));}
     .hero-logo{font-size:56px;display:block;margin-bottom:14px;}
-    .hero h1{color:#F5C842;font-size:var(--fs-3xl);font-weight:700;letter-spacing:2px;margin-bottom:8px;}
+    .hero h1{color:var(--az-yellow);font-size:var(--fs-3xl);font-weight:700;letter-spacing:2px;margin-bottom:8px;}
     .hero p{color:#9A9A9A;font-size:13px;line-height:1.7;}
     .body{padding:20px 16px 40px;}
     .section{background:#fff;border-radius:12px;padding:20px;border:0.5px solid #eee;margin-bottom:14px;}
@@ -21,17 +21,17 @@ export default function RrethNesh() {
     p{font-size:13px;color:#444;line-height:1.85;margin-bottom:10px;}
     p:last-child{margin-bottom:0;}
     .values{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;}
-    .val{background:#FFFBEA;border:0.5px solid #e0b030;border-radius:10px;padding:14px;text-align:center;}
+    .val{background:var(--az-cream);border:0.5px solid #e0b030;border-radius:10px;padding:14px;text-align:center;}
     .val i{font-size:24px;color:#C42B0F;display:block;margin-bottom:8px;}
     .val strong{font-size:12px;font-weight:700;color:#111;display:block;margin-bottom:4px;}
     .val span{font-size:11px;color:#666;}
     .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px;}
     .stat{background:#111;border-radius:10px;padding:14px;text-align:center;}
-    .stat-n{font-size:22px;font-weight:700;color:#F5C842;}
+    .stat-n{font-size:22px;font-weight:700;color:var(--az-yellow);}
     .stat-l{font-size:10px;color:#9A9A9A;margin-top:4px;}
     .timeline{position:relative;padding-left:20px;}
     .tl-item{position:relative;padding-bottom:20px;}
-    .tl-item::before{content:'';position:absolute;left:-16px;top:5px;width:8px;height:8px;border-radius:50%;background:#F5C842;}
+    .tl-item::before{content:'';position:absolute;left:-16px;top:5px;width:8px;height:8px;border-radius:50%;background:var(--az-yellow);}
     .tl-item::after{content:'';position:absolute;left:-13px;top:13px;width:2px;bottom:0;background:#e0b030;}
     .tl-item:last-child::after{display:none;}
     .tl-date{font-size:11px;font-weight:700;color:#C42B0F;margin-bottom:3px;}

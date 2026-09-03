@@ -129,7 +129,7 @@ export default function UpdatePrompt() {
       style={{
         position: 'fixed', left: 12, right: 12, bottom: 12, zIndex: 9999,
         maxWidth: 460, margin: '0 auto',
-        background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#fff',
+        background: 'linear-gradient(135deg,var(--az-ink),#000)', color: '#fff',
         borderRadius: 14, padding: '12px 14px', boxShadow: '0 8px 28px -6px rgba(0,0,0,.45)',
         display: 'flex', alignItems: 'center', gap: 12, fontFamily: 'inherit',
       }}
@@ -141,7 +141,7 @@ export default function UpdatePrompt() {
       <button
         type="button"
         onClick={rifreskoTani}
-        style={{ background: '#F5C842', color: '#111', border: 'none', borderRadius: 9, padding: '8px 14px', fontSize: 12.5, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', minHeight: 40 }}
+        style={{ background: 'var(--az-yellow)', color: '#111', border: 'none', borderRadius: 9, padding: '8px 14px', fontSize: 12.5, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', minHeight: 40 }}
       >
         Rifresko
       </button>

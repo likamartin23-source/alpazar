@@ -190,12 +190,12 @@ rr('Dërguar më', dt(d.denoncimi?.derguar)) + rr('Shënim', d.denoncimi?.shenim
         }}>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 15, fontWeight: 800, letterSpacing: .2 }}>Dosja ligjore</div>
-            <div style={{ fontSize: 10.5, color: '#F5C842', fontFamily: 'monospace', marginTop: 2 }}>
+            <div style={{ fontSize: 10.5, color: 'var(--az-yellow)', fontFamily: 'monospace', marginTop: 2 }}>
               {d?.dosja_nr || '…'}
             </div>
           </div>
           <button type="button" onClick={shkarko} disabled={!d}
-            style={{ background: '#F5C842', color: '#111', border: 'none', borderRadius: 9, padding: '8px 15px', fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>
+            style={{ background: 'var(--az-yellow)', color: '#111', border: 'none', borderRadius: 9, padding: '8px 15px', fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>
             Shkarko dosjen
           </button>
           <button type="button" onClick={onClose} aria-label="Mbyll"

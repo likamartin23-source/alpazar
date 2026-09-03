@@ -9,7 +9,7 @@
 // mbante — ndaj hidratimi deshtonte ne CDO faqe 404.
 export default function NotFound() {
   return (
-    <div style={{ background: '#FFFBEA' }}>
+    <div style={{ background: 'var(--az-cream)' }}>
         <div style={{
           minHeight: '58vh', display: 'flex', flexDirection: 'column',
           alignItems: 'center', justifyContent: 'center', padding: 24, gap: 16,
@@ -20,7 +20,7 @@ export default function NotFound() {
             boxShadow: '0 4px 24px rgba(0,0,0,.06)',
           }}>
             <div style={{
-              background: '#111', color: '#F5C842', fontWeight: 800,
+              background: '#111', color: 'var(--az-yellow)', fontWeight: 800,
               letterSpacing: 3, fontSize: 18, padding: '6px 16px',
               borderRadius: 8, display: 'inline-block', marginBottom: 20,
             }}>
@@ -32,7 +32,7 @@ export default function NotFound() {
             }}>
               404
             </div>
-            <h2 style={{ fontSize: 18, fontWeight: 700, color: '#111', margin: '0 0 8px' }}>
+            <h2 style={{ fontSize: 'var(--fs-2xl)', fontWeight: 700, color: '#111', margin: '0 0 8px' }}>
               Faqja nuk u gjet
             </h2>
             <p style={{ fontSize: 13, color: '#555', lineHeight: 1.6, margin: '0 0 24px' }}>
@@ -43,7 +43,7 @@ export default function NotFound() {
               <a
                 href="/"
                 style={{
-                  display: 'block', background: '#E63312', color: '#fff',
+                  display: 'block', background: 'var(--az-red)', color: '#fff',
                   borderRadius: 10, padding: '13px 0', fontSize: 14,
                   fontWeight: 700, textDecoration: 'none',
                 }}
@@ -53,7 +53,7 @@ export default function NotFound() {
               <a
                 href="/search"
                 style={{
-                  display: 'block', background: '#F5C842', color: '#111',
+                  display: 'block', background: 'var(--az-yellow)', color: '#111',
                   borderRadius: 10, padding: '12px 0', fontSize: 13,
                   fontWeight: 700, textDecoration: 'none',
                 }}

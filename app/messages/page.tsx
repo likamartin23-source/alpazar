@@ -65,7 +65,7 @@ function AudioPlayer({ url, mine }: { url: string; mine: boolean }) {
     a.currentTime = ((e.clientX - r.left) / r.width) * a.duration
   }
 
-  const accent = mine ? '#F5C842' : '#E63312'
+  const accent = mine ? 'var(--az-yellow)' : 'var(--az-red)'
   const track  = mine ? 'rgba(255,255,255,.2)' : 'rgba(0,0,0,.1)'
 
   return (
@@ -76,7 +76,7 @@ function AudioPlayer({ url, mine }: { url: string; mine: boolean }) {
         display:'flex', alignItems:'center', justifyContent:'center',
       }}>
         <i className={`ti ti-${playing ? 'player-pause-filled' : 'player-play-filled'}`} aria-hidden="true"
-          style={{ fontSize:19, color: mine ? '#F5C842' : '#E63312' }} />
+          style={{ fontSize:19, color: mine ? 'var(--az-yellow)' : 'var(--az-red)' }} />
       </button>
 
       <div style={{ flex:1 }}>
@@ -744,12 +744,12 @@ export default function MessagesPage() {
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
         /* Fixed overlay — qëndron brenda viewport pavarësisht nga prindërit */
-        .page{position:fixed;inset:0;max-width:480px;margin:0 auto;display:flex;flex-direction:column;background:#FFFBEA;overflow:hidden;z-index:50;}
+        .page{position:fixed;inset:0;max-width:480px;margin:0 auto;display:flex;flex-direction:column;background:var(--az-cream);overflow:hidden;z-index:50;}
 
         /* Topbar */
         .topbar{background:linear-gradient(135deg,#151515,#1c1c1c);padding:0 12px;display:flex;align-items:center;gap:9px;height:58px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.06);z-index:10;}
-        .topbar.chat{background:linear-gradient(135deg,#1a1a1a 0%,#222 100%);}
-        .back-btn{width:44px;height:44px;background:rgba(255,255,255,.06);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#F5C842;font-size:19px;}
+        .topbar.chat{background:linear-gradient(135deg,var(--az-ink) 0%,#222 100%);}
+        .back-btn{width:44px;height:44px;background:rgba(255,255,255,.06);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--az-yellow);font-size:19px;}
         .t-meta{flex:1;min-width:0;}
         .t-name{font-size:15px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
         .t-sub{font-size:10px;color:#888;margin-top:1px;display:flex;align-items:center;gap:4px;}
@@ -769,15 +769,15 @@ export default function MessagesPage() {
         .threads-scroll::-webkit-scrollbar-thumb{background:#ddd;border-radius:10px;}
         .thread{display:flex;align-items:center;gap:12px;padding:13px 14px;cursor:pointer;border-bottom:0.5px solid #f0ece0;transition:background .1s;position:relative;border-left:3px solid transparent;}
         .thread:active{background:#FFF8E0;}
-        .thread.unread-thread{border-left-color:#E63312;background:#FFFAF5;}
+        .thread.unread-thread{border-left-color:var(--az-red);background:#FFFAF5;}
         .t-info{flex:1;min-width:0;}
         .t-thread-name{font-size:13.5px;font-weight:700;color:#111;margin-bottom:3px;}
         .t-preview{font-size:11.5px;color:#aaa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
         .t-preview.unread{color:#333;font-weight:600;}
         .t-right{text-align:right;flex-shrink:0;}
         .t-time{font-size:10px;color:#bbb;}
-        .t-badge{background:#E63312;color:#fff;border-radius:12px;min-width:20px;height:20px;padding:0 6px;font-size:9px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;margin-top:4px;}
-        .fab{position:absolute;bottom:20px;right:16px;width:52px;height:52px;background:linear-gradient(135deg,#E63312,#c42a0e);border-radius:50%;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;box-shadow:0 6px 20px rgba(230,51,18,.4);z-index:10;}
+        .t-badge{background:var(--az-red);color:#fff;border-radius:12px;min-width:20px;height:20px;padding:0 6px;font-size:9px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;margin-top:4px;}
+        .fab{position:absolute;bottom:20px;right:16px;width:52px;height:52px;background:linear-gradient(135deg,var(--az-red),#c42a0e);border-radius:50%;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;box-shadow:0 6px 20px rgba(230,51,18,.4);z-index:10;}
         .fab i{font-size:22px;color:#fff;}
 
         /* Empty */
@@ -785,7 +785,7 @@ export default function MessagesPage() {
         .empty-emoji{font-size:62px;margin-bottom:16px;}
         .empty h3{font-size:16px;font-weight:700;color:#555;margin-bottom:8px;}
         .empty p{font-size:12px;color:#555;line-height:1.8;margin-bottom:20px;}
-        .empty-cta{background:#111;color:#F5C842;border:none;border-radius:12px;padding:13px 26px;min-height:44px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;}
+        .empty-cta{background:#111;color:var(--az-yellow);border:none;border-radius:12px;padding:13px 26px;min-height:44px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;}
 
         /* Chat area */
         .chat-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
@@ -809,7 +809,7 @@ export default function MessagesPage() {
         .av-spacer{width:26px;flex-shrink:0;}
 
         /* Thread list — scrollable */
-        .threads-scroll{flex:1;height:0;overflow-y:scroll;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;background:#FFFBEA;}
+        .threads-scroll{flex:1;height:0;overflow-y:scroll;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;background:var(--az-cream);}
 
         /* Bubble wrap — touch-action:pan-y lejon scroll vertikal me gisht */
         .bwrap{display:flex;flex-direction:column;max-width:78%;position:relative;transform:translateX(0);transition:transform .22s cubic-bezier(.4,0,.2,1);touch-action:pan-y;}
@@ -832,7 +832,7 @@ export default function MessagesPage() {
         }
         .bubble.tmp{opacity:.65;}
         .bubble.deleted{opacity:.6;}
-        .bubble.sel{outline:3px solid #F5C842;outline-offset:1px;}
+        .bubble.sel{outline:3px solid var(--az-yellow);outline-offset:1px;}
 
         /* Bubble tail */
         .mine .bubble::after{content:'';position:absolute;bottom:0;right:-7px;width:0;height:0;border-style:solid;border-width:8px 0 0 8px;border-color:transparent transparent transparent #111118;}
@@ -842,9 +842,9 @@ export default function MessagesPage() {
         /* Reply preview inside bubble */
         .rp{border-left:3px solid;padding:5px 8px 5px;margin-bottom:7px;border-radius:6px;cursor:pointer;}
         .mine .rp{border-color:rgba(245,200,66,.55);background:rgba(255,255,255,.08);}
-        .theirs .rp{border-color:#E63312;background:rgba(230,51,18,.06);}
+        .theirs .rp{border-color:var(--az-red);background:rgba(230,51,18,.06);}
         .rp-name{font-size:10px;font-weight:700;margin-bottom:2px;opacity:.9;}
-        .mine .rp-name{color:#F5C842;}
+        .mine .rp-name{color:var(--az-yellow);}
         .theirs .rp-name{color:#C42B0F;}
         .rp-text{font-size:11px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;opacity:.65;}
         .rp-img{width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0;}
@@ -860,7 +860,7 @@ export default function MessagesPage() {
         .btime{font-size:9.5px;color:rgba(255,255,255,.42);margin-top:4px;display:flex;align-items:center;justify-content:flex-end;gap:3px;}
         .theirs .btime{justify-content:flex-start;color:#bbb;}
         .tick{font-size:12px;}
-        .tick.read{color:#F5C842;}
+        .tick.read{color:var(--az-yellow);}
 
         /* Typing */
         .typing-row{display:flex;align-items:flex-end;gap:5px;margin-top:2px;}
@@ -876,7 +876,7 @@ export default function MessagesPage() {
 
         /* Reply strip */
         .reply-strip{background:#fff;border-top:1.5px solid #EDE6D0;padding:8px 12px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
-        .rs-bar{flex:1;border-left:3px solid #E63312;padding:0 0 0 8px;min-width:0;}
+        .rs-bar{flex:1;border-left:3px solid var(--az-red);padding:0 0 0 8px;min-width:0;}
         .rs-name{font-size:11px;color:#C42B0F;font-weight:700;margin-bottom:1px;}
         .rs-text{font-size:11px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
         .rs-img{width:38px;height:38px;border-radius:6px;object-fit:cover;flex-shrink:0;}
@@ -895,32 +895,32 @@ export default function MessagesPage() {
         /* Input bar */
         .input-bar{background:#fff;border-top:1.5px solid #EDE6D0;padding:8px 10px;display:flex;gap:8px;align-items:flex-end;flex-shrink:0;}
         .input-wrap{flex:1;background:#F5F0E6;border:1.5px solid transparent;border-radius:22px;display:flex;align-items:flex-end;padding:0 12px;gap:6px;transition:border-color .15s,background .15s;}
-        .input-wrap:focus-within{border-color:#F5C842;background:#fff;}
+        .input-wrap:focus-within{border-color:var(--az-yellow);background:#fff;}
         .input-wrap textarea{border:none;background:transparent;font-size:13.5px;color:#111;outline:none;flex:1;resize:none;min-height:20px;max-height:90px;line-height:1.5;padding:10px 0;font-family:inherit;}
         .input-wrap textarea::placeholder{color:#bbb;}
         .emoji-btn{width:30px;height:30px;border:none;background:none;cursor:pointer;font-size:21px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-bottom:8px;}
         .attach-btn{width:44px;height:44px;background:rgba(0,0,0,.06);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#555;font-size:17px;}
-        .send-btn{width:46px;height:46px;background:linear-gradient(135deg,#E63312,#c42a0e);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 14px rgba(230,51,18,.4);}
+        .send-btn{width:46px;height:46px;background:linear-gradient(135deg,var(--az-red),#c42a0e);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 14px rgba(230,51,18,.4);}
         .send-btn:disabled{opacity:.45;cursor:default;box-shadow:none;}
         .send-btn:disabled{opacity:.4;box-shadow:none;}
         .send-btn i{color:#fff;font-size:20px;}
-        .mic-btn{width:46px;height:46px;background:linear-gradient(135deg,#E63312,#c42a0e);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 14px rgba(230,51,18,.35);}
+        .mic-btn{width:46px;height:46px;background:linear-gradient(135deg,var(--az-red),#c42a0e);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 14px rgba(230,51,18,.35);}
         .mic-btn.recording{background:linear-gradient(135deg,#111,#1C1C2E);box-shadow:0 3px 10px rgba(0,0,0,.3);animation:pulse .9s infinite;}
         .mic-btn i{color:#fff;font-size:20px;}
 
         /* Blocked bar */
         .blocked-bar{background:#fff3f0;border-top:1px solid #ffd5cc;padding:14px 16px;flex-shrink:0;text-align:center;}
         .blocked-bar p{font-size:12px;color:#C42B0F;margin-bottom:8px;}
-        .unblock-btn{background:transparent;border:1.5px solid #E63312;color:#C42B0F;border-radius:10px;padding:7px 18px;min-height:44px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;}
+        .unblock-btn{background:transparent;border:1.5px solid var(--az-red);color:#C42B0F;border-radius:10px;padding:7px 18px;min-height:44px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;}
 
         /* Select mode bar */
         .select-bar{background:#111;padding:0 12px;height:52px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
         .select-bar-text{flex:1;color:#fff;font-size:13px;font-weight:600;}
-        .sel-delete{background:#E63312;border:none;border-radius:10px;color:#fff;font-size:12px;font-weight:700;padding:8px 16px;min-height:44px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;}
+        .sel-delete{background:var(--az-red);border:none;border-radius:10px;color:#fff;font-size:12px;font-weight:700;padding:8px 16px;min-height:44px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;}
 
         /* Recording bar */
         .rec-bar{flex:1;display:flex;align-items:center;gap:8px;background:#fff;border-radius:22px;padding:0 12px;min-height:46px;box-shadow:0 1px 3px rgba(0,0,0,.1);}
-        .rec-dot{width:9px;height:9px;border-radius:50%;background:#E63312;flex-shrink:0;animation:pulse .9s infinite;}
+        .rec-dot{width:9px;height:9px;border-radius:50%;background:var(--az-red);flex-shrink:0;animation:pulse .9s infinite;}
         .rec-time{font-size:13px;font-weight:700;color:#C42B0F;font-variant-numeric:tabular-nums;white-space:nowrap;}
         .rec-wave{flex:1;display:flex;align-items:center;gap:2px;height:24px;overflow:hidden;}
         .rec-cancel{background:none;border:none;color:#C42B0F;font-size:22px;cursor:pointer;padding:2px;line-height:1;flex-shrink:0;}
@@ -947,7 +947,7 @@ export default function MessagesPage() {
         .confirm-btns{display:flex;gap:10px;}
         .confirm-btn{flex:1;padding:13px;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;}
         .confirm-btn.cancel{background:#f5f5f0;color:#555;}
-        .confirm-btn.danger{background:#E63312;color:#fff;}
+        .confirm-btn.danger{background:var(--az-red);color:#fff;}
 
         /* Reaction overlay */
         .rxn-overlay{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;animation:fadeIn .15s;}
@@ -961,7 +961,7 @@ export default function MessagesPage() {
 
         /* Spinner */
         .spin-center{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:#555;font-size:12px;}
-        .spinner{width:26px;height:26px;border:3px solid #F5C842;border-top-color:#E63312;border-radius:50%;animation:spin .7s linear infinite;}
+        .spinner{width:26px;height:26px;border:3px solid var(--az-yellow);border-top-color:var(--az-red);border-radius:50%;animation:spin .7s linear infinite;}
 
         @keyframes spin{to{transform:rotate(360deg)}}
         @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -1015,7 +1015,7 @@ export default function MessagesPage() {
               <div style={{ display:'flex', gap:6, padding:'10px 20px 4px', borderBottom:'0.5px solid #f0f0f0' }}>
                 {EMOJI_QUICK.map(e => (
                   <button type="button" key={e} aria-label={`Reaksion ${e}`} onClick={() => { sendReaction(ctxMenu.msg.id, e) }}
-                    style={{ background:ctxMenu.msg.reaction===e?'#fff3c0':'#f5f5f5', border: ctxMenu.msg.reaction===e?'2px solid #F5C842':'2px solid transparent', borderRadius:50, width:38, height:38, fontSize:20, cursor:'pointer', transition:'transform .1s' }}>
+                    style={{ background:ctxMenu.msg.reaction===e?'#fff3c0':'#f5f5f5', border: ctxMenu.msg.reaction===e?'2px solid var(--az-yellow)':'2px solid transparent', borderRadius:50, width:38, height:38, fontSize:20, cursor:'pointer', transition:'transform .1s' }}>
                     {e}
                   </button>
                 ))}
@@ -1036,7 +1036,7 @@ export default function MessagesPage() {
 
             {ctxMenu.msg.type === 'image' && ctxMenu.msg.attachment_url && (
               <div role="button" tabIndex={0} className="mi" onClick={() => { setLightbox(srcBashkengjitje(ctxMenu.msg.attachment_url)); setCtxMenu(null) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setLightbox(srcBashkengjitje(ctxMenu.msg.attachment_url)); setCtxMenu(null) } }}>
-                <i className="ti ti-photo" style={{ color:'#F5C842' }} aria-hidden="true" />
+                <i className="ti ti-photo" style={{ color:'var(--az-yellow)' }} aria-hidden="true" />
                 <span>Shiko foton</span>
               </div>
             )}
@@ -1073,7 +1073,7 @@ export default function MessagesPage() {
               </div>
             </div>
             <div role="button" tabIndex={0} className="mi" onClick={() => { setShowInfo(false); window.location.href=`/biznese/${selected.otherId}` }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setShowInfo(false); window.location.href=`/biznese/${selected.otherId}` } }}>
-              <i className="ti ti-building-store" style={{ color:'#F5C842' }} aria-hidden="true" />
+              <i className="ti ti-building-store" style={{ color:'var(--az-yellow)' }} aria-hidden="true" />
               <span>Shiko biznesin</span>
             </div>
             <div role="button" tabIndex={0} className="mi" onClick={() => { setShowInfo(false); window.location.href='/notifications' }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setShowInfo(false); window.location.href='/notifications' } }}>
@@ -1126,7 +1126,7 @@ export default function MessagesPage() {
                   Duke hapur kontaktin…
                 </div>
               ) : kontaktGabim ? (
-                <div role="alert" style={{ padding:'12px 14px', borderRadius:14, background:'#FFF0EE', border:'1px solid #F09595', fontSize:13, fontWeight:600, color:'#C42305', marginBottom:10, lineHeight:1.6 }}>
+                <div role="alert" style={{ padding:'12px 14px', borderRadius:14, background:'#FFF0EE', border:'1px solid #F09595', fontSize:13, fontWeight:600, color:'var(--az-red-deep)', marginBottom:10, lineHeight:1.6 }}>
                   {kontaktGabim}
                 </div>
               ) : waLink ? (
@@ -1164,7 +1164,7 @@ export default function MessagesPage() {
                   Duke hapur kontaktin…
                 </div>
               ) : kontaktGabim ? (
-                <div role="alert" style={{ padding:'12px 14px', borderRadius:14, background:'#FFF0EE', border:'1px solid #F09595', fontSize:13, fontWeight:600, color:'#C42305', marginBottom:10, lineHeight:1.6 }}>
+                <div role="alert" style={{ padding:'12px 14px', borderRadius:14, background:'#FFF0EE', border:'1px solid #F09595', fontSize:13, fontWeight:600, color:'var(--az-red-deep)', marginBottom:10, lineHeight:1.6 }}>
                   {kontaktGabim}
                 </div>
               ) : viberLink ? (
@@ -1224,7 +1224,7 @@ export default function MessagesPage() {
                   <div className="t-name">{displayName(selected.other)}</div>
                   <div className="t-sub">
                     {typingVisible
-                      ? <><span className="online-dot" style={{ background:'#F5C842' }} />Po shkruan...</>
+                      ? <><span className="online-dot" style={{ background:'var(--az-yellow)' }} />Po shkruan...</>
                       : isOtherOnline
                         ? <><span className="online-dot" />Online tani</>
                         : 'Trokit për info'}
@@ -1440,7 +1440,7 @@ export default function MessagesPage() {
                       </div>
                       <button aria-label="Anulo foton" type="button" onClick={() => { URL.revokeObjectURL(imgPreview.url); setImgPreview(null) }} style={{ background:'none', border:'none', color:'#bbb', fontSize:20, cursor:'pointer', flexShrink:0 }}>✕</button>
                       <button type="button" onClick={sendImage} disabled={uploading}
-                        style={{ background:'linear-gradient(135deg,#E63312,#c42a0e)', border:'none', borderRadius:10, color:'#fff', fontWeight:700, fontSize:13, padding:'9px 16px', cursor:'pointer', flexShrink:0 }}>
+                        style={{ background:'linear-gradient(135deg,var(--az-red),#c42a0e)', border:'none', borderRadius:10, color:'#fff', fontWeight:700, fontSize:13, padding:'9px 16px', cursor:'pointer', flexShrink:0 }}>
                         {uploading ? '...' : 'Dërgo'}
                       </button>
                     </div>
@@ -1466,7 +1466,7 @@ export default function MessagesPage() {
                             <div className="rec-time">{fmtDur(recTime)}</div>
                             <div className="rec-wave">
                               {WAVE.slice(0,20).map((h, i) => (
-                                <div key={i} style={{ width:2.5, height: h * 1.4 + Math.sin(Date.now()/200+i)*3, borderRadius:3, background:'#E63312', opacity:.7, flexShrink:0 }} />
+                                <div key={i} style={{ width:2.5, height: h * 1.4 + Math.sin(Date.now()/200+i)*3, borderRadius:3, background:'var(--az-red)', opacity:.7, flexShrink:0 }} />
                               ))}
                             </div>
                             <button type="button" className="rec-cancel" aria-label="Anulo regjistrim" onClick={() => stopRecording(true)}>
@@ -1528,10 +1528,10 @@ export default function MessagesPage() {
                 <i className="ti ti-arrow-left" aria-hidden="true" />
               </button>
               <div className="t-meta">
-                <h1 className="t-name" style={{ color:'#F5C842', margin: 0 }}>
+                <h1 className="t-name" style={{ color:'var(--az-yellow)', margin: 0 }}>
                   Mesazhet
                   {totalUnread > 0 && (
-                    <span style={{ background:'#E63312', color:'#fff', borderRadius:10, padding:'1px 8px', fontSize:10, fontWeight:800, marginLeft:8 }}>{totalUnread}</span>
+                    <span style={{ background:'var(--az-red)', color:'#fff', borderRadius:10, padding:'1px 8px', fontSize:10, fontWeight:800, marginLeft:8 }}>{totalUnread}</span>
                   )}
                 </h1>
               </div>
@@ -1551,7 +1551,7 @@ export default function MessagesPage() {
               <div className="spin-center">
                 <div style={{ fontSize: 32 }} aria-hidden="true">⚠️</div>
                 <div style={{ fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
-                <button type="button" onClick={() => window.location.reload()} style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
+                <button type="button" onClick={() => window.location.reload()} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
               </div>
             ) : loading ? (
               <div className="spin-center"><span className="spinner" />Duke ngarkuar...</div>

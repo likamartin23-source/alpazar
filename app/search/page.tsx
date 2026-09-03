@@ -128,11 +128,11 @@ export default function SearchPage() {
     <>
       <style dangerouslySetInnerHTML={{ __html: `
         *{box-sizing:border-box;margin:0;padding:0;}
-        body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA;}
-        .wrap{max-width:480px;margin:0 auto;background:#FFFBEA;min-height:100vh;padding-bottom:80px;}
+        body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--az-cream);}
+        .wrap{max-width:480px;margin:0 auto;background:var(--az-cream);min-height:100vh;padding-bottom:80px;}
 
         /* ── Topbar ── */
-        .topbar{background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%);padding:10px 12px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:50;}
+        .topbar{background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%);padding:10px 12px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:50;}
         .back{width:44px;height:44px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
         .back i{font-size:18px;color:#111;}
         .search-wrap{flex:1;background:#fff;border-radius:12px;display:flex;align-items:center;padding:0 11px;gap:8px;border:0.5px solid #e0b030;transition:border-color .15s ease,box-shadow .15s ease;}
@@ -141,25 +141,25 @@ export default function SearchPage() {
         .search-wrap input::placeholder{color:#bbb;}
         .search-wrap:focus-within{border-color:#111;box-shadow:0 4px 16px -4px rgba(0,0,0,.2);}
         .search-wrap:focus-within i{color:#C42B0F;}
-        .search-btn{background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;border:none;border-radius:12px;padding:9px 14px;min-height:44px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(0,0,0,.25);transition:transform .15s ease,box-shadow .15s ease;}
+        .search-btn{background:linear-gradient(135deg,var(--az-ink),#000);color:var(--az-yellow);border:none;border-radius:12px;padding:9px 14px;min-height:44px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(0,0,0,.25);transition:transform .15s ease,box-shadow .15s ease;}
         .search-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px -2px rgba(0,0,0,.35);}
 
         /* ── Filter toggle bar ── */
         .filter-toggle-bar{background:#fff;border-bottom:1px solid #ececec;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
         .filter-toggle-btn{display:flex;align-items:center;gap:5px;background:transparent;border:1px solid #ececec;border-radius:999px;padding:5px 14px;min-height:44px;font-size:11px;font-weight:700;color:#111;cursor:pointer;font-family:inherit;transition:background .15s ease,color .15s ease,border-color .15s ease;}
         .filter-toggle-btn:hover{background:#f5f5f5;}
-        .filter-toggle-btn.active{background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;border-color:#111;}
-        .filter-badge-inline{background:#E63312;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;}
+        .filter-toggle-btn.active{background:linear-gradient(135deg,var(--az-ink),#000);color:var(--az-yellow);border-color:#111;}
+        .filter-badge-inline{background:var(--az-red);color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;}
         .clear-link{font-size:11px;color:#C42B0F;font-weight:600;cursor:pointer;background:none;border:none;font-family:inherit;padding:4px 10px;min-height:44px;display:inline-flex;align-items:center;}
 
         /* ── Category chips ── */
         .cats{display:flex;gap:8px;overflow-x:auto;padding:10px 12px;background:#fff;border-bottom:1px solid #f0f0f0;}
         .cats::-webkit-scrollbar{display:none;}
         .cb{background:#f5f5f5;border:none;border-radius:999px;padding:5px 14px;min-height:44px;display:inline-flex;align-items:center;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit;color:#555;white-space:nowrap;transition:background .15s ease,color .15s ease;}
-        .cb.on{background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;}
+        .cb.on{background:linear-gradient(135deg,var(--az-ink),#000);color:var(--az-yellow);}
 
         /* ── Inline filter panel ── */
-        .filter-panel{background:#fff;border-bottom:2px solid #F5C842;overflow:hidden;transition:max-height .25s ease,opacity .2s ease;max-height:0;opacity:0;pointer-events:none;}
+        .filter-panel{background:#fff;border-bottom:2px solid var(--az-yellow);overflow:hidden;transition:max-height .25s ease,opacity .2s ease;max-height:0;opacity:0;pointer-events:none;}
         .filter-panel.open{max-height:600px;opacity:1;pointer-events:auto;}
         .filter-inner{padding:14px 12px 6px;}
 
@@ -181,11 +181,11 @@ export default function SearchPage() {
         .cond-row{display:flex;gap:8px;}
         .cond-chip{flex:1;border:1.5px solid #e0e0e0;border-radius:12px;padding:8px 4px;min-height:44px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;white-space:nowrap;transition:all .15s ease;}
         .cond-chip:hover{border-color:#aaa;}
-        .cond-chip.on{border-color:#111;background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;}
+        .cond-chip.on{border-color:#111;background:linear-gradient(135deg,var(--az-ink),#000);color:var(--az-yellow);}
 
         /* Premium toggle */
         .premium-toggle{display:flex;align-items:center;justify-content:space-between;border:1.5px solid #e0e0e0;border-radius:12px;padding:11px 14px;cursor:pointer;transition:border-color .15s ease,background .15s ease;}
-        .premium-toggle.on{border-color:#e0b030;background:#FFFBEA;}
+        .premium-toggle.on{border-color:#e0b030;background:var(--az-cream);}
         .premium-toggle-label{font-size:13px;font-weight:700;color:#111;}
         .premium-toggle-sub{font-size:10px;color:#555;margin-top:2px;}
         .toggle-track{width:42px;height:24px;border-radius:12px;position:relative;transition:background .2s;flex-shrink:0;}
@@ -193,7 +193,7 @@ export default function SearchPage() {
 
         /* Action row */
         .fp-actions{display:flex;gap:8px;padding:0 12px 14px;}
-        .fp-apply{flex:1;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 2px 8px -2px rgba(230,51,18,.4);transition:transform .15s ease,box-shadow .15s ease;}
+        .fp-apply{flex:1;background:linear-gradient(135deg,var(--az-red),#c42a0e);color:#fff;border:none;border-radius:12px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 2px 8px -2px rgba(230,51,18,.4);transition:transform .15s ease,box-shadow .15s ease;}
         .fp-apply:hover{transform:translateY(-1px);box-shadow:0 4px 16px -4px rgba(230,51,18,.5);}
         .fp-clear{background:#f5f5f5;color:#555;border:none;border-radius:12px;padding:13px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;}
 
@@ -205,7 +205,7 @@ export default function SearchPage() {
         .body{padding:12px;}
         .initial{text-align:center;padding:50px 20px;}
         .initial i{font-size:50px;color:#e0b030;display:block;margin-bottom:14px;}
-        .initial h1{font-size:var(--fs-xl);font-weight:700;color:#1a1a1a;margin-bottom:6px;}
+        .initial h1{font-size:var(--fs-xl);font-weight:700;color:var(--az-ink);margin-bottom:6px;}
         .initial p{font-size:12px;color:#555;}
       ` }} />
 
@@ -389,7 +389,7 @@ export default function SearchPage() {
                 </div>
                 <div
                   className="toggle-track"
-                  style={{ background: premiumOnly ? '#F5C842' : '#ddd' }}
+                  style={{ background: premiumOnly ? 'var(--az-yellow)' : '#ddd' }}
                   aria-hidden="true"
                 >
                   <div

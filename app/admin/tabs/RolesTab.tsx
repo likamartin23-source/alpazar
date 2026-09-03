@@ -9,7 +9,7 @@ import { supabase } from '../../../lib/supabase'
 
 const ROLET: { k: string; l: string; d: string; ng: string }[] = [
   { k: 'owner',     l: 'Pronar',        d: 'Gjithçka, përfshirë caktimin e roleve dhe rimbursimet.', ng: '#7A2E12' },
-  { k: 'admin',     l: 'Administrator', d: 'Gjithçka përveç roleve dhe rimbursimeve.',               ng: '#E63312' },
+  { k: 'admin',     l: 'Administrator', d: 'Gjithçka përveç roleve dhe rimbursimeve.',               ng: 'var(--az-red)' },
   { k: 'finance',   l: 'Financa',       d: 'Pagesat, faturat, rimbursimet dhe planet. Nuk fshin.',   ng: '#1B7F3B' },
   { k: 'moderator', l: 'Moderator',     d: 'Përmbajtja, përdoruesit dhe bizneset. Pa para, pa fshirje.', ng: '#BA7517' },
   { k: 'support',   l: 'Mbështetje',    d: 'Vetëm lexim — sheh, nuk prek.',                          ng: '#555' },
@@ -79,7 +79,7 @@ export function RolesTab() {
       )}
 
       {!mund && (
-        <div className="card" style={{ borderColor: '#F5C842', background: '#FFFBEF', fontSize: 11.5, color: '#7A5B00' }}>
+        <div className="card" style={{ borderColor: 'var(--az-yellow)', background: '#FFFBEF', fontSize: 11.5, color: '#7A5B00' }}>
           Ti mund t’i shohësh rolet, por vetëm një <strong>Pronar</strong> i ndryshon ato.
         </div>
       )}

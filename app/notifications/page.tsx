@@ -134,10 +134,10 @@ export default function NotificationsPage() {
   // Not logged in
   if (authReady && !user) {
     return (
-      <div style={{ minHeight: '100dvh', background: '#FFFBEA', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24 }}>
+      <div style={{ minHeight: '100dvh', background: 'var(--az-cream)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24 }}>
         <div style={{ fontSize: 48 }} aria-hidden="true">🔔</div>
         <div style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>Kyçu për të parë njoftimet</div>
-        <button type="button" onClick={() => window.location.href = '/auth/login'} style={{ background: '#F5C842', border: 'none', borderRadius: 12, padding: '12px 28px', fontWeight: 700, fontSize: 15, cursor: 'pointer', minHeight: 44 }}>
+        <button type="button" onClick={() => window.location.href = '/auth/login'} style={{ background: 'var(--az-yellow)', border: 'none', borderRadius: 12, padding: '12px 28px', fontWeight: 700, fontSize: 15, cursor: 'pointer', minHeight: 44 }}>
           Kyçu
         </button>
       </div>
@@ -145,7 +145,7 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div style={{ minHeight: '100dvh', background: '#FFFBEA', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", paddingBottom: 80 }}>
+    <div style={{ minHeight: '100dvh', background: 'var(--az-cream)', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", paddingBottom: 80 }}>
       {/* Topbar */}
       <div style={{
         position: 'sticky', top: 0, zIndex: 100,
@@ -158,14 +158,14 @@ export default function NotificationsPage() {
           type="button"
           aria-label="Kthehu mbrapa"
           onClick={() => window.history.length > 1 ? window.history.back() : window.location.href = '/'}
-          style={{ background: 'none', border: 'none', color: '#F5C842', fontSize: 22, cursor: 'pointer', padding: '0 4px', lineHeight: 1, display: 'flex', alignItems: 'center', minWidth: 44, minHeight: 44, justifyContent: 'center' }}
+          style={{ background: 'none', border: 'none', color: 'var(--az-yellow)', fontSize: 22, cursor: 'pointer', padding: '0 4px', lineHeight: 1, display: 'flex', alignItems: 'center', minWidth: 44, minHeight: 44, justifyContent: 'center' }}
         >
           <i className="ti ti-arrow-left" style={{ fontSize: 22 }} aria-hidden="true" />
         </button>
-        <h1 style={{ flex: 1, fontWeight: 700, fontSize: 16, color: '#fff', display: 'flex', alignItems: 'center', gap: 8, margin: 0 }}>
+        <h1 style={{ flex: 1, fontWeight: 700, fontSize: 'var(--fs-xl)', color: '#fff', display: 'flex', alignItems: 'center', gap: 8, margin: 0 }}>
           Njoftimet
           {unreadCount > 0 && (
-            <span style={{ background: '#F5C842', color: '#111', borderRadius: 20, padding: '1px 8px', fontSize: 11, fontWeight: 800 }}>
+            <span style={{ background: 'var(--az-yellow)', color: '#111', borderRadius: 20, padding: '1px 8px', fontSize: 11, fontWeight: 800 }}>
               {unreadCount > 99 ? '99+' : unreadCount}
             </span>
           )}
@@ -205,7 +205,7 @@ export default function NotificationsPage() {
           <button
             type="button"
             onClick={() => { window.location.href = '/' }}
-            style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 24px', minHeight: 44, boxSizing: 'border-box', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', marginTop: 4 }}
+            style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 24px', minHeight: 44, boxSizing: 'border-box', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', marginTop: 4 }}
           >
             Shfleto shpalljet →
           </button>
@@ -235,7 +235,7 @@ function NotifRow({ n, onClick, onDismiss, isLast }: { n: Notif; onClick: (n: No
       onKeyDown={isClickable ? (e) => { if (e.key === 'Enter' || e.key === ' ') onClick(n) } : undefined}
       style={{
         display: 'flex', gap: 14, padding: '14px 16px',
-        background: n.is_read ? '#fff' : '#FFFBEA',
+        background: n.is_read ? '#fff' : 'var(--az-cream)',
         borderBottom: isLast ? 'none' : '1px solid #f0e6b0',
         cursor: isClickable ? 'pointer' : 'default',
         transition: 'background .15s',
@@ -246,7 +246,7 @@ function NotifRow({ n, onClick, onDismiss, isLast }: { n: Notif; onClick: (n: No
       {!n.is_read && (
         <div style={{
           position: 'absolute', left: 6, top: '50%', transform: 'translateY(-50%)',
-          width: 6, height: 6, borderRadius: '50%', background: '#F5C842',
+          width: 6, height: 6, borderRadius: '50%', background: 'var(--az-yellow)',
         }} />
       )}
 

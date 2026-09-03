@@ -95,7 +95,7 @@ function BizReviews({ rating, reviews }: { rating: { count: number; avg: number 
         <div style={{ background: '#fff', borderRadius: 16, padding: 16, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{ fontSize: 32, fontWeight: 800, color: '#111' }}>{rating.avg.toFixed(1)}</div>
           <div>
-            <div style={{ color: '#F5C842', fontSize: 16 }} aria-hidden="true">{'★'.repeat(Math.round(rating.avg))}{'☆'.repeat(5 - Math.round(rating.avg))}</div>
+            <div style={{ color: 'var(--az-yellow)', fontSize: 16 }} aria-hidden="true">{'★'.repeat(Math.round(rating.avg))}{'☆'.repeat(5 - Math.round(rating.avg))}</div>
             <div style={{ fontSize: 12, color: '#888' }}>{rating.count} vlerësim{rating.count !== 1 ? 'e' : ''}</div>
           </div>
         </div>
@@ -110,7 +110,7 @@ function BizReviews({ rating, reviews }: { rating: { count: number; avg: number 
                   <div style={{ fontSize: 13, fontWeight: 700, color: '#111' }}>{rv.reviewer_name}</div>
                   <div style={{ fontSize: 10, color: '#aaa' }}>{new Date(rv.created_at).toLocaleDateString('sq-AL', { day: 'numeric', month: 'short', year: 'numeric' })}{rv.purchase_verified ? ' · ✅ Blerje e verifikuar' : ''}</div>
                 </div>
-                <div style={{ color: '#F5C842', fontSize: 13 }} aria-label={`${rv.rating} nga 5`}>{'★'.repeat(rv.rating)}{'☆'.repeat(5 - rv.rating)}</div>
+                <div style={{ color: 'var(--az-yellow)', fontSize: 13 }} aria-label={`${rv.rating} nga 5`}>{'★'.repeat(rv.rating)}{'☆'.repeat(5 - rv.rating)}</div>
               </div>
               {rv.comment && <div style={{ fontSize: 13, color: '#444', lineHeight: 1.5 }}>{rv.comment}</div>}
             </div>
@@ -445,16 +445,16 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   }
 
   if (loadError) return (
-    <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+    <div style={{ maxWidth: 480, margin: '0 auto', background: 'var(--az-cream)', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
       <div style={{ fontSize: 32, marginBottom: 12 }} aria-hidden="true">⚠️</div>
       <div style={{ fontSize: 14, color: '#C42B0F', marginBottom: 16, textAlign: 'center' }}>Nuk u ngarkua biznesi. Kontrollo lidhjen dhe provo sërish.</div>
-      <button type="button" onClick={() => window.location.reload()} style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
+      <button type="button" onClick={() => window.location.reload()} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
     </div>
   )
 
   if (loading) return (
     <div style={{ maxWidth: 480, margin: '0 auto', background: '#f8f8f8', minHeight: '100vh' }}>
-      <div style={{ background: 'linear-gradient(135deg,#F5C842,#E63312)', aspectRatio: '16/7' }} />
+      <div style={{ background: 'linear-gradient(135deg,var(--az-yellow),var(--az-red))', aspectRatio: '16/7' }} />
       <div style={{ padding: 16 }}>
         <div style={{ height: 24, background: '#eee', borderRadius: 8, marginBottom: 10, width: '60%' }} />
         <div style={{ height: 14, background: '#eee', borderRadius: 6, width: '40%' }} />
@@ -463,10 +463,10 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   )
 
   if (!biz) return (
-    <div style={{ maxWidth: 480, margin: '0 auto', padding: 40, textAlign: 'center', background: '#FFFBEA', minHeight: '100vh' }}>
+    <div style={{ maxWidth: 480, margin: '0 auto', padding: 40, textAlign: 'center', background: 'var(--az-cream)', minHeight: '100vh' }}>
       <div style={{ fontSize: 48, marginBottom: 16 }} aria-hidden="true">🏢</div>
       <div style={{ fontWeight: 700, color: '#111', marginBottom: 16 }}>Biznesi nuk u gjet</div>
-      <button type="button" onClick={() => window.history.back()} style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 20px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>← Kthehu</button>
+      <button type="button" onClick={() => window.history.back()} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 20px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>← Kthehu</button>
     </div>
   )
 
@@ -492,19 +492,19 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           .vs-bar .vs-lbl{color:#bbb;}
           .vs-seg{display:inline-flex;background:#000;border-radius:999px;padding:3px;gap:2px;margin-left:auto;}
           .vs-seg button{border:none;background:none;color:#ccc;font-weight:800;font-size:12px;padding:6px 12px;border-radius:999px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;min-height:34px;}
-          .vs-seg button.on{background:#F5C842;color:#111;}
-          .bizp-cover{position:relative;aspect-ratio:16/7;overflow:hidden;background:linear-gradient(135deg,#F5C842,#E63312);}
+          .vs-seg button.on{background:var(--az-yellow);color:#111;}
+          .bizp-cover{position:relative;aspect-ratio:16/7;overflow:hidden;background:linear-gradient(135deg,var(--az-yellow),var(--az-red));}
           .bizp-cover img{width:100%;height:100%;object-fit:cover;}
           .cam{position:absolute;background:rgba(0,0,0,.55);border:none;border-radius:999px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;}
           .bizp-card{background:#fff;border-radius:0 0 20px 20px;padding:0 16px 16px;margin-bottom:8px;}
           .bizp-badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
           /* Shirit statistikash i zi — pasqyrë e panelit /profile (BP2: paneli identik në formë). */
           .stat-pill{display:flex;flex-direction:column;align-items:center;flex:1;}
-          .stat-n{font-size:18px;font-weight:800;color:#F5C842;}
+          .stat-n{font-size:18px;font-weight:800;color:var(--az-yellow);}
           .stat-l{font-size:10px;color:#555;font-weight:500;margin-top:1px;}
           .bizp-tabs{position:sticky;top:50px;z-index:10;background:#fff;border-bottom:1px solid #eee;display:flex;overflow-x:auto;margin-bottom:2px;}
           .bizp-tabs button{flex:1 0 auto;padding:12px 14px;font-size:12.5px;font-weight:700;border:none;background:none;cursor:pointer;border-bottom:2.5px solid transparent;color:#888;font-family:inherit;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:5px;}
-          .bizp-tabs button.on{color:#C42B0F;border-bottom-color:#E63312;}
+          .bizp-tabs button.on{color:#C42B0F;border-bottom-color:var(--az-red);}
           .mcard{background:#fff;border-radius:14px;margin:8px 12px 0;padding:14px 16px;}
           .mrow{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;background:#fff;border:1px solid #ececec;border-radius:12px;padding:10px 14px;cursor:pointer;font-family:inherit;text-align:left;margin-bottom:8px;}
           .mrow:hover{background:#fafafa;border-color:#ddd;}
@@ -515,14 +515,14 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           .bl-thumb{width:52px;height:52px;border-radius:10px;background:#f9f5e0;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;cursor:pointer;}
           .bl-thumb img{width:100%;height:100%;object-fit:cover;}
           .bl-info{flex:1;min-width:0;cursor:pointer;}
-          .bl-title{font-size:12px;font-weight:700;color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+          .bl-title{font-size:12px;font-weight:700;color:var(--az-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
           .bl-price{font-size:13px;font-weight:800;color:#C42B0F;margin-top:2px;}
           .bl-meta{font-size:10px;color:#aaa;margin-top:2px;}
-          .bl-edit{background:#FFFBEA;border:1px solid #e0b030;border-radius:10px;padding:6px 10px;font-size:12px;cursor:pointer;color:#856404;font-family:inherit;min-height:34px;}
+          .bl-edit{background:var(--az-cream);border:1px solid #e0b030;border-radius:10px;padding:6px 10px;font-size:12px;cursor:pointer;color:#856404;font-family:inherit;min-height:34px;}
           .bl-edit:disabled{opacity:.6;cursor:not-allowed;}
           .bl-del{background:#FFF0EE;border:none;border-radius:10px;padding:6px 10px;font-size:12px;cursor:pointer;color:#C42B0F;font-family:inherit;min-height:34px;}
           .bl-filter{flex:1;min-height:40px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;border:1px solid #eee;background:#fff;color:#666;}
-          .bl-filter.on{border:1.5px solid #C42305;background:#FFF1EE;color:#C42305;}
+          .bl-filter.on{border:1.5px solid var(--az-red-deep);background:#FFF1EE;color:var(--az-red-deep);}
           .mrow i.lead{font-size:19px;color:#C42B0F;width:24px;text-align:center;}
           .mrow .mtxt{flex:1;min-width:0;}
           .mrow .mtt{font-size:13.5px;font-weight:700;color:#111;}
@@ -560,10 +560,10 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
                 <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) uploadBizImage(f, 'logo'); e.currentTarget.value = '' }} />
               </label>
             </div>
-            {imgErr && <div role="alert" style={{ fontSize: 11, color: '#C42305', marginBottom: 6 }}>{imgErr}</div>}
+            {imgErr && <div role="alert" style={{ fontSize: 11, color: 'var(--az-red-deep)', marginBottom: 6 }}>{imgErr}</div>}
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-              <h1 style={{ fontSize: 21, fontWeight: 800, color: '#111', lineHeight: 1.2 }}>{biz.name}</h1>
+              <h1 style={{ fontSize: 'var(--fs-2xl)', fontWeight: 800, color: '#111', lineHeight: 1.2 }}>{biz.name}</h1>
               {biz.is_verified && <span aria-hidden="true" style={{ fontSize: 17 }}>✅</span>}
             </div>
 
@@ -656,13 +656,13 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
                 <div style={{ textAlign: 'center', padding: '32px 16px', color: '#aaa' }}>
                   <div style={{ fontSize: 44, marginBottom: 10 }} aria-hidden="true">🛍️</div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: '#666', marginBottom: 8 }}>Asnjë shpallje ende</div>
-                  <button type="button" onClick={() => { window.location.href = '/listing/new' }} style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 24px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: 13 }}>+ Shto shpallje</button>
+                  <button type="button" onClick={() => { window.location.href = '/listing/new' }} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 24px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: 13 }}>+ Shto shpallje</button>
                 </div>
               ) : (
                 <>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
                     <span style={{ fontSize: 13, fontWeight: 800, color: '#111' }}>Shpalljet e biznesit</span>
-                    <button type="button" onClick={() => { window.location.href = '/listing/new' }} style={{ background: '#F5C842', border: 'none', borderRadius: 9, padding: '7px 14px', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', color: '#111' }}>+ Shto</button>
+                    <button type="button" onClick={() => { window.location.href = '/listing/new' }} style={{ background: 'var(--az-yellow)', border: 'none', borderRadius: 9, padding: '7px 14px', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', color: '#111' }}>+ Shto</button>
                   </div>
                   <div role="tablist" aria-label="Filtro shpalljet" style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
                     {([['active', 'Aktive'], ['paused', 'Të pauzuara'], ['sold', 'Të shitura']] as const).map(([k, etiketa]) => {
@@ -681,7 +681,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
                     const bosh = listFilter === 'active' ? 'Nuk ke shpallje aktive.' : listFilter === 'sold' ? 'Ende asnjë shpallje e shitur.' : 'Asnjë shpallje e pauzuar.'
                     return shown.length === 0 ? (
                       <div style={{ textAlign: 'center', padding: '24px 0', color: '#555', fontSize: 12 }}>
-                        <i className="ti ti-package" style={{ fontSize: 36, display: 'block', marginBottom: 10, color: '#F5C842' }} aria-hidden="true" />{bosh}
+                        <i className="ti ti-package" style={{ fontSize: 36, display: 'block', marginBottom: 10, color: 'var(--az-yellow)' }} aria-hidden="true" />{bosh}
                       </div>
                     ) : shown.map(l => (
                       <div key={l.id} className="bl-row" style={!l.is_active ? { opacity: 0.72 } : undefined}>
@@ -712,7 +712,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
                         ))}
                         {pendingDelete === l.id ? (
                           <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
-                            <button type="button" onClick={() => bizDeactivate(l.id)} style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Hiq</button>
+                            <button type="button" onClick={() => bizDeactivate(l.id)} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Hiq</button>
                             <button type="button" onClick={() => setPendingDelete(null)} style={{ background: '#eee', color: '#555', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Jo</button>
                           </div>
                         ) : (
@@ -756,7 +756,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           .biz-right{min-width:0;}
         }
         .biz-tab{flex:1;padding:13px 0;font-size:13px;font-weight:700;border:none;background:none;cursor:pointer;border-bottom:2.5px solid transparent;color:#888;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:4px;}
-        .biz-tab.active{color:#C42B0F;border-bottom-color:#E63312;}
+        .biz-tab.active{color:#C42B0F;border-bottom-color:var(--az-red);}
         /* Grid-i .ig-* (katror 1/1, vetem foto + cmim) u zevendesua nga
            .listings-grid + ListingCard — stilet e tyre rrine te
            app/ui-refine.css, seksioni 8. */
@@ -784,7 +784,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
       <div className="biz-left">
       {/* ── Cover photo ────────────────────────────────────── */}
       <div style={{ position: 'relative' }}>
-        <div style={{ aspectRatio: '16/7', overflow: 'hidden', background: 'linear-gradient(135deg,#F5C842,#E63312)' }}>
+        <div style={{ aspectRatio: '16/7', overflow: 'hidden', background: 'linear-gradient(135deg,var(--az-yellow),var(--az-red))' }}>
           {biz.cover_url && (
             <img src={biz.cover_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
@@ -821,7 +821,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
         {/* Name + verified */}
         <div style={{ padding: '0 16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-            <h1 style={{ fontSize: 22, fontWeight: 800, color: '#111', lineHeight: 1.2 }}>{biz.name}</h1>
+            <h1 style={{ fontSize: 'var(--fs-3xl)', fontWeight: 800, color: '#111', lineHeight: 1.2 }}>{biz.name}</h1>
             {biz.is_verified && (
               <span style={{ fontSize: 18, lineHeight: 1 }} aria-hidden="true">✅</span>
             )}
@@ -909,9 +909,9 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               <a
                 href={`/u/${biz.owner_id}`}
                 aria-label={isOwner ? 'Ti je pronari — shiko profilin tënd' : 'Pronari — shiko profilin'}
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12.5, color: '#111', textDecoration: 'none', minHeight: 44, padding: '6px 12px', border: '1px solid #F5C842', background: '#FFFBEA', borderRadius: 999, fontWeight: 600 }}>
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12.5, color: '#111', textDecoration: 'none', minHeight: 44, padding: '6px 12px', border: '1px solid var(--az-yellow)', background: 'var(--az-cream)', borderRadius: 999, fontWeight: 600 }}>
                 <span aria-hidden="true" style={{ color: '#E6A200', fontSize: 14, lineHeight: 1 }}>★</span>
-                {isOwner ? <>Ti je pronari <span style={{ color: '#C42305', fontWeight: 700 }}>— profili yt →</span></> : <>Pronari <span style={{ color: '#C42305', fontWeight: 700 }}>— shiko profilin →</span></>}
+                {isOwner ? <>Ti je pronari <span style={{ color: 'var(--az-red-deep)', fontWeight: 700 }}>— profili yt →</span></> : <>Pronari <span style={{ color: 'var(--az-red-deep)', fontWeight: 700 }}>— shiko profilin →</span></>}
               </a>
             </div>
           )}
@@ -938,11 +938,11 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
                 {/* [D] Shkalla 3-nivelesh: MESAZH = PRIMAR i kuq i mbushur (i njëjti rol si /u & /listing,
                     kanali kryesor i platformës); TELEFONO = SEKONDAR kontur i kuq (kontakt i drejtpërdrejtë). */}
                 <button type="button" aria-label="Dërgo mesazh" onClick={() => { if (!userId) { window.location.href = '/auth/login'; return } window.location.href = `/messages?with=${biz.owner_id}` }}
-                  className="action-btn" style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff' }}>
+                  className="action-btn" style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff' }}>
                   <i className="ti ti-message" style={{ fontSize: 15 }} aria-hidden="true" /> Mesazh
                 </button>
                 {biz.phone && (
-                  <a href={`tel:${biz.phone}`} className="action-btn" style={{ background: '#fff', color: '#C42305', border: '1.5px solid #C42305' }}>
+                  <a href={`tel:${biz.phone}`} className="action-btn" style={{ background: '#fff', color: 'var(--az-red-deep)', border: '1.5px solid var(--az-red-deep)' }}>
                     <i className="ti ti-phone" style={{ fontSize: 15 }} aria-hidden="true" /> Telefono
                   </a>
                 )}
@@ -954,8 +954,8 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
                   aria-label={following ? 'Mos e ndiq më këtë biznes' : 'Ndiq këtë biznes'}
                   className="action-btn"
                   style={following
-                    ? { background: '#fff', color: '#C42305', border: '1.5px solid #C42305', boxShadow: 'none' }
-                    : { background: 'linear-gradient(135deg,#F8D24E,#F5C842)', color: '#111' }}>
+                    ? { background: '#fff', color: 'var(--az-red-deep)', border: '1.5px solid var(--az-red-deep)', boxShadow: 'none' }
+                    : { background: 'linear-gradient(135deg,var(--az-yellow-hi),var(--az-yellow))', color: '#111' }}>
                   <i className={`ti ti-${following ? 'check' : 'plus'}`} style={{ fontSize: 15 }} aria-hidden="true" />
                   {following ? 'Po ndjek' : 'Ndiq'}
                 </button>
@@ -982,7 +982,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
             {openNow !== null && (
               <span className="biz-chip" style={openNow
                 ? { background: '#E7F6EC', color: '#0E7A35', borderColor: '#0E7A3533' }
-                : { background: '#FDECEC', color: '#C42305', borderColor: '#C4230533' }}>
+                : { background: '#FDECEC', color: 'var(--az-red-deep)', borderColor: '#C4230533' }}>
                 <span aria-hidden="true">🕐</span> {openNow ? 'Hapur tani' : 'Mbyllur tani'}
               </span>
             )}
@@ -999,10 +999,10 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           publike i shfaqet pronarit VETËM kur ka shtypur "Shiko faqen publike" → banderolë
           e qëndrueshme për t'u kthyer te menaxhimi ("Vepro si: Biznesi"). */}
       {isOwner && asVisitor && (
-        <div style={{ background: '#111', color: '#F5C842', margin: '0 0 8px', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, fontSize: 12.5, fontWeight: 700 }}>
+        <div style={{ background: '#111', color: 'var(--az-yellow)', margin: '0 0 8px', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, fontSize: 12.5, fontWeight: 700 }}>
           <span><i className="ti ti-eye" aria-hidden="true" /> Po e shikon faqen publike të biznesit</span>
           <button type="button" onClick={() => { window.location.href = `/biznese/${biz.id}` }}
-            style={{ background: '#F5C842', color: '#111', border: 'none', borderRadius: 8, padding: '6px 12px', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' }}>
+            style={{ background: 'var(--az-yellow)', color: '#111', border: 'none', borderRadius: 8, padding: '6px 12px', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' }}>
             ← Kthehu te menaxhimi
           </button>
         </div>
@@ -1046,7 +1046,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               <div style={{ fontSize: 48, marginBottom: 12 }} aria-hidden="true">🛍️</div>
               <div style={{ fontSize: 14, fontWeight: 600, color: '#666', marginBottom: 6 }}>Asnjë shpallje ende</div>
               {isOwner && (
-                <button type="button" onClick={() => window.location.href = '/listing/new'} style={{ marginTop: 8, background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 24px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: 13 }}>+ Shto shpallje</button>
+                <button type="button" onClick={() => window.location.href = '/listing/new'} style={{ marginTop: 8, background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 24px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: 13 }}>+ Shto shpallje</button>
               )}
             </div>
           ) : (
@@ -1072,7 +1072,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           <div className="card">
             <h2 className="section-title"><i className="ti ti-building-store" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Rreth biznesit</h2>
             {biz.tagline && (
-              <p style={{ fontSize: 13.5, color: '#C42305', fontWeight: 700, fontStyle: 'italic', marginBottom: 10 }}>“{biz.tagline}”</p>
+              <p style={{ fontSize: 13.5, color: 'var(--az-red-deep)', fontWeight: 700, fontStyle: 'italic', marginBottom: 10 }}>“{biz.tagline}”</p>
             )}
             {biz.description
               ? <p style={{ fontSize: 13, color: '#444', lineHeight: 1.7, marginBottom: 12 }}>{biz.description}</p>
@@ -1183,9 +1183,9 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
                 <div className="info-row" style={{ gap: 12 }}>
                   <span className="info-icon" aria-hidden="true">🔗</span>
                   <span className="info-text" style={{ display: 'inline-flex', gap: 12, flexWrap: 'wrap' }}>
-                    {biz.socials?.instagram && <a href={biz.socials.instagram.startsWith('http') ? biz.socials.instagram : `https://instagram.com/${biz.socials.instagram.replace('@','')}`} target="_blank" rel="noopener noreferrer" style={{ color: '#C42305', fontWeight: 700 }}>Instagram</a>}
-                    {biz.socials?.facebook && <a href={biz.socials.facebook.startsWith('http') ? biz.socials.facebook : `https://facebook.com/${biz.socials.facebook}`} target="_blank" rel="noopener noreferrer" style={{ color: '#C42305', fontWeight: 700 }}>Facebook</a>}
-                    {biz.socials?.tiktok && <a href={biz.socials.tiktok.startsWith('http') ? biz.socials.tiktok : `https://tiktok.com/@${biz.socials.tiktok.replace('@','')}`} target="_blank" rel="noopener noreferrer" style={{ color: '#C42305', fontWeight: 700 }}>TikTok</a>}
+                    {biz.socials?.instagram && <a href={biz.socials.instagram.startsWith('http') ? biz.socials.instagram : `https://instagram.com/${biz.socials.instagram.replace('@','')}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--az-red-deep)', fontWeight: 700 }}>Instagram</a>}
+                    {biz.socials?.facebook && <a href={biz.socials.facebook.startsWith('http') ? biz.socials.facebook : `https://facebook.com/${biz.socials.facebook}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--az-red-deep)', fontWeight: 700 }}>Facebook</a>}
+                    {biz.socials?.tiktok && <a href={biz.socials.tiktok.startsWith('http') ? biz.socials.tiktok : `https://tiktok.com/@${biz.socials.tiktok.replace('@','')}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--az-red-deep)', fontWeight: 700 }}>TikTok</a>}
                   </span>
                 </div>
               )}

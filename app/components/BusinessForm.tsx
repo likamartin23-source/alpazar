@@ -211,15 +211,15 @@ export default function BusinessForm({ mode, initial, onSaved }: {
     <div>
       <style dangerouslySetInnerHTML={{ __html: `
         .bf-input{width:100%;border:1px solid #e5e5e5;border-radius:10px;padding:11px 13px;font-size:13px;font-family:inherit;background:#fff;outline:none;box-sizing:border-box;}
-        .bf-input:focus{border-color:#E63312;}
+        .bf-input:focus{border-color:var(--az-red);}
         .bf-chip{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1.5px solid #ddd;border-radius:20px;padding:7px 13px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;}
-        .bf-chip.on{background:#F5C842;border-color:#F5C842;color:#111;}
-        .bf-save{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:13px;padding:15px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;margin-top:20px;}
+        .bf-chip.on{background:var(--az-yellow);border-color:var(--az-yellow);color:#111;}
+        .bf-save{width:100%;background:linear-gradient(135deg,var(--az-red),#c42a0e);color:#fff;border:none;border-radius:13px;padding:15px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;margin-top:20px;}
         .bf-save:disabled{opacity:.5;cursor:not-allowed;}
       ` }} />
 
       {msg && (
-        <div role="alert" style={{ background: msg.startsWith('err:') ? '#FFF0EE' : '#F0FFF4', border: `1px solid ${msg.startsWith('err:') ? '#F09595' : '#86efac'}`, borderRadius: 10, padding: '10px 14px', marginBottom: 14, fontSize: 12, color: msg.startsWith('err:') ? '#C42305' : '#166534', fontWeight: 600 }}>
+        <div role="alert" style={{ background: msg.startsWith('err:') ? '#FFF0EE' : '#F0FFF4', border: `1px solid ${msg.startsWith('err:') ? '#F09595' : '#86efac'}`, borderRadius: 10, padding: '10px 14px', marginBottom: 14, fontSize: 12, color: msg.startsWith('err:') ? 'var(--az-red-deep)' : '#166534', fontWeight: 600 }}>
           {msg.replace(/^(err|warn):/, '')}
         </div>
       )}
@@ -227,7 +227,7 @@ export default function BusinessForm({ mode, initial, onSaved }: {
       {/* Kopertina + logo. Avatar-i është SIBLING i kopertinës (jo brenda overflow:hidden) →
           gjysma e poshtme + butoni i kamerës NUK priten dhe janë të kapshme (rregullim). */}
       <div style={{ position: 'relative', width: '100%', marginBottom: 44 }}>
-        <div style={{ position: 'relative', width: '100%', aspectRatio: '16/6', borderRadius: 12, overflow: 'hidden', background: coverPrev ? 'transparent' : 'linear-gradient(135deg,#F5C842,#E63312)' }}>
+        <div style={{ position: 'relative', width: '100%', aspectRatio: '16/6', borderRadius: 12, overflow: 'hidden', background: coverPrev ? 'transparent' : 'linear-gradient(135deg,var(--az-yellow),var(--az-red))' }}>
           {coverPrev && <img src={coverPrev} alt="Kopertinë" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
           <label style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: coverPrev ? 'rgba(0,0,0,.25)' : 'none' }}>
             <span style={{ background: 'rgba(0,0,0,.55)', color: '#fff', borderRadius: 10, padding: '8px 16px', fontSize: 12, fontWeight: 700 }}><span aria-hidden="true">📷</span> {coverPrev ? 'Ndrysho kopertinën' : 'Shto kopertinën'}</span>
@@ -247,7 +247,7 @@ export default function BusinessForm({ mode, initial, onSaved }: {
             <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const x = e.target.files?.[0]; if (x) { setLogoFile(x); setLogoPrev(URL.createObjectURL(x)) } }} />
           </label>
           {logoPrev && (
-            <button type="button" aria-label="Hiq logon" onClick={() => { setLogoFile(null); setLogoPrev('') }} style={{ position: 'absolute', top: -6, right: -6, width: 20, height: 20, borderRadius: '50%', background: '#E63312', color: '#fff', border: '2px solid #fff', cursor: 'pointer', fontSize: 11, lineHeight: 1 }}>✕</button>
+            <button type="button" aria-label="Hiq logon" onClick={() => { setLogoFile(null); setLogoPrev('') }} style={{ position: 'absolute', top: -6, right: -6, width: 20, height: 20, borderRadius: '50%', background: 'var(--az-red)', color: '#fff', border: '2px solid #fff', cursor: 'pointer', fontSize: 11, lineHeight: 1 }}>✕</button>
           )}
         </div>
       </div>
@@ -280,10 +280,10 @@ export default function BusinessForm({ mode, initial, onSaved }: {
         {galleryItems.map((it, i) => (
           <div key={it.id} style={{ position: 'relative', width: 72 }}>
             <div style={{ position: 'relative', width: 72, height: 72 }}>
-              <img src={it.file ? it.prev : it.url} alt="" style={{ width: 72, height: 72, objectFit: 'cover', borderRadius: 8, border: i === 0 ? '2px solid #F5C842' : '1px solid #eee' }} />
-              {i === 0 && <span style={{ position: 'absolute', top: 0, left: 0, background: '#F5C842', color: '#111', fontSize: 8, fontWeight: 800, padding: '1px 4px', borderRadius: '8px 0 6px 0' }} aria-hidden="true">KRYESORE</span>}
+              <img src={it.file ? it.prev : it.url} alt="" style={{ width: 72, height: 72, objectFit: 'cover', borderRadius: 8, border: i === 0 ? '2px solid var(--az-yellow)' : '1px solid #eee' }} />
+              {i === 0 && <span style={{ position: 'absolute', top: 0, left: 0, background: 'var(--az-yellow)', color: '#111', fontSize: 8, fontWeight: 800, padding: '1px 4px', borderRadius: '8px 0 6px 0' }} aria-hidden="true">KRYESORE</span>}
               {it.file && <span style={{ position: 'absolute', bottom: 0, right: 0, background: 'rgba(14,122,53,.9)', color: '#fff', fontSize: 8, padding: '1px 4px', borderRadius: '6px 0 8px 0' }} aria-hidden="true">E re</span>}
-              <button type="button" aria-label="Fshi foton" onClick={() => removeGalleryItem(it.id)} style={{ position: 'absolute', top: -6, right: -6, width: 20, height: 20, borderRadius: '50%', background: '#E63312', color: '#fff', border: '2px solid #fff', cursor: 'pointer', fontSize: 11, lineHeight: 1 }}>✕</button>
+              <button type="button" aria-label="Fshi foton" onClick={() => removeGalleryItem(it.id)} style={{ position: 'absolute', top: -6, right: -6, width: 20, height: 20, borderRadius: '50%', background: 'var(--az-red)', color: '#fff', border: '2px solid #fff', cursor: 'pointer', fontSize: 11, lineHeight: 1 }}>✕</button>
             </div>
             {/* Rendit: ◀ ▶ (e para = kryesore) */}
             <div style={{ display: 'flex', gap: 4, marginTop: 3, justifyContent: 'center' }}>

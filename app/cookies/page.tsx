@@ -5,20 +5,20 @@ const LS = { color: '#666' as const, fontSize: 11, textDecoration: 'none' as con
 export default function Cookies() {
   const css = `
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA;}
+    body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--az-cream);}
     .wrap{max-width:640px;margin:0 auto;background:#fff;min-height:100vh;}
-    .topbar{background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
+    .topbar{background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
     .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0;}
     .back i{font-size:18px;color:#111;}
     .topbar-title{font-size:15px;font-weight:700;color:#111;}
     .content{padding:24px 20px 40px;}
-    .ver{font-size:11px;color:#6E6E6E;margin-bottom:20px;background:#FFFBEA;padding:8px 12px;border-radius:8px;display:inline-block;}
+    .ver{font-size:11px;color:#6E6E6E;margin-bottom:20px;background:var(--az-cream);padding:8px 12px;border-radius:8px;display:inline-block;}
     h1{font-size:var(--fs-3xl);font-weight:700;color:#111;margin-bottom:8px;}
-    h2{font-size:14px;font-weight:700;color:#111;margin:22px 0 8px;padding-bottom:5px;border-bottom:2px solid #F5C842;}
+    h2{font-size:14px;font-weight:700;color:#111;margin:22px 0 8px;padding-bottom:5px;border-bottom:2px solid var(--az-yellow);}
     p{font-size:13px;color:#444;line-height:1.85;margin-bottom:10px;}
     ul{font-size:13px;color:#444;line-height:1.85;padding-left:18px;margin-bottom:10px;}
     li{margin-bottom:5px;}
-    .note{background:#FFFBEA;border-left:3px solid #F5C842;padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:12px;color:#666;line-height:1.7;}
+    .note{background:var(--az-cream);border-left:3px solid var(--az-yellow);padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:12px;color:#666;line-height:1.7;}
     .cookie-card{background:#f9f9f9;border:1px solid #eee;border-radius:10px;padding:12px 16px;margin:8px 0;}
     .cookie-card strong{font-size:12px;font-weight:700;color:#111;display:block;margin-bottom:4px;}
     .cookie-card span{font-size:11px;color:#666;}
@@ -28,7 +28,7 @@ export default function Cookies() {
     .law{font-size:11px;color:#555;font-style:italic;}
     .table-wrap{overflow-x:auto;margin:10px 0;}
     table{width:100%;border-collapse:collapse;font-size:12px;}
-    th{background:#FFFBEA;padding:8px 10px;text-align:left;font-weight:700;color:#111;border:1px solid #eee;}
+    th{background:var(--az-cream);padding:8px 10px;text-align:left;font-weight:700;color:#111;border:1px solid #eee;}
     td{padding:8px 10px;color:#444;border:1px solid #eee;vertical-align:top;}
     code{background:#f0f0f0;padding:1px 5px;border-radius:3px;font-size:11px;font-family:monospace;}
     .ftr{display:flex;flex-wrap:wrap;gap:8px 16px;padding:20px;background:#f9f9f9;border-top:1px solid #eee;margin-top:10px;}

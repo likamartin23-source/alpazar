@@ -36,14 +36,14 @@ export function LanguageSwitcher({ tone = 'dark' }: { tone?: 'dark' | 'light' })
   const { lang, setLang, t } = useT()
   const cur = LANGS.find(l => l.code === lang) ?? LANGS[0]
   const light = tone === 'light'
-  const ngjyra = light ? '#5A4A12' : '#F5C842'
+  const ngjyra = light ? '#5A4A12' : 'var(--az-yellow)'
 
   return (
     <label data-no-translate title={t('lang_label')}
       style={{
         display: 'inline-flex', alignItems: 'center', gap: 5, cursor: 'pointer',
         position: 'relative',
-        background: light ? 'rgba(0,0,0,.07)' : '#1a1a1a',
+        background: light ? 'rgba(0,0,0,.07)' : 'var(--az-ink)',
         border: light ? '1px solid rgba(0,0,0,.06)' : '1px solid #333',
         borderRadius: 999, padding: light ? '4px 9px 4px 8px' : '5px 10px 5px 9px',
       }}>

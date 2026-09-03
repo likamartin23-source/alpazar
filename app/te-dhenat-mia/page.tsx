@@ -118,12 +118,12 @@ export default function TeDhenatMiaPage() {
    *  e vetme ne 1447ms. Koka (55px) dhe kolona (480px) tani jane te pranishme
    *  qe ne fillim; skeleti mbulon trupin e matur (~1025px).  */
   if (loading) return (
-    <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh', paddingBottom: 80, fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
-      <div style={{ background: 'linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%)', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10, position: 'sticky', top: 0, zIndex: 10 }}>
+    <div style={{ maxWidth: 480, margin: '0 auto', background: 'var(--az-cream)', minHeight: '100vh', paddingBottom: 80, fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
+      <div style={{ background: 'linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%)', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10, position: 'sticky', top: 0, zIndex: 10 }}>
         <button type="button" aria-label="Kthehu mbrapa" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <i className="ti ti-arrow-left" aria-hidden="true" style={{ fontSize: 22, color: '#111' }} />
         </button>
-        <h1 style={{ fontSize: 16, fontWeight: 800, color: '#111', margin: 0 }}>Të dhënat e mia</h1>
+        <h1 style={{ fontSize: 'var(--fs-xl)', fontWeight: 800, color: '#111', margin: 0 }}>Të dhënat e mia</h1>
       </div>
       <div style={{ padding: 16 }} aria-busy="true" aria-label="Duke ngarkuar të dhënat">
         {[210, 150, 260, 190, 170].map((h, i) => (
@@ -134,18 +134,18 @@ export default function TeDhenatMiaPage() {
   )
 
   return (
-    <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh', paddingBottom: 80, fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
+    <div style={{ maxWidth: 480, margin: '0 auto', background: 'var(--az-cream)', minHeight: '100vh', paddingBottom: 80, fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
       {/* Header */}
-      <div style={{ background: 'linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%)', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10, position: 'sticky', top: 0, zIndex: 10 }}>
+      <div style={{ background: 'linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%)', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10, position: 'sticky', top: 0, zIndex: 10 }}>
         <button type="button" aria-label="Kthehu mbrapa" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <i className="ti ti-arrow-left" aria-hidden="true" style={{ fontSize: 22, color: '#111' }} />
         </button>
-        <h1 style={{ fontSize: 15, fontWeight: 700, color: '#111', flex: 1, margin: 0 }}><span aria-hidden="true">🔒</span> Të dhënat e mia (GDPR)</h1>
+        <h1 style={{ fontSize: 'var(--fs-xl)', fontWeight: 700, color: '#111', flex: 1, margin: 0 }}><span aria-hidden="true">🔒</span> Të dhënat e mia (GDPR)</h1>
       </div>
 
       <div style={{ padding: '16px 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
         {msg && (
-          <div role="alert" style={{ background: msg.startsWith('err:') ? '#FFF0EE' : '#F0FFF4', border: `1px solid ${msg.startsWith('err:') ? '#F09595' : '#86efac'}`, borderRadius: 10, padding: '10px 14px', fontSize: 12, color: msg.startsWith('err:') ? '#C42305' : '#166534', fontWeight: 600 }}>
+          <div role="alert" style={{ background: msg.startsWith('err:') ? '#FFF0EE' : '#F0FFF4', border: `1px solid ${msg.startsWith('err:') ? '#F09595' : '#86efac'}`, borderRadius: 10, padding: '10px 14px', fontSize: 12, color: msg.startsWith('err:') ? 'var(--az-red-deep)' : '#166534', fontWeight: 600 }}>
             {msg.replace(/^(err:|ok:)/, '')}
           </div>
         )}
@@ -176,7 +176,7 @@ export default function TeDhenatMiaPage() {
             type="button"
             onClick={exportData}
             disabled={exporting}
-            style={{ width: '100%', background: '#111', color: '#F5C842', border: 'none', borderRadius: 11, padding: '12px 0', minHeight: 44, boxSizing: 'border-box', fontSize: 13, fontWeight: 700, cursor: exporting ? 'not-allowed' : 'pointer', opacity: exporting ? 0.6 : 1, fontFamily: 'inherit' }}
+            style={{ width: '100%', background: '#111', color: 'var(--az-yellow)', border: 'none', borderRadius: 11, padding: '12px 0', minHeight: 44, boxSizing: 'border-box', fontSize: 13, fontWeight: 700, cursor: exporting ? 'not-allowed' : 'pointer', opacity: exporting ? 0.6 : 1, fontFamily: 'inherit' }}
           >
             {exporting ? <><span aria-hidden='true'>⏳</span> Duke eksportuar...</> : <><span aria-hidden='true'>📥</span> Shkarko të dhënat e mia (JSON)</>}
           </button>
@@ -191,7 +191,7 @@ export default function TeDhenatMiaPage() {
               checked={marketingOpt}
               disabled={savingOpt}
               onChange={e => toggleMarketing(e.target.checked)}
-              style={{ width: 18, height: 18, accentColor: '#E63312', cursor: 'pointer' }}
+              style={{ width: 18, height: 18, accentColor: 'var(--az-red)', cursor: 'pointer' }}
             />
             <div>
               <div style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>Pranoj njoftime marketingu</div>
@@ -210,13 +210,13 @@ export default function TeDhenatMiaPage() {
             <button
               type="button"
               onClick={() => setConfirmDelete(true)}
-              style={{ width: '100%', background: 'transparent', color: '#C42305', border: '1.5px solid #C42305', borderRadius: 11, padding: '11px 0', minHeight: 44, boxSizing: 'border-box', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+              style={{ width: '100%', background: 'transparent', color: 'var(--az-red-deep)', border: '1.5px solid var(--az-red-deep)', borderRadius: 11, padding: '11px 0', minHeight: 44, boxSizing: 'border-box', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
             >
               <><span aria-hidden="true">🗑️</span> Fshi llogarinë time</>
             </button>
           ) : (
             <div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: '#C42305', marginBottom: 10 }}>Jeni i sigurt? Ky veprim NUK mund të kthehet!</div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--az-red-deep)', marginBottom: 10 }}>Jeni i sigurt? Ky veprim NUK mund të kthehet!</div>
               <input
                 id="delete-confirm-password"
                 type="password"
@@ -225,7 +225,7 @@ export default function TeDhenatMiaPage() {
                 placeholder="Shkruaj fjalëkalimin për të konfirmuar"
                 aria-label="Fjalëkalimi për konfirmim fshirjeje"
                 autoComplete="current-password"
-                style={{ width: '100%', border: '1.5px solid #C42305', borderRadius: 10, padding: '10px 12px', fontSize: 13, marginBottom: 10, fontFamily: 'inherit', boxSizing: 'border-box', outline: 'none' }}
+                style={{ width: '100%', border: '1.5px solid var(--az-red-deep)', borderRadius: 10, padding: '10px 12px', fontSize: 13, marginBottom: 10, fontFamily: 'inherit', boxSizing: 'border-box', outline: 'none' }}
               />
               <div style={{ display: 'flex', gap: 8 }}>
                 <button
@@ -239,7 +239,7 @@ export default function TeDhenatMiaPage() {
                   type="button"
                   onClick={deleteAccount}
                   disabled={deleting}
-                  style={{ flex: 1, background: '#C42305', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: deleting ? 'not-allowed' : 'pointer', opacity: deleting ? 0.7 : 1, fontFamily: 'inherit', minHeight: 44 }}
+                  style={{ flex: 1, background: 'var(--az-red-deep)', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: deleting ? 'not-allowed' : 'pointer', opacity: deleting ? 0.7 : 1, fontFamily: 'inherit', minHeight: 44 }}
                 >
                   {deleting ? <><span aria-hidden='true'>⏳</span> Duke fshirë...</> : 'Po, fshi!'}
                 </button>

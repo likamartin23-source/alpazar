@@ -21,13 +21,13 @@ function getLevelProgress(pts: number) {
 
 const CSS = `
   *{box-sizing:border-box;margin:0;padding:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
-  body{background:#FFFBEA;}
-  .wrap{max-width:480px;margin:0 auto;background:#FFFBEA;min-height:100vh;padding-bottom:60px;}
-  .topbar{background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%);padding:10px 12px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;box-shadow:0 4px 16px -8px rgba(190,130,0,.4);}
+  body{background:var(--az-cream);}
+  .wrap{max-width:480px;margin:0 auto;background:var(--az-cream);min-height:100vh;padding-bottom:60px;}
+  .topbar{background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%);padding:10px 12px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;box-shadow:0 4px 16px -8px rgba(190,130,0,.4);}
   .back{width:44px;height:44px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
   .back i{font-size:18px;color:#111;}
   .topbar-title{font-size:15px;font-weight:700;color:#111;}
-  .hero{background:linear-gradient(135deg,#E63312,#c42a0e);padding:28px 20px 32px;text-align:center;}
+  .hero{background:linear-gradient(135deg,var(--az-red),#c42a0e);padding:28px 20px 32px;text-align:center;}
   .hero-emoji{font-size:52px;display:block;margin-bottom:12px;}
   .hero h1{color:#fff;font-size:var(--fs-3xl);font-weight:800;margin-bottom:8px;}
   .hero p{color:rgba(255,255,255,.85);font-size:13px;line-height:1.7;}
@@ -36,20 +36,20 @@ const CSS = `
   .section-title{font-size:13px;font-weight:700;color:#111;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
   .section-title i{font-size:16px;color:#C42B0F;}
   .stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:4px;}
-  .stat{background:#FFFBEA;border-radius:12px;padding:14px 10px;text-align:center;}
+  .stat{background:var(--az-cream);border-radius:12px;padding:14px 10px;text-align:center;}
   .stat-n{font-size:22px;font-weight:700;color:#C42B0F;}
   .stat-l{font-size:10px;color:#555;margin-top:3px;}
-  .ref-box{background:#f9f5e0;border:1.5px dashed #F5C842;border-radius:12px;padding:16px;margin-bottom:12px;text-align:center;}
+  .ref-box{background:#f9f5e0;border:1.5px dashed var(--az-yellow);border-radius:12px;padding:16px;margin-bottom:12px;text-align:center;}
   .ref-code{font-size:22px;font-weight:700;color:#111;letter-spacing:3px;margin-bottom:6px;font-family:monospace;}
   .ref-url{font-size:11px;color:#555;word-break:break-all;margin-bottom:12px;}
   .share-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
   .share-btn{border:none;border-radius:12px;padding:11px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;transition:transform .15s ease,box-shadow .15s ease;min-height:44px;}
   .share-btn:hover{transform:translateY(-1px);}
-  .copy-btn{background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;box-shadow:0 2px 8px -2px rgba(0,0,0,.35);}
+  .copy-btn{background:linear-gradient(135deg,var(--az-ink),#000);color:var(--az-yellow);box-shadow:0 2px 8px -2px rgba(0,0,0,.35);}
   .whatsapp-btn{background:#25D366;color:#fff;}
   .step{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:0.5px solid #f5f5f5;}
   .step:last-child{border:none;}
-  .step-num{width:26px;height:26px;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;box-shadow:0 1px 4px rgba(230,51,18,.35);}
+  .step-num{width:26px;height:26px;background:linear-gradient(135deg,var(--az-red),#c42a0e);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;box-shadow:0 1px 4px rgba(230,51,18,.35);}
   .step-text strong{font-size:12px;font-weight:700;color:#111;display:block;margin-bottom:3px;}
   .step-text span{font-size:11px;color:#666;line-height:1.6;}
   .reward-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid #f5f5f5;}
@@ -61,18 +61,18 @@ const CSS = `
   .reward-done{font-size:16px;flex-shrink:0;}
   .referral-list{display:flex;flex-direction:column;gap:8px;}
   .ref-row{display:flex;align-items:center;gap:10px;background:#f9f5e0;border-radius:12px;padding:10px 12px;}
-  .ref-avatar{width:34px;height:34px;background:#F5C842;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#111;flex-shrink:0;}
+  .ref-avatar{width:34px;height:34px;background:var(--az-yellow);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#111;flex-shrink:0;}
   .ref-info{flex:1;}
   .ref-info strong{font-size:12px;font-weight:700;color:#111;display:block;}
   .ref-info span{font-size:10px;color:#555;}
   .ref-pts{font-size:11px;font-weight:700;color:#3B6D11;background:#EAF3DE;padding:3px 8px;border-radius:6px;}
   .empty-ref{text-align:center;padding:24px;color:#555;font-size:12px;}
-  .login-cta{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;width:100%;font-family:inherit;margin-top:8px;box-shadow:0 4px 14px -3px rgba(230,51,18,.45);transition:transform .15s ease,box-shadow .15s ease;min-height:44px;}
+  .login-cta{background:linear-gradient(135deg,var(--az-red),#c42a0e);color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;width:100%;font-family:inherit;margin-top:8px;box-shadow:0 4px 14px -3px rgba(230,51,18,.45);transition:transform .15s ease,box-shadow .15s ease;min-height:44px;}
   .login-cta:hover{transform:translateY(-1px);box-shadow:0 7px 20px -4px rgba(230,51,18,.55);}
   .msg{padding:10px 14px;border-radius:12px;font-size:12px;font-weight:500;margin-bottom:10px;text-align:center;}
   .ok{background:#EAF3DE;color:#3B6D11;}
   .info{background:#EEF4FF;color:#185FA5;}
-  .spinner{width:24px;height:24px;border:3px solid #F5C842;border-top-color:#E63312;border-radius:50%;animation:spin .7s linear infinite;margin:40px auto;}
+  .spinner{width:24px;height:24px;border:3px solid var(--az-yellow);border-top-color:var(--az-red);border-radius:50%;animation:spin .7s linear infinite;margin:40px auto;}
   @keyframes spin{to{transform:rotate(360deg);}}
   /* Level progress */
   .level-card{background:linear-gradient(135deg,#151515,#1c1c1c 60%,#231a0a);border-radius:12px;padding:16px;margin-bottom:14px;}
@@ -84,9 +84,9 @@ const CSS = `
   .level-hint{font-size:10px;color:#666;text-align:right;}
   /* Premium milestone */
   .milestone-card{background:linear-gradient(135deg,#1a0a00,#2d1400);border:1px solid #F5C84255;border-radius:14px;padding:16px;margin-bottom:14px;}
-  .milestone-title{color:#F5C842;font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+  .milestone-title{color:var(--az-yellow);font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:7px;}
   .milestone-bar-bg{background:#333;border-radius:6px;height:10px;overflow:hidden;margin-bottom:8px;}
-  .milestone-bar-fill{height:100%;background:linear-gradient(90deg,#F5C842,#E63312);border-radius:6px;transition:width .5s ease;}
+  .milestone-bar-fill{height:100%;background:linear-gradient(90deg,var(--az-yellow),var(--az-red));border-radius:6px;transition:width .5s ease;}
   .milestone-meta{display:flex;justify-content:space-between;font-size:10px;color:#888;}
 `
 
@@ -212,12 +212,12 @@ export default function ReferralPage() {
                 <div className="level-bar-bg">
                   <div className="level-bar-fill" style={{
                     width: `${lp.pct}%`,
-                    background: lp.next ? `linear-gradient(90deg,${lp.current.color},${lp.next.color})` : '#F5C842',
+                    background: lp.next ? `linear-gradient(90deg,${lp.current.color},${lp.next.color})` : 'var(--az-yellow)',
                   }} />
                 </div>
                 {lp.next
                   ? <div className="level-hint">{lp.remaining} pikë deri në <span aria-hidden="true">{lp.next.icon}</span> {lp.next.name}</div>
-                  : <div className="level-hint" style={{ color: '#F5C842' }}><span aria-hidden="true">💎</span> Nivel maksimal i arritur!</div>
+                  : <div className="level-hint" style={{ color: 'var(--az-yellow)' }}><span aria-hidden="true">💎</span> Nivel maksimal i arritur!</div>
                 }
               </div>
 
@@ -250,7 +250,7 @@ export default function ReferralPage() {
                     <i className="ti ti-crown" style={{ fontSize: 14 }} aria-hidden="true" />
                     <span aria-hidden="true">🥇</span> Ke arritur të gjitha milestones!
                   </div>
-                  <div style={{ fontSize: 12, color: '#F5C842', textAlign: 'center', padding: '8px 0' }}>
+                  <div style={{ fontSize: 12, color: 'var(--az-yellow)', textAlign: 'center', padding: '8px 0' }}>
                     Urime! 50+ referalë & 1 muaj Premium FALAS fituar! <span aria-hidden="true">🎉</span>
                   </div>
                 </div>
@@ -287,7 +287,7 @@ export default function ReferralPage() {
                     type="button"
                     aria-label="Kopjo linkun e referimit"
                     onClick={() => { navigator.clipboard.writeText(refUrl); setCopied(true); setTimeout(() => setCopied(false), 2000) }}
-                    style={{ flexShrink: 0, background: copied ? '#1D9E75' : '#F5C842', color: copied ? '#fff' : '#111', border: 'none', borderRadius: 10, padding: '8px 14px', minHeight: 44, fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: 'inherit', transition: 'all .2s', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                    style={{ flexShrink: 0, background: copied ? '#1D9E75' : 'var(--az-yellow)', color: copied ? '#fff' : '#111', border: 'none', borderRadius: 10, padding: '8px 14px', minHeight: 44, fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: 'inherit', transition: 'all .2s', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: 4 }}
                   >
                     {copied ? <><span aria-hidden='true'>✓</span> Kopjuar!</> : <><span aria-hidden='true'>📋</span> Kopjo</>}
                   </button>

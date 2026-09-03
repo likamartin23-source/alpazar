@@ -117,7 +117,7 @@ export function BroadcastTab() {
 
       <div className="card">
         <div className="ct">Parapamje</div>
-        <div style={{ border: '1px solid #eee', borderRadius: 10, padding: '12px 14px', background: '#FFFBEA' }}>
+        <div style={{ border: '1px solid #eee', borderRadius: 10, padding: '12px 14px', background: 'var(--az-cream)' }}>
           <div style={{ fontSize: 12.5, fontWeight: 800, color: '#111' }}>{title || 'Titulli i njoftimit'}</div>
           <div style={{ fontSize: 11.5, color: '#666', marginTop: 4, lineHeight: 1.6 }}>
             {body || 'Teksti që do të lexojnë përdoruesit.'}

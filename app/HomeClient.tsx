@@ -3,7 +3,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { useRealtimeTable } from '../hooks/useRealtimeTable'
-import { useDraggable } from '../hooks/useDraggable'
 import type { Category, Listing } from '../lib/types'
 import { LISTING_SELECT } from '../lib/listingSelect'
 import { SkeletonGrid } from './components/Skeleton'
@@ -18,7 +17,7 @@ import { saveRefFromUrl } from '../lib/referral'
 import { SITE_URL } from '../lib/siteConfig'
 import { nf } from '../lib/format'
 
-// Banner shkarkim — buton i vogël katrore pulsues (fixed, vetem faqja kryesore)
+// Banner shkarkim — FAB i rrumbullakët (fixed, anë djathtas, vetëm faqja kryesore)
 function InstallBanner() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
   const [installed, setInstalled] = useState(false)
@@ -26,19 +25,13 @@ function InstallBanner() {
   const [standalone, setStandalone] = useState(false)
   const [showGuide, setShowGuide] = useState(false)
 
-  const { pos, dragging, onPointerDown } = useDraggable(
-    '_alpz_pos_install',
-    () => window.innerWidth >= 768 ? { left: 24, bottom: 104 } : { left: 12, bottom: 226 },
-    64
-  )
-
   useEffect(() => {
-    // Nese app-i eshte tashme i instaluar (standalone), fshihe butonin.
+    // Nëse app-i është tashmë i instaluar (standalone), fshihe butonin.
     try {
       if (window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone) setStandalone(true)
     } catch { /* ignore */ }
-    // Chromium ndez beforeinstallprompt -> instalim me nje klik. Firefox/Safari nuk e ndezin;
-    // atehere butoni mbetet i dukshem dhe klik-u tregon udhezime manuale (shih install()).
+    // Chromium ndez beforeinstallprompt -> instalim me një klik. Firefox/Safari nuk e ndezin;
+    // atëhere butoni mbetet i dukshëm dhe klik-u tregon udhëzime manuale (shih install()).
     const handler = (e: any) => { e.preventDefault(); setDeferredPrompt(e) }
     const installedHandler = () => { setInstalled(true) }
     window.addEventListener('beforeinstallprompt', handler)
@@ -54,93 +47,67 @@ function InstallBanner() {
       setDeferredPrompt(null)
       return
     }
-    // Pa prompt native (Firefox/Safari) -> udhezime manuale.
+    // Pa prompt native (Firefox/Safari) -> udhëzime manuale.
     setShowGuide(v => !v)
   }
 
-  // GJITHMONE i dukshem per perdoruesin (jo i varur nga beforeinstallprompt qe s'ndizet
-  // ne cdo browser) — fshihet vetem nese eshte instaluar, mbyllur, ose ne standalone.
+  // GJITHMONË i dukshëm për përdoruesin (jo i varur nga beforeinstallprompt që s'ndizet
+  // në çdo browser) — fshihet vetëm nëse është instaluar, mbyllur, ose në standalone.
   if (installed || dismissed || standalone) return null
   return (
-    <div
-      className="install-float"
-      style={{
-        position: 'fixed',
-        bottom: pos?.bottom ?? 226,
-        left: pos?.left ?? 12,
-        right: 'auto',
-        zIndex: 190,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        gap: 3,
-        cursor: dragging ? 'grabbing' : 'grab',
-        touchAction: 'none',
-        userSelect: 'none',
-      }}
-      onPointerDown={onPointerDown}
-    >
+    <div className="fab-instalo">
       {showGuide && (
         <div
           role="dialog"
           aria-label="Si të instaloni Alpazar"
           style={{
-            position: 'absolute', bottom: '112%', left: 0,
+            position: 'absolute', bottom: 0, right: 'calc(100% + 8px)',
             width: 236, maxWidth: '78vw',
-            background: '#111', color: '#fff', borderRadius: '12px 12px 12px 4px',
-            padding: '12px 13px', boxShadow: '0 10px 30px rgba(0,0,0,.35)',
+            background: 'var(--az-ink,#111)', color: '#fff', borderRadius: '12px 12px 0 12px',
+            padding: '12px 13px', boxShadow: '0 4px 16px rgba(0,0,0,.28)',
             fontSize: 12, lineHeight: 1.5, zIndex: 5, cursor: 'default',
           }}
-          onPointerDown={e => e.stopPropagation()}
         >
-          <strong style={{ display: 'block', color: '#22C55E', fontSize: 13, marginBottom: 6 }}>
+          <strong style={{ display: 'block', color: 'var(--az-yellow)', fontSize: 13, marginBottom: 6 }}>
             Instalo Alpazar-in
           </strong>
-          <div style={{ marginBottom: 5 }}><b>Chrome/Edge:</b> menyja ⋮ → “Instalo aplikacionin”.</div>
-          <div style={{ marginBottom: 5 }}><b>iPhone (Safari):</b> Ndaj <span aria-hidden="true">↑</span> → “Add to Home Screen”.</div>
-          <div><b>Android:</b> menyja ⋮ → “Shto te ekrani kryesor”.</div>
+          <div style={{ marginBottom: 5 }}><b>Chrome/Edge:</b> menyja ⋮ → "Instalo aplikacionin".</div>
+          <div style={{ marginBottom: 5 }}><b>iPhone (Safari):</b> Ndaj <span aria-hidden="true">↑</span> → "Add to Home Screen".</div>
+          <div><b>Android:</b> menyja ⋮ → "Shto te ekrani kryesor".</div>
           <button
             type="button"
             onClick={() => setShowGuide(false)}
-            style={{ position: 'absolute', top: 6, right: 8, background: 'none', border: 'none', color: '#6b6b6b', cursor: 'pointer', fontSize: 13, lineHeight: 1 }}
+            style={{ position: 'absolute', top: 6, right: 8, background: 'none', border: 'none', color: '#6b6b6b', cursor: 'pointer', fontSize: 13, lineHeight: 1, minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             aria-label="Mbyll udhëzimet"
           >✕</button>
         </div>
       )}
-      <button
-        type="button"
-        aria-label="Instalo aplikacionin"
-        onClick={install}
-        style={{
-          width: 36, height: 44,
-          background: 'linear-gradient(135deg,#22C55E,#16a34a)',
-          borderRadius: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2,
-          border: 'none', cursor: 'inherit',
-          boxShadow: '0 4px 13px rgba(34,197,94,.45)',
-          animation: 'install-pulse 2.2s infinite',
-          transition: 'transform .15s',
-        }}
-      >
-        <i className="ti ti-device-mobile-down float-icon-main" aria-hidden="true" />
-        <span className="float-label">Instalo</span>
-      </button>
-      {/* Zonë prekjeje ≥44px (Vendimi 8): më parë fontSize:7 → 6×7px, praktikisht e paprekshme. */}
-      <button type="button" aria-label="Mbyll" onClick={() => setDismissed(true)} style={{ background: 'none', border: 'none', color: 'rgba(34,197,94,.8)', cursor: 'pointer', fontSize: 13, lineHeight: 1, alignSelf: 'center', width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
+      <span className="fab-label-dark">Instalo</span>
+      <div style={{ position: 'relative', display: 'inline-flex' }}>
+        <button
+          type="button"
+          aria-label="Instalo aplikacionin"
+          onClick={install}
+          className="fab-btn-dark"
+        >
+          <i className="ti ti-device-mobile-down" aria-hidden="true" style={{ fontSize: 22, color: 'var(--az-yellow)' }} />
+        </button>
+        <button
+          type="button"
+          aria-label="Mbyll"
+          onClick={() => setDismissed(true)}
+          style={{ position: 'absolute', top: -5, right: -5, width: 24, height: 24, borderRadius: '50%', background: '#111', border: '2px solid var(--az-cream)', color: '#fff', cursor: 'pointer', fontSize: 11, lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+        >✕</button>
+      </div>
     </div>
   )
 }
 
-// Kuti ndarje — buton i vogël katrore pulsues (fixed, vetem faqja kryesore)
+// Kuti ndarje — FAB i rrumbullakët (fixed, anë djathtas, vetëm faqja kryesore)
 function ShareBox({ refCode }: { refCode?: string }) {
   const [open, setOpen] = useState(false)
   const [mode, setMode] = useState<'feed' | 'msg'>('feed')
   const [copied, setCopied] = useState<string | null>(null)
-
-  const { pos, dragging, onPointerDown } = useDraggable(
-    '_alpz_pos_share',
-    () => window.innerWidth >= 768 ? { left: 24, bottom: 24 } : { left: 12, bottom: 157 },
-    64
-  )
 
   const base = SITE_URL
   const url  = refCode ? `${base}?ref=${refCode}` : base
@@ -222,29 +189,13 @@ function ShareBox({ refCode }: { refCode?: string }) {
   }
 
   return (
-    <div
-      className="share-float"
-      style={{
-        position: 'fixed',
-        bottom: pos?.bottom ?? 157,
-        left: pos?.left ?? 12,
-        right: 'auto',
-        zIndex: 190,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        gap: 3,
-        cursor: dragging ? 'grabbing' : 'grab',
-        touchAction: 'none',
-        userSelect: 'none',
-      }}
-      onPointerDown={onPointerDown}
-    >
+    <div className="fab-ndaj">
       {open && (
         <div style={{
-          background: '#111', border: '1.5px solid #1d4ed8', borderRadius: '14px 14px 14px 0',
-          padding: '10px', boxShadow: '0 4px 20px rgba(59,130,246,.3)',
-          width: 212, animation: 'ai-fade .2s ease',
+          position: 'absolute', bottom: 0, right: 'calc(100% + 8px)',
+          background: 'var(--az-ink,#111)', border: '1px solid rgba(255,255,255,.12)', borderRadius: '14px 14px 0 14px',
+          padding: '10px', boxShadow: '0 4px 16px rgba(0,0,0,.28)',
+          width: 212,
         }}>
           {/* Mode toggle */}
           <div style={{ display: 'flex', background: '#222', borderRadius: 8, padding: 3, gap: 3, marginBottom: 9 }}>
@@ -252,8 +203,8 @@ function ShareBox({ refCode }: { refCode?: string }) {
               <button key={m} type="button" onClick={() => setMode(m)} style={{
                 flex: 1, border: 'none', borderRadius: 6, padding: '5px 2px',
                 fontSize: 8, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
-                background: mode === m ? '#3B82F6' : 'transparent',
-                color: mode === m ? '#fff' : '#888', transition: 'all .15s',
+                background: mode === m ? 'var(--az-yellow)' : 'transparent',
+                color: mode === m ? '#111' : '#888', transition: 'all .15s',
               }}>
                 {m === 'feed' ? <><span aria-hidden='true'>📢</span> Statusi</> : <><span aria-hidden='true'>💬</span> Mesazh</>}
               </button>
@@ -283,27 +234,16 @@ function ShareBox({ refCode }: { refCode?: string }) {
         </div>
       )}
 
+      <span className="fab-label-dark">Ndaj</span>
       <button
         type="button"
         aria-label={open ? 'Mbyll menynë e ndarjes' : 'Ndaj aplikacionin'}
         aria-expanded={open}
         onClick={() => setOpen(o => !o)}
-        style={{
-          width: 36, height: 44,
-          background: open ? '#2563EB' : 'linear-gradient(135deg,#3B82F6,#2563EB)',
-          borderRadius: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2,
-          border: 'none', cursor: 'pointer',
-          boxShadow: '0 4px 13px rgba(59,130,246,.45)',
-          animation: open ? 'none' : 'share-pulse 2.2s infinite',
-          transition: 'transform .15s',
-        }}
-        onMouseDown={e => (e.currentTarget.style.transform = 'scale(.92)')}
-        onMouseUp={e => (e.currentTarget.style.transform = '')}
+        className="fab-btn-dark"
       >
-        <i className={`ti ti-${open ? 'x' : 'share-2'} float-icon-main`} aria-hidden="true" />
-        <span className="float-label">Ndaj</span>
+        <i className={`ti ti-${open ? 'x' : 'share'}`} aria-hidden="true" style={{ fontSize: 22, color: 'var(--az-yellow)' }} />
       </button>
-      <button type="button" aria-label="Mbyll" onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', color: 'rgba(59,130,246,.7)', cursor: 'pointer', fontSize: 8, padding: 0, lineHeight: 1, alignSelf: 'center', display: open ? 'block' : 'none' }}>✕</button>
     </div>
   )
 }
@@ -311,7 +251,7 @@ function ShareBox({ refCode }: { refCode?: string }) {
 function AlpazarIcon() {
   return (
     <svg width="34" height="34" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-      <rect width="40" height="40" rx="10" fill="#E63312"/>
+      <rect width="40" height="40" rx="10" fill="var(--az-red)"/>
       <g fill="#111">
         <ellipse cx="20" cy="22" rx="4" ry="5.5"/>
         <circle cx="15.5" cy="13" r="3.2"/>
@@ -322,7 +262,7 @@ function AlpazarIcon() {
         <polygon points="20,20 34,18 32,26 20,25"/>
         <polygon points="17,27 23,27 24,33 20,32 16,33"/>
       </g>
-      <rect x="24" y="26" width="12" height="10" rx="3" fill="#F5C842"/>
+      <rect x="24" y="26" width="12" height="10" rx="3" fill="var(--az-yellow)"/>
     </svg>
   )
 }
@@ -575,9 +515,9 @@ export default function HomeClient({ initialListings = [], initialCategories = [
       <style dangerouslySetInnerHTML={{ __html: `
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
-        .wrap{max-width:480px;margin:0 auto;background:#FFFBEA;padding-bottom:80px;}
+        .wrap{max-width:480px;margin:0 auto;background:var(--az-cream);padding-bottom:80px;}
         /* Header */
-        .header{background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%);position:sticky;top:0;z-index:50;box-shadow:0 6px 22px -8px rgba(190,130,0,.5),inset 0 1px 0 rgba(255,255,255,.4);border-bottom:1px solid rgba(255,255,255,.25);}
+        .header{background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%);position:sticky;top:0;z-index:50;box-shadow:0 6px 22px -8px rgba(190,130,0,.5),inset 0 1px 0 rgba(255,255,255,.4);border-bottom:1px solid rgba(255,255,255,.25);}
         .topbar{padding:10px 14px;display:flex;align-items:center;justify-content:space-between;}
         .logo{display:flex;align-items:center;gap:8px;cursor:pointer;}
         .brand{font-size:20px;font-weight:800;color:#111;letter-spacing:2px;text-shadow:0 1px 0 rgba(255,255,255,.3);}
@@ -585,14 +525,14 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .icon-btn{width:44px;height:44px;background:rgba(0,0,0,.10);border-radius:50%;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:background .15s;}
         .icon-btn:hover{background:rgba(0,0,0,.18);}
         .icon-btn i{font-size:17px;color:#111;}
-        .login-btn{background:#111;color:#F5C842;border:none;border-radius:8px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s;}
+        .login-btn{background:#111;color:var(--az-yellow);border:none;border-radius:8px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s;}
         .login-btn:hover{opacity:.85;}
         /* Identiteti i përdoruesit të loguar */
         .user-chip{display:flex;align-items:center;gap:7px;background:rgba(0,0,0,.08);border:none;border-radius:20px;padding:4px 10px 4px 4px;cursor:pointer;font-family:inherit;transition:background .15s;}
         .user-chip:hover{background:rgba(0,0,0,.15);}
-        .user-chip-av{width:28px;height:28px;border-radius:50%;background:#111;color:#F5C842;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;overflow:hidden;flex-shrink:0;position:relative;}
+        .user-chip-av{width:28px;height:28px;border-radius:50%;background:#111;color:var(--az-yellow);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;overflow:hidden;flex-shrink:0;position:relative;}
         .user-chip-av img{width:100%;height:100%;object-fit:cover;}
-        .user-chip-on{position:absolute;bottom:-1px;right:-1px;width:9px;height:9px;background:#22C55E;border-radius:50%;border:2px solid #F5C842;}
+        .user-chip-on{position:absolute;bottom:-1px;right:-1px;width:9px;height:9px;background:#22C55E;border-radius:50%;border:2px solid var(--az-yellow);}
         .user-chip-txt{display:flex;flex-direction:column;align-items:flex-start;line-height:1.1;}
         .user-chip-name{font-size:11px;font-weight:700;color:#111;max-width:84px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
         .user-chip-lvl{font-size:8px;font-weight:700;}
@@ -601,17 +541,17 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         /* Search */
         .searchbar{padding:0 12px 12px;display:flex;gap:8px;}
         .search-wrap{flex:1;background:#fff;border-radius:12px;display:flex;align-items:center;padding:0 12px;gap:8px;border:1.5px solid rgba(0,0,0,.07);box-shadow:0 1px 4px rgba(0,0,0,.05);transition:border-color .2s ease,box-shadow .2s ease;}
-        .search-wrap:focus-within{border-color:#E63312;box-shadow:0 6px 20px -6px rgba(230,51,18,.22);transform:translateY(-1px);}
+        .search-wrap:focus-within{border-color:var(--az-red);box-shadow:0 6px 20px -6px rgba(230,51,18,.22);transform:translateY(-1px);}
         .search-wrap:focus-within i{color:#C42B0F;}
         .search-wrap i{font-size:15px;color:#bbb;}
         .search-wrap input{border:none;background:transparent;font-size:13px;color:#111;outline:none;flex:1;padding:10px 0;font-family:inherit;}
         .search-wrap input::placeholder{color:#bbb;}
-        .search-btn{background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;border:none;border-radius:12px;padding:10px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(0,0,0,.4);transition:transform .15s ease,box-shadow .15s ease;}
+        .search-btn{background:linear-gradient(135deg,var(--az-ink),#000);color:var(--az-yellow);border:none;border-radius:12px;padding:10px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(0,0,0,.4);transition:transform .15s ease,box-shadow .15s ease;}
         .search-btn:hover{transform:translateY(-1px);box-shadow:0 5px 14px -3px rgba(0,0,0,.5);}
         .search-btn:active{transform:translateY(0);}
         .search-suggestions{position:absolute;left:12px;right:12px;top:100%;background:#fff;border-radius:0 0 12px 12px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:200;overflow:hidden;border:1.5px solid rgba(0,0,0,.08);border-top:none;}
         .sug-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;transition:background .1s;}
-        .sug-item:hover{background:#FFFBEA;}
+        .sug-item:hover{background:var(--az-cream);}
         .sug-img{width:38px;height:38px;border-radius:6px;object-fit:cover;flex-shrink:0;background:#f0e8d0;}
         .sug-title{font-size:13px;font-weight:600;color:#111;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
         .sug-price{font-size:12px;font-weight:700;color:#C42B0F;white-space:nowrap;}
@@ -621,11 +561,11 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .cat-item{background:#fff;border-radius:20px;padding:6px 12px;min-height:44px;display:flex;align-items:center;gap:5px;cursor:pointer;border:1.5px solid transparent;font-family:inherit;transition:all .15s;box-shadow:0 1px 4px rgba(0,0,0,.06);white-space:nowrap;flex-shrink:0;scroll-snap-align:start;}
         .cat-item:hover{border-color:#F5C84288;background:#FFFDF5;}
         .cat-item:active{transform:scale(.95);}
-        .cat-item.active{background:linear-gradient(135deg,#1a1a1a,#000);border-color:#111;box-shadow:0 6px 16px -4px rgba(0,0,0,.35);transform:translateY(-1px);}
+        .cat-item.active{background:linear-gradient(135deg,var(--az-ink),#000);border-color:#111;box-shadow:0 6px 16px -4px rgba(0,0,0,.35);transform:translateY(-1px);}
         .cat-item i{font-size:14px;color:#777;}
-        .cat-item.active i{color:#F5C842;}
+        .cat-item.active i{color:var(--az-yellow);}
         .cat-item span{font-size:11px;color:#555;font-weight:600;}
-        .cat-item.active span{color:#F5C842;font-weight:700;}
+        .cat-item.active span{color:var(--az-yellow);font-weight:700;}
         /* Body */
         .body{padding:0 12px;}
         .no-ads{background:#EAF3DE;border:0.5px solid #97C459;border-radius:8px;padding:7px 12px;display:flex;align-items:center;gap:6px;margin-bottom:12px;}
@@ -638,12 +578,12 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         @keyframes hero-sheen{0%,74%{left:-60%}90%,100%{left:135%}}
         @keyframes hero-in{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
         .hero>div{position:relative;z-index:1;animation:hero-in .55s cubic-bezier(.2,.8,.2,1) both;}
-        .hero h2{color:#F5C842;font-size:17px;font-weight:800;margin-bottom:5px;letter-spacing:-.2px;text-shadow:0 1px 2px rgba(0,0,0,.35);}
+        .hero h2{color:var(--az-yellow);font-size:17px;font-weight:800;margin-bottom:5px;letter-spacing:-.2px;text-shadow:0 1px 2px rgba(0,0,0,.35);}
         .hero p{color:#9a9488;font-size:11px;line-height:1.55;}
         .hero-stats{display:flex;gap:0;flex-shrink:0;position:relative;z-index:1;}
         .stat{text-align:center;padding:0 14px;}
         .stat+.stat{border-left:1px solid rgba(245,200,66,.18);}
-        .stat-n{color:#F5C842;font-size:20px;font-weight:800;line-height:1;letter-spacing:-.5px;}
+        .stat-n{color:var(--az-yellow);font-size:20px;font-weight:800;line-height:1;letter-spacing:-.5px;}
         .stat-l{color:#8a8375;font-size:8px;margin-top:3px;text-transform:uppercase;letter-spacing:.6px;}
         @media (prefers-reduced-motion: reduce){.hero::after,.hero>div{animation:none;}}
         /* Trust row */
@@ -667,66 +607,73 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .filter-row{display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;}
         .filter-row::-webkit-scrollbar{display:none;}
         .filter-btn{background:#fff;border:0.5px solid #ddd;border-radius:20px;padding:6px 13px;min-height:44px;font-size:10px;color:#666;white-space:nowrap;flex-shrink:0;cursor:pointer;font-family:inherit;transition:all .12s;box-shadow:0 1px 3px rgba(0,0,0,.04);display:inline-flex;align-items:center;}
-        .filter-btn:hover{border-color:#F5C842;color:#C42B0F;}
-        .filter-btn.active{background:#111;border-color:#111;color:#F5C842;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+        .filter-btn:hover{border-color:var(--az-yellow);color:#C42B0F;}
+        .filter-btn.active{background:#111;border-color:#111;color:var(--az-yellow);font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.15);}
         /* Karta e shpalljes (.listing-card e me radhe) rri te
            app/ui-refine.css seksioni 8 — nje burim i vetem per kryefaqen,
            faqen e biznesit dhe profilin. Ketu mbeten vetem klasat qe i
            perkasin VETEM kryefaqes. */
         .empty-state{grid-column:1/-1;text-align:center;padding:36px 16px;background:linear-gradient(135deg,#f9f5e0,#f5f0d5);border:0.5px solid #eee;border-radius:13px;}
-        .empty-state i{font-size:40px;color:#F5C842;display:block;margin-bottom:10px;}
+        .empty-state i{font-size:40px;color:var(--az-yellow);display:block;margin-bottom:10px;}
         .empty-state h3{font-size:14px;font-weight:700;color:#555;margin-bottom:6px;}
         .empty-state p{font-size:11px;color:#555;line-height:1.6;margin-bottom:14px;}
-        .empty-cta{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:10px;padding:10px 20px;min-height:44px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;}
+        .empty-cta{background:linear-gradient(135deg,var(--az-red),#c42a0e);color:#fff;border:none;border-radius:10px;padding:10px 20px;min-height:44px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;}
         /* Premium CTA */
-        .premium-cta{margin:0 0 16px;background:linear-gradient(135deg,#FFFBEA,#fff8d9);border:1.5px solid #F5C842;border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 3px 12px rgba(245,200,66,.15);}
-        .prem-icon{width:30px;height:30px;background:#F5C842;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .premium-cta{margin:0 0 16px;background:linear-gradient(135deg,var(--az-cream),#fff8d9);border:1.5px solid var(--az-yellow);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 3px 12px rgba(245,200,66,.15);}
+        .prem-icon{width:30px;height:30px;background:var(--az-yellow);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
         .prem-icon i{font-size:15px;color:#111;}
         .prem-text strong{font-size:11px;font-weight:700;color:#111;display:block;}
         .prem-text span{font-size:9px;color:#555;}
-        .prem-btn{background:#111;color:#F5C842;border:none;border-radius:8px;padding:8px 13px;min-height:44px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;margin-left:auto;display:inline-flex;align-items:center;}
+        .prem-btn{background:#111;color:var(--az-yellow);border:none;border-radius:8px;padding:8px 13px;min-height:44px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;margin-left:auto;display:inline-flex;align-items:center;}
         /* Bottom nav */
         .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(15,15,15,.9);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);padding:8px 6px 16px;display:flex;justify-content:space-around;align-items:center;z-index:100;box-shadow:0 -6px 26px rgba(0,0,0,.32);border-top:1px solid rgba(255,255,255,.06);}
         .nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#8a8a99;border:none;background:none;font-family:inherit;cursor:pointer;transition:color .2s;padding:4px 10px;min-height:44px;border-radius:12px;position:relative;}
-        .nav-item.active{color:#F5C842;}
+        .nav-item.active{color:var(--az-yellow);}
         .nav-item.active::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(245,200,66,.1);border-radius:12px;}
         .nav-item i{font-size:22px;transition:transform .2s;}
         .nav-item.active i{transform:scale(1.12);}
         .nav-item span{font-size:10px;color:inherit;font-weight:600;}
-        .nav-badge{position:absolute;top:2px;right:6px;background:#E63312;color:#fff;font-size:7px;font-weight:700;border-radius:10px;padding:1px 4px;min-width:14px;text-align:center;line-height:14px;}
-        .nav-add{width:50px;height:50px;background:linear-gradient(135deg,#E63312,#c42a0e);border-radius:50%;display:flex;align-items:center;justify-content:center;border:3px solid #111;margin-top:-18px;cursor:pointer;box-shadow:0 4px 16px rgba(230,51,18,.5);transition:transform .15s,box-shadow .15s;padding:0;appearance:none;}
+        .nav-badge{position:absolute;top:2px;right:6px;background:var(--az-red);color:#fff;font-size:7px;font-weight:700;border-radius:10px;padding:1px 4px;min-width:14px;text-align:center;line-height:14px;}
+        .nav-add{width:50px;height:50px;background:linear-gradient(135deg,var(--az-red),#c42a0e);border-radius:50%;display:flex;align-items:center;justify-content:center;border:3px solid #111;margin-top:-18px;cursor:pointer;box-shadow:0 4px 16px rgba(230,51,18,.5);transition:transform .15s,box-shadow .15s;padding:0;appearance:none;}
         .nav-add:active{transform:scale(.9);box-shadow:0 2px 8px rgba(230,51,18,.3);}
         .nav-add i{font-size:24px;color:#fff;}
-        /* Floating pulsing squares */
-        @keyframes install-pulse{0%,100%{box-shadow:0 6px 20px rgba(34,197,94,.4);transform:scale(1)}50%{box-shadow:0 8px 28px rgba(34,197,94,.65);transform:scale(1.07)}}
-        @keyframes share-pulse{0%,100%{box-shadow:0 6px 20px rgba(59,130,246,.35);transform:scale(1)}50%{box-shadow:0 8px 28px rgba(59,130,246,.6);transform:scale(1.07)}}
         .loading{text-align:center;padding:32px;color:#555;font-size:13px;}
-        .spinner{display:block;width:28px;height:28px;border:3px solid #F5C842;border-top-color:#E63312;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px;}
+        .spinner{display:block;width:28px;height:28px;border:3px solid var(--az-yellow);border-top-color:var(--az-red);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px;}
         @keyframes spin{to{transform:rotate(360deg);}}
         .new-listing-toast{background:#EAF3DE;border:1px solid #97C459;border-radius:8px;padding:6px 12px;display:flex;align-items:center;gap:7px;margin-bottom:7px;animation:toast-in .3s ease;}
         @keyframes toast-in{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
         .new-listing-toast span{font-size:11px;font-weight:700;color:#3B6D11;}
-        /* ── Etiketat e butonave lundrues (responsive me className) ── */
-        .float-label{font-size:7px;color:#fff;font-weight:800;letter-spacing:.3px;line-height:1;}
-        .float-icon-main{font-size:16px;color:#fff;}
+        /* ── FAB-et e unifikuara (Instalo + Ndaj) — anë djathtas ── */
+        .fab-btn-dark{width:52px;height:52px;background:var(--az-ink,#111);border-radius:50%;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.28);transition:transform .15s;min-width:44px;min-height:44px;}
+        .fab-btn-dark:active{transform:scale(.92);}
+        .fab-btn-dark:focus-visible{outline:2px solid var(--az-yellow);outline-offset:3px;}
+        .fab-label-dark{font-size:11px;font-weight:700;color:#fff;background:rgba(17,17,17,.82);padding:5px 10px;border-radius:9px;letter-spacing:.02em;pointer-events:none;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.22);}
+        .fab-ndaj{position:fixed;right:12px;bottom:148px;z-index:190;display:flex;flex-direction:row;align-items:center;gap:8px;}
+        .fab-instalo{position:fixed;right:12px;bottom:212px;z-index:190;display:flex;flex-direction:row;align-items:center;gap:8px;}
+        /* Kur cookie banneri është i hapur — ngrit FAB-et */
+        body[data-cookie] .fab-ndaj{bottom:288px;}
+        body[data-cookie] .fab-instalo{bottom:352px;}
         /* ── Navigimi desktop ── */
         .desk-nav{display:none;}
         .desk-nav-btn{background:rgba(0,0,0,.08);border:none;border-radius:8px;padding:6px 11px;min-height:44px;font-size:12px;font-weight:700;color:#111;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:background .15s;}
         .desk-nav-btn:hover{background:rgba(0,0,0,.16);}
         .desk-nav-btn.dn-active{background:rgba(0,0,0,.16);}
-        .desk-nav-add{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:8px;padding:6px 13px;min-height:44px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:opacity .15s;box-shadow:0 2px 8px rgba(230,51,18,.3);}
+        .desk-nav-add{background:linear-gradient(135deg,var(--az-red),#c42a0e);color:#fff;border:none;border-radius:8px;padding:6px 13px;min-height:44px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:opacity .15s;box-shadow:0 2px 8px rgba(230,51,18,.3);}
         .desk-nav-add:hover{opacity:.88;}
         /* ── Responsive breakpoints (additive) ── */
         @media(min-width:768px){
-          body{background:#FFFBEA;}
+          body{background:var(--az-cream);}
           .wrap{max-width:960px;padding-bottom:0;}
           .body{padding:0 24px;}
           .bottom-nav{display:none;}
           .desk-nav{display:flex;gap:3px;align-items:center;margin-right:6px;}
-          /* pozicioni i share-float dhe install-float menaxhohet nga useDraggable (JS) */
-          .share-float>button:first-of-type,.install-float>button:first-of-type{width:60px !important;height:60px !important;border-radius:50% !important;}
-          .float-label{font-size:11px;}
-          .float-icon-main{font-size:22px;}
+          /* FAB-et e unifikuara — pozicioni desktop */
+          .fab-ndaj{right:24px;bottom:96px;}
+          .fab-instalo{right:24px;bottom:168px;}
+          body[data-cookie] .fab-ndaj{bottom:96px;}
+          body[data-cookie] .fab-instalo{bottom:168px;}
+          .fab-btn-dark{width:60px;height:60px;}
+          .fab-label-dark{font-size:11px;}
         }
         @media(min-width:1024px){
           /* 100% full screen: wrap-i mbush gjithë gjerësinë e ekranit; padding-u
@@ -805,10 +752,15 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                   <i className="ti ti-message-circle" aria-hidden="true" />Mesazhe
                   {unreadCount > 0 && <span className="nav-badge" aria-hidden="true">{unreadCount > 9 ? '9+' : unreadCount}</span>}
                 </button>
-                <button type="button" className="desk-nav-btn" onClick={() => go(user ? '/profile' : '/auth/login')}>
-                  <i className="ti ti-user-circle" aria-hidden="true" />
-                  {authReady ? (user ? 'Profili' : 'Hyr') : '\u00a0'}
-                </button>
+                {/* Kur i loguar \u2192 "Profili"; gjat\u00eb ngarkimit \u2192 vend-mbajt\u00ebs (pa zhvendosje).
+                    Kur i pa-loguar NUK shfaqet: hyrja e vetme e desktopit \u00ebsht\u00eb butoni
+                    "Hyr / Regjistrohu" djathtas \u2014 p\u00ebrndryshe dilnin DY "Hyr" n\u00eb t\u00eb nj\u00ebjtin krye. */}
+                {(!authReady || user) && (
+                  <button type="button" className="desk-nav-btn" onClick={() => go(user ? '/profile' : '/auth/login')}>
+                    <i className="ti ti-user-circle" aria-hidden="true" />
+                    {authReady ? 'Profili' : '\u00a0'}
+                  </button>
+                )}
               </div>
               {/* Njoftimet — GJITHMONË i dukshëm e funksional për përdoruesin e loguar
                   (më parë zhdukej kur s'kishte njoftime të palexuara, ose çonte gabimisht
@@ -818,7 +770,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                 <button type="button" className="icon-btn" aria-label={unreadNotifications > 0 ? `Njoftime — ${unreadNotifications} të palexuara` : 'Njoftime'} onClick={() => go('/notifications')} style={{ position: 'relative' }}>
                   <i className={`ti ti-bell${unreadNotifications > 0 ? '-ringing' : ''}`} aria-hidden="true" />
                   {unreadNotifications > 0 && (
-                    <span aria-hidden="true" style={{ position: 'absolute', top: 2, right: 2, background: '#E63312', color: '#fff', fontSize: 7, fontWeight: 700, borderRadius: 8, padding: '1px 3px', minWidth: 12, textAlign: 'center', lineHeight: '12px' }}>{unreadNotifications > 9 ? '9+' : unreadNotifications}</span>
+                    <span aria-hidden="true" style={{ position: 'absolute', top: 2, right: 2, background: 'var(--az-red)', color: '#fff', fontSize: 7, fontWeight: 700, borderRadius: 8, padding: '1px 3px', minWidth: 12, textAlign: 'center', lineHeight: '12px' }}>{unreadNotifications > 9 ? '9+' : unreadNotifications}</span>
                   )}
                 </button>
               )}
@@ -1021,7 +973,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
           {recentUnique.length > 0 && (
             <div style={{ marginBottom: 12 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px', marginBottom: 10 }}>
-                <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: '#111' }}><span aria-hidden="true">👁</span> Rishikimet e fundit</h3>
+                <h3 style={{ margin: 0, fontSize: 'var(--fs-lg)', fontWeight: 700, color: '#111' }}><span aria-hidden="true">👁</span> Rishikimet e fundit</h3>
                 <button type="button" onClick={() => { localStorage.removeItem('_alpazar_rv'); setRecentlyViewed([]) }} style={{ background: 'none', border: 'none', fontSize: 10, color: '#6b6b6b', cursor: 'pointer', fontFamily: 'inherit' }}>Pastro</button>
               </div>
               <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, scrollbarWidth: 'none' }}>
@@ -1075,7 +1027,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
               <button
                 type="button"
                 onClick={() => go('/search')}
-                style={{ background: '#111', color: '#F5C842', border: 'none', borderRadius: 12, padding: '12px 28px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+                style={{ background: '#111', color: 'var(--az-yellow)', border: 'none', borderRadius: 12, padding: '12px 28px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
               >
                 <><span aria-hidden="true">🔍</span> Eksploro të gjitha shpalljet →</>
               </button>

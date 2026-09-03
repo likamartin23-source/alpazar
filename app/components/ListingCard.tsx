@@ -22,6 +22,7 @@ import { useIsOnline } from './OnlinePresence'
 import { useSyteLive } from './PremiumUpsell'
 import { trackEvent } from '../../lib/track'
 import { nf, dayMonth, priceLabel } from '../../lib/format'
+import { cldVideo } from '../../lib/cldVideo'
 
 export type ListingCardAuthor = {
   id: string
@@ -200,7 +201,7 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
         {videoUrl && videoVisible
           ? <video
               ref={vref}
-              src={videoUrl}
+              src={cldVideo(videoUrl, 640, true)}
               poster={l.video_poster || undefined}
               autoPlay muted loop playsInline preload="metadata"
               aria-label={l.title}
@@ -236,7 +237,7 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
             H2: TË DYJA vulat nga i njëjti burim `tier` (=tierNgaRankTier(rank_tier)) si unaza —
             më parë ★ lexonte `is_premium` bruto, ndaj mund të mospërputhej me unazën. */}
         {tier === 'vip'
-          ? <span className="badge-premium" role="img" aria-label="VIP" style={{ background: 'linear-gradient(135deg,#D4AF37,#E63312)', color: '#fff' }}><span aria-hidden="true">👑</span> VIP</span>
+          ? <span className="badge-premium" role="img" aria-label="VIP" style={{ background: 'linear-gradient(135deg,#D4AF37,var(--az-red))', color: '#fff' }}><span aria-hidden="true">👑</span> VIP</span>
           : tier === 'premium' && <span className="badge-premium" role="img" aria-label="Premium"><span aria-hidden="true">★</span></span>}
         {/* ZBULIM I DETYRUESHËM (neni 17/A.11 + neni 8, ligji 10128): renditja e kësaj
             shpalljeje është e paguar — feed-i renditet me `.order('rank_tier', desc)` dhe

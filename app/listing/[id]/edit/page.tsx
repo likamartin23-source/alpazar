@@ -192,9 +192,9 @@ export default function EditListing() {
   const [mt, mm] = msg.split(/:(.+)/)
 
   if (pageLoading) return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#FFFBEA' }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--az-cream)' }}>
       <style dangerouslySetInnerHTML={{ __html: `@keyframes spin{to{transform:rotate(360deg);}}` }} />
-      <div style={{ width: 28, height: 28, border: '3px solid #F5C842', borderTopColor: '#E63312', borderRadius: '50%', animation: 'spin .7s linear infinite' }} />
+      <div style={{ width: 28, height: 28, border: '3px solid var(--az-yellow)', borderTopColor: 'var(--az-red)', borderRadius: '50%', animation: 'spin .7s linear infinite' }} />
     </div>
   )
 
@@ -202,9 +202,9 @@ export default function EditListing() {
     <>
       <style dangerouslySetInnerHTML={{ __html: `
         *{box-sizing:border-box;margin:0;padding:0;}
-        body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA;}
-        .wrap{max-width:480px;margin:0 auto;background:#FFFBEA;min-height:100vh;padding-bottom:100px;}
-        .topbar{background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%);padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
+        body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--az-cream);}
+        .wrap{max-width:480px;margin:0 auto;background:var(--az-cream);min-height:100vh;padding-bottom:100px;}
+        .topbar{background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%);padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
         .back{width:44px;height:44px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .back i{font-size:18px;color:#111;}
         .topbar-title{font-size:15px;font-weight:700;color:#111;}
@@ -226,21 +226,21 @@ export default function EditListing() {
         .price-row select{width:90px;flex-shrink:0;}
         .cond-row{display:flex;gap:8px;}
         .cond-btn{flex:1;border:1.5px solid #e0e0e0;border-radius:12px;padding:9px;font-size:12px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;}
-        .cond-btn.active{border-color:#E63312;background:#FFF0EE;color:#C42B0F;}
-        .img-zone{border:2px dashed #e0b030;border-radius:10px;padding:20px;text-align:center;cursor:pointer;background:#FFFBEA;}
+        .cond-btn.active{border-color:var(--az-red);background:#FFF0EE;color:#C42B0F;}
+        .img-zone{border:2px dashed #e0b030;border-radius:10px;padding:20px;text-align:center;cursor:pointer;background:var(--az-cream);}
         .img-zone input{display:none;}
         .img-zone i{font-size:32px;color:#e0b030;display:block;margin-bottom:8px;}
         .img-zone p{font-size:12px;color:#555;}
         .img-previews{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
         .img-prev-wrap{position:relative;}
-        .img-prev{width:70px;height:70px;border-radius:8px;object-fit:cover;border:2px solid #F5C842;}
-        .img-remove{position:absolute;top:-5px;right:-5px;width:18px;height:18px;background:#E63312;border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:700;line-height:1;}
+        .img-prev{width:70px;height:70px;border-radius:8px;object-fit:cover;border:2px solid var(--az-yellow);}
+        .img-remove{position:absolute;top:-5px;right:-5px;width:18px;height:18px;background:var(--az-red);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:700;line-height:1;}
         .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
         .cat-btn{border:1.5px solid #e0e0e0;border-radius:12px;padding:8px 4px;font-size:10px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;}
         .cat-btn i{font-size:18px;color:#aaa;}
-        .cat-btn.active{border-color:#F5C842;background:#FFFBEA;color:#111;}
+        .cat-btn.active{border-color:var(--az-yellow);background:var(--az-cream);color:#111;}
         .cat-btn.active i{color:#C42B0F;}
-        .submit-btn{width:100%;min-height:52px;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:800;letter-spacing:.3px;cursor:pointer;font-family:inherit;box-shadow:0 6px 18px -3px rgba(230,51,18,.5);transition:transform .15s ease,box-shadow .15s ease;} .submit-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 9px 24px -4px rgba(230,51,18,.6);}
+        .submit-btn{width:100%;min-height:52px;background:linear-gradient(135deg,var(--az-red),#c42a0e);color:#fff;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:800;letter-spacing:.3px;cursor:pointer;font-family:inherit;box-shadow:0 6px 18px -3px rgba(230,51,18,.5);transition:transform .15s ease,box-shadow .15s ease;} .submit-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 9px 24px -4px rgba(230,51,18,.6);}
         .submit-btn:disabled{opacity:.6;cursor:not-allowed;}
       ` }} />
 
@@ -274,14 +274,14 @@ export default function EditListing() {
               <label htmlFor="listing-title">Titulli *</label>
               <input id="listing-title" type="text" placeholder="p.sh. iPhone 13 Pro Max 256GB..." value={form.title}
                 onChange={e => set('title', e.target.value)} maxLength={100} required />
-              <div style={{ textAlign: 'right', fontSize: 10, color: form.title.length > 85 ? '#C42305' : '#aaa', marginTop: 2 }}>{form.title.length}/100</div>
+              <div style={{ textAlign: 'right', fontSize: 10, color: form.title.length > 85 ? 'var(--az-red-deep)' : '#aaa', marginTop: 2 }}>{form.title.length}/100</div>
             </div>
 
             <div className="field">
               <label htmlFor="listing-description">Përshkrimi</label>
               <textarea id="listing-description" placeholder="Përshkruaj artikullin..." value={form.description}
                 onChange={e => set('description', e.target.value)} maxLength={2000} />
-              <div style={{ textAlign: 'right', fontSize: 10, color: form.description.length > 1800 ? '#C42305' : '#aaa', marginTop: 2 }}>{form.description.length}/2000</div>
+              <div style={{ textAlign: 'right', fontSize: 10, color: form.description.length > 1800 ? 'var(--az-red-deep)' : '#aaa', marginTop: 2 }}>{form.description.length}/2000</div>
             </div>
 
             <div className="field">
@@ -361,7 +361,7 @@ export default function EditListing() {
                       <img src={url} className="img-prev" alt={`Foto ${i + 1}`} loading="lazy" />
                       <button className="img-remove" aria-label={`Hiq foton ${i + 1}`} type="button" onClick={() => removeExistingImage(url)}>✕</button>
                       {i === 0 && (
-                        <span style={{ position: 'absolute', top: 4, left: 4, background: '#F5C842', color: '#111', fontSize: 8, fontWeight: 800, padding: '2px 5px', borderRadius: 4, lineHeight: 1.4, pointerEvents: 'none' }}>
+                        <span style={{ position: 'absolute', top: 4, left: 4, background: 'var(--az-yellow)', color: '#111', fontSize: 8, fontWeight: 800, padding: '2px 5px', borderRadius: 4, lineHeight: 1.4, pointerEvents: 'none' }}>
                           Kryesore
                         </span>
                       )}
@@ -386,7 +386,7 @@ export default function EditListing() {
                     <div key={i} style={{ position: 'relative', display: 'inline-block' }}>
                       <img src={src} className="img-prev" alt={`Foto e re ${i + 1}`} loading="lazy" />
                       {isFirst && (
-                        <span style={{ position: 'absolute', top: 4, left: 4, background: '#F5C842', color: '#111', fontSize: 8, fontWeight: 800, padding: '2px 5px', borderRadius: 4, lineHeight: 1.4, pointerEvents: 'none' }}>
+                        <span style={{ position: 'absolute', top: 4, left: 4, background: 'var(--az-yellow)', color: '#111', fontSize: 8, fontWeight: 800, padding: '2px 5px', borderRadius: 4, lineHeight: 1.4, pointerEvents: 'none' }}>
                           Kryesore
                         </span>
                       )}

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useListingMedia } from './ListingMediaContext'
+import { cldVideo } from '../../lib/cldVideo'
 
 interface VideoItem { url: string; poster?: string; duration?: number }
 interface Props {
@@ -201,7 +202,7 @@ export function ImageCarousel({ images, videos, poster, alt = '', aspectRatio = 
               ) : (
                 <>
                   <video
-                    src={s.src}
+                    src={cldVideo(s.src, 1280)}
                     poster={s.poster}
                     controls
                     playsInline
@@ -250,7 +251,7 @@ export function ImageCarousel({ images, videos, poster, alt = '', aspectRatio = 
             >
               <span style={{
                 width: i === current ? 18 : 7, height: 7, borderRadius: 4, display: 'block',
-                background: i === current ? '#E63312' : (s.kind === 'video' ? '#9a9a9a' : '#ccc'),
+                background: i === current ? 'var(--az-red)' : (s.kind === 'video' ? '#9a9a9a' : '#ccc'),
                 transition: 'all .2s',
               }} />
             </button>
@@ -298,7 +299,7 @@ export function ImageCarousel({ images, videos, poster, alt = '', aspectRatio = 
           {imgCount > 1 && (
             <div aria-hidden="true" style={{ position: 'absolute', bottom: 20, display: 'flex', gap: 6 }}>
               {imgList.map((_, i) => (
-                <div key={i} style={{ width: i === current ? 18 : 7, height: 7, borderRadius: 4, background: i === current ? '#E63312' : 'rgba(255,255,255,.4)', transition: 'all .2s' }} />
+                <div key={i} style={{ width: i === current ? 18 : 7, height: 7, borderRadius: 4, background: i === current ? 'var(--az-red)' : 'rgba(255,255,255,.4)', transition: 'all .2s' }} />
               ))}
             </div>
           )}

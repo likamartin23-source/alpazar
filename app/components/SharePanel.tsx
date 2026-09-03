@@ -233,11 +233,11 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
       {refCode && (
         <div style={{
-          background: '#FFFBEA', border: '1px dashed #F5C842', borderRadius: 9,
+          background: 'var(--az-cream)', border: '1px dashed var(--az-yellow)', borderRadius: 9,
           padding: '8px 12px', fontSize: 11, color: '#856404',
           display: 'flex', alignItems: 'center', gap: 7,
         }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#E63312" style={{ flexShrink: 0 }} aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--az-red)" style={{ flexShrink: 0 }} aria-hidden="true">
             <path d="M20 12a8 8 0 0 1-8 8 8 8 0 0 1-8-8 8 8 0 0 1 8-8 8 8 0 0 1 8 8m-8-6a6 6 0 0 0-6 6 6 6 0 0 0 6 6 6 6 0 0 0 6-6 6 6 0 0 0-6-6m-1 3h2v2h2v2h-2v2h-2v-2H9v-2h2V9z"/>
           </svg>
           <span>Me kodin tënd — nëse miku regjistrohet fiton <strong>50 pikë!</strong> <span aria-hidden="true">🎁</span></span>
@@ -254,7 +254,7 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
               .catch(() => {})
           }}
           style={{
-            width: '100%', background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842', border: 'none',
+            width: '100%', background: 'linear-gradient(135deg,var(--az-ink),#000)', color: 'var(--az-yellow)', border: 'none',
             borderRadius: 10, padding: '11px 16px', fontWeight: 700, fontSize: 13,
             cursor: 'pointer', fontFamily: 'inherit', display: 'flex',
             alignItems: 'center', justifyContent: 'center', gap: 8,
@@ -277,7 +277,7 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
             flex: 1, border: 'none', borderRadius: 8, padding: '8px 4px',
             fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
             background: mode === 'feed' ? '#111' : 'transparent',
-            color: mode === 'feed' ? '#F5C842' : '#666',
+            color: mode === 'feed' ? 'var(--az-yellow)' : '#666',
             transition: 'all .15s',
           }}
         >
@@ -291,7 +291,7 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
             flex: 1, border: 'none', borderRadius: 8, padding: '8px 4px',
             fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
             background: mode === 'msg' ? '#111' : 'transparent',
-            color: mode === 'msg' ? '#F5C842' : '#666',
+            color: mode === 'msg' ? 'var(--az-yellow)' : '#666',
             transition: 'all .15s',
           }}
         >
@@ -351,7 +351,7 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
           onClick={handleCopyLink}
           style={{
             background: linkCopied ? '#EAF3DE' : '#111',
-            color: linkCopied ? '#3B6D11' : '#F5C842',
+            color: linkCopied ? '#3B6D11' : 'var(--az-yellow)',
             border: 'none', borderRadius: 7,
             padding: '6px 12px', fontSize: 11, fontWeight: 700,
             cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0,

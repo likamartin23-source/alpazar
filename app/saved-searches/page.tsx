@@ -61,7 +61,7 @@ export default function SavedSearchesPage() {
         <button type="button" aria-label="Kthehu mbrapa" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <i className="ti ti-arrow-left" aria-hidden="true" style={{ fontSize: 22, color: '#111' }} />
         </button>
-        <h1 style={{ fontSize: 18, fontWeight: 800, color: '#111', margin: 0 }}>Kërkimet e ruajtura <span aria-hidden="true">🔔</span></h1>
+        <h1 style={{ fontSize: 'var(--fs-2xl)', fontWeight: 800, color: '#111', margin: 0 }}>Kërkimet e ruajtura <span aria-hidden="true">🔔</span></h1>
       </div>
 
       <div style={{ padding: '16px' }}>
@@ -69,7 +69,7 @@ export default function SavedSearchesPage() {
           <div style={{ textAlign: 'center', padding: '40px 24px' }}>
             <div style={{ fontSize: 32, marginBottom: 12 }} aria-hidden="true">⚠️</div>
             <div style={{ fontSize: 14, color: '#C42B0F', marginBottom: 16 }}>Nuk u ngarkuan të dhënat. Kontrollo lidhjen dhe provo sërish.</div>
-            <button type="button" onClick={() => { setLoadError(false); setLoading(true); window.location.reload() }} style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', minHeight: 44, boxSizing: 'border-box', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
+            <button type="button" onClick={() => { setLoadError(false); setLoading(true); window.location.reload() }} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', minHeight: 44, boxSizing: 'border-box', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
           </div>
         ) : loading ? (
           <div style={{ color: '#555', textAlign: 'center', padding: 40 }}>Duke ngarkuar...</div>
@@ -81,7 +81,7 @@ export default function SavedSearchesPage() {
             <button
               type="button"
               onClick={() => { window.location.href = '/search' }}
-              style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 24px', minHeight: 44, boxSizing: 'border-box', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+              style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 24px', minHeight: 44, boxSizing: 'border-box', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
             >
               <><span aria-hidden="true">🔍</span> Fillo një kërkim</>
             </button>
@@ -123,7 +123,7 @@ export default function SavedSearchesPage() {
                           aria-label={s.notify ? 'Çaktivizo njoftime' : 'Aktivizo njoftime'}
                           style={{
                             width: 36, height: 20, borderRadius: 10, border: 'none', cursor: 'pointer',
-                            background: s.notify ? '#E63312' : '#ddd', position: 'relative', transition: 'background .2s',
+                            background: s.notify ? 'var(--az-red)' : '#ddd', position: 'relative', transition: 'background .2s',
                           }}
                         >
                           <div style={{

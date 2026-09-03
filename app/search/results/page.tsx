@@ -438,11 +438,11 @@ const [searchError, setSearchError] = useState(false)
     <>
       <style dangerouslySetInnerHTML={{ __html: `
         *{box-sizing:border-box;margin:0;padding:0;}
-        body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA;}
-        .wrap{max-width:480px;margin:0 auto;background:#FFFBEA;min-height:100vh;padding-bottom:80px;}
+        body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--az-cream);}
+        .wrap{max-width:480px;margin:0 auto;background:var(--az-cream);min-height:100vh;padding-bottom:80px;}
 
         /* Topbar */
-        .topbar{background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%);padding:10px 12px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:50;box-shadow:0 4px 16px -8px rgba(190,130,0,.4);}
+        .topbar{background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%);padding:10px 12px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:50;box-shadow:0 4px 16px -8px rgba(190,130,0,.4);}
         .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
         .back i{font-size:18px;color:#111;}
         .search-wrap{flex:1;background:#fff;border-radius:12px;display:flex;align-items:center;padding:0 11px;gap:8px;border:0.5px solid #e0b030;transition:border-color .15s ease,box-shadow .15s ease;}
@@ -452,13 +452,13 @@ const [searchError, setSearchError] = useState(false)
         .search-wrap input::placeholder{color:#bbb;}
         .filter-btn{position:relative;width:44px;height:44px;background:rgba(0,0,0,.1);border:none;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
         .filter-btn i{font-size:17px;color:#111;}
-        .filter-badge{position:absolute;top:-3px;right:-3px;width:16px;height:16px;background:#E63312;border-radius:50%;font-size:9px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;border:2px solid #F5C842;}
+        .filter-badge{position:absolute;top:-3px;right:-3px;width:16px;height:16px;background:var(--az-red);border-radius:50%;font-size:9px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;border:2px solid var(--az-yellow);}
 
         /* Category chips */
         .cats{display:flex;gap:8px;overflow-x:auto;padding:10px 12px;background:#fff;border-bottom:1px solid #f0f0f0;}
         .cats::-webkit-scrollbar{display:none;}
         .cb{background:#f5f5f5;border:none;border-radius:999px;padding:5px 12px;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit;color:#555;white-space:nowrap;transition:background .15s ease,color .15s ease;}
-        .cb.on{background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;}
+        .cb.on{background:linear-gradient(135deg,var(--az-ink),#000);color:var(--az-yellow);}
 
         /* Active filters */
         .active-filters{display:flex;gap:6px;flex-wrap:wrap;padding:8px 12px;background:#fff;border-bottom:1px solid #ececec;}
@@ -471,7 +471,7 @@ const [searchError, setSearchError] = useState(false)
 
         /* Section headings */
         .section{margin-bottom:20px;}
-        .section-hdr{display:flex;align-items:center;gap:7px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #F5C842;}
+        .section-hdr{display:flex;align-items:center;gap:7px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--az-yellow);}
         .section-hdr .section-icon{font-size:16px;}
         .section-hdr h2{font-size:13px;font-weight:800;color:#111;flex:1;}
         .section-count{font-size:10px;color:#6B6B6B;background:#f5f5f0;border-radius:20px;padding:2px 8px;}
@@ -482,8 +482,8 @@ const [searchError, setSearchError] = useState(false)
         .shop-card:hover{transform:translateY(-3px);box-shadow:0 10px 24px -8px rgba(0,0,0,.2);}
         .shop-card:active{transform:scale(.97);}
         .shop-banner{height:56px;position:relative;display:flex;align-items:flex-end;padding:6px;}
-        .shop-avatar{width:40px;height:40px;border-radius:50%;background:#fff;border:2.5px solid #F5C842;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.12);}
-        .shop-premium-badge{position:absolute;top:5px;right:6px;background:#F5C842;color:#111;font-size:7.5px;padding:2px 5px;border-radius:8px;font-weight:700;}
+        .shop-avatar{width:40px;height:40px;border-radius:50%;background:#fff;border:2.5px solid var(--az-yellow);display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.12);}
+        .shop-premium-badge{position:absolute;top:5px;right:6px;background:var(--az-yellow);color:#111;font-size:7.5px;padding:2px 5px;border-radius:8px;font-weight:700;}
         .shop-body{padding:7px 9px 9px;}
         .shop-name{font-size:11.5px;font-weight:700;color:#111;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
         .shop-cat-tag{font-size:9px;color:#C42B0F;font-weight:600;margin-bottom:4px;}
@@ -500,7 +500,7 @@ const [searchError, setSearchError] = useState(false)
 
         /* Global loading */
         .loading{text-align:center;padding:50px 20px;}
-        .spinner{width:28px;height:28px;border:3px solid #F5C842;border-top-color:#E63312;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px;}
+        .spinner{width:28px;height:28px;border:3px solid var(--az-yellow);border-top-color:var(--az-red);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px;}
         @keyframes spin{to{transform:rotate(360deg);}}
 
         /* Filter panel */
@@ -512,14 +512,14 @@ const [searchError, setSearchError] = useState(false)
         .fp-row{margin-bottom:14px;}
         .fp-label{font-size:11px;font-weight:700;color:#555;margin-bottom:6px;display:block;}
         .fp-row select,.fp-row input{width:100%;border:1.5px solid #ddd;border-radius:10px;padding:10px 13px;font-size:13px;font-family:inherit;outline:none;background:#fff;color:#111;}
-        .fp-row select:focus,.fp-row input:focus{border-color:#F5C842;}
+        .fp-row select:focus,.fp-row input:focus{border-color:var(--az-yellow);}
         .price-range{display:flex;gap:8px;}
         .price-range input{flex:1;}
         .cond-row{display:flex;gap:6px;flex-wrap:wrap;}
         .cond-btn{flex:1;min-width:70px;border:1.5px solid #ddd;border-radius:9px;padding:8px 6px;font-size:11px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;white-space:nowrap;}
-        .cond-btn.active{border-color:#E63312;background:#FFF0EE;color:#C42B0F;}
+        .cond-btn.active{border-color:var(--az-red);background:#FFF0EE;color:#C42B0F;}
         .fp-actions{display:flex;gap:8px;margin-top:6px;}
-        .fp-apply{flex:1;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:11px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .fp-apply{flex:1;background:linear-gradient(135deg,var(--az-red),#c42a0e);color:#fff;border:none;border-radius:11px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
         .fp-clear{background:#f5f5f5;color:#555;border:none;border-radius:11px;padding:13px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
 
         @keyframes ai-fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
@@ -569,7 +569,7 @@ const [searchError, setSearchError] = useState(false)
         </div>
 
         {nearErr && (
-          <div role="alert" style={{ padding: '8px 12px', fontSize: 12, color: '#C42305', background: '#FFF0EE', borderBottom: '1px solid #F5C5BC' }}>
+          <div role="alert" style={{ padding: '8px 12px', fontSize: 12, color: 'var(--az-red-deep)', background: '#FFF0EE', borderBottom: '1px solid #F5C5BC' }}>
             {nearErr}
           </div>
         )}
@@ -595,7 +595,7 @@ const [searchError, setSearchError] = useState(false)
             <div style={{ textAlign: 'center', padding: '48px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
               <div style={{ fontSize: 36 }} aria-hidden="true">⚠️</div>
               <div style={{ fontWeight: 700, color: '#111' }}>Gabim gjatë kërkimit</div>
-              <button type="button" onClick={() => doSearch()} style={{ background: '#F5C842', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Provo Përsëri</button>
+              <button type="button" onClick={() => doSearch()} style={{ background: 'var(--az-yellow)', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Provo Përsëri</button>
             </div>
           ) : loading ? (
             <SkeletonGrid count={6} />
@@ -632,8 +632,8 @@ const [searchError, setSearchError] = useState(false)
                     aria-label="Ruaj këtë kërkim"
                     style={{
                       background: savedOk ? '#10B981' : '#fff',
-                      color: savedOk ? '#fff' : '#C42305',
-                      border: `1.5px solid ${savedOk ? '#10B981' : '#C42305'}`,
+                      color: savedOk ? '#fff' : 'var(--az-red-deep)',
+                      border: `1.5px solid ${savedOk ? '#10B981' : 'var(--az-red-deep)'}`,
                       borderRadius: 20, padding: '3px 10px', fontSize: 10,
                       fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
                       display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0,
@@ -698,7 +698,7 @@ const [searchError, setSearchError] = useState(false)
                       type="button"
                       onClick={loadMore}
                       disabled={loadingMore}
-                      style={{ background: '#111', color: '#F5C842', border: 'none', borderRadius: 24, padding: '11px 28px', fontWeight: 700, fontSize: 13, cursor: loadingMore ? 'not-allowed' : 'pointer', fontFamily: 'inherit', opacity: loadingMore ? 0.7 : 1 }}
+                      style={{ background: '#111', color: 'var(--az-yellow)', border: 'none', borderRadius: 24, padding: '11px 28px', fontWeight: 700, fontSize: 13, cursor: loadingMore ? 'not-allowed' : 'pointer', fontFamily: 'inherit', opacity: loadingMore ? 0.7 : 1 }}
                     >
                       {loadingMore ? <><span aria-hidden='true'>⏳</span> Duke ngarkuar...</> : 'Shiko më shumë →'}
                     </button>
@@ -778,7 +778,7 @@ const [searchError, setSearchError] = useState(false)
                 <div style={{ fontSize: 11, color: '#6B6B6B', marginTop: 2 }}>Shpallje të verifikuara</div>
               </div>
               <div style={{
-                width: 44, height: 24, borderRadius: 12, background: premiumOnly ? '#F5C842' : '#ddd',
+                width: 44, height: 24, borderRadius: 12, background: premiumOnly ? 'var(--az-yellow)' : '#ddd',
                 position: 'relative', transition: 'background .2s', flexShrink: 0,
               }}>
                 <div style={{
@@ -827,7 +827,7 @@ const [searchError, setSearchError] = useState(false)
         <button
           type="button"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          style={{ position: 'fixed', bottom: 80, right: 16, width: 42, height: 42, borderRadius: '50%', background: '#111', color: '#F5C842', border: 'none', boxShadow: '0 2px 12px rgba(0,0,0,.25)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, zIndex: 99 }}
+          style={{ position: 'fixed', bottom: 80, right: 16, width: 42, height: 42, borderRadius: '50%', background: '#111', color: 'var(--az-yellow)', border: 'none', boxShadow: '0 2px 12px rgba(0,0,0,.25)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, zIndex: 99 }}
           aria-label="Kthehu në krye"
         >
           <i className="ti ti-arrow-up" aria-hidden="true" />

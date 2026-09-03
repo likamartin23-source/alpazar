@@ -120,8 +120,8 @@ const ARI = '#D4AF37'
  * Matrica (Imazhi 1): falas gri (pa vule) · premium e verdhe + ★ · VIP ari→kuqe + kurore.
  */
 function ringStyle(tier: AvatarTier): React.CSSProperties {
-  if (tier === 'vip')     return { background: `linear-gradient(135deg,${ARI},#E63312)` }
-  if (tier === 'premium') return { background: 'linear-gradient(135deg,#F5C842,#E63312)' }
+  if (tier === 'vip')     return { background: `linear-gradient(135deg,${ARI},var(--az-red))` }
+  if (tier === 'premium') return { background: 'linear-gradient(135deg,var(--az-yellow),var(--az-red))' }
   return { background: '#e2e2e2' }
 }
 
@@ -141,7 +141,7 @@ const VIP_PULSE_CSS = `
 
 /**
  * Pulsimi i unazes PREMIUM (BLLOKU I PERMIRESUAR §1, `ring_matrix_v3_pulse_forte`).
- * I njejti mekanizem si VIP-i, por me ngjyren premium (e verdha `#F5C842`) dhe
+ * I njejti mekanizem si VIP-i, por me ngjyren premium (e verdha `var(--az-yellow)`) dhe
  * ritem pak me te qete qe te dallohet nga VIP-i. Gradienti i unazes NUK ndryshon;
  * ndryshon vetem glow-u pulsues. `prefers-reduced-motion` e fik (a11y).
  */
@@ -188,7 +188,7 @@ export default function Avatar({
           {showImage ? (
             <img src={src as string} alt={name || 'avatar'} loading="lazy" onError={() => setBroken(true)} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', display: 'block' }} />
           ) : (
-            <div style={{ width: '100%', height: '100%', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg,#F5C842,#E63312)', color: '#fff', fontWeight: 800, fontSize: initialsFont, letterSpacing: 0.5, userSelect: 'none' }}>
+            <div style={{ width: '100%', height: '100%', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg,var(--az-yellow),var(--az-red))', color: '#fff', fontWeight: 800, fontSize: initialsFont, letterSpacing: 0.5, userSelect: 'none' }}>
               {getInitials(name)}
             </div>
           )}
@@ -209,7 +209,7 @@ export default function Avatar({
       {tier === 'premium' && (
         <div
           role="img" aria-label="Premium"
-          style={{ position: 'absolute', right: -2, top: -2, width: badge, height: badge, borderRadius: '50%', background: '#F5C842', border: '2px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: Math.round(badge * 0.55), color: '#7A4A00', lineHeight: 1 }}>
+          style={{ position: 'absolute', right: -2, top: -2, width: badge, height: badge, borderRadius: '50%', background: 'var(--az-yellow)', border: '2px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: Math.round(badge * 0.55), color: '#7A4A00', lineHeight: 1 }}>
           <span aria-hidden="true">★</span>
         </div>
       )}

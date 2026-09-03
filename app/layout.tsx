@@ -68,7 +68,7 @@ export const metadata: Metadata = {
     'apple-mobile-web-app-capable': 'yes',
     'apple-mobile-web-app-status-bar-style': 'black-translucent',
     'apple-mobile-web-app-title': 'ALPAZAR',
-    'msapplication-TileColor': '#111111',
+    'msapplication-TileColor': 'var(--az-black)',
     'msapplication-TileImage': '/icons/icon-144.png?v=3',
     'google-site-verification': ['VRnlK16BTSvB9jRZifv-un8DY_a2jp5X67XEXokK5xY', 'wNtd2B-Xmy2aTSr0e0eAXJ3RV4MIJyqIDSr'],
   },
@@ -80,8 +80,8 @@ export const viewport: Viewport = {
   maximumScale: 5,
   userScalable: true,
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#F5C842' },
-    { media: '(prefers-color-scheme: dark)', color: '#111111' },
+    { media: '(prefers-color-scheme: light)', color: 'var(--az-yellow)' },
+    { media: '(prefers-color-scheme: dark)', color: 'var(--az-black)' },
   ],
 }
 
@@ -100,7 +100,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Module 6: Vercel Web Analytics — 100% falas, GDPR-compliant, zero konfigurim */}
         <link rel="manifest" href="/manifest.json?v=3" />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=3" />
-        <style dangerouslySetInnerHTML={{__html:`a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible,[tabindex]:focus-visible,[role="button"]:focus-visible,[role="link"]:focus-visible,[role="radio"]:focus-visible,[role="switch"]:focus-visible{outline:2px solid #F5C842;outline-offset:2px;border-radius:4px;}.skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:9999;background:#F5C842;color:#111;padding:8px 16px;font-weight:700;border-radius:4px;text-decoration:none;}.skip-link:focus{left:16px;top:16px;width:auto;height:auto;overflow:visible;}html{scroll-padding-top:64px;scroll-padding-bottom:96px;}`}} />
+        <style dangerouslySetInnerHTML={{__html:`a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible,[tabindex]:focus-visible,[role="button"]:focus-visible,[role="link"]:focus-visible,[role="radio"]:focus-visible,[role="switch"]:focus-visible{outline:2px solid var(--az-yellow);outline-offset:2px;border-radius:4px;}.skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:9999;background:var(--az-yellow);color:#111;padding:8px 16px;font-weight:700;border-radius:4px;text-decoration:none;}.skip-link:focus{left:16px;top:16px;width:auto;height:auto;overflow:visible;}html{scroll-padding-top:64px;scroll-padding-bottom:96px;}`}} />
         {/* Speculation Rules — navigojme me window.location.href, ndaj
             prefetch-i i Next-it nuk aktivizohet KURRE. Keto rregulla punojne
             mbi navigime dokumenti, pra jane e vetmja menyre qe kemi per te
@@ -250,7 +250,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           })();
         `}} />
       </head>
-      <body style={{ margin: 0, background: '#FFFBEA', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
+      <body style={{ margin: 0, background: 'var(--az-cream)', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
         <a href="#main-content" className="skip-link">Kalo tek përmbajtja kryesore</a>
         <LanguageProvider>
         <AlpazarProviderDyn>

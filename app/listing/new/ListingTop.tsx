@@ -34,19 +34,19 @@ export function ListingTop({ p }: any) {
             <div className="field">
               <label htmlFor="listing-title">Titulli *</label>
               <input id="listing-title" type="text" placeholder="p.sh. iPhone 13 Pro Max 256GB..." value={form.title} onChange={e => set('title', e.target.value)} maxLength={100} required />
-              <div style={{ textAlign: 'right', fontSize: 10, color: form.title.length > 85 ? '#C42305' : '#aaa', marginTop: 2 }}>{form.title.length}/100</div>
+              <div style={{ textAlign: 'right', fontSize: 10, color: form.title.length > 85 ? 'var(--az-red-deep)' : '#aaa', marginTop: 2 }}>{form.title.length}/100</div>
             </div>
 
             <div className="field">
               <label htmlFor="listing-description">Përshkrimi</label>
               <textarea id="listing-description" placeholder="Përshkruaj artikullin — gjendje, veçori, arsye shitjeje..." value={form.description} onChange={e => set('description', e.target.value)} maxLength={2000} />
-              <div style={{ textAlign: 'right', fontSize: 10, color: form.description.length > 1800 ? '#C42305' : '#aaa', marginTop: 2 }}>{form.description.length}/2000</div>
+              <div style={{ textAlign: 'right', fontSize: 10, color: form.description.length > 1800 ? 'var(--az-red-deep)' : '#aaa', marginTop: 2 }}>{form.description.length}/2000</div>
               <button
                 type="button"
                 onClick={generateDescription}
                 disabled={descLoading}
                 style={{
-                  marginTop: 6, background: '#111', color: '#F5C842', border: 'none',
+                  marginTop: 6, background: '#111', color: 'var(--az-yellow)', border: 'none',
                   borderRadius: 8, padding: '7px 12px', fontSize: 11, fontWeight: 700,
                   cursor: descLoading ? 'not-allowed' : 'pointer', display: 'flex',
                   alignItems: 'center', gap: 5, opacity: descLoading ? 0.7 : 1, fontFamily: 'inherit',
@@ -72,7 +72,7 @@ export function ListingTop({ p }: any) {
                 onClick={suggestPrice}
                 disabled={priceLoading}
                 style={{
-                  marginTop: 8, background: '#111', color: '#F5C842', border: 'none',
+                  marginTop: 8, background: '#111', color: 'var(--az-yellow)', border: 'none',
                   borderRadius: 8, padding: '7px 12px', fontSize: 11, fontWeight: 700,
                   cursor: priceLoading ? 'not-allowed' : 'pointer', display: 'flex',
                   alignItems: 'center', gap: 5, opacity: priceLoading ? 0.7 : 1, fontFamily: 'inherit',

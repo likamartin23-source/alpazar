@@ -44,7 +44,7 @@ export function MaintenanceBanner() {
       padding: 24, textAlign: 'center',
     }} role="alert" aria-live="assertive">
       <div style={{ fontSize: 56, marginBottom: 16 }} aria-hidden="true">🔧</div>
-      <div style={{ fontSize: 22, fontWeight: 800, color: '#F5C842', marginBottom: 10 }}>
+      <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--az-yellow)', marginBottom: 10 }}>
         Mirëmbajtje
       </div>
       <div style={{ fontSize: 14, color: '#aaa', maxWidth: 300, lineHeight: 1.6 }}>

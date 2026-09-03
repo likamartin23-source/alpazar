@@ -74,7 +74,7 @@ export default function ModerimiPage() {
   }
 
   const wrap = (inner: React.ReactNode) => (
-    <div style={{ minHeight: '100dvh', background: '#FFFBEA', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 20px' }}>
+    <div style={{ minHeight: '100dvh', background: 'var(--az-cream)', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 20px' }}>
       <div style={{ width: '100%', maxWidth: 560 }}>
         <button type="button" aria-label="Kthehu" onClick={() => window.history.back()}
           style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', fontSize: 13, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -102,7 +102,7 @@ export default function ModerimiPage() {
       : gabim
     return wrap(
       <>
-        <h1 style={{ fontSize: 18, fontWeight: 800, color: '#111', marginBottom: 8 }}>Vendimi i moderimit</h1>
+        <h1 style={{ fontSize: 'var(--fs-2xl)', fontWeight: 800, color: '#111', marginBottom: 8 }}>Vendimi i moderimit</h1>
         <div role="alert" style={{ background: '#FFF0EE', color: '#C42B0F', border: '1px solid #F09595', borderRadius: 8, padding: '10px 12px', fontSize: 12.5 }}>{teksti}</div>
         {gabim === 'pa_autentikim' && (
           <a href="/auth/login" style={{ display: 'inline-block', marginTop: 12, background: '#111', color: '#fff', borderRadius: 10, padding: '11px 18px', fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>Hyr</a>
@@ -116,7 +116,7 @@ export default function ModerimiPage() {
 
   return wrap(
     <>
-      <h1 style={{ fontSize: 19, fontWeight: 800, color: '#111', marginBottom: 6 }}>
+      <h1 style={{ fontSize: 'var(--fs-2xl)', fontWeight: 800, color: '#111', marginBottom: 6 }}>
         {hequr ? 'Shpallja jote u hoq' : 'Shpallja jote u shqyrtua — pa masë'}
       </h1>
       <div style={{ fontSize: 12, color: '#555', marginBottom: 18 }}>
