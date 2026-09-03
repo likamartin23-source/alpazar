@@ -198,6 +198,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--az-cream)', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", paddingBottom: 80 }}>
+      <style dangerouslySetInnerHTML={{ __html: `.u-inner{max-width:480px;margin:0 auto}@media(min-width:768px){.u-inner{max-width:760px}}@media(min-width:1024px){.u-inner{max-width:1080px}}` }} />
       {/* Back button */}
       <button
         type="button"
@@ -219,6 +220,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
         )}
       </div>
 
+      <div className="u-inner">
       {/* Identity card */}
       <div style={{ background: '#fff', paddingBottom: 16, marginBottom: 8, boxShadow: '0 2px 8px rgba(0,0,0,.06)' }}>
         {/* Avatar overlapping cover */}
@@ -463,6 +465,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
           </div>
         </div>
       )}
+      </div>
     </div>
   )
 }

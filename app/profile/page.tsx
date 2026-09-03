@@ -462,7 +462,7 @@ export default function ProfilePage() {
   const [mt, mm] = msg.split(/:(.+)/)
 
   if (loadError) return (
-    <div style={{ maxWidth: 480, margin: '0 auto', background: 'var(--az-cream)', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
+    <div style={{ maxWidth: 800, margin: '0 auto', background: 'var(--az-cream)', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
       <div style={{ fontSize: 40 }} aria-hidden="true">⚠️</div>
       <div style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
       <button type="button" onClick={() => window.location.reload()} style={{ padding: '10px 24px', background: 'var(--az-yellow)', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer', minHeight: 44 }}>Rifresko</button>
@@ -470,7 +470,7 @@ export default function ProfilePage() {
   )
 
   if (loading) return (
-    <div style={{ maxWidth: 480, margin: '0 auto', background: 'var(--az-cream)', minHeight: '100vh' }}>
+    <div style={{ maxWidth: 800, margin: '0 auto', background: 'var(--az-cream)', minHeight: '100vh' }}>
       <div style={{ background: 'var(--az-yellow)', height: 52 }} />
       <SkeletonProfile />
       <div style={{ height: 1, background: '#f0f0f0' }} />
@@ -484,6 +484,8 @@ export default function ProfilePage() {
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--az-cream);}
         .wrap{max-width:480px;margin:0 auto;background:var(--az-cream);min-height:100vh;padding-bottom:30px;}
+        @media(min-width:768px){.wrap{max-width:760px}}
+        @media(min-width:1024px){.wrap{max-width:1080px}}
         .topbar{background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%);padding:10px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);}
         .back{width:44px;height:44px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .back i{font-size:18px;color:#111;}

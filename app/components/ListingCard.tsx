@@ -201,7 +201,7 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
         {videoUrl && videoVisible
           ? <video
               ref={vref}
-              src={cldVideo(videoUrl, 640, true)}
+              src={cldVideo(videoUrl, 360, true)}
               poster={l.video_poster || undefined}
               autoPlay muted loop playsInline preload="metadata"
               aria-label={l.title}

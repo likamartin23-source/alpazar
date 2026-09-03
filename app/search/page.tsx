@@ -130,6 +130,8 @@ export default function SearchPage() {
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--az-cream);}
         .wrap{max-width:480px;margin:0 auto;background:var(--az-cream);min-height:100vh;padding-bottom:80px;}
+        @media(min-width:768px){.wrap{max-width:760px}}
+        @media(min-width:1024px){.wrap{max-width:1080px}}
 
         /* ── Topbar ── */
         .topbar{background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%);padding:10px 12px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:50;}

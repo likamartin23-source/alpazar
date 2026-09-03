@@ -82,7 +82,7 @@ function InstallBanner() {
           >✕</button>
         </div>
       )}
-      <span className="fab-label-dark">Instalo</span>
+      <span className="fab-label-dark" aria-hidden="true">Instalo</span>
       <div style={{ position: 'relative', display: 'inline-flex' }}>
         <button
           type="button"
@@ -234,7 +234,7 @@ function ShareBox({ refCode }: { refCode?: string }) {
         </div>
       )}
 
-      <span className="fab-label-dark">Ndaj</span>
+      <span className="fab-label-dark" aria-hidden="true">Ndaj</span>
       <button
         type="button"
         aria-label={open ? 'Mbyll menynë e ndarjes' : 'Ndaj aplikacionin'}

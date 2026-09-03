@@ -6,7 +6,7 @@ export default function Cookies() {
   const css = `
     *{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--az-cream);}
-    .wrap{max-width:640px;margin:0 auto;background:#fff;min-height:100vh;}
+    .wrap{max-width:800px;margin:0 auto;background:#fff;min-height:100vh;}
     .topbar{background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
     .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0;}
     .back i{font-size:18px;color:#111;}
@@ -61,7 +61,7 @@ export default function Cookies() {
             <span>Këta cookie janë të domosdoshëm për funksionimin bazë të platformës. Nuk kërkohet konsentimi juaj sipas Nenit 158/6 §3, Ligji Nr. 54/2024.</span>
           </div>
 
-          <div className="table-wrap">
+          <div className="table-wrap" tabIndex={0} role="group" aria-label="Tabelë — rrëshqit anash për ta parë të plotë">
             <table>
               <thead>
                 <tr>
@@ -99,7 +99,7 @@ export default function Cookies() {
             <span>Alpazar përdor Vercel Analytics — sistem analitik <strong>pa cookie</strong>, që mbledh vetëm statistika agregate anonime (pa ruajtje të IP-së individuale, pa fingerprinting, pa identifikim të vizitorit). Sipas Udhëzimit të WP29 dhe EDPB, kjo teknologji nuk kërkon konsentim të veçantë.</span>
           </div>
 
-          <div className="table-wrap">
+          <div className="table-wrap" tabIndex={0} role="group" aria-label="Tabelë — rrëshqit anash për ta parë të plotë">
             <table>
               <thead>
                 <tr>

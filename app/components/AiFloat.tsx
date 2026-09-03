@@ -152,7 +152,7 @@ export default function AiFloat() {
       {/* Butoni FAB i Albit — fshihet kur paneli është hapur */}
       {!open && (
         <div className="fab-albi">
-          <span className="fab-label">Albi</span>
+          <span className="fab-label" aria-hidden="true">Albi</span>
           <button
             type="button"
             className="fab-albi-btn"

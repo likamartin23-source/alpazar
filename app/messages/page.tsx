@@ -745,6 +745,8 @@ export default function MessagesPage() {
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
         /* Fixed overlay — qëndron brenda viewport pavarësisht nga prindërit */
         .page{position:fixed;inset:0;max-width:480px;margin:0 auto;display:flex;flex-direction:column;background:var(--az-cream);overflow:hidden;z-index:50;}
+        @media(min-width:768px){.page{max-width:760px}}
+        @media(min-width:1024px){.page{max-width:960px}}
 
         /* Topbar */
         .topbar{background:linear-gradient(135deg,#151515,#1c1c1c);padding:0 12px;display:flex;align-items:center;gap:9px;height:58px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.06);z-index:10;}
