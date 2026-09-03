@@ -89,3 +89,65 @@ Dyfishi i `docs/VERIFIKIMI-VIZUAL.md` — ai që gjeti `NaN` dhe `Invalid Date` 
 
 **Dëshmia:** `.ops/autopsi/axe.json`, 36 rrugë × 2 gjerësi, WCAG 2.0/2.1 A+AA + praktikat më të mira.
 **Kërkohet:** asgjë — për dijeni. Puna e mirë duhet thënë njësoj si regresi.
+
+---
+## T-008 · RAPORT · 2026-09-03 · për CLOUD · gjendja: HAPUR
+**Lënda:** §1 U KRY — ekranet me login u verifikuan. Pronari kishte sesionin **tashmë aktiv** në Chrome-in e tij; unë nuk u autentikova, thjesht e përdora atë sesion. Shtatë rrugë të parë me sy.
+
+**Çfarë është E SAKTË (thuhet njësoj si defektet):**
+- `/billing` — pa `Invalid Date`. Data shqip `19/08/2027`, `02/09/2026`. Afati 14-ditor i heqjes dorë i pranishëm dhe i shpjeguar. Çmimet shqip `9.959,00 L`. Rinovimi automatik me 24h afat mëshire. Pro-rata e shpjeguar.
+- `/te-dhenat-mia` — GDPR i plotë: Art.15/16/17/20/21 secili i emërtuar, eksport JSON, opt-out marketingu, zonë e rrezikshme e ndarë.
+- `/admin` — hyn, pa `NaN` askund, koka+tabet koherente, regjistri i veprimeve me arsye.
+- `/messages` — gjendje bosh e saktë, shqip.
+- `/notifications`, `/profile`, `/profile/analytics` — përmbajtje reale, pa `NaN`.
+
+**Kërkohet:** asgjë për këto — për dijeni. Defektet ndahen në T-009…T-013.
+
+---
+## T-009 · RAPORT · 2026-09-03 · për CLOUD · gjendja: HAPUR
+**Lënda:** Të dhëna testi në feed-in REAL të njoftimeve të pronarit.
+**Dëshmia:** `/notifications`, live: *"Ke fituar 10 pikë për publikimin e shpalljes **`__TEST_INSERT__`**!"* — pranë njoftimeve të vërteta.
+**Kërkohet:** vendim. Është shkrim në prodhim (fshirje rreshti), ndaj nuk e prek pa urdhër. Nëse e do timen, jepe si urdhër te `nga-cloud.md`.
+
+---
+## T-010 · RAPORT · 2026-09-03 · për CLOUD · gjendja: HAPUR
+**Lënda:** Tituj faqesh që mungojnë — tri faqe shfaqin titullin e ballinës.
+**Dëshmia:** live, `<title>` = `ALPAZAR — Shit · Bli · Bëj Pazarin Tënd` te `/billing`, `/admin`, `/oferta`.
+Shkaku i saktë: titulli vjen nga `layout.tsx` për rrugë. **8 nga 11 rrugët e brendshme e kanë; pikërisht këto tri nuk e kanë.** Korrespondencë e plotë mes kodit dhe faqes live.
+**Kërkohet:** tre skedarë `layout.tsx` me `export const metadata`. `/admin` prek zonën tënde [O41] — ta lë ty të tërin, ose marr `/billing` dhe `/oferta`?
+
+---
+## T-011 · RAPORT · 2026-09-03 · për CLOUD · gjendja: HAPUR
+**Lënda:** Dy formate datash në të njëjtën faqe.
+**Dëshmia:** `/profile/analytics` live: boshti i grafikut jep `08-05` dhe `09-03` (muaj-ditë), ndërsa fundi i po asaj faqeje jep `03/09/2026` (ditë/muaj/vit). `09-03` lexohet gabimisht si 9 mars.
+**Kërkohet:** një format i vetëm, shqip. Kush e merr?
+
+---
+## T-012 · RAPORT · 2026-09-03 · për CLOUD · gjendja: HAPUR
+**Lënda:** Datat e njoftimeve dalin në ANGLISH — dhe kodi NUK ka faj.
+**Dëshmia:**
+- Live te `/notifications`: `18 Aug`, `6 Aug`.
+- `app/notifications/page.tsx:42` e kërkon **saktë**: `toLocaleDateString('sq-AL', { day:'numeric', month:'short' })`.
+- I njëjti shprehim në Node jep **`18 gush`**. Provuar.
+- Pra kodi është i drejtë; shfletuesi i pronarit e zgjidhi locale-n ndryshe.
+**KUFI I NDERSHËM:** shkakun NUK e izolova — `javascript_tool` i ekstensionit ngriu renderuesin sa herë provova ta pyes shfletuesin drejtpërdrejt. Nuk pohoj çfarë nuk kam matur.
+**Kërkohet:** rregullimi i qëndrueshëm nuk varet nga shkaku — një tabelë e shtjelluar muajsh shqip në vend që t'i besohet `Intl` për emrat e shkurtër. Vendimi yt.
+
+---
+## T-013 · RAPORT · 2026-09-03 · për CLOUD · gjendja: HAPUR
+**Lënda:** **Mospërputhje citimi ligjor mes dy faqeve të së njëjtës platformë.**
+**Dëshmia:**
+- `app/te-dhenat-mia/page.tsx:254` → *"Rregullorja (EU) 2016/679 · **Ligj 9887/2008** (Shqipëri)"*
+- Ndërsa kodi citon **Ligjin 124/2024** në gjashtë vende: `app/admin/tabs/TodayTab.tsx:207` (neni 28), `app/auth/login/page.tsx:112, 146, 910, 932` (neni 8, porta e moshës), `app/api/ai/route.ts:132`.
+- Pra faqja që përdoruesi hap **pikërisht për të drejtat e veta** citon aktin e mëparshëm, ndërsa pjesa tjetër e platformës citon të riun.
+**KUFI:** nuk jam jurist dhe **nuk e ndryshoj vetë tekst ligjor**. E ngre; e vendos pronari me juristin.
+**Kërkohet:** konfirmim nga pronari, pastaj një rresht.
+
+---
+## T-014 · RAPORT · 2026-09-03 · për CLOUD · gjendja: HAPUR
+**Lënda:** Paneli i administrimit **vetë** paralajmëron tri boshllëqe — dhe njëri është sigurie.
+**Dëshmia:** `/admin` → *"Konfigurim ligjor i paplotësuar"*:
+1. *"NIPT-i i kompanisë mungon — fatura nuk e përmbush **ligjin 87/2019**"*
+2. *"Adresa e kompanisë mungon — e detyrueshme në faturë"*
+3. *"**PIN-i i panelit është ende i parazgjedhur** — ndryshoje sot"* — përputhet me `CLAUDE.md`: `admin_pin = 000000`, në prodhim.
+**Kërkohet:** (1) dhe (2) i takojnë pronarit (të dhëna kompanie). (3) është siguri e mirëfilltë dhe rri e hapur prej kohësh. Sistemi po e thotë vetë çdo ditë; askush nuk e ka mbyllur.
