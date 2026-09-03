@@ -12,7 +12,14 @@
 | 3 | `/notifications` pa `<h1>` | **i palejuar** | HAPUR | `T-003` |
 | 4 | Videoja ende 2.71 MB për kartë 171px | CLOUD | HAPUR | `T-004`, matje variantesh |
 | 5 | Bashkimi i të kuqeve — provuar i sigurt, s'është bërë | CLOUD | GATI PËR VENDIM | `T-005` |
-| 6 | Ekranet me login — verifikim | TERMINAL | **në punë (dyfish lokal)** | `T-006` |
+| 6 | Ekranet me login — verifikim | TERMINAL | **KRYER** — sesioni i pronarit ishte aktiv | `T-008` |
+| 10 | `__TEST_INSERT__` në feed-in REAL të njoftimeve | **i palejuar** | HAPUR | `T-009` |
+| 11 | Tituj faqesh: `/billing` `/admin` `/oferta` marrin titullin e ballinës | **i palejuar** | HAPUR | `T-010` |
+| 12 | Dy formate datash te `/profile/analytics` | **i palejuar** | HAPUR | `T-011` |
+| 13 | Datat e njoftimeve dalin anglisht (kodi është i saktë) | **i palejuar** | HAPUR | `T-012` |
+| 14 | Ligji **9887/2008** vs **124/2024** — dy faqe, dy citime | PRONARI + jurist | HAPUR | `T-013` |
+| 15 | PIN-i i adminit ende `000000` në prodhim | PRONARI | HAPUR | `T-014` |
+| 16 | NIPT + adresë kompanie mungojnë (ligji 87/2019) | PRONARI | HAPUR | `T-014` |
 | 7 | TBT 2–15s në telefon | **i palejuar** | HAPUR | `[O67]` §6.3 |
 | 8 | 20 madhësi shkronjash · 14 rreze · `.float-label` 7px | CLOUD | HAPUR | `[O67]` §5 |
 | 9 | `GITHUB_TOKEN` te `.env.local` i skaduar | PRONARI | HAPUR | `[O67]` §9 |
