@@ -287,7 +287,7 @@ export default function ReferralPage() {
                     type="button"
                     aria-label="Kopjo linkun e referimit"
                     onClick={() => { navigator.clipboard.writeText(refUrl); setCopied(true); setTimeout(() => setCopied(false), 2000) }}
-                    style={{ flexShrink: 0, background: copied ? '#1D9E75' : '#F5C842', color: copied ? '#fff' : '#111', border: 'none', borderRadius: 10, padding: '8px 14px', fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: 'inherit', transition: 'all .2s', whiteSpace: 'nowrap' }}
+                    style={{ flexShrink: 0, background: copied ? '#1D9E75' : '#F5C842', color: copied ? '#fff' : '#111', border: 'none', borderRadius: 10, padding: '8px 14px', minHeight: 44, fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: 'inherit', transition: 'all .2s', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: 4 }}
                   >
                     {copied ? <><span aria-hidden='true'>✓</span> Kopjuar!</> : <><span aria-hidden='true'>📋</span> Kopjo</>}
                   </button>

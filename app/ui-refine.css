@@ -154,6 +154,14 @@ button[aria-label="Ndaj aplikacionin"]{box-shadow:0 4px 13px -5px rgba(0,0,0,.22
   --fs-2xs:9px; --fs-xs:10px; --fs-sm:11px; --fs-base:12px; --fs-md:13px;
   --fs-lg:14px; --fs-xl:16px; --fs-2xl:19px; --fs-3xl:22px;
 }
+/* [P5] Tokenet tipografikë responsive — h1/.hero-h1/.seo-h1 që përdorin var(--fs-*)
+   fitojnë automatikisht madhësi më të madhe në ekrane desktop. */
+@media(min-width:768px){
+  :root{ --fs-3xl:28px; --fs-2xl:22px; --fs-xl:18px; }
+}
+@media(min-width:1024px){
+  :root{ --fs-3xl:32px; --fs-2xl:24px; --fs-xl:20px; }
+}
 a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="button"]:focus-visible, [tabindex]:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible{
   outline:2px solid var(--action-red) !important; outline-offset:2px !important;
 }

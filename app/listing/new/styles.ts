@@ -32,7 +32,7 @@ export const NEW_LISTING_CSS = `
         .img-previews{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
         .img-prev{width:70px;height:70px;border-radius:8px;object-fit:cover;border:2px solid #F5C842;}
         .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
-        .cat-btn{border:1.5px solid #e0e0e0;border-radius:12px;padding:8px 4px;font-size:10px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;}
+        .cat-btn{border:1.5px solid #e0e0e0;border-radius:12px;padding:8px 4px;min-height:44px;font-size:10px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;}
         .cat-btn i{font-size:18px;color:#aaa;}
         .cat-btn.active{border-color:#F5C842;background:#FFFBEA;color:#111;}
         .cat-btn.active i{color:#C42B0F;}

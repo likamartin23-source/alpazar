@@ -785,7 +785,7 @@ export default function MessagesPage() {
         .empty-emoji{font-size:62px;margin-bottom:16px;}
         .empty h3{font-size:16px;font-weight:700;color:#555;margin-bottom:8px;}
         .empty p{font-size:12px;color:#555;line-height:1.8;margin-bottom:20px;}
-        .empty-cta{background:#111;color:#F5C842;border:none;border-radius:12px;padding:13px 26px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .empty-cta{background:#111;color:#F5C842;border:none;border-radius:12px;padding:13px 26px;min-height:44px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;}
 
         /* Chat area */
         .chat-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
@@ -889,7 +889,7 @@ export default function MessagesPage() {
         .emoji-panel{background:#fff;border-top:1.5px solid #EDE6D0;padding:8px 10px;display:flex;flex-wrap:wrap;gap:1px;max-height:130px;overflow-y:auto;flex-shrink:0;}
         .emoji-panel::-webkit-scrollbar{width:3px;}
         .emoji-panel::-webkit-scrollbar-thumb{background:#eee;}
-        .ep-btn{background:none;border:none;font-size:22px;cursor:pointer;padding:4px;border-radius:8px;line-height:1;}
+        .ep-btn{background:none;border:none;font-size:22px;cursor:pointer;padding:4px;border-radius:8px;line-height:1;width:44px;height:44px;display:flex;align-items:center;justify-content:center;}
         .ep-btn:hover{background:#eee;}
 
         /* Input bar */
@@ -899,7 +899,7 @@ export default function MessagesPage() {
         .input-wrap textarea{border:none;background:transparent;font-size:13.5px;color:#111;outline:none;flex:1;resize:none;min-height:20px;max-height:90px;line-height:1.5;padding:10px 0;font-family:inherit;}
         .input-wrap textarea::placeholder{color:#bbb;}
         .emoji-btn{width:30px;height:30px;border:none;background:none;cursor:pointer;font-size:21px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-bottom:8px;}
-        .attach-btn{width:32px;height:32px;background:rgba(0,0,0,.06);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#555;font-size:17px;}
+        .attach-btn{width:44px;height:44px;background:rgba(0,0,0,.06);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#555;font-size:17px;}
         .send-btn{width:46px;height:46px;background:linear-gradient(135deg,#E63312,#c42a0e);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 14px rgba(230,51,18,.4);}
         .send-btn:disabled{opacity:.45;cursor:default;box-shadow:none;}
         .send-btn:disabled{opacity:.4;box-shadow:none;}
@@ -911,12 +911,12 @@ export default function MessagesPage() {
         /* Blocked bar */
         .blocked-bar{background:#fff3f0;border-top:1px solid #ffd5cc;padding:14px 16px;flex-shrink:0;text-align:center;}
         .blocked-bar p{font-size:12px;color:#C42B0F;margin-bottom:8px;}
-        .unblock-btn{background:transparent;border:1.5px solid #E63312;color:#C42B0F;border-radius:10px;padding:7px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .unblock-btn{background:transparent;border:1.5px solid #E63312;color:#C42B0F;border-radius:10px;padding:7px 18px;min-height:44px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;}
 
         /* Select mode bar */
         .select-bar{background:#111;padding:0 12px;height:52px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
         .select-bar-text{flex:1;color:#fff;font-size:13px;font-weight:600;}
-        .sel-delete{background:#E63312;border:none;border-radius:10px;color:#fff;font-size:12px;font-weight:700;padding:8px 16px;cursor:pointer;font-family:inherit;}
+        .sel-delete{background:#E63312;border:none;border-radius:10px;color:#fff;font-size:12px;font-weight:700;padding:8px 16px;min-height:44px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;}
 
         /* Recording bar */
         .rec-bar{flex:1;display:flex;align-items:center;gap:8px;background:#fff;border-radius:22px;padding:0 12px;min-height:46px;box-shadow:0 1px 3px rgba(0,0,0,.1);}

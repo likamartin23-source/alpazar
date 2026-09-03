@@ -267,7 +267,7 @@ export default function AlbiChat({ variant = 'page', onClose }: { variant?: 'pag
         .albi-header-name{color:#fff;font-weight:700;font-size:15px;}
         .albi-header-status{color:rgba(255,255,255,.7);font-size:10px;display:flex;align-items:center;gap:5px;margin-top:2px;}
         .albi-online-dot{width:6px;height:6px;border-radius:50%;background:#4ade80;flex-shrink:0;}
-        .albi-clear-btn{background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:7px 12px;color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;}
+        .albi-clear-btn{background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:7px 12px;min-height:44px;color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;}
         .albi-msgs{flex:1;overflow-y:auto;padding:14px 12px 8px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth;}
         .albi-msgs::-webkit-scrollbar{width:3px;}
         .albi-msgs::-webkit-scrollbar-track{background:transparent;}
@@ -290,7 +290,7 @@ export default function AlbiChat({ variant = 'page', onClose }: { variant?: 'pag
         .albi-quick-section{flex-shrink:0;padding:0 12px 8px;}
         .albi-quick-label{color:#555;font-size:10px;font-weight:600;margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px;}
         .albi-quick-grid{display:flex;flex-wrap:wrap;gap:6px;}
-        .albi-quick-btn{background:#1a1a1a;border:0.5px solid #2a2a2a;border-radius:20px;padding:7px 13px;font-size:11px;color:#ccc;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap;}
+        .albi-quick-btn{background:#1a1a1a;border:0.5px solid #2a2a2a;border-radius:20px;padding:7px 13px;min-height:44px;font-size:11px;color:#ccc;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;}
         .albi-quick-btn:hover,.albi-quick-btn:active{background:#F5C842;color:#111;border-color:#F5C842;font-weight:700;}
         .albi-input-area{background:#111;border-top:1px solid #1e1e1e;padding:10px 12px ${isPanel ? '12px' : (isPWA ? '28px' : '12px')};flex-shrink:0;}
         .albi-input-row{display:flex;gap:8px;align-items:flex-end;}

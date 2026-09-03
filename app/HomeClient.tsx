@@ -618,7 +618,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         /* Categories */
         .cat-scroll{display:flex;gap:8px;padding:0 12px 12px;overflow-x:auto;scroll-snap-type:x mandatory;}
         .cat-scroll::-webkit-scrollbar{display:none;}
-        .cat-item{background:#fff;border-radius:20px;padding:6px 12px;display:flex;align-items:center;gap:5px;cursor:pointer;border:1.5px solid transparent;font-family:inherit;transition:all .15s;box-shadow:0 1px 4px rgba(0,0,0,.06);white-space:nowrap;flex-shrink:0;scroll-snap-align:start;}
+        .cat-item{background:#fff;border-radius:20px;padding:6px 12px;min-height:44px;display:flex;align-items:center;gap:5px;cursor:pointer;border:1.5px solid transparent;font-family:inherit;transition:all .15s;box-shadow:0 1px 4px rgba(0,0,0,.06);white-space:nowrap;flex-shrink:0;scroll-snap-align:start;}
         .cat-item:hover{border-color:#F5C84288;background:#FFFDF5;}
         .cat-item:active{transform:scale(.95);}
         .cat-item.active{background:linear-gradient(135deg,#1a1a1a,#000);border-color:#111;box-shadow:0 6px 16px -4px rgba(0,0,0,.35);transform:translateY(-1px);}
@@ -660,13 +660,13 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         /* Shops section */
         .section-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
         .section-hdr h3{font-size:13px;font-weight:700;color:#111;}
-        .section-hdr a{color:#C42B0F;font-size:11px;text-decoration:none;cursor:pointer;font-weight:600;}
+        .section-hdr a{color:#C42B0F;font-size:11px;text-decoration:none;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;min-height:44px;padding:0 4px;}
         /* CSS-ja e vjeter shops-grid/shop-* u HOQ: "Biznese Online" perdor tani BusinessCard
            mbi listings-grid + listing-card (K2). §4-bis: e reja u be e detyrueshme, e vjetra u hoq. */
         /* Filter row */
         .filter-row{display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;}
         .filter-row::-webkit-scrollbar{display:none;}
-        .filter-btn{background:#fff;border:0.5px solid #ddd;border-radius:20px;padding:6px 13px;font-size:10px;color:#666;white-space:nowrap;flex-shrink:0;cursor:pointer;font-family:inherit;transition:all .12s;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+        .filter-btn{background:#fff;border:0.5px solid #ddd;border-radius:20px;padding:6px 13px;min-height:44px;font-size:10px;color:#666;white-space:nowrap;flex-shrink:0;cursor:pointer;font-family:inherit;transition:all .12s;box-shadow:0 1px 3px rgba(0,0,0,.04);display:inline-flex;align-items:center;}
         .filter-btn:hover{border-color:#F5C842;color:#C42B0F;}
         .filter-btn.active{background:#111;border-color:#111;color:#F5C842;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.15);}
         /* Karta e shpalljes (.listing-card e me radhe) rri te
@@ -677,17 +677,17 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .empty-state i{font-size:40px;color:#F5C842;display:block;margin-bottom:10px;}
         .empty-state h3{font-size:14px;font-weight:700;color:#555;margin-bottom:6px;}
         .empty-state p{font-size:11px;color:#555;line-height:1.6;margin-bottom:14px;}
-        .empty-cta{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .empty-cta{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:10px;padding:10px 20px;min-height:44px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;}
         /* Premium CTA */
         .premium-cta{margin:0 0 16px;background:linear-gradient(135deg,#FFFBEA,#fff8d9);border:1.5px solid #F5C842;border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 3px 12px rgba(245,200,66,.15);}
         .prem-icon{width:30px;height:30px;background:#F5C842;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
         .prem-icon i{font-size:15px;color:#111;}
         .prem-text strong{font-size:11px;font-weight:700;color:#111;display:block;}
         .prem-text span{font-size:9px;color:#555;}
-        .prem-btn{background:#111;color:#F5C842;border:none;border-radius:8px;padding:8px 13px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;margin-left:auto;}
+        .prem-btn{background:#111;color:#F5C842;border:none;border-radius:8px;padding:8px 13px;min-height:44px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;margin-left:auto;display:inline-flex;align-items:center;}
         /* Bottom nav */
         .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(15,15,15,.9);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);padding:8px 6px 16px;display:flex;justify-content:space-around;align-items:center;z-index:100;box-shadow:0 -6px 26px rgba(0,0,0,.32);border-top:1px solid rgba(255,255,255,.06);}
-        .nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;color:#8a8a99;border:none;background:none;font-family:inherit;cursor:pointer;transition:color .2s;padding:4px 10px;border-radius:12px;position:relative;}
+        .nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#8a8a99;border:none;background:none;font-family:inherit;cursor:pointer;transition:color .2s;padding:4px 10px;min-height:44px;border-radius:12px;position:relative;}
         .nav-item.active{color:#F5C842;}
         .nav-item.active::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(245,200,66,.1);border-radius:12px;}
         .nav-item i{font-size:22px;transition:transform .2s;}
@@ -711,10 +711,10 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .float-icon-main{font-size:16px;color:#fff;}
         /* ── Navigimi desktop ── */
         .desk-nav{display:none;}
-        .desk-nav-btn{background:rgba(0,0,0,.08);border:none;border-radius:8px;padding:6px 11px;font-size:12px;font-weight:700;color:#111;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:background .15s;}
+        .desk-nav-btn{background:rgba(0,0,0,.08);border:none;border-radius:8px;padding:6px 11px;min-height:44px;font-size:12px;font-weight:700;color:#111;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:background .15s;}
         .desk-nav-btn:hover{background:rgba(0,0,0,.16);}
         .desk-nav-btn.dn-active{background:rgba(0,0,0,.16);}
-        .desk-nav-add{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:8px;padding:6px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:opacity .15s;box-shadow:0 2px 8px rgba(230,51,18,.3);}
+        .desk-nav-add{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:8px;padding:6px 13px;min-height:44px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:opacity .15s;box-shadow:0 2px 8px rgba(230,51,18,.3);}
         .desk-nav-add:hover{opacity:.88;}
         /* ── Responsive breakpoints (additive) ── */
         @media(min-width:768px){
