@@ -13,7 +13,7 @@ import { useSyteLive } from '../../components/PremiumUpsell'
 import { useIsOnline } from '../../components/OnlinePresence'
 import { BackButton } from '../../components/BackButton'
 import { LISTING_SELECT } from '../../../lib/listingSelect'
-import { nf, monthYear } from '../../../lib/format'
+import { nf, monthYear, dateShort } from '../../../lib/format'
 import { uploadSingleImage } from '../../../lib/uploadImages'
 
 const MapDisplay = dynamicImport(() => import('../../components/MapDisplay').then(m => ({ default: m.MapDisplay })), {
@@ -108,7 +108,7 @@ function BizReviews({ rating, reviews }: { rating: { count: number; avg: number 
                 <Avatar src={rv.reviewer_avatar} name={rv.reviewer_name} type="person" size={30} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 13, fontWeight: 700, color: '#111' }}>{rv.reviewer_name}</div>
-                  <div style={{ fontSize: 10, color: '#aaa' }}>{new Date(rv.created_at).toLocaleDateString('sq-AL', { day: 'numeric', month: 'short', year: 'numeric' })}{rv.purchase_verified ? ' · ✅ Blerje e verifikuar' : ''}</div>
+                  <div style={{ fontSize: 10, color: '#aaa' }}>{dateShort(rv.created_at)}{rv.purchase_verified ? ' · ✅ Blerje e verifikuar' : ''}</div>
                 </div>
                 <div style={{ color: 'var(--az-yellow)', fontSize: 13 }} aria-label={`${rv.rating} nga 5`}>{'★'.repeat(rv.rating)}{'☆'.repeat(5 - rv.rating)}</div>
               </div>

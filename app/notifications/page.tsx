@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { supabase } from '../../lib/supabase'
+import { dayMonth } from '../../lib/format'
 import { useAlpazar } from '../../lib/context'
 
 interface Notif {
@@ -39,7 +40,9 @@ function timeAgo(iso: string): string {
   if (diff < 3600) return `${Math.floor(diff / 60)}min`
   if (diff < 86400) return `${Math.floor(diff / 3600)}h`
   if (diff < 604800) return `${Math.floor(diff / 86400)}d`
-  return new Date(iso).toLocaleDateString('sq-AL', { day: 'numeric', month: 'short' })
+  // `dayMonth` (lib/format) përdor tabelën shqip të muajve — jo `Intl`, që në disa
+  // shfletues (ICU e cunguar) jep emra anglisht ("18 Aug") edhe me `sq-AL` (T-012).
+  return dayMonth(iso)
 }
 
 export default function NotificationsPage() {

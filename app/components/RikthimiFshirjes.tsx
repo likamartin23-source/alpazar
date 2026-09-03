@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import { dateShort } from '../../lib/format'
 
 /**
  * BANDEROLA E RIKTHIMIT — §2.3 (neni 20/3, ligji 10128).
@@ -31,7 +32,7 @@ export default function RikthimiFshirjes() {
   if (!purgeAt) return null
 
   const dt = new Date(purgeAt)
-  const dataTxt = isNaN(dt.getTime()) ? '' : dt.toLocaleDateString('sq-AL', { day: 'numeric', month: 'long', year: 'numeric' })
+  const dataTxt = dateShort(dt) // muaj shqip deterministë (jo Intl/ICU — T-012)
 
   async function anulo() {
     setBusy(true)
