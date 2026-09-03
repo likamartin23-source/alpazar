@@ -23,10 +23,15 @@ export function ListingMedia({ p }: any) {
           </span>
         </div>
         <label className="img-zone" onClick={() => document.getElementById('img-input')?.click()}>
-          <input id="img-input" type="file" accept="image/*" multiple onChange={handleImages} />
+          {/* `aria-label` i shprehur: MATUR me pemën e aksesueshmërisë së Chrome-it
+              (read_page mbi prodhim), ky input dilte `button type="file"` PA ASNJË
+              emër. Etiketa mbështjellëse s'po ia jepte emrin — lexuesi i ekranit
+              njoftonte thjesht "buton". Emri i shprehur nuk varet nga ajo. */}
+          <input id="img-input" type="file" accept="image/*" multiple onChange={handleImages}
+            aria-label="Ngarko fotot e shpalljes" />
           <i className="ti ti-cloud-upload" aria-hidden="true" />
           <p>Kliko për të ngarkuar fotot</p>
-          <p style={{ fontSize: 10, marginTop: 4, color: '#555' }}>Cdo format · pa kufi madhesie · kompresim automatik</p>
+          <p style={{ fontSize: 10, marginTop: 4, color: '#555' }}>Çdo format · pa kufi madhësie · kompresim automatik</p>
         </label>
         {imagePreviews.length > 0 && (
           <div className="img-previews">
@@ -54,7 +59,8 @@ export function ListingMedia({ p }: any) {
 
         {!full && (
           <label className="img-zone" onClick={() => document.getElementById('vid-input')?.click()}>
-            <input id="vid-input" type="file" accept="video/*" multiple onChange={vid.add} />
+            <input id="vid-input" type="file" accept="video/*" multiple onChange={vid.add}
+              aria-label="Ngarko videot e shpalljes" />
             <i className="ti ti-video" aria-hidden="true" />
             <p>Shto video të produktit</p>
             <p style={{ fontSize: 10, marginTop: 4, color: '#555' }}>

@@ -60,6 +60,8 @@ export function moneyDec(n: number | null | undefined): string {
 
 const MONTHS_SHORT = ['jan', 'shk', 'mar', 'pri', 'maj', 'qer', 'korr', 'gush', 'sht', 'tet', 'nën', 'dhj']
 const MONTHS_LONG = ['janar', 'shkurt', 'mars', 'prill', 'maj', 'qershor', 'korrik', 'gusht', 'shtator', 'tetor', 'nëntor', 'dhjetor']
+// getUTCDay(): 0 = e diel.
+const WEEKDAYS_SHORT = ['die', 'hën', 'mar', 'mër', 'enj', 'pre', 'sht']
 
 function toDate(d: string | number | Date | null | undefined): Date | null {
   if (!d) return null
@@ -79,6 +81,25 @@ export function dayMonth(d: string | number | Date | null | undefined): string {
   const dt = toDate(d)
   if (!dt) return ''
   return `${String(dt.getUTCDate()).padStart(2, '0')} ${MONTHS_LONG[dt.getUTCMonth()]}`
+}
+
+/** "hën" — dita e javës, e shkurtër.
+ *  Shtuar sepse `toLocaleDateString('sq-AL', { weekday: 'short' })` te
+ *  `/profile` jepte emra ditësh nga ICU-ja e mjedisit, e cila në shfletuesin e
+ *  pronarit kthente anglisht (matur: "18 Aug" te njoftimet, i njëjti shkak).
+ *  Tabela e shtjelluar nuk varet nga ICU-ja dhe jep të njëjtin rezultat në SSR
+ *  dhe në klient. */
+export function weekdayShort(d: string | number | Date | null | undefined): string {
+  const dt = toDate(d)
+  if (!dt) return ''
+  return WEEKDAYS_SHORT[dt.getUTCDay()]
+}
+
+/** "09 gush" — datë e shkurtër pa vit, për lista bisedash. */
+export function dayMonthShort(d: string | number | Date | null | undefined): string {
+  const dt = toDate(d)
+  if (!dt) return ''
+  return `${String(dt.getUTCDate()).padStart(2, '0')} ${MONTHS_SHORT[dt.getUTCMonth()]}`
 }
 
 /** "gusht 2026" */

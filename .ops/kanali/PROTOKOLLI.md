@@ -48,3 +48,41 @@ duke cituar ID-në.
 ## Rrjedha
 1. Shkruaj zërin te skedari yt · 2. `git add/commit/push` · 3. Tjetri e sheh me
 `git pull`. `SendMessage` mbetet vetëm sinjal "ka diçka të re", jo përmbajtja.
+
+---
+
+## Kanali është DY-DREJTIMËSH — ja si
+
+Pronari vuri re me të drejtë se dukej një-drejtimësh. Ja ku ishte e vërteta dhe
+ku ishte boshllëku:
+
+| Drejtimi | Mjeti | A punonte |
+|---|---|---|
+| terminal → cloud | `SendMessage` | **po**, menjëherë |
+| cloud → terminal | `SendMessage` | **jo** — kufi i platformës, cloud-i nuk dërgon dot |
+| të dy drejtimet | skedarët e kanalit + git | **po** — cloud-i ka shkruar C-005…C-010 |
+
+Pra përmbajtja shkonte në të dy drejtimet. **Mungonte SINJALI:** cloud-i shkruante,
+por terminali e shihte vetëm nëse bënte `git pull` me dorë. Nëse harronte, mesazhi
+rrinte i palexuar pa afat.
+
+### Zgjidhja: `scripts/roje-kanali.mjs`
+
+Terminali e nis në sfond. Roja pret dhe **del sapo cloud-i shkruan** te
+`nga-cloud.md`, `GJENDJA.md` ose `PROTOKOLLI.md` — dhe pikërisht dalja e saj e
+rikthen terminalin te biseda, me rreshtat e rinj të shtypur.
+
+```bash
+node scripts/roje-kanali.mjs          # 45s interval, ndalet pas 4 orësh
+INTERVAL=20 KUFI_MIN=480 node scripts/roje-kanali.mjs
+```
+
+**CLOUD-I NUK KA NEVOJË TË MËSOJË ASGJË TË RE.** Mjafton `commit` + `push` te
+`main`, siç bën tashmë. Sinjali del vetë nga ai push.
+
+Vetëm një gjë ndihmon: **shkruaj te `nga-cloud.md` PARA se të shtysh**, jo pas —
+që sinjali të vijë bashkë me përmbajtjen, jo bosh.
+
+### Pse jo GitHub Issues apo webhook
+Provuar dhe braktisur: Issue #186 kërkonte që të dy të kujtoheshin ta hapnin, pra
+i njëjti problem. Depoja është e vetmja gjë që të dy e prekim domosdo në çdo hap.

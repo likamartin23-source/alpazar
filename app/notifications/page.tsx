@@ -142,7 +142,12 @@ export default function NotificationsPage() {
     return (
       <div style={{ minHeight: '100dvh', background: 'var(--az-cream)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24 }}>
         <div style={{ fontSize: 48 }} aria-hidden="true">🔔</div>
-        <div style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>Kyçu për të parë njoftimet</div>
+        {/* `<h1>`, jo `<div>`: kjo është dega E DALOGUR, dhe ajo ishte e vetmja
+            faqe e platformës pa krye të nivelit të parë (axe `page-has-heading-one`,
+            2 nyje / 1 faqe). Dega e kyçur e kishte `<h1>`-në që te rreshti 170 —
+            prandaj kodi dukej i saktë, ndërsa matja e dalogur thoshte të kundërtën.
+            Të dyja ishin të vërteta, për gjendje të ndryshme. */}
+        <h1 style={{ fontSize: 16, fontWeight: 700, color: '#111', margin: 0 }}>Kyçu për të parë njoftimet</h1>
         <button type="button" onClick={() => window.location.href = '/auth/login'} style={{ background: 'var(--az-yellow)', border: 'none', borderRadius: 12, padding: '12px 28px', fontWeight: 700, fontSize: 15, cursor: 'pointer', minHeight: 44 }}>
           Kyçu
         </button>

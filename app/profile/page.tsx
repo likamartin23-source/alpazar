@@ -10,7 +10,7 @@ import { isNewMember } from '../components/Badges'
 import { IdentityBadges } from '../components/IdentityBadges'
 import { useIsOnline } from '../components/OnlinePresence'
 import FshirjeShkallezuar from '../components/FshirjeShkallezuar'
-import { monthYear } from '../../lib/format'
+import { monthYear, weekdayShort, dayMonthShort } from '../../lib/format'
 import { SkeletonProfile, SkeletonList } from '../components/Skeleton'
 
 
@@ -1237,8 +1237,8 @@ export default function ProfilePage() {
                       const diffH = (now.getTime() - time.getTime()) / 3600000
                       const timeStr = diffH < 1 ? 'Tani'
                         : diffH < 24 ? `${Math.floor(diffH)}o`
-                        : diffH < 168 ? time.toLocaleDateString('sq-AL', { weekday: 'short' })
-                        : time.toLocaleDateString('sq-AL', { day: 'numeric', month: 'short' })
+                        : diffH < 168 ? weekdayShort(time)
+                        : dayMonthShort(time)
 
                       return (
                         <div key={conv.otherId} role="link" tabIndex={0} className="conv-row"

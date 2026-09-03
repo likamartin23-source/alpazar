@@ -7,6 +7,7 @@ import { lidhjaEFirmosur, rrugaNgaUrl } from '../../lib/attachments'
 import { supabase } from '../../lib/supabase'
 import { useAlpazar } from '../../lib/context'
 import AlpazarAvatar, { tierNgaProfili, avatarVerified } from '../components/Avatar'
+import { dayMonth } from '../../lib/format'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -28,7 +29,7 @@ function dayLabel(d: string) {
   if (dt.toDateString() === now.toDateString()) return 'Sot'
   const yes = new Date(); yes.setDate(now.getDate()-1)
   if (dt.toDateString() === yes.toDateString()) return 'Dje'
-  return dt.toLocaleDateString('sq-AL', { day: '2-digit', month: 'long' })
+  return dayMonth(dt)
 }
 function fmtDur(s: number) {
   return `${Math.floor(s/60)}:${String(Math.floor(s % 60)).padStart(2,'0')}`
