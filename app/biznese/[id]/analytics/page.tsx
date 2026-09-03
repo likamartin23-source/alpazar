@@ -107,7 +107,7 @@ export default function BiznesAnalyticsPage() {
         .stat-num{font-size:24px;font-weight:800;color:#111;}
         .stat-lbl{font-size:11px;color:#555;margin-top:2px;}
         .period-row{display:flex;gap:6px;margin:12px 12px 0;}
-        .period-btn{flex:1;padding:8px;border-radius:9px;border:1.5px solid #eee;background:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .period-btn{flex:1;padding:8px;min-height:44px;border-radius:9px;border:1.5px solid #eee;background:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
         .period-btn.active{background:#E63312;color:#fff;border-color:#E63312;}
         .listing-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f0f0f0;}
         .listing-row:last-child{border-bottom:none;}
