@@ -571,3 +571,35 @@ Asnje kolone nuk mbulon dy rreshta. Prandaj klasat e instrumenteve nuk jane
 liste deshirash — jane te gjitha te detyrueshme.
 
 ---
+
+## 10. DOMENI & MARKA — vendim i hapur (3 shtator 2026)
+
+> Kujtesa e plote e kesaj pune eshte te Notion: **"Puna e deritanishme"** —
+> https://app.notion.com/p/3d03ee6af1098125b86fca2832a82a1e
+> (autopsi teknike + kerkim domeni + gjetja e markes + 30 emra alternative).
+
+**GJETJA VENDIMTARE (juridike):** "**ALPAZAR**" eshte **marke e REGJISTRUAR ne DPPI**,
+prone e **Agron Llakajt** (autori i show-t "Al Pazar", Vizion Plus): nr. 21948,
+regjistruar 04.08.2021, **ne fuqi deri 15.02.2031**, **Klasa e Nice-it 41**
+(media/argetim; pershkrimi perfshin "online media" dhe "uebfaqe"). Pra emri i
+sotem i aplikacionit perkon me nje marke te nje personi te famshem. Tregu yne
+bie te Klasa 35/42 (ndryshe nga 41) → depozitim teorikisht i mundur, POR rrezik
+nga **marka e mirenjohur** (mbrojtje pertej klases) + ngaterrim me showin.
+**Para cdo vendimi emri: kontrollo DPPI (klasat 35/42) dhe merr opinion clearance.**
+
+**Domeni:** `alpazar.com` eshte I ZENE (mbajtes i panjohur). `.al` menaxhohet nga
+AKEP, pa kusht rezidence, ~€8.99/vit te **UpFlare** (`.com.al` kerkon biznes/shtetas
+shqiptar). Regjistrat me te mire: **Cloudflare** (me kosto, vetem transfer),
+**Porkbun** (regjistrim i ri me kosto); **GoDaddy JO** (rinovim i larte + upsell).
+Kurthi: `.shop`/`.store` rinovohen ~$31/$44 ne vit (lire vetem viti i pare).
+`al-pazar.com` (me vize) NUK rekomandohet (thyen marken, `alpazar.com` shkon te tjetri).
+
+**30 emra alternative te verifikuar** (`.com` i lire, $11.25/vit) — lista e plote
+te Notion; preferencat: **Tregira, Liratreg, Dritapazar, Aritreg, Besatreg**
+(emrat pa "pazar" jane me te sigurtit ligjerisht). `pazari.al` = gjenerik/i mbushur,
+marke e dobet — jo i rekomanduar.
+
+**Deploy Vercel — kufi Hobby:** 100 deploy/dite; kur mbushet, push-et s'ndertojne
+(0 deploy) → nevojitet **Promote to Production** manual (ose pritje ~24h). Puna e
+kesaj dite (100% web, X/Twitter, T-032/033, moderation_score) u shkri te `main`
+(0aacf5c/9c71145); prit deploy-in ose promote manual.
