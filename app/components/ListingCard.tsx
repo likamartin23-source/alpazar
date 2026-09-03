@@ -22,6 +22,7 @@ import { useIsOnline } from './OnlinePresence'
 import { useSyteLive } from './PremiumUpsell'
 import { trackEvent } from '../../lib/track'
 import { nf, dayMonth, priceLabel } from '../../lib/format'
+import { cldVideo } from '../../lib/cldVideo'
 
 export type ListingCardAuthor = {
   id: string
@@ -200,7 +201,7 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
         {videoUrl && videoVisible
           ? <video
               ref={vref}
-              src={videoUrl}
+              src={cldVideo(videoUrl, 640, true)}
               poster={l.video_poster || undefined}
               autoPlay muted loop playsInline preload="metadata"
               aria-label={l.title}

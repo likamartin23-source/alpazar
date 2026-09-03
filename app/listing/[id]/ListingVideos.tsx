@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { cldVideo } from '../../../lib/cldVideo'
 
 type V = { url: string; poster?: string; duration?: number }
 
@@ -120,7 +121,7 @@ export default function ListingVideos({ videos, legacy, poster, images }: any) {
             <video
               ref={vref}
               key={cur.url}
-              src={cur.url}
+              src={cldVideo(cur.url, 1280)}
               poster={fallbackPoster}
               controls
               playsInline

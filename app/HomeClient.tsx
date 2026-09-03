@@ -805,10 +805,15 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                   <i className="ti ti-message-circle" aria-hidden="true" />Mesazhe
                   {unreadCount > 0 && <span className="nav-badge" aria-hidden="true">{unreadCount > 9 ? '9+' : unreadCount}</span>}
                 </button>
-                <button type="button" className="desk-nav-btn" onClick={() => go(user ? '/profile' : '/auth/login')}>
-                  <i className="ti ti-user-circle" aria-hidden="true" />
-                  {authReady ? (user ? 'Profili' : 'Hyr') : '\u00a0'}
-                </button>
+                {/* Kur i loguar \u2192 "Profili"; gjat\u00eb ngarkimit \u2192 vend-mbajt\u00ebs (pa zhvendosje).
+                    Kur i pa-loguar NUK shfaqet: hyrja e vetme e desktopit \u00ebsht\u00eb butoni
+                    "Hyr / Regjistrohu" djathtas \u2014 p\u00ebrndryshe dilnin DY "Hyr" n\u00eb t\u00eb nj\u00ebjtin krye. */}
+                {(!authReady || user) && (
+                  <button type="button" className="desk-nav-btn" onClick={() => go(user ? '/profile' : '/auth/login')}>
+                    <i className="ti ti-user-circle" aria-hidden="true" />
+                    {authReady ? 'Profili' : '\u00a0'}
+                  </button>
+                )}
               </div>
               {/* Njoftimet — GJITHMONË i dukshëm e funksional për përdoruesin e loguar
                   (më parë zhdukej kur s'kishte njoftime të palexuara, ose çonte gabimisht

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useListingMedia } from './ListingMediaContext'
+import { cldVideo } from '../../lib/cldVideo'
 
 interface VideoItem { url: string; poster?: string; duration?: number }
 interface Props {
@@ -201,7 +202,7 @@ export function ImageCarousel({ images, videos, poster, alt = '', aspectRatio = 
               ) : (
                 <>
                   <video
-                    src={s.src}
+                    src={cldVideo(s.src, 1280)}
                     poster={s.poster}
                     controls
                     playsInline
