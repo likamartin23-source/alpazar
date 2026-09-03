@@ -70,9 +70,18 @@ function VbIcon() {
   )
 }
 
+function XIcon() {
+  // X (ish-Twitter)
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+    </svg>
+  )
+}
+
 // ─── Platform config ──────────────────────────────────────────────────────────
 
-type PlatformId = 'facebook' | 'instagram' | 'linkedin' | 'tiktok' | 'whatsapp' | 'viber' | 'copy' | 'native'
+type PlatformId = 'facebook' | 'x' | 'instagram' | 'linkedin' | 'tiktok' | 'whatsapp' | 'viber' | 'copy' | 'native'
 
 interface Platform {
   id: PlatformId
@@ -103,6 +112,20 @@ const PLATFORMS: Platform[] = [
     msgSubLabel: 'Messenger',
     Icon: FbIcon,
     MsgIcon: MsgrIcon,
+  },
+  {
+    id: 'x',
+    label: 'X / Twitter',
+    bg: '#000000',
+    // Ndarja te X (ish-Twitter) — intent-i i tweet-it punon si te x.com ashtu edhe te twitter.com,
+    // pavarësisht nëse ekziston profili i markës (ndryshe nga lidhja e profilit te footer-i).
+    feedUrl: (u, t) => `https://twitter.com/intent/tweet?text=${encodeURIComponent(t)}&url=${encodeURIComponent(u)}`,
+    feedApp: null,
+    feedSubLabel: 'Postim',
+    msgUrl: null,
+    msgApp: null,
+    msgSubLabel: '',
+    Icon: XIcon,
   },
   {
     id: 'instagram',
@@ -217,6 +240,12 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
         window.open(fallbackApp, '_blank', 'noopener,noreferrer')
         setCopied(null)
       }, 1200)
+    } else {
+      // Pa rrugë për këtë platformë në këtë modalitet (p.sh. X s'ka DM me lidhje të parambushur):
+      // kopjo lidhjen si zgjidhje universale, që butoni të mos jetë kurrë i vdekur.
+      copyText(shareUrl)
+      setCopied(p.id)
+      setTimeout(() => setCopied(null), 1200)
     }
   }
 

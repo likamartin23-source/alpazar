@@ -11,9 +11,9 @@ const soc = [
   { href: 'https://tiktok.com/@alpazaral',         label: 'TikTok',      icon: 'ti-brand-tiktok' },
   { href: 'https://t.me/alpazaral',                label: 'Telegram',    icon: 'ti-brand-telegram' },
   { href: 'https://linkedin.com/company/alpazar',  label: 'LinkedIn',    icon: 'ti-brand-linkedin' },
-  // X/Twitter u hoq: x.com/alpazaral jep 404 (profili s'ekziston) — një lidhje e vdekur në
-  // çdo footer dëmton përvojën dhe SEO-në. Kur pronari të hapë profilin @alpazaral në X,
-  // rikthe këtu: { href: 'https://x.com/alpazaral', label: 'X / Twitter', icon: 'ti-brand-x' }.
+  // X/Twitter — rikthyer me kërkesë të pronarit ("X dhe Twitter të dyja"). SHËNIM: x.com/alpazaral
+  // jep ende 404 derisa pronari të hapë profilin @alpazaral; sapo të hapet, lidhja resolvon.
+  { href: 'https://x.com/alpazaral',               label: 'X / Twitter', icon: 'ti-brand-x' },
 ]
 
 export function SiteFooter() {

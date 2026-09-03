@@ -1004,7 +1004,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
           {loading ? (
             <SkeletonGrid count={6} />
           ) : (
-            <div className="listings-grid">
+            <div className="listings-grid grid-fund">
               {listings.length === 0 ? (
                 <div className="empty-state">
                   <i className="ti ti-mood-empty" aria-hidden="true" />

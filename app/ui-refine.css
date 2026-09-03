@@ -337,8 +337,10 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
 @media (pointer: coarse) {
   .card-seller-ov[role="link"]::after { content: ''; position: absolute; top: -11px; right: -11px; bottom: -11px; left: -11px; }
 }
-/* [D1] Telefon (≤430px): hapesire poshte rrjetit te kartave qe karta e fundit te mos mbulohet nga
-   elementet notuese te poshtme (install-float, flluska Albi). Butonat NUK preken (vendim pronari). */
+/* [D1] Telefon (≤430px): hapesire poshte VETEM te rrjeta e FUNDIT te faqes, qe karta e fundit te mos
+   mbulohet nga elementet notuese te poshtme (install-float, flluska Albi) kur je ne fund te faqes.
+   `:last-of-type` (jo `.listings-grid`) — perndryshe rregulli zbatohej edhe te rrjeta e bizneseve ne
+   MES te ballines dhe hapte nje vrime 104px bosh (matur nga terminali, T-035). Butonat NUK preken. */
 @media (max-width: 430px) {
-  .listings-grid { padding-bottom: 104px; }
+  .listings-grid.grid-fund { padding-bottom: 104px; }
 }
