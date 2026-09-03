@@ -171,3 +171,38 @@ Shumica janë në zonën tënde [O41] (`admin`, `billing`). **Nuk i preka.** Thu
 Të 13 lidhjet e brendshme të fundit kthejnë 200.
 **Kufi:** 200 nga rrjetet sociale nuk provon se profili ekziston (disa kthejnë 200 me faqe "not found"). **404-a është provë se X-i nuk ekziston.**
 **Kërkohet:** vendim i pronarit — krijo profilin, ose hiq lidhjen.
+
+---
+## T-035 · RAPORT · 2026-09-03 · për CLOUD · gjendja: HAPUR — PROVUAR
+**Lënda:** **[D1] hap një vrimë 104px NË MES të ballinës**, në çdo telefon. Pronari e pa me sy; e mata.
+
+**Dëshmia** — matje e drejtpërdrejtë e të dy rrjetave te `/`:
+| Gjerësia | Rrjeta 1 (Biznese Online) | Rrjeta 2 (Shpallje) |
+|---|---|---|
+| **390px** | `padding-bottom: 104px` · kuti **433px**, përmbajtje **320px** | e njëjta |
+| **430px** | `padding-bottom: 104px` · kuti 433px, përmbajtje 320px | e njëjta |
+| **431px** | `padding-bottom: 0` · kuti **329px** | e njëjta |
+
+Pra **113px hapësirë e vdekur** poshtë rreshtit të bizneseve, dhe zhduket saktësisht mbi 430px — prova që rregulli është shkaku i vetëm.
+
+**Shkaku:** `app/ui-refine.css:342–344`
+```css
+@media (max-width: 430px) { .listings-grid { padding-bottom: 104px; } }
+```
+Synimi yt te [D1] ishte i drejtë: karta E FUNDIT të mos mbulohej nga lundruesit. Por `.listings-grid` përdoret **dy herë** te `HomeClient.tsx` — rreshti i bizneseve (`:931`) dhe feed-i (`:1007`). Rregulli zbatohet **sipas klasës, jo sipas pozicionit**, ndaj edhe rreshti në mes merr 104px bosh.
+
+**Dhe një gjë e dytë:** lundruesit janë `position:fixed`, pra rrinë në një lartësi të caktuar të EKRANIT, jo të dokumentit. Hapësira në fund të një rrjete nuk i pengon të mbulojnë përmbajtje në asnjë pozicion tjetër rrëshqitjeje. Pra rregulli shton kosto pa e zgjidhur problemin për të cilin u shtua.
+
+**Propozim** (skedari është yti — [O41], nuk e preka):
+- `.listings-grid:last-of-type` në vend të `.listings-grid` — heq vrimën në mes, mban hapësirën ku duhet;
+- ose, më mirë, hiqe fare nga rrjeta dhe vendose te `.wrap{padding-bottom}`, meqë lundruesit janë fiks ndaj ekranit.
+
+---
+## T-036 · RAPORT · 2026-09-03 · për CLOUD · gjendja: HAPUR — I PAPROVUAR NGA UNË
+**Lënda:** Në pamjen e ekranit të pronarit, etiketat **Instalo / Ndaj / Albi** rrinë **mbi kartat** e "Shpallje të fundit".
+
+**Kufi i ndershëm:** **nuk e riprodhova dot.** Mata 412px, 8 pozicione rrëshqitjeje nga kreu në fund: **0/8 mbivendosje**. Provova edhe 360/390/430px — asnjë.
+Ndryshimi i vetëm që di: pronari është **i kyçur**, unë mata të dalogurin; ballina e kyçur ka më shumë përmbajtje dhe lartësi tjetër (1968px e dalogur).
+
+Prandaj e paraqes si **dëshmi pamore e pronarit, jo matje imja**. Nuk pohoj çfarë nuk kam matur.
+**Kërkohet:** nëse e riprodhon dot me sesion, mate; përndryshe le ta shohë pronari sërish pas rregullimit të T-035, meqë të dyja prekin të njëjtën zonë.
