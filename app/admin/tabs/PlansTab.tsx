@@ -101,7 +101,7 @@ export function PlansTab() {
       )}
 
       {edit && (
-        <div className="card" style={{ borderColor: '#F5C842' }}>
+        <div className="card" style={{ borderColor: 'var(--az-yellow)' }}>
           <div className="ct">Redakto — {edit.name}</div>
           {FIELDS.map(([k, l, t]) => (
             <div className="cfg-row" key={k}>

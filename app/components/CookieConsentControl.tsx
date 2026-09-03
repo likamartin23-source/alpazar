@@ -29,13 +29,13 @@ export function CookieConsentControl() {
   if (!gati) return null
 
   const etiketa = consent === 'accepted' ? 'Të pranuara' : consent === 'declined' ? 'Të refuzuara' : 'Të pavendosura'
-  const ngjyra  = consent === 'accepted' ? '#3B6D11' : consent === 'declined' ? '#C42305' : '#6E6E6E'
+  const ngjyra  = consent === 'accepted' ? '#3B6D11' : consent === 'declined' ? 'var(--az-red-deep)' : '#6E6E6E'
   const sfond   = consent === 'accepted' ? '#EAF3DE' : consent === 'declined' ? '#FDECEA' : '#F1F1F1'
 
   const btn = (primar: boolean): React.CSSProperties => ({
     minHeight: 44, padding: '0 16px', borderRadius: 'var(--r-btn)', fontSize: 13, fontWeight: 700,
-    fontFamily: 'inherit', cursor: 'pointer', border: primar ? 'none' : '1.5px solid #C42305',
-    background: primar ? '#3B6D11' : '#fff', color: primar ? '#fff' : '#C42305',
+    fontFamily: 'inherit', cursor: 'pointer', border: primar ? 'none' : '1.5px solid var(--az-red-deep)',
+    background: primar ? '#3B6D11' : '#fff', color: primar ? '#fff' : 'var(--az-red-deep)',
     display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
   })
 

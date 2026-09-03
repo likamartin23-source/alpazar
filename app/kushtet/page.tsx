@@ -3,20 +3,20 @@ const LS = { color: '#666' as const, fontSize: 11, textDecoration: 'none' as con
 export default function Kushtet() {
   const css = `
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA;}
+    body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--az-cream);}
     .wrap{max-width:640px;margin:0 auto;background:#fff;min-height:100vh;}
-    .topbar{background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
+    .topbar{background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
     .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0;}
     .back i{font-size:18px;color:#111;}
     .topbar-title{font-size:15px;font-weight:700;color:#111;}
     .content{padding:24px 20px 40px;}
-    .ver{font-size:11px;color:#6E6E6E;margin-bottom:20px;background:#FFFBEA;padding:8px 12px;border-radius:8px;display:inline-block;}
+    .ver{font-size:11px;color:#6E6E6E;margin-bottom:20px;background:var(--az-cream);padding:8px 12px;border-radius:8px;display:inline-block;}
     h1{font-size:var(--fs-3xl);font-weight:700;color:#111;margin-bottom:8px;}
-    h2{font-size:14px;font-weight:700;color:#111;margin:22px 0 8px;padding-bottom:5px;border-bottom:2px solid #F5C842;}
+    h2{font-size:14px;font-weight:700;color:#111;margin:22px 0 8px;padding-bottom:5px;border-bottom:2px solid var(--az-yellow);}
     p{font-size:13px;color:#444;line-height:1.85;margin-bottom:10px;}
     ul{font-size:13px;color:#444;line-height:1.85;padding-left:18px;margin-bottom:10px;}
     li{margin-bottom:5px;}
-    .note{background:#FFFBEA;border-left:3px solid #E63312;padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:12px;color:#555;line-height:1.7;}
+    .note{background:var(--az-cream);border-left:3px solid var(--az-red);padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:12px;color:#555;line-height:1.7;}
     .law{font-size:11px;color:#555;font-style:italic;}
     .ftr{display:flex;flex-wrap:wrap;gap:8px 16px;padding:20px;background:#f9f9f9;border-top:1px solid #eee;margin-top:10px;}
     .ftr a{color:#555;font-size:11px;text-decoration:none;}

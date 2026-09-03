@@ -16,7 +16,7 @@ export default function GlobalError({
   useEffect(() => { console.error('[App Error]', error); reportError(error, 'route') }, [error])
 
   return (
-    <div style={{ background: '#FFFBEA' }}>
+    <div style={{ background: 'var(--az-cream)' }}>
         <div style={{
           minHeight: '58vh', display: 'flex', flexDirection: 'column',
           alignItems: 'center', justifyContent: 'center', padding: 24, gap: 16,
@@ -28,13 +28,13 @@ export default function GlobalError({
           }}>
             <div style={{ fontSize: 52, marginBottom: 12 }} aria-hidden="true">⚠️</div>
             <div style={{
-              background: '#111', color: '#F5C842', fontWeight: 800,
+              background: '#111', color: 'var(--az-yellow)', fontWeight: 800,
               letterSpacing: 3, fontSize: 18, padding: '6px 16px',
               borderRadius: 8, display: 'inline-block', marginBottom: 16,
             }}>
               ALPAZAR
             </div>
-            <h2 style={{ fontSize: 18, fontWeight: 700, color: '#111', margin: '0 0 8px' }}>
+            <h2 style={{ fontSize: 'var(--fs-2xl)', fontWeight: 700, color: '#111', margin: '0 0 8px' }}>
               Ndodhi një gabim
             </h2>
             <p style={{ fontSize: 13, color: '#555', lineHeight: 1.6, margin: '0 0 24px' }}>
@@ -47,7 +47,7 @@ export default function GlobalError({
                 type="button"
                 onClick={reset}
                 style={{
-                  background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none',
+                  background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none',
                   borderRadius: 10, padding: '13px 0', fontSize: 14,
                   fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
                 }}
@@ -57,7 +57,7 @@ export default function GlobalError({
               <a
                 href="/"
                 style={{
-                  display: 'block', background: '#F5C842', color: '#111',
+                  display: 'block', background: 'var(--az-yellow)', color: '#111',
                   border: 'none', borderRadius: 10, padding: '12px 0',
                   fontSize: 13, fontWeight: 700, textDecoration: 'none',
                 }}

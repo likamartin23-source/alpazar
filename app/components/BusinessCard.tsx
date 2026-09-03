@@ -85,7 +85,7 @@ export default function BusinessCard({ business, index = 0 }: { business: Busine
         }
         {/* Vula e tier-it (lart-djathtas) — i njëjti sistem si te ListingCard. */}
         {tier === 'vip'
-          ? <span className="badge-premium" role="img" aria-label="VIP" style={{ background: 'linear-gradient(135deg,#D4AF37,#E63312)', color: '#fff' }}><span aria-hidden="true">👑</span> VIP</span>
+          ? <span className="badge-premium" role="img" aria-label="VIP" style={{ background: 'linear-gradient(135deg,#D4AF37,var(--az-red))', color: '#fff' }}><span aria-hidden="true">👑</span> VIP</span>
           : tier === 'premium' && <span className="badge-premium" role="img" aria-label="Premium"><span aria-hidden="true">★</span></span>}
         {/* 🏢 Biznes (poshtë-majtas) — identiteti; ✓ kur i verifikuar. */}
         <span className="card-seller-ov" style={{ cursor: 'default' }} aria-label={b.is_verified ? 'Biznes i verifikuar' : 'Biznes'}>
@@ -101,7 +101,7 @@ export default function BusinessCard({ business, index = 0 }: { business: Busine
           style={{ position: 'absolute', right: 6, bottom: 6, zIndex: 3, width: 44, height: 44, minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', border: 'none', padding: 0, cursor: 'pointer' }}
         >
           <span style={{ width: 30, height: 30, borderRadius: '50%', background: 'rgba(255,255,255,.92)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 1px 6px rgba(0,0,0,.12)' }}>
-            <i className={`ti ti-bookmark${following ? '-filled' : ''}`} style={{ fontSize: 16, color: following ? '#E63312' : '#888' }} aria-hidden="true" />
+            <i className={`ti ti-bookmark${following ? '-filled' : ''}`} style={{ fontSize: 16, color: following ? 'var(--az-red)' : '#888' }} aria-hidden="true" />
           </span>
         </button>
       </div>

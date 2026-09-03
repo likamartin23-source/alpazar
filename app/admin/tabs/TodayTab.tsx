@@ -176,7 +176,7 @@ export function TodayTab({ stats, trends }: { stats?: any; trends?: any }) {
         <div className="card">
           <div className="ct">Periudha</div>
           <div style={{ fontSize: 11.5, color: '#555', lineHeight: 1.9 }}>
-            Rimbursuar: <strong style={{ color: Number(trends.totale.rimbursime) > 0 ? '#C42305' : '#111' }}>
+            Rimbursuar: <strong style={{ color: Number(trends.totale.rimbursime) > 0 ? 'var(--az-red-deep)' : '#111' }}>
               {Number(trends.totale.rimbursime || 0).toLocaleString('sq-AL')}</strong>
           </div>
         </div>

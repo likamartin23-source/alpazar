@@ -18,7 +18,7 @@ export function ListingMid({ p }: any) {
               onClick={suggestCategory}
               disabled={catLoading}
               style={{
-                margin: '0 0 10px', background: '#111', color: '#F5C842', border: 'none',
+                margin: '0 0 10px', background: '#111', color: 'var(--az-yellow)', border: 'none',
                 borderRadius: 8, padding: '7px 12px', fontSize: 11, fontWeight: 700,
                 cursor: catLoading ? 'not-allowed' : 'pointer', display: 'flex',
                 alignItems: 'center', gap: 5, opacity: catLoading ? 0.7 : 1, fontFamily: 'inherit',

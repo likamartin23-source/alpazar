@@ -44,15 +44,15 @@ export default function Kontakt() {
 
   const css = `
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA;}
-    .wrap{max-width:640px;margin:0 auto;background:#FFFBEA;min-height:100vh;}
-    .topbar{background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
+    body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--az-cream);}
+    .wrap{max-width:640px;margin:0 auto;background:var(--az-cream);min-height:100vh;}
+    .topbar{background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
     .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0;}
     .back i{font-size:18px;color:#111;}
     .topbar-title{font-size:15px;font-weight:700;color:#111;}
     .hero{background:#111;padding:32px 20px;text-align:center;}
     .hero-icon{font-size:52px;display:block;margin-bottom:12px;}
-    .hero h1{color:#F5C842;font-size:var(--fs-3xl);font-weight:700;margin-bottom:8px;}
+    .hero h1{color:var(--az-yellow);font-size:var(--fs-3xl);font-weight:700;margin-bottom:8px;}
     .hero p{color:#9A9A9A;font-size:13px;line-height:1.6;}
     .body{padding:20px 16px 40px;}
     .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
@@ -76,9 +76,9 @@ export default function Kontakt() {
     .form-field{margin-bottom:12px;}
     .form-field label{font-size:11px;font-weight:600;color:#555;display:block;margin-bottom:4px;}
     .form-field input,.form-field textarea{width:100%;border:1.5px solid #ddd;border-radius:10px;padding:11px 13px;font-size:13px;font-family:inherit;outline:none;background:#fff;color:#111;transition:border .15s;}
-    .form-field input:focus,.form-field textarea:focus{border-color:#F5C842;}
+    .form-field input:focus,.form-field textarea:focus{border-color:var(--az-yellow);}
     .form-field textarea{min-height:110px;resize:vertical;}
-    .send-btn{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:11px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s;}
+    .send-btn{width:100%;background:linear-gradient(135deg,var(--az-red),#c42a0e);color:#fff;border:none;border-radius:11px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s;}
     .send-btn:disabled{opacity:.6;cursor:not-allowed;}
     .msg-box{border-radius:9px;padding:10px 14px;margin-bottom:14px;font-size:12px;font-weight:600;}
     .ok{background:#EAF3DE;color:#3B6D11;border:0.5px solid #97C459;}

@@ -102,7 +102,7 @@ export default function AuthCallback() {
     <div style={{
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       minHeight: '100vh', flexDirection: 'column', gap: 14,
-      fontFamily: "'Plus Jakarta Sans', system-ui", background: '#FFFBEA', padding: 20, textAlign: 'center'
+      fontFamily: "'Plus Jakarta Sans', system-ui", background: 'var(--az-cream)', padding: 20, textAlign: 'center'
     }}>
       <style dangerouslySetInnerHTML={{ __html: `@keyframes spin{to{transform:rotate(360deg);}}` }} />
       {err ? (
@@ -115,7 +115,7 @@ export default function AuthCallback() {
         <>
           <div style={{
             width: 32, height: 32,
-            border: '3px solid #F5C842', borderTopColor: '#E63312',
+            border: '3px solid var(--az-yellow)', borderTopColor: 'var(--az-red)',
             borderRadius: '50%', animation: 'spin .7s linear infinite'
           }} />
           <p style={{ color: '#555', fontSize: 13 }}>Duke u autentikuar...</p>

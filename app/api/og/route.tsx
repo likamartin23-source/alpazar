@@ -6,9 +6,9 @@ import { ImageResponse } from 'next/og'
 // dhe PA aset binar ne repo.
 export const runtime = 'edge'
 
-const RED = '#E63312'
-const GOLD = '#F5C842'
-const INK = '#111111'
+const RED = 'var(--az-red)'
+const GOLD = 'var(--az-yellow)'
+const INK = 'var(--az-black)'
 
 export async function GET() {
   return new ImageResponse(
@@ -20,7 +20,7 @@ export async function GET() {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          backgroundImage: 'linear-gradient(135deg, #FFFBEA 0%, #FFF7DC 52%, #FDEBE6 100%)',
+          backgroundImage: 'linear-gradient(135deg, var(--az-cream) 0%, #FFF7DC 52%, #FDEBE6 100%)',
           position: 'relative',
         }}
       >

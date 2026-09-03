@@ -27,7 +27,7 @@ import { priceLabel, dateShort } from '../../lib/format'
 const ETIKETA: Record<string, { tekst: string; sfond: string; kufi: string; ngjyre: string }> = {
   pending:   { tekst: 'Në pritje',  sfond: '#FFF8E1', kufi: '#FFB74D', ngjyre: '#8A6D00' },
   accepted:  { tekst: 'E pranuar',  sfond: '#F0FFF4', kufi: '#86efac', ngjyre: '#166534' },
-  rejected:  { tekst: 'Nuk u pranua', sfond: '#FFF0EE', kufi: '#F09595', ngjyre: '#C42305' },
+  rejected:  { tekst: 'Nuk u pranua', sfond: '#FFF0EE', kufi: '#F09595', ngjyre: 'var(--az-red-deep)' },
   withdrawn: { tekst: 'E tërhequr', sfond: '#F3F3F3', kufi: '#ddd',    ngjyre: '#555' },
   expired:   { tekst: 'Skaduar',    sfond: '#F3F3F3', kufi: '#ddd',    ngjyre: '#555' },
 }
@@ -194,7 +194,7 @@ export default function OfferBox({ listingId, isOwner, initial }:
           {gabim && (
             <div role="alert" style={{
               background: '#FFF0EE', border: '1px solid #F09595', borderRadius: 10,
-              padding: '10px 13px', marginTop: 10, fontSize: 12, color: '#C42305', fontWeight: 600,
+              padding: '10px 13px', marginTop: 10, fontSize: 12, color: 'var(--az-red-deep)', fontWeight: 600,
             }}>{gabim}</div>
           )}
 

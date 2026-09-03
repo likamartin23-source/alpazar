@@ -36,7 +36,7 @@ export function AgeGate({ children }: { children: React.ReactNode }) {
             fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
           }}>
           <div aria-hidden="true"><img src="/icons/eagle.svg" alt="" style={{ height: 44, display: 'inline-block' }} /></div>
-          <div style={{ fontSize: 24, fontWeight: 900, color: '#F5C842', letterSpacing: 2 }}>ALPAZAR</div>
+          <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--az-yellow)', letterSpacing: 2 }}>ALPAZAR</div>
           <div style={{ fontSize: 14, fontWeight: 700, color: '#fff', textAlign: 'center' }}>
             Para se të vazhdosh, konfirmo moshën tënde
           </div>
@@ -48,7 +48,7 @@ export function AgeGate({ children }: { children: React.ReactNode }) {
               type="button"
               onClick={() => { localStorage.setItem(KEY, '1'); setConfirmed(true) }}
               style={{
-                background: 'linear-gradient(135deg,#F8D24E,#F5C842)', color: '#111', border: 'none',
+                background: 'linear-gradient(135deg,var(--az-yellow-hi),var(--az-yellow))', color: '#111', border: 'none',
                 borderRadius: 12, padding: '14px 32px',
                 fontWeight: 800, fontSize: 15, cursor: 'pointer',
                 boxShadow: '0 2px 8px -2px rgba(245,200,66,.5)',
@@ -70,7 +70,7 @@ export function AgeGate({ children }: { children: React.ReactNode }) {
           </div>
           <div style={{ fontSize: 12, color: '#9A9A9A', textAlign: 'center', maxWidth: 280, marginTop: 4, lineHeight: 1.5 }}>
             Duke klikuar "Po", konfirmon se ke mbushur 16 vjeç dhe pranon{' '}
-            <a href="/kushtet" style={{ color: '#F5C842', textDecoration: 'underline' }}>Kushtet e Shërbimit</a>.
+            <a href="/kushtet" style={{ color: 'var(--az-yellow)', textDecoration: 'underline' }}>Kushtet e Shërbimit</a>.
           </div>
         </div>
       )}

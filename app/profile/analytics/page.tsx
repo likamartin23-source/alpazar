@@ -19,7 +19,7 @@ function fmt(n: number | null | undefined, cur?: string | null) {
   return n >= 1000 ? `${(n / 1000).toFixed(1)}K ${sym}` : `${n} ${sym}`
 }
 
-function BarChart({ data, color = '#E63312' }: { data: { date: string; count: number }[]; color?: string }) {
+function BarChart({ data, color = 'var(--az-red)' }: { data: { date: string; count: number }[]; color?: string }) {
   const max = Math.max(...data.map(d => d.count), 1)
   const w = 100 / data.length
   return (
@@ -108,13 +108,13 @@ const [loadError, setLoadError] = useState(false)
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: 12, fontFamily: "'Segoe UI',sans-serif" }}>
       <div style={{ fontSize: 36 }} aria-hidden="true">⚠️</div>
       <div style={{ fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
-      <button type="button" onClick={() => { setLoadError(false); changePeriod(period) }} style={{ background: '#F5C842', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Rifresko</button>
+      <button type="button" onClick={() => { setLoadError(false); changePeriod(period) }} style={{ background: 'var(--az-yellow)', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Rifresko</button>
     </div>
   )
 
   if (!user || loading) return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: 12 }}>
-      <div style={{ width: 36, height: 36, border: '3px solid #E63312', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+      <div style={{ width: 36, height: 36, border: '3px solid var(--az-red)', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
       <style dangerouslySetInnerHTML={{ __html: `@keyframes spin{to{transform:rotate(360deg)}}` }} />
       <span style={{ fontSize: 13, color: '#555' }}>Duke ngarkuar analytics...</span>
     </div>
@@ -133,7 +133,7 @@ const [loadError, setLoadError] = useState(false)
         .stat-lbl{font-size:11px;color:#555;margin-top:2px;}
         .period-row{display:flex;gap:6px;margin:12px 12px 0;}
         .period-btn{flex:1;padding:8px;min-height:44px;border-radius:9px;border:1.5px solid #eee;background:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
-        .period-btn.active{background:#E63312;color:#fff;border-color:#E63312;}
+        .period-btn.active{background:var(--az-red);color:#fff;border-color:var(--az-red);}
         .listing-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f0f0f0;}
         .listing-row:last-child{border-bottom:none;}
         .listing-rank{width:22px;height:22px;border-radius:50%;background:#FFF0EE;color:#C42B0F;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
@@ -152,7 +152,7 @@ const [loadError, setLoadError] = useState(false)
         <button type="button" className="back-btn" aria-label="Kthehu në profil" onClick={() => window.location.href = '/profile'}>
           <i className="ti ti-arrow-left" style={{ fontSize: 16 }} aria-hidden="true" />
         </button>
-        <h1 style={{ fontWeight: 800, fontSize: 16, color: '#111', margin: 0 }}>Statistikat e Shpalljeve</h1>
+        <h1 style={{ fontWeight: 800, fontSize: 'var(--fs-xl)', color: '#111', margin: 0 }}>Statistikat e Shpalljeve</h1>
       </div>
 
       {/* Period selector */}
@@ -307,7 +307,7 @@ const [loadError, setLoadError] = useState(false)
           <div className="an-card">
             <div className="an-title">Referral</div>
             <button type="button" onClick={() => { window.location.href = '/referral' }}
-              style={{ width: '100%', minHeight: 48, background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842', border: 'none', borderRadius: 11, fontSize: 13, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              style={{ width: '100%', minHeight: 48, background: 'linear-gradient(135deg,var(--az-ink),#000)', color: 'var(--az-yellow)', border: 'none', borderRadius: 11, fontSize: 13, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
               <i className="ti ti-gift" aria-hidden="true" /> Fto miq — fito pikë & Premium →
             </button>
           </div>

@@ -26,13 +26,13 @@ function renderContent(text: string, isStreaming = false): React.ReactNode {
     const line = lines[i]
 
     if (line.startsWith('## ')) {
-      nodes.push(<div key={i} style={{ fontWeight: 700, fontSize: 14, color: '#F5C842', margin: '8px 0 3px' }}>{renderInline(line.slice(3))}</div>)
+      nodes.push(<div key={i} style={{ fontWeight: 700, fontSize: 14, color: 'var(--az-yellow)', margin: '8px 0 3px' }}>{renderInline(line.slice(3))}</div>)
     } else if (line.startsWith('# ')) {
-      nodes.push(<div key={i} style={{ fontWeight: 700, fontSize: 15, color: '#F5C842', margin: '8px 0 3px' }}>{renderInline(line.slice(2))}</div>)
+      nodes.push(<div key={i} style={{ fontWeight: 700, fontSize: 15, color: 'var(--az-yellow)', margin: '8px 0 3px' }}>{renderInline(line.slice(2))}</div>)
     } else if (/^[-*] /.test(line)) {
       nodes.push(
         <div key={i} style={{ display: 'flex', gap: 6, alignItems: 'flex-start', marginLeft: 2, marginTop: 2 }}>
-          <span style={{ color: '#F5C842', flexShrink: 0 }}>•</span>
+          <span style={{ color: 'var(--az-yellow)', flexShrink: 0 }}>•</span>
           <span>{renderInline(line.slice(2))}</span>
         </div>
       )
@@ -40,7 +40,7 @@ function renderContent(text: string, isStreaming = false): React.ReactNode {
       const m = line.match(/^(\d+)\. /)!
       nodes.push(
         <div key={i} style={{ display: 'flex', gap: 6, alignItems: 'flex-start', marginLeft: 2, marginTop: 2 }}>
-          <span style={{ color: '#F5C842', flexShrink: 0, minWidth: 16 }}>{m[1]}.</span>
+          <span style={{ color: 'var(--az-yellow)', flexShrink: 0, minWidth: 16 }}>{m[1]}.</span>
           <span>{renderInline(line.slice(m[0].length))}</span>
         </div>
       )
@@ -52,7 +52,7 @@ function renderContent(text: string, isStreaming = false): React.ReactNode {
   }
 
   if (isStreaming) {
-    nodes.push(<span key="cursor" style={{ display: 'inline-block', width: 2, height: 13, background: '#F5C842', marginLeft: 1, verticalAlign: 'middle', animation: 'albi-blink .7s step-end infinite' }} />)
+    nodes.push(<span key="cursor" style={{ display: 'inline-block', width: 2, height: 13, background: 'var(--az-yellow)', marginLeft: 1, verticalAlign: 'middle', animation: 'albi-blink .7s step-end infinite' }} />)
   }
 
   return <>{nodes}</>
@@ -80,7 +80,7 @@ function renderInline(text: string): React.ReactNode {
     if (first === 'bold') {
       const end = remaining.indexOf('**', boldIdx + 2)
       if (boldIdx > 0) parts.push(remaining.slice(0, boldIdx))
-      parts.push(<strong key={key++} style={{ color: '#F5C842' }}>{remaining.slice(boldIdx + 2, end)}</strong>)
+      parts.push(<strong key={key++} style={{ color: 'var(--az-yellow)' }}>{remaining.slice(boldIdx + 2, end)}</strong>)
       remaining = remaining.slice(end + 2)
     } else {
       const end = remaining.indexOf('`', codeIdx + 1)
@@ -258,10 +258,10 @@ export default function AlbiChat({ variant = 'page', onClose }: { variant?: 'pag
       <style dangerouslySetInnerHTML={{ __html: `
         .albi-page{max-width:480px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;background:#0e0e0e;position:relative;font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
         .albi-panel-root{display:flex;flex-direction:column;height:100%;background:#0e0e0e;font-family:'Plus Jakarta Sans',system-ui,sans-serif;border-radius:16px;overflow:hidden;}
-        .albi-header{background:linear-gradient(135deg,#E63312,#b02a0c);padding:${isPanel ? '12px' : (isPWA ? '44px' : '12px')} 14px 12px;flex-shrink:0;display:flex;align-items:center;gap:10px;}
+        .albi-header{background:linear-gradient(135deg,var(--az-red),#b02a0c);padding:${isPanel ? '12px' : (isPWA ? '44px' : '12px')} 14px 12px;flex-shrink:0;display:flex;align-items:center;gap:10px;}
         .albi-back-btn{width:44px;height:44px;background:rgba(255,255,255,.15);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
         .albi-back-btn i{font-size:18px;color:#fff;}
-        .albi-ai-avatar{width:40px;height:40px;background:#F5C842;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 0 3px rgba(245,200,66,.3);}
+        .albi-ai-avatar{width:40px;height:40px;background:var(--az-yellow);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 0 3px rgba(245,200,66,.3);}
         .albi-ai-avatar i{font-size:20px;color:#111;}
         .albi-header-info{flex:1;min-width:0;}
         .albi-header-name{color:#fff;font-weight:700;font-size:15px;}
@@ -274,15 +274,15 @@ export default function AlbiChat({ variant = 'page', onClose }: { variant?: 'pag
         .albi-msgs::-webkit-scrollbar-thumb{background:#333;border-radius:10px;}
         .albi-msg-row{display:flex;gap:8px;align-items:flex-end;max-width:100%;}
         .albi-msg-row.user{flex-direction:row-reverse;}
-        .albi-bot-av{width:30px;height:30px;background:#F5C842;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .albi-bot-av{width:30px;height:30px;background:var(--az-yellow);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
         .albi-bot-av i{font-size:15px;color:#111;}
         .albi-bot-av.spacer{visibility:hidden;}
         .albi-bubble{padding:10px 14px;border-radius:18px;font-size:13px;line-height:1.6;max-width:82%;word-break:break-word;}
         .albi-bubble.bot{background:#1e1e1e;color:#e8e8e8;border:0.5px solid #2a2a2a;border-bottom-left-radius:4px;}
-        .albi-bubble.user{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border-bottom-right-radius:4px;box-shadow:0 3px 10px rgba(230,51,18,.3);}
+        .albi-bubble.user{background:linear-gradient(135deg,var(--az-red),#c42a0e);color:#fff;border-bottom-right-radius:4px;box-shadow:0 3px 10px rgba(230,51,18,.3);}
         .albi-bubble.user strong{color:#fff;text-decoration:underline;}
         .albi-typing{display:flex;gap:5px;align-items:center;padding:12px 16px;background:#1e1e1e;border-radius:18px;border-bottom-left-radius:4px;width:fit-content;border:0.5px solid #2a2a2a;}
-        .albi-dot{width:7px;height:7px;border-radius:50%;background:#F5C842;animation:albi-bounce .9s infinite;}
+        .albi-dot{width:7px;height:7px;border-radius:50%;background:var(--az-yellow);animation:albi-bounce .9s infinite;}
         .albi-dot:nth-child(2){animation-delay:.2s;}
         .albi-dot:nth-child(3){animation-delay:.4s;}
         @keyframes albi-bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
@@ -290,15 +290,15 @@ export default function AlbiChat({ variant = 'page', onClose }: { variant?: 'pag
         .albi-quick-section{flex-shrink:0;padding:0 12px 8px;}
         .albi-quick-label{color:#555;font-size:10px;font-weight:600;margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px;}
         .albi-quick-grid{display:flex;flex-wrap:wrap;gap:6px;}
-        .albi-quick-btn{background:#1a1a1a;border:0.5px solid #2a2a2a;border-radius:20px;padding:7px 13px;min-height:44px;font-size:11px;color:#ccc;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;}
-        .albi-quick-btn:hover,.albi-quick-btn:active{background:#F5C842;color:#111;border-color:#F5C842;font-weight:700;}
+        .albi-quick-btn{background:var(--az-ink);border:0.5px solid #2a2a2a;border-radius:20px;padding:7px 13px;min-height:44px;font-size:11px;color:#ccc;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;}
+        .albi-quick-btn:hover,.albi-quick-btn:active{background:var(--az-yellow);color:#111;border-color:var(--az-yellow);font-weight:700;}
         .albi-input-area{background:#111;border-top:1px solid #1e1e1e;padding:10px 12px ${isPanel ? '12px' : (isPWA ? '28px' : '12px')};flex-shrink:0;}
         .albi-input-row{display:flex;gap:8px;align-items:flex-end;}
-        .albi-input-wrap{flex:1;background:#1a1a1a;border:1.5px solid #2a2a2a;border-radius:22px;padding:10px 16px;display:flex;align-items:flex-end;gap:8px;transition:border-color .15s;}
-        .albi-input-wrap:focus-within{border-color:#E63312;}
+        .albi-input-wrap{flex:1;background:var(--az-ink);border:1.5px solid #2a2a2a;border-radius:22px;padding:10px 16px;display:flex;align-items:flex-end;gap:8px;transition:border-color .15s;}
+        .albi-input-wrap:focus-within{border-color:var(--az-red);}
         .albi-input-wrap textarea{border:none;background:transparent;color:#e8e8e8;font-size:13px;font-family:inherit;outline:none;flex:1;resize:none;min-height:20px;max-height:100px;line-height:1.5;}
         .albi-input-wrap textarea::placeholder{color:#444;}
-        .albi-send-btn{width:46px;height:46px;background:linear-gradient(135deg,#E63312,#c42a0e);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 14px rgba(230,51,18,.4);transition:transform .1s,opacity .15s;}
+        .albi-send-btn{width:46px;height:46px;background:linear-gradient(135deg,var(--az-red),#c42a0e);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 14px rgba(230,51,18,.4);transition:transform .1s,opacity .15s;}
         .albi-send-btn:active{transform:scale(.9);}
         .albi-send-btn:disabled{opacity:.4;}
         .albi-send-btn i{color:#fff;font-size:20px;}

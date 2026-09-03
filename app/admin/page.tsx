@@ -22,11 +22,11 @@ const CSS = `
 .wrap{display:flex;min-height:100vh;background:#f5f5f5;}
 .sb{width:190px;background:#111;display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;}
 .sb-logo{padding:16px 14px;border-bottom:1px solid #1e1e1e;}
-.sb-logo .n{font-size:14px;font-weight:800;color:#F5C842;letter-spacing:.5px;}
+.sb-logo .n{font-size:14px;font-weight:800;color:var(--az-yellow);letter-spacing:.5px;}
 .sb-logo .r{font-size:10px;color:#555;margin-top:3px;}
 .nl{padding:10px 14px;display:flex;align-items:center;gap:9px;color:#9a9aa5;border-left:3px solid transparent;cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:inherit;transition:background .15s;}
-.nl:hover{background:#1a1a1a;}
-.nl.on{background:#1a1a1a;border-left-color:#F5C842;color:#F5C842;}
+.nl:hover{background:var(--az-ink);}
+.nl.on{background:var(--az-ink);border-left-color:var(--az-yellow);color:var(--az-yellow);}
 .nl i{font-size:16px;}
 .nl span{font-size:11px;font-weight:600;}
 .sb-group{font-size:9px;font-weight:800;color:#4a4a55;text-transform:uppercase;letter-spacing:.9px;padding:14px 14px 5px;}
@@ -55,8 +55,8 @@ tr:last-child td{border:none;}
 .btn:hover{opacity:.88;transform:translateY(-1px);}
 .btn:disabled{opacity:.5;cursor:default;transform:none;}
 .btn-green{background:#1D9E75;color:#fff;}
-.btn-orange{background:#F5C842;color:#111;}
-.btn-red{background:#E63312;color:#fff;}
+.btn-orange{background:var(--az-yellow);color:#111;}
+.btn-red{background:var(--az-red);color:#fff;}
 .tgl{width:30px;height:16px;border-radius:10px;position:relative;cursor:pointer;display:inline-block;flex-shrink:0;transition:background .2s;}
 .tgl-on{background:#1D9E75;}
 .tgl-off{background:#ccc;}
@@ -69,10 +69,10 @@ tr:last-child td{border:none;}
 .cfg-desc{font-size:9px;color:#aaa;margin-top:2px;}
 .cfg-val{font-size:11px;font-weight:700;color:#111;}
 .finput{border:1px solid #e5e5e5;border-radius:7px;padding:7px 10px;font-size:12px;width:100%;font-family:inherit;outline:none;background:#fafafa;transition:border .15s;}
-.finput:focus{border-color:#F5C842;background:#fff;}
+.finput:focus{border-color:var(--az-yellow);background:#fff;}
 .section-label{font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.8px;margin:18px 0 10px;}
 .edit-btn{border:1px solid #eee;background:#fff;color:#111;border-radius:10px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s,border .15s;}
-.edit-btn:hover{background:#FDE9E4;border-color:#E63312;color:#C42B0F;}
+.edit-btn:hover{background:#FDE9E4;border-color:var(--az-red);color:#C42B0F;}
 .edit-btn:disabled{opacity:.5;cursor:default;}
 .save-row{display:flex;gap:8px;align-items:center;margin-top:6px;}
 .save-btn{background:#111;color:#fff;border:none;border-radius:7px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;}
@@ -83,7 +83,7 @@ tr:last-child td{border:none;}
 .pm-inf{flex:1;}
 .pm-inf strong{font-size:11px;font-weight:700;color:#111;display:block;}
 .pm-inf span{font-size:10px;color:#888;}
-.maint-banner{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border-radius:10px;padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:12px;}
+.maint-banner{background:linear-gradient(135deg,var(--az-red),#c42a0e);color:#fff;border-radius:10px;padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:12px;}
 .maint-banner i{font-size:22px;}
 .maint-banner p{font-size:12px;font-weight:700;flex:1;}
 `
@@ -124,7 +124,7 @@ function ReferralTab() {
             <thead><tr><th scope="col">#</th><th scope="col">Kodi</th><th scope="col">Të ftuar</th><th scope="col">Pikë</th></tr></thead>
             <tbody>{ranked.map((r: any, i) => (
               <tr key={r.code}>
-                <td style={{ fontWeight: 800, color: '#F5C842' }}>{i + 1}</td>
+                <td style={{ fontWeight: 800, color: 'var(--az-yellow)' }}>{i + 1}</td>
                 <td style={{ fontFamily: 'monospace', fontWeight: 700 }}>{r.code}</td>
                 <td>{r.count}</td>
                 <td style={{ color: '#1D9E75', fontWeight: 700 }}>+{r.count * 50}</td>
@@ -162,7 +162,7 @@ const SECRETS_SCHEMA: { key: string; label: string; desc: string; secret?: boole
   { key: 'brevo_from_email', label: 'Brevo — Email Dërguesi', desc: 'Adresë e verifikuar në Brevo' },
   { key: 'google_client_id', label: 'Google Client ID',     desc: 'Për hyrjen me Google (GIS)' },
   { key: 'site_name',        label: 'Emri i Faqes',         desc: 'Emri i shfaqur i platformës' },
-  { key: 'primary_color',    label: 'Ngjyra Primare',       desc: 'Hex, p.sh. #E63312' },
+  { key: 'primary_color',    label: 'Ngjyra Primare',       desc: 'Hex, p.sh. var(--az-red)' },
   { key: 'admin_pin',        label: 'Ndrysho Admin PIN',    desc: '6 shifra — ndryshon PIN-in e këtij paneli', secret: true },
 ]
 
@@ -216,7 +216,7 @@ function AIHealthTab() {
   useEffect(() => { load() }, [load])
 
   const sevColor = (s: string) =>
-    s === 'critical' ? '#B42318' : s === 'high' ? '#E63312' : s === 'medium' ? '#A05000' : '#1D9E75'
+    s === 'critical' ? '#B42318' : s === 'high' ? 'var(--az-red)' : s === 'medium' ? '#A05000' : '#1D9E75'
 
   return (
     <>
@@ -553,28 +553,28 @@ export default function Admin() {
 
   if (mfaRequired) return (
     <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'#111', flexDirection:'column', gap:20 }}>
-      <style dangerouslySetInnerHTML={{ __html: `input[type=text]{background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:8px;padding:12px 16px;font-size:20px;letter-spacing:8px;text-align:center;width:180px;outline:none;font-family:monospace;}` }} />
+      <style dangerouslySetInnerHTML={{ __html: `input[type=text]{background:var(--az-ink);border:1px solid #333;color:#fff;border-radius:8px;padding:12px 16px;font-size:20px;letter-spacing:8px;text-align:center;width:180px;outline:none;font-family:monospace;}` }} />
       <div style={{ fontSize:32 }} aria-hidden="true">🔐</div>
-      <div style={{ color:'#F5C842', fontWeight:800, fontSize:16 }}>Verifikimi 2FA i Adminit</div>
+      <div style={{ color:'var(--az-yellow)', fontWeight:800, fontSize:16 }}>Verifikimi 2FA i Adminit</div>
       <div style={{ color:'#666', fontSize:12 }}>Fut kodin nga Google Authenticator / Authy</div>
       <input type="text" aria-label="Kodi 2FA (6 shifra)" inputMode="numeric" pattern="[0-9]*" autoComplete="one-time-code" maxLength={6} value={totpCode} onChange={e => setTotpCode(e.target.value.replace(/\D/g,''))} placeholder="000000" onKeyDown={e => e.key === 'Enter' && verifyAdminMfa()} autoFocus />
       {mfaError && <div role="alert" style={{ color: '#C42B0F', fontSize:12 }}>{mfaError}</div>}
-      <button type="button" onClick={verifyAdminMfa} style={{ background:'#F5C842', color:'#111', border:'none', borderRadius:8, padding:'10px 28px', fontWeight:800, fontSize:14, cursor:'pointer' }}>Konfirmo</button>
+      <button type="button" onClick={verifyAdminMfa} style={{ background:'var(--az-yellow)', color:'#111', border:'none', borderRadius:8, padding:'10px 28px', fontWeight:800, fontSize:14, cursor:'pointer' }}>Konfirmo</button>
     </div>
   )
 
   if (!authChecked) return (
-    <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'#111', color:'#F5C842', fontFamily:'system-ui', gap:12 }}>
+    <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'#111', color:'var(--az-yellow)', fontFamily:'system-ui', gap:12 }}>
       <span style={{ fontSize:24 }} aria-hidden="true">🔐</span> Duke verifikuar aksesin...
     </div>
   )
 
   if (!adminUnlocked) {
     return (
-      <div style={{ minHeight: '100dvh', background: '#FFFBEA', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
+      <div style={{ minHeight: '100dvh', background: 'var(--az-cream)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
         <div style={{ background: '#fff', border: '1.5px solid #f0e6b0', borderRadius: 18, padding: 36, maxWidth: 340, width: '90%', textAlign: 'center' }}>
           <div style={{ fontSize: 40, marginBottom: 12 }} aria-hidden="true">🔐</div>
-          <h2 style={{ fontSize: 18, fontWeight: 800, color: '#111', marginBottom: 6 }}>Admin PIN</h2>
+          <h2 style={{ fontSize: 'var(--fs-2xl)', fontWeight: 800, color: '#111', marginBottom: 6 }}>Admin PIN</h2>
           <p style={{ fontSize: 12, color: '#888', marginBottom: 20 }}>Fut kodin 6-shifror për të hyrë në panel</p>
           <input
             type="password"
@@ -585,7 +585,7 @@ export default function Admin() {
             maxLength={6}
             placeholder="••••••"
             autoComplete="off"
-            style={{ width: '100%', border: '2px solid #F5C842', borderRadius: 10, padding: '12px', fontSize: 22, textAlign: 'center', letterSpacing: 8, fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' as const, marginBottom: 12 }}
+            style={{ width: '100%', border: '2px solid var(--az-yellow)', borderRadius: 10, padding: '12px', fontSize: 22, textAlign: 'center', letterSpacing: 8, fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' as const, marginBottom: 12 }}
             autoFocus
           />
           {pinError && <div role="alert" style={{ color: '#C42B0F', fontSize: 12, marginBottom: 10 }}>{pinError}</div>}
@@ -614,15 +614,15 @@ export default function Admin() {
             <div className="n"><span aria-hidden="true">🦅</span> ALPAZAR</div>
             <div className="r">Paneli i Administrimit</div>
             {myRole && (
-              <div style={{ marginTop: 6, display: 'inline-block', background: '#1a1a1a',
-                color: '#F5C842', borderRadius: 4, padding: '2px 7px', fontSize: 9, fontWeight: 800,
+              <div style={{ marginTop: 6, display: 'inline-block', background: 'var(--az-ink)',
+                color: 'var(--az-yellow)', borderRadius: 4, padding: '2px 7px', fontSize: 9, fontWeight: 800,
                 textTransform: 'uppercase', letterSpacing: .5 }}>
                 {myRole === 'owner' ? 'Pronar' : myRole === 'admin' ? 'Administrator'
                   : myRole === 'finance' ? 'Financa' : myRole === 'moderator' ? 'Moderator' : 'Mbështetje'}
               </div>
             )}
             {isMaint && (
-              <div style={{ marginTop: 8, background: '#E63312', color: '#fff', borderRadius: 4, padding: '2px 6px', fontSize: 9, fontWeight: 700 }}>
+              <div style={{ marginTop: 8, background: 'var(--az-red)', color: '#fff', borderRadius: 4, padding: '2px 6px', fontSize: 9, fontWeight: 700 }}>
                 <><span aria-hidden="true">🔧</span> MIRËMBAJTJE</>
               </div>
             )}
@@ -646,7 +646,7 @@ export default function Admin() {
               <i className={`ti ti-${icon}`} aria-hidden="true" />
               <span>{label}</span>
               {id === 'radha' && stats.reports > 0 && (
-                <span style={{ marginLeft: 'auto', background: '#E63312', color: '#fff', borderRadius: 10, fontSize: 9, fontWeight: 800, padding: '1px 5px' }}>
+                <span style={{ marginLeft: 'auto', background: 'var(--az-red)', color: '#fff', borderRadius: 10, fontSize: 9, fontWeight: 800, padding: '1px 5px' }}>
                   {stats.reports}
                 </span>
               )}
@@ -682,13 +682,13 @@ export default function Admin() {
                   <div className="ph">
                     <div className="pt"><span aria-hidden="true">💳</span> Pagesat Premium</div>
                     {premiumRequests.filter(r => r.status === 'pending').length > 0 && (
-                      <span style={{ background: '#E63312', color: '#fff', borderRadius: 10, fontSize: 10, fontWeight: 800, padding: '3px 9px' }}>
+                      <span style={{ background: 'var(--az-red)', color: '#fff', borderRadius: 10, fontSize: 10, fontWeight: 800, padding: '3px 9px' }}>
                         {premiumRequests.filter(r => r.status === 'pending').length} të reja
                       </span>
                     )}
                   </div>
                   {payMsg && (
-                    <div style={{ background: payMsg.startsWith('Sukses') ? '#EAF3DE' : '#FFF0EE', border: payMsg.startsWith('Sukses') ? '0.5px solid #97C459' : '0.5px solid #F09595', color: payMsg.startsWith('Sukses') ? '#3B6D11' : '#C42305', fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 8, margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{ background: payMsg.startsWith('Sukses') ? '#EAF3DE' : '#FFF0EE', border: payMsg.startsWith('Sukses') ? '0.5px solid #97C459' : '0.5px solid #F09595', color: payMsg.startsWith('Sukses') ? '#3B6D11' : 'var(--az-red-deep)', fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 8, margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span style={{ flex: 1 }}>{payMsg}</span>
                       <button type="button" aria-label="Mbyll mesazhin" onClick={() => setPayMsg('')} style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', fontSize: 14 }}>✕</button>
                     </div>
@@ -926,7 +926,7 @@ export default function Admin() {
                           }}>Ruaj</button>
                           <button type="button" className="btn" style={{ flex:1, background:'#f5f5f5', color:'#111' }} onClick={() => setPmForm(null)}>Anulo</button>
                         </div>
-                        {payMsg && <div style={{ marginTop:8, fontSize:12, color: payMsg.startsWith('err') ? '#C42305' : '#1D9E75' }}>{payMsg.replace(/^(err:|✅ )/, '')}</div>}
+                        {payMsg && <div style={{ marginTop:8, fontSize:12, color: payMsg.startsWith('err') ? 'var(--az-red-deep)' : '#1D9E75' }}>{payMsg.replace(/^(err:|✅ )/, '')}</div>}
                       </div>
                     </div>
                   )}

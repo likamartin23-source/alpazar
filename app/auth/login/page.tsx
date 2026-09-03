@@ -14,8 +14,8 @@ function fmt2(n: number) { return String(n).padStart(2, '0') }
 
 const CSS = `
   *{box-sizing:border-box;margin:0;padding:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
-  body{background:#FFFBEA;}
-  .wrap{min-height:100vh;background:#FFFBEA;display:flex;align-items:center;justify-content:center;padding:20px;}
+  body{background:var(--az-cream);}
+  .wrap{min-height:100vh;background:var(--az-cream);display:flex;align-items:center;justify-content:center;padding:20px;}
   .card{background:#fff;border-radius:16px;border:1.5px solid #e0b030;padding:28px 24px;width:100%;max-width:400px;box-shadow:0 4px 24px rgba(0,0,0,.06);}
   .logo{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:20px;}
   .brand{font-size:24px;font-weight:700;color:#111;letter-spacing:2px;}
@@ -26,22 +26,22 @@ const CSS = `
   .field{margin-bottom:12px;}
   label{font-size:11px;font-weight:600;color:#555;display:block;margin-bottom:4px;}
   input[type=text],input[type=email],input[type=tel],input[type=number],input[type=password]{width:100%;border:1.5px solid #ddd;border-radius:8px;padding:11px 13px;font-size:13px;font-family:inherit;outline:none;transition:border .15s;background:#fff;color:#111;}
-  input:focus{border-color:#F5C842;}
+  input:focus{border-color:var(--az-yellow);}
   .hint{font-size:10px;color:#555;margin-top:4px;line-height:1.5;}
   .hint.ok{color:#3B6D11;}
   .hint.warn{color:#A05000;}
-  .btn{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px;box-shadow:0 4px 14px -3px rgba(230,51,18,.45);transition:transform .15s ease,box-shadow .15s ease;}
+  .btn{width:100%;background:linear-gradient(135deg,var(--az-red),#c42a0e);color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px;box-shadow:0 4px 14px -3px rgba(230,51,18,.45);transition:transform .15s ease,box-shadow .15s ease;}
   .btn:hover{transform:translateY(-1px);box-shadow:0 7px 20px -4px rgba(230,51,18,.55);}
   .btn:disabled{opacity:.6;cursor:not-allowed;}
   .btn-ghost{width:100%;background:none;color:#555;border:1.5px solid #ddd;border-radius:9px;padding:12px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:8px;transition:border .15s;}
   .btn-ghost:hover{border-color:#bbb;}
-  .btn-yellow{width:100%;background:#F5C842;color:#111;border:none;border-radius:9px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:8px;transition:opacity .15s;}
+  .btn-yellow{width:100%;background:var(--az-yellow);color:#111;border:none;border-radius:9px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:8px;transition:opacity .15s;}
   .btn-yellow:hover{opacity:.9;}
   .msg{text-align:center;font-size:12px;padding:10px 12px;border-radius:8px;margin-bottom:12px;font-weight:500;line-height:1.5;}
   .ok{background:#EAF3DE;color:#3B6D11;border:0.5px solid #97C459;}
   .err{background:#FFF0EE;color:#C42B0F;border:0.5px solid #F09595;}
   .info{background:#EEF4FF;color:#185FA5;border:0.5px solid #85B7EB;}
-  .warn{background:#FFF8EE;color:#A05000;border:0.5px solid #F5C842;}
+  .warn{background:#FFF8EE;color:#A05000;border:0.5px solid var(--az-yellow);}
   .divider{display:flex;align-items:center;gap:10px;margin:12px 0;color:#6E6E6E;font-size:12px;}
   .divider::before,.divider::after{content:'';flex:1;border-top:1px solid #eee;}
   .back{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:14px;color:#555;font-size:12px;cursor:pointer;}
@@ -49,10 +49,10 @@ const CSS = `
   .otp-row{display:flex;gap:8px;justify-content:center;margin-bottom:16px;}
   .otp-input{width:46px;height:54px;border:2px solid #e0e0e0;border-radius:12px;font-size:22px;font-weight:700;text-align:center;color:#111;outline:none;transition:border-color .15s ease,box-shadow .15s ease;background:#fff;}
   .otp-input:focus{border-color:#111;box-shadow:0 4px 16px -4px rgba(0,0,0,.2);}
-  .otp-input:focus{border-color:#F5C842;background:#FFFBEA;}
-  .otp-input.filled{border-color:#E63312;color:#C42B0F;}
+  .otp-input:focus{border-color:var(--az-yellow);background:var(--az-cream);}
+  .otp-input.filled{border-color:var(--az-red);color:#C42B0F;}
   .otp-input:disabled{background:#f9f9f9;color:#bbb;border-color:#eee;}
-  .countdown{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding:8px 12px;border-radius:8px;background:#FFFBEA;border:1px solid #f0e0a8;}
+  .countdown{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding:8px 12px;border-radius:8px;background:var(--az-cream);border:1px solid #f0e0a8;}
   .countdown-time{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;}
   .countdown-time.ok-c{color:#3B6D11;}
   .countdown-time.warn-c{color:#A05000;}
@@ -61,7 +61,7 @@ const CSS = `
   .resend-btn:disabled{color:#bbb;text-decoration:none;cursor:default;}
   .steps{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:16px;}
   .step-dot{width:8px;height:8px;border-radius:50%;background:#eee;}
-  .step-dot.active{background:#E63312;width:20px;border-radius:4px;}
+  .step-dot.active{background:var(--az-red);width:20px;border-radius:4px;}
   .step-dot.done{background:#97C459;}
   .terms{font-size:10px;color:#555;text-align:center;margin-top:10px;line-height:1.6;}
   .terms a{color:#555;text-decoration:underline;}
@@ -79,7 +79,7 @@ const CSS = `
   .contact-type{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;}
   .forgot-link{display:block;text-align:center;font-size:11px;color:#555;cursor:pointer;margin-top:4px;min-height:24px;padding:6px 4px;}
   .forgot-link:hover{color:#C42B0F;text-decoration:underline;}
-  .sms-fail-box{background:#FFF8EE;border:1.5px solid #F5C842;border-radius:12px;padding:14px;margin-bottom:10px;}
+  .sms-fail-box{background:#FFF8EE;border:1.5px solid var(--az-yellow);border-radius:12px;padding:14px;margin-bottom:10px;}
   .sms-fail-header{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;}
   .sms-fail-header span{font-size:22px;flex-shrink:0;}
   .sms-fail-header strong{font-size:13px;font-weight:700;color:#111;display:block;margin-bottom:3px;}
@@ -815,7 +815,7 @@ export default function Auth() {
   const Logo = (
     <div className="logo">
       <svg width="36" height="36" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-        <rect width="40" height="40" rx="10" fill="#E63312"/>
+        <rect width="40" height="40" rx="10" fill="var(--az-red)"/>
         <g fill="#111">
           <ellipse cx="20" cy="22" rx="4" ry="5.5"/>
           <circle cx="15.5" cy="13" r="3.2"/>
@@ -826,7 +826,7 @@ export default function Auth() {
           <polygon points="20,20 34,18 32,26 20,25"/>
           <polygon points="17,27 23,27 24,33 20,32 16,33"/>
         </g>
-        <rect x="24" y="26" width="12" height="10" rx="3" fill="#F5C842"/>
+        <rect x="24" y="26" width="12" height="10" rx="3" fill="var(--az-yellow)"/>
       </svg>
       <span className="brand">ALPAZAR</span>
     </div>
@@ -924,7 +924,7 @@ export default function Auth() {
             boxShadow: '0 20px 60px -12px rgba(0,0,0,0.28)',
           }}>
             <div aria-hidden="true" style={{ fontSize: 52, marginBottom: 10 }}>🔞</div>
-            <h2 style={{ fontSize: 18, fontWeight: 800, color: '#111', marginBottom: 8, margin: '0 0 8px' }}>
+            <h2 style={{ fontSize: 'var(--fs-2xl)', fontWeight: 800, color: '#111', marginBottom: 8, margin: '0 0 8px' }}>
               Konfirmo moshën tënde
             </h2>
             <p style={{ fontSize: 13, color: '#555', lineHeight: 1.6, marginBottom: 24 }}>
@@ -939,7 +939,7 @@ export default function Auth() {
                 window.location.href = '/'
               }}
               style={{
-                width: '100%', background: 'linear-gradient(135deg,#F8D24E,#F5C842)', color: '#111',
+                width: '100%', background: 'linear-gradient(135deg,var(--az-yellow-hi),var(--az-yellow))', color: '#111',
                 border: 'none', borderRadius: 12, padding: '13px',
                 fontSize: 14, fontWeight: 700, cursor: 'pointer',
                 marginBottom: 10, fontFamily: 'inherit', boxShadow: '0 2px 8px -2px rgba(245,200,66,.5)',
@@ -958,7 +958,7 @@ export default function Auth() {
                 setStep('form')
               }}
               style={{
-                width: '100%', background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff',
+                width: '100%', background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff',
                 border: 'none', borderRadius: 12, padding: '13px',
                 fontSize: 14, fontWeight: 700, cursor: 'pointer',
                 fontFamily: 'inherit', boxShadow: '0 4px 14px -3px rgba(230,51,18,.45)',

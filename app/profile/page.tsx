@@ -33,12 +33,12 @@ function BizUpsellBanner({ userId, isPremium }: { userId?: string; isPremium?: b
     >
       <span style={{ fontSize: 28 }} aria-hidden="true">🏢</span>
       <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 13, fontWeight: 800, color: '#F5C842', marginBottom: 3 }}>Krijo Biznes Online</div>
+        <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--az-yellow)', marginBottom: 3 }}>Krijo Biznes Online</div>
         <div style={{ fontSize: 11, color: '#555', lineHeight: 1.5 }}>{isPremium
           ? <>Faqe e dedikuar · Shpallje pa limit · Vulë <span aria-hidden="true">✓</span> Biznes</>
           : <><span aria-hidden="true">⭐</span> Veçori Premium · Faqe e dedikuar · Vulë <span aria-hidden="true">✓</span> Biznes</>}</div>
       </div>
-      <i className="ti ti-chevron-right" style={{ color: '#F5C842', fontSize: 18 }} aria-hidden="true" />
+      <i className="ti ti-chevron-right" style={{ color: 'var(--az-yellow)', fontSize: 18 }} aria-hidden="true" />
     </div>
   )
 }
@@ -462,16 +462,16 @@ export default function ProfilePage() {
   const [mt, mm] = msg.split(/:(.+)/)
 
   if (loadError) return (
-    <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
+    <div style={{ maxWidth: 480, margin: '0 auto', background: 'var(--az-cream)', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
       <div style={{ fontSize: 40 }} aria-hidden="true">⚠️</div>
       <div style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
-      <button type="button" onClick={() => window.location.reload()} style={{ padding: '10px 24px', background: '#F5C842', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer', minHeight: 44 }}>Rifresko</button>
+      <button type="button" onClick={() => window.location.reload()} style={{ padding: '10px 24px', background: 'var(--az-yellow)', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer', minHeight: 44 }}>Rifresko</button>
     </div>
   )
 
   if (loading) return (
-    <div style={{ maxWidth: 480, margin: '0 auto', background: '#FFFBEA', minHeight: '100vh' }}>
-      <div style={{ background: '#F5C842', height: 52 }} />
+    <div style={{ maxWidth: 480, margin: '0 auto', background: 'var(--az-cream)', minHeight: '100vh' }}>
+      <div style={{ background: 'var(--az-yellow)', height: 52 }} />
       <SkeletonProfile />
       <div style={{ height: 1, background: '#f0f0f0' }} />
       <SkeletonList count={4} />
@@ -482,28 +482,28 @@ export default function ProfilePage() {
     <>
       <style dangerouslySetInnerHTML={{ __html: `
         *{box-sizing:border-box;margin:0;padding:0;}
-        body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA;}
-        .wrap{max-width:480px;margin:0 auto;background:#FFFBEA;min-height:100vh;padding-bottom:30px;}
-        .topbar{background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%);padding:10px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);}
+        body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--az-cream);}
+        .wrap{max-width:480px;margin:0 auto;background:var(--az-cream);min-height:100vh;padding-bottom:30px;}
+        .topbar{background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%);padding:10px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);}
         .back{width:44px;height:44px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .back i{font-size:18px;color:#111;}
         .topbar-title{font-size:15px;font-weight:700;color:#111;flex:1;}
-        .logout{background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;border:none;border-radius:10px;padding:7px 13px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s ease;min-height:44px;display:inline-flex;align-items:center;}
+        .logout{background:linear-gradient(135deg,var(--az-ink),#000);color:var(--az-yellow);border:none;border-radius:10px;padding:7px 13px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s ease;min-height:44px;display:inline-flex;align-items:center;}
         .hero{background:linear-gradient(180deg,#111,#1c1c1c);padding:24px 16px;text-align:center;}
-        .avatar{width:76px;height:76px;border-radius:50%;background:#F5C842;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 12px;border:3px solid #F5C842;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.3);}
+        .avatar{width:76px;height:76px;border-radius:50%;background:var(--az-yellow);display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 12px;border:3px solid var(--az-yellow);overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.3);}
         .avatar img{width:100%;height:100%;object-fit:cover;}
-        .name{font-size:19px;font-weight:800;color:#1a1a1a;}
+        .name{font-size:19px;font-weight:800;color:var(--az-ink);}
         .handle{font-size:12px;color:#555;margin-top:4px;}
         .email-row{font-size:11px;color:#666;display:flex;align-items:center;gap:6px;margin-top:4px;justify-content:center;}
         .badges-row{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap;}
         /* .badge/.b-* u hoqen: vulat vijne nga IdentityBadges ([O56]). .badges-row mbetet si kontejner. */
         .stat{text-align:center;}
-        .stat-n{font-size:18px;font-weight:800;color:#F5C842;}
+        .stat-n{font-size:18px;font-weight:800;color:var(--az-yellow);}
         .stat-l{font-size:9px;color:#666;margin-top:2px;}
         /* Tabs */
         .tabs{display:flex;background:#fff;border-bottom:1.5px solid #eee;}
         .tab{flex:1;padding:9px 2px;text-align:center;font-size:9.5px;font-weight:600;color:#6B6B6B;border:none;background:none;cursor:pointer;font-family:inherit;border-bottom:2.5px solid transparent;transition:all .15s cubic-bezier(.2,.8,.2,1);min-height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-        .tab.active{background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;border-bottom-color:transparent;font-weight:700;}
+        .tab.active{background:linear-gradient(135deg,var(--az-ink),#000);color:var(--az-yellow);border-bottom-color:transparent;font-weight:700;}
         .tab i{font-size:14px;display:block;margin-bottom:2px;}
         .body{padding:12px 12px;}
         .msg-box{border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:12px;font-weight:600;}
@@ -511,9 +511,9 @@ export default function ProfilePage() {
         .err{background:#FFF0EE;color:#C42B0F;border:0.5px solid #F09595;}
         .card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;border:0.5px solid #ececec;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 16px -10px rgba(0,0,0,.14);}
         .card-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
-        .section-title{font-size:13px;font-weight:700;color:#1a1a1a;}
-        .edit-btn{background:linear-gradient(135deg,#1a1a1a,#000);border:none;border-radius:10px;padding:6px 13px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;color:#F5C842;transition:all .15s ease;min-height:44px;display:inline-flex;align-items:center;}
-        .save-btn{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:10px;padding:6px 13px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(230,51,18,.4);transition:all .15s ease;min-height:44px;display:inline-flex;align-items:center;}
+        .section-title{font-size:13px;font-weight:700;color:var(--az-ink);}
+        .edit-btn{background:linear-gradient(135deg,var(--az-ink),#000);border:none;border-radius:10px;padding:6px 13px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--az-yellow);transition:all .15s ease;min-height:44px;display:inline-flex;align-items:center;}
+        .save-btn{background:linear-gradient(135deg,var(--az-red),#c42a0e);color:#fff;border:none;border-radius:10px;padding:6px 13px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(230,51,18,.4);transition:all .15s ease;min-height:44px;display:inline-flex;align-items:center;}
         .info-row{display:flex;align-items:flex-start;padding:8px 0;border-bottom:0.5px solid #f5f5f0;}
         .info-row:last-child{border:none;}
         .info-label{font-size:10px;color:#4A4A4A;width:90px;flex-shrink:0;margin-top:2px;}
@@ -527,53 +527,53 @@ export default function ProfilePage() {
         .listing-thumb{width:52px;height:52px;border-radius:10px;background:#f9f5e0;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;}
         .listing-thumb img{width:100%;height:100%;object-fit:cover;}
         .listing-info{flex:1;}
-        .listing-title{font-size:12px;font-weight:700;color:#1a1a1a;}
+        .listing-title{font-size:12px;font-weight:700;color:var(--az-ink);}
         .listing-price{font-size:13px;font-weight:800;color:#C42B0F;margin-top:2px;}
         .listing-meta{font-size:10px;color:#aaa;margin-top:2px;}
         .del-btn{background:#FFF0EE;border:none;border-radius:10px;padding:6px 10px;font-size:12px;cursor:pointer;color:#C42B0F;font-family:inherit;min-height:44px;display:inline-flex;align-items:center;}
-        .edit-listing-btn{background:#FFFBEA;border:1px solid #e0b030;border-radius:10px;padding:6px 10px;font-size:12px;cursor:pointer;color:#856404;font-family:inherit;min-height:44px;display:inline-flex;align-items:center;}
+        .edit-listing-btn{background:var(--az-cream);border:1px solid #e0b030;border-radius:10px;padding:6px 10px;font-size:12px;cursor:pointer;color:#856404;font-family:inherit;min-height:44px;display:inline-flex;align-items:center;}
         .prem-card{background:linear-gradient(135deg,#111,#1c1c1c);border-radius:12px;padding:18px;margin-bottom:12px;text-align:center;border:1px solid #333;}
-        .prem-card h3{color:#F5C842;font-size:15px;font-weight:700;margin-bottom:8px;}
+        .prem-card h3{color:var(--az-yellow);font-size:15px;font-weight:700;margin-bottom:8px;}
         .prem-card p{color:#777;font-size:11px;margin-bottom:16px;line-height:1.6;}
-        .prem-cta{background:linear-gradient(135deg,#F8D24E,#F5C842);color:#111;border:none;border-radius:10px;padding:12px 26px;min-height:44px;box-sizing:border-box;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .prem-cta{background:linear-gradient(135deg,var(--az-yellow-hi),var(--az-yellow));color:#111;border:none;border-radius:10px;padding:12px 26px;min-height:44px;box-sizing:border-box;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
         .admin-btn{background:linear-gradient(135deg,#7C3AED,#6d28d9);color:#fff;border:none;border-radius:10px;padding:11px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;}
         /* Messages inbox */
-        .tab-badge{display:inline-flex;align-items:center;justify-content:center;background:#E63312;color:#fff;font-size:8px;font-weight:700;width:15px;height:15px;border-radius:50%;margin-left:3px;vertical-align:middle;}
+        .tab-badge{display:inline-flex;align-items:center;justify-content:center;background:var(--az-red);color:#fff;font-size:8px;font-weight:700;width:15px;height:15px;border-radius:50%;margin-left:3px;vertical-align:middle;}
         .conv-list{display:flex;flex-direction:column;gap:0;}
         .conv-row{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:0.5px solid #f5f5f0;cursor:pointer;transition:background .15s ease;}
         .conv-row:last-child{border:none;}
         .conv-row:active{background:#f9f5e0;}
-        .conv-av{width:48px;height:48px;border-radius:50%;background:#F5C842;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;overflow:hidden;position:relative;}
+        .conv-av{width:48px;height:48px;border-radius:50%;background:var(--az-yellow);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;overflow:hidden;position:relative;}
         .conv-av img{width:100%;height:100%;object-fit:cover;}
-        .unread-dot{position:absolute;top:1px;right:1px;width:12px;height:12px;background:#E63312;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:6px;color:#fff;font-weight:700;}
+        .unread-dot{position:absolute;top:1px;right:1px;width:12px;height:12px;background:var(--az-red);border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:6px;color:#fff;font-weight:700;}
         .conv-body{flex:1;min-width:0;}
-        .conv-name{font-size:13px;font-weight:700;color:#1a1a1a;display:flex;align-items:center;gap:5px;}
-        .conv-prem{font-size:8px;background:linear-gradient(135deg,#F8D24E,#F5C842);color:#111;padding:1px 5px;border-radius:6px;font-weight:700;}
+        .conv-name{font-size:13px;font-weight:700;color:var(--az-ink);display:flex;align-items:center;gap:5px;}
+        .conv-prem{font-size:8px;background:linear-gradient(135deg,var(--az-yellow-hi),var(--az-yellow));color:#111;padding:1px 5px;border-radius:6px;font-weight:700;}
         .conv-preview{font-size:11px;color:#aaa;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
         .conv-preview.unread{color:#111;font-weight:600;}
         .conv-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
         .conv-time{font-size:9px;color:#bbb;}
-        .conv-badge{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:999px;min-width:18px;text-align:center;}
+        .conv-badge{background:linear-gradient(135deg,var(--az-red),#c42a0e);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:999px;min-width:18px;text-align:center;}
         .inbox-empty{text-align:center;padding:40px 20px;}
-        .inbox-empty i{font-size:44px;color:#F5C842;display:block;margin-bottom:12px;}
+        .inbox-empty i{font-size:44px;color:var(--az-yellow);display:block;margin-bottom:12px;}
         .inbox-empty p{font-size:12px;color:#555;margin-bottom:16px;line-height:1.6;}
-        .inbox-empty-btn{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:10px;padding:11px 22px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(230,51,18,.4);min-height:44px;}
-        .open-msgs-btn{width:100%;background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;transition:all .15s ease;}
+        .inbox-empty-btn{background:linear-gradient(135deg,var(--az-red),#c42a0e);color:#fff;border:none;border-radius:10px;padding:11px 22px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(230,51,18,.4);min-height:44px;}
+        .open-msgs-btn{width:100%;background:linear-gradient(135deg,var(--az-ink),#000);color:var(--az-yellow);border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;transition:all .15s ease;}
         .open-msgs-btn i{font-size:17px;}
         /* Security section */
         .pass-wrap{position:relative;}
         .pass-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#aaa;font-size:13px;padding:4px;}
-        .sec-btn{width:100%;background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:12px;transition:all .15s ease;}
+        .sec-btn{width:100%;background:linear-gradient(135deg,var(--az-ink),#000);color:var(--az-yellow);border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:12px;transition:all .15s ease;}
         .sec-btn:disabled{opacity:.6;cursor:not-allowed;}
         .danger-zone{background:#FFF0EE;border:1px solid #F09595;border-radius:12px;padding:16px;margin-bottom:12px;}
         .danger-title{font-size:13px;font-weight:700;color:#C42B0F;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
         .danger-desc{font-size:11px;color:#555;line-height:1.6;margin-bottom:12px;}
-        .delete-btn{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(230,51,18,.4);transition:all .15s ease;}
+        .delete-btn{width:100%;background:linear-gradient(135deg,var(--az-red),#c42a0e);color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(230,51,18,.4);transition:all .15s ease;}
         .delete-btn:disabled{opacity:.6;cursor:not-allowed;}
-        .delete-confirm{background:#fff;border:1.5px solid #E63312;border-radius:12px;padding:14px;margin-top:10px;text-align:center;}
+        .delete-confirm{background:#fff;border:1.5px solid var(--az-red);border-radius:12px;padding:14px;margin-top:10px;text-align:center;}
         .delete-confirm p{font-size:12px;color:#111;font-weight:600;margin-bottom:10px;line-height:1.6;}
         .delete-confirm-btns{display:flex;gap:8px;}
-        .delete-confirm-btns button:first-child{flex:1;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:10px;padding:11px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;min-height:44px;}
+        .delete-confirm-btns button:first-child{flex:1;background:linear-gradient(135deg,var(--az-red),#c42a0e);color:#fff;border:none;border-radius:10px;padding:11px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;min-height:44px;}
         .delete-confirm-btns button:last-child{flex:1;background:#eee;color:#555;border:none;border-radius:10px;padding:11px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;min-height:44px;}
         .msg-sm{font-size:11px;padding:8px 12px;border-radius:10px;margin-top:8px;font-weight:600;}
       ` }} />
@@ -594,7 +594,7 @@ export default function ProfilePage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#FFF8E1', border: '1px solid #F5C84255', borderRadius: 12, padding: '6px 11px', marginBottom: 10 }}>
             <span style={{ fontSize: 11.5, fontWeight: 800, color: '#7B5000' }}>Vepro si:</span>
             <div role="tablist" aria-label="Vepro si" style={{ display: 'inline-flex', background: '#fff', border: '1px solid #e0c070', borderRadius: 999, overflow: 'hidden' }}>
-              <button type="button" role="tab" aria-current="true" style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: '#111', color: '#F5C842', border: 'none', padding: '5px 12px', fontSize: 12, fontWeight: 800, cursor: 'default', fontFamily: 'inherit', minHeight: 44 }}>
+              <button type="button" role="tab" aria-current="true" style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: '#111', color: 'var(--az-yellow)', border: 'none', padding: '5px 12px', fontSize: 12, fontWeight: 800, cursor: 'default', fontFamily: 'inherit', minHeight: 44 }}>
                 <i className="ti ti-user" aria-hidden="true" /> Unë
               </button>
               <button type="button" role="tab" onClick={() => { window.location.href = `/biznese/${myBiz.id}` }} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'transparent', color: '#7B5000', border: 'none', padding: '5px 12px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', minHeight: 44 }}>
@@ -607,7 +607,7 @@ export default function ProfilePage() {
         {/* Cover + Avatar — Facebook-style */}
         <div style={{ position: 'relative', marginBottom: 56 }}>
           {/* Cover 16:6 */}
-          <div style={{ position: 'relative', width: '100%', aspectRatio: '16/6', overflow: 'hidden', borderRadius: '20px 20px 0 0', background: 'linear-gradient(135deg,#F5C842,#E63312)' }}>
+          <div style={{ position: 'relative', width: '100%', aspectRatio: '16/6', overflow: 'hidden', borderRadius: '20px 20px 0 0', background: 'linear-gradient(135deg,var(--az-yellow),var(--az-red))' }}>
             {profile?.cover_url && (
               <img src={profile.cover_url} alt="Kopertina" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
             )}
@@ -816,7 +816,7 @@ export default function ProfilePage() {
                 <button
                   type="button"
                   onClick={() => setProfSub('menu')}
-                  style={{ background: 'none', border: 'none', color: '#C42305', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', padding: '4px 0', marginBottom: 8, minHeight: 44, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  style={{ background: 'none', border: 'none', color: 'var(--az-red-deep)', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', padding: '4px 0', marginBottom: 8, minHeight: 44, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                   <i className="ti ti-arrow-left" style={{ fontSize: 16 }} aria-hidden="true" /> Kthehu te paneli
                 </button>
               )}
@@ -859,7 +859,7 @@ export default function ProfilePage() {
                       setMsg(`ok:Trust Score ${visible ? 'aktivizuar' : 'çaktivizuar'} me sukses.`)
                       setTimeout(() => setMsg(''), 3000)
                     }}
-                    style={{ width: 18, height: 18, accentColor: '#E63312', cursor: 'pointer' }}
+                    style={{ width: 18, height: 18, accentColor: 'var(--az-red)', cursor: 'pointer' }}
                   />
                   <span style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>
                     Shfaq Trust Score tim te profili publik
@@ -898,7 +898,7 @@ export default function ProfilePage() {
                       setMsg(`ok:Preferencat e marketingut u ${opted ? 'aktivizuan' : 'çaktivizuan'}.`)
                       setTimeout(() => setMsg(''), 3000)
                     }}
-                    style={{ width: 18, height: 18, accentColor: '#E63312', cursor: 'pointer' }}
+                    style={{ width: 18, height: 18, accentColor: 'var(--az-red)', cursor: 'pointer' }}
                   />
                   <span style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>
                     Pranoj njoftime dhe oferta nga Alpazar
@@ -1027,7 +1027,7 @@ export default function ProfilePage() {
                   <span className="section-title">
                     Shpalljet e mia
                     {maxListings != null && maxListings >= 0
-                      ? <span style={{ marginLeft: 6, fontSize: 12, fontWeight: 700, color: myListings.filter(l => l.is_active).length >= maxListings ? '#C42305' : '#0E7A35' }}>{myListings.filter(l => l.is_active).length}/{maxListings}</span>
+                      ? <span style={{ marginLeft: 6, fontSize: 12, fontWeight: 700, color: myListings.filter(l => l.is_active).length >= maxListings ? 'var(--az-red-deep)' : '#0E7A35' }}>{myListings.filter(l => l.is_active).length}/{maxListings}</span>
                       : <span style={{ marginLeft: 6, fontSize: 12, fontWeight: 700, color: '#7A4A00' }}>{myListings.filter(l => l.is_active).length} · <span aria-hidden="true">⭐</span> pa limit</span>}
                   </span>
                   <button type="button" className="edit-btn" onClick={() => window.location.href = '/listing/new'}>+ Shto</button>
@@ -1047,7 +1047,7 @@ export default function ProfilePage() {
                 )}
                 {maxListings != null && maxListings >= 0 && myListings.filter(l => l.is_active).length >= maxListings && (
                   <div style={{ background: '#FFF9C3', border: '1px solid #FDE047', borderRadius: 8, padding: '8px 12px', fontSize: 11.5, color: '#713F12', marginBottom: 10 }}>
-                    <span aria-hidden="true">⚠️</span> Ke arritur kufirin falas ({maxListings} aktive). Pauzo një shpallje ose <a href="/premium" style={{ color: '#C42305', fontWeight: 700 }}>kalo në Premium</a> për shpallje pa limit.
+                    <span aria-hidden="true">⚠️</span> Ke arritur kufirin falas ({maxListings} aktive). Pauzo një shpallje ose <a href="/premium" style={{ color: 'var(--az-red-deep)', fontWeight: 700 }}>kalo në Premium</a> për shpallje pa limit.
                   </div>
                 )}
                 {/* FAZA 4: filtra Aktive / Të pauzuara / Të shitura */}
@@ -1059,8 +1059,8 @@ export default function ProfilePage() {
                     return (
                       <button key={k} type="button" role="tab" aria-selected={listFilter === k} onClick={() => setListFilter(k)}
                         style={{ flex: 1, minHeight: 40, borderRadius: 9, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
-                          border: listFilter === k ? '1.5px solid #C42305' : '1px solid #eee',
-                          background: listFilter === k ? '#FFF1EE' : '#fff', color: listFilter === k ? '#C42305' : '#666' }}>
+                          border: listFilter === k ? '1.5px solid var(--az-red-deep)' : '1px solid #eee',
+                          background: listFilter === k ? '#FFF1EE' : '#fff', color: listFilter === k ? 'var(--az-red-deep)' : '#666' }}>
                         {etiketa} ({n})
                       </button>
                     )
@@ -1075,7 +1075,7 @@ export default function ProfilePage() {
                              : 'Asnjë shpallje e pauzuar.'
                   return shown.length === 0 ? (
                   <div style={{ textAlign: 'center', padding: '24px 0', color: '#555', fontSize: 12 }}>
-                    <i className="ti ti-package" style={{ fontSize: 36, display: 'block', marginBottom: 10, color: '#F5C842' }} aria-hidden="true" />
+                    <i className="ti ti-package" style={{ fontSize: 36, display: 'block', marginBottom: 10, color: 'var(--az-yellow)' }} aria-hidden="true" />
                     {bosh}{listFilter === 'active' ? <><br />Shto tani falas!</> : null}
                   </div>
                 ) : (
@@ -1119,7 +1119,7 @@ export default function ProfilePage() {
                       ))}
                       {pendingDelete === l.id ? (
                         <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
-                          <button type="button" onClick={() => deleteListing(l.id)} style={{ background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Fshi</button>
+                          <button type="button" onClick={() => deleteListing(l.id)} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Fshi</button>
                           <button type="button" onClick={() => setPendingDelete(null)} style={{ background: '#eee', color: '#555', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Jo</button>
                         </div>
                       ) : (
@@ -1141,7 +1141,7 @@ export default function ProfilePage() {
               </div>
               {savedListings.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '24px 0', color: '#555', fontSize: 12 }}>
-                  <i className="ti ti-heart" style={{ fontSize: 36, display: 'block', marginBottom: 10, color: '#F5C842' }} aria-hidden="true" />
+                  <i className="ti ti-heart" style={{ fontSize: 36, display: 'block', marginBottom: 10, color: 'var(--az-yellow)' }} aria-hidden="true" />
                   Nuk ke shpallje të ruajtura.<br />Hap zemrën <i className="ti ti-heart" style={{ fontSize: 11 }} aria-hidden="true" /> në çdo shpallje!
                 </div>
               ) : (
@@ -1281,7 +1281,7 @@ export default function ProfilePage() {
             const badge = (on: boolean, txtOn: string, txtOff: string) => (
               <span style={{ fontSize: 10, fontWeight: 800, padding: '2px 8px', borderRadius: 6, background: on ? '#dcfce7' : '#f0f0f0', color: on ? '#16a34a' : '#999' }}>{on ? txtOn : txtOff}</span>
             )
-            const cardStyle = (on: boolean): React.CSSProperties => ({ borderLeft: `3px solid ${on ? '#C42305' : '#ddd'}`, opacity: on ? 1 : 0.6 })
+            const cardStyle = (on: boolean): React.CSSProperties => ({ borderLeft: `3px solid ${on ? 'var(--az-red-deep)' : '#ddd'}`, opacity: on ? 1 : 0.6 })
             return (
               <>
                 <div style={{ fontSize: 11.5, color: '#767676', margin: '2px 4px 10px', lineHeight: 1.5 }}>
@@ -1298,7 +1298,7 @@ export default function ProfilePage() {
                     S’ka biznes pa plan. Orientim automatik te <b>Planet</b> (gate në server/RLS).
                   </p>
                   <button type="button" disabled={!g1} onClick={() => { if (g1) window.location.href = '/premium' }}
-                    style={{ width: '100%', minHeight: 46, background: g1 ? 'linear-gradient(135deg,#F8D24E,#F5C842)' : '#f0f0f0', color: g1 ? '#111' : '#aaa', border: 'none', borderRadius: 11, fontSize: 13, fontWeight: 800, cursor: g1 ? 'pointer' : 'not-allowed', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                    style={{ width: '100%', minHeight: 46, background: g1 ? 'linear-gradient(135deg,var(--az-yellow-hi),var(--az-yellow))' : '#f0f0f0', color: g1 ? '#111' : '#aaa', border: 'none', borderRadius: 11, fontSize: 13, fontWeight: 800, cursor: g1 ? 'pointer' : 'not-allowed', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                     <span aria-hidden="true">⭐</span> Bëhu Premium → Shiko Planet
                   </button>
                 </div>
@@ -1313,7 +1313,7 @@ export default function ProfilePage() {
                     Regjistrimi për herë të parë — katalogu i plotë (Tipi → Nënkategoritë → Profili).
                   </p>
                   <button type="button" disabled={!g2} onClick={() => { if (g2) window.location.href = '/biznese/new' }}
-                    style={{ width: '100%', minHeight: 46, background: g2 ? 'linear-gradient(135deg,#E63312,#c42a0e)' : '#f0f0f0', color: g2 ? '#fff' : '#aaa', border: 'none', borderRadius: 11, fontSize: 13, fontWeight: 800, cursor: g2 ? 'pointer' : 'not-allowed', fontFamily: 'inherit' }}>
+                    style={{ width: '100%', minHeight: 46, background: g2 ? 'linear-gradient(135deg,var(--az-red),#c42a0e)' : '#f0f0f0', color: g2 ? '#fff' : '#aaa', border: 'none', borderRadius: 11, fontSize: 13, fontWeight: 800, cursor: g2 ? 'pointer' : 'not-allowed', fontFamily: 'inherit' }}>
                     + Krijo faqen e biznesit
                   </button>
                   {hasBiz && <p style={{ fontSize: 10.5, color: '#555', margin: '8px 0 0' }}>Ke tashmë një biznes → çaktivizohet (pa dublim).</p>}
@@ -1332,11 +1332,11 @@ export default function ProfilePage() {
                       </p>
                       <button type="button" aria-label="Vepro si biznes — hap profilin e brendshëm të biznesit"
                         onClick={() => { window.location.href = `/biznese/${myBiz.id}` }}
-                        style={{ width: '100%', minHeight: 48, background: 'linear-gradient(135deg,#1a1a1a,#000)', color: '#F5C842', border: 'none', borderRadius: 11, fontSize: 14, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                        style={{ width: '100%', minHeight: 48, background: 'linear-gradient(135deg,var(--az-ink),#000)', color: 'var(--az-yellow)', border: 'none', borderRadius: 11, fontSize: 14, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                         <i className="ti ti-briefcase" aria-hidden="true" /> Vepro si Biznes → hap profilin
                       </button>
                       <button type="button" onClick={() => { window.location.href = `/biznese/${myBiz.id}?public=1` }}
-                        style={{ width: '100%', marginTop: 8, minHeight: 40, background: 'none', border: 'none', color: '#C42305', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
+                        style={{ width: '100%', marginTop: 8, minHeight: 40, background: 'none', border: 'none', color: 'var(--az-red-deep)', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
                         <i className="ti ti-eye" aria-hidden="true" /> Shiko faqen publike të biznesit
                       </button>
                     </>

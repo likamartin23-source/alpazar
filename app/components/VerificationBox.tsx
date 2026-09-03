@@ -91,7 +91,7 @@ export default function VerificationBox({ businessId, nipt }: { businessId?: str
       ) : (
         <>
           {k?.status === 'rejected' && (
-            <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', borderRadius: 10, padding: '10px 14px', marginBottom: 12, fontSize: 12, color: '#C42305', lineHeight: 1.6 }}>
+            <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', borderRadius: 10, padding: '10px 14px', marginBottom: 12, fontSize: 12, color: 'var(--az-red-deep)', lineHeight: 1.6 }}>
               Kërkesa e mëparshme nuk u miratua.{k.shenimi ? ` „${k.shenimi}"` : ''} Mund të dërgosh një të re.
             </div>
           )}
@@ -109,7 +109,7 @@ export default function VerificationBox({ businessId, nipt }: { businessId?: str
           </select>
 
           {dergon && dergon !== 'duke' && (
-            <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', borderRadius: 10, padding: '10px 14px', marginTop: 12, fontSize: 12, color: '#C42305', fontWeight: 600 }}>
+            <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', borderRadius: 10, padding: '10px 14px', marginTop: 12, fontSize: 12, color: 'var(--az-red-deep)', fontWeight: 600 }}>
               {dergon}
             </div>
           )}

@@ -83,7 +83,7 @@ export function MapPicker({ lat, lng, address, onChange, onCityChange }: MapPick
             flex: 1, border: '1.5px solid #ddd', borderRadius: 9, padding: '9px 12px',
             fontSize: 13, fontFamily: 'inherit', outline: 'none', background: '#fff', color: '#111',
           }}
-          onFocus={e => (e.target.style.borderColor = '#F5C842')}
+          onFocus={e => (e.target.style.borderColor = 'var(--az-yellow)')}
           onBlur={e => (e.target.style.borderColor = '#ddd')}
         />
         <button

@@ -206,7 +206,7 @@ export function InvoicesTab() {
         <div className="sc">
           {/* Shenja minus vetem kur ka vertet rimbursim — perndryshe kutia
               shfaqte "−0", qe e ben operatorin te ndalet e te pyese pa arsye. */}
-          <div className="sn" style={{ color: st.rimb > 0 ? '#E63312' : undefined }}>{st.rimb > 0 ? '−' : ''}{L(st.rimb)}</div>
+          <div className="sn" style={{ color: st.rimb > 0 ? 'var(--az-red)' : undefined }}>{st.rimb > 0 ? '−' : ''}{L(st.rimb)}</div>
           <div className="sl">Rimbursuar</div>
         </div>
       </div>
@@ -295,7 +295,7 @@ export function InvoicesTab() {
               return (
                 <tr key={r.id} style={kredit ? { background: '#FFFAF9' } : undefined}>
                   <td>
-                    <strong style={{ fontSize: 11.5, color: kredit ? '#C42305' : undefined }}>
+                    <strong style={{ fontSize: 11.5, color: kredit ? 'var(--az-red-deep)' : undefined }}>
                       {r.fiscal_number || r.number}
                     </strong>
                     {kredit && <> <span className="badge bd">notë krediti</span></>}
@@ -315,7 +315,7 @@ export function InvoicesTab() {
                     <div style={{ color: '#aaa', fontSize: 9.5 }}>{r.email}</div>
                   </td>
                   <td>
-                    <strong style={{ color: kredit ? '#C42305' : undefined }}>{L(r.total)} {r.currency}</strong>
+                    <strong style={{ color: kredit ? 'var(--az-red-deep)' : undefined }}>{L(r.total)} {r.currency}</strong>
                     {!kredit && Number(r.refunded_total) > 0 && (
                       <div style={{ color: '#C42B0F', fontSize: 9.5 }}>
                         −{L(r.refunded_total)} rimbursuar · mbetet {L(r.mbetja)}

@@ -42,7 +42,7 @@ export function CookieBanner() {
           <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 4 }}>Alpazar përdor cookies</div>
           <div style={{ fontSize: 11, color: '#bbb', lineHeight: 1.6 }}>
             Përdorim cookies thelbësore për funksionimin e platformës dhe analytics anonime për ta përmirësuar.{' '}
-            <button type="button" aria-expanded={detail} onClick={() => setDetail(d => !d)} style={{ background: 'none', border: 'none', color: '#F5C842', cursor: 'pointer', fontSize: 11, fontWeight: 700, padding: 0, fontFamily: 'inherit' }}>
+            <button type="button" aria-expanded={detail} onClick={() => setDetail(d => !d)} style={{ background: 'none', border: 'none', color: 'var(--az-yellow)', cursor: 'pointer', fontSize: 11, fontWeight: 700, padding: 0, fontFamily: 'inherit' }}>
               {detail ? 'Fshih detajet ↑' : 'Shfaq detajet ↓'}
             </button>
           </div>
@@ -51,7 +51,7 @@ export function CookieBanner() {
               <div style={{ marginBottom: 4 }}><span aria-hidden="true">📌</span> <strong>Thelbësore</strong> — sesioni, autentifikimi, preferencat (gjithmonë aktiv)</div>
               <div style={{ marginBottom: 4 }}><span aria-hidden="true">📊</span> <strong>Analytics</strong> — Vercel Analytics (SHBA): të dhëna trafiku. Ngarkohet <strong>vetëm</strong> nëse pranon.</div>
               <div style={{ marginBottom: 4 }}><span aria-hidden="true">🎥</span> <strong>Diagnostikë</strong> — Sentry (BE): regjistrim sesioni me tekst të maskuar. Vetëm nëse pranon.</div>
-              <div><span aria-hidden="true">🔒</span> Nuk shesim të dhëna dhe nuk përdorim cookies reklamash. <a href="/privatesia" style={{ color: '#F5C842' }}>Politika e Privatësisë</a></div>
+              <div><span aria-hidden="true">🔒</span> Nuk shesim të dhëna dhe nuk përdorim cookies reklamash. <a href="/privatesia" style={{ color: 'var(--az-yellow)' }}>Politika e Privatësisë</a></div>
             </div>
           )}
         </div>
@@ -60,7 +60,7 @@ export function CookieBanner() {
         <button
           type="button"
           onClick={accept}
-          style={{ flex: 1, background: 'linear-gradient(135deg,#F8D24E,#F5C842)', color: '#111', border: 'none', borderRadius: 12, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+          style={{ flex: 1, background: 'linear-gradient(135deg,var(--az-yellow-hi),var(--az-yellow))', color: '#111', border: 'none', borderRadius: 12, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
         >
           <><span aria-hidden="true">✓</span> Prano të gjitha</>
         </button>

@@ -103,13 +103,13 @@ export default function TakedownPage() {
   }
 
   return (
-    <div style={{ minHeight: '100dvh', background: '#FFFBEA', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 20px' }}>
+    <div style={{ minHeight: '100dvh', background: 'var(--az-cream)', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 20px' }}>
       <div style={{ width: '100%', maxWidth: 500 }}>
         <button type="button" aria-label="Kthehu" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', color: '#6E6E6E', cursor: 'pointer', fontSize: 13, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 6 }}>
           ← Kthehu
         </button>
         <div style={{ background: '#fff', border: '1.5px solid #f0e6b0', borderRadius: 16, padding: 28 }}>
-          <h1 style={{ fontSize: 20, fontWeight: 800, color: '#111', marginBottom: 6 }}><span aria-hidden="true">⚖️</span> Kerkese Heqje Permbajtjeje / IP</h1>
+          <h1 style={{ fontSize: 'var(--fs-2xl)', fontWeight: 800, color: '#111', marginBottom: 6 }}><span aria-hidden="true">⚖️</span> Kerkese Heqje Permbajtjeje / IP</h1>
           <p style={{ fontSize: 12, color: '#6E6E6E', lineHeight: 1.6, marginBottom: 20 }}>
             Nese beson se ndonje permbajtje ne Alpazar shkel te drejtat e tua ose ligjin, plotesoje kete formular.
             Nuk te duhet llogari. Permbajtja qartesisht e paligjshme shqyrtohet <strong>menjehere</strong>;

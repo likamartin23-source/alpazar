@@ -11,7 +11,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
     <html lang="sq">
       <body>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', gap: '16px', fontFamily: 'sans-serif', padding: '24px', textAlign: 'center' }}>
-          <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#1a1a1a' }}>Diçka shkoi gabim!</h2>
+          <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--az-ink)' }}>Diçka shkoi gabim!</h2>
           <p style={{ color: '#666', maxWidth: '400px' }}>Gabimi u raportua automatikisht. Provo sërish ose rifresko faqen.</p>
           <button
             type="button"

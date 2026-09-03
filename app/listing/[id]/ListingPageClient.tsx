@@ -581,14 +581,14 @@ export default function ListingPageClient({ params, initialListing, initialSelle
     <div style={{ textAlign: 'center', padding: 60, fontFamily: "'Plus Jakarta Sans',system-ui" }}>
       <p style={{ fontSize: 40, marginBottom: 12 }} aria-hidden="true">⚠️</p>
       <h2 style={{ color: '#111', marginBottom: 8 }}>Gabim gjatë ngarkimit</h2>
-      <button type="button" onClick={() => window.location.reload()} style={{ background: '#F5C842', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Rifresko</button>
+      <button type="button" onClick={() => window.location.reload()} style={{ background: 'var(--az-yellow)', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Rifresko</button>
     </div>
   )
 
   if (loading) return (
     <div style={{ textAlign: 'center', padding: 60 }}>
       <style dangerouslySetInnerHTML={{ __html: `@keyframes spin{to{transform:rotate(360deg);}}` }} />
-      <div style={{ width: 28, height: 28, border: '3px solid #F5C842', borderTopColor: '#E63312', borderRadius: '50%', animation: 'spin .7s linear infinite', margin: '0 auto 10px' }} />
+      <div style={{ width: 28, height: 28, border: '3px solid var(--az-yellow)', borderTopColor: 'var(--az-red)', borderRadius: '50%', animation: 'spin .7s linear infinite', margin: '0 auto 10px' }} />
     </div>
   )
 
@@ -642,9 +642,9 @@ export default function ListingPageClient({ params, initialListing, initialSelle
     <>
       <style dangerouslySetInnerHTML={{ __html: `
         *{box-sizing:border-box;margin:0;padding:0;}
-        body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#FFFBEA;}
+        body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--az-cream);}
         .wrap{max-width:480px;margin:0 auto;background:#fff;min-height:100vh;padding-bottom:${chatPanelOpen ? '300px' : '70px'};}
-        .topbar{background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%);padding:10px 12px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
+        .topbar{background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%);padding:10px 12px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
         /* klasa e vjeter e back-butonit u zevendesua nga komponenti i perbashket BackButton (44px). */
         .topbar-title{font-size:15px;font-weight:700;color:#111;flex:1;}
         /* Butonat e sigurise (§7.4): terciar i vogel, gjithmone i arritshem,
@@ -654,8 +654,8 @@ export default function ListingPageClient({ params, initialListing, initialSelle
            :active (transform+sfond) — sepse :hover NUK ekziston në telefon. Të tria (safety/njoftim/
            ndaj) nga i njëjti fjalor. */
         .safety-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:44px;padding:0 14px;background:#f4f4f4;border:1px solid #b0b0b0;border-radius:11px;color:#3d3d3d;font-size:12.5px;font-weight:700;font-family:inherit;cursor:pointer;text-decoration:none;transition:transform .12s ease,border-color .15s ease,background .15s ease;}
-        .safety-btn:hover{border-color:#C42305;color:#C42305;}
-        .safety-btn:active{transform:scale(.97);background:#e9e9e9;border-color:#C42305;}
+        .safety-btn:hover{border-color:var(--az-red-deep);color:var(--az-red-deep);}
+        .safety-btn:active{transform:scale(.97);background:#e9e9e9;border-color:var(--az-red-deep);}
         .share-btn{width:44px;height:44px;background:#f4f4f4;border:1px solid #b0b0b0;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .12s ease,background .15s ease;}
         .share-btn:active{transform:scale(.94);background:#e9e9e9;}
         .share-btn i{font-size:17px;color:#333;}
@@ -680,7 +680,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         .status-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:4px 11px;border-radius:999px;}
         .sc-active{background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7;}
         .sc-sold{background:#F3F3F3;color:#555;border:1px solid #ccc;}
-        h1{font-size:var(--fs-2xl);font-weight:800;color:#1a1a1a;margin-bottom:6px;line-height:1.3;letter-spacing:-.2px;}
+        h1{font-size:var(--fs-2xl);font-weight:800;color:var(--az-ink);margin-bottom:6px;line-height:1.3;letter-spacing:-.2px;}
         .price{font-size:25px;font-weight:800;color:#C42B0F;margin-bottom:12px;letter-spacing:-.5px;}
         .meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
         .meta-item{display:flex;align-items:center;gap:4px;font-size:11px;color:#555;background:#f5f3eb;padding:5px 10px;border-radius:999px;font-weight:600;}
@@ -689,13 +689,13 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         .cond-used{background:#F0F0F0;color:#555;font-weight:700;}
         .divider{height:1px;background:#f0f0f0;margin:10px 0;}
         .sec-label{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:800;color:#4A4A4A;text-transform:uppercase;letter-spacing:.6px;margin-bottom:9px;}
-        .sec-label::before{content:'';flex:0 0 auto;width:3px;height:13px;border-radius:2px;background:linear-gradient(180deg,#F5C842,#E63312);}
+        .sec-label::before{content:'';flex:0 0 auto;width:3px;height:13px;border-radius:2px;background:linear-gradient(180deg,var(--az-yellow),var(--az-red));}
         .desc{font-size:13px;color:#555;line-height:1.7;}
 
         /* Seller section — free-flowing */
         .seller-section{background:#fff;border:0.5px solid #ececec;border-radius:14px;padding:14px;margin:0 12px 12px;box-shadow:0 1px 2px rgba(0,0,0,.04),0 8px 20px -12px rgba(0,0,0,.16);}
         .seller-av-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
-        .seller-av{width:44px;height:44px;border-radius:50%;background:#F5C842;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#111;flex-shrink:0;overflow:hidden;border:2.5px solid #F5C842;}
+        .seller-av{width:44px;height:44px;border-radius:50%;background:var(--az-yellow);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#111;flex-shrink:0;overflow:hidden;border:2.5px solid var(--az-yellow);}
         .seller-av img{width:100%;height:100%;object-fit:cover;}
         .seller-name{font-size:14px;font-weight:700;color:#111;}
         .seller-sub{font-size:11px;color:#555;margin-top:2px;}
@@ -704,7 +704,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         .stat-chip{display:flex;align-items:center;gap:4px;background:#f8f6f0;border:0.5px solid #ececec;border-radius:10px;padding:5px 10px;font-size:11px;color:#555;}
         .stat-chip i{font-size:11px;color:#999;}
         .seller-bio{font-size:12px;color:#666;line-height:1.65;margin-bottom:8px;}
-        .view-profile-btn{display:flex;align-items:center;justify-content:center;gap:6px;background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;border:none;border-radius:12px;padding:10px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;box-shadow:0 2px 8px -2px rgba(0,0,0,.35);transition:transform .15s ease,box-shadow .15s ease;}
+        .view-profile-btn{display:flex;align-items:center;justify-content:center;gap:6px;background:linear-gradient(135deg,var(--az-ink),#000);color:var(--az-yellow);border:none;border-radius:12px;padding:10px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;box-shadow:0 2px 8px -2px rgba(0,0,0,.35);transition:transform .15s ease,box-shadow .15s ease;}
         .view-profile-btn:hover{transform:translateY(-1px);box-shadow:0 5px 14px -3px rgba(0,0,0,.45);}
         .shop-link-row{display:flex;align-items:center;gap:9px;background:#f8f6f0;border:0.5px solid #ececec;border-radius:12px;padding:9px 12px;margin-top:8px;cursor:pointer;text-decoration:none;transition:background .15s ease;}
         .shop-link-row:hover{background:#f2efe6;}
@@ -718,7 +718,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         .cs-handle-row{padding:8px 0 4px;display:flex;justify-content:center;flex-shrink:0;}
         .cs-handle{width:36px;height:4px;background:#ddd;border-radius:4px;}
         .cs-header{padding:0 13px 8px;display:flex;align-items:center;gap:9px;flex-shrink:0;border-bottom:1px solid #f0f0f0;}
-        .cs-av{width:32px;height:32px;border-radius:50%;background:#F5C842;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#111;flex-shrink:0;overflow:hidden;}
+        .cs-av{width:32px;height:32px;border-radius:50%;background:var(--az-yellow);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#111;flex-shrink:0;overflow:hidden;}
         .cs-av img{width:100%;height:100%;object-fit:cover;}
         .cs-seller-name{font-size:13px;font-weight:700;color:#111;flex:1;}
         .cs-priv{font-size:9.5px;background:#EEF4FF;color:#185FA5;border:1px solid #C3DAFB;padding:2px 7px;border-radius:8px;font-weight:700;}
@@ -738,7 +738,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         .bubble-w{max-width:76%;}
         .mine .bubble-w{align-items:flex-end;display:flex;flex-direction:column;}
         .bubble{padding:7px 11px;font-size:13px;line-height:1.5;word-break:break-word;border-radius:14px;}
-        .mine .bubble{background:linear-gradient(135deg,#F5C842,#e8b820);color:#111;border-bottom-right-radius:4px;box-shadow:0 2px 6px rgba(245,200,66,.3);}
+        .mine .bubble{background:linear-gradient(135deg,var(--az-yellow),#e8b820);color:#111;border-bottom-right-radius:4px;box-shadow:0 2px 6px rgba(245,200,66,.3);}
         .theirs .bubble{background:#fff;color:#111;border-bottom-left-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,.07);}
         .btime{font-size:9px;color:rgba(0,0,0,.3);margin-top:2px;text-align:right;}
         .theirs .btime{text-align:left;color:#bbb;}
@@ -753,15 +753,15 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         @keyframes tdot{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
         .cs-input-bar{background:#fff;border-top:1px solid #eee;padding:9px 11px;display:flex;gap:7px;align-items:flex-end;flex-shrink:0;}
         .cs-input-wrap{flex:1;background:#f5f5f0;border-radius:20px;padding:0 12px;display:flex;align-items:flex-end;border:1.5px solid transparent;transition:border-color .15s;}
-        .cs-input-wrap:focus-within{border-color:#E63312;background:#fff;}
+        .cs-input-wrap:focus-within{border-color:var(--az-red);background:#fff;}
         .cs-input-wrap textarea{border:none;background:transparent;font-size:13px;color:#111;outline:none;flex:1;resize:none;min-height:20px;max-height:80px;line-height:1.5;padding:9px 0;font-family:inherit;}
         .cs-input-wrap textarea::placeholder{color:#bbb;}
-        .cs-send-btn{width:44px;height:44px;background:linear-gradient(135deg,#E63312,#c42a0e);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(230,51,18,.3);}
+        .cs-send-btn{width:44px;height:44px;background:linear-gradient(135deg,var(--az-red),#c42a0e);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(230,51,18,.3);}
         .cs-send-btn:disabled{opacity:.4;box-shadow:none;}
         .cs-send-btn i{color:#fff;font-size:18px;}
         .login-prompt{background:#FFF0EE;padding:18px;text-align:center;}
         .login-prompt p{font-size:13px;color:#555;margin-bottom:10px;font-weight:600;}
-        .login-prompt-btn{background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:10px 22px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(230,51,18,.4);transition:transform .15s ease,box-shadow .15s ease;}
+        .login-prompt-btn{background:linear-gradient(135deg,var(--az-red),#c42a0e);color:#fff;border:none;border-radius:12px;padding:10px 22px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px -2px rgba(230,51,18,.4);transition:transform .15s ease,box-shadow .15s ease;}
         .login-prompt-btn:hover{transform:translateY(-1px);box-shadow:0 5px 14px -3px rgba(230,51,18,.5);}
 
         /* Bottom bar */
@@ -769,7 +769,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         .bb-price{display:flex;flex-direction:column;justify-content:center;flex-shrink:0;max-width:112px;padding-right:2px;}
         .bb-price-l{font-size:9px;font-weight:600;color:#4A4A4A;text-transform:uppercase;letter-spacing:.3px;line-height:1;}
         .bb-price-n{font-size:16px;font-weight:800;color:#C42B0F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.3px;line-height:1.2;}
-        .main-chat-btn{flex:1;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 12px rgba(230,51,18,.3);}
+        .main-chat-btn{flex:1;background:linear-gradient(135deg,var(--az-red),#c42a0e);color:#fff;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 12px rgba(230,51,18,.3);}
         .main-chat-btn i{font-size:16px;}
         .wa-btn{width:48px;height:48px;background:#25D366;border:none;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(37,211,102,.3);text-decoration:none;}
         .wa-btn i{font-size:22px;color:#fff;}
@@ -787,9 +787,9 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         .alert-title{font-size:16px;font-weight:800;color:#111;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
         .alert-sub{font-size:12px;color:#555;margin-bottom:16px;}
         .alert-input{width:100%;border:1.5px solid #ddd;border-radius:11px;padding:12px 14px;font-size:15px;font-weight:700;color:#111;box-sizing:border-box;font-family:inherit;outline:none;}
-        .alert-input:focus{border-color:#E63312;}
+        .alert-input:focus{border-color:var(--az-red);}
         .alert-btn-row{display:flex;gap:8px;margin-top:14px;}
-        .alert-save{flex:1;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:11px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .alert-save{flex:1;background:linear-gradient(135deg,var(--az-red),#c42a0e);color:#fff;border:none;border-radius:11px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
         .alert-save:disabled{opacity:.5;cursor:not-allowed;}
         .alert-del{width:48px;background:#FFF0EE;color:#C42B0F;border:1.5px solid #FFCDD2;border-radius:11px;padding:13px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .alert-msg{font-size:12px;text-align:center;margin-top:8px;font-weight:600;}
@@ -804,8 +804,8 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         .report-sub{font-size:12px;color:#555;margin-bottom:14px;}
         .reason-list{display:flex;flex-direction:column;gap:7px;margin-bottom:16px;}
         .reason-btn{display:flex;align-items:center;gap:10px;border:1.5px solid #eee;border-radius:10px;padding:11px 13px;background:#fff;font-family:inherit;font-size:13px;color:#333;cursor:pointer;text-align:left;}
-        .reason-btn.sel{border-color:#E63312;background:#FFF0EE;color:#C42B0F;font-weight:600;}
-        .report-submit{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:11px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+        .reason-btn.sel{border-color:var(--az-red);background:#FFF0EE;color:#C42B0F;font-weight:600;}
+        .report-submit{width:100%;background:linear-gradient(135deg,var(--az-red),#c42a0e);color:#fff;border:none;border-radius:11px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
         .report-submit:disabled{opacity:.5;cursor:not-allowed;}
         .report-success{text-align:center;padding:18px 0;}
         .report-link{display:block;text-align:center;font-size:11px;color:#555;margin-top:14px;cursor:pointer;}
@@ -858,7 +858,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                 boxShadow: '0 2px 8px rgba(0,0,0,.15)', zIndex: 5,
               }}>
               <i className={`ti ti-heart${liked ? '-filled' : ''}`} aria-hidden="true"
-                style={{ fontSize: 17, color: liked ? '#E63312' : '#888' }} />
+                style={{ fontSize: 17, color: liked ? 'var(--az-red)' : '#888' }} />
             </button>
           )}
         </div>
@@ -1072,7 +1072,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                 <button
                   type="button"
                   onClick={() => window.location.href = `/listing/${params.id}/edit`}
-                  style={{ flex: 1, background: '#F5C842', color: '#111', border: 'none', borderRadius: 10, padding: '10px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+                  style={{ flex: 1, background: 'var(--az-yellow)', color: '#111', border: 'none', borderRadius: 10, padding: '10px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
                   <i className="ti ti-pencil" style={{ fontSize: 14 }} aria-hidden="true" />Ndrysho
                 </button>
                 <button
@@ -1081,7 +1081,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                   disabled={bumpLoading || !canBump(listing.last_bumped_at)}
                   aria-label={canBump(listing.last_bumped_at) ? 'Ngrije shpalljen në krye' : 'Mund ta ngresh pas 7 ditësh'}
                   title="Rifresko dukshmërinë — një herë çdo 7 ditë"
-                  style={{ flex: 1, background: canBump(listing.last_bumped_at) ? '#E63312' : '#F0F0F0', color: canBump(listing.last_bumped_at) ? '#fff' : '#999', border: 'none', borderRadius: 10, padding: '10px', fontSize: 12, fontWeight: 700, cursor: canBump(listing.last_bumped_at) ? 'pointer' : 'not-allowed', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, opacity: bumpLoading ? 0.7 : 1 }}>
+                  style={{ flex: 1, background: canBump(listing.last_bumped_at) ? 'var(--az-red)' : '#F0F0F0', color: canBump(listing.last_bumped_at) ? '#fff' : '#999', border: 'none', borderRadius: 10, padding: '10px', fontSize: 12, fontWeight: 700, cursor: canBump(listing.last_bumped_at) ? 'pointer' : 'not-allowed', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, opacity: bumpLoading ? 0.7 : 1 }}>
                   <i className="ti ti-arrow-up" style={{ fontSize: 14 }} aria-hidden="true" />{canBump(listing.last_bumped_at) ? 'Ngrije në krye' : 'Ngritur'}
                 </button>
               </div>
@@ -1095,12 +1095,12 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                     type="button"
                     onClick={() => { setDelConfirm(true); setDelMsg('') }}
                     aria-label="Fshi shpalljen"
-                    style={{ width: '100%', background: '#fff', color: '#C42305', border: '1.5px solid #C42305', borderRadius: 12, minHeight: 44, padding: '10px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+                    style={{ width: '100%', background: '#fff', color: 'var(--az-red-deep)', border: '1.5px solid var(--az-red-deep)', borderRadius: 12, minHeight: 44, padding: '10px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
                     <i className="ti ti-trash" style={{ fontSize: 14 }} aria-hidden="true" />Fshi shpalljen
                   </button>
                 ) : (
                   <div role="alertdialog" aria-label="Konfirmo fshirjen" style={{ background: '#FFF5F3', border: '1.5px solid #F0BDB2', borderRadius: 12, padding: '11px 12px' }}>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: '#C42305', marginBottom: 4 }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--az-red-deep)', marginBottom: 4 }}>
                       Ta fshijmë këtë shpallje?
                     </div>
                     <div style={{ fontSize: 11.5, color: '#6b5a56', lineHeight: 1.5, marginBottom: 10 }}>
@@ -1117,20 +1117,20 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                         type="button"
                         onClick={doDelete}
                         disabled={delLoading}
-                        style={{ flex: 1, background: '#C42305', color: '#fff', border: 'none', borderRadius: 12, minHeight: 44, fontSize: 12, fontWeight: 800, cursor: delLoading ? 'wait' : 'pointer', fontFamily: 'inherit', opacity: delLoading ? 0.7 : 1 }}>
+                        style={{ flex: 1, background: 'var(--az-red-deep)', color: '#fff', border: 'none', borderRadius: 12, minHeight: 44, fontSize: 12, fontWeight: 800, cursor: delLoading ? 'wait' : 'pointer', fontFamily: 'inherit', opacity: delLoading ? 0.7 : 1 }}>
                         {delLoading ? 'Po fshihet…' : 'Po, fshije'}
                       </button>
                     </div>
                   </div>
                 )}
                 {delMsg && (
-                  <div role="alert" style={{ fontSize: 12, fontWeight: 600, color: '#C42305', textAlign: 'center', padding: '6px 0 0' }}>
+                  <div role="alert" style={{ fontSize: 12, fontWeight: 600, color: 'var(--az-red-deep)', textAlign: 'center', padding: '6px 0 0' }}>
                     {delMsg}
                   </div>
                 )}
               </div>
               {bumpMsg && (
-                <div role="alert" style={{ fontSize: 12, fontWeight: 600, color: bumpMsg.startsWith('ok:') ? '#1D9E75' : '#C42305', textAlign: 'center', padding: '4px 0' }}>
+                <div role="alert" style={{ fontSize: 12, fontWeight: 600, color: bumpMsg.startsWith('ok:') ? '#1D9E75' : 'var(--az-red-deep)', textAlign: 'center', padding: '4px 0' }}>
                   {bumpMsg.replace(/^(ok:|err:)/, '')}
                 </div>
               )}
@@ -1175,7 +1175,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                     style={{ width: '100%', border: '1.5px solid #ddd', borderRadius: 9, padding: '8px 11px', fontSize: 12, fontFamily: 'inherit', outline: 'none', resize: 'none', minHeight: 60, color: '#111', background: '#fff', boxSizing: 'border-box' }}
                   />
                   {reviewMsg && (
-                    <div style={{ fontSize: 11, marginTop: 6, color: reviewMsg.startsWith('ok:') ? '#3B6D11' : '#C42305', fontWeight: 600 }}>
+                    <div style={{ fontSize: 11, marginTop: 6, color: reviewMsg.startsWith('ok:') ? '#3B6D11' : 'var(--az-red-deep)', fontWeight: 600 }}>
                       {reviewMsg.split(/:(.+)/)[1]}
                     </div>
                   )}
@@ -1183,7 +1183,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                     type="button"
                     onClick={submitReview}
                     disabled={reviewStars === 0 || reviewSaving}
-                    style={{ marginTop: 8, width: '100%', background: reviewStars ? '#C42305' : '#ccc', color: '#fff', border: 'none', borderRadius: 9, padding: '10px', fontSize: 12, fontWeight: 700, cursor: reviewStars ? 'pointer' : 'not-allowed', fontFamily: 'inherit' }}>
+                    style={{ marginTop: 8, width: '100%', background: reviewStars ? 'var(--az-red-deep)' : '#ccc', color: '#fff', border: 'none', borderRadius: 9, padding: '10px', fontSize: 12, fontWeight: 700, cursor: reviewStars ? 'pointer' : 'not-allowed', fontFamily: 'inherit' }}>
                     {reviewSaving ? <><span aria-hidden='true'>⏳</span> Duke ruajtur...</> : <><span aria-hidden='true'>⭐</span> Dërgo vlerësimin</>}
                   </button>
                 </div>
@@ -1300,7 +1300,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
               </button>
             </div>
             {alertMsg && (
-              <div role="alert" className="alert-msg" style={{ color: alertMsg.startsWith('ok:') ? '#2e7d32' : '#C42305' }}>
+              <div role="alert" className="alert-msg" style={{ color: alertMsg.startsWith('ok:') ? '#2e7d32' : 'var(--az-red-deep)' }}>
                 {alertMsg.replace(/^(ok|err):/, '')}
               </div>
             )}
@@ -1493,7 +1493,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                 Duke hapur kontaktin…
               </div>
             ) : kontaktGabim ? (
-              <div role="alert" style={{ padding:'12px 14px', borderRadius:14, background:'#FFF0EE', border:'1px solid #F09595', fontSize:13, fontWeight:600, color:'#C42305', marginBottom:10, lineHeight:1.6 }}>
+              <div role="alert" style={{ padding:'12px 14px', borderRadius:14, background:'#FFF0EE', border:'1px solid #F09595', fontSize:13, fontWeight:600, color:'var(--az-red-deep)', marginBottom:10, lineHeight:1.6 }}>
                 {kontaktGabim}
               </div>
             ) : sellerPhone ? (

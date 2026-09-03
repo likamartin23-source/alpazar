@@ -116,7 +116,7 @@ export function PremiumUpsellModal({
       <style dangerouslySetInnerHTML={{ __html: `
         @keyframes fadeIn{from{opacity:0}to{opacity:1}}
         @keyframes slideUp{from{transform:translateY(100%)}to{transform:none}}
-        .ups-sheet{background:#FFFBEA;border-radius:24px 24px 0 0;padding:28px 20px 36px;width:100%;max-width:480px;animation:slideUp .25s ease;}
+        .ups-sheet{background:var(--az-cream);border-radius:24px 24px 0 0;padding:28px 20px 36px;width:100%;max-width:480px;animation:slideUp .25s ease;}
         .ups-close{position:absolute;top:14px;right:16px;width:30px;height:30px;background:#eee;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:#555;}
         .ups-crown{font-size:44px;display:block;text-align:center;margin-bottom:10px;}
         .ups-h{font-size:19px;font-weight:800;color:#111;text-align:center;margin-bottom:6px;}
@@ -126,12 +126,12 @@ export function PremiumUpsellModal({
         .ups-feat i{font-size:14px;color:#C42B0F;}
         .ups-feat span{font-size:11px;font-weight:600;color:#333;}
         .ups-offer{background:#111;border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-        .ups-price{color:#F5C842;font-size:22px;font-weight:800;}
+        .ups-price{color:var(--az-yellow);font-size:22px;font-weight:800;}
         .ups-price span{font-size:11px;color:#888;font-weight:400;display:block;}
-        .ups-timer{background:#E63312;border-radius:8px;padding:6px 10px;text-align:center;}
+        .ups-timer{background:var(--az-red);border-radius:8px;padding:6px 10px;text-align:center;}
         .ups-timer-n{color:#fff;font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;}
         .ups-timer-l{color:rgba(255,255,255,.7);font-size:9px;}
-        .ups-cta{width:100%;background:linear-gradient(135deg,#E63312,#c42a0e);color:#fff;border:none;border-radius:12px;padding:15px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:10px;box-shadow:0 4px 16px rgba(230,51,18,.4);}
+        .ups-cta{width:100%;background:linear-gradient(135deg,var(--az-red),#c42a0e);color:#fff;border:none;border-radius:12px;padding:15px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:10px;box-shadow:0 4px 16px rgba(230,51,18,.4);}
         .ups-skip{width:100%;background:none;border:none;color:#555;font-size:12px;cursor:pointer;font-family:inherit;padding:4px;}
       ` }} />
       <div className="ups-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative' }}>
@@ -189,11 +189,11 @@ export function SocialProofBar({ viewsCount, listingId }: { viewsCount: number; 
   if (!viewsCount || viewsCount < 1) return null
   return (
     <div style={{
-      background: '#FFF8EE', border: '0.5px solid #F5C842', borderRadius: 10,
+      background: '#FFF8EE', border: '0.5px solid var(--az-yellow)', borderRadius: 10,
       padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10,
     }}>
       <div style={{
-        width: 26, height: 26, borderRadius: '50%', background: '#F5C842', flexShrink: 0,
+        width: 26, height: 26, borderRadius: '50%', background: 'var(--az-yellow)', flexShrink: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13,
       }} aria-hidden="true">👁</div>
       <div style={{ flex: 1 }}>
@@ -222,11 +222,11 @@ export function SellerPremiumUpsell({ isPremium, price }: { isPremium: boolean; 
     <div style={{
       background: 'linear-gradient(135deg,#111,#1c1c1c)', borderRadius: 14, padding: '14px 16px',
       marginBottom: 12, display: 'flex', alignItems: 'center', gap: 12,
-      border: '1px solid #F5C842',
+      border: '1px solid var(--az-yellow)',
     }}>
       <span style={{ fontSize: 28 }} aria-hidden="true">⚡</span>
       <div style={{ flex: 1 }}>
-        <div style={{ color: '#F5C842', fontSize: 12, fontWeight: 800, marginBottom: 3 }}>
+        <div style={{ color: 'var(--az-yellow)', fontSize: 12, fontWeight: 800, marginBottom: 3 }}>
           Shpallja jote shihet 5× më shumë me Premium
         </div>
         <div style={{ color: '#555', fontSize: 10, lineHeight: 1.5 }}>
@@ -238,7 +238,7 @@ export function SellerPremiumUpsell({ isPremium, price }: { isPremium: boolean; 
           type="button"
           onClick={() => window.location.href = '/premium'}
           style={{
-            background: 'linear-gradient(135deg,#F8D24E,#F5C842)', color: '#111', border: 'none', borderRadius: 12,
+            background: 'linear-gradient(135deg,var(--az-yellow-hi),var(--az-yellow))', color: '#111', border: 'none', borderRadius: 12,
             padding: '7px 12px', fontSize: 11, fontWeight: 800, cursor: 'pointer', whiteSpace: 'nowrap',
           }}
         >
@@ -270,11 +270,11 @@ export function FreeTierBanner({
   return (
     <div style={{
       background: remaining === 0 ? '#FFF0EE' : '#FFF8EE',
-      border: `1.5px solid ${remaining === 0 ? '#F09595' : '#F5C842'}`,
+      border: `1.5px solid ${remaining === 0 ? '#F09595' : 'var(--az-yellow)'}`,
       borderRadius: 12, padding: '12px 14px', marginBottom: 14,
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-        <span style={{ fontSize: 12, fontWeight: 700, color: remaining === 0 ? '#C42305' : '#A05000' }}>
+        <span style={{ fontSize: 12, fontWeight: 700, color: remaining === 0 ? 'var(--az-red-deep)' : '#A05000' }}>
           {remaining === 0 ? <><span aria-hidden='true'>🚫</span> Ke arritur kufirin falas</> : <><span aria-hidden='true'>⚠️</span> {remaining} shpallje të mbetura falas</>}
         </span>
         <span style={{ fontSize: 10, color: '#888' }}>{listingCount}/{freeLimit}</span>
@@ -282,7 +282,7 @@ export function FreeTierBanner({
       <div style={{ background: '#eee', borderRadius: 4, height: 6, marginBottom: 10, overflow: 'hidden' }}>
         <div style={{
           width: `${pct}%`, height: '100%', borderRadius: 4,
-          background: remaining === 0 ? '#E63312' : '#F5C842', transition: 'width .5s',
+          background: remaining === 0 ? 'var(--az-red)' : 'var(--az-yellow)', transition: 'width .5s',
         }} />
       </div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -293,7 +293,7 @@ export function FreeTierBanner({
           type="button"
           onClick={() => window.location.href = '/premium'}
           style={{
-            background: 'linear-gradient(135deg,#E63312,#c42a0e)', color: '#fff', border: 'none', borderRadius: 8,
+            background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 8,
             padding: '7px 12px', fontSize: 11, fontWeight: 700, cursor: 'pointer', flexShrink: 0, marginLeft: 10,
           }}
         >

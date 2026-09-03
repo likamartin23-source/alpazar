@@ -52,33 +52,33 @@ button:active{transform:scale(.97);}
 .hero .stat-n{font-size:15px !important;}
 .hero .stat-l{font-size:9px !important;}
 
-.cat-item i{color:#757575 !important;}
-.cat-item.active i{color:#F5C842 !important;}
-.nav-item{color:#757575 !important;}
-.nav-item.active{color:#F5C842 !important;}
-.filter-btn{color:#555555 !important;}
-.filter-btn.active{color:#F5C842 !important;}
-.stat-l{color:#757575 !important;}
+.cat-item i{color:var(--az-gray-2) !important;}
+.cat-item.active i{color:var(--az-yellow) !important;}
+.nav-item{color:var(--az-gray-2) !important;}
+.nav-item.active{color:var(--az-yellow) !important;}
+.filter-btn{color:var(--az-gray-1) !important;}
+.filter-btn.active{color:var(--az-yellow) !important;}
+.stat-l{color:var(--az-gray-2) !important;}
 /*  Kjo mbizoterese globale eshte per KARTAT E NDRITURA. Mbi nje karte te
-    erret (#111) #757575 jep 4.09:1 — nen 4.5:1 te WCAG 2.1 AA (matur me
+    erret (#111) var(--az-gray-2) jep 4.09:1 — nen 4.5:1 te WCAG 2.1 AA (matur me
     axe-core, 31 gusht 2026), dhe `!important`-i ketu i anashkalonte
     rregullimet e bera ne faqe. Asnje gri e VETME s'i kalon te dy sfondet:
     mbi #111 duhet me e ndritur se ~#7F7F7F, mbi kremin me e erret se
     ~#767676 — kufij qe perjashtojne njeri-tjetrin. Prandaj siperfaqja e
     erret shenohet dhe merr vleren e vet.  */
-/* `.stats-row` e profilit ka `background:#1a1a1a` por NUK mban klasen
+/* `.stats-row` e profilit ka `background:var(--az-ink)` por NUK mban klasen
    `.stat-dark`, ndaj rregulli i mesiperm nuk e prekte kurre: matur me
-   axe-core 31 gusht 2026 — #757575 mbi #1a1a1a = 3,77:1. Selektori tani
+   axe-core 31 gusht 2026 — var(--az-gray-2) mbi var(--az-ink) = 3,77:1. Selektori tani
    e mbulon edhe bllokun real. */
 .stat-dark .stat-l, .stats-row .stat-l{color:#9A9A9A !important;}
 
 .header{
-  background:linear-gradient(165deg,#F8D24E 0%,#F5C842 52%,#EEB828 100%) !important;
+  background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%) !important;
   box-shadow:0 2px 10px -6px rgba(0,0,0,.25) !important;
   border-bottom:1px solid rgba(0,0,0,.14) !important;
   animation:az-fade-in .4s ease both;
 }
-.topbar{border-top:3px solid #E63312 !important;}
+.topbar{border-top:3px solid var(--az-red) !important;}
 
 .brand{
   background:none !important;
@@ -97,9 +97,9 @@ button:active{transform:scale(.97);}
 .tc-green{background:#FFF8E1 !important;border:.5px solid #E8C878 !important;}
 .tc-green i,.tc-green span{color:#8A6D00 !important;}
 .tc-blue{background:#F5F4F2 !important;border:.5px solid #DAD5C9 !important;}
-.tc-blue i,.tc-blue span{color:#1a1a1a !important;}
+.tc-blue i,.tc-blue span{color:var(--az-ink) !important;}
 .tc-red{background:#FFF0EE !important;border:.5px solid #EEA99E !important;}
-.tc-red i,.tc-red span{color:#C42305 !important;}
+.tc-red i,.tc-red span{color:var(--az-red-deep) !important;}
 .no-ads{background:#FFF8E1 !important;border:.5px solid #E8C878 !important;}
 .no-ads i,.no-ads span{color:#8A6D00 !important;}
 
@@ -143,7 +143,7 @@ button[aria-label="Ndaj aplikacionin"]{box-shadow:0 4px 13px -5px rgba(0,0,0,.22
 /*  7) SISTEMI I DIZAJNIT: tokens semantike + aksesueshmeri (harmoni + WCAG/EAA)  */
 :root{
   /* [O60] dedup: --action-red* nuk ripërsërisin vlerën — aliasojnë fjalorin bazë --az-*.
-     Kështu e kuqja e markës ka NJË burim (--az-red = #E63312), jo dy hex identike me dy emra. */
+     Kështu e kuqja e markës ka NJË burim (--az-red = var(--az-red)), jo dy hex identike me dy emra. */
   --action-red:var(--az-red); --action-red-deep:var(--az-red-deep); --flag-red:#E01F26;
   --gold-ink:#856404; --ok:#16a34a;
   --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px; --sp-6:24px; --sp-8:32px;
@@ -207,11 +207,11 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
 .card-img i{font-size:28px;color:#d0c9a0;}
 .card-seller-ov{position:absolute;left:6px;bottom:6px;display:flex;align-items:center;gap:5px;min-height:24px;max-width:calc(100% - 48px);background:rgba(0,0,0,.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border-radius:var(--r-pill);padding:2px 9px 2px 2px;z-index:2;cursor:pointer;}
 .card-seller-ov span{font-size:10px;color:#fff;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-/* [O52] Teksti bardhë 9px kërkonte 4.5:1 (WCAG 1.4.3); #fff mbi #E63312 jepte vetëm 4.33.
-   E kuqja a11y #C42305 (5.85:1) → kalon, pa shpikur ngjyrë të tretë. */
-.badge-new{position:absolute;top:6px;left:6px;background:linear-gradient(135deg,#C42305,#a81f04);color:#fff;font-size:9px;padding:3px 7px;border-radius:var(--r-pill);font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(196,35,5,.4);letter-spacing:.2px;}
-.badge-used{position:absolute;top:6px;left:6px;background:linear-gradient(135deg,#1a1a1a,#000);color:#F5C842;font-size:9px;padding:3px 7px;border-radius:var(--r-pill);font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(0,0,0,.3);letter-spacing:.2px;}
-.badge-premium{position:absolute;top:6px;right:6px;background:linear-gradient(135deg,#F8D24E,#F5C842);color:#111;font-size:9px;padding:3px 7px;border-radius:var(--r-pill);font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(245,200,66,.5);}
+/* [O52] Teksti bardhë 9px kërkonte 4.5:1 (WCAG 1.4.3); #fff mbi var(--az-red) jepte vetëm 4.33.
+   E kuqja a11y var(--az-red-deep) (5.85:1) → kalon, pa shpikur ngjyrë të tretë. */
+.badge-new{position:absolute;top:6px;left:6px;background:linear-gradient(135deg,var(--az-red-deep),#a81f04);color:#fff;font-size:9px;padding:3px 7px;border-radius:var(--r-pill);font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(196,35,5,.4);letter-spacing:.2px;}
+.badge-used{position:absolute;top:6px;left:6px;background:linear-gradient(135deg,var(--az-ink),#000);color:var(--az-yellow);font-size:9px;padding:3px 7px;border-radius:var(--r-pill);font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(0,0,0,.3);letter-spacing:.2px;}
+.badge-premium{position:absolute;top:6px;right:6px;background:linear-gradient(135deg,var(--az-yellow-hi),var(--az-yellow));color:#111;font-size:9px;padding:3px 7px;border-radius:var(--r-pill);font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(245,200,66,.5);}
 /* `box-sizing:border-box` NUK eshte dekor: pa te, `flex-basis` matet mbi kutine
    e PERMBAJTJES dhe padding-u i shtohet siper. Matur: trupi dilte 117px per nje
    baze prej 98px (98+9+10) dhe 149px per 124px — raporti binte ne 65,8/33,7 ne
@@ -224,7 +224,7 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
    deformonte kokat e anasjelltas (shkaku kryesor i 'planeve qe s'mbyllen'). Fjalori u nda:
    `.card-title` = 2 tituj kartash (ListingCard/BusinessCard); `.section-title` = kokat, PA clamp. */
 .section-title{font-size:13px;line-height:1.3;font-weight:700;color:#222;}
-/* Cmimi perdor `--action-red-deep`: `#E63312` mbi te bardhe nuk e kalon
+/* Cmimi perdor `--action-red-deep`: `var(--az-red)` mbi te bardhe nuk e kalon
    WCAG AA per tekst nen 18px (§7.1 i planit). */
 /* Nje rresht, gjithmone: trupi ka lartesi te caktuar (70/30) dhe nje cmim qe
    thyhet ne dy rreshta e prish raportin. Elipsa eshte rrjete sigurie per raste
@@ -296,21 +296,21 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
    pastaj: "tekstin beje me te kuqe te ndezur".
 
    UNAZA E AVATARIT (urdher i pronarit: "rrypi duhet te jete ne stilin avatar"): korniza 2px
-   mban linear-gradient(135deg,#F5C842,#E63312) — SAKTESISHT unaza premium e Avatar.tsx:103.
+   mban linear-gradient(135deg,var(--az-yellow),var(--az-red)) — SAKTESISHT unaza premium e Avatar.tsx:103.
    Teknika: dy sfonde — padding-box per brendesine e erret dhe border-box per gradientin —
    ndaj korniza ndjek rrezen 14px pa e humbur. (border-image do ta prishte rrezen.)
    Kur te ndryshoje unaza e avatarit, ndrysho edhe kete — jane i njejti fjalor.
 
-   SFONDI I ERRET (#1A1A1A): rrypi eshte INFORMACION, jo veprim — nje sfond i erret e ndan
+   SFONDI I ERRET (var(--az-ink)): rrypi eshte INFORMACION, jo veprim — nje sfond i erret e ndan
    identitetin nga permbajtja pa konkurruar me CTA-te, dhe i jep numrit vend te lexohet fort.
 
    NUMRI I KUQ I NDEZUR (#FF4433): vendim i shprehur i pronarit, pasi iu paraqiten tri
-   variante me kontrastet e matura. Propozimi im i pare ishte ari #F5C842 (10.9:1) me
+   variante me kontrastet e matura. Propozimi im i pare ishte ari var(--az-yellow) (10.9:1) me
    arsyetimin qe e kuqja duhet t'i mbetet veprimit; pronari zgjodhi te kuqen dhe kjo vlen.
-   KUJDES: e kuqja e veprimit #E63312 jep vetem 4.0:1 mbi #1A1A1A — NEN pragut 4.5. Prandaj
-   u perdor #FF4433: e njejta familje, por kalon. Mos e kthe ne #E63312 pa e rimatur.
+   KUJDES: e kuqja e veprimit var(--az-red) jep vetem 4.0:1 mbi var(--az-ink) — NEN pragut 4.5. Prandaj
+   u perdor #FF4433: e njejta familje, por kalon. Mos e kthe ne var(--az-red) pa e rimatur.
 
-   KONTRASTET, TE MATURA mbi #1A1A1A (WCAG 2.1):
+   KONTRASTET, TE MATURA mbi var(--az-ink) (WCAG 2.1):
      numri #FF4433 -> 5.1:1     etiketa #A0A0A0 -> 6.7:1     e shitur #4ADE80 -> 10.0:1
    MADHESIA e numrit rri PA !important me qellim: /profile e ul ne 12px per "gusht 2026"
    (dy fjale) permes stilit inline, dhe ai duhet ta fitoje. Vetem .stat-l e mban !important,
@@ -319,12 +319,12 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
    Jeshilja e drites #0E7A35 jep vetem 3.2:1 mbi te erret — mbetet #4ADE80 ketu, dhe #0E7A35
    kudo tjeter ku sfondi eshte i celet.
 
-   PARA: kater zbatime te ndryshme — /profile #1a1a1a, paneli i biznesit #111, publiku i
+   PARA: kater zbatime te ndryshme — /profile var(--az-ink), paneli i biznesit #111, publiku i
    biznesit dhe /u mbi te bardhe. Tri arnime me !important ishin shtuar te ui-refine.css
    (rreshtat 47, 61, 73) pikerisht sepse .stat-l jetonte mbi te dy sfondet. Duke e bere
    rrypin te erret kudo, ajo nevoje bie. ═══════════════════════════════════════════════ */
 .alpz-stats{display:flex;align-items:stretch;border:2px solid transparent;border-radius:14px;padding:11px 6px;
-  background:linear-gradient(#1A1A1A,#1A1A1A) padding-box,linear-gradient(135deg,#F5C842,#E63312) border-box;}
+  background:linear-gradient(var(--az-ink),var(--az-ink)) padding-box,linear-gradient(135deg,var(--az-yellow),var(--az-red)) border-box;}
 .alpz-stats .stat,.alpz-stats .stat-pill{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
 .alpz-stats .stat-n{display:block;font-size:18px;font-weight:800;color:#FF4433;line-height:1.15;}
 .alpz-stats .stat-l{display:block;font-size:10px !important;font-weight:500;color:#A0A0A0 !important;margin-top:2px;}
