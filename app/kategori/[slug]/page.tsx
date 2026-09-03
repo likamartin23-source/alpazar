@@ -75,7 +75,7 @@ export default async function CategoryPage(props: { params: Promise<{ slug: stri
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
       <style dangerouslySetInnerHTML={{ __html: LANDING_CSS }} />
-      <main className="seo-wrap">
+      <div className="seo-wrap">
         <nav className="seo-crumb" aria-label="Breadcrumb">
           <a href="/">Kreu</a> <span>/</span>
           <a href="/kategori">Kategoritë</a> <span>/</span>
@@ -112,7 +112,7 @@ export default async function CategoryPage(props: { params: Promise<{ slug: stri
         )}
 
         <a className="seo-cta" href={`/search?cat=${encodeURIComponent(cat.id)}`}>Kërko në {cat.name} →</a>
-      </main>
+      </div>
     </>
   )
 }

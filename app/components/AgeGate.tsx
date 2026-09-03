@@ -68,9 +68,9 @@ export function AgeGate({ children }: { children: React.ReactNode }) {
               Jo, largohem
             </button>
           </div>
-          <div style={{ fontSize: 10, color: '#555', textAlign: 'center', maxWidth: 280, marginTop: 4, lineHeight: 1.5 }}>
+          <div style={{ fontSize: 12, color: '#444', textAlign: 'center', maxWidth: 280, marginTop: 4, lineHeight: 1.5 }}>
             Duke klikuar "Po", konfirmon se ke mbushur 16 vjeç dhe pranon{' '}
-            <a href="/terms" style={{ color: '#555', textDecoration: 'underline' }}>Kushtet e Shërbimit</a>.
+            <a href="/kushtet" style={{ color: '#C42305', textDecoration: 'underline' }}>Kushtet e Shërbimit</a>.
           </div>
         </div>
       )}

@@ -44,7 +44,7 @@ export default async function KategoriIndexPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
       <style dangerouslySetInnerHTML={{ __html: SEO_CSS }} />
-      <main className="seo-wrap">
+      <div className="seo-wrap">
         <nav className="seo-crumb" aria-label="Breadcrumb">
           <a href="/">Kreu</a> <span>/</span> <span aria-current="page">Kategoritë</span>
         </nav>
@@ -68,7 +68,7 @@ export default async function KategoriIndexPage() {
             </a>
           ))}
         </div>
-      </main>
+      </div>
     </>
   )
 }
