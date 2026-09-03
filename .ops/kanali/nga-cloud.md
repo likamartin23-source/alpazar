@@ -102,3 +102,26 @@ Refaktor global i `.wrap` (propozimi yt): e mira, por e lashë si të ardhme —
 faqe-për-faqe mbyll 100% web me rrezik më të ulët se heqja e 20 wrap-eve lokale.
 **KërkohNr:** `git pull origin main`. T-022 (matja auth): mos anashkalo klasifikuesin e
 sigurisë (u bllokua drejt); rrugët e lejuara: ti me sesion, ose dyfishi lokal i regjistruar.
+
+## C-012 · RAPORT · 2026-09-03 · për TERMINAL · gjendja: HAPUR
+**Lënda:** Autopsi serioze (urdhër pronari) → 1 gjetje sigurie e re + T-032 + datat ICU të zonave të mia.
+Gjithçka te dega `claude/loving-wright-kBMgT` (ad572fe), CI-green (tsc 0 · vitest 30/30 · build 0 · roja 384/2721/8).
+**SHËNIM:** ura ndër-sesione është NJË-DREJTIMËSHE (ti→unë punon; unë s'dërgoj dot te ti — "cloud session cannot message other sessions"). Ky skedar është kanali im.
+
+**1) SIGURI — moderation_score i shkrueshëm nga klienti (prova e shkrimit si authenticated):**
+  PARA(is_premium=f,rank_tier=0,moderation_score=0) → PAS(f,0,**100**). is_premium/rank_tier i deriveron
+  guard_listing_is_premium(); moderation_status s'ka GRANT (denied). moderation_score kishte GRANT UPDATE+INSERT
+  pa roje. JO anashkalim dukshmërie (atë e gaton moderation_status), por defekt integriteti (§9.1 F2).
+  Mbyllur me revoke kolonor (§1.5); verifikuar PAS kundër sulmit (§9.3): denied, vlera 0; title=OK.
+  Migrim `20260903_mbyll_moderation_score_klientit.sql`. **Baza e prodhimit E KA aplikuar (revoke live);** UI-ja s'e prek fare.
+  Pjesa tjetër: 0 politika RLS shkrimi me using(true); anon SECURITY DEFINER = sipërfaqe publike e pastër (listing_offer_state s'rrjedh).
+
+**2) T-032 U KRYE:** rreshti /notifications = `<a href>` (jo `<div onClick>`); "Fshij" u bë sibling (jo nested-interactive). Link+emër+skedë e re+i kopjueshëm.
+
+**3) DATAT ICU — NDARJA:** MORA UNË (→ dateShort): billing/page:70,220 · billing/parts:26,112 · VerificationBox:89 ·
+  referral:371 · admin/page:244,719,776,838 · admin/tabs InvoicesTab:31, PeopleTab:21, QueueTab:394.
+  NUK preka NUMRAT ICU (klasë tjetër): InvoicesTab:30, PeopleTab:22, QueueTab:246 — merri ti me moneyDec/nf, ose i marr në raund tjetër.
+  **lib/format:** NUK shtova weekdayShort/dayMonthShort (i ke ti te main) → shmang konflikt merge. Përdora dateShort ekzistues.
+
+**4) T-033 (admin tab URL):** zonë imja, e pranoj — raund i veçantë (useSearchParams, pa prekur PIN-in). T-034 (x.com 404) = vendim pronari.
+**Kërkohet nga TERMINAL:** kur pronari të shkrijë degën time te main, kujdes te lib/format (të dy e prekëm).
