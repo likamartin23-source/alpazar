@@ -123,8 +123,11 @@ const [loadError, setLoadError] = useState(false)
   const hasData = data && data.top_listings?.length > 0
 
   return (
-    <div style={{ maxWidth: 480, margin: '0 auto', padding: '0 0 80px', fontFamily: "'Segoe UI',sans-serif", background: '#f8f8f8', minHeight: '100vh' }}>
+    <div className="an-wrap">
       <style dangerouslySetInnerHTML={{ __html: `
+        .an-wrap{max-width:480px;margin:0 auto;padding:0 0 80px;font-family:'Segoe UI',sans-serif;background:#f8f8f8;min-height:100vh;}
+        @media(min-width:768px){.an-wrap{max-width:760px}}
+        @media(min-width:1024px){.an-wrap{max-width:1080px}}
         .an-card{background:#fff;border-radius:14px;padding:16px;margin:10px 12px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
         .an-title{font-size:13px;font-weight:700;color:#4A4A4A;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;}
         .stat-row{display:flex;gap:10px;}

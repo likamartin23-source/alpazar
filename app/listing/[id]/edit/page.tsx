@@ -204,6 +204,8 @@ export default function EditListing() {
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--az-cream);}
         .wrap{max-width:480px;margin:0 auto;background:var(--az-cream);min-height:100vh;padding-bottom:100px;}
+        @media(min-width:768px){.wrap{max-width:760px}}
+        @media(min-width:1024px){.wrap{max-width:1080px}}
         .topbar{background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%);padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
         .back{width:44px;height:44px;background:rgba(0,0,0,.1);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
         .back i{font-size:18px;color:#111;}

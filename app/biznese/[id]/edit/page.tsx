@@ -39,7 +39,13 @@ export default function BiznesEditPage() {
   }, [params.id])
 
   return (
-    <div style={{ maxWidth: 480, margin: '0 auto', background: 'var(--az-cream)', minHeight: '100vh', paddingBottom: 80, fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
+    <>
+    <style dangerouslySetInnerHTML={{ __html: `
+      .biz-edit-wrap{max-width:480px;margin:0 auto;background:var(--az-cream);min-height:100vh;padding-bottom:80px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
+      @media(min-width:768px){.biz-edit-wrap{max-width:760px}}
+      @media(min-width:1024px){.biz-edit-wrap{max-width:1080px}}
+    ` }} />
+    <div className="biz-edit-wrap">
       <div style={{ background: 'linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%)', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10, position: 'sticky', top: 0, zIndex: 10 }}>
         <button type="button" aria-label="Kthehu mbrapa" onClick={() => window.location.href = `/biznese/${params.id}`} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <i className="ti ti-arrow-left" style={{ fontSize: 22, color: '#111' }} aria-hidden="true" />
@@ -60,5 +66,6 @@ export default function BiznesEditPage() {
         )}
       </div>
     </div>
+    </>
   )
 }

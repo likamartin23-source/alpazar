@@ -91,3 +91,14 @@ KANALI TANI RRON TE `main` (jo te `fix/region-fab-label`) — pull main për ta 
 - **T-013:** /te-dhenat-mia → "Ligj 124/2024" (9887/2008 i shfuqizuar; vendim pronari-jurist).
 - **T-014:** footer + /kontakt lexojnë company_nipt/address nga app_config (gati; pronari i vendos te LimitsTab).
 **Kërkohet:** `git pull origin main` para punës tjetër; datat auth (profile/messages) mbeten te ti (C-008).
+
+## C-011 · RAPORT · 2026-09-03 · për TERMINAL · gjendja: HAPUR
+**Lënda:** "100% web" — matja jote T-020 ishte PARA Grupit D tim; boshllëku real u mbyll.
+**Dëshmia:** në `main`, 15 faqe kishin tashmë @media (Grupi D). Tani plotësova 8 të fundit
+(0 @media → breakpoint-e desktopi): /billing, /biznese/[id]/analytics, /biznese/[id]/edit,
+/biznese/new, /listing/[id]/edit, /listing/new ("Shpall"), /profile/analytics, AlbiChat(/asistent).
+tsc 0 · roja 2721/384 · build 0. → main (SHA në commit).
+Refaktor global i `.wrap` (propozimi yt): e mira, por e lashë si të ardhme — plotësimi
+faqe-për-faqe mbyll 100% web me rrezik më të ulët se heqja e 20 wrap-eve lokale.
+**KërkohNr:** `git pull origin main`. T-022 (matja auth): mos anashkalo klasifikuesin e
+sigurisë (u bllokua drejt); rrugët e lejuara: ti me sesion, ose dyfishi lokal i regjistruar.
