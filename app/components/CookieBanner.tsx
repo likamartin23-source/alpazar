@@ -15,6 +15,16 @@ export function CookieBanner() {
     return () => window.removeEventListener(CONSENT_EVENT, sync)
   }, [])
 
+  // Sinjal për FAB-et: kur banneri është i dukshëm, ngrit body[data-cookie]
+  useEffect(() => {
+    if (visible) {
+      document.body.dataset.cookie = '1'
+    } else {
+      delete document.body.dataset.cookie
+    }
+    return () => { delete document.body.dataset.cookie }
+  }, [visible])
+
   // Të dy butonat tani kanë PASOJË TË NDRYSHME: `setConsent` njofton Analytics-in
   // dhe Sentry-n përmes eventit, ndaj 'declined' i mban të çmontuar. Më parë të
   // dy shkruanin një varg që s'e lexonte askush.
@@ -24,12 +34,27 @@ export function CookieBanner() {
   if (!visible) return null
 
   return (
+    <>
+      <style dangerouslySetInnerHTML={{ __html: `
+        .alpz-cookie {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          z-index: 9999;
+        }
+        @media (max-width: 767px) {
+          .alpz-cookie {
+            bottom: 72px;
+          }
+        }
+      ` }} />
     <div
+      className="alpz-cookie"
       role="alertdialog"
       aria-modal="true"
       aria-label="Cookies"
       style={{
-        position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 9999,
         background: '#111', color: '#fff',
         padding: '14px 16px 18px',
         boxShadow: '0 -4px 24px rgba(0,0,0,.4)',
@@ -80,5 +105,6 @@ export function CookieBanner() {
         <a href="/te-dhenat-mia" style={{ color: '#888', fontSize: 10, textDecoration: 'none' }}>Të dhënat e mia</a>
       </div>
     </div>
+    </>
   )
 }

@@ -3,7 +3,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { useRealtimeTable } from '../hooks/useRealtimeTable'
-import { useDraggable } from '../hooks/useDraggable'
 import type { Category, Listing } from '../lib/types'
 import { LISTING_SELECT } from '../lib/listingSelect'
 import { SkeletonGrid } from './components/Skeleton'
@@ -18,7 +17,7 @@ import { saveRefFromUrl } from '../lib/referral'
 import { SITE_URL } from '../lib/siteConfig'
 import { nf } from '../lib/format'
 
-// Banner shkarkim — buton i vogël katrore pulsues (fixed, vetem faqja kryesore)
+// Banner shkarkim — FAB i rrumbullakët (fixed, anë djathtas, vetëm faqja kryesore)
 function InstallBanner() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
   const [installed, setInstalled] = useState(false)
@@ -26,19 +25,13 @@ function InstallBanner() {
   const [standalone, setStandalone] = useState(false)
   const [showGuide, setShowGuide] = useState(false)
 
-  const { pos, dragging, onPointerDown } = useDraggable(
-    '_alpz_pos_install',
-    () => window.innerWidth >= 768 ? { left: 24, bottom: 104 } : { left: 12, bottom: 226 },
-    64
-  )
-
   useEffect(() => {
-    // Nese app-i eshte tashme i instaluar (standalone), fshihe butonin.
+    // Nëse app-i është tashmë i instaluar (standalone), fshihe butonin.
     try {
       if (window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone) setStandalone(true)
     } catch { /* ignore */ }
-    // Chromium ndez beforeinstallprompt -> instalim me nje klik. Firefox/Safari nuk e ndezin;
-    // atehere butoni mbetet i dukshem dhe klik-u tregon udhezime manuale (shih install()).
+    // Chromium ndez beforeinstallprompt -> instalim me një klik. Firefox/Safari nuk e ndezin;
+    // atëhere butoni mbetet i dukshëm dhe klik-u tregon udhëzime manuale (shih install()).
     const handler = (e: any) => { e.preventDefault(); setDeferredPrompt(e) }
     const installedHandler = () => { setInstalled(true) }
     window.addEventListener('beforeinstallprompt', handler)
@@ -54,93 +47,67 @@ function InstallBanner() {
       setDeferredPrompt(null)
       return
     }
-    // Pa prompt native (Firefox/Safari) -> udhezime manuale.
+    // Pa prompt native (Firefox/Safari) -> udhëzime manuale.
     setShowGuide(v => !v)
   }
 
-  // GJITHMONE i dukshem per perdoruesin (jo i varur nga beforeinstallprompt qe s'ndizet
-  // ne cdo browser) — fshihet vetem nese eshte instaluar, mbyllur, ose ne standalone.
+  // GJITHMONË i dukshëm për përdoruesin (jo i varur nga beforeinstallprompt që s'ndizet
+  // në çdo browser) — fshihet vetëm nëse është instaluar, mbyllur, ose në standalone.
   if (installed || dismissed || standalone) return null
   return (
-    <div
-      className="install-float"
-      style={{
-        position: 'fixed',
-        bottom: pos?.bottom ?? 226,
-        left: pos?.left ?? 12,
-        right: 'auto',
-        zIndex: 190,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        gap: 3,
-        cursor: dragging ? 'grabbing' : 'grab',
-        touchAction: 'none',
-        userSelect: 'none',
-      }}
-      onPointerDown={onPointerDown}
-    >
+    <div className="fab-instalo">
       {showGuide && (
         <div
           role="dialog"
           aria-label="Si të instaloni Alpazar"
           style={{
-            position: 'absolute', bottom: '112%', left: 0,
+            position: 'absolute', bottom: 0, right: 'calc(100% + 8px)',
             width: 236, maxWidth: '78vw',
-            background: '#111', color: '#fff', borderRadius: '12px 12px 12px 4px',
-            padding: '12px 13px', boxShadow: '0 10px 30px rgba(0,0,0,.35)',
+            background: 'var(--az-ink,#111)', color: '#fff', borderRadius: '12px 12px 0 12px',
+            padding: '12px 13px', boxShadow: '0 4px 16px rgba(0,0,0,.28)',
             fontSize: 12, lineHeight: 1.5, zIndex: 5, cursor: 'default',
           }}
-          onPointerDown={e => e.stopPropagation()}
         >
-          <strong style={{ display: 'block', color: '#22C55E', fontSize: 13, marginBottom: 6 }}>
+          <strong style={{ display: 'block', color: 'var(--az-yellow)', fontSize: 13, marginBottom: 6 }}>
             Instalo Alpazar-in
           </strong>
-          <div style={{ marginBottom: 5 }}><b>Chrome/Edge:</b> menyja ⋮ → “Instalo aplikacionin”.</div>
-          <div style={{ marginBottom: 5 }}><b>iPhone (Safari):</b> Ndaj <span aria-hidden="true">↑</span> → “Add to Home Screen”.</div>
-          <div><b>Android:</b> menyja ⋮ → “Shto te ekrani kryesor”.</div>
+          <div style={{ marginBottom: 5 }}><b>Chrome/Edge:</b> menyja ⋮ → "Instalo aplikacionin".</div>
+          <div style={{ marginBottom: 5 }}><b>iPhone (Safari):</b> Ndaj <span aria-hidden="true">↑</span> → "Add to Home Screen".</div>
+          <div><b>Android:</b> menyja ⋮ → "Shto te ekrani kryesor".</div>
           <button
             type="button"
             onClick={() => setShowGuide(false)}
-            style={{ position: 'absolute', top: 6, right: 8, background: 'none', border: 'none', color: '#6b6b6b', cursor: 'pointer', fontSize: 13, lineHeight: 1 }}
+            style={{ position: 'absolute', top: 6, right: 8, background: 'none', border: 'none', color: '#6b6b6b', cursor: 'pointer', fontSize: 13, lineHeight: 1, minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             aria-label="Mbyll udhëzimet"
           >✕</button>
         </div>
       )}
-      <button
-        type="button"
-        aria-label="Instalo aplikacionin"
-        onClick={install}
-        style={{
-          width: 36, height: 44,
-          background: 'linear-gradient(135deg,#22C55E,#16a34a)',
-          borderRadius: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2,
-          border: 'none', cursor: 'inherit',
-          boxShadow: '0 4px 13px rgba(34,197,94,.45)',
-          animation: 'install-pulse 2.2s infinite',
-          transition: 'transform .15s',
-        }}
-      >
-        <i className="ti ti-device-mobile-down float-icon-main" aria-hidden="true" />
-        <span className="float-label">Instalo</span>
-      </button>
-      {/* Zonë prekjeje ≥44px (Vendimi 8): më parë fontSize:7 → 6×7px, praktikisht e paprekshme. */}
-      <button type="button" aria-label="Mbyll" onClick={() => setDismissed(true)} style={{ background: 'none', border: 'none', color: 'rgba(34,197,94,.8)', cursor: 'pointer', fontSize: 13, lineHeight: 1, alignSelf: 'center', width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
+      <span className="fab-label-dark">Instalo</span>
+      <div style={{ position: 'relative', display: 'inline-flex' }}>
+        <button
+          type="button"
+          aria-label="Instalo aplikacionin"
+          onClick={install}
+          className="fab-btn-dark"
+        >
+          <i className="ti ti-device-mobile-down" aria-hidden="true" style={{ fontSize: 22, color: 'var(--az-yellow)' }} />
+        </button>
+        <button
+          type="button"
+          aria-label="Mbyll"
+          onClick={() => setDismissed(true)}
+          style={{ position: 'absolute', top: -5, right: -5, width: 24, height: 24, borderRadius: '50%', background: '#111', border: '2px solid var(--az-cream)', color: '#fff', cursor: 'pointer', fontSize: 11, lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+        >✕</button>
+      </div>
     </div>
   )
 }
 
-// Kuti ndarje — buton i vogël katrore pulsues (fixed, vetem faqja kryesore)
+// Kuti ndarje — FAB i rrumbullakët (fixed, anë djathtas, vetëm faqja kryesore)
 function ShareBox({ refCode }: { refCode?: string }) {
   const [open, setOpen] = useState(false)
   const [mode, setMode] = useState<'feed' | 'msg'>('feed')
   const [copied, setCopied] = useState<string | null>(null)
-
-  const { pos, dragging, onPointerDown } = useDraggable(
-    '_alpz_pos_share',
-    () => window.innerWidth >= 768 ? { left: 24, bottom: 24 } : { left: 12, bottom: 157 },
-    64
-  )
 
   const base = SITE_URL
   const url  = refCode ? `${base}?ref=${refCode}` : base
@@ -222,29 +189,13 @@ function ShareBox({ refCode }: { refCode?: string }) {
   }
 
   return (
-    <div
-      className="share-float"
-      style={{
-        position: 'fixed',
-        bottom: pos?.bottom ?? 157,
-        left: pos?.left ?? 12,
-        right: 'auto',
-        zIndex: 190,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        gap: 3,
-        cursor: dragging ? 'grabbing' : 'grab',
-        touchAction: 'none',
-        userSelect: 'none',
-      }}
-      onPointerDown={onPointerDown}
-    >
+    <div className="fab-ndaj">
       {open && (
         <div style={{
-          background: '#111', border: '1.5px solid #1d4ed8', borderRadius: '14px 14px 14px 0',
-          padding: '10px', boxShadow: '0 4px 20px rgba(59,130,246,.3)',
-          width: 212, animation: 'ai-fade .2s ease',
+          position: 'absolute', bottom: 0, right: 'calc(100% + 8px)',
+          background: 'var(--az-ink,#111)', border: '1px solid rgba(255,255,255,.12)', borderRadius: '14px 14px 0 14px',
+          padding: '10px', boxShadow: '0 4px 16px rgba(0,0,0,.28)',
+          width: 212,
         }}>
           {/* Mode toggle */}
           <div style={{ display: 'flex', background: '#222', borderRadius: 8, padding: 3, gap: 3, marginBottom: 9 }}>
@@ -252,8 +203,8 @@ function ShareBox({ refCode }: { refCode?: string }) {
               <button key={m} type="button" onClick={() => setMode(m)} style={{
                 flex: 1, border: 'none', borderRadius: 6, padding: '5px 2px',
                 fontSize: 8, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
-                background: mode === m ? '#3B82F6' : 'transparent',
-                color: mode === m ? '#fff' : '#888', transition: 'all .15s',
+                background: mode === m ? 'var(--az-yellow)' : 'transparent',
+                color: mode === m ? '#111' : '#888', transition: 'all .15s',
               }}>
                 {m === 'feed' ? <><span aria-hidden='true'>📢</span> Statusi</> : <><span aria-hidden='true'>💬</span> Mesazh</>}
               </button>
@@ -283,27 +234,16 @@ function ShareBox({ refCode }: { refCode?: string }) {
         </div>
       )}
 
+      <span className="fab-label-dark">Ndaj</span>
       <button
         type="button"
         aria-label={open ? 'Mbyll menynë e ndarjes' : 'Ndaj aplikacionin'}
         aria-expanded={open}
         onClick={() => setOpen(o => !o)}
-        style={{
-          width: 36, height: 44,
-          background: open ? '#2563EB' : 'linear-gradient(135deg,#3B82F6,#2563EB)',
-          borderRadius: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2,
-          border: 'none', cursor: 'pointer',
-          boxShadow: '0 4px 13px rgba(59,130,246,.45)',
-          animation: open ? 'none' : 'share-pulse 2.2s infinite',
-          transition: 'transform .15s',
-        }}
-        onMouseDown={e => (e.currentTarget.style.transform = 'scale(.92)')}
-        onMouseUp={e => (e.currentTarget.style.transform = '')}
+        className="fab-btn-dark"
       >
-        <i className={`ti ti-${open ? 'x' : 'share-2'} float-icon-main`} aria-hidden="true" />
-        <span className="float-label">Ndaj</span>
+        <i className={`ti ti-${open ? 'x' : 'share'}`} aria-hidden="true" style={{ fontSize: 22, color: 'var(--az-yellow)' }} />
       </button>
-      <button type="button" aria-label="Mbyll" onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', color: 'rgba(59,130,246,.7)', cursor: 'pointer', fontSize: 8, padding: 0, lineHeight: 1, alignSelf: 'center', display: open ? 'block' : 'none' }}>✕</button>
     </div>
   )
 }
@@ -697,18 +637,22 @@ export default function HomeClient({ initialListings = [], initialCategories = [
         .nav-add{width:50px;height:50px;background:linear-gradient(135deg,var(--az-red),#c42a0e);border-radius:50%;display:flex;align-items:center;justify-content:center;border:3px solid #111;margin-top:-18px;cursor:pointer;box-shadow:0 4px 16px rgba(230,51,18,.5);transition:transform .15s,box-shadow .15s;padding:0;appearance:none;}
         .nav-add:active{transform:scale(.9);box-shadow:0 2px 8px rgba(230,51,18,.3);}
         .nav-add i{font-size:24px;color:#fff;}
-        /* Floating pulsing squares */
-        @keyframes install-pulse{0%,100%{box-shadow:0 6px 20px rgba(34,197,94,.4);transform:scale(1)}50%{box-shadow:0 8px 28px rgba(34,197,94,.65);transform:scale(1.07)}}
-        @keyframes share-pulse{0%,100%{box-shadow:0 6px 20px rgba(59,130,246,.35);transform:scale(1)}50%{box-shadow:0 8px 28px rgba(59,130,246,.6);transform:scale(1.07)}}
         .loading{text-align:center;padding:32px;color:#555;font-size:13px;}
         .spinner{display:block;width:28px;height:28px;border:3px solid var(--az-yellow);border-top-color:var(--az-red);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px;}
         @keyframes spin{to{transform:rotate(360deg);}}
         .new-listing-toast{background:#EAF3DE;border:1px solid #97C459;border-radius:8px;padding:6px 12px;display:flex;align-items:center;gap:7px;margin-bottom:7px;animation:toast-in .3s ease;}
         @keyframes toast-in{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
         .new-listing-toast span{font-size:11px;font-weight:700;color:#3B6D11;}
-        /* ── Etiketat e butonave lundrues (responsive me className) ── */
-        .float-label{font-size:7px;color:#fff;font-weight:800;letter-spacing:.3px;line-height:1;}
-        .float-icon-main{font-size:16px;color:#fff;}
+        /* ── FAB-et e unifikuara (Instalo + Ndaj) — anë djathtas ── */
+        .fab-btn-dark{width:52px;height:52px;background:var(--az-ink,#111);border-radius:50%;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.28);transition:transform .15s;min-width:44px;min-height:44px;}
+        .fab-btn-dark:active{transform:scale(.92);}
+        .fab-btn-dark:focus-visible{outline:2px solid var(--az-yellow);outline-offset:3px;}
+        .fab-label-dark{font-size:11px;font-weight:700;color:#fff;background:rgba(17,17,17,.82);padding:5px 10px;border-radius:9px;letter-spacing:.02em;pointer-events:none;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.22);}
+        .fab-ndaj{position:fixed;right:12px;bottom:148px;z-index:190;display:flex;flex-direction:row;align-items:center;gap:8px;}
+        .fab-instalo{position:fixed;right:12px;bottom:212px;z-index:190;display:flex;flex-direction:row;align-items:center;gap:8px;}
+        /* Kur cookie banneri është i hapur — ngrit FAB-et */
+        body[data-cookie] .fab-ndaj{bottom:288px;}
+        body[data-cookie] .fab-instalo{bottom:352px;}
         /* ── Navigimi desktop ── */
         .desk-nav{display:none;}
         .desk-nav-btn{background:rgba(0,0,0,.08);border:none;border-radius:8px;padding:6px 11px;min-height:44px;font-size:12px;font-weight:700;color:#111;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:background .15s;}
@@ -723,10 +667,13 @@ export default function HomeClient({ initialListings = [], initialCategories = [
           .body{padding:0 24px;}
           .bottom-nav{display:none;}
           .desk-nav{display:flex;gap:3px;align-items:center;margin-right:6px;}
-          /* pozicioni i share-float dhe install-float menaxhohet nga useDraggable (JS) */
-          .share-float>button:first-of-type,.install-float>button:first-of-type{width:60px !important;height:60px !important;border-radius:50% !important;}
-          .float-label{font-size:11px;}
-          .float-icon-main{font-size:22px;}
+          /* FAB-et e unifikuara — pozicioni desktop */
+          .fab-ndaj{right:24px;bottom:96px;}
+          .fab-instalo{right:24px;bottom:168px;}
+          body[data-cookie] .fab-ndaj{bottom:96px;}
+          body[data-cookie] .fab-instalo{bottom:168px;}
+          .fab-btn-dark{width:60px;height:60px;}
+          .fab-label-dark{font-size:11px;}
         }
         @media(min-width:1024px){
           /* 100% full screen: wrap-i mbush gjithë gjerësinë e ekranit; padding-u
