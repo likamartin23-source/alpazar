@@ -161,8 +161,12 @@ export default function SearchPage() {
         .cb.on{background:linear-gradient(135deg,var(--az-ink),#000);color:var(--az-yellow);}
 
         /* ── Inline filter panel ── */
-        .filter-panel{background:#fff;border-bottom:2px solid var(--az-yellow);overflow:hidden;transition:max-height .25s ease,opacity .2s ease;max-height:0;opacity:0;pointer-events:none;}
-        .filter-panel.open{max-height:600px;opacity:1;pointer-events:auto;}
+        /* visibility:hidden kur i palosur e heq nga rendi i Tab-it dhe nga pema
+           e aksesueshmerise (WCAG 2.4.3/2.4.7/4.1.2 - 26 ndalesa fokusi brenda
+           panelit te fshehur). Vonesa visibility 0s .25s e le animacionin e
+           mbylljes te mbaroje; pamja nuk ndryshon. axe s'e kap kete klase. */
+        .filter-panel{background:#fff;border-bottom:2px solid var(--az-yellow);overflow:hidden;transition:max-height .25s ease,opacity .2s ease,visibility 0s .25s;max-height:0;opacity:0;pointer-events:none;visibility:hidden;}
+        .filter-panel.open{max-height:600px;opacity:1;pointer-events:auto;visibility:visible;transition:max-height .25s ease,opacity .2s ease,visibility 0s 0s;}
         .filter-inner{padding:14px 12px 6px;}
 
         .fp-section{margin-bottom:14px;}

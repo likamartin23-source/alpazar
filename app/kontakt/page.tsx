@@ -3,10 +3,12 @@
 export const dynamic = 'force-dynamic'
 
 import { useState } from 'react'
+import { useAlpazar } from '../../lib/context'
 
 const LS = { color: '#666' as const, fontSize: 11, textDecoration: 'none' as const }
 
 export default function Kontakt() {
+  const { cfg } = useAlpazar()
   const [name, setName]       = useState('')
   const [email, setEmail]     = useState('')
   const [subject, setSubject] = useState('')
@@ -187,7 +189,7 @@ export default function Kontakt() {
             <p style={{ fontSize: 13, color: '#444', lineHeight: 1.7 }}>
               Alpazar<br />
               Tiranë, Shqipëri<br />
-              <span style={{ fontSize: 11, color: '#555' }}>NIPT/QKB: (në regjistrim)</span>
+              <span style={{ fontSize: 11, color: '#555' }}>NIPT/QKB: {cfg('company_nipt') || '(në regjistrim)'}</span>
             </p>
             <a
               href="https://www.google.com/maps/search/Tiranë,+Shqipëri"

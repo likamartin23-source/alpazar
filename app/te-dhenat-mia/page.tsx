@@ -253,7 +253,7 @@ export default function TeDhenatMiaPage() {
         <div style={{ textAlign: 'center', fontSize: 11, color: '#555', lineHeight: 1.6, padding: '8px 0' }}>
           Për çdo kërkesë tjetër GDPR kontaktoni: <a href="mailto:alpazarsuport@gmail.com" style={{ color: '#C42B0F' }}>alpazarsuport@gmail.com</a>
           <br />
-          Rregullorja (EU) 2016/679 · Ligj 9887/2008 (Shqipëri)
+          Rregullorja (EU) 2016/679 · Ligj 124/2024 (Shqipëri)
         </div>
       </div>
     </div>

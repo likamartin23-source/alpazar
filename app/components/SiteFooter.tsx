@@ -2,6 +2,7 @@
 /** Footer i përkthyeshëm — nxjerrë nga layout.tsx që të përdorë useT() + LanguageSwitcher. */
 import { usePathname } from 'next/navigation'
 import { useT } from '../../lib/i18n'
+import { useAlpazar } from '../../lib/context'
 import { LanguageSwitcher } from './LanguageSwitcher'
 
 const soc = [
@@ -15,6 +16,7 @@ const soc = [
 
 export function SiteFooter() {
   const { t } = useT()
+  const { cfg } = useAlpazar()
   const pathname = usePathname()
   // Paneli i administrimit ka navigimin e vet dhe nuk eshte faqe publike:
   // fundi i faqes me lidhjet e marketingut, rrjetet sociale dhe nje kontroll
@@ -51,7 +53,7 @@ export function SiteFooter() {
           <a href="/referral" style={{ color: 'var(--az-yellow)', fontSize: 11, textDecoration: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center', minHeight: 44, padding: '0 4px', gap: 4 }}><span aria-hidden="true">🎁</span> {t('nav_referral')}</a>
         </nav>
         <div style={{ marginBottom: 14 }}><LanguageSwitcher /></div>
-        <div style={{ fontSize: 10, color: '#8A8A8A' }}>© 2026 Alpazar · NIPT/QKB: (në regjistrim) · Tiranë, Shqipëri · {t('rights')}</div>
+        <div style={{ fontSize: 10, color: '#8A8A8A' }}>© 2026 Alpazar · NIPT/QKB: {cfg('company_nipt') || '(në regjistrim)'} · {cfg('company_address') || 'Tiranë, Shqipëri'} · {t('rights')}</div>
       </div>
     </footer>
   )
