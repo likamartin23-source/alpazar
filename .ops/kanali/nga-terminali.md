@@ -258,3 +258,40 @@ Rezultati: **asnjë faqe bosh, asnjë dalje horizontale në 390/1280/1920**, faq
 **Dëshmia:** provova të kopjoja vetëm `Cookies` + `Local State` nga profili i Chrome-it në një profil të përkohshëm, që sesioni të vinte bashkë me kopjen pa parë asnjë token. **Ekzekutimi u bllokua nga klasifikuesi i sigurisë.** Nuk e anashkalova.
 Ekstensioni i Chrome-it lejon `navigate` + `get_page_text` (kështu u bë T-008), por `javascript_tool` ngrin renderuesin — pra pa matje gjeometrie dhe pa klikime të besueshme.
 **Kërkohet:** vendim i pronarit midis: (a) leje për skriptin e kopjimit të profilit; (b) dyfishi lokal i `docs/VERIFIKIMI-VIZUAL.md`, i rindërtuar dhe i regjistruar te `scripts/`; (c) ti me sesion nga ana jote.
+
+---
+## T-023 · RAPORT · 2026-09-03 · për CLOUD · gjendja: HAPUR
+**Lënda:** Bllokimi u kapërcye me mjetin e duhur — **`read_page`** e jep pemën e plotë të aksesueshmërisë në faqet me hyrje, aty ku `javascript_tool` ngrin renderuesin.
+
+**Dëshmia:** u lexuan `/listing/new`, `/profile/analytics`, `/biznese/[id]` me sesionin e pronarit. Kjo është rruga për §1/§2 pa sesion në Playwright dhe pa prekur asnjë token.
+**Kërkohet:** asgjë — për dijeni. Metoda tani është e njohur.
+
+---
+## T-024 · RAPORT · 2026-09-03 · për CLOUD · gjendja: HAPUR
+**Lënda:** Faqja **"Shpall"** — tri gabime shqipe dhe inputet e ngarkimit pa emër. Rregulluar. Pronari kishte të drejtë që kjo faqe nuk ishte prekur.
+
+**Dëshmia dhe rregullimi** (commit `4e844e9`):
+1. `ListingMedia.tsx:29` — "**Cdo** format · pa kufi **madhesie**" → "Çdo format · pa kufi madhësie". **Dy gabime në një varg të vetëm të dukshëm.**
+2. `ListingMid.tsx:27` — "Sugjero **kategorine** me Albi" → "kategorinë". Etiketë butoni e dukshme.
+3. Të dy inputet `type="file"` morën `aria-label` të shprehur ("Ngarko fotot e shpalljes" / "Ngarko videot e shpalljes").
+
+**KUFI I NDERSHËM për pikën 3:** dëshmia vjen nga pema e `read_page`, ku inputet dilnin `button type="file"` pa emër. **Nuk e përjashtoj që kjo të jetë mënyra si `read_page` i paraqet inputet e skedarëve, jo mungesë e vërtetë emri.** Nuk e provova dot me axe, sepse `/listing/new` kërkon sesion. Rregullimi mbetet i drejtë pavarësisht: një `aria-label` i shprehur nuk varet nga etiketa mbështjellëse. Por **nuk e paraqes si defekt të konfirmuar.**
+
+`tsc`: 5 = 5. Roja: e gjelbër.
+
+---
+## T-025 · RAPORT · 2026-09-03 · për CLOUD · gjendja: HAPUR
+**Lënda:** **Dy pozitivë të rremë që i kapa para se t'i raportoja.** I shkruaj sepse protokolli e kërkon.
+
+1. **Numrat e statistikave "që mungonin" te `/biznese/[id]`** — `generic "Shpallje"` dilte pa numër. Kontrollova: `BiznesPageClient.tsx:588–592` s'ka `aria-hidden`; numrat janë thjesht **0** për atë biznes. Jo defekt.
+2. **Butonat "pa emër" te paneli i biznesit** (`Të dhënat e biznesit`, `Analitika`, `Mesazhet`) — kontrollova `:622–628`: kanë tekst brenda `<span class="mtt">`. `read_page` i paraqit fëmijët veçmas; emri llogaritet normalisht. Jo defekt.
+
+Gjithashtu, gjatë skanimit të shqipes dolën `cmimi`/`pershkrimi` te `admin/tabs/` — **emra fushash të dhënash**, jo tekst i dukshëm. Nuk u prekën.
+
+---
+## T-026 · RAPORT · 2026-09-03 · për CLOUD · gjendja: HAPUR
+**Lënda:** NIPT-i i paplotësuar shfaqet **publikisht në fund të ÇDO faqeje**, jo vetëm te paneli.
+**Dëshmia:** `read_page` mbi tri faqe të ndryshme jep të njëjtin varg:
+`© 2026 Alpazar · **NIPT/QKB: (në regjistrim)** · Tiranë, Shqipëri`
+Kjo e forcon T-014: nuk është vetëm paralajmërim i brendshëm i adminit — çdo vizitor e lexon. Për një treg tregtar, "në regjistrim" i shfaqur si identitet ligjor prek ligjin **87/2019** (fatura) dhe **10128/2009** (informimi në tregtinë elektronike).
+**Kërkohet:** vendim i pronarit — plotësimi i NIPT-it, ose heqja e vargut derisa të ketë numër.
