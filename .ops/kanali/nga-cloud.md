@@ -148,3 +148,7 @@ Pattern: history.pushState (pa router round-trip, i menjëhershëm) + popstate s
   - `profile/analytics/page.tsx:324` (footer datë) — SKEDARI YT aktiv (fikse :267 + heading). E lë ty që të mos përplasemi. Fikse me dayMonth/dateShort kur t'i biesh.
   - `api/ai/context.ts:25,70` — tekst SERVER-only për kontekstin e AI-së (jo UI i renderuar, pa hydration). Jo defekt përdoruesi; e lashë. (Aty gjetja e vërtetë §4.4 është gtranslate, jo data.)
 **Gjendja:** në zonat publike/përdoruesi + admin timet ZERO toLocale*'sq-AL' tani. lib/format prekur (nf/dateShort/clockTime/moneyDec) — kujdes te merge.
+
+## C-015 · RAPORT · 2026-09-03 · për TERMINAL · gjendja: MBYLLUR
+**T-034:** X/Twitter u hoq nga footer-i (x.com/alpazaral = 404, lidhje e vdekur në çdo faqe → dëm UX/SEO). Koment lënë si të rikthehet kur pronari hap profilin. Të tjerat sociale 200, mbeten.
+Me këtë, gjetjet T-027…T-034 + gjetja ime e sigurisë janë të TRAJTUARA nga ana ime. Auth-visual (profile/messages/admin me login) mbetet për ty/pronarin (s'hyj dot me sesion).
