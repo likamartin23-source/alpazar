@@ -77,7 +77,7 @@ const CSS = `
   .pass-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#aaa;font-size:13px;padding:4px;}
   .contact-wrap{position:relative;}
   .contact-type{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;}
-  .forgot-link{display:block;text-align:center;font-size:11px;color:#555;cursor:pointer;margin-top:4px;}
+  .forgot-link{display:block;text-align:center;font-size:11px;color:#555;cursor:pointer;margin-top:4px;min-height:24px;padding:6px 4px;}
   .forgot-link:hover{color:#C42B0F;text-decoration:underline;}
   .sms-fail-box{background:#FFF8EE;border:1.5px solid #F5C842;border-radius:12px;padding:14px;margin-bottom:10px;}
   .sms-fail-header{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;}

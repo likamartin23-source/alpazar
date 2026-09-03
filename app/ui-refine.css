@@ -205,7 +205,7 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
 .card-img{flex:0 0 calc(var(--card-body-h) / 3 * 7);width:100%;position:relative;background:linear-gradient(135deg,#FBF7E8,#F2EAD0);overflow:hidden;display:flex;align-items:center;justify-content:center;}
 .card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;transition:transform .35s cubic-bezier(.2,.8,.2,1);}
 .card-img i{font-size:28px;color:#d0c9a0;}
-.card-seller-ov{position:absolute;left:6px;bottom:6px;display:flex;align-items:center;gap:5px;max-width:calc(100% - 48px);background:rgba(0,0,0,.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border-radius:var(--r-pill);padding:2px 9px 2px 2px;z-index:2;cursor:pointer;}
+.card-seller-ov{position:absolute;left:6px;bottom:6px;display:flex;align-items:center;gap:5px;min-height:24px;max-width:calc(100% - 48px);background:rgba(0,0,0,.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border-radius:var(--r-pill);padding:2px 9px 2px 2px;z-index:2;cursor:pointer;}
 .card-seller-ov span{font-size:10px;color:#fff;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 /* [O52] Teksti bardhë 9px kërkonte 4.5:1 (WCAG 1.4.3); #fff mbi #E63312 jepte vetëm 4.33.
    E kuqja a11y #C42305 (5.85:1) → kalon, pa shpikur ngjyrë të tretë. */
