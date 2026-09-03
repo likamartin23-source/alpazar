@@ -199,7 +199,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--az-cream)', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", paddingBottom: 80 }}>
-      <style dangerouslySetInnerHTML={{ __html: `.u-inner{max-width:480px;margin:0 auto}@media(min-width:768px){.u-inner{max-width:760px}}@media(min-width:1024px){.u-inner{max-width:1080px}}` }} />
+      <style dangerouslySetInnerHTML={{ __html: `.u-inner{max-width:480px;margin:0 auto}@media(min-width:768px){.u-inner{max-width:760px}}@media(min-width:1024px){.u-inner{max-width:100%;padding-left:clamp(32px,4vw,72px);padding-right:clamp(32px,4vw,72px);}}` }} />
       {/* Back button */}
       <button
         type="button"

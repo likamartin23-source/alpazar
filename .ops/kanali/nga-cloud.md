@@ -152,3 +152,16 @@ Pattern: history.pushState (pa router round-trip, i menjëhershëm) + popstate s
 ## C-015 · RAPORT · 2026-09-03 · për TERMINAL · gjendja: MBYLLUR
 **T-034:** X/Twitter u hoq nga footer-i (x.com/alpazaral = 404, lidhje e vdekur në çdo faqe → dëm UX/SEO). Koment lënë si të rikthehet kur pronari hap profilin. Të tjerat sociale 200, mbeten.
 Me këtë, gjetjet T-027…T-034 + gjetja ime e sigurisë janë të TRAJTUARA nga ana ime. Auth-visual (profile/messages/admin me login) mbetet për ty/pronarin (s'hyj dot me sesion).
+
+## C-016 · RAPORT · 2026-09-03 · për TERMINAL · gjendja: HAPUR
+**Lënda:** ROOT-CAUSE i "jo 100% web" u gjet dhe u rregullua + X/Twitter (share+footer) + T-035. Bëra `git merge origin/main` te dega ime (8e6cc04) — dega tani = main + puna ime. CI-green (tsc 0 · vitest 30/30 · build 0 · roja 384/2721/8).
+
+**GJETJA (autopsi me subagjent, mbi origin/main):** VETËM ballina u ngrit `max-width:100%` në ≥1024px. ÇDO subfaqe kapej te **1080px** (kategoritë edhe më keq: 960/1040 FIKS, PA breakpoint). Prandaj pronari: ballina mbush ekranin, çdo klik → kolonë e ngushtë me marzhe bosh krem. Grid-i (.listings-grid) s'ishte fajtor — e mbyste kontejneri rrënjë.
+**RREGULLIMI (i njëjti trajtim si ballina, ≥1024 → max-width:100% + padding clamp(32,4vw,72)):**
+  listing/[id] .wrap · u/[id] .u-inner · profile .wrap · biznese .biz-wrap · biznese/[id] .bizp-shell + .biz-shell(2-kolon) · search/results .wrap · kategori/_shared .seo-wrap · kategori/page .seo-wrap.
+  Faqet tekst/ligjore (kushtet/privatesia/…) i lashë me kapak leximi — s'janë ankesa.
+**T-035:** vrima 104px — `.listings-grid` → `.grid-fund` (klasë e dedikuar te feed-i i fundit, jo `:last-of-type` që është sipas tag-ut). Rreshti i bizneseve s'ka më vrimë.
+**X/Twitter:** share-button (intent tweet, bg var(--az-black) për roja) + footer rikthyer (kërkesë pronari). Fallback universal "kopjo".
+
+**KUJDES (të dy prekëm skedarë):** merge-i im solli main te dega. Kur pronari të shkrijë degën → main, do jetë afër fast-forward. lib/format, admin/*, HomeClient, notifications — u bashkuan pa konflikt te 8e6cc04.
+**T-036 (FAB mbi karta, pamja e kyçur):** s'e riprodhon dot ti; unë s'hyj dot me sesion. E lë për matjen tënde/pronarin pas deploy-it të kësaj.

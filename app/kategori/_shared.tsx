@@ -5,6 +5,7 @@
 
 export const LANDING_CSS = `
 .seo-wrap{max-width:1040px;margin:0 auto;padding:20px 16px 60px;font-family:inherit;}
+@media(min-width:1024px){.seo-wrap{max-width:100%;padding-left:clamp(32px,4vw,72px);padding-right:clamp(32px,4vw,72px);}}
 .seo-crumb{font-size:12px;color:#555;margin-bottom:14px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
 .seo-crumb a{color:#C42B0F;text-decoration:none;}
 .seo-crumb span[aria-current]{color:#555;}

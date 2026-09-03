@@ -645,7 +645,9 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--az-cream);}
         .wrap{max-width:480px;margin:0 auto;background:#fff;min-height:100vh;padding-bottom:${chatPanelOpen ? '300px' : '70px'};}
         @media(min-width:768px){.wrap{max-width:760px}}
-        @media(min-width:1024px){.wrap{max-width:1080px}}
+        /* 100% web (si ballina, ≥1024): mbush ekranin me padding anësor që rritet me viewport-in,
+           në vend të një kolone 1080px me marzhe bosh krem (ankesa e pronarit — kolonë e ngushtë). */
+        @media(min-width:1024px){.wrap{max-width:100%;padding-left:clamp(32px,4vw,72px);padding-right:clamp(32px,4vw,72px);}}
         .topbar{background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%);padding:10px 12px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
         /* klasa e vjeter e back-butonit u zevendesua nga komponenti i perbashket BackButton (44px). */
         .topbar-title{font-size:15px;font-weight:700;color:#111;flex:1;}

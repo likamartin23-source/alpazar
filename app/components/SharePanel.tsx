@@ -116,7 +116,7 @@ const PLATFORMS: Platform[] = [
   {
     id: 'x',
     label: 'X / Twitter',
-    bg: '#000000',
+    bg: 'var(--az-black)',
     // Ndarja te X (ish-Twitter) — intent-i i tweet-it punon si te x.com ashtu edhe te twitter.com,
     // pavarësisht nëse ekziston profili i markës (ndryshe nga lidhja e profilit te footer-i).
     feedUrl: (u, t) => `https://twitter.com/intent/tweet?text=${encodeURIComponent(t)}&url=${encodeURIComponent(u)}`,

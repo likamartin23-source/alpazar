@@ -98,7 +98,7 @@ export default function BiznestPage() {
 
   return (
     <>
-    <style dangerouslySetInnerHTML={{ __html: `.biz-wrap{max-width:480px;margin:0 auto;background:var(--az-cream);min-height:100vh;padding-bottom:80px;font-family:'Plus Jakarta Sans',system-ui,sans-serif}@media(min-width:768px){.biz-wrap{max-width:760px}}@media(min-width:1024px){.biz-wrap{max-width:1080px}}` }} />
+    <style dangerouslySetInnerHTML={{ __html: `.biz-wrap{max-width:480px;margin:0 auto;background:var(--az-cream);min-height:100vh;padding-bottom:80px;font-family:'Plus Jakarta Sans',system-ui,sans-serif}@media(min-width:768px){.biz-wrap{max-width:760px}}@media(min-width:1024px){.biz-wrap{max-width:100%;padding-left:clamp(32px,4vw,72px);padding-right:clamp(32px,4vw,72px);}}` }} />
     <div className="biz-wrap">
       {/* Header */}
       <div style={{ background: 'linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%)', padding: '14px 16px 16px', boxShadow: '0 4px 16px -8px rgba(190,130,0,.4)' }}>

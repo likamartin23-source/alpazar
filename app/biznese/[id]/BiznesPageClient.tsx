@@ -514,7 +514,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           .bizp{background:#f2f2f2;min-height:100vh;padding-bottom:70px;}
           .bizp-shell{max-width:480px;margin:0 auto;}
           @media(min-width:768px){.bizp-shell{max-width:760px}}
-          @media(min-width:1024px){.bizp-shell{max-width:1080px}}
+          @media(min-width:1024px){.bizp-shell{max-width:100%;padding-left:clamp(32px,4vw,72px);padding-right:clamp(32px,4vw,72px);}}
           .vs-bar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:8px;background:#111;color:#fff;padding:8px 12px;font-size:12px;font-weight:700;}
           .vs-bar .vs-lbl{color:#bbb;}
           .vs-seg{display:inline-flex;background:#000;border-radius:999px;padding:3px;gap:2px;margin-left:auto;}
@@ -777,7 +777,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
         .biz-page{background:#f2f2f2;min-height:100vh;padding-bottom:60px;}
         .biz-shell{max-width:480px;margin:0 auto;}
         @media (min-width:1000px){
-          .biz-shell{max-width:1120px;display:grid;grid-template-columns:minmax(320px,390px) 1fr;gap:24px;align-items:start;padding:0 20px;}
+          .biz-shell{max-width:100%;display:grid;grid-template-columns:minmax(320px,390px) 1fr;gap:24px;align-items:start;padding:0 clamp(20px,4vw,72px);}
           .biz-left{position:sticky;top:12px;align-self:start;max-height:calc(100vh - 24px);overflow-y:auto;overscroll-behavior:contain;}
           .biz-left::-webkit-scrollbar{width:0;}
           .biz-right{min-width:0;}
