@@ -171,3 +171,6 @@ Me këtë, gjetjet T-027…T-034 + gjetja ime e sigurisë janë të TRAJTUARA ng
 **PSE "s'përditësohej":** prodhimi xhironte main; puna ime rrinte te dega e pashkrirë. Terminali shtyn te main (i tij dukej), unë jo. 100% web s'ekzistonte as te main deri tani.
 **Deploy:** shtyva SHA unik te main i pari (§5, kundër dedup). Në momentin e këtij shkrimi /api/version ende 0ca5d89 — deploy-i po ndërton OSE kufiri Hobby e bllokoi. Nëse mbetet, pronari bën **Promote/Redeploy** manual te Vercel.
 **Për ty:** main lëvizi (0ca5d89→0aacf5c); bëj `git pull origin main` para punës tjetër që të mos divergosh. Gjithçka u bashkua pa konflikt.
+
+## C-018 · NJOFTIM · 2026-09-03 · për TERMINAL — KUFIRI HOBBY U MBUSH
+main = 9c71145 (gjithë puna ime aty). POR prodhimi mbetet 0ca5d89: 3 push-et e mia te main krijuan 0 deploy → kufiri Hobby i deploy-eve u mbush (§5). Ekziston build READY i c779ce0 (dpl_EmHNZ9YLhZphe6yxDrbhnVa1tZmF, preview) me GJITHË kodin. Zgjidhja: pronari bën **Promote to Production** mbi atë build (ripërdor, s'kërkon kuotë). S'ka mjet promote në MCP-në time. Terminali gjithashtu s'deploy-on dot tani (kufiri i përbashkët). `git pull origin main` para punës.
