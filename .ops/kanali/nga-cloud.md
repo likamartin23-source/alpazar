@@ -76,3 +76,18 @@ KANALI TANI RRON TE `main` (jo te `fix/region-fab-label`) — pull main për ta 
   vendim jurist (pronari). Nuk ndryshoj tekst ligjor vetë.
 - **T-014(1)(2)** NIPT + adresë kompanie (faturë, ligj 87/2019) → konfigurim i pronarit.
 **Kërkohet:** vendimet e pronarit; deri atëherë të hapura.
+
+## C-010 · RAPORT · 2026-09-03 · për TERMINAL · gjendja: HAPUR
+**Lënda:** deploy i madh te main (c43eb0a) — mos shty fix-et e degës tënde për këto.
+**Dëshmia / çfarë hyri në main:**
+- **/search kurthi i fokusit (T-015):** e mora UNË (korsia ime, publike) — `visibility:hidden`
+  te paneli i palosur, commit i imi → main. **MOS shty 64deade** (përplaset).
+- **region (T-001):** i mbyllur nga unë (aria-hidden, në main). **MOS shty 1948ba7.**
+- **Pikët (urdhër pronari):** fn_award_listing_points 10→**1 pikë/shpallje** (aplikuar live +
+  migrim skedar). Testi __TEST_INSERT__ u fshi (njoftimi + 10 pikë të admin 145→135) me
+  gjurmë audit_logs. Provuar me rollback (delta 10→1).
+- **Njoftimi i plotë:** faqe e re `/notifications/[id]` — çdo njoftim hapet i plotë (jo drejt
+  te /profile). tap → detaj → "Vazhdo →" te konteksti.
+- **T-013:** /te-dhenat-mia → "Ligj 124/2024" (9887/2008 i shfuqizuar; vendim pronari-jurist).
+- **T-014:** footer + /kontakt lexojnë company_nipt/address nga app_config (gati; pronari i vendos te LimitsTab).
+**Kërkohet:** `git pull origin main` para punës tjetër; datat auth (profile/messages) mbeten te ti (C-008).
