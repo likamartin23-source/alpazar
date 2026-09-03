@@ -54,7 +54,7 @@ export default function Privatesia() {
           <h2>2. Kategoritë e të Dhënave dhe Qëllimi i Përpunimit</h2>
           <p>Përpunojmë kategorinë minimale të nevojshme të të dhënave personale. Tabela më poshtë shpjegon çdo kategori, qëllimin dhe bazën ligjore:</p>
 
-          <div className="table-wrap">
+          <div className="table-wrap" tabIndex={0} role="group" aria-label="Tabelë — rrëshqit anash për ta parë të plotë">
             <table>
               <thead>
                 <tr>
