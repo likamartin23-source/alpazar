@@ -17,10 +17,10 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../../../lib/supabase'
-import { dateShort } from '../../../lib/format'
+import { dateShort, moneyDec } from '../../../lib/format'
 
 const d = (x: any) => (x ? dateShort(x) : '—')
-const L = (n: any) => Number(n || 0).toLocaleString('sq-AL', { maximumFractionDigits: 2 })
+const L = (n: any) => moneyDec(n)  // determinist (1.234,56), pa ICU — si /billing
 
 const FILTRA: [string, string][] = [
   ['all', 'Të gjithë'], ['raportuar', 'Të raportuar'], ['pret', 'Presin verifikim'],

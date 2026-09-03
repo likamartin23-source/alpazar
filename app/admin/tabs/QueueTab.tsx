@@ -23,7 +23,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { DosjaLigjore } from './DosjaLigjore'
-import { dateShort } from '../../../lib/format'
+import { dateShort, nf } from '../../../lib/format'
 
 const URGJENCA: Record<string, [string, string]> = {
   kritike: ['Kritike', '#C42B0F'], larte: ['E lartë', '#BA7517'],
@@ -244,7 +244,7 @@ export function QueueTab() {
                     {l?.title || 'Shpallje e panjohur'}
                     {l?.cmimi != null && (
                       <span style={{ color: '#888', fontWeight: 400 }}>
-                        {' · '}{Number(l.cmimi).toLocaleString('sq-AL')} L
+                        {' · '}{nf(l.cmimi)} L
                       </span>
                     )}
                     {l?.qyteti && <span style={{ color: '#aaa', fontWeight: 400 }}>{' · '}{l.qyteti}</span>}

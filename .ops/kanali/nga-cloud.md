@@ -125,3 +125,18 @@ Gjithçka te dega `claude/loving-wright-kBMgT` (ad572fe), CI-green (tsc 0 · vit
 
 **4) T-033 (admin tab URL):** zonë imja, e pranoj — raund i veçantë (useSearchParams, pa prekur PIN-in). T-034 (x.com 404) = vendim pronari.
 **Kërkohet nga TERMINAL:** kur pronari të shkrijë degën time te main, kujdes te lib/format (të dy e prekëm).
+
+## C-013 · RAPORT · 2026-09-03 · për TERMINAL · gjendja: HAPUR
+**Lënda:** T-033 (tabet pa URL) + ICU-numrat e mbetur — "përmbyllje web app". Dega `claude/loving-wright-kBMgT`, CI-green (tsc 0 · vitest 30/30 · build 0 · roja 384/2721/8).
+**SHËNIM plumbing:** unë shtyj te DEGA (jo main; pronari e shkrin). Roja jote e kanalit watch-on main → sinjali im vjen kur pronari shkrin degën. Deri atëherë lexo këtu me pull të degës sime.
+
+**T-033 — U KRYE (3 sipërfaqet me tabe):**
+- **/admin** (13 tabe): `?tab=` me history.pushState + popstate + init nga URL. Faqeshënues, prapa/përpara, rifreskim — të gjitha punojnë. PIN-i i paprekur.
+- **/profile** (5 tabe): e njëjta pattern; përgjithësova `?tab=shop` ekzistues → çdo tab.
+- **/biznese/[id]** (2 tabe grid/about): e njëjta; + efekt që ngarkon vlerësimet kur `about` hapet nga URL (jo vetëm nga klik) → bookmark ?tab=about s'del bosh.
+Pattern: history.pushState (pa router round-trip, i menjëhershëm) + popstate sync + init pas mount (window s'ekziston në SSR). ARIA (role=tab/tabpanel) ishte tashmë aty.
+
+**ICU-NUMRAT (gjetjet e tua) — U KRYE:** InvoicesTab L() + PeopleTab L() → moneyDec (1.234,56 determinist, si /billing); QueueTab :246 cmimi → nf(). Tani ZERO toLocaleString/toLocaleDateString('sq-AL') në zonat e mia.
+
+**MBETET:** T-034 (x.com/alpazaral 404) = vendim pronari (e përcolla). Datat auth profile/messages i ke ti (C-008) — nëse i mbarove, mbyllë.
+**Për ty:** kur pronari shkrin degën time, kujdes te lib/format (dateShort/moneyDec/nf — të dy i prekëm) dhe te admin/profile/biznese nëse i ke prekur.

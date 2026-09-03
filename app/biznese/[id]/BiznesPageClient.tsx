@@ -139,7 +139,24 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   const bizRtDebounce = useRef<ReturnType<typeof setTimeout> | null>(null) // debounce për realtime-in e shpalljeve
   const [loading, setLoading]       = useState(!initialBiz)
   const [loadError, setLoadError]   = useState(false)
-  const [activeTab, setActiveTab]   = useState<'grid' | 'about'>('grid')
+  // Tab-i i lidhur me URL-në (T-033): i faqeshënueshëm, prapa/përpara + rifreskim.
+  const [activeTab, _setActiveTab]  = useState<'grid' | 'about'>('grid')
+  const setActiveTab = (id: 'grid' | 'about') => {
+    _setActiveTab(id)
+    if (typeof window !== 'undefined') {
+      const url = id === 'grid' ? window.location.pathname : `${window.location.pathname}?tab=${id}`
+      window.history.pushState({ tab: id }, '', url)
+    }
+  }
+  useEffect(() => {
+    const syncFromUrl = () => {
+      const t = new URLSearchParams(window.location.search).get('tab')
+      _setActiveTab(t === 'about' ? 'about' : 'grid')
+    }
+    syncFromUrl()
+    window.addEventListener('popstate', syncFromUrl)
+    return () => window.removeEventListener('popstate', syncFromUrl)
+  }, [])
   // FINAL — harmonizim vizitor-pronar (si rrjet social): pronari mund të kalojë te
   // pamja publike ("Shiko si vizitor") dhe të kthehet te menaxhimi. Detektimi isOwner
   // (SSR, anti-flaker) mbetet i paprekur; kjo vetëm fsheh panelin e pronarit lokalisht.
@@ -156,6 +173,14 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   const [rating, setRating]         = useState<{ avg: number | null; count: number }>({ avg: null, count: 0 })
   const [reviews, setReviews]       = useState<any[]>([])
   const [reviewsLoaded, setReviewsLoaded] = useState(false)
+  // Ngarko vlerësimet edhe kur tab-i 'about' hapet nga URL-ja (bookmark/prapa), jo vetëm
+  // nga klik — përndryshe ?tab=about do të tregonte seksionin bosh. Njëherë (reviewsLoaded).
+  useEffect(() => {
+    if (activeTab === 'about' && biz && !reviewsLoaded) {
+      setReviewsLoaded(true)
+      supabase.rpc('business_reviews', { p_business: biz.id }).then(({ data }) => setReviews(data || []))
+    }
+  }, [activeTab, biz, reviewsLoaded])
   // Shitjet e kryera — social proof (jo fshehje). Funksion agregimi
   // business_sold_count (status='sold'), pa N+1. Shfaqet vetem kur >0.
   const [soldCount, setSoldCount]   = useState(0)

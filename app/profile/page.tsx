@@ -62,7 +62,16 @@ export default function ProfilePage() {
   const [conversations, setConversations] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
-  const [activeTab, setActiveTab] = useState<'profile'|'listings'|'saved'|'shop'|'messages'>('profile')
+  // Tab-i i lidhur me URL-në (T-033): i faqeshënueshëm, "prapa"/"përpara" punojnë,
+  // rifreskimi mban tab-in. history.pushState (pa round-trip); popstate sinkronizon prapa.
+  const [activeTab, _setActiveTab] = useState<'profile'|'listings'|'saved'|'shop'|'messages'>('profile')
+  const setActiveTab = (id: 'profile'|'listings'|'saved'|'shop'|'messages') => {
+    _setActiveTab(id)
+    if (typeof window !== 'undefined') {
+      const url = id === 'profile' ? window.location.pathname : `${window.location.pathname}?tab=${id}`
+      window.history.pushState({ tab: id }, '', url)
+    }
+  }
   // FAZA 3 (BLLOKU Imazhi 6a): tabi "Profili" ndahet ne nen-pamje permes nen-butonave.
   // Koka dhe tabet mbeten identike; kartat ekzistuese vetem grupohen, s'krijohet sistem i ri.
   const [profSub, setProfSub] = useState<'menu'|'tedhena'|'siguri'>('menu')
@@ -141,11 +150,18 @@ export default function ProfilePage() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!session) { window.location.href = '/auth/login' }
     })
-    // Check if redirected with tab param
-    const params = new URLSearchParams(window.location.search)
-    if (params.get('tab') === 'shop') setActiveTab('shop')
+    // Tab nga URL-ja (init + prapa/përpara). _setActiveTab (jo wrapper-i) që të mos
+    // shtojë hyrje të re historie kur vetëm LEXojmë URL-në.
+    const VALID = ['profile','listings','saved','shop','messages'] as const
+    const syncFromUrl = () => {
+      const t = new URLSearchParams(window.location.search).get('tab') || 'profile'
+      _setActiveTab((VALID as readonly string[]).includes(t) ? (t as any) : 'profile')
+    }
+    syncFromUrl()
+    window.addEventListener('popstate', syncFromUrl)
     return () => {
       cancelled = true
+      window.removeEventListener('popstate', syncFromUrl)
       subscription.unsubscribe()
       if (listingsChRef.current) supabase.removeChannel(listingsChRef.current)
       clearInterval(pollRef.current)

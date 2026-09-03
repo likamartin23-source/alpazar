@@ -256,9 +256,32 @@ function AIHealthTab() {
 }
 
 /* ─── Main Admin Page ────────────────────────────────────────── */
+// ID-të e vlefshme të tabeve — porta për ?tab= (mos hap tab të pavlefshëm nga URL-ja).
+const ADMIN_TABS = ['dash','preq','payments','methods','config','health','referrals','njerez','radha','plans','invoices','roles','broadcast'] as const
+
 export default function Admin() {
   const { config } = useAlpazar()
-  const [tab, setTab] = useState('dash')
+  // Tab-i i lidhur me URL-në (T-033): paneli "vetëm-web" me 13 nënfaqe duhet të jetë
+  // i faqeshënueshëm, "prapa"/"përpara" duhet të punojnë, dhe rifreskimi të mbajë tab-in.
+  // Përdorim history.pushState (jo router.push) → i menjëhershëm, pa round-trip te serveri;
+  // popstate e sinkronizon prapa. Init nga ?tab= bëhet pas mount-it (window s'ekziston në SSR).
+  const [tab, _setTab] = useState('dash')
+  const setTab = useCallback((id: string) => {
+    _setTab(id)
+    if (typeof window !== 'undefined') {
+      const url = id === 'dash' ? window.location.pathname : `${window.location.pathname}?tab=${id}`
+      window.history.pushState({ tab: id }, '', url)
+    }
+  }, [])
+  useEffect(() => {
+    const fromUrl = () => {
+      const t = new URLSearchParams(window.location.search).get('tab') || 'dash'
+      _setTab((ADMIN_TABS as readonly string[]).includes(t) ? t : 'dash')
+    }
+    fromUrl()
+    window.addEventListener('popstate', fromUrl)
+    return () => window.removeEventListener('popstate', fromUrl)
+  }, [])
   const [perms, setPerms] = useState<string[] | null>(null)
   const [myRole, setMyRole] = useState('')
   const [trends, setTrends] = useState<any>(null)

@@ -26,9 +26,9 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { exportCsv } from './exportCsv'
-import { dateShort } from '../../../lib/format'
+import { dateShort, moneyDec } from '../../../lib/format'
 
-const L = (n: any) => Number(n || 0).toLocaleString('sq-AL', { maximumFractionDigits: 2 })
+const L = (n: any) => moneyDec(n)  // determinist (1.234,56), pa ICU — si /billing
 const d = (x: any) => (x ? dateShort(x) : '—')
 
 const FILTRA: [string, string][] = [['', 'Të gjitha'], ['invoice', 'Fatura'], ['credit_note', 'Nota krediti']]
