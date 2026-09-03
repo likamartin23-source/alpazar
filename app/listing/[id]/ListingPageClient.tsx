@@ -644,6 +644,8 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--az-cream);}
         .wrap{max-width:480px;margin:0 auto;background:#fff;min-height:100vh;padding-bottom:${chatPanelOpen ? '300px' : '70px'};}
+        @media(min-width:768px){.wrap{max-width:760px}}
+        @media(min-width:1024px){.wrap{max-width:1080px}}
         .topbar{background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%);padding:10px 12px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
         /* klasa e vjeter e back-butonit u zevendesua nga komponenti i perbashket BackButton (44px). */
         .topbar-title{font-size:15px;font-weight:700;color:#111;flex:1;}

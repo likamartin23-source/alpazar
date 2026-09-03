@@ -445,7 +445,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   }
 
   if (loadError) return (
-    <div style={{ maxWidth: 480, margin: '0 auto', background: 'var(--az-cream)', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+    <div style={{ maxWidth: 800, margin: '0 auto', background: 'var(--az-cream)', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
       <div style={{ fontSize: 32, marginBottom: 12 }} aria-hidden="true">⚠️</div>
       <div style={{ fontSize: 14, color: '#C42B0F', marginBottom: 16, textAlign: 'center' }}>Nuk u ngarkua biznesi. Kontrollo lidhjen dhe provo sërish.</div>
       <button type="button" onClick={() => window.location.reload()} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
@@ -453,7 +453,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   )
 
   if (loading) return (
-    <div style={{ maxWidth: 480, margin: '0 auto', background: '#f8f8f8', minHeight: '100vh' }}>
+    <div style={{ maxWidth: 800, margin: '0 auto', background: '#f8f8f8', minHeight: '100vh' }}>
       <div style={{ background: 'linear-gradient(135deg,var(--az-yellow),var(--az-red))', aspectRatio: '16/7' }} />
       <div style={{ padding: 16 }}>
         <div style={{ height: 24, background: '#eee', borderRadius: 8, marginBottom: 10, width: '60%' }} />
@@ -463,7 +463,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   )
 
   if (!biz) return (
-    <div style={{ maxWidth: 480, margin: '0 auto', padding: 40, textAlign: 'center', background: 'var(--az-cream)', minHeight: '100vh' }}>
+    <div style={{ maxWidth: 800, margin: '0 auto', padding: 40, textAlign: 'center', background: 'var(--az-cream)', minHeight: '100vh' }}>
       <div style={{ fontSize: 48, marginBottom: 16 }} aria-hidden="true">🏢</div>
       <div style={{ fontWeight: 700, color: '#111', marginBottom: 16 }}>Biznesi nuk u gjet</div>
       <button type="button" onClick={() => window.history.back()} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 20px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>← Kthehu</button>
@@ -488,6 +488,8 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
           .bizp{background:#f2f2f2;min-height:100vh;padding-bottom:70px;}
           .bizp-shell{max-width:480px;margin:0 auto;}
+          @media(min-width:768px){.bizp-shell{max-width:760px}}
+          @media(min-width:1024px){.bizp-shell{max-width:1080px}}
           .vs-bar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:8px;background:#111;color:#fff;padding:8px 12px;font-size:12px;font-weight:700;}
           .vs-bar .vs-lbl{color:#bbb;}
           .vs-seg{display:inline-flex;background:#000;border-radius:999px;padding:3px;gap:2px;margin-left:auto;}
