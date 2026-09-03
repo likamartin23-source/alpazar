@@ -151,3 +151,59 @@ Shkaku i saktë: titulli vjen nga `layout.tsx` për rrugë. **8 nga 11 rrugët e
 2. *"Adresa e kompanisë mungon — e detyrueshme në faturë"*
 3. *"**PIN-i i panelit është ende i parazgjedhur** — ndryshoje sot"* — përputhet me `CLAUDE.md`: `admin_pin = 000000`, në prodhim.
 **Kërkohet:** (1) dhe (2) i takojnë pronarit (të dhëna kompanie). (3) është siguri e mirëfilltë dhe rri e hapur prej kohësh. Sistemi po e thotë vetë çdo ditë; askush nuk e ka mbyllur.
+
+---
+## T-015 · RAPORT · 2026-09-03 · për CLOUD · gjendja: HAPUR
+**Lënda:** **Defekti më i rëndë i gjetur deri tani** — paneli i palosur i `/search` gëlltiste 26 ndalesa fokusi. Rregulluar dhe provuar. **axe NUK e kap këtë klasë.**
+
+**Dëshmia:**
+- Duke lëvizur me Tab te `/search`: **26 nga 60 ndalesat** binin BRENDA panelit të filtrave TË PALOSUR.
+- Gjendja e mbyllur ishte `max-height:0` + `opacity:0` + `pointer-events:none`, por `visibility:visible`, **pa `inert`, pa `aria-hidden`**.
+- Asnjëra prej atyre tri vetive nuk e heq elementin nga rendi i tabit apo nga pema e aksesueshmërisë.
+- Pasoja: përdoruesi me tastierë humbte fokusin në 26 kontrolle që s'i shihte dhe s'i klikonte dot — pa asnjë tregues se ku ndodhej. Lexuesi i ekranit i lexonte të 17 çipat e kategorive **dy herë**, sepse i njëjti grup ekziston edhe te rripi gjithmonë i dukshëm.
+- Kritere të prekura: **2.4.3** (rendi i fokusit), **2.4.7** (fokusi i dukshëm), **1.3.2**, **4.1.2**.
+
+**Pse axe s'e kapi:** `aria-hidden-focus` shkrep vetëm kur `aria-hidden="true"` përmban fokusues. Këtu `aria-hidden` **nuk ishte vendosur fare**, ndaj rregulli s'kishte pse të shkrepte. E gjeti matja e vetë projektit, jo mjeti standard.
+
+**Rregullimi:** `visibility:hidden` në gjendjen e palosur (`app/search/page.tsx:172`). E heq nga rendi i tabit në ÇDO shfletues. `inert` do të ishte më i pastër, por s'e mbulon browserslist-in e projektit (chrome≥90, safari≥14). Vonesa te `visibility` e lë animacionin e mbylljes të përfundojë — **pamja nuk ndryshon fare**.
+**Provë:** 26 → **0**, matur me të njëjtin skript para/pas. Commit `64deade`.
+`tsc`: 5 = 5. Roja: e gjelbër.
+
+**Kërkohet:** shkrirje. Është defekt aksesueshmërie me ndikim real, jo kozmetik.
+
+---
+## T-016 · RAPORT · 2026-09-03 · për CLOUD · gjendja: HAPUR
+**Lënda:** Klasa e defektit u mbyll — **saktësisht një rast në gjithë kodin**, përfshirë faqet pas hyrjes.
+
+**Dëshmia:** kërkim i modelit "e fshehur vizualisht por i fokusueshëm" në tërë `app/`:
+| Vendi | Vlerësimi |
+|---|---|
+| `app/search/page.tsx:172` | **defekti** — rregulluar te `64deade` |
+| `app/search/results/page.tsx:714` | **i pastër** — `{filtersOpen && (…)}`, pra as nuk montohet kur është i mbyllur; plus `role="dialog"`, `aria-modal`, Escape |
+| `.swipe-icon` te `app/messages/page.tsx:817` | **i pastër** — dekorativ, `pointer-events:none`, pa fokusues brenda |
+
+Kjo e mbulon edhe `/listing/new`, `/biznese/new`, `/admin`, `/profile/analytics` — që Playwright s'i arrin dot pa sesion, por kodi i tyre nuk e ka modelin.
+**Kërkohet:** asgjë — për dijeni.
+
+---
+## T-017 · RAPORT · 2026-09-03 · për CLOUD · gjendja: HAPUR
+**Lënda:** Katër kritere WCAG që nuk ishin prekur kurrë — rezultati është **kryesisht i mirë**.
+
+| Kriteri | Matja | Rezultati |
+|---|---|---|
+| **1.4.4** Zmadhim 200% | 10 rrugë @640px CSS | **0/10 me dalje horizontale** |
+| **2.4.7** Fokusi i dukshëm | 220 ndalesa Tab, 10 rrugë | **7 pa tregues** — 6 janë `<video>` (kontrolle amtare), 1 është iframe-i i Google Sign-In. **Zero nga kontrollet tona.** |
+| **1.4.11** Kontrasti i treguesit | i njëjti kalim | asnjë kontroll i yni pa tregues |
+| **2.3.3** `prefers-reduced-motion` | 6 rrugë me `reducedMotion:'reduce'` | **0 animacione vazhdojnë** — respektohet plotësisht |
+
+**Gjendjet interaktive** (22 rrugë × 2 gjerësi, 22 hapës të aktivizuar — tabe, akordeone, panele):
+**0 gjendje të hapura sjellin dalje horizontale, kontrolle pa emër, ose objektiva më të vegjël.**
+
+**Kërkohet:** asgjë. Kjo është punë e mirë dhe duhet regjistruar si e tillë.
+
+---
+## T-018 · BLLOKIM · 2026-09-03 · për CLOUD · gjendja: HAPUR
+**Lënda:** Gjendjet interaktive TË FAQEVE PAS HYRJES nuk u matën me instrument.
+**Dëshmia:** `/listing/new` (shpall), `/biznese/new`, `/profile/analytics`, `/admin`, `/oferta` — Playwright-i im nuk ka sesion, ndaj marrin guaskën e hyrjes. I pashë me sy përmes sesionit të pronarit (T-008), por **klikimet mbi nënbutona nuk i provova dot**: `javascript_tool` i ekstensionit ngriu renderuesin çdo herë.
+Mbulesa e pjesshme që arrita: kërkimi i klasës së defektit në kod (T-016) tregon se modeli nuk ekziston aty.
+**Kërkohet:** nëse do mbulim të plotë të hapave të formës "Shpall", duhet ose dyfishi lokal i regjistruar te `scripts/`, ose ti me sesion.
