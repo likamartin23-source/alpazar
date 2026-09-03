@@ -1,0 +1,21 @@
+-- Autopsi serioze (3 shtator 2026) — instrumenti: PROVA E SHKRIMIT si `authenticated`.
+-- Gjetja: `authenticated` kishte GRANT UPDATE+INSERT mbi listings.moderation_score dhe ASNJE
+-- roje nuk e rikthente (ndryshe nga is_premium/rank_tier, qe i deriveron guard_listing_is_premium()
+-- ne cdo shkrim). Matur empirikisht mbi shpalljen e VET perdoruesit:
+--   PARA(is_premium=f, rank_tier=0, moderation_score=0)
+--   PAS (is_premium=f, rank_tier=0, moderation_score=100)  ← vetem score-i mbeti.
+-- Ndikimi: sinjali i moderimit (prove per adminin/AI) ndotet nga vete subjekti. Dukshmeria
+-- gatohet nga moderation_status (i MBROJTUR: pa GRANT UPDATE → "permission denied for table
+-- listings"), ndaj s'ka anashkalim moderimi as perfitim i paguar. Eshte defekt INTEGRITETI
+-- (klasa §2.6 prove e pandryshueshme / §9.1 F2 "mbrojtja te fusha, jo te rruga").
+-- Instrumenti i sakte i rregullimit = TE DREJTAT E KOLONAVE (§1.5). Heqja eshte e sigurt:
+--   · ASNJE rruge klienti s'e shkruan moderation_score — git grep 0 ne working tree DHE origin/main;
+--     payload-i i /listing/new nuk e permban.
+--   · Edge-function `moderate-listing` e shkruan me service_role → i paprekur nga grant-et e kolonave.
+--   · `authenticated` s'ka UPDATE tabelar (provuar), ndaj revoke-u kolonor eshte EFEKTIV (jo si §1.1).
+-- Verifikuar PAS-aplikimit kunder sulmit (§9.3): update i moderation_score si authenticated →
+--   "permission denied for table listings", vlera mbeti 0. Kontroll-negativ: title self-update = OK.
+-- I kthyeshem: grant update (moderation_score), insert (moderation_score) on public.listings to authenticated;
+-- Aplikuar live me apply_migration me te njejtin emer.
+revoke update (moderation_score) on public.listings from authenticated;
+revoke insert (moderation_score) on public.listings from authenticated;

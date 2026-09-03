@@ -23,6 +23,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { DosjaLigjore } from './DosjaLigjore'
+import { dateShort } from '../../../lib/format'
 
 const URGJENCA: Record<string, [string, string]> = {
   kritike: ['Kritike', '#C42B0F'], larte: ['E lartë', '#BA7517'],
@@ -391,7 +392,7 @@ export function QueueTab() {
                 {' '}· bazë: {v.lloji}
               </div>
               <div style={{ fontSize: 10.5, color: '#555', marginTop: 3 }}>
-                Dërguar më {v.derguar_me ? new Date(v.derguar_me).toLocaleDateString('sq-AL') : '—'}
+                Dërguar më {v.derguar_me ? dateShort(v.derguar_me) : '—'}
                 {v.ka_dokument ? ' · ka dokument të bashkëngjitur' : ''}
               </div>
               <div style={{ marginTop: 6 }}>

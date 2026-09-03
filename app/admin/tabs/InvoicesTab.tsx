@@ -26,9 +26,10 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { exportCsv } from './exportCsv'
+import { dateShort } from '../../../lib/format'
 
 const L = (n: any) => Number(n || 0).toLocaleString('sq-AL', { maximumFractionDigits: 2 })
-const d = (x: any) => (x ? new Date(x).toLocaleDateString('sq-AL') : '—')
+const d = (x: any) => (x ? dateShort(x) : '—')
 
 const FILTRA: [string, string][] = [['', 'Të gjitha'], ['invoice', 'Fatura'], ['credit_note', 'Nota krediti']]
 

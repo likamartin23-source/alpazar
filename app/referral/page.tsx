@@ -7,6 +7,7 @@ import { supabase } from '../../lib/supabase'
 import { LEVELS } from '../components/Badges'
 import { SharePanel } from '../components/SharePanel'
 import { SITE_URL as SITE } from '../../lib/siteConfig'
+import { dateShort } from '../../lib/format'
 
 // Shkalla e niveleve vjen nga `LEVELS` te components/Badges (burim i vetëm) —
 // që etiketat, ikonat dhe ngjyrat të jenë identike kudo (harmoni).
@@ -368,7 +369,7 @@ export default function ReferralPage() {
                         </div>
                         <div className="ref-info">
                           <strong>{r.full_name || r.username || 'Përdorues'}</strong>
-                          <span>U regjistrua {new Date(r.created_at).toLocaleDateString('sq-AL')}</span>
+                          <span>U regjistrua {dateShort(r.created_at)}</span>
                         </div>
                         <div className="ref-pts">+50 pts</div>
                       </div>

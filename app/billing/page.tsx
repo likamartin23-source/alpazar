@@ -7,7 +7,7 @@ import { supabase } from '../../lib/supabase'
 import { useAlpazar } from '../../lib/context'
 import { BILLING_CSS, EVENT_LABELS, StatusBadge } from './ui'
 import { PlansGrid, MyInvoices, BoostStrip } from './parts'
-import { moneyDec } from '../../lib/format'
+import { moneyDec, dateShort } from '../../lib/format'
 
 export default function BillingPage() {
   const { user, authReady } = useAlpazar()
@@ -67,7 +67,9 @@ export default function BillingPage() {
      mban te njejten sjellje ne te tria vendet ku shfaqet ajo date. */
   const dataOse = (v: any, ndryshe = 'pa datë të caktuar') => {
     const d = v ? new Date(v) : null
-    return d && !isNaN(d.getTime()) ? d.toLocaleDateString('sq-AL') : ndryshe
+    // dateShort (determinist) në vend të toLocaleDateString('sq-AL'): ky i fundit varet
+    // nga ICU-ja e mjedisit (Chromium i kontejnerit s'e njeh 'sq-AL' → daton anglisht).
+    return d && !isNaN(d.getTime()) ? dateShort(d) : ndryshe
   }
   const pct = daysLeft != null ? Math.max(0, Math.min(100, Math.round((daysLeft / totalDays) * 100))) : 0
 
@@ -217,7 +219,7 @@ export default function BillingPage() {
               {events.map((e: any) => (
                 <div key={e.id} className="ev">
                   <span>{EVENT_LABELS[e.type] || e.type}</span>
-                  <span className="muted">{new Date(e.created_at).toLocaleDateString('sq-AL')}</span>
+                  <span className="muted">{dateShort(e.created_at)}</span>
                 </div>
               ))}
             </div>

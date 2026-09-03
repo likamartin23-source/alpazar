@@ -17,8 +17,9 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../../../lib/supabase'
+import { dateShort } from '../../../lib/format'
 
-const d = (x: any) => (x ? new Date(x).toLocaleDateString('sq-AL') : '—')
+const d = (x: any) => (x ? dateShort(x) : '—')
 const L = (n: any) => Number(n || 0).toLocaleString('sq-AL', { maximumFractionDigits: 2 })
 
 const FILTRA: [string, string][] = [

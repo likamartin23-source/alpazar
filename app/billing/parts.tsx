@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
-import { moneyDec } from '../../lib/format'
+import { moneyDec, dateShort } from '../../lib/format'
 
 // Çmim plani gjithmonë me 2 shifra (EAA), determinist (moneyDec te lib/format).
 const L = (n: any) => moneyDec(n)
@@ -23,7 +23,7 @@ export function BoostStrip({ boost }: any) {
       </div>
       {active && boost.current_period_end && (
         <div className="muted" style={{ marginTop: 8 }}>
-          Shikueshmëri maksimale deri më <b>{new Date(boost.current_period_end).toLocaleDateString('sq-AL')}</b> ({boost.days_left} ditë).
+          Shikueshmëri maksimale deri më <b>{dateShort(boost.current_period_end)}</b> ({boost.days_left} ditë).
         </div>
       )}
     </div>
@@ -109,7 +109,7 @@ export function MyInvoices() {
               )}
             </div>
             <div className="muted" style={{ fontSize: 11, marginTop: 2 }}>
-              {i.plan_name}{i.issued_at ? ` · ${new Date(i.issued_at).toLocaleDateString('sq-AL')}` : ''}
+              {i.plan_name}{i.issued_at ? ` · ${dateShort(i.issued_at)}` : ''}
             </div>
           </div>
           <div style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>

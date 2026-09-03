@@ -22,6 +22,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import { dateShort } from '../../lib/format'
 
 const LLOJET: [string, string][] = [
   ['business_registration', 'Ekstrakt QKB / regjistrim biznesi'],
@@ -86,7 +87,7 @@ export default function VerificationBox({ businessId, nipt }: { businessId?: str
       ) : k && k.status === 'pending' ? (
         <div role="status" style={{ background: '#FFF8E1', border: '1px solid #FFB74D', borderRadius: 10, padding: '10px 14px', fontSize: 12, color: '#8A6D00', lineHeight: 1.6 }}>
           Kërkesa jote është <strong>në shqyrtim</strong> — dërguar më{' '}
-          {new Date(k.derguar_me).toLocaleDateString('sq-AL')}. Do të marrësh njoftim me vendimin dhe arsyen.
+          {dateShort(k.derguar_me)}. Do të marrësh njoftim me vendimin dhe arsyen.
         </div>
       ) : (
         <>

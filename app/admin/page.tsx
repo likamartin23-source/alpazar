@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic'
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAlpazar } from '../../lib/context'
+import { dateShort, clockTime } from '../../lib/format'
 import { useRealtimeTable } from '../../hooks/useRealtimeTable'
 import { PlansTab } from './tabs/PlansTab'
 import { LimitsTab } from './tabs/LimitsTab'
@@ -241,7 +242,7 @@ function AIHealthTab() {
               {ev.category && <span style={{ fontSize: 11, color: '#555', fontWeight: 600 }}>{ev.category}</span>}
               <span style={{ fontSize: 10, color: '#aaa' }}>×{ev.count} · {ev.source}</span>
               {ev.is_actionable && <span style={{ fontSize: 10, color: '#1D9E75', fontWeight: 700 }}>● e rregullueshme</span>}
-              <span style={{ marginLeft: 'auto', fontSize: 10, color: '#bbb' }}>{ev.last_seen_at ? new Date(ev.last_seen_at).toLocaleString('sq-AL') : ''}</span>
+              <span style={{ marginLeft: 'auto', fontSize: 10, color: '#bbb' }}>{ev.last_seen_at ? `${dateShort(ev.last_seen_at)} ${clockTime(ev.last_seen_at)}` : ''}</span>
             </div>
             <div style={{ fontSize: 12, fontWeight: 700, color: '#111', wordBreak: 'break-word' }}>{ev.message}</div>
             {ev.url && <div style={{ fontSize: 10, color: '#888', marginTop: 2 }}>{ev.url}</div>}
@@ -716,7 +717,7 @@ export default function Admin() {
                               <td>{r.plan === 'yearly' ? 'Vjetor' : 'Mujor'}</td>
                               <td style={{ fontWeight: 700, color: '#1D9E75' }}>{r.amount} ALL</td>
                               <td>{r.payment_methods?.name || '—'}</td>
-                              <td style={{ color: '#888' }}>{new Date(r.created_at).toLocaleDateString('sq-AL')}</td>
+                              <td style={{ color: '#888' }}>{dateShort(r.created_at)}</td>
                               <td>
                                 <span className={`badge ${r.status === 'approved' ? 'ba' : r.status === 'pending' ? 'bp' : 'bd'}`}>
                                   {r.status === 'approved' ? 'Aprovuar' : r.status === 'rejected' ? 'Refuzuar' : 'Në pritje'}
@@ -773,7 +774,7 @@ export default function Admin() {
                               <td style={{ fontWeight:700, color:'#1D9E75' }}>{p.amount_eur}€</td>
                               <td>{p.payment_method || '—'}</td>
                               <td><span className={`badge ${p.status==='active'?'ba':p.status==='pending'?'bp':'bd'}`}>{p.status}</span></td>
-                              <td style={{ color:'#888' }}>{new Date(p.created_at).toLocaleDateString('sq-AL')}</td>
+                              <td style={{ color:'#888' }}>{dateShort(p.created_at)}</td>
                               <td>
                                 {p.status!=='active' && <button type="button" aria-label="Aktivizo" className="btn btn-green" onClick={() => updateStatus(p.id,'active',p.user_id)}>✓</button>}
                                 {p.status==='active' && <button type="button" aria-label="Pezullo" className="btn btn-orange" onClick={() => updateStatus(p.id,'suspended',p.user_id)}>⏸</button>}
@@ -835,7 +836,7 @@ export default function Admin() {
                                   <td>{t.provider}</td>
                                   <td><span className={`badge ${t.status === 'completed' ? 'ba' : (t.status === 'review' || t.status === 'grant_failed') ? 'bd' : 'bp'}`}>{t.status}</span></td>
                                   <td style={{ fontSize: 11, color: '#888' }}>{t.review_reason || (t.grant_error ? 'grant_error' : '—')}</td>
-                                  <td style={{ color: '#888' }}>{new Date(t.created_at).toLocaleDateString('sq-AL')}</td>
+                                  <td style={{ color: '#888' }}>{dateShort(t.created_at)}</td>
                                 </tr>
                               ))}
                           </tbody>

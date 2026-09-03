@@ -129,11 +129,12 @@ export default function NotificationsPage() {
     if (!error) { setNotifs(prev => prev.map(n => ({ ...n, is_read: true }))); refreshUnread(user.id) }
   }, [user, refreshUnread])
 
-  const handleClick = useCallback((n: Notif) => {
+  // Shënon njoftimin si të lexuar (optimist). Navigimi te /notifications/[id] e bën
+  // vetë ANKORA `<a href>` te NotifRow — që rreshti të jetë LIDHJE e vërtetë: e ndashme,
+  // hapet në skedë të re, kopjohet, dhe lexuesi i ekranit e njofton si "link" me emër
+  // (matje terminali T-032: më parë rreshti dilte `generic`/<div>, pa href, pa rol).
+  const markSeen = useCallback((n: Notif) => {
     if (!n.is_read) markRead(n.id)
-    // Hap NJOFTIMIN E PLOTË te /notifications/[id] (jo drejt te `link`) — që përdoruesi
-    // ta lexojë njoftimin, e prej andej të vazhdojë te konteksti (urdhër pronari).
-    window.location.href = `/notifications/${n.id}`
   }, [markRead])
 
   // Not logged in
@@ -221,7 +222,7 @@ export default function NotificationsPage() {
       {!loading && notifs.length > 0 && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
           {notifs.map((n, idx) => (
-            <NotifRow key={n.id} n={n} onClick={handleClick} onDismiss={dismiss} isLast={idx === notifs.length - 1} />
+            <NotifRow key={n.id} n={n} onSeen={markSeen} onDismiss={dismiss} isLast={idx === notifs.length - 1} />
           ))}
         </div>
       )}
@@ -229,20 +230,19 @@ export default function NotificationsPage() {
   )
 }
 
-function NotifRow({ n, onClick, onDismiss, isLast }: { n: Notif; onClick: (n: Notif) => void; onDismiss: (id: string) => void; isLast: boolean }) {
+function NotifRow({ n, onSeen, onDismiss, isLast }: { n: Notif; onSeen: (n: Notif) => void; onDismiss: (id: string) => void; isLast: boolean }) {
   const icon = TYPE_ICON[n.type] ?? '🔔'
-  const isClickable = true // çdo njoftim hapet i plotë te /notifications/[id]
 
+  // Rreshti = ANKORË e vërtetë `<a href>` (jo `<div onClick>`): e ndashme, hapet në skedë
+  // të re, kopjohet, dhe lexuesi i ekranit e njofton si "link" me emër (teksti brenda).
+  // Butoni "Fshij" rri SIBLING i ankorës — kurrë brenda saj — që të mos krijohet
+  // interaktив-brenda-interaktivi (axe: nested-interactive).
   return (
     <div
-      onClick={() => onClick(n)}
-      tabIndex={isClickable ? 0 : undefined}
-      onKeyDown={isClickable ? (e) => { if (e.key === 'Enter' || e.key === ' ') onClick(n) } : undefined}
       style={{
-        display: 'flex', gap: 14, padding: '14px 16px',
+        display: 'flex', alignItems: 'stretch',
         background: n.is_read ? '#fff' : 'var(--az-cream)',
         borderBottom: isLast ? 'none' : '1px solid #f0e6b0',
-        cursor: isClickable ? 'pointer' : 'default',
         transition: 'background .15s',
         position: 'relative',
       }}
@@ -251,10 +251,18 @@ function NotifRow({ n, onClick, onDismiss, isLast }: { n: Notif; onClick: (n: No
       {!n.is_read && (
         <div style={{
           position: 'absolute', left: 6, top: '50%', transform: 'translateY(-50%)',
-          width: 6, height: 6, borderRadius: '50%', background: 'var(--az-yellow)',
+          width: 6, height: 6, borderRadius: '50%', background: 'var(--az-yellow)', zIndex: 1,
         }} />
       )}
 
+      <a
+        href={`/notifications/${n.id}`}
+        onClick={() => onSeen(n)}
+        style={{
+          flex: 1, minWidth: 0, display: 'flex', gap: 14, padding: '14px 16px',
+          textDecoration: 'none', color: 'inherit', cursor: 'pointer',
+        }}
+      >
       {/* Avatar / icon */}
       <div style={{ flexShrink: 0, position: 'relative' }}>
         {n.image_url ? (
@@ -315,20 +323,21 @@ function NotifRow({ n, onClick, onDismiss, isLast }: { n: Notif; onClick: (n: No
         )}
       </div>
 
-      {/* Dismiss / Chevron */}
-      <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 4 }}>
-        {isClickable && (
-          <i className="ti ti-chevron-right" style={{ fontSize: 16, color: '#ccc' }} aria-hidden="true" />
-        )}
-        <button
-          type="button"
-          onClick={e => { e.stopPropagation(); onDismiss(n.id) }}
-          style={{ background: 'none', border: 'none', color: '#ccc', cursor: 'pointer', padding: '2px 4px', fontSize: 14, lineHeight: 1, display: 'flex', alignItems: 'center', minWidth: 44, minHeight: 44, justifyContent: 'center' }}
-          aria-label="Fshij njoftimin"
-        >
-          <i className="ti ti-x" style={{ fontSize: 14 }} aria-hidden="true" />
-        </button>
+      {/* Chevron — fund i pjesës së navigueshme, brenda ankorës */}
+      <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+        <i className="ti ti-chevron-right" style={{ fontSize: 16, color: '#ccc' }} aria-hidden="true" />
       </div>
+      </a>
+
+      {/* Fshij — SIBLING i ankorës (jo brenda saj) */}
+      <button
+        type="button"
+        onClick={() => onDismiss(n.id)}
+        style={{ background: 'none', border: 'none', color: '#ccc', cursor: 'pointer', padding: '0 8px', fontSize: 14, lineHeight: 1, display: 'flex', alignItems: 'center', minWidth: 44, minHeight: 44, justifyContent: 'center', flexShrink: 0 }}
+        aria-label="Fshij njoftimin"
+      >
+        <i className="ti ti-x" style={{ fontSize: 14 }} aria-hidden="true" />
+      </button>
     </div>
   )
 }
