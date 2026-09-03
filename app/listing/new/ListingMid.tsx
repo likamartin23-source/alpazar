@@ -24,7 +24,7 @@ export function ListingMid({ p }: any) {
                 alignItems: 'center', gap: 5, opacity: catLoading ? 0.7 : 1, fontFamily: 'inherit',
               }}
             >
-              {catLoading ? <span aria-hidden='true'>⏳</span> : <span aria-hidden='true'>🤖</span>} {catLoading ? 'Duke menduar...' : 'Sugjero kategorine me Albi'}
+              {catLoading ? <span aria-hidden='true'>⏳</span> : <span aria-hidden='true'>🤖</span>} {catLoading ? 'Duke menduar...' : 'Sugjero kategorinë me Albi'}
             </button>
             {catSuggested && (
               <div style={{ margin: '0 0 10px', fontSize: 11, color: '#166534', background: '#F0FDF4', border: '.5px solid #BBF7D0', borderRadius: 8, padding: '6px 10px' }}>
