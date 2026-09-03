@@ -52,3 +52,34 @@ INSTRUMENTEVE, jo me kohën.
 
 Kush bllokohet → e shkruan si **BLLOKIM me rrugëdalje** te kanali, jo si dështim.
 Dëshmi, jo pohim. Numrat e shtëpisë raportohen si të tillë.
+
+## 7. Konteksti ligjor i punës (urdhër pronari — Shqipëri PRIMARE, BE SEKONDARE)
+Çdo vendim peshohet njëkohësisht ndaj kuadrit ligjor. **Ligjet e Shqipërisë kanë
+përparësi; ligjet e BE-së janë referencë sekondare.** Kur ndeshen, zbatohet ai
+shqiptar; ku shqiptari hesht, plotëson BE-ja.
+
+### Shqipëri (primar)
+- **9902/2008** — mbrojtja e konsumatorit: informim parakontraktor, çmimi në **lekë**
+  (neni 9/4), e drejta **14-ditore** e heqjes dorë (nenet 37/1–37/8).
+- **10128/2009** — tregtia elektronike: detyrimet e ndërmjetësit, masat ndaj përmbajtjes,
+  fshirja e butë e llogarisë (neni 20/3), rastet kritike (neni 20/2).
+- **124/2024** — mbrojtja e të dhënave personale (**zëvendëson 9887/2008, të shfuqizuar**):
+  regjistri i përpunimit (n.27), cenimi 72-orësh (n.29), DPO (n.33/1/c), transferimet
+  ndërkombëtare (n.26,39–42).
+- **9918/2008** — komunikimet elektronike: pëlqimi për cookie (**neni 123/6**).
+- **93/2014** — aksesueshmëria (bazë kombëtare; harmonizohet me EN 301 549).
+- **10273/2010** — vlera provuese e regjistrit (`audit_logs` i pandryshueshëm, n.6,12).
+- **87/2019** — fatura fiskale: **NIPT + adresë kompanie** të detyrueshme.
+- **Fiskalizimi** — fatura brenda **48 orësh** (leshim→DPT→NIVF/NSLF).
+
+### BE (sekondar — referencë/harmonizim)
+- **GDPR (EU) 2016/679** — mbrojtja e të dhënave (paralel me 124/2024).
+- **EAA 2019/882 → EN 301 549 → WCAG 2.1 AA** — aksesueshmëria (prekje 24px AA,
+  kontrast 4.5:1, i zbatueshëm nga 28.06.2025). Synim i brendshëm: 44px (AAA).
+- **2002/58 (ePrivacy)** — cookie/komunikime elektronike.
+- **Direktiva 2011/83 (të drejtat e konsumatorit)** — heqja dorë 14-ditore (paralel me 9902/2008).
+
+### Zbatimi
+- Asnjë veçori evazioni fiskal; ndërtohet GATI për konformitet.
+- Fshehja automatike ≠ heqje; vendimet me pasoja të rënda kërkojnë njeri + arsyetim (124/2024).
+- Sekretet/çelësat/PIN-et: vetëm pronari.
