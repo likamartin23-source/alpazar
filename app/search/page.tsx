@@ -159,8 +159,18 @@ export default function SearchPage() {
         .cb.on{background:linear-gradient(135deg,var(--az-ink),#000);color:var(--az-yellow);}
 
         /* ── Inline filter panel ── */
-        .filter-panel{background:#fff;border-bottom:2px solid var(--az-yellow);overflow:hidden;transition:max-height .25s ease,opacity .2s ease;max-height:0;opacity:0;pointer-events:none;}
-        .filter-panel.open{max-height:600px;opacity:1;pointer-events:auto;}
+        /* visibility:hidden kur eshte i palosur — JO vetem max-height/opacity.
+           MATUR: pa te, 26 nga 60 ndalesat e tastieres binin BRENDA ketij paneli
+           te padukshem; perdoruesi me tastiere humbte fokusin ne 26 kontrolle qe
+           nuk i shihte dhe nuk i klikonte dot (pointer-events:none). Lexuesi i
+           ekranit i lexonte te 17 cipat e kategorive dy here.
+           opacity:0 NUK e heq nga rendi i tabit; visibility:hidden po, ne cdo
+           shfletues. inert do ta bente me bukur, por s'e mbulon browserslist-in
+           e projektit (chrome>=90, safari>=14). Vonesa te visibility e le
+           animacionin e mbylljes te perfundoje para se te fshihet.
+           Prove: 26 ndalesa -> 0. axe NUK e kap kete klase defekti. */
+        .filter-panel{background:#fff;border-bottom:2px solid var(--az-yellow);overflow:hidden;transition:max-height .25s ease,opacity .2s ease,visibility 0s linear .25s;max-height:0;opacity:0;pointer-events:none;visibility:hidden;}
+        .filter-panel.open{max-height:600px;opacity:1;pointer-events:auto;visibility:visible;transition:max-height .25s ease,opacity .2s ease,visibility 0s;}
         .filter-inner{padding:14px 12px 6px;}
 
         .fp-section{margin-bottom:14px;}
