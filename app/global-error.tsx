@@ -1,10 +1,15 @@
 'use client'
 import * as Sentry from '@sentry/nextjs'
 import { useEffect } from 'react'
+import { reportError } from '../lib/monitor'
 
 export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
+    // GARANCIA: raporto në TË DYJA sistemet (urdhër pronari) — Sentry (i jashtëm)
+    // DHE health_events → paneli i adminit (real-time). Rrëzimet rrënjë s'shkonin
+    // te paneli më parë.
     Sentry.captureException(error)
+    reportError(error, 'boundary')
   }, [error])
 
   return (

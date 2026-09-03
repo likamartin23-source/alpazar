@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import * as Sentry from '@sentry/nextjs'
 import { reportError } from '../lib/monitor'
 
 // Si te `not-found.tsx`: kjo faqe render-ohet BRENDA layout-it rrenje, ndaj
@@ -13,7 +14,8 @@ export default function GlobalError({
   error: Error & { digest?: string }
   reset: () => void
 }) {
-  useEffect(() => { console.error('[App Error]', error); reportError(error, 'route') }, [error])
+  // GARANCIA: të dyja sistemet (urdhër pronari) — paneli (health_events) DHE Sentry.
+  useEffect(() => { console.error('[App Error]', error); reportError(error, 'route'); Sentry.captureException(error) }, [error])
 
   return (
     <div style={{ background: 'var(--az-cream)' }}>
