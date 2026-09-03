@@ -119,7 +119,7 @@ export function IdentityBadges({
       )}
       {rating && rating.count > 0 && (
         <span style={chip('#FFF8E1', '#7B5000', '#F5C84255')} aria-label={`Vlerësimi ${rating.avg.toFixed(1)} nga ${rating.count}`}>
-          <span aria-hidden="true">★</span> {rating.avg.toFixed(1)} <span style={{ fontWeight: 600, opacity: .8 }}>({rating.count})</span>
+          <span aria-hidden="true">★</span> {rating.avg.toFixed(1)} <span style={{ fontWeight: 600 }}>({rating.count})</span>
         </span>
       )}
       {(density === 'full' || pts >= 100) && (

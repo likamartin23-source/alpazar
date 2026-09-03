@@ -40,7 +40,7 @@ export function AgeGate({ children }: { children: React.ReactNode }) {
           <div style={{ fontSize: 14, fontWeight: 700, color: '#fff', textAlign: 'center' }}>
             Para se të vazhdosh, konfirmo moshën tënde
           </div>
-          <div style={{ fontSize: 12, color: '#555', textAlign: 'center', maxWidth: 280, lineHeight: 1.6 }}>
+          <div style={{ fontSize: 12, color: '#9A9A9A', textAlign: 'center', maxWidth: 280, lineHeight: 1.6 }}>
             Kjo platformë lejon vetëm përdorues mbi moshën 16 vjeç sipas kushteve tona të shërbimit dhe kërkesave ligjore.
           </div>
           <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
@@ -60,7 +60,7 @@ export function AgeGate({ children }: { children: React.ReactNode }) {
               type="button"
               onClick={() => { window.location.href = 'https://www.google.com' }}
               style={{
-                background: 'none', color: '#666', border: '1px solid #333',
+                background: 'none', color: '#9A9A9A', border: '1px solid #333',
                 borderRadius: 12, padding: '14px 24px',
                 fontWeight: 600, fontSize: 14, cursor: 'pointer',
               }}
@@ -68,9 +68,9 @@ export function AgeGate({ children }: { children: React.ReactNode }) {
               Jo, largohem
             </button>
           </div>
-          <div style={{ fontSize: 12, color: '#444', textAlign: 'center', maxWidth: 280, marginTop: 4, lineHeight: 1.5 }}>
+          <div style={{ fontSize: 12, color: '#9A9A9A', textAlign: 'center', maxWidth: 280, marginTop: 4, lineHeight: 1.5 }}>
             Duke klikuar "Po", konfirmon se ke mbushur 16 vjeç dhe pranon{' '}
-            <a href="/kushtet" style={{ color: '#C42305', textDecoration: 'underline' }}>Kushtet e Shërbimit</a>.
+            <a href="/kushtet" style={{ color: '#F5C842', textDecoration: 'underline' }}>Kushtet e Shërbimit</a>.
           </div>
         </div>
       )}

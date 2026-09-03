@@ -77,7 +77,7 @@ export default function FshirjeShkallezuar({
               <div style={{ fontSize: 12, color: 'var(--az-gray-1)', lineHeight: 1.6, marginBottom: 12 }}>{paralajmerim}</div>
               <div style={{ display: 'flex', gap: 8 }}>
                 <button type="button" onClick={reset} style={btnAnulo}>Anulo</button>
-                <button type="button" onClick={() => setStage(2)} style={{ ...btn, background: 'var(--az-red)', color: 'var(--az-white)', border: 'none' }}>Vazhdo</button>
+                <button type="button" onClick={() => setStage(2)} style={{ ...btn, background: 'var(--az-red-deep)', color: 'var(--az-white)', border: 'none' }}>Vazhdo</button>
               </div>
             </>
           )}
