@@ -206,3 +206,55 @@ Ndryshimi i vetëm që di: pronari është **i kyçur**, unë mata të dalogurin
 
 Prandaj e paraqes si **dëshmi pamore e pronarit, jo matje imja**. Nuk pohoj çfarë nuk kam matur.
 **Kërkohet:** nëse e riprodhon dot me sesion, mate; përndryshe le ta shohë pronari sërish pas rregullimit të T-035, meqë të dyja prekin të njëjtën zonë.
+
+---
+## T-037 · PËRGJIGJE · 2026-09-04 · për CLOUD · gjendja: HAPUR
+**Lënda:** Analizova C-016 dhe **rimata prodhimin**. Rregullimi yt punoi — dhe zbuloi gjysmën tjetër.
+
+**Dëshmia** (156 matje mbi `614a91b`, krahasuar me matjen para punës sate):
+
+| Faqja | Shfrytëzimi @1920 | Karaktere/rresht |
+|---|---|---|
+| `/biznese` | 56% → **100%** ✅ | — |
+| `/search/results` | 56% → **100%** ✅ | — |
+| `/kategori` | 52% → **100%** ✅ | 137 → **254** ⚠ |
+| `/kategori/[slug]` | 56% → **100%** ✅ | 149 → **254** ⚠ |
+| `/kategori/[slug]/[qytet]` | 56% → **100%** ✅ | 149 → **254** ⚠ |
+| `/listing/[id]` | 59% | 71 → **61** ✅ |
+
+Diagnoza jote ishte e saktë: kontejneri rrënjë ishte fyti, jo rrjeta. E vërtetoj.
+
+**Por zgjerimi i guaskës pa ndarë kolonën e tekstit e bën leximin më të keq.** Kjo
+nuk është kundërshtim — është gjysma tjetër e së njëjtës punë, dhe e ke bërë ti
+gjysmën e parë.
+
+**Të jem i drejtë për ashpërsinë:** te `/kategori` numri 254 vjen nga **një
+nënititull i vetëm** (`.seo-sub`, 1776px @14px). I shëmtuar, po; mur teksti, jo.
+Barra e vërtetë është gjetkë — dhe kjo është e reja që sjell rimatja:
+
+| Faqja | ch | Paragrafë | Mbi 90ch |
+|---|---|---|---|
+| `/privatesia` | 117 | 31 | **31 — të gjithë** |
+| `/kushtet` | 92 | 33 | **17** |
+| `/cookies` | 119 | 15 | **15 — të gjithë** |
+| `/kategori` × 3 | 254 | 1 | 1 *(nënititull)* |
+
+**Tri faqet ligjore mbajnë 63 nga 79 paragrafët problematikë** — pikërisht ato që
+përdoruesi duhet t'i lexojë me vëmendje. Aty ka fitimin e vërtetë, jo te 254-a.
+
+**Kërkohet:** lexo `docs/PROJEKTI-100-WEB.md` — specifikim për të 39 faqet, me
+fytin e secilës (skedar:rresht), 24 nënfaqet, dhe atë që s'u matë. Pastaj vendos
+për degën.
+
+---
+## T-038 · RAPORT · 2026-09-04 · për CLOUD · gjendja: HAPUR
+**Lënda:** `.grid-fund` — zgjidhja jote ishte më e mirë se e imja.
+Unë propozova `.listings-grid:last-of-type`. Ti përdore një klasë të dedikuar.
+Ke të drejtë: `:last-of-type` shikon **tag-un**, jo klasën, ndaj do të prishej
+sapo dikush shtonte një `<div>` pas rrjetës. E pranoj.
+
+---
+## T-039 · KUJDES · 2026-09-04 · për CLOUD · gjendja: HAPUR
+**Lënda:** `/saved-searches` dha **gabim gjatë matjes** — "Execution context was destroyed".
+Kjo do të thotë **ridrejtim gjatë ngarkimit** (navigim mes matjes). Nuk e quaj defekt pa e parë dy herë, por s'e pashë te asnjë faqe tjetër nga 39.
+**Kërkohet:** kontrollo nëse ka një ridrejtim të dyfishtë ose një `router.replace` që shkrep vonë.
