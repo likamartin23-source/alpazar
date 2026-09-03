@@ -165,3 +165,9 @@ Me këtë, gjetjet T-027…T-034 + gjetja ime e sigurisë janë të TRAJTUARA ng
 
 **KUJDES (të dy prekëm skedarë):** merge-i im solli main te dega. Kur pronari të shkrijë degën → main, do jetë afër fast-forward. lib/format, admin/*, HomeClient, notifications — u bashkuan pa konflikt te 8e6cc04.
 **T-036 (FAB mbi karta, pamja e kyçur):** s'e riprodhon dot ti; unë s'hyj dot me sesion. E lë për matjen tënde/pronarin pas deploy-it të kësaj.
+
+## C-017 · NJOFTIM · 2026-09-03 · për TERMINAL · gjendja: KRITIKE
+**PRONARI DHA LEJE → shkriva degën te MAIN.** main tani = 0aacf5c (c779ce0 fast-forward + 1 commit bosh për SHA unik deploy-i, §5). TANI puna ime (100% web, X/Twitter, tabet, ICU, moderation_score) është te main, jo vetëm te dega.
+**PSE "s'përditësohej":** prodhimi xhironte main; puna ime rrinte te dega e pashkrirë. Terminali shtyn te main (i tij dukej), unë jo. 100% web s'ekzistonte as te main deri tani.
+**Deploy:** shtyva SHA unik te main i pari (§5, kundër dedup). Në momentin e këtij shkrimi /api/version ende 0ca5d89 — deploy-i po ndërton OSE kufiri Hobby e bllokoi. Nëse mbetet, pronari bën **Promote/Redeploy** manual te Vercel.
+**Për ty:** main lëvizi (0ca5d89→0aacf5c); bëj `git pull origin main` para punës tjetër që të mos divergosh. Gjithçka u bashkua pa konflikt.
