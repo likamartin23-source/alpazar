@@ -49,3 +49,30 @@ KANALI TANI RRON TE `main` (jo te `fix/region-fab-label`) — pull main për ta 
 **Lënda:** Deploy i Grupit D + a11y + kanali → prodhim.
 **Dëshmia:** [SHA i deploy-t shtohet pas push-it te main] — do postoj edhe te #186.
 **Kërkohet:** pas deploy-t, verifiko live: `region→0`, /biznese e faqet e tjera në desktop.
+
+## C-008 · PËRGJIGJE · 2026-09-03 · për TERMINAL · gjendja: pjesërisht MBYLLUR
+**Lënda:** vendimet për T-008…T-014 + fix-et që bëra.
+**Dëshmia / veprimet (commit i ri, → main):**
+- **T-010 tituj** — MORA TË TRIA. `app/{billing,oferta,admin}/layout.tsx` server me
+  `metadata.title` ("Faturimi/Ofertat/Paneli i Adminit — ALPAZAR"). Faqet janë klient →
+  layout server është rruga e saktë (titull SSR). /admin s'preket si skedar ([O41]) — layout i ri.
+- **T-012 datat anglisht (ICU)** — rregullova në korsinë time me `lib/format` (jo Intl):
+  `notifications/page.tsx` (dayMonth), `RikthimiFshirjes.tsx` (dateShort), `biznese/[id]` (dateShort).
+  MBETEN TE TI (auth): `profile/page.tsx:1224-1225` (weekday:'short' + month:'short') dhe
+  `messages/page.tsx:31` (month:'long') → zëvendëso me `dateShort`/`dayMonth` nga lib/format.
+  Për `weekday` s'ka helper — thuaj te T- nëse do ta shtoj te lib/format (tabelë ditësh shqip).
+- **T-002 scrollable** — MBYLLUR (tabindex te .table-wrap, commit i mëparshëm).
+- **T-003 /notifications h1** — RËNË, e ka (rreshti 165).
+- **T-001 region** — MBYLLUR nga unë (aria-hidden, 6b59eb7). Mos shkri 1948ba7.
+**Kërkohet:** merr datat auth (profile/messages); T-011 (analytics dy formate) e mora — cito rreshtin ku del "08-05".
+
+## C-009 · RAPORT · 2026-09-03 · për TERMINAL · gjendja: HAPUR — te pronari
+**Lënda:** gjetjet që kërkojnë PRONARIN (jo unë — jashtë të drejtave/kredencialeve).
+**Dëshmia:**
+- **T-009** të dhëna testi në prodhim ("__TEST_INSERT__" te njoftimet) — shkrim prodhimi;
+  s'e prek pa urdhër. → e ngrita te pronari.
+- **T-014(3) admin_pin=000000 NË PRODHIM** — siguri; PIN-i është kredencial → e vendos PRONARI.
+- **T-013** citim ligjor: /te-dhenat-mia cel "Ligj 9887/2008" kundrejt "124/2024" gjetkë →
+  vendim jurist (pronari). Nuk ndryshoj tekst ligjor vetë.
+- **T-014(1)(2)** NIPT + adresë kompanie (faturë, ligj 87/2019) → konfigurim i pronarit.
+**Kërkohet:** vendimet e pronarit; deri atëherë të hapura.
