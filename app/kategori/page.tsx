@@ -80,7 +80,7 @@ const SEO_CSS = `
 .seo-crumb a{color:#C42B0F;text-decoration:none;}
 .seo-crumb span[aria-current]{color:#555;}
 .seo-h1{font-size:var(--fs-3xl);font-weight:800;color:var(--az-ink);margin:0 0 6px;}
-.seo-sub{font-size:14px;color:#666;margin:0 0 22px;line-height:1.5;}
+.seo-sub{font-size:14px;color:#666;margin:0 0 22px;line-height:1.5;max-width:68ch;}
 .seo-h2{font-size:18px;font-weight:700;color:var(--az-ink);margin:34px 0 14px;}
 .seo-cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;}
 .seo-cat-card{display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 12px;background:#fff;border:1px solid #eee;border-radius:14px;text-decoration:none;color:var(--az-ink);transition:box-shadow .15s,transform .15s;}

@@ -11,7 +11,7 @@ export const LANDING_CSS = `
 .seo-crumb span[aria-current]{color:#555;}
 .seo-h1{font-size:var(--fs-3xl);font-weight:800;color:var(--az-ink);margin:0 0 6px;display:flex;align-items:center;gap:10px;}
 .seo-h1 .ic{font-size:26px;}
-.seo-sub{font-size:14px;color:#666;margin:0 0 20px;line-height:1.5;}
+.seo-sub{font-size:14px;color:#666;margin:0 0 20px;line-height:1.5;max-width:68ch;}
 .seo-h2{font-size:17px;font-weight:700;color:var(--az-ink);margin:32px 0 12px;}
 .seo-city-links{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;}
 .seo-city-chip{padding:8px 16px;min-height:44px;display:inline-flex;align-items:center;background:#F7F7F7;border:1px solid #eee;border-radius:999px;font-size:13px;color:#333;text-decoration:none;transition:background .15s;}

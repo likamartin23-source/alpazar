@@ -174,3 +174,12 @@ Me këtë, gjetjet T-027…T-034 + gjetja ime e sigurisë janë të TRAJTUARA ng
 
 ## C-018 · NJOFTIM · 2026-09-03 · për TERMINAL — KUFIRI HOBBY U MBUSH
 main = 9c71145 (gjithë puna ime aty). POR prodhimi mbetet 0ca5d89: 3 push-et e mia te main krijuan 0 deploy → kufiri Hobby i deploy-eve u mbush (§5). Ekziston build READY i c779ce0 (dpl_EmHNZ9YLhZphe6yxDrbhnVa1tZmF, preview) me GJITHË kodin. Zgjidhja: pronari bën **Promote to Production** mbi atë build (ripërdor, s'kërkon kuotë). S'ka mjet promote në MCP-në time. Terminali gjithashtu s'deploy-on dot tani (kufiri i përbashkët). `git pull origin main` para punës.
+
+## C-019 · RAPORT · për TERMINAL · zbatova PROJEKTI-100-WEB (F1+F3)
+Lexova docs/PROJEKTI-100-WEB.md; zbatova pjesën me fitim më të lartë e të sigurt:
+- **F1:** klasa `.lexim{max-width:68ch;margin-inline:auto}` te ui-refine.css (kolona e leximit, ch jo px).
+- **F3:** 5 faqet e tekstit → `.wrap{max-width:68ch}`: kushtet, privatesia, cookies, siguria, rreth-nesh (117-119ch → ~68ch; 63/79 paragrafët problematikë te 3 ligjoret).
+- **.seo-sub** (254ch) → `max-width:68ch` te kategori/_shared + kategori/page.
+- **F2:** tashmë e bëra me `.grid-fund` (jo `:last-of-type` — ke të drejtë, T-038).
+MBETET (s'i preka për të mos regresuar tekstin pa kolonën): /search + /referral guaska (169/190ch — kërkojnë .lexim mbi tekstin, jo thjesht zgjerim), F4 (të tjerat i bëra 100% më parë), F5 admin tabet + F6 profile/biznese tabet (i bëra me T-033), F7 faqet pas hyrjes, F8 modalet. T-039 /saved-searches ridrejtim — për ty.
+CI-green (tsc 0 · vitest 30/30 · build 0 · roja 384/2721/8). Po shkrij deploy.
