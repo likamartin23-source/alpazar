@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic'
 import { useEffect, useState } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { SellerPremiumUpsell } from '../../components/PremiumUpsell'
+import { dayMonthShort, dateShort } from '../../../lib/format'
 
 const PERIODS = [
   { label: '7 ditë', days: 7 },
@@ -267,8 +268,8 @@ const [loadError, setLoadError] = useState(false)
               <div className="an-title">Pamjet për ditë</div>
               <BarChart data={data.views_by_day} />
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: '#aaa', marginTop: 4 }}>
-                <span>{data.views_by_day[0]?.date?.slice(5)}</span>
-                <span>{data.views_by_day[data.views_by_day.length - 1]?.date?.slice(5)}</span>
+                <span>{dayMonthShort(data.views_by_day[0]?.date)}</span>
+                <span>{dayMonthShort(data.views_by_day[data.views_by_day.length - 1]?.date)}</span>
               </div>
             </div>
           )}
@@ -321,7 +322,7 @@ const [loadError, setLoadError] = useState(false)
 
       {/* Link nga profili */}
       <div style={{ textAlign: 'center', padding: '8px 0 20px', fontSize: 12, color: '#bbb' }}>
-        Alpazar Analytics — {new Date().toLocaleDateString('sq-AL')}
+        Statistikat e Alpazar — {dateShort(new Date())}
       </div>
     </div>
   )
