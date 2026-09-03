@@ -12,6 +12,7 @@ export const dynamic = 'force-dynamic'
 import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { supabase } from '../../../lib/supabase'
+import { dateShort, clockTime } from '../../../lib/format'
 
 const inputStyle = {
   width: '100%', border: '1.5px solid #ddd', borderRadius: 8, padding: '10px 12px',
@@ -23,8 +24,9 @@ const MIN_ARSYE = 20
 
 function dt(v: string | null) {
   if (!v) return '—'
-  try { return new Date(v).toLocaleString('sq-AL', { dateStyle: 'medium', timeStyle: 'short' }) }
-  catch { return '—' }
+  // Determinist (pa ICU): "09 gush 2026 · 14:05". clockTime jep orën lokale — vetëm pas mount.
+  const d = dateShort(v)
+  return d ? `${d} · ${clockTime(v)}` : '—'
 }
 
 export default function ModerimiPage() {

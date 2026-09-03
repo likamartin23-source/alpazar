@@ -16,8 +16,9 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../../../lib/supabase'
+import { nf, dateShort, clockTime } from '../../../lib/format'
 
-const d = (x: any) => (x ? new Date(x).toLocaleString('sq-AL') : '—')
+const d = (x: any) => (x ? `${dateShort(x)} · ${clockTime(x)}` : '—')  // determinist, pa ICU
 
 /** Treguesit që kërkojnë veprim, me shtegun ku zgjidhen. */
 const PUNA: [string, string, string, 'kritike' | 'paralajmerim'][] = [
@@ -62,7 +63,7 @@ export function TodayTab({ stats, trends }: { stats?: any; trends?: any }) {
     if (h.error || (h.data as any)?.error) { setErr(h.error?.message || (h.data as any)?.error) }
     else { setSh(h.data); setErr('') }
     if (!a.error && !(a.data as any)?.error) setGjurma(((a.data as any)?.actions || []) as any[])
-    setKohe(new Date().toLocaleTimeString('sq-AL'))
+    setKohe(clockTime(new Date()))
   }, [])
 
   useEffect(() => { load() }, [load])
@@ -165,10 +166,10 @@ export function TodayTab({ stats, trends }: { stats?: any; trends?: any }) {
       {/* ── Numrat e biznesit ─────────────────────────────────────── */}
       {stats && (
         <div className="stats">
-          <div className="sc"><div className="sn">{Number(stats.users || 0).toLocaleString('sq-AL')}</div><div className="sl">Përdorues</div></div>
-          <div className="sc"><div className="sn">{Number(stats.premium || 0).toLocaleString('sq-AL')}</div><div className="sl">Me plan aktiv</div></div>
-          <div className="sc"><div className="sn">{Number(stats.listings || 0).toLocaleString('sq-AL')}</div><div className="sl">Shpallje aktive</div></div>
-          <div className="sc"><div className="sn">{Number(stats.messages || 0).toLocaleString('sq-AL')}</div><div className="sl">Mesazhe</div></div>
+          <div className="sc"><div className="sn">{nf(stats.users)}</div><div className="sl">Përdorues</div></div>
+          <div className="sc"><div className="sn">{nf(stats.premium)}</div><div className="sl">Me plan aktiv</div></div>
+          <div className="sc"><div className="sn">{nf(stats.listings)}</div><div className="sl">Shpallje aktive</div></div>
+          <div className="sc"><div className="sn">{nf(stats.messages)}</div><div className="sl">Mesazhe</div></div>
         </div>
       )}
 
@@ -177,7 +178,7 @@ export function TodayTab({ stats, trends }: { stats?: any; trends?: any }) {
           <div className="ct">Periudha</div>
           <div style={{ fontSize: 11.5, color: '#555', lineHeight: 1.9 }}>
             Rimbursuar: <strong style={{ color: Number(trends.totale.rimbursime) > 0 ? 'var(--az-red-deep)' : '#111' }}>
-              {Number(trends.totale.rimbursime || 0).toLocaleString('sq-AL')}</strong>
+              {nf(trends.totale.rimbursime)}</strong>
           </div>
         </div>
       )}

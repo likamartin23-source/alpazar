@@ -2,8 +2,9 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../../../lib/supabase'
+import { moneyDec } from '../../../lib/format'
 
-const L = (n: any) => Number(n || 0).toLocaleString('sq-AL', { maximumFractionDigits: 2 })
+const L = (n: any) => moneyDec(n)  // determinist (1.234,56), pa ICU — si /billing
 const PERIOD: Record<string, string> = { monthly: 'Mujor', quarterly: '3-mujor', yearly: 'Vjetor' }
 
 const FIELDS = [

@@ -9,6 +9,7 @@
  */
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../../../lib/supabase'
+import { dateShort, clockTime } from '../../../lib/format'
 
 /* Autoritetet reale shqiptare, sipas natyrës së shkeljes. Lista nuk është
    dekorative: secili zë çon te një ligj i ndryshëm dhe te një afat i ndryshëm. */
@@ -36,7 +37,7 @@ const LLOJI: Record<string, string> = {
 }
 
 const dt = (s?: string | null) =>
-  s ? new Date(s).toLocaleString('sq-AL', { dateStyle: 'long', timeStyle: 'short' }) : '—'
+  s ? `${dateShort(s)} · ${clockTime(s)}` : '—'  // determinist (dosje ligjore e printueshme)
 
 export function DosjaLigjore({ id, onClose }: { id: string; onClose: () => void }) {
   const [d, setD] = useState<any>(null)

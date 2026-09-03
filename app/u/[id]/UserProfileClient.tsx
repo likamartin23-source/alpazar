@@ -10,6 +10,7 @@ import ListingCard from '../../components/ListingCard'
 import { LISTING_SELECT } from '../../../lib/listingSelect'
 import { IdentityBadges } from '../../components/IdentityBadges'
 import { isNewMember } from '../../components/Badges'
+import { nf } from '../../../lib/format'
 
 function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime()
@@ -300,7 +301,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
             const tv = listings.reduce((s, l) => s + (l.views_count || 0), 0)
             return tv > 0 ? (
               <div style={{ fontSize: 'var(--fs-sm)', color: 'var(--az-gray-1)', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span aria-hidden="true">👁</span> {tv.toLocaleString('sq-AL')} shikime te shpalljet
+                <span aria-hidden="true">👁</span> {nf(tv)} shikime te shpalljet
               </div>
             ) : null
           })()}

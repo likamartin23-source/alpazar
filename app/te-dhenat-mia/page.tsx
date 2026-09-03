@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
+import { dateShort } from '../../lib/format'
 
 export default function TeDhenatMiaPage() {
   const [loading, setLoading]     = useState(true)
@@ -159,7 +160,7 @@ export default function TeDhenatMiaPage() {
             <div style={{ fontSize: 13, color: '#333', lineHeight: 2 }}>
               <div><span aria-hidden="true">👤</span> {profile.full_name || profile.username || 'Pa emër'}</div>
               {profile.city && <div><span aria-hidden="true">📍</span> {profile.city}</div>}
-              <div><span aria-hidden="true">📅</span> Anëtar që nga {new Date(profile.created_at).toLocaleDateString('sq-AL')}</div>
+              <div><span aria-hidden="true">📅</span> Anëtar që nga {dateShort(profile.created_at)}</div>
             </div>
           </div>
         )}

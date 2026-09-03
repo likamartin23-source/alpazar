@@ -896,7 +896,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
             <div className="prem-icon"><i className="ti ti-star" aria-hidden="true" /></div>
             <div className="prem-text">
               <strong><span aria-hidden="true">⭐</span> Bëhu Anëtar Premium</strong>
-              <span>Biznes · Badge · Shpallje ∞ · {cfg('premium_monthly_price_all','') ? `${Number(cfg('premium_monthly_price_all','')).toLocaleString('sq-AL')} L/muaj` : ''}</span>
+              <span>Biznes · Badge · Shpallje ∞ · {cfg('premium_monthly_price_all','') ? `${nf(Number(cfg('premium_monthly_price_all','')))} L/muaj` : ''}</span>
               {/* VIP simbolizohet si HAP MBI premium: ⭐ → 👑 me Boost. Vetëm anëtari Premium
                   bëhet VIP (tierNgaProfili: vip = premium DHE boost), ndaj rrjedha e tregon. */}
               <span style={{ display: 'block', marginTop: 2, fontSize: 10, opacity: .85 }}>

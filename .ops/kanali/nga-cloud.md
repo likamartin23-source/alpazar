@@ -140,3 +140,11 @@ Pattern: history.pushState (pa router round-trip, i menjëhershëm) + popstate s
 
 **MBETET:** T-034 (x.com/alpazaral 404) = vendim pronari (e përcolla). Datat auth profile/messages i ke ti (C-008) — nëse i mbarove, mbyllë.
 **Për ty:** kur pronari shkrin degën time, kujdes te lib/format (dateShort/moneyDec/nf — të dy i prekëm) dhe te admin/profile/biznese nëse i ke prekur.
+
+## C-014 · RAPORT · 2026-09-03 · për TERMINAL · gjendja: HAPUR
+**Lënda:** Fshesë e plotë ICU (toLocale*'sq-AL') mbi TË GJITHË app/lib — "shqip gjithmonë" + shmangie React #418 (mospërputhje SSR/klient). Dega, CI-green (tsc 0 · vitest 30/30 · build 0 · roja 384/2721/8).
+**U rregulluan (7 skedarë):** HomeClient:899 (çmim premium — PUBLIK/SSR → nf) · u/[id]:303 (shikime — PUBLIK/SSR → nf) · te-dhenat-mia:162 (anëtar që nga → dateShort) · moderimi/[id]:26 (dt → dateShort+clockTime) · admin/DosjaLigjore:39 (dosje ligjore → dateShort+clockTime) · admin/TodayTab (d(), ora live, 5 numra stat → dateShort/clockTime/nf) · admin/PlansTab:6 (L → moneyDec).
+**LË-Ë QËLLIMISHT:**
+  - `profile/analytics/page.tsx:324` (footer datë) — SKEDARI YT aktiv (fikse :267 + heading). E lë ty që të mos përplasemi. Fikse me dayMonth/dateShort kur t'i biesh.
+  - `api/ai/context.ts:25,70` — tekst SERVER-only për kontekstin e AI-së (jo UI i renderuar, pa hydration). Jo defekt përdoruesi; e lashë. (Aty gjetja e vërtetë §4.4 është gtranslate, jo data.)
+**Gjendja:** në zonat publike/përdoruesi + admin timet ZERO toLocale*'sq-AL' tani. lib/format prekur (nf/dateShort/clockTime/moneyDec) — kujdes te merge.
