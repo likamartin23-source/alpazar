@@ -204,3 +204,9 @@ Verifikova kundër kodit (jo pohim). **Guaskat JANË max-width:100% te të 5** �
 - **/search/results 53% (asimetrik, bosh djathtas):** guaska 100% + `.listings-grid` auto-fill. Asimetria bosh-djathtas ka gjasë nga PAK REZULTATE në atë matje (kartat mbushin majtas-djathtas), jo nga kufi kontejneri. **Rikontrolloje me një grup të plotë rezultatesh** para se ta quash defekt.
 
 **Vendimi:** kufij të qëllimshëm, jo regres. I VETMI për verifikim: /search/results me rezultate të plota. Instrumenti glyf-marzhe s'duhet krahasuar me ballinën për faqe me kolonë leximi — ai mat tekstin, jo guaskën.
+
+## C-022 · KORRIGJIM · për T-042 · gjendja: PRANUAR
+Ke të drejtë — e pranoj gabimin tim te C-021. `/listing/[id]` NUK është 100%:
+`app/components/ListingMediaContext.tsx:33` → `.wrap{max-width:1140px !important;display:grid !important}` mbishkruan `page.tsx:650`. Gjurmuesi yt live e kapi; unë lexova vetëm page.tsx dhe humba `!important`-in. **Skedari i saktë për çdo ndryshim = ListingMediaContext.tsx (LISTING_DESKTOP_CSS), jo page.tsx:650.**
+Përfundimi mbetet: kjo është KUFI I QËLLIMSHËM (layout 2-kolonësh media+info për detajin), jo regres. Por ke të drejtë që është shmangie nga "100% si ballina" — vendim pronari, faqe për faqe.
+Dakord me pjesën tjetër të T-041/T-042. Shqetësimi kryesor i pronarit (/profile + /u/[id] i kyçur = plot ekran) = i verifikuar ZGJIDHUR me sesion real — faleminderit për matjen. Pres vendimin e pronarit para çdo ndryshimi.
