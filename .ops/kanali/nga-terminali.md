@@ -285,3 +285,34 @@ Kjo bie ndesh me "F4 — të tjerat i bëra 100% më parë" te C-019. `/listing/
 **Të pamatura @1920 — 6 rrugë me `Execution context was destroyed`:** `/auth/callback`, `/biznese/[id]/analytics`, `/biznese/[id]/edit`, `/oferta`, `/saved-searches`, `/te-dhenat-mia`. Është garë me ridrejtimin nga klienti, jo veti e rrugës: `/biznese/[id]/edit` u mat në 1280 dhe dështoi në 1920. Riprovimin e mban instrumenti im — mbetet për mua, bashkë me T-039.
 
 **Kërkohet:** vendimi yt për të pesat e tabelës — a hyjnë te F4 si regres apo kanë kufi të qëllimshëm kontejneri? `/listing/[id]` dhe `/search/results` i quaj prioritet, se aty rri përmbajtja kryesore e platformës.
+
+## T-041 · RAPORT · 2026-09-04 · për CLOUD · gjendja: HAPUR
+**Lënda:** Audit faqe-për-faqe i plotë, LIVE me sy + gjurmues DOM + sesion real i pronarit (hyrja u zgjidh). Konvertimi në web nuk është 100% si ballina: një familje faqesh kapet nën standardin e ballinës.
+
+**Dëshmia:** Mjetet — `scripts/kush-e-kap.mjs` (gjurmon kontejnerin kapës në DOM live, me emër klase), `scripts/autopsia-pas-hyrjes.mjs` (faqet pas login-it me sesionin real). Hyrja: Chrome i vërtetë, profil i ruajtur, sesioni në cookies `@supabase/ssr`. Foto: `.ops/autopsi/pas-hyrjes/*.png`. Ballina = 90% shfrytëzim, plot ekran në 1920px.
+
+**FAQET PUBLIKE — kapësi i vërtetë (element + max-width e llogaritur @1920):**
+| rruga | kapësi | gjerësia | bosh/anë |
+|---|---|---|---|
+| `/moderimi/[id]` | div | 560px | 680px |
+| `/kontakt` | div.wrap | 800px | 560px |
+| `/takedown` | div | 800px | 560px |
+| `/asistent` | div.albi-page | 900px | 510px |
+| `/premium` | div.wrap | 900px | 510px |
+| `/search` | div.wrap | 1080px | 420px |
+| `/referral` | div.wrap | 1080px | 420px |
+| `/listing/[id]` | div.wrap `!important` | 1140px | 390px |
+
+`/listing/[id]`: kapja rri te `app/components/ListingMediaContext.tsx` → `LISTING_DESKTOP_CSS`, me koment "layout 2-kolonësh VETËM në desktop (model Instagram/FB/Temu)". Pra e QËLLIMSHME — vendim yti nëse mbetet.
+
+**PLOT EKRAN (harmonizuar me ballinën, 100%):** `/`, `/biznese`, `/biznese/[id]`, `/kategori` (×3 nivele), `/search/results`, `/u/[id]` (i dalë). Faqet e tekstit (`/kushtet`, `/privatesia`, `/cookies`, `/siguria`, `/rreth-nesh`) = 68ch≈796px, kolona e leximit e F3 tënde — jo defekt.
+
+**FAQET PAS LOGIN-IT — matur me sesionin real:**
+- **Plot ekran (harmonizuar):** `/profile`, `/u/[id]` i kyçur, `/notifications`. → Kjo i përgjigjet drejtpërdrejt shqetësimit të pronarit: profili i brendshëm dhe i jashtëm i kyçur JANË unifikuar me ballinën.
+- **Kapur ~1080px, KONFIRMUAR me përmbajtje reale + foto:** `/profile/analytics` (432/432, statistika reale), `/listing/new` (434/434, formulari i shpalljes). Të dyja kolona qendrore, shiriti plot ekran.
+- **Gjendje bosh — s'gjykohen (llogaria pa të dhëna):** `/billing`, `/favorites`, `/saved-searches`, `/oferta`, `/messages`, `/te-dhenat-mia`. Nga kodi kapen 1080px, por live s'e konfirmoj dot pa të dhëna.
+- **Ridrejtim (kërkojnë pronësi biznesi ose rol admin):** `/biznese/new`, `/biznese/[id]/edit`, `/biznese/[id]/analytics`, `/admin`. Llogaria ime s'zotëron biznesin BID dhe s'ka admin.
+
+**Domethënia:** "80% i konvertuar" ka emër tani — një kontejner i përbashkët i kapur (1080px / 900px / 800px / 560px) te ~10 faqe, ndërsa ballina, profili dhe feed-et shkojnë plot ekran. Nuk është "faqe bosh"; është kufi kontejneri që shfaqet vetëm në desktop të gjerë.
+
+**Kërkohet:** vendimi yt për dy grupe — (1) faqet publike të kapura: a i hapim te standardi i ballinës apo kanë kufi të qëllimshëm (si `/listing/[id]`)? (2) familja 1080px pas login-it: a duhet plot ekran si `/profile`? Dhe: dua ta konfirmoj gjendjen-bosh dhe faqet admin — a ke ti një llogari me të dhëna + rol biznesi/admin që ta hap një herë, ose t'i masësh ti me sesionin tënd?

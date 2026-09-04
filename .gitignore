@@ -36,3 +36,7 @@ __pycache__/
 
 # Rruge harness per verifikim vizual — kurre ne prodhim
 app/verifikim-vizual/
+.env*
+.ops/.profil-chrome/
+.ops/.profil-audit/
+.ops/hyrje/

@@ -1,0 +1,89 @@
+[
+ {
+  "emri": "referral",
+  "rruga": "/referral",
+  "gjeresi": 1920,
+  "gl": {
+   "majtas": 451,
+   "djathtas": 451,
+   "gjeresia": 1018,
+   "perqind": 53
+  },
+  "kutia": 1080,
+  "kutiaPerqind": 56,
+  "kutiaEmri": "wrap",
+  "guaske": false,
+  "titulli": "Fto Miqtë, Fito Pikë!",
+  "nyje": 21
+ },
+ {
+  "emri": "premium",
+  "rruga": "/premium",
+  "gjeresi": 1920,
+  "gl": {
+   "majtas": 524,
+   "djathtas": 524,
+   "gjeresia": 872,
+   "perqind": 45
+  },
+  "kutia": 900,
+  "kutiaPerqind": 47,
+  "kutiaEmri": "wrap",
+  "guaske": false,
+  "titulli": "Planet",
+  "nyje": 26
+ },
+ {
+  "emri": "listing-new",
+  "rruga": "/listing/new",
+  "gjeresi": 1920,
+  "gl": {
+   "majtas": 434,
+   "djathtas": 434,
+   "gjeresia": 1052,
+   "perqind": 55
+  },
+  "kutia": 1080,
+  "kutiaPerqind": 56,
+  "kutiaEmri": "wrap",
+  "guaske": false,
+  "titulli": "➕ Shto Shpallje",
+  "nyje": 54
+ },
+ {
+  "emri": "listing-edit",
+  "rruga": "/listing/dcc29dcc-ad56-4297-b299-5fb7e4ea6349/edit",
+  "gjeresi": 1920,
+  "gabim": "page.evaluate: Execution context was destroye"
+ },
+ {
+  "emri": "biznese-new",
+  "rruga": "/biznese/new",
+  "gjeresi": 1920,
+  "gabim": "page.goto: Navigation to \"https://alpazar.ver"
+ },
+ {
+  "emri": "biznese-edit",
+  "rruga": "/biznese/49745b08-ba0a-488e-b731-7fd19ee6a0bb/edit",
+  "gjeresi": 1920,
+  "gabim": "page.goto: Navigation to \"https://alpazar.ver"
+ },
+ {
+  "emri": "biznese-analytics",
+  "rruga": "/biznese/49745b08-ba0a-488e-b731-7fd19ee6a0bb/analytics",
+  "gjeresi": 1920,
+  "gabim": "page.goto: Navigation to \"https://alpazar.ver"
+ },
+ {
+  "emri": "biznese-id-i-kycur",
+  "rruga": "/biznese/49745b08-ba0a-488e-b731-7fd19ee6a0bb",
+  "gjeresi": 1920,
+  "gabim": "page.goto: Navigation to \"https://alpazar.ver"
+ },
+ {
+  "emri": "admin",
+  "rruga": "/admin",
+  "gjeresi": 1920,
+  "gabim": "page.goto: Navigation to \"https://alpazar.ver"
+ }
+]
