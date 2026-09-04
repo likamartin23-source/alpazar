@@ -11,6 +11,14 @@
 - `alpazar.com` I ZËNË (mbajtës i panjohur). `.al` te **UpFlare** ~€8.99/vit (AKEP, pa rezidencë; `.com.al` kërkon biznes/shtetas shqiptar). Regjistrat: Cloudflare (me kosto, vetëm transfer) / Porkbun (regjistrim i ri). **GoDaddy JO.** Kurthi: `.shop`/`.store` rinovohen ~$31/$44.
 - **30 emra alternativë të verifikuar** (`.com` i lirë, $11.25/vit) — lista te Notion; preferencat: **Tregira, Liratreg, Dritapazar, Aritreg, Besatreg** (pa "pazar" = më të sigurtit ligjërisht). `pazari.al` = gjenerik/i mbushur, i dobët si markë.
 
+## Sesioni 4 shtator 2026 (LIVE në prodhim, build c0c0de7)
+- **Shiriti Instagram (DeskSidebar) — HEQUR.** Vendim pronari: "vetëm zgjerim plot ekran" (jo raft filtrash, jo shtyllë ndihmëse). Terminali e kishte revertuar tashmë në main (ebdb763+5ef2a24) — sinkronizova me merge. Konfirmuar live: 0 mbetje `desk-sidebar`.
+- **Zgjerim plot ekran** (pattern ballinës `max-width:100%`+clamp≥1024) te familja grid/dashboard: /search, /referral, /premium, /billing, /favorites, /oferta, /saved-searches, /profile/analytics, /biznese/[id]/analytics, /te-dhenat-mia. Konfirmuar live te /premium HTML.
+- **MBAJTUR me gjerësi të lexueshme** (Rregulli 9/10): formularë+bisedë — /listing/new, /listing/[id]/edit, /biznese/new+edit, /kontakt, /messages. /listing/[id] 2-kolonësh + /asistent 900px = vendime të mëparshme. Nëse pronari i do plot ekran → hapen.
+- **Njoftimet (mesazhe):** njoftimi EKZISTONTE në skemën bazë (`notify_on_new_message`/`trg_notify_on_message`) — auditi migrime-vetëm s'e pa (F1/F6). Ndërtova gabimisht duplikat; prova e shkrimit e kapi (pozitiv=2). Hoqa duplikatin + përmirësova ekzistuesin: **dedupe FB-style** (një bisedë e palexuar=një zë zileje) + parapamje media (📷/🎤). Migrim `20260904_njoftim_mesazhi.sql`, aplikuar live. **Ofertat:** njoftim+UI ekzistojnë tashmë (asgjë për të ndërtuar).
+- **Komentet:** JO përfundimisht (vendim pronari). `listing_comments` mbetet tabelë e vdekur (mund të hiqet).
+- **Web-push te telefoni (tab i mbyllur): MUNGON** — s'ka SW (kill-switch i qëllimshëm), VAPID, push_subscriptions. Pret vendim pronari (VAPID=sekret i tij) + pajtim me bug-un cache-freshness të SW-së.
+
 ## Gjendja teknike (LIVE në prodhim)
 - **"100% web"** (shkaku rrënjë: vetëm ballina ishte 100%, subfaqet kapeshin te 1080px) → RREGULLUAR për të gjitha subfaqet (max-width:100% + clamp ≥1024). LIVE.
 - **Kolona e leximit** (`.lexim{max-width:68ch}`, ui-refine.css) → faqet e tekstit (kushtet/privatësia/cookies/siguria/rreth-nesh) + `.seo-sub`. LIVE (b214835).
