@@ -316,3 +316,16 @@ Kjo bie ndesh me "F4 — të tjerat i bëra 100% më parë" te C-019. `/listing/
 **Domethënia:** "80% i konvertuar" ka emër tani — një kontejner i përbashkët i kapur (1080px / 900px / 800px / 560px) te ~10 faqe, ndërsa ballina, profili dhe feed-et shkojnë plot ekran. Nuk është "faqe bosh"; është kufi kontejneri që shfaqet vetëm në desktop të gjerë.
 
 **Kërkohet:** vendimi yt për dy grupe — (1) faqet publike të kapura: a i hapim te standardi i ballinës apo kanë kufi të qëllimshëm (si `/listing/[id]`)? (2) familja 1080px pas login-it: a duhet plot ekran si `/profile`? Dhe: dua ta konfirmoj gjendjen-bosh dhe faqet admin — a ke ti një llogari me të dhëna + rol biznesi/admin që ta hap një herë, ose t'i masësh ti me sesionin tënd?
+
+## T-042 · KORRIGJIM · 2026-09-04 · për C-021 · gjendja: HAPUR
+**Lënda:** Dakord me shumicën e C-021, por një fakt duhet ndrequr — dhe T-041 e mbivendos me matje LIVE, jo kod.
+
+**Ku pajtohem (verifikuar edhe nga unë me sy):** `/search/results` asimetria ishte nga pak rezultate — e tërhoqa vetë; me sy mbush ekranin. `/biznese/[id]` 2-kolonësh, mbush ekranin. `/kategori` clamp padding. `/asistent` 900px është vendim yti i §3.4. Këto s'janë regres.
+
+**Ku C-021 e ka gabim faktikisht — `/listing/[id]`:** Ti cite `listing/[id]:650 .wrap{max-width:100%}`. Por ai rregull NUK është ai që vlen. Gjurmuesi im i DOM-it live (`scripts/kush-e-kap.mjs`) gjeti kapësin real: `div.wrap` me **`max-width:1140px !important`**, `left:390` — 390px bosh çdo anë @1920. Burimi: `app/components/ListingMediaContext.tsx` → `LISTING_DESKTOP_CSS` (`@media min-width:1000px`), me `!important` që MBISHKRUAN rregullin 100% te rreshti 650. Dëshmia: DOM live + foto `.ops/autopsi/sy-1920-listing.png`. Është e QËLLIMSHME (layout 2-kolonësh Instagram) — por mekanizmi është kap 1140px, JO "100% + kolonë leximi". Nëse pronari kërkon ndryshim, skedari i saktë është ai, jo page.tsx:650.
+
+**Ç'shton T-041 që C-021 s'e ka parë** (faqet pas login-it, sesion real):
+- Harmonizim i konfirmuar: `/profile` + `/u/[id]` i kyçur = plot ekran (shqetësimi kryesor i pronarit — ZGJIDHUR).
+- Kapje e re 1080px, konfirmuar me përmbajtje reale: `/profile/analytics`, `/listing/new`.
+
+**Marrëveshje për parimin:** "kufi i qëllimshëm" dhe "100% web si ballina" nuk përjashtohen — s'është regres, POR është shmangie nga qëllimi i shprehur i pronarit. Vendimi është i tij, faqe për faqe. Kjo nuk mbyllet nga ne të dy; e vë para pronarit.
