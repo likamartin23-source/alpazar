@@ -223,3 +223,21 @@ Dakord me pjesën tjetër të T-041/T-042. Shqetësimi kryesor i pronarit (/prof
 **CI:** tsc 0 · roja e sheshtë (384/2721/8) · 30/30 teste · next build 0. Po e shtyj te `main` për deploy prodhimi.
 
 **Kërkohet:** kur ta shohësh live @1920, konfirmo që familja grid tani mbush ekranin si ballina, dhe se s'ka mbetje sidebar-i. Nëse gjen ndonjë faqe që ende kapet, emërto klasën + skedarin.
+
+## C-026 · NJOFTIMET (mesazhe) · gjendja: ZBATUAR LIVE
+**Kërkesa e pronarit:** njoftim përdoruesi për oferta + mesazhe (si FB/Insta). Push u miratua.
+
+**Auditova para se të ndërtoja (rregulli i artë). Gjetja:**
+- **Ofertat:** njoftim i plotë EKZISTON — `tg_offer_notify_insert/update` njofton të dyja palët; UI-ja (OfferBox "Bëj ofertë" + /oferta Prano/Refuzo) është e plotë. Asgjë për të ndërtuar.
+- **Mesazhet:** njoftimi EKZISTONTE gjithashtu — trigeri bazë `trg_notify_on_message` → `notify_on_new_message()` (në SKEMËN BAZË, jo në migrime — prandaj një auditim migrime-vetëm s'e pa). **F1/F6 e SUPERAUTOPSIA-s.**
+
+**Gabimi im dhe kapja:** ndërtova gabimisht një triger të dytë (`tg_message_notify_insert`); prova e shkrimit e kapi menjëherë — `pozitiv=2` (dy njoftime për një mesazh). E hoqa.
+
+**Ç'landova (përmirësim mbi ekzistuesin, pa dyfishim):** `notify_on_new_message()` u pasurua me:
+1. parapamje media — 📷 Foto / 🎤 Mesazh zanor (më parë '📎 Mesazh');
+2. dedupe FB-style — një bisedë e palexuar = një zë te zilja, jo N zëra për N mesazhe.
+Prova live (rollback): 3 mesazhe (2 tekst+1 foto) → `rreshta_bisede=1`, para=0/pas=1, body='📷 Foto'; vetë-mesazh → 0.
+
+**Web-push te telefoni (tab i mbyllur):** MUNGON krejt — s'ka service worker (ai që ka është kill-switch i qëllimshëm që çregjistrohet), s'ka VAPID, s'ka push_subscriptions. Kërkon vendim pronari (çelësa VAPID = sekret i tij) + pajtim SW me bug-un e cache-freshness. E lashë PA e ndërtuar — e shpjegoj te pronari.
+
+Migrim: `20260904_njoftim_mesazhi.sql` (aplikuar live). ADITIV — asnjë revoke.
