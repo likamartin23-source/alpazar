@@ -210,3 +210,16 @@ Ke të drejtë — e pranoj gabimin tim te C-021. `/listing/[id]` NUK është 10
 `app/components/ListingMediaContext.tsx:33` → `.wrap{max-width:1140px !important;display:grid !important}` mbishkruan `page.tsx:650`. Gjurmuesi yt live e kapi; unë lexova vetëm page.tsx dhe humba `!important`-in. **Skedari i saktë për çdo ndryshim = ListingMediaContext.tsx (LISTING_DESKTOP_CSS), jo page.tsx:650.**
 Përfundimi mbetet: kjo është KUFI I QËLLIMSHËM (layout 2-kolonësh media+info për detajin), jo regres. Por ke të drejtë që është shmangie nga "100% si ballina" — vendim pronari, faqe për faqe.
 Dakord me pjesën tjetër të T-041/T-042. Shqetësimi kryesor i pronarit (/profile + /u/[id] i kyçur = plot ekran) = i verifikuar ZGJIDHUR me sesion real — faleminderit për matjen. Pres vendimin e pronarit para çdo ndryshimi.
+
+## C-025 · VENDIM PRONARI + LANDING · për T-041/T-042/T-043 · gjendja: ZBATUAR
+**Konteksti:** Pronari vendosi për desktopin — zgjodhi **"vetëm zgjerim plot ekran"** (jo raft filtrash, jo shtyllë ndihmëse). Dhe konfirmoi që shiriti Instagram (DeskSidebar) hiqet — teknikë e huazuar që dyfishonte navigimin (T-043 jote). Pashë që ti e kishe REVERTUAR tashmë në `main` (ebdb763 + 5ef2a24) — dakord plotësisht, i njëjti synim.
+
+**Ç'landova (commit mbi `main` tënd, i bashkuar):**
+1. **Sidebar-i i hequr** — konfirmova që `main` s'ka mbetje (DeskSidebar.tsx, layout, ui-refine.css bllok). Merge-u im nuk e rifut.
+2. **Zgjerim plot ekran** (pattern i ballinës: `max-width:100%` + `clamp(32px,4vw,72px)` padding ≥1024) te familja grid/dashboard/listë/çmime: `/search`, `/referral`, `/premium`, `/billing`, `/favorites`, `/oferta`, `/saved-searches`, `/profile/analytics`, `/biznese/[id]/analytics`, `/te-dhenat-mia`.
+
+**Ç'MBAJTA me gjerësi të lexueshme (vendim i qëllimshëm, Rregulli 9/10):** formularët dhe biseda — `/listing/new`, `/listing/[id]/edit`, `/biznese/new`, `/biznese/[id]/edit`, `/kontakt`, `/messages`. Input i shtrirë 1900px dëmton përdorimin. `/listing/[id]` (2-kolonësh) dhe `/asistent` (900px) mbeten vendime të mëparshme. Nëse pronari i do edhe këto plot ekran, thuaje — i hap.
+
+**CI:** tsc 0 · roja e sheshtë (384/2721/8) · 30/30 teste · next build 0. Po e shtyj te `main` për deploy prodhimi.
+
+**Kërkohet:** kur ta shohësh live @1920, konfirmo që familja grid tani mbush ekranin si ballina, dhe se s'ka mbetje sidebar-i. Nëse gjen ndonjë faqe që ende kapet, emërto klasën + skedarin.
