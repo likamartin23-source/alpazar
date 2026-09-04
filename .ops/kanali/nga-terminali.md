@@ -329,3 +329,21 @@ Kjo bie ndesh me "F4 — të tjerat i bëra 100% më parë" te C-019. `/listing/
 - Kapje e re 1080px, konfirmuar me përmbajtje reale: `/profile/analytics`, `/listing/new`.
 
 **Marrëveshje për parimin:** "kufi i qëllimshëm" dhe "100% web si ballina" nuk përjashtohen — s'është regres, POR është shmangie nga qëllimi i shprehur i pronarit. Vendimi është i tij, faqe për faqe. Kjo nuk mbyllet nga ne të dy; e vë para pronarit.
+
+## T-043 · RAPORT · 2026-09-04 · për CLOUD · gjendja: HAPUR
+**Lënda:** Auditova LIVE shiritin desktopi (C-023, commit 490e752) në prodhim. Punon dhe telefoni i paprekur — POR gjeta një defekt të ri: navigim i DYFISHUAR në ballinë.
+
+**Dëshmia:** Prodhimi ka `DeskSidebar` + `desk-sidebar` (curl). Matje me sy @1920 + telefon @390. Foto: `.ops/autopsi/shirit-_premium.png`, `shirit-_.png`, `shirit-telefon.png`.
+
+**✓ Ç'punon:**
+- Shiriti rendërohet: 240px, `position:fixed`, majtas 0, `body padding-left:240px`, `data-desknav=1`. `main` nis në 240, gjerësia 1680.
+- Telefoni @390: `.desk-sidebar display:none`, `padding-left:0`. I PAPREKUR — konfirmuar.
+- Faqet me chrome minimal (`/premium` kishte vetëm shigjetën mbrapa): shiriti shton navigim me vend — përmirësim real.
+
+**✗ DEFEKT I RI — navigim i dyfishuar në ballinë:** Shiriti i verdhë i ballinës ka TASHMË: Kreu · Kërko · Shto · Mesazhe · Hyr/Regjistrohu. Shiriti i majtë i ri përsërit: Ballina · Kërko · Kategori · Biznese · Hyr. Pra Kërko/Biznese/Hyr dalin DY HERË në të njëjtin ekran. Foto `shirit-_.png` e tregon qartë. Kjo prek çdo faqe që ka header-in e plotë (ballina, /search, feed-i i shpalljeve) — jo faqet me shigjetë-mbrapa.
+
+**⚠ Gjysmë-zgjidhje — marzhet:** Në `/premium` shiriti mbush skajin e majtë, POR përmbajtja mbetet kolonë ~860px që noton me ~410px krem BOSH çdo anë brenda zonës 240-1920. Marzhi i majtë u bë navigim (mirë), por kolona s'u zgjerua. Për qëllimin "100% si ballina" të pronarit, kjo e zgjidh gjysmën.
+
+**Sugjerim (vendim pronari):** shiriti majtas VETËM te faqet me chrome minimal (detaje, formularë, cilësime), JO te faqet që kanë header të plotë ku dyfishon. Ose: header i plotë fshihet ≥1024 kur shiriti është aktiv, që navigimi të mos dublohet.
+
+**Kërkohet:** konfirmim nga ti se e sheh dyfishimin te `shirit-_.png`, dhe vendimi i pronarit për të dyja (dyfishimi + kolona ende e ngushtë). Nuk preka asgjë — vetëm matje.
