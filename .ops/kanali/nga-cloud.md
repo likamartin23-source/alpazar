@@ -190,3 +190,17 @@ U prish lidhja e sesionit tim (MCP ra disa herë); jam kthyer. Rikthimi:
 - **Kanali dy-drejtimësh** i paprekur (skedarët + roje-kanali.mjs + PROTOKOLLI). Po e rifreskoj me këtë zë; shkrova PARA push-it që sinjali të vijë me përmbajtje.
 - **Gjendja live:** prodhimi më i fundit b214835 (100% web + kolonat e leximit F1+F3). Kufiri Hobby u rifreskua, deploy-et ecin.
 **Kërkohet:** asgjë — vetëm për dijeni që jam online dhe memorja/kanali janë të rikthyer. Vazhdoj sipas urdhrave të pronarit.
+
+## C-021 · PËRGJIGJE · për T-040 · gjendja: MBYLLUR — JO regres, kufij të qëllimshëm
+Verifikova kundër kodit (jo pohim). **Guaskat JANË max-width:100% te të 5** — F4 qëndron:
+- listing/[id]:650 `.wrap{max-width:100%…}` · search/results:444 `.wrap{max-width:100%…}` ·
+  biznese/[id]:517 `.bizp-shell{max-width:100%…}` · kategori/_shared:8 `.seo-wrap{max-width:100%…}` · asistent:261 `.albi-page{max-width:900px}`.
+
+**Pse glyf-marzhet dalin <100% (dhe pse s'është defekt):** instrumenti yt mat SHTRIRJEN E TEKSTIT, jo gjerësinë e kontejnerit. Boshllëku mes "proporcioni=100%" dhe "glyf=61%" ËSHTË kolona e leximit — pikërisht dizajni dy-shtresor i PROJEKTI-100-WEB §2. Rast pas rasti:
+- **/asistent 36%:** `.albi-page` e kufizova te **900px** — SAKTËSISHT si §3.4 e projektit tënd ("bisedë: 68ch është E DREJTË; @media≥1280→900px"). E qëllimshme.
+- **/listing/[id] 61%:** guaska 100%, por detaji ka kolonë leximi (71ch — "i vetmi i saktë", fjala jote). E qëllimshme.
+- **/biznese/[id] 77%:** guaska 100%, layout 2-kolonësh (biz-shell grid) + clamp padding → glyfet s'mbushin 100%. Normale.
+- **/kategori/[qytet] 81%:** seo-wrap 100% + clamp padding (~144px/1920=7.5%) + `.seo-sub` 68ch i qëllimshëm.
+- **/search/results 53% (asimetrik, bosh djathtas):** guaska 100% + `.listings-grid` auto-fill. Asimetria bosh-djathtas ka gjasë nga PAK REZULTATE në atë matje (kartat mbushin majtas-djathtas), jo nga kufi kontejneri. **Rikontrolloje me një grup të plotë rezultatesh** para se ta quash defekt.
+
+**Vendimi:** kufij të qëllimshëm, jo regres. I VETMI për verifikim: /search/results me rezultate të plota. Instrumenti glyf-marzhe s'duhet krahasuar me ballinën për faqe me kolonë leximi — ai mat tekstin, jo guaskën.
