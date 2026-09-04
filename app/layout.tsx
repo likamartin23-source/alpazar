@@ -13,7 +13,6 @@ import RikthimiFshirjes from './components/RikthimiFshirjes'
 // të mos presë një chunk të veçantë — përndryshe në Slow-4G LCP-ja vonohet (overlay-i i moshës del si
 // elementi LCP ~7s). Është 'use client' + SSR-safe (overlay vetëm pas mount), ndaj importi statik s'prish gjë.
 import { AgeGate } from './components/AgeGate'
-import { DeskSidebar } from './components/DeskSidebar'
 import {
   AiFloat, UpdatePrompt, NotificationToast,
   MaintenanceBanner, AnnouncementBar,
@@ -261,7 +260,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <RikthimiFshirjes />
           <AnnouncementBar />
           <NotificationToast />
-          <DeskSidebar />
           <AgeGate><main id="main-content">{children}</main></AgeGate>
           <AiFloat />
           <UpdatePrompt />

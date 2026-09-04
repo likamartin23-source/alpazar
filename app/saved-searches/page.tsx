@@ -57,7 +57,7 @@ export default function SavedSearchesPage() {
 
   return (
     <>
-    <style dangerouslySetInnerHTML={{ __html: `.az-wrap{max-width:480px;margin:0 auto;padding:16px 0 80px}@media(min-width:768px){.az-wrap{max-width:760px}}@media(min-width:1024px){.az-wrap{max-width:1080px}}` }} />
+    <style dangerouslySetInnerHTML={{ __html: `.az-wrap{max-width:480px;margin:0 auto;padding:16px 0 80px}@media(min-width:768px){.az-wrap{max-width:760px}}@media(min-width:1024px){.az-wrap{max-width:100%;padding-left:clamp(32px,4vw,72px);padding-right:clamp(32px,4vw,72px)}}` }} />
     <div className="az-wrap">
       <div style={{ padding: '12px 16px 0', display: 'flex', alignItems: 'center', gap: 10 }}>
         <button type="button" aria-label="Kthehu mbrapa" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>

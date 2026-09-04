@@ -191,25 +191,6 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
    Matje terminali: faqet ligjore kishin 92–119ch (syri e humb rreshtin >90ch). */
 .lexim{max-width:68ch;margin-left:auto;margin-right:auto;}
 
-/* [DESK-SIDEBAR §Instagram-web] Shirit navigimi majtas VETËM ≥1024px. Fiks në zbrazëtirën
-   240px; `body[data-desknav]` zhvendos gjithë përmbajtjen djathtas (fiksi s'preket nga padding).
-   Vetëm tokena/rgba këtu — pa hex, që roja të mbetet e sheshtë. */
-.desk-sidebar{display:none;}
-@media(min-width:1024px){
-  body[data-desknav="1"]{padding-left:240px;}
-  /* Hiq navigimin e dyfishuar: shiriti majtas mban gjithë lidhjet, ndaj nav-i i sipërm i
-     desktopit te ballina (.desk-nav) fshihet ≥1024 kur shiriti është aktiv (matje terminali T-043). */
-  body[data-desknav="1"] .desk-nav{display:none;}
-  .desk-sidebar{display:flex;flex-direction:column;gap:2px;position:fixed;left:0;top:0;bottom:0;width:240px;padding:20px 14px;background:var(--az-white);border-right:1px solid rgba(0,0,0,.08);z-index:60;overflow-y:auto;box-shadow:1px 0 12px rgba(0,0,0,.03);}
-  .ds-logo{font-size:20px;font-weight:800;color:var(--az-black);text-decoration:none;padding:6px 10px 18px;letter-spacing:.5px;}
-  .ds-nav{display:flex;flex-direction:column;gap:2px;flex:1;}
-  .ds-link{display:flex;align-items:center;gap:14px;padding:11px 12px;border-radius:12px;color:var(--az-ink);text-decoration:none;font-size:15px;font-weight:600;transition:background .15s;min-height:44px;}
-  .ds-link:hover{background:var(--az-cream);}
-  .ds-link.on{background:var(--az-cream);color:var(--az-black);font-weight:800;}
-  .ds-link i{font-size:22px;flex-shrink:0;}
-  .ds-cta{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;padding:12px;border-radius:12px;background:var(--az-black);color:var(--az-yellow);text-decoration:none;font-weight:800;font-size:15px;min-height:44px;}
-  .ds-cta i{font-size:20px;}
-}
 .listings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--sp-3);margin-bottom:var(--sp-4);}
 .listing-card{--card-body-h:98px;background:#fff;border:1px solid #eee;border-radius:var(--r-card);overflow:hidden;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 18px -12px rgba(0,0,0,.14);transition:box-shadow .25s cubic-bezier(.2,.8,.2,1),border-color .25s;display:flex;flex-direction:column;will-change:transform;animation:card-in .45s cubic-bezier(.2,.8,.2,1) both,alpzCardFloat 5s ease-in-out infinite;animation-delay:calc(var(--i,0)*45ms),calc(700ms + var(--i,0)*140ms);}
 @keyframes card-in{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}

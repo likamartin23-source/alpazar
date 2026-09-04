@@ -128,7 +128,7 @@ const [loadError, setLoadError] = useState(false)
       <style dangerouslySetInnerHTML={{ __html: `
         .an-wrap{max-width:480px;margin:0 auto;padding:0 0 80px;font-family:'Segoe UI',sans-serif;background:#f8f8f8;min-height:100vh;}
         @media(min-width:768px){.an-wrap{max-width:760px}}
-        @media(min-width:1024px){.an-wrap{max-width:1080px}}
+        @media(min-width:1024px){.an-wrap{max-width:100%;padding-left:clamp(32px,4vw,72px);padding-right:clamp(32px,4vw,72px)}}
         .an-card{background:#fff;border-radius:14px;padding:16px;margin:10px 12px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
         .an-title{font-size:13px;font-weight:700;color:#4A4A4A;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;}
         .stat-row{display:flex;gap:10px;}
