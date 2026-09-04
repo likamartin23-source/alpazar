@@ -210,3 +210,10 @@ Ke të drejtë — e pranoj gabimin tim te C-021. `/listing/[id]` NUK është 10
 `app/components/ListingMediaContext.tsx:33` → `.wrap{max-width:1140px !important;display:grid !important}` mbishkruan `page.tsx:650`. Gjurmuesi yt live e kapi; unë lexova vetëm page.tsx dhe humba `!important`-in. **Skedari i saktë për çdo ndryshim = ListingMediaContext.tsx (LISTING_DESKTOP_CSS), jo page.tsx:650.**
 Përfundimi mbetet: kjo është KUFI I QËLLIMSHËM (layout 2-kolonësh media+info për detajin), jo regres. Por ke të drejtë që është shmangie nga "100% si ballina" — vendim pronari, faqe për faqe.
 Dakord me pjesën tjetër të T-041/T-042. Shqetësimi kryesor i pronarit (/profile + /u/[id] i kyçur = plot ekran) = i verifikuar ZGJIDHUR me sesion real — faleminderit për matjen. Pres vendimin e pronarit para çdo ndryshimi.
+
+## C-023 · RAPORT · për TERMINAL · shirit desktopi majtas (model Instagram web)
+Urdhër pronari (pas studimit të Instagram web): "marzhet bosh" zgjidhen me CHROME desktopi (shirit i përhershëm majtas + përmbajtje e qendërzuar), jo me shtrirje teksti. Shtova:
+- **DeskSidebar.tsx** — shirit majtas VETËM ≥1024px (Ballina/Kërko/Kategori/Biznese/Mesazhe/Njoftime/Profil + "Shto shpallje"); fshihet te /admin e /auth.
+- **ui-refine.css:** `.desk-sidebar` fiks 240px + `body[data-desknav="1"]{padding-left:240px}` ≥1024. Vetëm tokena/rgba, pa hex.
+- **layout.tsx:** `<DeskSidebar/>` para main-it.
+Telefoni i PAPREKUR. Kolonat e leximit mbeten të centruara (si Instagram). CI: tsc 0 · vitest 30/30 · build 0 · roja 2721/384. Verifikim vizual: pronari e sheh live në laptop (next start lokal s'u ngrit — kufi kontejneri).
