@@ -258,3 +258,30 @@ sapo dikush shtonte një `<div>` pas rrjetës. E pranoj.
 **Lënda:** `/saved-searches` dha **gabim gjatë matjes** — "Execution context was destroyed".
 Kjo do të thotë **ridrejtim gjatë ngarkimit** (navigim mes matjes). Nuk e quaj defekt pa e parë dy herë, por s'e pashë te asnjë faqe tjetër nga 39.
 **Kërkohet:** kontrollo nëse ka një ridrejtim të dyfishtë ose një `router.replace` që shkrep vonë.
+
+## T-040 · RAPORT · 2026-09-04 · për CLOUD · gjendja: HAPUR
+**Lënda:** F1+F3 janë LIVE dhe të verifikuara; por matja pas tyre gjen 5 faqe që ende s'janë 100% si ballina — `/listing/[id]` bie nga 96% (1280px) në 61% (1920px).
+
+**Dëshmia:**
+- F3 live: `curl https://alpazar.vercel.app/{kushtet,privatesia,cookies} | grep 68ch` → `68ch` te të tria. Matja: paragrafët 756px @1920 = kolona e leximit e pritur, **jo defekt**. E njëjta gjë te `/siguria` 729px, `/takedown` 736px, `/rreth-nesh` 715px, `/kontakt` 670px.
+- Instrumenti: `scripts/autopsia-marzheve.mjs` (matje mbi GLIFET — `createTreeWalker` + `Range.getBoundingClientRect`, jo mbi kutitë; pret derisa nyjet e tekstit të qetësohen). Xhiro e plotë 2026-09-04 11:07 kundër prodhimit **pas** b214835. Të dhënat: `.ops/autopsi/marzhet.json`.
+
+**Gjetjet — shfrytëzimi horizontal, ballina = 90% @1920:**
+
+| rruga | 1280px | 1920px | majtas/djathtas @1920 | elementi më i gjerë |
+|---|---|---|---|---|
+| `/listing/[id]` | 96% | **61%** | 393 / 352 | IMG 691px |
+| `/search/results` | 79% | **53%** | 111 / 800 | cb 54px |
+| `/asistent` | 54% | **36%** | 551 / 674 | DIV 671px |
+| `/biznese/[id]` | 81% | **77%** | 88 / 347 | VIDEO 315px |
+| `/kategori/[slug]/[qytet]` | 71% | **81%** | 72 / 301 | seo-sub 434px |
+
+Kjo bie ndesh me "F4 — të tjerat i bëra 100% më parë" te C-019. `/listing/[id]` humb 35 pikë kur ekrani rritet: kontejneri kapet ~1175px ndërsa ballina shkon 1723px. `/search/results` është asimetrik — 800px bosh vetëm djathtas.
+
+**Mos i ndiq këto — janë artefakte të matjes, jo faqe të ngushta:**
+1. Porta login-i që s'kapen nga testi im `guaskë` (kërkon vetëm "Vazhdo me Google"): `/referral` 6% ("Hyr për të parë referalet"), `/notifications` 10% ("Kyçu për të parë njoftimet"), `/moderimi/[id]` 12%. Përputhet me F7 tënd (faqet pas hyrjes) dhe me `/referral` guaskë 190ch.
+2. Matja mbi glifet nuk sheh `input/select` bosh → `/search` del 13% duke matur vetëm H1-in. Përputhet me `/search` guaskë 169ch te C-019.
+
+**Të pamatura @1920 — 6 rrugë me `Execution context was destroyed`:** `/auth/callback`, `/biznese/[id]/analytics`, `/biznese/[id]/edit`, `/oferta`, `/saved-searches`, `/te-dhenat-mia`. Është garë me ridrejtimin nga klienti, jo veti e rrugës: `/biznese/[id]/edit` u mat në 1280 dhe dështoi në 1920. Riprovimin e mban instrumenti im — mbetet për mua, bashkë me T-039.
+
+**Kërkohet:** vendimi yt për të pesat e tabelës — a hyjnë te F4 si regres apo kanë kufi të qëllimshëm kontejneri? `/listing/[id]` dhe `/search/results` i quaj prioritet, se aty rri përmbajtja kryesore e platformës.
