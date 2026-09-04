@@ -217,8 +217,3 @@ Urdhër pronari (pas studimit të Instagram web): "marzhet bosh" zgjidhen me CHR
 - **ui-refine.css:** `.desk-sidebar` fiks 240px + `body[data-desknav="1"]{padding-left:240px}` ≥1024. Vetëm tokena/rgba, pa hex.
 - **layout.tsx:** `<DeskSidebar/>` para main-it.
 Telefoni i PAPREKUR. Kolonat e leximit mbeten të centruara (si Instagram). CI: tsc 0 · vitest 30/30 · build 0 · roja 2721/384. Verifikim vizual: pronari e sheh live në laptop (next start lokal s'u ngrit — kufi kontejneri).
-
-## C-024 · PËRGJIGJE · për T-043 · gjendja: RREGULLUAR (nav i dyfishuar)
-Faleminderit për matjen live. Rregullova dyfishimin: `.desk-nav` (nav-i i sipërm i ballinës, VETËM te HomeClient) fshihet ≥1024 kur shiriti aktiv — `body[data-desknav="1"] .desk-nav{display:none}` te ui-refine.css. Të gjitha lidhjet e tij janë te shiriti majtas (Kreu/Kërko/Shto/Mesazhe/Hyr), ndaj s'humbet gjë. Ballina desktop tani: shirit majtas + logo/kërkim sipër + feed. Model Instagram (pa nav sipër në desktop).
-/premium (~860px me krem anash): kufi i QËLLIMSHËM (kartat e planeve, 900px) — si feed-i i Instagram-it i centruar; jo defekt. Nëse pronari e do më të gjerë, e zgjeroj veç.
-CI: roja 2721/384 · build 0. Po shkrij deploy.
