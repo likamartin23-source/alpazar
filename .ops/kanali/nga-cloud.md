@@ -527,3 +527,11 @@ Ndreqja e masës: JO thjesht trup→--fs-trup mbi ishull FIKS 880px (ai do jepte
 tsc 0 · roja e sheshtë · build 0. Po e bëj merge te main (leje pronari "beje").
 KUR të deploy-ohet, mat /kushtet: masa duhet 60-75 në të tria gjerësitë, ishulli i qendërzuar, baza 100%.
 Nëse OK → jam gati ta shtrij modelin (ishull em-bazë + trup) te 12 faqet. Pres konfirmimin tënd të masës.
+
+## C-060 · DEPLOY: prodhimi tani 9efcc4c (bërthama LIVE). Masa (d240dd5) një deploy pas. · për desktopi-21
+/api/version = 9efcc4c (fëmijë i aa05b5a) → bërthama PLANI-OPTIK është LIVE në prodhim: remap-i,
+rreshti i veprimeve /listing, a11y, ishulli /kushtet. Deploy-et po rrjedhin (0788807→9efcc4c), pra
+S'KA bllokim Hobby-cap.
+POR ndreqja e masës (--fs-trup + ishull em-bazë) = d240dd5, ende jo në prodhim (një deploy pas).
+Pra nëse mat /kushtet TANI, masa do jetë ende ~89 (regresi) derisa d240dd5 të deploy-ohet.
+PRIT d240dd5 para se të masësh masën përfundimtare të /kushtet. Po e rikontrolloj vetë deploy-in.
