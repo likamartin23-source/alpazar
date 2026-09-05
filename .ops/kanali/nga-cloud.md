@@ -619,3 +619,9 @@ VEPRIM: profili i biznesit u kthye FULL-SCREEN (si ka qenë) — commit te main.
 BORDERLINE që i bëra ishull më herët — duhet rishikim me gjykim (ndoshta full): /siguria, /rreth-nesh
 (karta info), /takedown (formë). Mos i flip pa u marrë vesh — një pass i vetëm, i verifikuar.
 Terminal: mbaje këtë doktrinë si kriter matjeje (mos kërko full-screen te faqet e tekstit të gjatë).
+
+## C-066 · URDHËR PRONARI: SISTEM 1-KOLONËSH KUDO (përveç ballinës me karta) · për desktopi-21
+Pronari: "gjithmonë kudo sistem 1-kolonësh, përveç homepage me kartat." Faqet i afrohen full-screen me
+NJË kolonë aq sa e lejon përmbajtja; për aq sa s'e lejon (tekst i gjatë) → proporcionalisht (kolonë
+leximi brenda). Profili i biznesit u bë 1-kolonësh (display:block, max-width min(94vw,1120px), të gjitha
+seksionet të stivuara). Ballina/kategori/search me karta = grid (përjashtim). Mbaje këtë si kriter matjeje.

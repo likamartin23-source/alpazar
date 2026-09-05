@@ -783,15 +783,22 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
         .biz-panel{display:none;}
         .biz-panel.is-active{display:block;}
         @media (min-width:1000px){
-          /* FULL-SCREEN si ka qenë (guaskë e plotë), me 2 kolona. */
-          .biz-shell{max-width:100%;display:grid;grid-template-columns:minmax(320px,380px) minmax(0,1fr);gap:24px;align-items:start;padding:0 clamp(20px,4vw,72px);}
-          .biz-left{position:sticky;top:12px;align-self:start;max-height:calc(100vh - 24px);overflow-y:auto;overscroll-behavior:contain;}
-          .biz-left::-webkit-scrollbar{width:0;}
+          /* SISTEM 1-KOLONËSH (doktrina e pronarit: gjithmonë 1 kolonë, përveç ballinës
+             me karta). Profili = NJË kolonë e vetme, e qendërzuar, që i AFROHET
+             full-screen sa e lejon përmbajtja. Jo sidebar 2-kolonësh. */
+          .biz-shell{display:block;max-width:min(94vw,1120px);margin:0 auto 44px;padding:0 clamp(20px,3vw,40px);}
+          .biz-left{position:static;max-height:none;overflow:visible;}
           .biz-right{min-width:0;}
           .biz-tabs{display:none!important;}
           .biz-panel{display:block!important;}
-          /* Rrjeta mbush gjerësinë me sa karta nxë. */
+          /* Shpalljet mbushin gjerësinë me sa karta nxë (grid brenda kolonës së vetme). */
           .biz-right .listings-grid{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));}
+          /* "Për aq sa nuk e lejon, proporcionalisht": teksti i gjatë i leximit
+             kufizohet te kolona e leximit që të mos lodhë syrin, ndonëse kolona e gjerë. */
+          .biz-right .card p, .biz-right .info-text{max-width:var(--kolona-lexim);}
+          /* Kopertina të mos bëhet slab gjigant në kolonë të gjerë (16/7 @1120=490px);
+             kufizohet proporcionalisht që të mbetet e bukur. */
+          .biz-cover{aspect-ratio:auto!important;height:clamp(200px,20vw,280px);}
         }
         .biz-tab{flex:1;padding:13px 0;font-size:var(--fs-dysheme);font-weight:700;border:none;background:none;cursor:pointer;border-bottom:2.5px solid transparent;color:#888;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:4px;}
         .biz-tab.active{color:#C42B0F;border-bottom-color:var(--az-red);}
@@ -822,7 +829,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
       <div className="biz-left">
       {/* ── Cover photo ────────────────────────────────────── */}
       <div style={{ position: 'relative' }}>
-        <div style={{ aspectRatio: '16/7', overflow: 'hidden', background: 'linear-gradient(135deg,var(--az-yellow),var(--az-red))' }}>
+        <div className="biz-cover" style={{ aspectRatio: '16/7', overflow: 'hidden', background: 'linear-gradient(135deg,var(--az-yellow),var(--az-red))' }}>
           {biz.cover_url && (
             <img src={biz.cover_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
