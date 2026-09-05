@@ -218,3 +218,54 @@ Nga shtatë pikat e rregullores: **një e respektuar plotësisht** (§6), **një
 **pesë të shkelura pjesërisht ose plotësisht**. Kontrata thotë "të gjitha = të gjitha"; unë kam
 dorëzuar pjesë dhe i kam quajtur të plota. Kjo është arsyeja e vërtetë pse puna nuk konvergjon —
 jo ritmi, por **pranimi i mbulimit të pjesshëm si i mjaftueshëm**.
+
+---
+
+## 11. AUTOPSIA SHUMËDIMENSIONALE — thellim i dytë (urdhër pronari)
+
+Baza: **140 matje të vlefshme** (35 rrugë × 4 gjerësi), me instrumentin e ndrequr tri herë sot.
+
+### 11.1 · Dy metrika, jo një — dhe pse kjo ndryshon gjithçka
+Deri sot mata një numër: sa e mbushte teksti ekranin. Ai numër **gënjente në dy drejtime**:
+- Faqet me kokë e fund plot-gjerësi dilnin "të kaluara" edhe kur përmbajtja notonte ishull
+  (`/favorites`: guaskë **87.3%**, përmbajtje **51.7%**).
+- Faqet që e mbanin përmbajtjen jashtë `<main>` dilnin katastrofike pa qenë
+  (`/admin`: **11.3%** e matur, **59.6%** reale).
+
+Tani maten **dy**: *guaska* (a duket ekrani i mbushur) dhe *përmbajtja* (a është faqja ishull).
+
+### 11.2 · Progresioni i dëmit me gjerësinë — numri qendror
+| Gjerësia | Përmbajtje <85% | Ishuj të rëndë <60% |
+|---|---|---|
+| 390 (app) | 11/35 | **0** |
+| 1280 | 19/35 | **6** |
+| 1920 | 20/35 | **19** |
+| 2560 | **24/35** | **21** |
+
+**Zero ishuj në telefon, njëzet e një në monitor.** Platforma është e shëndetshme në mobil;
+i gjithë dëmi lind nga zmadhimi. Kjo e vërteton ankesën e pronarit me numër, jo me përshtypje.
+
+### 11.3 · Klasifikimi i dështimit — tri lloje, jo një
+| Lloji | Raste | Kuptimi | Ndreqja |
+|---|---|---|---|
+| **A · ishull i qendërzuar** | 41 | marzhe të barabarta; përmbajtja noton në mes | bazë 100% + panel proporcional |
+| **B · e ankoruar majtas** | 23 | bosh vetëm djathtas; rrjeta s'zgjerohet | heqje kapësi / qendërzim rrjete |
+| **C · guaska VETË bosh** | 10 | as koka/fundi s'e mbushin ekranin | duhet shtresa bazë e vetë platformës |
+
+**Zbulim i ri: disa faqe ndërrojnë lloj sipas gjerësisë.** `/messages` është B në 1280/1920 por A
+në 2560. `/listing/new` është C në 1280 dhe A në 1920+. Prandaj një ndreqje e vetme për faqe
+**nuk mjafton** — duhet e verifikuar në të katër gjerësitë.
+
+### 11.4 · Faqet e Tipit C (guaska vetë bosh) — prioriteti i vërtetë
+`/admin` (@1920, @2560) · `/asistent` (@1280, @1920, @2560) · `/biznese/[id]/edit` (@1280) ·
+`/listing/[id]/edit` (@1280) · `/listing/new` (@1280) · `/profile` (@2560) · `/rreth-nesh` (@2560).
+Këtu nuk mjafton paneli — mungon vetë tavolina. Këto duhen të parat, se pa bazë s'ka ku të qëndrojë ishulli.
+
+### 11.5 · Faqet që dështojnë në TË KATRA gjerësitë — defekt strukturor
+`/messages` · `/listing/[id]/edit` · `/saved-searches` · `/favorites` · `/te-dhenat-mia` · `/oferta`
+Këto nuk kanë problem zmadhimi — kanë defekt të vetë strukturës, dhe do të mbeten të prishura
+edhe pas çdo ndreqjeje të gjerësisë.
+
+### 11.6 · Faqja më e keqe e platformës
+`/messages`: **60.6% → 43.1% → 29.5% → 22.7%**. Bie në mënyrë monotone me çdo zmadhim.
+Në monitor 27" më shumë se tre të katërtat e ekranit janë bosh.
