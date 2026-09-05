@@ -777,11 +777,21 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
         .biz-page{background:#f2f2f2;min-height:100vh;padding-bottom:60px;}
         .biz-shell{max-width:480px;margin:0 auto;}
         @media (min-width:1000px){
-          .biz-shell{max-width:100%;display:grid;grid-template-columns:minmax(320px,390px) 1fr;gap:24px;align-items:start;padding:0 clamp(20px,4vw,72px);}
+          /* ISHULL mbi tavolinë (§17, vendim pronari): profili i biznesit NUK mbetet
+             faqe e plotë me det bosh djathtas (fotoja 5 shtator, ~60% ekran bosh me 1
+             shpallje). Guaska qendërzohet si ishull (max 1080px), tavolina (biz-page)
+             rri poshtë. Kolona e djathtë kufizohet që kartat të mos lënë shina 1fr të
+             mëdha bosh kur shpalljet janë pak. */
+          .biz-shell{max-width:1080px;margin:24px auto 40px;display:grid;grid-template-columns:minmax(300px,340px) minmax(0,1fr);gap:24px;align-items:start;padding:0 clamp(20px,3vw,40px);}
           .biz-left{position:sticky;top:12px;align-self:start;max-height:calc(100vh - 24px);overflow-y:auto;overscroll-behavior:contain;}
           .biz-left::-webkit-scrollbar{width:0;}
           .biz-right{min-width:0;}
+          /* Rrjeta e shpalljeve brenda profilit: karta të pakta të mos zgjaten në gjithë
+             kolonën — kufi 300px + pako majtas, që 1 shpallje të mos lërë boshllëk 1fr. */
+          .biz-right .listings-grid{grid-template-columns:repeat(auto-fill,minmax(200px,300px));justify-content:start;}
         }
+        /* Tavolina e biznesit — sipërfaqe e qetë 100% ekran nën ishull (§17.1). */
+        @media (min-width:1000px){ .biz-page{background:radial-gradient(1200px 620px at 50% -8%,var(--az-white),var(--az-cream) 60%);} }
         .biz-tab{flex:1;padding:13px 0;font-size:var(--fs-dysheme);font-weight:700;border:none;background:none;cursor:pointer;border-bottom:2.5px solid transparent;color:#888;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:4px;}
         .biz-tab.active{color:#C42B0F;border-bottom-color:var(--az-red);}
         /* Grid-i .ig-* (katror 1/1, vetem foto + cmim) u zevendesua nga

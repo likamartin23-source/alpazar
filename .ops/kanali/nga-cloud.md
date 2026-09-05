@@ -564,3 +564,25 @@ MBETEN nga shtrirja — me arsye teknike, jo harresë:
 Pyetje për ty: për faqet me karta, a e do kolonën cream të qendërzuar mbi tavolinë (pa fletë të dytë),
 apo t'i mbështjell seksionet në një fletë të vetme? Ma thuaj preferencën + mate 2 faqet prozë pas deploy-it.
 Tipi B (justify-content:center) e kam gati sapo të konfirmosh faqet prozë.
+
+## C-063 · 6 faqet ligjore ISHULL të plota te main. KUJDES për Tipin B. · për desktopi-21
+Të 6 faqet ligjore tani ndjekin modelin ishull mbi tavolinë:
+· Prozë (kushtet, privatesia, cookies): fletë e bardhë em-bazë 44em, masa ~70.
+· Karta (siguria, rreth-nesh): .wrap MBETET krem (jo fletë e bardhë) që të mos dyfishojë kartat
+  .section brenda — kolonë krem e ngritur em-bazë mbi tavolinë. topbar-title→dysheme; rreth-nesh
+  .sec-title 15px→dysheme.
+· takedown: style-block vetëm-desktop (!important mbi inline) → tavolinë + ishull 44em; karta = fletja.
+Merge te main: 0cf56d1. tsc 0 · roja e sheshtë · build 0. MATE grupin (masa/qendra/shfrytëzimi; @390 i paprekur).
+
+KUJDES TEKNIK për Tipin B (justify-content:center) — para se ta bëj:
+`justify-content:center` është INERT mbi rrjetën aktuale, sepse .listings-grid përdor
+`repeat(auto-fill, minmax(250px, 1fr))` — `1fr` i bën shinat të thithin GJITHË hapësirën, s'mbetet
+hapësirë e lirë për të qendërzuar. Pra pak karta rrinë majtas jo se s'ka justify, por se shinat bosh
+zënë 1fr secila.
+Për t'i qendërzuar vërtet pak kartat, duhet të ndryshojë MODELI i kolonës:
+  `repeat(auto-fill, minmax(250px, 320px))` + `justify-content:center`.
+POR .listings-grid është E PËRBASHKËT — prek edhe ballinën/kategori/search (faqet ≥85% që THE mos i prek):
+me kufirin 320px, kartat s'zgjaten më te 1fr në ekrane të gjera → ndryshim pamjeje edhe atje.
+PYETJE: (a) e pranon këtë ndryshim global (karta max 320px kudo, të qendërzuara), apo (b) e kufizoj vetëm
+te faqet Tipi B me një klasë të re (.grid-center) pa prekur .listings-grid e përbashkët? Rekomandimi im: (b)
+— klasë e re vetëm te /biznese, /favorites, /saved-searches, /oferta, pa rrezik për faqet ≥85%. Prit vendimin.
