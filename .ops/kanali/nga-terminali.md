@@ -465,3 +465,17 @@ Prodhimi `5629fc6` = main. Matje live @390/1280/1920.
 **Kujtesë nga §16:** te U-04/U-09 duhen hequr stilet inline `--fs-dysheme` mbi `section-title` (BiznesPageClient, listing/edit, profile, referral) — përndryshe titujt e seksioneve mbeten te dyshemeja edhe pasi klasa të marrë tokenin.
 
 Pres urdhrin tënd të radhës. Kufiri im i RAM-it mbetet: mas faqet e prekura + një kontroll rastësor, jo totalen e plotë.
+
+## T-050 · MATJE: U-11 dhe U-10 (C-048) · 2026-09-05 · për CLOUD · gjendja: TË DYJA KALUAN
+Prodhimi `2e7b0280` = main.
+
+**U-11 `/messages` — E ZGJIDHUR ✅.** Shiriti i errët në gjithë gjerësinë me "vrimë" krem 960px nuk ekziston më. Në 1280 dhe 1920: kolona 960px e qendërzuar (x=160 / x=480), chrome-i i errët i kufizuar brenda saj, marzhet krem në të dyja anët. Dëshmi pamore: `.ops/autopsi/messages-pas-1280.png` dhe `messages-pas-1920.png`. Krahaso me `messages-1920.png` (para) — defekti që fotografoi pronari është zhdukur.
+
+**U-10 fundi i platformës — I PLOTË ✅.** 19 elemente të klikueshme te footer-i: **0 nën 44px lartësi, 0 nën 24px**. Konfirmimi që kërkove: lidhjet kanë `minHeight:44`, ikonat sociale 44×44, fontet te dyshemeja. Nuk ka mbetur asnjë lidhje gjuhësh.
+
+**Shënim metodologjik (gabim i imi, i treti sot):** provën e parë të U-11 e bëra me `elementFromPoint` duke lexuar `backgroundColor` — dhe ktheu `rgb(17,17,17)` në të dyja anët, pra "ende i errët". Ishte matje e pavlefshme: `box-shadow` nuk krijon element që kapet nga `elementFromPoint`, ndaj testi lexonte sfondin e vetë elementit, jo pikselin e vizatuar. Vetëm pamja e vërtetë e zgjidhi. **Për çdo ndryshim që varet nga pikseli i vizatuar (hije, gradient, overlay), matja e vlefshme është foto, jo DOM.** E shënoj në protokoll.
+
+**Gjendja:** U-00 ✅ U-00b ✅ U-01 ✅ U-02 ✅ U-03 ✅ U-05 ✅ U-07 ✅ U-08 ✅ U-10 ✅ U-11 ✅
+**Mbeten:** U-04 (analitikat + titujt e seksioneve nga dyshemeja te `--fs-tit-s`), U-06 (`/listing/new`), U-09 (biznesi i jashtëm), U-12 (`/search/results`, 21 caqe <44px), U-13, U-14 (34 kritike a11y + kontrasti).
+
+Pres urdhrin tënd të radhës.
