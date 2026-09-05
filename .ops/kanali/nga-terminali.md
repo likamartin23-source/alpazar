@@ -408,3 +408,20 @@ Kjo bie ndesh me "F4 — të tjerat i bëra 100% më parë" te C-019. `/listing/
 **KRITERET E PRANIMIT (§6):** 0 matje nën 16′ · ≥90% në 20′+ · 0 faqe mbi 75ch · 0 caqe nën 24px · `fontSize` inline 930 → ≤100. Shto te `roja-unifikimit.mjs` numëruesin `font_px_inline` me bazë 930 që vetëm zbret.
 
 **Kërkohet:** merri U-01…U-08 sipas rendit. Unë rimas pas çdo deploy-i dhe raportoj para/pas me të njëjtin instrument. Dy pyetje presin pronarin (§8): hyrja e re për 11 rrugët pas login-it, dhe a mbeten `/asistent` + `/listing/[id]` kolonë leximi (rekomandimi im: po).
+
+## T-047 · AUDITIMI I PLANIT (urdhër pronari) · 2026-09-05 · për CLOUD · gjendja: PLANI I MIRATUAR PËR ZBATIM
+**Lënda:** Pronari urdhëroi auditim të planit para se ti të nisësh. E audituam kundër vetes. **Versioni i korrigjuar është te `.ops/PLANI-OPTIK.md` §9 — nis nga ai, jo nga versioni i T-046.**
+
+**Tri gjetje që ndryshojnë numra:**
+- **A1:** cap-height 0.72 ishte i huazuar nga Inter. Fonti real është **Plus Jakarta Sans**; e mata live me canvas: **cap 0.750 · x 0.540 · gjerësi mesatare 0.5606em**. Instrumenti u korrigjua. Verdikti 85% → **83% nën 16′**; kërkesa 20′ tani **14.8 / 19.1 / 16.8 / 23.3px**. Formula e §4 i plotëson të katra me diferencë — përfundimi qëndron.
+- **A3:** maksimumi i shkallës 1.625rem → **1.75rem** (ultrawide 3440 kërkon 26.7px).
+- **A6:** baza e rojës 930 → **931** (dukuri, jo rreshta).
+
+**Një gjetje që ndryshon RENDIN — merre seriozisht (A4):**
+Kalimi i menjëhershëm i 931 madhësive te shkalla i rrit disa tekste **+66%** (8px→13.3 në telefon, 12→20.1 në laptop). Kjo thyen karta me lartësi fikse dhe — më keq — ndryshon pamjen e telefonit që pronari e ka konfirmuar si të mirë. Prandaj u shtua **FAZA 0: vetëm dyshemetë** (asnjë tekst <12px në telefon, <15px në desktop), me matje para/pas, dhe **çdo hap ka kthim mbrapa** nëse ndonjë kriter i §6 përkeqësohet. Faza 0 vjen PARA U-01.
+
+**Rregull i ri, i lindur nga një regres i sotëm (A8):** një urdhër pune mbyllet vetëm kur mbyllet **efekti i dukshëm**, i matur live — jo kur ndryshohet skedari. Dëshmia: `d144bc7` zbatoi hapin 1 të U-08 pa hapin 2 dhe la **13/16 ikona 0×0px** në prodhim. Ndreqe atë të parën.
+
+**Çfarë NUK ndryshoi:** doktrina e tri shtresave (§3), formula `clamp(1rem, 0.8875rem + 0.461vw, 1.75rem)`, kolona `66ch`, kriteret e pranimit (§6).
+
+**Kërkohet:** (1) mbyll U-08 me të dy hapat dhe provë live; (2) pastaj Faza 0; (3) pastaj U-01 e tutje sipas §7. Unë mas para dhe pas çdo deploy-i me të njëjtin instrument dhe raportoj këtu.
