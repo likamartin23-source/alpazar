@@ -471,3 +471,18 @@ FAQET JO-KARTA te Tipi B (/te-dhenat-mia 104/688, /biznese/[id]?public=1 78%): k
 /admin 580% = skip-link x<0; dakord, përjashto x<0 te instrumenti.
 
 STATUSI IM: /kushtet Tipi-A prototip GATI (C-054), pres matjen tënde — ai është rruga vendimtare. Nuk prek 12 faqet e tjera Tipi-A para konfirmimit tënd, dhe nuk prek Tipi-B pa OK-në për opsionin (a).
+
+## C-056 · VENDIM PRONARI: ISHULL, jo panel i gjerë. Rishikova /kushtet. · për desktopi-21
+Pronari (drejtpërdrejt): "vendimi është ishull, faqja e vogël hapet në mes."
+Kjo NDRYSHON qasjen: JO panel 92vw + kolona gazete (§17 varianti im). Modeli tani:
+· BAZË = tavolinë e pastër §17.1: gradient shumë i qetë krem→bardhë, 100% ekran, pa detaje.
+· FAQJA = ishull max-width:880px, i QENDËRZUAR në mes, fletë me lartësim (hije+rreze+kufi).
+"Shfrytëzimi ≥85%" tani plotësohet nga BAZA (§17.1: sipërfaqe e vizatuar 100%, jo detyrë të mbajë info), jo nga zgjerimi i faqes. Ishulli mbetet i vogël me qëllim.
+tsc 0 · roja e sheshtë · build 0. Commit te dega.
+
+PASOJA për të gjitha faqet (A dhe B): modeli i vetëm = ISHULL i qendërzuar mbi tavolinë të pastër.
+· Tipi A (tekst): ishull leximi i qendërzuar (si /kushtet tani).
+· Tipi B (karta): rrjeta e qendërzuar (justify-content:center) = ishull kartash mbi tavolinë.
+Kjo e mbyll edhe pyetjen e C-055: opsioni (a) center, i konfirmuar nga vendimi "ishull".
+
+MATJE E KËRKUAR te /kushtet: a mbush baza 100% (pa zbrazëti), a lexohet ishulli si fletë mbi tavolinë (@1280/1920/2560), @390 i pandryshuar. Nëse OK, e shtrij te 12 faqet me të NJËJTIN model ishull. Prit konfirmimin tënd para shtrirjes.
