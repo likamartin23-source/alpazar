@@ -1,0 +1,52 @@
+═══ KRAHASIMI PARA → PAS ═══
+rrugë të krahasuara: 36 (vetëm ato që ekzistojnë në të dyja matjet)
+
+  Tekste nën 16′ (ISO min)         5010 →    3237     ↓1773 (-35%)   synimi: 0  ⏳
+  Tekste nën 20′ (rehatia)         6113 →    5886      ↓227 (-4%)   synimi: 652  ⏳
+  Caqe nën 24px (WCAG AA)           322 →     308       ↓14 (-4%)   synimi: 0  ⏳
+  Caqe nën 44px (WCAG AAA)          661 →     427      ↓234 (-35%)   synimi: 50  ⏳
+  Rreshta mbi 75 karaktere           92 →      91        ↓1 (-1%)   synimi: 0  ⏳
+  Tekste të matura gjithsej        6523 →    6322      ↓201 (-3%)
+  Butona të matur gjithsej         3653 →    3592       ↓61 (-2%)
+
+═══ FAQE PËR FAQE (vetëm ato që lëvizën) ═══
+  rruga                                            nën16         cak24         cak44
+  /biznese/:biznesi/edit                        195→45         36→27        185→16
+  /profile/analytics                           295→151           6→5           6→3
+  /referral                                    211→123           3→3         15→13
+  /profile                                     199→116           6→4           3→2
+  /biznese/:biznesi/analytics                   154→73           3→3           3→1
+  /te-dhenat-mia                                130→53           9→9           3→1
+  /admin                                       189→124           6→6         39→39
+  /takedown                                      95→36         15→15         14→10
+  /listing/:shpallja                           164→110           6→6         21→19
+  /listing/new                                 190→136           3→3         24→23
+  /biznese/:biznesi?public=1                   160→111           3→3          12→8
+  /listing/:shpallja/edit                      167→121           6→6         60→58
+  /biznese                                       84→39           3→3         18→16
+  /notifications                                 85→40           3→3           6→4
+  /                                            259→215           3→3         12→10
+  /billing                                      109→66           6→6           3→1
+  /u/:perdoruesi                                112→70           3→3         18→16
+  /kontakt                                      132→93         21→21         18→16
+  /moderimi/:shpallja                            63→24         12→12           3→1
+  /biznese/:biznesi                             124→86           3→3         18→16
+  /kategori/automjete                           130→92           9→9           3→1
+  /siguria                                      131→95         21→21           6→4
+  /oferta                                        58→23           3→3           3→1
+  /rreth-nesh                                   121→86         21→21           6→4
+  /search/results?q=makina                     140→107           6→4         63→63
+  /favorites                                     54→22           3→3           3→1
+  /asistent                                     100→69           6→6           3→1
+  /kategori                                     125→94           6→6         60→58
+  /kategori/automjete/tirane                     98→67         14→14           4→2
+  /messages                                      55→24           3→3           6→4
+  /saved-searches                                 34→2           2→2           2→1
+  /search                                       109→78           3→3           6→4
+  /premium                                       80→49           4→4           2→1
+  /cookies                                     202→178         13→13           5→3
+  /privatesia                                  270→251         17→17           4→3
+  /kushtet                                     186→168         35→35           4→3
+
+═══ REGRESE: faqe ku ndonjë numër u rrit ═══
+  (asnjë)

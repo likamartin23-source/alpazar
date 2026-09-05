@@ -372,3 +372,75 @@ Ky vendim **zëvendëson** rekomandimin e mëparshëm te §4 (ku `/listing/[id]`
 | Masa e leximit | ≤75 karaktere reale te përshkrimi, në të tria gjerësitë |
 | Pa CSS të vdekur | `grep -c "grid-template-columns" ListingMediaContext.tsx` = 0 |
 | Pa regres telefoni | numrat @390 të pandryshuar (bllok i prekur ishte vetëm ≥1000px) |
+
+---
+
+## 12. MATJA PARA/PAS — U-00 (Faza 0) dhe U-02, të verifikuara live
+
+Prodhimi `6f32a96` kundrejt `3c21976`. Krahasim mbi **çiftet (rrugë × gjerësi) që ekzistojnë në
+të dyja matjet** — jo mbi totalet e papërpunuara, sepse dy xhirot mbuluan grupe paksa të ndryshme
+rrugësh dhe 19 matje mungonin (kjo e ndotte krahasimin e parë; u ndreq te `krahaso-para-pas.mjs`).
+
+| Kriteri | Para | Pas | Ndryshimi | Synimi |
+|---|---|---|---|---|
+| Tekste nën 16′ | 5 010 | **3 237** | **−1 773 (−35%)** | 0 |
+| Tekste nën 20′ | 6 113 | 5 886 | −227 (−4%) | ≤652 |
+| Caqe nën 24px | 322 | 308 | −14 (−4%) | 0 |
+| Caqe nën 44px | 661 | **427** | **−234 (−35%)** | ≤50 |
+| Rreshta mbi 75 karaktere | 92 | 91 | −1 | 0 |
+
+**Regrese: asnjë.**
+
+### U-02 e mbyllur me numër (faqja më e dëmtuar e platformës)
+`/biznese/[id]/edit`: tekste nën 16′ **195 → 45**, caqe nën 24px **36 → 27**,
+caqe nën 44px **185 → 16**. Përmirësimi më i madh i regjistruar deri tani në një faqe të vetme.
+
+### Faqe të tjera që lëvizën ndjeshëm
+`/profile/analytics` 295→151 · `/referral` 211→123 · `/premium` 132→49 · `/profile` 199→116 ·
+`/biznese/[id]/analytics` 154→73 · `/te-dhenat-mia` 130→53 · `/takedown` 95→36.
+
+---
+
+## 13. GABIM I IMI, I ZBULUAR NGA MATJA: dyshemeja është 0.3px e shkurtër
+
+Analiza e shpërndarjes së teksteve që MBETEN nën 16′ në laptop-1280:
+
+| Madhësia | Sa raste |
+|---|---|
+| **15px** | **921** |
+| 13px | 309 |
+| 12px | 260 |
+| 11px | 223 |
+| 10px | 118 |
+| 14px | 49 |
+
+**921 raste rrinë saktësisht te 15.00px** — pikërisht vlera që jep formula ime
+`--fs-dysheme: clamp(12px, 10.69px + 0.337vw, 16px)` në 1280px. Por kërkesa ISO për 16′ në atë
+gjerësi është **15.3px**. Pra dyshemenë e projektova me numra të rrumbullakët (12 mobil / 15
+desktop) pa e kontrolluar kundrejt kërkesës së llogaritur në §1. Është 28% e gjithë mbetjes.
+
+**Ndreqja e propozuar** (mban telefonin të paprekur në 12px, ku 16.2′ tashmë kalon):
+```css
+--fs-dysheme: 12px;                                        /* telefon: 12px = 16.2′ ✓ */
+@media (min-width: 700px){
+  --fs-dysheme: clamp(15.4px, 12.2px + 0.26vw, 19px);      /* 15.5px @1280 · 17.2 @1920 · 18.9 @2560 */
+}
+```
+Kontrolli: @1280 → 15.53px = 16.3′ ✓ · @1920 → 17.19px = 19.6′ ✓ · @2560 → 18.86px = 16.2′ ✓.
+Një rresht i vetëm; heq 921 shkelje pa asnjë ndryshim tjetër kodi.
+
+## 14. U-00b — Faza 0 nuk është e plotë: mbeti CSS-i
+
+Kodmodi preku vetëm stilet **inline** (713 zëvendësime, 0 `fontSize` numerike nën 15 të mbetura).
+Por madhësitë në blloqet CSS / styled-jsx nuk u prekën:
+
+| Ku | Sa nën 15px |
+|---|---|
+| `font-size:` brenda `.tsx` (styled-jsx) | **418** |
+| skedarët `.css` | 22 |
+
+Më të ngarkuarit: `app/admin/page.tsx` (22), `app/auth/login/page.tsx` (19),
+`BiznesPageClient.tsx` (19), `app/billing/ui.tsx` (13), `biznese/[id]/analytics/page.tsx` (7).
+Këto shpjegojnë pjesën tjetër të mbetjes (13px ×309, 12px ×260, 11px ×223, 10px ×118).
+
+**U-00b:** i njëjti trajtim mbi blloqet CSS — `font-size: <15px` → `var(--fs-dysheme)`.
