@@ -332,3 +332,43 @@ pas çdo hapi** — jo supozim se u zgjidh.
 589 kontrolle mbetën **të papërfunduara**: axe nuk e llogarit dot kontrastin mbi gradient,
 foto ose tekst me shtresa. Ato kërkojnë sy njeriu ose matje me mostër pikselësh — punë e
 mbetur, e shënuar, jo e harruar.
+
+---
+
+## 11. VENDIM PRONARI (5 shtator, me foto) — KARTA E SHPALLJES NË NJË KOLONË
+
+**Urdhri:** «strukturore karten e shpalljes ne nje kolone».
+
+Ky vendim **zëvendëson** rekomandimin e mëparshëm te §4 (ku `/listing/[id]` mbahej layout
+2-kolonësh si "kufi i qëllimshëm"). Pronari vendos faqe për faqe; vendimi është i tij.
+
+### Gjendja e sotme, e matur
+`/listing/[id]` @≥1000px është grid me dy kolona, i imponuar me `!important`:
+- **Skedari i saktë:** `app/components/ListingMediaContext.tsx` → `LISTING_DESKTOP_CSS`
+  ```css
+  @media (min-width:1000px){
+    .wrap{ max-width:1140px !important; display:grid !important;
+           grid-template-columns:minmax(0,1.15fr) minmax(0,0.85fr); column-gap:34px; }
+    .wrap > .info{ grid-column:2; grid-row:2 / span 999; }
+  }
+  ```
+- Rregulli i faqes (`ListingPageClient.tsx:646–650`) është 480px → 760px @768 → 100% @1024;
+  bllokut me `!important` e mbishkruan. Kjo është kapja që gjurmuesi live e gjeti (D-07).
+
+### Ç'duhet bërë (U-07 i rishikuar)
+1. **Hiq bllokun grid** te `LISTING_DESKTOP_CSS` — jo ta anashkalosh, ta heqësh, që të mos mbetet
+   CSS i vdekur (mësimi i shiritit Instagram, revert-i i 4 shtatorit).
+2. `.wrap` bëhet **një kolonë e vetme, e qendërzuar**: `max-width: min(100%, 1140px); margin: 0 auto;`
+   me padding-in e lëngshëm ekzistues.
+3. Brenda saj, **blloqet e tekstit kufizohen te `var(--kolona-lexim)` (37em)** — përshkrimi,
+   vendndodhja, të dhënat e shitësit. Media mban gjerësinë e plotë të kolonës.
+4. Rendi vertikal: media → statistikat e shikimit → shitësi → përshkrimi → vendndodhja → veprimet.
+
+### Kriteret e pranimit (të matshme, jo vlerësim me sy)
+| Kriteri | Si matet |
+|---|---|
+| Një kolonë vërtet | `.info` dhe blloku i medias kanë **të njëjtin `x`** @1000/1280/1920 |
+| Asnjë element anash | asnjë çift elementesh me mbivendosje vertikale dhe `x` të ndryshëm |
+| Masa e leximit | ≤75 karaktere reale te përshkrimi, në të tria gjerësitë |
+| Pa CSS të vdekur | `grep -c "grid-template-columns" ListingMediaContext.tsx` = 0 |
+| Pa regres telefoni | numrat @390 të pandryshuar (bllok i prekur ishte vetëm ≥1000px) |
