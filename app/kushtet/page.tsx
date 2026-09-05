@@ -21,44 +21,31 @@ export default function Kushtet() {
     .ftr{display:flex;flex-wrap:wrap;gap:8px 16px;padding:20px;background:#f9f9f9;border-top:1px solid #eee;margin-top:10px;}
     .ftr a{color:#555;font-size:var(--fs-dysheme);text-decoration:none;}
 
-    /* ── MODELI DY-SHTRESOR (urdhër pronari, 5 shtator; PLANI-OPTIK §17/§17.1) ──
-       PROTOTIP te /kushtet (rasti më i keq: më parë 29% shfrytëzim @1920, ishull
-       teksti 37em mbi krem bosh). Zëvendëson doktrinën e kolonës së ngurtë 37em.
-
-       · Shtresa BAZË = "tavolinë e pastër" (përgjigje e pronarit §17.1): vetëm
-         sipërfaqja vizuale e platformës në 100% të ekranit — pa karta, pa
-         katalog, pa asnjë të dhënë a komponent. Vetëm që ekrani të mos mbetet
-         zbrazëti. Këtu: krem-i i platformës.
-       · Shtresa e PËRMBAJTJES = panel me gjerësi proporcionale me vw (kurrë px
-         të ngurtë), fletë mbi tavolinë me lartësim (hije + rreze). Kur zgjerohet,
-         teksti ndahet në kolona gazete që ekrani të mbushet DHE masa të mbetet
-         60-75 karaktere/kolonë — jo shkronjë 40px.
+    /* ── MODELI: ISHULL MBI TAVOLINË TË PASTËR (vendim pronari, 5 shtator) ──
+       Fjalët e pronarit: "vendimi është ishull, faqja e vogël hapet në mes."
+       Pra JO panel i gjerë proporcional me kolona gazete — por:
+       · Shtresa BAZË = "tavolinë e pastër" (§17.1): sipërfaqe vizuale e qetë në
+         100% të ekranit — pa karta, pa katalog, pa asnjë detaj që konkurron.
+         Vetëm që ekrani të mos mbetet zbrazëti bosh.
+       · FAQJA (ishulli) = fletë me gjerësi të rehatshme leximi, E QENDËRZUAR në
+         mes, me lartësim (hije + rreze + kufi) që lexohet si fletë mbi tavolinë.
+       Ndryshimi nga gjendja e vjetër (ishull mbi krem bosh, dukej "i thyer"):
+       tani baza është sipërfaqe e trajtuar DHE ishulli ka lartësim — kompozim i
+       qëllimshëm, si dokument mbi tavolinë.
        Mobil-i (<1000px) i PANDRYSHUAR: 37em > çdo telefon, pra 100% si më parë. */
     @media(min-width:1000px){
-      body{background:var(--az-cream);}
+      /* Tavolina: gradient shumë i qetë krem→bardhë, pa zhurmë, mbush 100%. */
+      body{background:radial-gradient(1200px 620px at 50% -8%,var(--az-white),var(--az-cream) 58%);}
       .wrap{
-        max-width:none;
-        width:92vw;              /* proporcional: panel÷ekran = 0.92 konstant */
-        margin:18px auto;
+        max-width:880px;          /* ISHULL: gjerësi e rehatshme leximi, jo e gjerë */
+        margin:28px auto 40px;    /* E QENDËRZUAR në mes */
         min-height:auto;
         border-radius:18px;
         border:1px solid var(--az-line);
         box-shadow:0 2px 8px rgba(0,0,0,.06),0 22px 54px -26px rgba(0,0,0,.28);
-        overflow:hidden;         /* që këndet e rrumbullakosura t'i presin fëmijët */
+        overflow:hidden;          /* këndet e rrumbullakosura t'i presin fëmijët */
       }
-      /* Teksti mbush panelin në kolona; column-width në em → masa mbetet
-         ~68 karaktere pavarësisht sa kolona nxë ekrani (2 @1280 … 4 @2560). */
-      .content{
-        columns:34em;
-        column-gap:clamp(2rem,3.4vw,4.5rem);
-        padding:34px clamp(28px,3vw,60px) 52px;
-      }
-      /* Titulli e versioni shtrihen mbi të gjitha kolonat (hyrje e vetme). */
-      .content>h1,.content>.ver{column-span:all;}
-      /* Mos i ndaj seksionet shëmtuar mes dy kolonave. */
-      .content h2{break-inside:avoid;break-after:avoid;margin-top:0;}
-      .content h2:not(:first-of-type){margin-top:22px;}
-      .content p,.content ul,.content .note{break-inside:avoid;}
+      .content{padding:34px clamp(28px,4vw,56px) 48px;}
     }
   `
   return (
