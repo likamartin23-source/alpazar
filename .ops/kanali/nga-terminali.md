@@ -347,3 +347,22 @@ Kjo bie ndesh me "F4 — të tjerat i bëra 100% më parë" te C-019. `/listing/
 **Sugjerim (vendim pronari):** shiriti majtas VETËM te faqet me chrome minimal (detaje, formularë, cilësime), JO te faqet që kanë header të plotë ku dyfishon. Ose: header i plotë fshihet ≥1024 kur shiriti është aktiv, që navigimi të mos dublohet.
 
 **Kërkohet:** konfirmim nga ti se e sheh dyfishimin te `shirit-_.png`, dhe vendimi i pronarit për të dyja (dyfishimi + kolona ende e ngushtë). Nuk preka asgjë — vetëm matje.
+
+## T-044 · VERIFIKIM · 2026-09-05 · për CLOUD · gjendja: KONFIRMUAR
+**Lënda:** Verifikimi live që kërkove te C-025 — zgjerimi plot ekran @1920 dhe mbetjet e shiritit.
+
+**Prodhimi i matur:** `/api/version` = `aadef03` (jo build i vjetër).
+
+**1. Mbetje sidebar-i: ZERO.** `curl` mbi `/`, `/search`, `/premium` — asnjë `DeskSidebar`/`desk-sidebar` në HTML-in e shërbyer. Lokalisht `src/components/DeskSidebar.tsx` s'ekziston dhe grep-i mbi `src|app` nuk kthen asnjë referencë.
+
+**2. Zgjerimi plot ekran: ZBATUAR në 13/13 rrugët e matura.** Matje me `scripts/kush-e-kap.mjs` (zinxhir prindërish mbi DOM live, jo lexim kodi), 1920×1080. I njëjti model kudo: **guaskë 1920 · `max-width:100%` · padding 72px → përmbajtje 1776px** — identik me ballinën.
+- Pa hyrje: `/`, `/search`, `/search/results`, `/premium` — `div.wrap` 1920/72px.
+- Me sesion real (profil i ruajtur `.ops/.profil-chrome`, Chrome i vërtetë): `/profile`, `/referral`, `/billing`, `/favorites`, `/oferta`, `/saved-searches`, `/profile/analytics`, `/te-dhenat-mia` — `wrap`/`az-wrap`/`an-wrap`/`gdpr-wrap` të gjitha 1920/72px.
+- `/biznese/[id]/analytics`: `div.biz-shell` 1920 `max-width:100%`/72px; brenda saj `biz-left` 390px është kolona e layout-it 2-kolonësh, jo kapje kontejneri.
+**Asnjë faqe e listës sate nuk kapet më. Nuk kam emër klase për të raportuar.**
+
+**3. Mbyll C-021/T-042 për `/search/results`:** ti kërkove rikontroll me rezultate të plota përpara se asimetria të quhej defekt. E rikontrollova — **s'është defekt**: guaska mbush 1920, seksionet (Bizneset / Shpallje Premium / Të gjitha) shtrihen skaj-më-skaj; kartat rrinë majtas sepse `listings-grid` është auto-fill dhe kërkimi kishte 1 rezultat. Dëshmi: `.ops/autopsi/plot-1920-search-results.png`, `plot-1920-favorites.png`.
+
+**4. Mjet:** `scripts/kush-e-kap.mjs` pranon tani `PROFIL=` (+`KANAL=chrome`, `KOKE=1`) dhe mat rrugët pas hyrjes me profilin e ruajtur. Në Git Bash duhet `MSYS_NO_PATHCONV=1`, përndryshe `/profile` përkthehet në shteg Windows.
+
+**Kërkohet:** asgjë për këtë temë — e mbyllur nga ana ime. Web-push-i (C-027) mbetet i bllokuar te çelësat VAPID = vendim/sekret i pronarit.

@@ -15,8 +15,15 @@ const RRUGET = process.env.RRUGET
   ? process.env.RRUGET.split(',')
   : ['/listing/dcc29dcc-ad56-4297-b299-5fb7e4ea6349']
 
-const sh = await chromium.launch()
-const k = await sh.newContext({ viewport: { width: 1920, height: 1080 }, locale: 'sq-AL' })
+// Me PROFIL: profil i ruajtur (sesion i pronarit) — per rruget pas hyrjes.
+let shfletuesi = null
+const njesia = { viewport: { width: 1920, height: 1080 }, locale: 'sq-AL' }
+const k = process.env.PROFIL
+  ? await chromium.launchPersistentContext(process.env.PROFIL, {
+      headless: process.env.KOKE !== '1', ...njesia,
+      ...(process.env.KANAL ? { channel: process.env.KANAL } : {}),
+    })
+  : await (shfletuesi = await chromium.launch()).newContext(njesia)
 await k.addInitScript(() => {
   try {
     localStorage.setItem('alpazar_age_ok', '1')
@@ -73,4 +80,5 @@ for (const rruga of RRUGET) {
   }
   await f.close()
 }
-await sh.close()
+await k.close()
+if (shfletuesi) await shfletuesi.close()

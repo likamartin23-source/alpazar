@@ -1,6 +1,6 @@
 # GJENDJA — tabela e vetme e së vërtetës
 
-> Përditësuar: **3 shtator 2026** · prodhimi `4d533d7` · CI **e gjelbër** (5/5)
+> Përditësuar: **5 shtator 2026** · prodhimi `aadef03` · CI **e gjelbër** (5/5)
 > Roja: `radiuse_inline 384/384` · `ngjyra_hex_inline 2721/2721`
 
 ## Punë e hapur
@@ -29,6 +29,7 @@
 | Baza e rojës e pambyllur, CI e kuqe | CLOUD | CI 5/5 e gjelbër |
 | Video 7.32 MB pa kap gjerësie | CLOUD | 7.32 → 2.71 MB, `−63%` |
 | Ngjyra jashtë sistemit | CLOUD | `ngjyra_hex_inline` 3389 → 2721 |
+| Shirit desktopi (Instagram) + faqe të kapura @1920 | TERMINAL+CLOUD | `T-044`: zero mbetje sidebar; 13/13 rrugë guaskë 1920 + padding 72px si ballina |
 
 ## Kufijtë — të vërtetë, jo negociueshëm
 
