@@ -597,3 +597,58 @@ dhe paneli të ketë ku të qëndrojë.
 **Kriteri i pranimit ndryshon përkatësisht:** "përmbajtje e vizatuar në ≥98%" bëhet
 **"sipërfaqe e vizatuar në 100% të ekranit"** — mjafton që asnjë pjesë e ekranit të mos mbetet
 zbrazëti pa trajtim, pa kërkuar që ajo sipërfaqe të mbajë informacion.
+
+---
+
+## 18. AUDITIM I PLOTË I HAPËSIRËS — çdo faqe me këtë problem (urdhër pronari)
+
+Instrument i ri: `scripts/autopsia-hapesires.mjs` — mat vetëm mbushjen e ekranit dhe praninë e
+shtresës bazë; i lehtë sa të kalojë çdo rrugë me RAM të pakët. Matje @1920, prodhimi i sotëm.
+
+**35 rrugë të matura · 19 dështojnë (54% e platformës).**
+
+Dështimi nuk është i një lloji të vetëm — ndahet në dy tipe që kërkojnë zgjidhje **të ndryshme**:
+
+### TIPI A — ISHULL (marzhe afërsisht të barabarta majtas/djathtas)
+Përmbajtja rri e qendërzuar mbi zbrazëti. **Këto duan modelin e §17: guaskë bazë 100% + panel
+proporcional mbi të.**
+
+| Shfrytëzimi | Rruga | Marzhe (majtas/djathtas) |
+|---|---|---|
+| **27.6%** | `/rreth-nesh` | 684 / 707 |
+| **28.0%** | `/siguria` | 684 / 699 |
+| **28.7%** | `/privatesia` | 684 / 685 |
+| **28.8%** | `/kushtet` | 684 / 684 |
+| **29.1%** | `/cookies` | 684 / 677 |
+| **29.5%** | `/messages` | 546 / 808 |
+| **30.2%** | `/takedown` | 670 / 670 |
+| 38.8% | `/kontakt` | 580 / 595 |
+| 44.9% | `/asistent` | 522 / 536 |
+| 52.3% | `/biznese/[id]/edit` | 436 / 480 |
+| 53.0% | `/listing/[id]/edit` | 451 / 451 |
+| 53.7% | `/listing/new` | 438 / 451 |
+| 55.3% | `/listing/[id]` | 475 / 384 |
+
+### TIPI B — E ANKORUAR MAJTAS (bosh vetëm djathtas)
+Përmbajtja nis majtas dhe thjesht nuk e mbush ekranin. **Këto NUK duan panel mbi bazë — duan
+vetëm zgjerim**, sepse janë lista/rrjeta (Shtresa A e skanimit).
+
+| Shfrytëzimi | Rruga | Marzhe |
+|---|---|---|
+| 47.0% | `/biznese` | 88 / **929** |
+| 51.7% | `/favorites` | 142 / **785** |
+| 54.5% | `/saved-searches` | 142 / **732** |
+| 58.7% | `/te-dhenat-mia` | 104 / **688** |
+| 68.0% | `/oferta` | 142 / 473 |
+| 78.4% | `/biznese/[id]?public=1` | 88 / 328 |
+
+### Faqet që kalojnë (≥85%) — mos i prek
+`/notifications` 98% · `/` 93.9% · `/search/results` 90.9% · `/profile` 90.9% · `/biznese/[id]` 90.6% ·
+`/u/[id]` 90.2% · `/kategori` 89.8% · `/search` 89.8% · `/profile/analytics` 89.8% · `/referral` 89.1% ·
+`/premium` 88.8% · `/billing` 88.7% · `/kategori/[slug]/[qytet]` 88.2% · `/kategori/[slug]` 87.6% ·
+`/biznese/[id]/analytics` 87.5%
+
+### Kufi i instrumentit, i deklaruar
+`/admin` dha 580% sepse matja kap edhe elemente të pozicionuara jashtë ekranit (skip-link te
+x=−9999). Duhet përjashtimi i elementeve me `x < 0`; deri atëherë `/admin` mbetet **i pamatur**,
+jo "i kaluar".
