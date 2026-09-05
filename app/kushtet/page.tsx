@@ -8,7 +8,7 @@ export default function Kushtet() {
     .topbar{background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
     .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0;}
     .back i{font-size:18px;color:#111;}
-    .topbar-title{font-size:15px;font-weight:700;color:#111;}
+    .topbar-title{font-size:var(--fs-dysheme);font-weight:700;color:#111;}
     .content{padding:24px 20px 40px;}
     .ver{font-size:var(--fs-dysheme);color:#6E6E6E;margin-bottom:20px;background:var(--az-cream);padding:8px 12px;border-radius:8px;display:inline-block;}
     h1{font-size:var(--fs-3xl);font-weight:700;color:#111;margin-bottom:8px;}
@@ -20,6 +20,36 @@ export default function Kushtet() {
     .law{font-size:var(--fs-dysheme);color:#555;font-style:italic;}
     .ftr{display:flex;flex-wrap:wrap;gap:8px 16px;padding:20px;background:#f9f9f9;border-top:1px solid #eee;margin-top:10px;}
     .ftr a{color:#555;font-size:var(--fs-dysheme);text-decoration:none;}
+
+    /* ── MODELI: ISHULL MBI TAVOLINË TË PASTËR (vendim pronari, 5 shtator) ──
+       Fjalët e pronarit: "vendimi është ishull, faqja e vogël hapet në mes."
+       Pra JO panel i gjerë proporcional me kolona gazete — por:
+       · Shtresa BAZË = "tavolinë e pastër" (§17.1): sipërfaqe vizuale e qetë në
+         100% të ekranit — pa karta, pa katalog, pa asnjë detaj që konkurron.
+         Vetëm që ekrani të mos mbetet zbrazëti bosh.
+       · FAQJA (ishulli) = fletë me gjerësi të rehatshme leximi, E QENDËRZUAR në
+         mes, me lartësim (hije + rreze + kufi) që lexohet si fletë mbi tavolinë.
+       Ndryshimi nga gjendja e vjetër (ishull mbi krem bosh, dukej "i thyer"):
+       tani baza është sipërfaqe e trajtuar DHE ishulli ka lartësim — kompozim i
+       qëllimshëm, si dokument mbi tavolinë.
+       Mobil-i (<1000px) i PANDRYSHUAR: 37em > çdo telefon, pra 100% si më parë. */
+    @media(min-width:1000px){
+      /* Tavolina: gradient shumë i qetë krem→bardhë, pa zhurmë, mbush 100%. */
+      body{background:radial-gradient(1200px 620px at 50% -8%,var(--az-white),var(--az-cream) 58%);}
+      .wrap{
+        max-width:880px;          /* ISHULL: gjerësi e rehatshme leximi, jo e gjerë */
+        margin:28px auto 40px;    /* E QENDËRZUAR në mes */
+        min-height:auto;
+        border-radius:18px;
+        border:1px solid var(--az-line);
+        box-shadow:0 2px 8px rgba(0,0,0,.06),0 22px 54px -26px rgba(0,0,0,.28);
+        /* PA overflow:hidden — do të prishte position:sticky të .topbar. Këndet
+           rrumbullakosen te vetë topbar-i (lart) dhe footer-i (poshtë). */
+      }
+      .topbar{border-radius:18px 18px 0 0;}
+      .ftr{border-radius:0 0 18px 18px;}
+      .content{padding:34px clamp(28px,4vw,56px) 48px;}
+    }
   `
   return (
     <>

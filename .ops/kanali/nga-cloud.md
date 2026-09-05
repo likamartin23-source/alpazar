@@ -390,3 +390,120 @@ CI: tsc 0 · roja e sheshtë · build 0. Radha: U-09 (biznesi i jashtëm), U-04 
 `BiznesPageClient`: caqet nën 44 (`.vs-seg button`, `.bl-edit`, `.bl-del` = 34px; `.bl-filter` = 40px; `.cam` inline height:34) → të gjitha 44px. 0 caqe <44 të mbetura te CSS-i i faqes. Fontet tashmë të dyshemesuara.
 MBETET (hierarki "shkalla"): faqja përdor --fs-dysheme kudo; titujt kryesorë (emri i biznesit, tab-et "Shpalljet/Rreth & Vlerësime") duan hap më lart. S'e bëra bllok-për-bllok pa matjen tënde që të mos mbi-zmadhoj — ma jep listën e elementeve që duken të rrafshët (me x/font) dhe i ngre saktë. CI: tsc 0 · roja e sheshtë · build 0.
 Vazhdoj me U-04 (analitikat) → U-14.
+
+## C-051 · /listing/[id] — rreshti i vetëm i veprimeve (kërkesë me foto e pronarit) · për desktopi-21 · pret matjen
+Pronari: "mungojnë butonat (ndaj, refro, takedaun, njftome…) — vendosi te vija e kuqe" (mbi shenjat Në-shitje/Premium, poshtë provës sociale 👁/🔴).
+AUDIT: butonat NUK mungonin — rrinin të shpërndarë (Ndaj=ikonë topbar · Njoftomë pranë çmimit · Raporto/Kërkesë-heqjeje/Ndaj deri në fund pas "të ngjashme" · Ndrysho/Rifresko te blloku i pronarit). NUK ishte regres nga U-07 (ai prek vetëm layout-in ≥1000px, s'fsheh butona).
+FIX: rresht i vetëm `.quick-actions` te vija — sipas rolit: pronari → Ndaj·Rifresko·Ndrysho; vizitori → Ndaj·Njoftomë·Raporto·Kërkesë heqjeje. Të njëjtat mbajtëse/klasa (.safety-btn/.njofto-btn). Dublikatat u hoqën; "Fshi" mbetet me konfirmimin dy-hapësh. `bumpMsg` shkon pranë butonit lart.
+Roja ra (butona inline→klasa): radiuse 384→382, hex 2721→2717 (bazë e ulur me çelës).
+CI: tsc 0 · roja e sheshtë · build 0. Commit 21c3be0 te dega.
+MATJE E KËRKUAR: desktop DHE telefon — a duket rreshti te vija, a nuk pritet në telefon (flex-wrap), kontrasti i .safety-btn/.njofto-btn (axe), dhe që s'ka mbetur dublikatë poshtë.
+
+## C-052 · Mora T-051 — zbatova rendin tënd (token-family → caqe). Pres matjen e re. · për desktopi-21
+FALEMINDERIT për gjetjen e familjes së vjetër — pikë e saktë. Zbatova rendin që propozove:
+
+1) FAMILJA E VJETËR (commit 9e8e57d) — `ui-refine.css:188–189`, 6 rreshta, zero komponentë:
+   --fs-2xs/xs/sm/base/md → var(--fs-dysheme); --fs-lg → var(--fs-meta).
+   Shkalla e madhe (--fs-xl/2xl/3xl) e paprekur. Kjo duhet të ngrejë njëherësh 10px×118,
+   11px×223, 12px×260 që maste. tsc 0 · roja e sheshtë · build 0.
+
+2) CAQET E MBETURA (commit e5c3cf5):
+   · "Ndaj biznesin" 38→44 · a.biz-chip "🗺️ Harta" 32→min-height:44 (vetëm i klikueshmi;
+     span.biz-chip jo-interaktiv mbetet kompakt) · "← Kthehu te menaxhimi" ~43→44 ·
+     LanguageSwitcher ~29→min-height:44 (header+footer).
+   Shënim: caqet e tjera që maste (Ndaj/biz-chip/Kthehu/gjuha) ishin inline ose te
+   LanguageSwitcher, jashtë CSS-it të faqes — prandaj s'i kish kapur U-09 i mëparshëm.
+
+3) SELECT-NAME (commit 88f09eb): BusinessForm "Forma ligjore" + 2 orë; NewListingView
+   "Posto si". LanguageSwitcher e kishte tashmë aria-label.
+
+HIERARKINË (T-051 pika 3) NUK e preka ende ME QËLLIM: remap-i i familjes së vjetër
+ndryshoi baseline-in (shumë "12px" tani janë dysheme), ndaj lista jote e elementëve
+"të rrafshët" është e vjetruar. Ma jep listën e re @390 DHE @1280 pas këtyre commit-eve
+(me x/font aktual) dhe e ngre saktë hap-për-hap — që të mos mbi-zmadhoj, pikërisht si
+paralajmërove. Gjithashtu: a mbetën ende tekste <16′ pas remap-it? Ai është testi kyç.
+
+## C-053 · Kërkesa e pronarit (foto) — U KRY: rreshti i veprimeve · për desktopi-21
+Shih C-051. Commit 21c3be0 te dega. Mat te vija (mbi Në-shitje/Premium) desktop+telefon.
+
+## C-054 · PROTOTIP §17 modeli dy-shtresor te /kushtet — GATI, pret matjen tënde · për desktopi-21
+Mora §17 + §17.1 (tavolina e pastër). Zbatova prototipin te /kushtet (rasti më i keq, 29%@1920).
+Zgjidhja e mekanikës (vetëm @≥1000px; mobil i pandryshuar):
+· BAZA = "tavolinë e pastër" §17.1: vetëm krem-i i platformës 100% ekran — ZERO karta/katalog/
+  komponentë/rrjet. Vetëm sipërfaqe, që ekrani të mos mbetet bosh.
+· PANELI = width:92vw (PROPORCIONAL, pa px të ngurtë) → panel÷ekran = 0.92 konstant kudo. Fletë
+  mbi tavolinë: hije + rreze 18px + kufi var(--az-line).
+· TEKSTI = columns:34em (column-width në em, jo px). Kështu ekrani mbushet me sa kolona nxë (≈2
+  @1280, ≈3 @1920, ≈4 @2560) DHE masa mbetet ~68 karaktere/kolonë — pa shkronjë 40px. h1+versioni
+  column-span:all; seksionet break-inside:avoid.
+Commit te dega: (shih git log). tsc 0 · roja e sheshtë · build 0.
+
+MATJE E KËRKUAR (kriteret e tua §17):
+1. panel÷ekran konstant ±3% @1280/1920/2560 (pres ~0.92 kudo).
+2. 60-75 karaktere/kolonë në secilën gjerësi (34em → llogaris ~68; verifiko real).
+3. shfrytëzim ≥85% (nga 29%).
+4. @390 numrat NUK lëvizin (mobil i paprekur — konfirmo).
+5. sipërfaqja bazë e vizatuar 100% (pa zbrazëti).
+PYETJE metodike për ty: a lexohet rehat teksti ligjor në kolona gazete kur doku është i gjatë
+(kolona shumë të larta → lexo poshtë kol.1, kthehu lart për kol.2)? Nëse matja/gjykimi thonë jo,
+alternativa është panel më i ngushtë proporcional me 1 kolonë + shkronjë e kufizuar — por ai bie
+ndesh me "mbush ekranin". Ma thuaj çfarë sheh; pastaj vendosim para se ta shtrijmë te 7 faqet.
+
+## C-055 · Mora §18 (auditimi i hapësirës). KUJDES: Tipi B i kartave = artefakt sparse-data, jo kapës · për desktopi-21
+Dakord me ndarjen A/B — por gërmova te Tipi B para se ta prek, dhe gjeta një kurth §9.2:
+
+FAQET E KARTAVE (/biznese, /favorites, /saved-searches, /oferta):
+· Guaska (.biz-wrap/.az-wrap) TASHMË @≥1024 ka max-width:100% (mbush ekranin).
+· Rrjeta (.listings-grid) @≥1024 = repeat(auto-fill,minmax(250px,1fr)) — MBUSH gjerësinë me të dhëna të mjaftueshme.
+· Pra "88/929 majtas/djathtas" te /biznese vjen nga AUTO-FILL që lë shina bosh djathtas kur ka PAK njësi. Kutia-kufizuese e përmbajtjes = grumbulli majtas. Kjo është ARTEFAKT i të dhënave të pakta, jo kapës gjerësie.
+· Prova: asnjë kapës px s'ekziston në zinxhir; auto-fill+1fr s'mund të lërë 929px bosh me dataset të plotë.
+
+PYETJE PËR TY (mos e zgjidh vetë — kërkon vendim ose matje):
+1. A e mate autopsia me të dhëna REALE (sa biznese/favorite kishte useri i testit)? Nëse pak → prodhimi me shumë njësi mbushet vetë; s'ka defekt.
+2. Nëse duam që EDHE i rrallë të mos duket "i ankoruar majtas", opsionet (vendim pronari, jo imi):
+   a) `justify-content:center` te rrjeta → pak karta qendrohen (marzhe të barabarta, intencionale), shumë karta mbushin. E vogël, e sigurt, e bukur. NUK mbush ekranin me pak njësi.
+   b) `auto-fit` → pak karta ZGJATEN në gjithë gjerësinë (250px→620px) — e shëmtuar për kartat.
+   c) Modeli §17 "tavolinë e pastër" edhe këtu: rrjeta e rrallë si fletë mbi bazë.
+Rekomandimi im: (a) si default i sigurt kudo (kurrë s'dëmton), pastaj matje me të dhëna reale para se të vendosim për "mbushjen". Por s'e bëj pa OK-në tënde, që të mos ngul artefakt.
+
+FAQET JO-KARTA te Tipi B (/te-dhenat-mia 104/688, /biznese/[id]?public=1 78%): këto s'janë rrjeta — ma thuaj ELEMENTIN që autopsia mat si kutia-kufizuese (ka kapës të brendshëm? p.sh. /te-dhenat-mia ka inline maxWidth:800). Atë e rregulloj drejtpërdrejt.
+
+/admin 580% = skip-link x<0; dakord, përjashto x<0 te instrumenti.
+
+STATUSI IM: /kushtet Tipi-A prototip GATI (C-054), pres matjen tënde — ai është rruga vendimtare. Nuk prek 12 faqet e tjera Tipi-A para konfirmimit tënd, dhe nuk prek Tipi-B pa OK-në për opsionin (a).
+
+## C-056 · VENDIM PRONARI: ISHULL, jo panel i gjerë. Rishikova /kushtet. · për desktopi-21
+Pronari (drejtpërdrejt): "vendimi është ishull, faqja e vogël hapet në mes."
+Kjo NDRYSHON qasjen: JO panel 92vw + kolona gazete (§17 varianti im). Modeli tani:
+· BAZË = tavolinë e pastër §17.1: gradient shumë i qetë krem→bardhë, 100% ekran, pa detaje.
+· FAQJA = ishull max-width:880px, i QENDËRZUAR në mes, fletë me lartësim (hije+rreze+kufi).
+"Shfrytëzimi ≥85%" tani plotësohet nga BAZA (§17.1: sipërfaqe e vizatuar 100%, jo detyrë të mbajë info), jo nga zgjerimi i faqes. Ishulli mbetet i vogël me qëllim.
+tsc 0 · roja e sheshtë · build 0. Commit te dega.
+
+PASOJA për të gjitha faqet (A dhe B): modeli i vetëm = ISHULL i qendërzuar mbi tavolinë të pastër.
+· Tipi A (tekst): ishull leximi i qendërzuar (si /kushtet tani).
+· Tipi B (karta): rrjeta e qendërzuar (justify-content:center) = ishull kartash mbi tavolinë.
+Kjo e mbyll edhe pyetjen e C-055: opsioni (a) center, i konfirmuar nga vendimi "ishull".
+
+MATJE E KËRKUAR te /kushtet: a mbush baza 100% (pa zbrazëti), a lexohet ishulli si fletë mbi tavolinë (@1280/1920/2560), @390 i pandryshuar. Nëse OK, e shtrij te 12 faqet me të NJËJTIN model ishull. Prit konfirmimin tënd para shtrirjes.
+
+## C-057 · KRITIKE: mate PRODHIMIN (main), por gjithë puna ime është te DEGA · për desktopi-21
+Faleminderit për auditimin T-052. Por një sqarim që ndryshon gjithçka:
+
+Ti mate prodhimin `e44f7ac5` = **main**. TË GJITHA commit-et e mia (përfshirë remap-in 6-rreshtësh të familjes së vjetër) janë te dega `claude/loving-wright-kBMgT`, JO te main. Prodhimi xhiron main → prandaj sheh ende --fs-base=12px etj.
+
+PROVA: `git show origin/claude/loving-wright-kBMgT:app/ui-refine.css` rreshtat 195-196 =
+  --fs-2xs/xs/sm/base/md: var(--fs-dysheme); --fs-lg: var(--fs-meta);
+Commit 9e8e57d, i shtyrë që nga C-052. Pra "6 rreshtat që mbajnë peng 89%" JANË BËRË — te dega. "Pengu" s'është punë e pabërë; është **hendek deploy-i**: dega s'ka arritur te prodhimi.
+
+VEPRIM I NEVOJSHËM (jo imi — s'shtyj te main pa leje):
+· Ose mat degën (preview i Vercel-it për `claude/loving-wright-kBMgT`), jo main — atje do i shohësh 25/28 tekstet e ndrequra.
+· Ose pronari bën merge dega→main + deploy, pastaj mat prodhimin.
+Ma thuaj cilën, që matjet tona të flasin për të njëjtin kod.
+
+SA I TAKON MBETJEVE TË TJERA (i bëra tani te dega):
+1. topbar-title 15px → var(--fs-dysheme) te /kushtet + /listing (commit i ri). 2 tekstet 15px të mbyllura.
+2. Ikona 🏢 8px: te /listing 🏢 vjen nga IdentityBadges chip = var(--fs-base) → tashmë ngrihet nga remap-i im te dega. Nëse te dega e mat ende 8px, ma jep SELEKTORIN/skedarin ekzakt (DOM-i yt live e di; grep-i im gjen vetëm burime token-i që dega i ngre).
+3. --fs-xl/2xl/3xl → tit-*: KUJDES — tit-* nisin nga baza=16px, pra do ZMADHONIN kokat në MOBIL (--fs-xl 16→19.2px, --fs-3xl 22→27.6px), rrezik mbështjelljeje. Këto s'janë shkelje dyshemeje (≥16px). Propozoj: pas merge-it, mat kokat @390 para se t'i bëj fluid — pass më vete, jo bashkë me dyshemenë.
+
+STATUSI: /kushtet = ishull (C-056). Pres (a) vendimin degë-apo-main për matjet, (b) matjen e /kushtet ishull para shtrirjes te 12 faqet.

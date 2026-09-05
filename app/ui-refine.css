@@ -185,8 +185,15 @@ button[aria-label="Ndaj aplikacionin"]{box-shadow:0 4px 13px -5px rgba(0,0,0,.22
   /* [O60] Shkalla tipografike — deri sot s'ekzistonte fare, ndaj 39 madhësi fontesh të
      shkruara me dorë (koka e faqes doli 22/18/15 pa nga çfarë të zgjidhte). Këtu është
      shkalla e vetme; adoptimi nis nga modeli i identitetit (Avatar/IdentityBadges/TrustBadge). */
-  --fs-2xs:9px; --fs-xs:10px; --fs-sm:11px; --fs-base:12px; --fs-md:13px;
-  --fs-lg:14px; --fs-xl:16px; --fs-2xl:19px; --fs-3xl:22px;
+  /* PLANI-OPTIK (5 shtator, matje terminali T-051): familja e vjetër 9–14px ishte E
+     GJITHA nën minimumin ISO 16′ dhe e PADUKSHME për kodmodët (ata kërkonin numra
+     literalë, jo tokenë). Prandaj mbetnin ende 10px ("Besueshmëria"=--fs-xs) dhe 12px
+     ("Premium"/"Biznes"/"Tregtar"=--fs-base) te biznesi i jashtëm etj. Zgjidhja: aliaso
+     familjen e vjetër te dyshemeja — çdo përdorim i mbetur ngrihet njëherësh, kudo,
+     pa prekur asnjë komponent. --fs-lg (theksi dytësor) → --fs-meta; pjesa tjetër →
+     --fs-dysheme. Shkalla e madhe (--fs-xl/2xl/3xl) mbetet e paprekur (kokat). */
+  --fs-2xs:var(--fs-dysheme); --fs-xs:var(--fs-dysheme); --fs-sm:var(--fs-dysheme); --fs-base:var(--fs-dysheme); --fs-md:var(--fs-dysheme);
+  --fs-lg:var(--fs-meta); --fs-xl:16px; --fs-2xl:19px; --fs-3xl:22px;
 }
 /* [P5] Tokenet tipografikë responsive — h1/.hero-h1/.seo-h1 që përdorin var(--fs-*)
    fitojnë automatikisht madhësi më të madhe në ekrane desktop. */

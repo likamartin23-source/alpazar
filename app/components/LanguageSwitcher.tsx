@@ -43,6 +43,8 @@ export function LanguageSwitcher({ tone = 'dark' }: { tone?: 'dark' | 'light' })
       style={{
         display: 'inline-flex', alignItems: 'center', gap: 5, cursor: 'pointer',
         position: 'relative',
+        /* Cak prekjeje ≥44px (Vendimi 8): më parë ~29px — nën pragun e platformës. */
+        minHeight: 44, boxSizing: 'border-box',
         background: light ? 'rgba(0,0,0,.07)' : 'var(--az-ink)',
         border: light ? '1px solid rgba(0,0,0,.06)' : '1px solid #333',
         borderRadius: 999, padding: light ? '4px 9px 4px 8px' : '5px 10px 5px 9px',

@@ -94,7 +94,6 @@ export default function ListingPageClient({ params, initialListing, initialSelle
   const [liked, setLiked]             = useState(false)
   const [myRefCode, setMyRefCode]     = useState<string | null>(null)
   const [shareOpen, setShareOpen]     = useState(false)
-  const [linkCopied, setLinkCopied]   = useState(false)
 
   // Vlerësimi i shitësit
   const [myReview, setMyReview]       = useState<any>(null)
@@ -650,7 +649,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         @media(min-width:1024px){.wrap{max-width:100%;padding-left:clamp(32px,4vw,72px);padding-right:clamp(32px,4vw,72px);}}
         .topbar{background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%);padding:10px 12px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
         /* klasa e vjeter e back-butonit u zevendesua nga komponenti i perbashket BackButton (44px). */
-        .topbar-title{font-size:15px;font-weight:700;color:#111;flex:1;}
+        .topbar-title{font-size:var(--fs-dysheme);font-weight:700;color:#111;flex:1;}
         /* Butonat e sigurise (§7.4): terciar i vogel, gjithmone i arritshem,
            lartesi prekjeje 36px dhe kontrast qe kalon WCAG AA. */
         /* SHKALLË E VETME për butonat dytësorë (O24): kufi me kontrast ≥3:1 + mbushje e lehtë
@@ -680,6 +679,11 @@ export default function ListingPageClient({ params, initialListing, initialSelle
 
         /* Info */
         .info{padding:12px 12px 0;}
+        /* Rreshti i VETËM i veprimeve (vendim pronari, 5 shtator): të gjitha veprimet
+           e shpalljes mblidhen këtu, mbi shenjat e statusit, ku i pa syri — jo të
+           shpërndara nëpër faqe. I njëjti fjalor vizual (.safety-btn/.njofto-btn). */
+        .quick-actions{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #f0f0f0;}
+        .qa-msg{font-size:var(--fs-dysheme);font-weight:600;text-align:center;padding:0 0 10px;}
         .status-row{display:flex;align-items:center;gap:6px;margin-bottom:7px;}
         .status-chip{display:inline-flex;align-items:center;gap:4px;font-size:var(--fs-dysheme);font-weight:700;padding:4px 11px;border-radius:999px;}
         .sc-active{background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7;}
@@ -871,6 +875,77 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         <SocialProofBar viewsCount={listing.views_count || 0} listingId={params.id} />
 
         <div className="info">
+          {/* ── VEPRIME — rreshti i vetëm, te vija ku e kërkoi pronari (5 shtator):
+              mbi shenjat e statusit, poshtë provës sociale. Butonat vijnë sipas
+              rolit: pronari sheh Ndaj · Rifresko · Ndrysho; vizitori sheh
+              Ndaj · Njoftomë · Raporto · Kërkesë heqjeje. Të njëjtat mbajtëse dhe
+              klasa si më parë — thjesht të bashkuara në një vend. ── */}
+          <div className="quick-actions" role="group" aria-label="Veprime për shpalljen">
+            <button
+              type="button"
+              className="safety-btn"
+              aria-label={shareOpen ? 'Mbyll ndarjen' : 'Ndaj shpalljen'}
+              aria-expanded={shareOpen}
+              onClick={() => { trackEvent('share', listing.id); setShareOpen(o => !o) }}>
+              <i className="ti ti-share" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />Ndaj
+            </button>
+
+            {isOwner ? (
+              <>
+                <button
+                  type="button"
+                  className="safety-btn"
+                  onClick={doBump}
+                  disabled={bumpLoading || !canBump(listing.last_bumped_at)}
+                  aria-label={canBump(listing.last_bumped_at) ? 'Rifresko dukshmërinë — ngrije në krye' : 'Mund ta rifreskosh pas 7 ditësh'}
+                  title="Rifresko dukshmërinë — një herë çdo 7 ditë"
+                  style={{ opacity: bumpLoading ? 0.7 : 1 }}>
+                  <i className="ti ti-arrow-up" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />{canBump(listing.last_bumped_at) ? 'Rifresko' : 'Rifreskuar'}
+                </button>
+                <button
+                  type="button"
+                  className="safety-btn"
+                  aria-label="Ndrysho shpalljen"
+                  onClick={() => window.location.href = `/listing/${params.id}/edit`}>
+                  <i className="ti ti-pencil" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />Ndrysho
+                </button>
+              </>
+            ) : (
+              <>
+                {user && listing.is_active && (
+                  <button
+                    type="button"
+                    aria-label={priceAlert ? 'Ndrysho alarmin e çmimit' : 'Vendos alarm çmimi'}
+                    onClick={() => { trackEvent('notify', listing.id); setAlertOpen(true) }}
+                    className={`njofto-btn${priceAlert ? ' on' : ''}`}>
+                    <i className={`ti ti-bell${priceAlert ? '-ringing' : ''}`} style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />
+                    {priceAlert ? <><span aria-hidden="true">🔔</span> {priceAlert.target_price} ALL</> : 'Njoftomë'}
+                  </button>
+                )}
+                <button
+                  type="button"
+                  aria-label="Raporto shpalljen"
+                  aria-haspopup="dialog"
+                  onClick={() => setReportOpen(true)}
+                  className="safety-btn">
+                  <i className="ti ti-flag" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />Raporto
+                </button>
+                <a
+                  href="/takedown"
+                  className="safety-btn"
+                  title="Kërkesë ligjore për heqjen e përmbajtjes">
+                  <i className="ti ti-gavel" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />Kërkesë heqjeje
+                </a>
+              </>
+            )}
+          </div>
+          {/* Rezultati i rifreskimit (bump) — pranë butonit që e nis. */}
+          {isOwner && bumpMsg && (
+            <div role="alert" className="qa-msg" style={{ color: bumpMsg.startsWith('ok:') ? '#1D9E75' : 'var(--az-red-deep)' }}>
+              {bumpMsg.replace(/^(ok:|err:)/, '')}
+            </div>
+          )}
+
           {/* Status chip */}
           <div className="status-row">
             {listing.is_active
@@ -882,19 +957,8 @@ export default function ListingPageClient({ params, initialListing, initialSelle
           </div>
 
           <h1>{listing.title}</h1>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-            <div className="price">{fmt(listing.price, listing.currency)}</div>
-            {user && !isOwner && listing.is_active && (
-              <button
-                type="button"
-                aria-label={priceAlert ? 'Ndrysho alarmin e çmimit' : 'Vendos alarm çmimi'}
-                onClick={() => { trackEvent('notify', listing.id); setAlertOpen(true) }}
-                className={`njofto-btn${priceAlert ? ' on' : ''}`}>
-                <i className={`ti ti-bell${priceAlert ? '-ringing' : ''}`} style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />
-                {priceAlert ? <><span aria-hidden="true">🔔</span> {priceAlert.target_price} ALL</> : 'Njoftomë'}
-              </button>
-            )}
-          </div>
+          {/* Çmimi — "Njoftomë" u ngjit lart te rreshti i veprimeve (quick-actions). */}
+          <div className="price">{fmt(listing.price, listing.currency)}</div>
 
           {/* Meta row: condition + city + date + category + views */}
           <div className="meta">
@@ -1069,27 +1133,11 @@ export default function ListingPageClient({ params, initialListing, initialSelle
             <SellerPremiumUpsell isPremium={false} />
           )}
 
-          {/* Owner actions */}
+          {/* Owner actions — Ndrysho/Rifresko u ngjitën lart te quick-actions;
+              këtu mbetet vetëm veprimi shkatërrues (Fshi), me rrjedhën e vet të
+              konfirmimit dy-hapëshe (§7.4). */}
           {isOwner && (
             <div style={{ padding: '0 13px 14px' }}>
-              <div style={{ display: 'flex', gap: 8, marginBottom: bumpMsg ? 8 : 0 }}>
-                <button
-                  type="button"
-                  onClick={() => window.location.href = `/listing/${params.id}/edit`}
-                  style={{ flex: 1, background: 'var(--az-yellow)', color: '#111', border: 'none', borderRadius: 10, padding: '10px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-                  <i className="ti ti-pencil" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />Ndrysho
-                </button>
-                <button
-                  type="button"
-                  onClick={doBump}
-                  disabled={bumpLoading || !canBump(listing.last_bumped_at)}
-                  aria-label={canBump(listing.last_bumped_at) ? 'Ngrije shpalljen në krye' : 'Mund ta ngresh pas 7 ditësh'}
-                  title="Rifresko dukshmërinë — një herë çdo 7 ditë"
-                  style={{ flex: 1, background: canBump(listing.last_bumped_at) ? 'var(--az-red)' : '#F0F0F0', color: canBump(listing.last_bumped_at) ? '#fff' : '#999', border: 'none', borderRadius: 10, padding: '10px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: canBump(listing.last_bumped_at) ? 'pointer' : 'not-allowed', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, opacity: bumpLoading ? 0.7 : 1 }}>
-                  <i className="ti ti-arrow-up" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />{canBump(listing.last_bumped_at) ? 'Ngrije në krye' : 'Ngritur'}
-                </button>
-              </div>
-
               {/* Fshirja — buton shkaterrues: outline i kuq, jo mbushje, dhe
                   kurre me nje klikim te vetem (§7.4). Klikimi i pare hap
                   konfirmimin, i dyti fshin. */}
@@ -1133,11 +1181,6 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                   </div>
                 )}
               </div>
-              {bumpMsg && (
-                <div role="alert" style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 600, color: bumpMsg.startsWith('ok:') ? '#1D9E75' : 'var(--az-red-deep)', textAlign: 'center', padding: '4px 0' }}>
-                  {bumpMsg.replace(/^(ok:|err:)/, '')}
-                </div>
-              )}
             </div>
           )}
 
@@ -1213,48 +1256,9 @@ export default function ListingPageClient({ params, initialListing, initialSelle
             </div>
           )}
 
-          {/* Rreshti siguri/besim — Raporto, Takedown, Ndaj bashke.
-              Me pare "Raporto" rrinte vetem, me ngjyre #ccc mbi te bardhe
-              (rreth 1.6:1 — nen cdo prag WCAG); tani teksti eshte i lexueshem
-              dhe rruget e ankimit qendrojne bashke, ku i kerkon syri. */}
-          {!isOwner && (
-            <div style={{ padding: '0 13px 20px' }}>
-              <div style={{ display: 'flex', gap: 6, justifyContent: 'center', flexWrap: 'wrap' }}>
-                <button
-                  type="button"
-                  aria-label="Raporto shpalljen"
-                  aria-haspopup="dialog"
-                  onClick={() => setReportOpen(true)}
-                  className="safety-btn">
-                  <i className="ti ti-flag" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />Raporto
-                </button>
-                <a
-                  href="/takedown"
-                  className="safety-btn"
-                  title="Kërkesë ligjore për heqjen e përmbajtjes">
-                  <i className="ti ti-gavel" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />Kërkesë heqjeje
-                </a>
-                <button
-                  type="button"
-                  aria-label="Ndaj shpalljen"
-                  onClick={() => {
-                    trackEvent('share', listing.id)
-                    const url = buildShareUrl(`/listing/${params.id}`, myRefCode)
-                    if (navigator.share) {
-                      navigator.share({ title: listing.title, url }).catch(() => {})
-                    } else {
-                      navigator.clipboard?.writeText(url).then(
-                        () => { setLinkCopied(true); setTimeout(() => setLinkCopied(false), 2000) },
-                        () => {},
-                      )
-                    }
-                  }}
-                  className="safety-btn">
-                  <i className="ti ti-share" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />{linkCopied ? 'U kopjua' : 'Ndaj'}
-                </button>
-              </div>
-            </div>
-          )}
+          {/* Rreshti i sigurisë/besimit (Raporto · Kërkesë heqjeje · Ndaj) u ngjit
+              lart te rreshti i vetëm i veprimeve (quick-actions), te vija ku e
+              kërkoi pronari — nuk rri më i shpërndarë në fund të faqes. */}
         </div>
       </div>
 
