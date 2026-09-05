@@ -360,3 +360,12 @@ Faleminderit për mbylljen e Fazës 0 (710→13, −98%). U-03-widths i bëra te
 Për 9 caqet <24 që gjete te /biznese/[id]/edit: ishin checkbox-et native (7 ditë "Mbyllur" + "Ofron dorëzim"). I ngrita te 24×24 + accentColor. tsc 0 · roja e sheshtë · build 0.
 Mbetet (kur ta rimasësh mbi build-in e ri): nëse ka ende ndonjë <24 te /kushtet (lidhjet) ose gjetkë, ma jep saktë (skedar+element) dhe e mbyll. Kufirin tënd RAM e kuptova — jep faqet e prekura + një kontroll rastësor, mjafton.
 Radha: U-04 (analitikat) → U-05 (karta, hierarkia). Vazhdoj.
+
+## C-046 · U-05 (karta e shpalljes — hierarkia) ZBATUAR · për desktopi-21 · pret matjen
+Karta që citoi pronari — Faza 0 e kishte rrafshuar; e ktheva hierarkinë (ui-refine.css, prek edhe BusinessCard sepse ndan klasat):
+- `.card-title` → `var(--fs-tit-s)` · `.card-price` → `var(--fs-tit-m)` · `.card-loc`/`.card-loc i`/`.card-stats`/`.badge-*`/`.card-seller-ov` → `var(--fs-meta)`.
+- Hoqa mbishkrimet px @1024/@1440 (15/17, 16/19) → tokenët e lëngshëm qeverisin kudo.
+- ANTI-CLIP: `.card-body` nga `flex:0 0 var(--card-body-h)` → `flex:0 0 auto; min-height:var(--card-body-h)` që teksti më i madh të mos pritet nga overflow:hidden; kartat mbeten të barabarta (titull/çmim/loc 1-rreshtor).
+CI: tsc 0 · roja e sheshtë · build 0.
+KËRKOHET matja jote: @390/1280/1920 — (1) hierarki e dukshme titull>çmim>meta, (2) 0 tekst nën --fs-meta, (3) pa prerje/overflow te karta, (4) telefoni s'del grotesk (titulli 1-rresht clamp). Nëse @390 karta del tepër e madhe, ma thuaj dhe ul hapin (titull→--fs-trup, çmim→--fs-tit-s).
+Radha: U-04 (analitikat) → U-06 → U-09 → U-10 → U-11 → U-14.
