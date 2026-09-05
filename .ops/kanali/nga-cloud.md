@@ -241,3 +241,18 @@ Prova live (rollback): 3 mesazhe (2 tekst+1 foto) → `rreshta_bisede=1`, para=0
 **Web-push te telefoni (tab i mbyllur):** MUNGON krejt — s'ka service worker (ai që ka është kill-switch i qëllimshëm që çregjistrohet), s'ka VAPID, s'ka push_subscriptions. Kërkon vendim pronari (çelësa VAPID = sekret i tij) + pajtim SW me bug-un e cache-freshness. E lashë PA e ndërtuar — e shpjegoj te pronari.
 
 Migrim: `20260904_njoftim_mesazhi.sql` (aplikuar live). ADITIV — asnjë revoke.
+
+## C-027 · WEB-PUSH (si FB/Insta) · kërkim + Faza A/B live, C gati · gjendja: PJESËRISHT
+**Urdhër pronari:** ndërto web-push me kujdes për freskinë; kërkim shkencor para; verifiko përditësimet së pari.
+
+**1. Përditësimet — verifikuar LIVE:** prod `/api/version`=3a0dd1a, `cache-control:no-store` + `cdn-cache-control:no-store`. Deploy-et propagohen fresh. Doktrina "asnjë SW s'kontrollon faqen" e paprekur.
+
+**2. Kërkim (MDN/W3C Push API + Apple):** push dorëzohet te SW-ja PAVARËSISHT fetch handler-it dhe clients.claim. → SW push-only (pa fetch, pa claim, scope '/push-scope/') s'ndërhyn KURRË në navigim → s'mund ta kthejë bug-un e "version i vjetër" (ai vinte VETËM nga fetch handler që shërbente app-shell nga cache). iOS 16.4+ vetëm PWA në ekran bazë + gjest.
+
+**3. Ndërtuar & LIVE (inerte pa çelës VAPID):**
+- Faza A: tabela `push_subscriptions` + RLS (provë: insert i vetes ✓, i tjetrit bllokohet ✓). Aplikuar.
+- Faza B: `public/push-sw.js` (push-only), `lib/push.ts`, `app/components/PushOptIn.tsx` (banderolë te /notifications, shfaqet vetëm kur ka çelës VAPID). **KUJDES FRESKIA:** rojet e SW-së në `layout.tsx` (unregister-all çdo ngarkim) dhe `UpdatePrompt.rifreskoTani` u mësuan të RUAJNË vetëm `/push-sw.js`, hjekin çdo SW tjetër. CI: tsc 0 · roja 384/2721/8 · 30/30 · build 0.
+
+**4. Faza C — GATI, PA APLIKUAR (pret çelësat VAPID):** `supabase/functions/send-push/index.ts` + `20260905_web_push_trigger_PA-APLIKUAR.sql` (trigon notifications insert → pg_net → send-push; gated me push_enabled='true' + admin_settings). pg_net=on, admin_settings(key,value), app_config(key,value) — verifikuar.
+
+**Mbetet (bllok: çelësat VAPID = sekret pronari):** gjenero VAPID; NEXT_PUBLIC_VAPID_PUBLIC_KEY te Vercel; VAPID_PRIVATE/PUBLIC/SUBJECT+SEND_PUSH_SECRET te funksioni; deploy send-push; admin_settings send_push_url/secret; app_config push_enabled='true'; apliko trigerin; test live. **Deri atëherë push-i është inert, zero rrezik freskie.**

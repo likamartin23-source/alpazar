@@ -108,7 +108,12 @@ export default function UpdatePrompt() {
     try {
       if ('serviceWorker' in navigator) {
         const rs = await navigator.serviceWorker.getRegistrations()
-        await Promise.all(rs.map(r => r.unregister().catch(() => {})))
+        await Promise.all(rs.map(r => {
+          // Ruaj SW-në push-only (/push-sw.js) — s'ka fetch handler, s'prek freskinë.
+          const u = r.active?.scriptURL || r.installing?.scriptURL || r.waiting?.scriptURL || ''
+          if (u.includes('/push-sw.js')) return Promise.resolve()
+          return r.unregister().catch(() => {})
+        }))
       }
     } catch { /* ignore */ }
     try {

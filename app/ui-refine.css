@@ -190,6 +190,16 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
    leximit). Guaska mund të mbushë ekranin; teksti brenda saj mban këtë masë.
    Matje terminali: faqet ligjore kishin 92–119ch (syri e humb rreshtin >90ch). */
 .lexim{max-width:68ch;margin-left:auto;margin-right:auto;}
+
+/* Njoftime në pajisje (web-push opt-in) — banderolë te /notifications.
+   Vetëm tokena/rgba, që roja të mbetet e sheshtë. */
+.push-optin{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--az-white);border-bottom:1px solid rgba(0,0,0,.06);font-family:inherit;}
+.push-optin .po-ico{font-size:20px;flex-shrink:0;line-height:1;}
+.push-optin .po-txt{flex:1;font-size:13px;color:var(--az-ink);line-height:1.4;}
+.push-optin .po-btn{border-radius:10px;padding:8px 14px;font-size:12.5px;font-weight:800;font-family:inherit;min-height:40px;white-space:nowrap;cursor:pointer;background:var(--az-yellow);color:var(--az-black);border:none;}
+.push-optin .po-btn.on{background:transparent;color:var(--az-gray-1);border:1px solid rgba(0,0,0,.18);}
+.push-optin .po-btn:disabled{opacity:.6;cursor:default;}
+
 .listings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--sp-3);margin-bottom:var(--sp-4);}
 .listing-card{--card-body-h:98px;background:#fff;border:1px solid #eee;border-radius:var(--r-card);overflow:hidden;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 18px -12px rgba(0,0,0,.14);transition:box-shadow .25s cubic-bezier(.2,.8,.2,1),border-color .25s;display:flex;flex-direction:column;will-change:transform;animation:card-in .45s cubic-bezier(.2,.8,.2,1) both,alpzCardFloat 5s ease-in-out infinite;animation-delay:calc(var(--i,0)*45ms),calc(700ms + var(--i,0)*140ms);}
 @keyframes card-in{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}

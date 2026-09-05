@@ -6,6 +6,7 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { supabase } from '../../lib/supabase'
 import { dayMonth } from '../../lib/format'
 import { useAlpazar } from '../../lib/context'
+import PushOptIn from '../components/PushOptIn'
 
 interface Notif {
   id: string
@@ -191,6 +192,8 @@ export default function NotificationsPage() {
           </button>
         )}
       </div>
+
+      <PushOptIn />
 
       {/* Loading */}
       {loading && (

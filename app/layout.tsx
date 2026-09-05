@@ -240,7 +240,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               }
               if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.getRegistrations().then(function(rs){
-                  rs.forEach(function(r){ r.unregister().catch(function(){}); });
+                  rs.forEach(function(r){
+                    // RUAJ SW-në push-only (/push-sw.js): s'ka fetch handler dhe scope
+                    // të ngushtë '/push-scope/' → s'kontrollon faqet, s'prek freskinë.
+                    // Çdo SW tjetër (i vjetër/i huaj) hiqet si më parë.
+                    var u=(r.active&&r.active.scriptURL)||(r.installing&&r.installing.scriptURL)||(r.waiting&&r.waiting.scriptURL)||'';
+                    if(u.indexOf('/push-sw.js')!==-1) return;
+                    r.unregister().catch(function(){});
+                  });
                 }).catch(function(){});
               }
               if (window.caches && caches.keys) {
