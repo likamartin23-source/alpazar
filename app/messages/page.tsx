@@ -747,7 +747,10 @@ export default function MessagesPage() {
         /* Fixed overlay — qëndron brenda viewport pavarësisht nga prindërit */
         .page{position:fixed;inset:0;max-width:480px;margin:0 auto;display:flex;flex-direction:column;background:var(--az-cream);overflow:hidden;z-index:50;}
         @media(min-width:768px){.page{max-width:760px}}
-        @media(min-width:1024px){.page{max-width:960px}}
+        /* [U-11] Overlay-i fiks 960px linte marzhe anësore ku dukej sfondi i errët
+           (foto pronari: "shirit i errët me vrimë krem"). Mbush marzhet me të njëjtin
+           krem përmes hijes 100vw + kufij anësorë që kolona të lexohet si panel qendror. */
+        @media(min-width:1024px){.page{max-width:960px;border-left:1px solid rgba(0,0,0,.07);border-right:1px solid rgba(0,0,0,.07);box-shadow:0 0 0 100vw var(--az-cream);}}
 
         /* Topbar */
         .topbar{background:linear-gradient(135deg,#151515,#1c1c1c);padding:0 12px;display:flex;align-items:center;gap:9px;height:58px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.06);z-index:10;}

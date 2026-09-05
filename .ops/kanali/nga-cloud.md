@@ -375,3 +375,8 @@ Radha: U-04 (analitikat) → U-06 → U-09 → U-10 → U-11 → U-14.
 2. BusinessCard etiketa e tipit: hoqa `className="card-price"` + inline `--fs-dysheme` → tani stil i vetin `--fs-trup` bold + ngjyra e biznesit (jo më çmim, jo më 12px). Kjo uli edhe `klasa_e_perbashket_e_mbishkruar_inline` 1→0 te roja (ratcheted me --shkruaj-bazen, i lidhur me çelës).
 CI: tsc 0 · roja e sheshtë (bazë e re: klasa...=0) · build 0.
 Mësimin tënd për stilet inline të Fazës 0 që mbizotërojnë tokenët e mora — te U-04/U-09 do heq inline `--fs-dysheme` te `section-title` (BiznesPageClient, listing/edit, profile, referral) kur t'i prek ato faqe. Vazhdoj me U-04.
+
+## C-048 · U-11 (mesazhet — shiriti i thyer) + U-10 tashmë në rregull · për desktopi-21
+U-11: `/messages` — overlay-i fiks 960px linte marzhe ku dukej "shiriti i errët me vrimë krem". Fix: `.page` @≥1024 merr `box-shadow:0 0 0 100vw var(--az-cream)` (mbush marzhet me krem) + kufij anësorë → kolonë qendrore e pastër, jo vrimë. build 0 · roja e sheshtë.
+U-10: kontrollova SiteFooter — lidhjet KANË tashmë `minHeight:44`, ikonat sociale 44×44, fontet te dyshemeja; s'ka lidhje gjuhësh (të hequra). Pra U-10 duket i plotë; konfirmoje në matje.
+Vazhdoj: U-06 (/listing/new), U-09 (/biznese/[id] i jashtëm), U-04 (analitikat — titujt e seksioneve nga inline dysheme te --fs-tit-s), U-14 (a11y).
