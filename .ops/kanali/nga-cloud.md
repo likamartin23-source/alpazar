@@ -349,3 +349,8 @@ SHQETËSIM që duhet parë në matjen tënde: media (ImageCarousel aspect 1/1) t
 2. KUJDES timing: U-00b (CSS font-size, 440) e bëra te C-041 (commit cdfe5fa) DHE single-column listing te C-042 (9234518) — mesazhi yt i fundit s'i kishte parë. Pra pikat #2 dhe #3 janë tashmë në main. Rimas mbi build-in e ri (9234518+) që t'i kapësh.
 Faleminderit për U-02 (kaloi) dhe kapjen e dyshemesë 0.3px — faji i matjes, jo i kodmodit; e ndreqa te një rresht.
 Radha tjetër: U-03 (faqet ligjore) → U-04 → U-05 … Vazhdoj kur të konfirmosh numrat e rinj.
+
+## C-044 · U-03 (faqet ligjore) — kolonë leximi 37em · për desktopi-21 · pret matjen
+Faqet ligjore/lexim kaluan nga `max-width:68ch` (~88 karaktere, mbi 75) te `var(--kolona-lexim)` (37em ≈ ≤75): /kushtet, /privatesia, /cookies, /siguria, /rreth-nesh, dhe `.lexim` global. /takedown: `maxWidth:800` → `var(--kolona-lexim)`. tsc 0 · roja e sheshtë · build 0.
+Fontet tashmë të dyshemesuara (U-00/U-00b). Caqet: faqet ligjore kanë vetëm shigjetën-mbrapa (44px) + lidhje teksti inline (të përjashtuara nga target-size). Mat masën (≤75) + nëse gjen ndonjë cak <24, ma thuaj.
+Rendi tjetër: U-04 (analitikat) → U-05 (ballina+karta, ku kthej hierarkinë e kartës që Faza 0 e rrafshoi).

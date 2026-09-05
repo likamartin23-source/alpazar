@@ -104,7 +104,7 @@ export default function TakedownPage() {
 
   return (
     <div style={{ minHeight: '100dvh', background: 'var(--az-cream)', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 20px' }}>
-      <div style={{ width: '100%', maxWidth: 800 }}>
+      <div style={{ width: '100%', maxWidth: 'var(--kolona-lexim)' }}>
         <button type="button" aria-label="Kthehu" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', color: '#6E6E6E', cursor: 'pointer', fontSize: 'var(--fs-dysheme)', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 6 }}>
           ← Kthehu
         </button>

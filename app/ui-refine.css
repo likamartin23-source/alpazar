@@ -223,7 +223,7 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
    `68ch` jep 45–75 karaktere për rresht në çdo font e ekran (brezi i rehatshëm i
    leximit). Guaska mund të mbushë ekranin; teksti brenda saj mban këtë masë.
    Matje terminali: faqet ligjore kishin 92–119ch (syri e humb rreshtin >90ch). */
-.lexim{max-width:68ch;margin-left:auto;margin-right:auto;}
+.lexim{max-width:var(--kolona-lexim);margin-left:auto;margin-right:auto;}
 
 /* Njoftime në pajisje (web-push opt-in) — banderolë te /notifications.
    Vetëm tokena/rgba, që roja të mbetet e sheshtë. */
