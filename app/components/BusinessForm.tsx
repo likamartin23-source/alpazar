@@ -339,7 +339,7 @@ export default function BusinessForm({ mode, initial, onSaved }: {
       <label style={{ ...lbl, marginTop: 12 }}>Zona e shërbimit</label>
       <input className="bf-input" value={f.service_area} onChange={e => setV('service_area', e.target.value)} placeholder="p.sh. Tiranë, Durrës dhe rrethina" />
       <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12, fontSize: 'var(--fs-dysheme)', cursor: 'pointer' }}>
-        <input type="checkbox" checked={f.delivery_ka} onChange={e => setV('delivery_ka', e.target.checked)} /> Ofron dorëzim
+        <input type="checkbox" checked={f.delivery_ka} onChange={e => setV('delivery_ka', e.target.checked)} style={{ width: 24, height: 24, flexShrink: 0, accentColor: 'var(--az-red)' }} /> Ofron dorëzim
       </label>
       {f.delivery_ka && <input className="bf-input" style={{ marginTop: 8 }} value={f.delivery_detaje} onChange={e => setV('delivery_detaje', e.target.value)} placeholder="Detaje dorëzimi (tarifa, zona, afat)" />}
 
@@ -350,7 +350,7 @@ export default function BusinessForm({ mode, initial, onSaved }: {
           <div key={k} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ width: 64, fontSize: 'var(--fs-dysheme)', fontWeight: 600, color: '#555' }}>{l}</span>
             <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 'var(--fs-dysheme)', color: '#555', cursor: 'pointer' }}>
-              <input type="checkbox" checked={hours[k].closed} onChange={e => setHours(h => ({ ...h, [k]: { ...h[k], closed: e.target.checked } }))} /> Mbyllur
+              <input type="checkbox" checked={hours[k].closed} onChange={e => setHours(h => ({ ...h, [k]: { ...h[k], closed: e.target.checked } }))} style={{ width: 24, height: 24, flexShrink: 0, accentColor: 'var(--az-red)' }} /> Mbyllur
             </label>
             {!hours[k].closed && (
               <>

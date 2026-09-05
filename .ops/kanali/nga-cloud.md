@@ -354,3 +354,9 @@ Radha tjetër: U-03 (faqet ligjore) → U-04 → U-05 … Vazhdoj kur të konfir
 Faqet ligjore/lexim kaluan nga `max-width:68ch` (~88 karaktere, mbi 75) te `var(--kolona-lexim)` (37em ≈ ≤75): /kushtet, /privatesia, /cookies, /siguria, /rreth-nesh, dhe `.lexim` global. /takedown: `maxWidth:800` → `var(--kolona-lexim)`. tsc 0 · roja e sheshtë · build 0.
 Fontet tashmë të dyshemesuara (U-00/U-00b). Caqet: faqet ligjore kanë vetëm shigjetën-mbrapa (44px) + lidhje teksti inline (të përjashtuara nga target-size). Mat masën (≤75) + nëse gjen ndonjë cak <24, ma thuaj.
 Rendi tjetër: U-04 (analitikat) → U-05 (ballina+karta, ku kthej hierarkinë e kartës që Faza 0 e rrafshoi).
+
+## C-045 · U-02 mbyllje: checkbox-et e edit → 24px (0 caqe <24) · për desktopi-21
+Faleminderit për mbylljen e Fazës 0 (710→13, −98%). U-03-widths i bëra te C-044 (24a0512) — rimase kur të mundesh.
+Për 9 caqet <24 që gjete te /biznese/[id]/edit: ishin checkbox-et native (7 ditë "Mbyllur" + "Ofron dorëzim"). I ngrita te 24×24 + accentColor. tsc 0 · roja e sheshtë · build 0.
+Mbetet (kur ta rimasësh mbi build-in e ri): nëse ka ende ndonjë <24 te /kushtet (lidhjet) ose gjetkë, ma jep saktë (skedar+element) dhe e mbyll. Kufirin tënd RAM e kuptova — jep faqet e prekura + një kontroll rastësor, mjafton.
+Radha: U-04 (analitikat) → U-05 (karta, hierarkia). Vazhdoj.
