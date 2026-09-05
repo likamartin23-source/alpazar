@@ -8,7 +8,7 @@ export default function Siguria() {
     .topbar{background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
     .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0;}
     .back i{font-size:18px;color:#111;}
-    .topbar-title{font-size:15px;font-weight:700;color:#111;}
+    .topbar-title{font-size:var(--fs-dysheme);font-weight:700;color:#111;}
     .hero{background:#C42B0F;padding:28px 20px;text-align:center;}
     .hero-icon{font-size:48px;display:block;margin-bottom:12px;}
     .hero h1{color:#fff;font-size:var(--fs-3xl);font-weight:700;margin-bottom:6px;}
@@ -34,6 +34,16 @@ export default function Siguria() {
     .red-btn{display:block;background:#C42B0F;color:#fff;text-align:center;border-radius:10px;padding:13px;font-size:var(--fs-dysheme);font-weight:700;text-decoration:none;margin-top:4px;}
     .ftr{display:flex;flex-wrap:wrap;gap:8px 16px;padding:20px;background:#f9f9f9;border-top:1px solid #eee;}
     .ftr a{color:#555;font-size:var(--fs-dysheme);text-decoration:none;}
+    /* ISHULL mbi tavolinë të pastër (§17). Faqe me karta: .wrap MBETET krem (jo fletë
+       e bardhë) që të mos dyfishojë kartat e bardha .section brenda; ishulli qëndron
+       si kolonë krem e ngritur mbi tavolinë. Këndet rrumbullakosen te topbar/ftr
+       (jo overflow:hidden — do të prishte sticky-n e .topbar). */
+    @media(min-width:1000px){
+      body{background:radial-gradient(1200px 620px at 50% -8%,var(--az-white),var(--az-cream) 58%);}
+      .wrap{font-size:var(--fs-trup);max-width:44em;margin:28px auto 40px;min-height:auto;border-radius:18px;border:1px solid var(--az-line);box-shadow:0 2px 8px rgba(0,0,0,.06),0 22px 54px -26px rgba(0,0,0,.28);}
+      .topbar{border-radius:18px 18px 0 0;}
+      .ftr{border-radius:0 0 18px 18px;}
+    }
   `
   return (
     <>

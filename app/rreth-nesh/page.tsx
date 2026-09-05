@@ -8,7 +8,7 @@ export default function RrethNesh() {
     .topbar{background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
     .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0;}
     .back i{font-size:18px;color:#111;}
-    .topbar-title{font-size:15px;font-weight:700;color:#111;}
+    .topbar-title{font-size:var(--fs-dysheme);font-weight:700;color:#111;}
     .hero{background:#111;padding:36px 20px;text-align:center;position:relative;overflow:hidden;}
     .hero::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--az-red),var(--az-yellow));}
     .hero-logo{font-size:56px;display:block;margin-bottom:14px;}
@@ -16,7 +16,7 @@ export default function RrethNesh() {
     .hero p{color:#9A9A9A;font-size:var(--fs-dysheme);line-height:1.7;}
     .body{padding:20px 16px 40px;}
     .section{background:#fff;border-radius:12px;padding:20px;border:0.5px solid #eee;margin-bottom:14px;}
-    .sec-title{font-size:15px;font-weight:700;color:#111;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+    .sec-title{font-size:var(--fs-dysheme);font-weight:700;color:#111;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
     .sec-title i{font-size:18px;color:#C42B0F;}
     p{font-size:var(--fs-dysheme);color:#444;line-height:1.85;margin-bottom:10px;}
     p:last-child{margin-bottom:0;}
@@ -38,6 +38,15 @@ export default function RrethNesh() {
     .tl-text{font-size:var(--fs-dysheme);color:#555;line-height:1.6;}
     .ftr{display:flex;flex-wrap:wrap;gap:8px 16px;padding:20px;background:#f9f9f9;border-top:1px solid #eee;}
     .ftr a{color:#555;font-size:var(--fs-dysheme);text-decoration:none;}
+    /* ISHULL mbi tavolinë të pastër (§17). Faqe me karta: .wrap MBETET krem (jo fletë
+       e bardhë) që të mos dyfishojë kartat e bardha .section brenda; ishulli qëndron
+       si kolonë krem e ngritur mbi tavolinë. Këndet te topbar/ftr (jo overflow:hidden). */
+    @media(min-width:1000px){
+      body{background:radial-gradient(1200px 620px at 50% -8%,var(--az-white),var(--az-cream) 58%);}
+      .wrap{font-size:var(--fs-trup);max-width:44em;margin:28px auto 40px;min-height:auto;border-radius:18px;border:1px solid var(--az-line);box-shadow:0 2px 8px rgba(0,0,0,.06),0 22px 54px -26px rgba(0,0,0,.28);}
+      .topbar{border-radius:18px 18px 0 0;}
+      .ftr{border-radius:0 0 18px 18px;}
+    }
   `
   return (
     <>
