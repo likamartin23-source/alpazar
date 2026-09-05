@@ -1,0 +1,6386 @@
+{
+ "baza": "https://alpazar.vercel.app",
+ "kur": "2026-09-05T08:10:16.174Z",
+ "faqet": {
+  "ballina": {
+   "telefon-390": {
+    "nyjeTeksti": 91,
+    "tekstiMajtas": 12,
+    "tekstiDjathtas": 1514,
+    "tekstiGjeresi": 1502,
+    "trupPx": 10,
+    "titullPx": 23,
+    "madhesiTeNdryshme": 12,
+    "shperndarjaFS": [
+     {
+      "px": 10,
+      "kar": 154
+     },
+     {
+      "px": 12,
+      "kar": 138
+     },
+     {
+      "px": 9,
+      "kar": 111
+     },
+     {
+      "px": 13,
+      "kar": 95
+     },
+     {
+      "px": 11,
+      "kar": 86
+     },
+     {
+      "px": 8,
+      "kar": 42
+     },
+     {
+      "px": 12.5,
+      "kar": 25
+     },
+     {
+      "px": 14,
+      "kar": 19
+     }
+    ],
+    "lhMesatar": 1.2,
+    "masa": null,
+    "caqe": {
+     "n": 58,
+     "min": 16,
+     "p10": 42,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 6
+    },
+    "rrezeTeNdryshme": 9,
+    "gjatesiaFaqes": 1864,
+    "titulli": "Alpazar — Treg Online Shqipëri",
+    "guaske": false,
+    "trupArcmin": 9.4,
+    "shfrytezimi": 385.1,
+    "caqeMm": 8.1
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 91,
+    "tekstiMajtas": 51,
+    "tekstiDjathtas": 1254,
+    "tekstiGjeresi": 1202,
+    "trupPx": 12,
+    "titullPx": 23,
+    "madhesiTeNdryshme": 13,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 263
+     },
+     {
+      "px": 13,
+      "kar": 95
+     },
+     {
+      "px": 11,
+      "kar": 87
+     },
+     {
+      "px": 10,
+      "kar": 58
+     },
+     {
+      "px": 14,
+      "kar": 46
+     },
+     {
+      "px": 18,
+      "kar": 36
+     },
+     {
+      "px": 12.5,
+      "kar": 25
+     },
+     {
+      "px": 9,
+      "kar": 23
+     }
+    ],
+    "lhMesatar": 1.2,
+    "masa": null,
+    "caqe": {
+     "n": 48,
+     "min": 16,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 10,
+    "gjatesiaFaqes": 1847,
+    "titulli": "Alpazar — Treg Online Shqipëri",
+    "guaske": false,
+    "trupArcmin": 8.7,
+    "shfrytezimi": 93.9,
+    "caqeMm": 9.8
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 95,
+    "tekstiMajtas": 96,
+    "tekstiDjathtas": 1894,
+    "tekstiGjeresi": 1798,
+    "trupPx": 12,
+    "titullPx": 23,
+    "madhesiTeNdryshme": 14,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 269
+     },
+     {
+      "px": 13,
+      "kar": 95
+     },
+     {
+      "px": 11,
+      "kar": 87
+     },
+     {
+      "px": 10,
+      "kar": 58
+     },
+     {
+      "px": 14,
+      "kar": 46
+     },
+     {
+      "px": 20,
+      "kar": 36
+     },
+     {
+      "px": 12.5,
+      "kar": 25
+     },
+     {
+      "px": 9,
+      "kar": 23
+     }
+    ],
+    "lhMesatar": 1.2,
+    "masa": null,
+    "caqe": {
+     "n": 60,
+     "min": 16,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 4
+    },
+    "rrezeTeNdryshme": 10,
+    "gjatesiaFaqes": 1835,
+    "titulli": "Alpazar — Treg Online Shqipëri",
+    "guaske": false,
+    "trupArcmin": 9.9,
+    "shfrytezimi": 93.6,
+    "caqeMm": 12.2
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 95,
+    "tekstiMajtas": 120,
+    "tekstiDjathtas": 2534,
+    "tekstiGjeresi": 2414,
+    "trupPx": 12,
+    "titullPx": 23,
+    "madhesiTeNdryshme": 14,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 269
+     },
+     {
+      "px": 13,
+      "kar": 95
+     },
+     {
+      "px": 11,
+      "kar": 87
+     },
+     {
+      "px": 10,
+      "kar": 58
+     },
+     {
+      "px": 14,
+      "kar": 46
+     },
+     {
+      "px": 20,
+      "kar": 36
+     },
+     {
+      "px": 12.5,
+      "kar": 25
+     },
+     {
+      "px": 9,
+      "kar": 23
+     }
+    ],
+    "lhMesatar": 1.2,
+    "masa": null,
+    "caqe": {
+     "n": 60,
+     "min": 16,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 4
+    },
+    "rrezeTeNdryshme": 10,
+    "gjatesiaFaqes": 1835,
+    "titulli": "Alpazar — Treg Online Shqipëri",
+    "guaske": false,
+    "trupArcmin": 7.1,
+    "shfrytezimi": 94.3,
+    "caqeMm": 10.3
+   }
+  },
+  "kategori": {
+   "telefon-390": {
+    "nyjeTeksti": 41,
+    "tekstiMajtas": 16,
+    "tekstiDjathtas": 352,
+    "tekstiGjeresi": 336,
+    "trupPx": 13,
+    "titullPx": 22,
+    "madhesiTeNdryshme": 5,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 230
+     },
+     {
+      "px": 14,
+      "kar": 73
+     },
+     {
+      "px": 22,
+      "kar": 23
+     },
+     {
+      "px": 18,
+      "kar": 22
+     },
+     {
+      "px": 12,
+      "kar": 15
+     }
+    ],
+    "lhMesatar": 1.5,
+    "masa": {
+     "ch": 37,
+     "px": 332,
+     "fs": 14
+    },
+    "caqe": {
+     "n": 57,
+     "min": 15,
+     "p10": 34,
+     "mesi": 44,
+     "nen24": 2,
+     "nen44": 22
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 1721,
+    "titulli": "Kategoritë e shpalljeve",
+    "guaske": false,
+    "trupArcmin": 12.2,
+    "shfrytezimi": 86.2,
+    "caqeMm": 8.1
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 41,
+    "tekstiMajtas": 51,
+    "tekstiDjathtas": 1180,
+    "tekstiGjeresi": 1129,
+    "trupPx": 13,
+    "titullPx": 32,
+    "madhesiTeNdryshme": 5,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 230
+     },
+     {
+      "px": 14,
+      "kar": 73
+     },
+     {
+      "px": 32,
+      "kar": 23
+     },
+     {
+      "px": 18,
+      "kar": 22
+     },
+     {
+      "px": 12,
+      "kar": 15
+     }
+    ],
+    "lhMesatar": 1.5,
+    "masa": {
+     "ch": 73,
+     "px": 451,
+     "fs": 14
+    },
+    "caqe": {
+     "n": 57,
+     "min": 15,
+     "p10": 34,
+     "mesi": 44,
+     "nen24": 2,
+     "nen44": 22
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 984,
+    "titulli": "Kategoritë e shpalljeve",
+    "guaske": false,
+    "trupArcmin": 9.4,
+    "shfrytezimi": 88.2,
+    "caqeMm": 9.8
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 41,
+    "tekstiMajtas": 72,
+    "tekstiDjathtas": 1791,
+    "tekstiGjeresi": 1719,
+    "trupPx": 13,
+    "titullPx": 32,
+    "madhesiTeNdryshme": 5,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 230
+     },
+     {
+      "px": 14,
+      "kar": 73
+     },
+     {
+      "px": 32,
+      "kar": 23
+     },
+     {
+      "px": 18,
+      "kar": 22
+     },
+     {
+      "px": 12,
+      "kar": 15
+     }
+    ],
+    "lhMesatar": 1.5,
+    "masa": {
+     "ch": 73,
+     "px": 451,
+     "fs": 14
+    },
+    "caqe": {
+     "n": 57,
+     "min": 15,
+     "p10": 34,
+     "mesi": 44,
+     "nen24": 2,
+     "nen44": 22
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 1080,
+    "titulli": "Kategoritë e shpalljeve",
+    "guaske": false,
+    "trupArcmin": 10.7,
+    "shfrytezimi": 89.5,
+    "caqeMm": 12.2
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 41,
+    "tekstiMajtas": 72,
+    "tekstiDjathtas": 2438,
+    "tekstiGjeresi": 2366,
+    "trupPx": 13,
+    "titullPx": 32,
+    "madhesiTeNdryshme": 5,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 230
+     },
+     {
+      "px": 14,
+      "kar": 73
+     },
+     {
+      "px": 32,
+      "kar": 23
+     },
+     {
+      "px": 18,
+      "kar": 22
+     },
+     {
+      "px": 12,
+      "kar": 15
+     }
+    ],
+    "lhMesatar": 1.5,
+    "masa": {
+     "ch": 73,
+     "px": 451,
+     "fs": 14
+    },
+    "caqe": {
+     "n": 57,
+     "min": 15,
+     "p10": 34,
+     "mesi": 44,
+     "nen24": 2,
+     "nen44": 22
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 1440,
+    "titulli": "Kategoritë e shpalljeve",
+    "guaske": false,
+    "trupArcmin": 7.7,
+    "shfrytezimi": 92.4,
+    "caqeMm": 10.3
+   }
+  },
+  "kategori-slug": {
+   "telefon-390": {
+    "nyjeTeksti": 47,
+    "tekstiMajtas": 16,
+    "tekstiDjathtas": 368,
+    "tekstiGjeresi": 352,
+    "trupPx": 13,
+    "titullPx": 22,
+    "madhesiTeNdryshme": 10,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 129
+     },
+     {
+      "px": 14,
+      "kar": 91
+     },
+     {
+      "px": 17,
+      "kar": 35
+     },
+     {
+      "px": 12,
+      "kar": 25
+     },
+     {
+      "px": 8.5,
+      "kar": 16
+     },
+     {
+      "px": 11,
+      "kar": 15
+     },
+     {
+      "px": 22,
+      "kar": 9
+     },
+     {
+      "px": 10,
+      "kar": 9
+     }
+    ],
+    "lhMesatar": 1.2,
+    "masa": {
+     "ch": 34,
+     "px": 352,
+     "fs": 14
+    },
+    "caqe": {
+     "n": 44,
+     "min": 15,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 3,
+     "nen44": 4
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 1554,
+    "titulli": "Automjete",
+    "guaske": false,
+    "trupArcmin": 12.2,
+    "shfrytezimi": 90.3,
+    "caqeMm": 8.1
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 47,
+    "tekstiMajtas": 51,
+    "tekstiDjathtas": 1199,
+    "tekstiGjeresi": 1148,
+    "trupPx": 13,
+    "titullPx": 32,
+    "madhesiTeNdryshme": 10,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 123
+     },
+     {
+      "px": 14,
+      "kar": 86
+     },
+     {
+      "px": 17,
+      "kar": 40
+     },
+     {
+      "px": 12,
+      "kar": 38
+     },
+     {
+      "px": 8.5,
+      "kar": 16
+     },
+     {
+      "px": 11,
+      "kar": 11
+     },
+     {
+      "px": 32,
+      "kar": 9
+     },
+     {
+      "px": 15,
+      "kar": 6
+     }
+    ],
+    "lhMesatar": 1.2,
+    "masa": {
+     "ch": 68,
+     "px": 431,
+     "fs": 14
+    },
+    "caqe": {
+     "n": 44,
+     "min": 15,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 3,
+     "nen44": 4
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 1264,
+    "titulli": "Automjete",
+    "guaske": false,
+    "trupArcmin": 9.4,
+    "shfrytezimi": 89.7,
+    "caqeMm": 9.8
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 47,
+    "tekstiMajtas": 72,
+    "tekstiDjathtas": 1698,
+    "tekstiGjeresi": 1626,
+    "trupPx": 13,
+    "titullPx": 32,
+    "madhesiTeNdryshme": 11,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 123
+     },
+     {
+      "px": 14,
+      "kar": 86
+     },
+     {
+      "px": 12,
+      "kar": 38
+     },
+     {
+      "px": 17,
+      "kar": 35
+     },
+     {
+      "px": 8.5,
+      "kar": 16
+     },
+     {
+      "px": 11,
+      "kar": 11
+     },
+     {
+      "px": 32,
+      "kar": 9
+     },
+     {
+      "px": 16,
+      "kar": 6
+     }
+    ],
+    "lhMesatar": 1.2,
+    "masa": {
+     "ch": 68,
+     "px": 431,
+     "fs": 14
+    },
+    "caqe": {
+     "n": 44,
+     "min": 15,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 3,
+     "nen44": 4
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 1214,
+    "titulli": "Automjete",
+    "guaske": false,
+    "trupArcmin": 10.7,
+    "shfrytezimi": 84.7,
+    "caqeMm": 12.2
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 47,
+    "tekstiMajtas": 72,
+    "tekstiDjathtas": 1698,
+    "tekstiGjeresi": 1626,
+    "trupPx": 13,
+    "titullPx": 32,
+    "madhesiTeNdryshme": 11,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 123
+     },
+     {
+      "px": 14,
+      "kar": 86
+     },
+     {
+      "px": 12,
+      "kar": 38
+     },
+     {
+      "px": 17,
+      "kar": 35
+     },
+     {
+      "px": 8.5,
+      "kar": 16
+     },
+     {
+      "px": 11,
+      "kar": 11
+     },
+     {
+      "px": 32,
+      "kar": 9
+     },
+     {
+      "px": 16,
+      "kar": 6
+     }
+    ],
+    "lhMesatar": 1.2,
+    "masa": {
+     "ch": 68,
+     "px": 431,
+     "fs": 14
+    },
+    "caqe": {
+     "n": 44,
+     "min": 15,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 3,
+     "nen44": 4
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 1440,
+    "titulli": "Automjete",
+    "guaske": false,
+    "trupArcmin": 7.7,
+    "shfrytezimi": 63.5,
+    "caqeMm": 10.3
+   }
+  },
+  "kategori-qytet": {
+   "telefon-390": {
+    "nyjeTeksti": 40,
+    "tekstiMajtas": 16,
+    "tekstiDjathtas": 365,
+    "tekstiGjeresi": 349,
+    "trupPx": 14,
+    "titullPx": 22,
+    "madhesiTeNdryshme": 5,
+    "shperndarjaFS": [
+     {
+      "px": 14,
+      "kar": 142
+     },
+     {
+      "px": 13,
+      "kar": 117
+     },
+     {
+      "px": 12,
+      "kar": 32
+     },
+     {
+      "px": 17,
+      "kar": 27
+     },
+     {
+      "px": 22,
+      "kar": 17
+     }
+    ],
+    "lhMesatar": 1.5,
+    "masa": {
+     "ch": 34,
+     "px": 349,
+     "fs": 14
+    },
+    "caqe": {
+     "n": 44,
+     "min": 15,
+     "p10": 36,
+     "mesi": 44,
+     "nen24": 4,
+     "nen44": 6
+    },
+    "rrezeTeNdryshme": 6,
+    "gjatesiaFaqes": 1206,
+    "titulli": "Automjete në Tiranë",
+    "guaske": false,
+    "trupArcmin": 13.1,
+    "shfrytezimi": 89.5,
+    "caqeMm": 8.1
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 40,
+    "tekstiMajtas": 51,
+    "tekstiDjathtas": 1120,
+    "tekstiGjeresi": 1069,
+    "trupPx": 14,
+    "titullPx": 32,
+    "madhesiTeNdryshme": 5,
+    "shperndarjaFS": [
+     {
+      "px": 14,
+      "kar": 142
+     },
+     {
+      "px": 13,
+      "kar": 117
+     },
+     {
+      "px": 12,
+      "kar": 32
+     },
+     {
+      "px": 17,
+      "kar": 27
+     },
+     {
+      "px": 32,
+      "kar": 17
+     }
+    ],
+    "lhMesatar": 1.5,
+    "masa": {
+     "ch": 68,
+     "px": 434,
+     "fs": 14
+    },
+    "caqe": {
+     "n": 44,
+     "min": 15,
+     "p10": 18,
+     "mesi": 44,
+     "nen24": 5,
+     "nen44": 6
+    },
+    "rrezeTeNdryshme": 6,
+    "gjatesiaFaqes": 902,
+    "titulli": "Automjete në Tiranë",
+    "guaske": false,
+    "trupArcmin": 10.2,
+    "shfrytezimi": 83.5,
+    "caqeMm": 9.8
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 40,
+    "tekstiMajtas": 72,
+    "tekstiDjathtas": 1619,
+    "tekstiGjeresi": 1547,
+    "trupPx": 14,
+    "titullPx": 32,
+    "madhesiTeNdryshme": 5,
+    "shperndarjaFS": [
+     {
+      "px": 14,
+      "kar": 142
+     },
+     {
+      "px": 13,
+      "kar": 117
+     },
+     {
+      "px": 12,
+      "kar": 32
+     },
+     {
+      "px": 17,
+      "kar": 27
+     },
+     {
+      "px": 32,
+      "kar": 17
+     }
+    ],
+    "lhMesatar": 1.5,
+    "masa": {
+     "ch": 68,
+     "px": 434,
+     "fs": 14
+    },
+    "caqe": {
+     "n": 44,
+     "min": 15,
+     "p10": 18,
+     "mesi": 44,
+     "nen24": 5,
+     "nen44": 6
+    },
+    "rrezeTeNdryshme": 6,
+    "gjatesiaFaqes": 1080,
+    "titulli": "Automjete në Tiranë",
+    "guaske": false,
+    "trupArcmin": 11.5,
+    "shfrytezimi": 80.6,
+    "caqeMm": 12.2
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 40,
+    "tekstiMajtas": 72,
+    "tekstiDjathtas": 1619,
+    "tekstiGjeresi": 1547,
+    "trupPx": 14,
+    "titullPx": 32,
+    "madhesiTeNdryshme": 5,
+    "shperndarjaFS": [
+     {
+      "px": 14,
+      "kar": 142
+     },
+     {
+      "px": 13,
+      "kar": 117
+     },
+     {
+      "px": 12,
+      "kar": 32
+     },
+     {
+      "px": 17,
+      "kar": 27
+     },
+     {
+      "px": 32,
+      "kar": 17
+     }
+    ],
+    "lhMesatar": 1.5,
+    "masa": {
+     "ch": 68,
+     "px": 434,
+     "fs": 14
+    },
+    "caqe": {
+     "n": 44,
+     "min": 15,
+     "p10": 18,
+     "mesi": 44,
+     "nen24": 5,
+     "nen44": 6
+    },
+    "rrezeTeNdryshme": 6,
+    "gjatesiaFaqes": 1440,
+    "titulli": "Automjete në Tiranë",
+    "guaske": false,
+    "trupArcmin": 8.3,
+    "shfrytezimi": 60.4,
+    "caqeMm": 10.3
+   }
+  },
+  "search": {
+   "telefon-390": {
+    "nyjeTeksti": 23,
+    "tekstiMajtas": 26,
+    "tekstiDjathtas": 1227,
+    "tekstiGjeresi": 1201,
+    "trupPx": 10,
+    "titullPx": 16,
+    "madhesiTeNdryshme": 4,
+    "shperndarjaFS": [
+     {
+      "px": 10,
+      "kar": 116
+     },
+     {
+      "px": 12,
+      "kar": 65
+     },
+     {
+      "px": 16,
+      "kar": 25
+     },
+     {
+      "px": 11,
+      "kar": 13
+     }
+    ],
+    "lhMesatar": null,
+    "masa": null,
+    "caqe": {
+     "n": 42,
+     "min": 16,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 1233,
+    "titulli": "Kërko çdo gjë në Shqipëri",
+    "guaske": false,
+    "trupArcmin": 9.4,
+    "shfrytezimi": 307.9,
+    "caqeMm": 8.1
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 23,
+    "tekstiMajtas": 77,
+    "tekstiDjathtas": 1278,
+    "tekstiGjeresi": 1201,
+    "trupPx": 10,
+    "titullPx": 20,
+    "madhesiTeNdryshme": 4,
+    "shperndarjaFS": [
+     {
+      "px": 10,
+      "kar": 116
+     },
+     {
+      "px": 12,
+      "kar": 65
+     },
+     {
+      "px": 20,
+      "kar": 25
+     },
+     {
+      "px": 11,
+      "kar": 13
+     }
+    ],
+    "lhMesatar": null,
+    "masa": null,
+    "caqe": {
+     "n": 42,
+     "min": 16,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 1127,
+    "titulli": "Kërko çdo gjë në Shqipëri",
+    "guaske": false,
+    "trupArcmin": 7.3,
+    "shfrytezimi": 93.8,
+    "caqeMm": 9.8
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 23,
+    "tekstiMajtas": 98,
+    "tekstiDjathtas": 1822,
+    "tekstiGjeresi": 1724,
+    "trupPx": 10,
+    "titullPx": 20,
+    "madhesiTeNdryshme": 4,
+    "shperndarjaFS": [
+     {
+      "px": 10,
+      "kar": 116
+     },
+     {
+      "px": 12,
+      "kar": 65
+     },
+     {
+      "px": 20,
+      "kar": 25
+     },
+     {
+      "px": 11,
+      "kar": 13
+     }
+    ],
+    "lhMesatar": null,
+    "masa": null,
+    "caqe": {
+     "n": 42,
+     "min": 16,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 1407,
+    "titulli": "Kërko çdo gjë në Shqipëri",
+    "guaske": false,
+    "trupArcmin": 8.2,
+    "shfrytezimi": 89.8,
+    "caqeMm": 12.2
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 23,
+    "tekstiMajtas": 98,
+    "tekstiDjathtas": 2462,
+    "tekstiGjeresi": 2364,
+    "trupPx": 10,
+    "titullPx": 20,
+    "madhesiTeNdryshme": 4,
+    "shperndarjaFS": [
+     {
+      "px": 10,
+      "kar": 116
+     },
+     {
+      "px": 12,
+      "kar": 65
+     },
+     {
+      "px": 20,
+      "kar": 25
+     },
+     {
+      "px": 11,
+      "kar": 13
+     }
+    ],
+    "lhMesatar": null,
+    "masa": null,
+    "caqe": {
+     "n": 42,
+     "min": 16,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 1767,
+    "titulli": "Kërko çdo gjë në Shqipëri",
+    "guaske": false,
+    "trupArcmin": 6,
+    "shfrytezimi": 92.3,
+    "caqeMm": 10.3
+   }
+  },
+  "search-results": {
+   "telefon-390": {
+    "nyjeTeksti": 47,
+    "tekstiMajtas": 10,
+    "tekstiDjathtas": 1254,
+    "tekstiGjeresi": 1244,
+    "trupPx": 10,
+    "titullPx": 17,
+    "madhesiTeNdryshme": 8,
+    "shperndarjaFS": [
+     {
+      "px": 10,
+      "kar": 134
+     },
+     {
+      "px": 11,
+      "kar": 99
+     },
+     {
+      "px": 13,
+      "kar": 43
+     },
+     {
+      "px": 9,
+      "kar": 17
+     },
+     {
+      "px": 7.5,
+      "kar": 8
+     },
+     {
+      "px": 11.5,
+      "kar": 6
+     },
+     {
+      "px": 16,
+      "kar": 5
+     },
+     {
+      "px": 17,
+      "kar": 2
+     }
+    ],
+    "lhMesatar": null,
+    "masa": null,
+    "caqe": {
+     "n": 44,
+     "min": 16,
+     "p10": 24,
+     "mesi": 39,
+     "nen24": 2,
+     "nen44": 23
+    },
+    "rrezeTeNdryshme": 8,
+    "gjatesiaFaqes": 1233,
+    "titulli": "Rezultatet e kërkimit për \"makina\"",
+    "guaske": false,
+    "trupArcmin": 9.4,
+    "shfrytezimi": 319,
+    "caqeMm": 7.1
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 3,
+    "tekstiMajtas": 75,
+    "tekstiDjathtas": 208,
+    "tekstiGjeresi": 133,
+    "trupPx": 10,
+    "titullPx": 10,
+    "madhesiTeNdryshme": 1,
+    "shperndarjaFS": [
+     {
+      "px": 10,
+      "kar": 20
+     }
+    ],
+    "lhMesatar": null,
+    "masa": null,
+    "caqe": {
+     "n": 25,
+     "min": 16,
+     "p10": 24,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 6
+    },
+    "rrezeTeNdryshme": 6,
+    "gjatesiaFaqes": 1192,
+    "titulli": "",
+    "guaske": false,
+    "trupArcmin": 7.3,
+    "shfrytezimi": 10.4,
+    "caqeMm": 9.8
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 47,
+    "tekstiMajtas": 82,
+    "tekstiDjathtas": 1830,
+    "tekstiGjeresi": 1748,
+    "trupPx": 10,
+    "titullPx": 17,
+    "madhesiTeNdryshme": 8,
+    "shperndarjaFS": [
+     {
+      "px": 10,
+      "kar": 134
+     },
+     {
+      "px": 11,
+      "kar": 99
+     },
+     {
+      "px": 13,
+      "kar": 43
+     },
+     {
+      "px": 9,
+      "kar": 17
+     },
+     {
+      "px": 7.5,
+      "kar": 8
+     },
+     {
+      "px": 11.5,
+      "kar": 6
+     },
+     {
+      "px": 16,
+      "kar": 5
+     },
+     {
+      "px": 17,
+      "kar": 2
+     }
+    ],
+    "lhMesatar": null,
+    "masa": null,
+    "caqe": {
+     "n": 44,
+     "min": 16,
+     "p10": 24,
+     "mesi": 39,
+     "nen24": 2,
+     "nen44": 23
+    },
+    "rrezeTeNdryshme": 8,
+    "gjatesiaFaqes": 1407,
+    "titulli": "Rezultatet e kërkimit për \"makina\"",
+    "guaske": false,
+    "trupArcmin": 8.2,
+    "shfrytezimi": 91,
+    "caqeMm": 10.8
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 47,
+    "tekstiMajtas": 82,
+    "tekstiDjathtas": 2470,
+    "tekstiGjeresi": 2388,
+    "trupPx": 10,
+    "titullPx": 17,
+    "madhesiTeNdryshme": 8,
+    "shperndarjaFS": [
+     {
+      "px": 10,
+      "kar": 134
+     },
+     {
+      "px": 11,
+      "kar": 99
+     },
+     {
+      "px": 13,
+      "kar": 43
+     },
+     {
+      "px": 9,
+      "kar": 17
+     },
+     {
+      "px": 7.5,
+      "kar": 8
+     },
+     {
+      "px": 11.5,
+      "kar": 6
+     },
+     {
+      "px": 16,
+      "kar": 5
+     },
+     {
+      "px": 17,
+      "kar": 2
+     }
+    ],
+    "lhMesatar": null,
+    "masa": null,
+    "caqe": {
+     "n": 44,
+     "min": 16,
+     "p10": 24,
+     "mesi": 39,
+     "nen24": 2,
+     "nen44": 23
+    },
+    "rrezeTeNdryshme": 8,
+    "gjatesiaFaqes": 1767,
+    "titulli": "Rezultatet e kërkimit për \"makina\"",
+    "guaske": false,
+    "trupArcmin": 6,
+    "shfrytezimi": 93.3,
+    "caqeMm": 9.1
+   }
+  },
+  "listing": {
+   "telefon-390": {
+    "nyjeTeksti": 69,
+    "tekstiMajtas": 12,
+    "tekstiDjathtas": 445,
+    "tekstiGjeresi": 433,
+    "trupPx": 11,
+    "titullPx": 25,
+    "madhesiTeNdryshme": 11,
+    "shperndarjaFS": [
+     {
+      "px": 11,
+      "kar": 153
+     },
+     {
+      "px": 13,
+      "kar": 125
+     },
+     {
+      "px": 12,
+      "kar": 109
+     },
+     {
+      "px": 11.5,
+      "kar": 88
+     },
+     {
+      "px": 10,
+      "kar": 75
+     },
+     {
+      "px": 13.2,
+      "kar": 31
+     },
+     {
+      "px": 15,
+      "kar": 8
+     },
+     {
+      "px": 14,
+      "kar": 8
+     }
+    ],
+    "lhMesatar": 1.25,
+    "masa": {
+     "ch": 32,
+     "px": 301,
+     "fs": 13
+    },
+    "caqe": {
+     "n": 19,
+     "min": 16,
+     "p10": 17,
+     "mesi": 44,
+     "nen24": 2,
+     "nen44": 8
+    },
+    "rrezeTeNdryshme": 8,
+    "gjatesiaFaqes": 1946,
+    "titulli": "Makine",
+    "guaske": false,
+    "trupArcmin": 10.3,
+    "shfrytezimi": 111,
+    "caqeMm": 8.1
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 69,
+    "tekstiMajtas": 141,
+    "tekstiDjathtas": 1142,
+    "tekstiGjeresi": 1001,
+    "trupPx": 11,
+    "titullPx": 25,
+    "madhesiTeNdryshme": 11,
+    "shperndarjaFS": [
+     {
+      "px": 11,
+      "kar": 153
+     },
+     {
+      "px": 13,
+      "kar": 125
+     },
+     {
+      "px": 12,
+      "kar": 109
+     },
+     {
+      "px": 11.5,
+      "kar": 88
+     },
+     {
+      "px": 10,
+      "kar": 75
+     },
+     {
+      "px": 13.2,
+      "kar": 31
+     },
+     {
+      "px": 15,
+      "kar": 8
+     },
+     {
+      "px": 14,
+      "kar": 8
+     }
+    ],
+    "lhMesatar": 1.25,
+    "masa": {
+     "ch": 58,
+     "px": 396,
+     "fs": 13
+    },
+    "caqe": {
+     "n": 31,
+     "min": 16,
+     "p10": 31,
+     "mesi": 44,
+     "nen24": 2,
+     "nen44": 9
+    },
+    "rrezeTeNdryshme": 9,
+    "gjatesiaFaqes": 1312,
+    "titulli": "Makine",
+    "guaske": false,
+    "trupArcmin": 8,
+    "shfrytezimi": 78.2,
+    "caqeMm": 9.8
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 69,
+    "tekstiMajtas": 482,
+    "tekstiDjathtas": 1432,
+    "tekstiGjeresi": 951,
+    "trupPx": 11,
+    "titullPx": 25,
+    "madhesiTeNdryshme": 11,
+    "shperndarjaFS": [
+     {
+      "px": 11,
+      "kar": 153
+     },
+     {
+      "px": 13,
+      "kar": 125
+     },
+     {
+      "px": 12,
+      "kar": 109
+     },
+     {
+      "px": 11.5,
+      "kar": 88
+     },
+     {
+      "px": 10,
+      "kar": 75
+     },
+     {
+      "px": 13.2,
+      "kar": 31
+     },
+     {
+      "px": 15,
+      "kar": 8
+     },
+     {
+      "px": 14,
+      "kar": 8
+     }
+    ],
+    "lhMesatar": 1.25,
+    "masa": {
+     "ch": 58,
+     "px": 370,
+     "fs": 13
+    },
+    "caqe": {
+     "n": 31,
+     "min": 16,
+     "p10": 31,
+     "mesi": 44,
+     "nen24": 2,
+     "nen44": 9
+    },
+    "rrezeTeNdryshme": 9,
+    "gjatesiaFaqes": 1407,
+    "titulli": "Makine",
+    "guaske": false,
+    "trupArcmin": 9.1,
+    "shfrytezimi": 49.5,
+    "caqeMm": 12.2
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 69,
+    "tekstiMajtas": 802,
+    "tekstiDjathtas": 1752,
+    "tekstiGjeresi": 951,
+    "trupPx": 11,
+    "titullPx": 25,
+    "madhesiTeNdryshme": 11,
+    "shperndarjaFS": [
+     {
+      "px": 11,
+      "kar": 153
+     },
+     {
+      "px": 13,
+      "kar": 125
+     },
+     {
+      "px": 12,
+      "kar": 109
+     },
+     {
+      "px": 11.5,
+      "kar": 88
+     },
+     {
+      "px": 10,
+      "kar": 75
+     },
+     {
+      "px": 13.2,
+      "kar": 31
+     },
+     {
+      "px": 15,
+      "kar": 8
+     },
+     {
+      "px": 14,
+      "kar": 8
+     }
+    ],
+    "lhMesatar": 1.25,
+    "masa": {
+     "ch": 58,
+     "px": 370,
+     "fs": 13
+    },
+    "caqe": {
+     "n": 31,
+     "min": 16,
+     "p10": 31,
+     "mesi": 44,
+     "nen24": 2,
+     "nen44": 9
+    },
+    "rrezeTeNdryshme": 9,
+    "gjatesiaFaqes": 1767,
+    "titulli": "Makine",
+    "guaske": false,
+    "trupArcmin": 6.6,
+    "shfrytezimi": 37.1,
+    "caqeMm": 10.3
+   }
+  },
+  "biznese-lista": {
+   "telefon-390": {
+    "nyjeTeksti": 20,
+    "tekstiMajtas": 16,
+    "tekstiDjathtas": 387,
+    "tekstiGjeresi": 371,
+    "trupPx": 13,
+    "titullPx": 22,
+    "madhesiTeNdryshme": 8,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 43
+     },
+     {
+      "px": 11,
+      "kar": 40
+     },
+     {
+      "px": 12,
+      "kar": 39
+     },
+     {
+      "px": 12.5,
+      "kar": 25
+     },
+     {
+      "px": 14,
+      "kar": 21
+     },
+     {
+      "px": 22,
+      "kar": 10
+     },
+     {
+      "px": 10,
+      "kar": 6
+     },
+     {
+      "px": 9,
+      "kar": 1
+     }
+    ],
+    "lhMesatar": 1.3,
+    "masa": null,
+    "caqe": {
+     "n": 28,
+     "min": 17,
+     "p10": 28,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 7
+    },
+    "rrezeTeNdryshme": 6,
+    "gjatesiaFaqes": 1313,
+    "titulli": "🏢 Bizneset",
+    "guaske": false,
+    "trupArcmin": 12.2,
+    "shfrytezimi": 95.1,
+    "caqeMm": 8.1
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 12,
+    "tekstiMajtas": 67,
+    "tekstiDjathtas": 438,
+    "tekstiGjeresi": 371,
+    "trupPx": 12,
+    "titullPx": 32,
+    "madhesiTeNdryshme": 5,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 39
+     },
+     {
+      "px": 13,
+      "kar": 35
+     },
+     {
+      "px": 11,
+      "kar": 28
+     },
+     {
+      "px": 14,
+      "kar": 21
+     },
+     {
+      "px": 32,
+      "kar": 10
+     }
+    ],
+    "lhMesatar": null,
+    "masa": null,
+    "caqe": {
+     "n": 27,
+     "min": 17,
+     "p10": 28,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 7
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 1207,
+    "titulli": "🏢 Bizneset",
+    "guaske": false,
+    "trupArcmin": 8.7,
+    "shfrytezimi": 29,
+    "caqeMm": 9.8
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 20,
+    "tekstiMajtas": 88,
+    "tekstiDjathtas": 980,
+    "tekstiGjeresi": 892,
+    "trupPx": 12,
+    "titullPx": 32,
+    "madhesiTeNdryshme": 8,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 44
+     },
+     {
+      "px": 11,
+      "kar": 41
+     },
+     {
+      "px": 13,
+      "kar": 37
+     },
+     {
+      "px": 12.5,
+      "kar": 25
+     },
+     {
+      "px": 14,
+      "kar": 21
+     },
+     {
+      "px": 32,
+      "kar": 10
+     },
+     {
+      "px": 16,
+      "kar": 6
+     },
+     {
+      "px": 9,
+      "kar": 1
+     }
+    ],
+    "lhMesatar": 1.3,
+    "masa": null,
+    "caqe": {
+     "n": 28,
+     "min": 17,
+     "p10": 28,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 7
+    },
+    "rrezeTeNdryshme": 6,
+    "gjatesiaFaqes": 1487,
+    "titulli": "🏢 Bizneset",
+    "guaske": false,
+    "trupArcmin": 9.9,
+    "shfrytezimi": 46.5,
+    "caqeMm": 12.2
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 20,
+    "tekstiMajtas": 88,
+    "tekstiDjathtas": 1300,
+    "tekstiGjeresi": 1212,
+    "trupPx": 12,
+    "titullPx": 32,
+    "madhesiTeNdryshme": 8,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 44
+     },
+     {
+      "px": 11,
+      "kar": 41
+     },
+     {
+      "px": 13,
+      "kar": 37
+     },
+     {
+      "px": 12.5,
+      "kar": 25
+     },
+     {
+      "px": 14,
+      "kar": 21
+     },
+     {
+      "px": 32,
+      "kar": 10
+     },
+     {
+      "px": 16,
+      "kar": 6
+     },
+     {
+      "px": 9,
+      "kar": 1
+     }
+    ],
+    "lhMesatar": 1.3,
+    "masa": null,
+    "caqe": {
+     "n": 28,
+     "min": 17,
+     "p10": 28,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 7
+    },
+    "rrezeTeNdryshme": 6,
+    "gjatesiaFaqes": 1847,
+    "titulli": "🏢 Bizneset",
+    "guaske": false,
+    "trupArcmin": 7.1,
+    "shfrytezimi": 47.3,
+    "caqeMm": 10.3
+   }
+  },
+  "biznes-publik": {
+   "telefon-390": {
+    "nyjeTeksti": 69,
+    "tekstiMajtas": 16,
+    "tekstiDjathtas": 358,
+    "tekstiGjeresi": 342,
+    "trupPx": 12,
+    "titullPx": 26,
+    "madhesiTeNdryshme": 14,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 94
+     },
+     {
+      "px": 11,
+      "kar": 74
+     },
+     {
+      "px": 12.5,
+      "kar": 64
+     },
+     {
+      "px": 13,
+      "kar": 56
+     },
+     {
+      "px": 10,
+      "kar": 54
+     },
+     {
+      "px": 10.5,
+      "kar": 43
+     },
+     {
+      "px": 11.5,
+      "kar": 33
+     },
+     {
+      "px": 8.5,
+      "kar": 16
+     }
+    ],
+    "lhMesatar": 1.17,
+    "masa": null,
+    "caqe": {
+     "n": 30,
+     "min": 16,
+     "p10": 39,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 5
+    },
+    "rrezeTeNdryshme": 9,
+    "gjatesiaFaqes": 1670,
+    "titulli": "Makina",
+    "guaske": false,
+    "trupArcmin": 11.2,
+    "shfrytezimi": 87.7,
+    "caqeMm": 8.1
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 69,
+    "tekstiMajtas": 67,
+    "tekstiDjathtas": 1103,
+    "tekstiGjeresi": 1036,
+    "trupPx": 12,
+    "titullPx": 32,
+    "madhesiTeNdryshme": 16,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 107
+     },
+     {
+      "px": 12.5,
+      "kar": 64
+     },
+     {
+      "px": 11,
+      "kar": 61
+     },
+     {
+      "px": 10,
+      "kar": 54
+     },
+     {
+      "px": 13,
+      "kar": 50
+     },
+     {
+      "px": 10.5,
+      "kar": 43
+     },
+     {
+      "px": 11.5,
+      "kar": 33
+     },
+     {
+      "px": 8.5,
+      "kar": 16
+     }
+    ],
+    "lhMesatar": 1.17,
+    "masa": null,
+    "caqe": {
+     "n": 30,
+     "min": 16,
+     "p10": 39,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 5
+    },
+    "rrezeTeNdryshme": 9,
+    "gjatesiaFaqes": 1163,
+    "titulli": "Makina",
+    "guaske": false,
+    "trupArcmin": 8.7,
+    "shfrytezimi": 80.9,
+    "caqeMm": 9.8
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 69,
+    "tekstiMajtas": 88,
+    "tekstiDjathtas": 1573,
+    "tekstiGjeresi": 1485,
+    "trupPx": 12,
+    "titullPx": 32,
+    "madhesiTeNdryshme": 15,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 107
+     },
+     {
+      "px": 12.5,
+      "kar": 64
+     },
+     {
+      "px": 11,
+      "kar": 61
+     },
+     {
+      "px": 10,
+      "kar": 54
+     },
+     {
+      "px": 13,
+      "kar": 50
+     },
+     {
+      "px": 10.5,
+      "kar": 43
+     },
+     {
+      "px": 11.5,
+      "kar": 33
+     },
+     {
+      "px": 8.5,
+      "kar": 16
+     }
+    ],
+    "lhMesatar": 1.17,
+    "masa": null,
+    "caqe": {
+     "n": 30,
+     "min": 16,
+     "p10": 39,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 5
+    },
+    "rrezeTeNdryshme": 9,
+    "gjatesiaFaqes": 1407,
+    "titulli": "Makina",
+    "guaske": false,
+    "trupArcmin": 9.9,
+    "shfrytezimi": 77.3,
+    "caqeMm": 12.2
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 69,
+    "tekstiMajtas": 88,
+    "tekstiDjathtas": 2053,
+    "tekstiGjeresi": 1965,
+    "trupPx": 12,
+    "titullPx": 32,
+    "madhesiTeNdryshme": 15,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 107
+     },
+     {
+      "px": 12.5,
+      "kar": 64
+     },
+     {
+      "px": 11,
+      "kar": 61
+     },
+     {
+      "px": 10,
+      "kar": 54
+     },
+     {
+      "px": 13,
+      "kar": 50
+     },
+     {
+      "px": 10.5,
+      "kar": 43
+     },
+     {
+      "px": 11.5,
+      "kar": 33
+     },
+     {
+      "px": 8.5,
+      "kar": 16
+     }
+    ],
+    "lhMesatar": 1.17,
+    "masa": null,
+    "caqe": {
+     "n": 30,
+     "min": 16,
+     "p10": 39,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 5
+    },
+    "rrezeTeNdryshme": 9,
+    "gjatesiaFaqes": 1767,
+    "titulli": "Makina",
+    "guaske": false,
+    "trupArcmin": 7.1,
+    "shfrytezimi": 76.8,
+    "caqeMm": 10.3
+   }
+  },
+  "premium": {
+   "telefon-390": {
+    "nyjeTeksti": 41,
+    "tekstiMajtas": 28,
+    "tekstiDjathtas": 360,
+    "tekstiGjeresi": 332,
+    "trupPx": 11.5,
+    "titullPx": 19,
+    "madhesiTeNdryshme": 9,
+    "shperndarjaFS": [
+     {
+      "px": 11.5,
+      "kar": 245
+     },
+     {
+      "px": 12,
+      "kar": 136
+     },
+     {
+      "px": 11,
+      "kar": 115
+     },
+     {
+      "px": 13,
+      "kar": 113
+     },
+     {
+      "px": 10,
+      "kar": 37
+     },
+     {
+      "px": 18,
+      "kar": 36
+     },
+     {
+      "px": 15,
+      "kar": 25
+     },
+     {
+      "px": 8,
+      "kar": 8
+     }
+    ],
+    "lhMesatar": 1.56,
+    "masa": {
+     "ch": 59,
+     "px": 325,
+     "fs": 12
+    },
+    "caqe": {
+     "n": 36,
+     "min": 16,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 2
+    },
+    "rrezeTeNdryshme": 8,
+    "gjatesiaFaqes": 1595,
+    "titulli": "Planet",
+    "guaske": false,
+    "trupArcmin": 10.8,
+    "shfrytezimi": 85.1,
+    "caqeMm": 8.1
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 41,
+    "tekstiMajtas": 79,
+    "tekstiDjathtas": 1199,
+    "tekstiGjeresi": 1120,
+    "trupPx": 11.5,
+    "titullPx": 19,
+    "madhesiTeNdryshme": 9,
+    "shperndarjaFS": [
+     {
+      "px": 11.5,
+      "kar": 245
+     },
+     {
+      "px": 12,
+      "kar": 136
+     },
+     {
+      "px": 11,
+      "kar": 115
+     },
+     {
+      "px": 13,
+      "kar": 113
+     },
+     {
+      "px": 10,
+      "kar": 37
+     },
+     {
+      "px": 18,
+      "kar": 36
+     },
+     {
+      "px": 15,
+      "kar": 25
+     },
+     {
+      "px": 8,
+      "kar": 8
+     }
+    ],
+    "lhMesatar": 1.56,
+    "masa": {
+     "ch": 118,
+     "px": 631,
+     "fs": 12
+    },
+    "caqe": {
+     "n": 36,
+     "min": 16,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 2
+    },
+    "rrezeTeNdryshme": 8,
+    "gjatesiaFaqes": 1498,
+    "titulli": "Planet",
+    "guaske": false,
+    "trupArcmin": 8.4,
+    "shfrytezimi": 87.5,
+    "caqeMm": 9.8
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 41,
+    "tekstiMajtas": 100,
+    "tekstiDjathtas": 1818,
+    "tekstiGjeresi": 1718,
+    "trupPx": 11.5,
+    "titullPx": 19,
+    "madhesiTeNdryshme": 9,
+    "shperndarjaFS": [
+     {
+      "px": 11.5,
+      "kar": 245
+     },
+     {
+      "px": 12,
+      "kar": 136
+     },
+     {
+      "px": 11,
+      "kar": 115
+     },
+     {
+      "px": 13,
+      "kar": 113
+     },
+     {
+      "px": 10,
+      "kar": 37
+     },
+     {
+      "px": 18,
+      "kar": 36
+     },
+     {
+      "px": 15,
+      "kar": 25
+     },
+     {
+      "px": 8,
+      "kar": 8
+     }
+    ],
+    "lhMesatar": 1.56,
+    "masa": {
+     "ch": 118,
+     "px": 631,
+     "fs": 12
+    },
+    "caqe": {
+     "n": 36,
+     "min": 16,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 2
+    },
+    "rrezeTeNdryshme": 8,
+    "gjatesiaFaqes": 1498,
+    "titulli": "Planet",
+    "guaske": false,
+    "trupArcmin": 9.5,
+    "shfrytezimi": 89.5,
+    "caqeMm": 12.2
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 41,
+    "tekstiMajtas": 100,
+    "tekstiDjathtas": 2458,
+    "tekstiGjeresi": 2358,
+    "trupPx": 11.5,
+    "titullPx": 19,
+    "madhesiTeNdryshme": 9,
+    "shperndarjaFS": [
+     {
+      "px": 11.5,
+      "kar": 245
+     },
+     {
+      "px": 12,
+      "kar": 136
+     },
+     {
+      "px": 11,
+      "kar": 115
+     },
+     {
+      "px": 13,
+      "kar": 113
+     },
+     {
+      "px": 10,
+      "kar": 37
+     },
+     {
+      "px": 18,
+      "kar": 36
+     },
+     {
+      "px": 15,
+      "kar": 25
+     },
+     {
+      "px": 8,
+      "kar": 8
+     }
+    ],
+    "lhMesatar": 1.56,
+    "masa": {
+     "ch": 118,
+     "px": 631,
+     "fs": 12
+    },
+    "caqe": {
+     "n": 36,
+     "min": 16,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 2
+    },
+    "rrezeTeNdryshme": 8,
+    "gjatesiaFaqes": 1767,
+    "titulli": "Planet",
+    "guaske": false,
+    "trupArcmin": 6.8,
+    "shfrytezimi": 92.1,
+    "caqeMm": 10.3
+   }
+  },
+  "asistent": {
+   "telefon-390": {
+    "nyjeTeksti": 21,
+    "tekstiMajtas": 12,
+    "tekstiDjathtas": 364,
+    "tekstiGjeresi": 352,
+    "trupPx": 13,
+    "titullPx": 15,
+    "madhesiTeNdryshme": 4,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 185
+     },
+     {
+      "px": 11,
+      "kar": 93
+     },
+     {
+      "px": 10,
+      "kar": 38
+     },
+     {
+      "px": 15,
+      "kar": 20
+     }
+    ],
+    "lhMesatar": 1.6,
+    "masa": {
+     "ch": 41,
+     "px": 249,
+     "fs": 13
+    },
+    "caqe": {
+     "n": 30,
+     "min": 16,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 2,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 1233,
+    "titulli": "Albi — Asistenti virtual i Alpazar",
+    "guaske": false,
+    "trupArcmin": 12.2,
+    "shfrytezimi": 90.3,
+    "caqeMm": 8.1
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 21,
+    "tekstiMajtas": 202,
+    "tekstiDjathtas": 1064,
+    "tekstiGjeresi": 862,
+    "trupPx": 13,
+    "titullPx": 15,
+    "madhesiTeNdryshme": 4,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 185
+     },
+     {
+      "px": 11,
+      "kar": 93
+     },
+     {
+      "px": 10,
+      "kar": 38
+     },
+     {
+      "px": 15,
+      "kar": 20
+     }
+    ],
+    "lhMesatar": 1.6,
+    "masa": {
+     "ch": 63,
+     "px": 671,
+     "fs": 13
+    },
+    "caqe": {
+     "n": 30,
+     "min": 16,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 2,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 1127,
+    "titulli": "Albi — Asistenti virtual i Alpazar",
+    "guaske": false,
+    "trupArcmin": 9.4,
+    "shfrytezimi": 67.3,
+    "caqeMm": 9.8
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 21,
+    "tekstiMajtas": 522,
+    "tekstiDjathtas": 1384,
+    "tekstiGjeresi": 862,
+    "trupPx": 13,
+    "titullPx": 15,
+    "madhesiTeNdryshme": 4,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 185
+     },
+     {
+      "px": 11,
+      "kar": 93
+     },
+     {
+      "px": 10,
+      "kar": 38
+     },
+     {
+      "px": 15,
+      "kar": 20
+     }
+    ],
+    "lhMesatar": 1.6,
+    "masa": {
+     "ch": 63,
+     "px": 671,
+     "fs": 13
+    },
+    "caqe": {
+     "n": 30,
+     "min": 16,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 2,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 1407,
+    "titulli": "Albi — Asistenti virtual i Alpazar",
+    "guaske": false,
+    "trupArcmin": 10.7,
+    "shfrytezimi": 44.9,
+    "caqeMm": 12.2
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 21,
+    "tekstiMajtas": 842,
+    "tekstiDjathtas": 1704,
+    "tekstiGjeresi": 862,
+    "trupPx": 13,
+    "titullPx": 15,
+    "madhesiTeNdryshme": 4,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 185
+     },
+     {
+      "px": 11,
+      "kar": 93
+     },
+     {
+      "px": 10,
+      "kar": 38
+     },
+     {
+      "px": 15,
+      "kar": 20
+     }
+    ],
+    "lhMesatar": 1.6,
+    "masa": {
+     "ch": 63,
+     "px": 671,
+     "fs": 13
+    },
+    "caqe": {
+     "n": 30,
+     "min": 16,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 2,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 1767,
+    "titulli": "Albi — Asistenti virtual i Alpazar",
+    "guaske": false,
+    "trupArcmin": 7.7,
+    "shfrytezimi": 33.7,
+    "caqeMm": 10.3
+   }
+  },
+  "kushtet": {
+   "telefon-390": {
+    "nyjeTeksti": 64,
+    "tekstiMajtas": 20,
+    "tekstiDjathtas": 370,
+    "tekstiGjeresi": 350,
+    "trupPx": 13,
+    "titullPx": 22,
+    "madhesiTeNdryshme": 6,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 2812
+     },
+     {
+      "px": 12,
+      "kar": 427
+     },
+     {
+      "px": 14,
+      "kar": 236
+     },
+     {
+      "px": 11,
+      "kar": 177
+     },
+     {
+      "px": 15,
+      "kar": 20
+     },
+     {
+      "px": 22,
+      "kar": 20
+     }
+    ],
+    "lhMesatar": 1.84,
+    "masa": {
+     "ch": 41,
+     "px": 348,
+     "fs": 13
+    },
+    "caqe": {
+     "n": 3,
+     "min": 16,
+     "p10": 16,
+     "mesi": 32,
+     "nen24": 1,
+     "nen44": 2
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 4955,
+    "titulli": "Kushtet e Përdorimit",
+    "guaske": false,
+    "trupArcmin": 12.2,
+    "shfrytezimi": 89.7,
+    "caqeMm": 5.9
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 94,
+    "tekstiMajtas": 262,
+    "tekstiDjathtas": 1018,
+    "tekstiGjeresi": 756,
+    "trupPx": 13,
+    "titullPx": 32,
+    "madhesiTeNdryshme": 6,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 3915
+     },
+     {
+      "px": 12,
+      "kar": 628
+     },
+     {
+      "px": 14,
+      "kar": 329
+     },
+     {
+      "px": 11,
+      "kar": 272
+     },
+     {
+      "px": 15,
+      "kar": 20
+     },
+     {
+      "px": 32,
+      "kar": 20
+     }
+    ],
+    "lhMesatar": 1.84,
+    "masa": {
+     "ch": 99,
+     "px": 750,
+     "fs": 13
+    },
+    "caqe": {
+     "n": 4,
+     "min": 16,
+     "p10": 16,
+     "mesi": 32,
+     "nen24": 2,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 3443,
+    "titulli": "Kushtet e Përdorimit",
+    "guaske": false,
+    "trupArcmin": 9.4,
+    "shfrytezimi": 59.1,
+    "caqeMm": 7.2
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 114,
+    "tekstiMajtas": 582,
+    "tekstiDjathtas": 1338,
+    "tekstiGjeresi": 756,
+    "trupPx": 13,
+    "titullPx": 32,
+    "madhesiTeNdryshme": 6,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 5350
+     },
+     {
+      "px": 12,
+      "kar": 628
+     },
+     {
+      "px": 14,
+      "kar": 438
+     },
+     {
+      "px": 11,
+      "kar": 332
+     },
+     {
+      "px": 15,
+      "kar": 20
+     },
+     {
+      "px": 32,
+      "kar": 20
+     }
+    ],
+    "lhMesatar": 1.84,
+    "masa": {
+     "ch": 99,
+     "px": 750,
+     "fs": 13
+    },
+    "caqe": {
+     "n": 7,
+     "min": 16,
+     "p10": 16,
+     "mesi": 16,
+     "nen24": 5,
+     "nen44": 6
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 3443,
+    "titulli": "Kushtet e Përdorimit",
+    "guaske": false,
+    "trupArcmin": 10.7,
+    "shfrytezimi": 39.4,
+    "caqeMm": 4.4
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 114,
+    "tekstiMajtas": 902,
+    "tekstiDjathtas": 1658,
+    "tekstiGjeresi": 756,
+    "trupPx": 13,
+    "titullPx": 32,
+    "madhesiTeNdryshme": 6,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 5350
+     },
+     {
+      "px": 12,
+      "kar": 628
+     },
+     {
+      "px": 14,
+      "kar": 438
+     },
+     {
+      "px": 11,
+      "kar": 332
+     },
+     {
+      "px": 15,
+      "kar": 20
+     },
+     {
+      "px": 32,
+      "kar": 20
+     }
+    ],
+    "lhMesatar": 1.84,
+    "masa": {
+     "ch": 99,
+     "px": 750,
+     "fs": 13
+    },
+    "caqe": {
+     "n": 10,
+     "min": 16,
+     "p10": 16,
+     "mesi": 16,
+     "nen24": 8,
+     "nen44": 9
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 3443,
+    "titulli": "Kushtet e Përdorimit",
+    "guaske": false,
+    "trupArcmin": 7.7,
+    "shfrytezimi": 29.5,
+    "caqeMm": 3.7
+   }
+  },
+  "rreth-nesh": {
+   "telefon-390": {
+    "nyjeTeksti": 40,
+    "tekstiMajtas": 20,
+    "tekstiDjathtas": 352,
+    "tekstiGjeresi": 332,
+    "trupPx": 13,
+    "titullPx": 22,
+    "madhesiTeNdryshme": 6,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 580
+     },
+     {
+      "px": 12,
+      "kar": 376
+     },
+     {
+      "px": 11,
+      "kar": 295
+     },
+     {
+      "px": 10,
+      "kar": 69
+     },
+     {
+      "px": 15,
+      "kar": 58
+     },
+     {
+      "px": 22,
+      "kar": 14
+     }
+    ],
+    "lhMesatar": 1.66,
+    "masa": {
+     "ch": 45,
+     "px": 315,
+     "fs": 13
+    },
+    "caqe": {
+     "n": 3,
+     "min": 16,
+     "p10": 16,
+     "mesi": 32,
+     "nen24": 1,
+     "nen44": 2
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 2369,
+    "titulli": "ALPAZAR",
+    "guaske": false,
+    "trupArcmin": 12.2,
+    "shfrytezimi": 85.1,
+    "caqeMm": 5.9
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 40,
+    "tekstiMajtas": 262,
+    "tekstiDjathtas": 994,
+    "tekstiGjeresi": 732,
+    "trupPx": 13,
+    "titullPx": 32,
+    "madhesiTeNdryshme": 7,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 580
+     },
+     {
+      "px": 12,
+      "kar": 376
+     },
+     {
+      "px": 11,
+      "kar": 295
+     },
+     {
+      "px": 10,
+      "kar": 69
+     },
+     {
+      "px": 15,
+      "kar": 58
+     },
+     {
+      "px": 32,
+      "kar": 7
+     },
+     {
+      "px": 22,
+      "kar": 7
+     }
+    ],
+    "lhMesatar": 1.66,
+    "masa": {
+     "ch": 65,
+     "px": 715,
+     "fs": 13
+    },
+    "caqe": {
+     "n": 3,
+     "min": 16,
+     "p10": 16,
+     "mesi": 32,
+     "nen24": 1,
+     "nen44": 2
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 2432,
+    "titulli": "ALPAZAR",
+    "guaske": false,
+    "trupArcmin": 9.4,
+    "shfrytezimi": 57.2,
+    "caqeMm": 7.2
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 40,
+    "tekstiMajtas": 582,
+    "tekstiDjathtas": 1314,
+    "tekstiGjeresi": 732,
+    "trupPx": 13,
+    "titullPx": 32,
+    "madhesiTeNdryshme": 7,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 580
+     },
+     {
+      "px": 12,
+      "kar": 376
+     },
+     {
+      "px": 11,
+      "kar": 295
+     },
+     {
+      "px": 10,
+      "kar": 69
+     },
+     {
+      "px": 15,
+      "kar": 58
+     },
+     {
+      "px": 32,
+      "kar": 7
+     },
+     {
+      "px": 22,
+      "kar": 7
+     }
+    ],
+    "lhMesatar": 1.66,
+    "masa": {
+     "ch": 65,
+     "px": 715,
+     "fs": 13
+    },
+    "caqe": {
+     "n": 10,
+     "min": 15,
+     "p10": 15,
+     "mesi": 15,
+     "nen24": 7,
+     "nen44": 8
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 2432,
+    "titulli": "ALPAZAR",
+    "guaske": false,
+    "trupArcmin": 10.7,
+    "shfrytezimi": 38.1,
+    "caqeMm": 4.1
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 40,
+    "tekstiMajtas": 902,
+    "tekstiDjathtas": 1634,
+    "tekstiGjeresi": 732,
+    "trupPx": 13,
+    "titullPx": 32,
+    "madhesiTeNdryshme": 7,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 580
+     },
+     {
+      "px": 12,
+      "kar": 376
+     },
+     {
+      "px": 11,
+      "kar": 295
+     },
+     {
+      "px": 10,
+      "kar": 69
+     },
+     {
+      "px": 15,
+      "kar": 58
+     },
+     {
+      "px": 32,
+      "kar": 7
+     },
+     {
+      "px": 22,
+      "kar": 7
+     }
+    ],
+    "lhMesatar": 1.66,
+    "masa": {
+     "ch": 65,
+     "px": 715,
+     "fs": 13
+    },
+    "caqe": {
+     "n": 28,
+     "min": 15,
+     "p10": 15,
+     "mesi": 44,
+     "nen24": 7,
+     "nen44": 9
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 2432,
+    "titulli": "ALPAZAR",
+    "guaske": false,
+    "trupArcmin": 7.7,
+    "shfrytezimi": 28.6,
+    "caqeMm": 10.3
+   }
+  },
+  "biznes-edit": {
+   "telefon-390": {
+    "nyjeTeksti": 102,
+    "tekstiMajtas": 16,
+    "tekstiDjathtas": 370,
+    "tekstiGjeresi": 354,
+    "trupPx": 12,
+    "titullPx": 24,
+    "madhesiTeNdryshme": 8,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 818
+     },
+     {
+      "px": 11,
+      "kar": 171
+     },
+     {
+      "px": 16,
+      "kar": 28
+     },
+     {
+      "px": 13,
+      "kar": 13
+     },
+     {
+      "px": 8,
+      "kar": 8
+     },
+     {
+      "px": 22,
+      "kar": 2
+     },
+     {
+      "px": 10,
+      "kar": 2
+     },
+     {
+      "px": 24,
+      "kar": 1
+     }
+    ],
+    "lhMesatar": 1.4,
+    "masa": {
+     "ch": 64,
+     "px": 336,
+     "fs": 11
+    },
+    "caqe": {
+     "n": 37,
+     "min": 17,
+     "p10": 22,
+     "mesi": 32,
+     "nen24": 4,
+     "nen44": 34
+    },
+    "rrezeTeNdryshme": 11,
+    "gjatesiaFaqes": 4106,
+    "titulli": "🏢 Të dhënat e biznesit",
+    "guaske": false,
+    "trupArcmin": 11.2,
+    "shfrytezimi": 90.8,
+    "caqeMm": 5.9
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 96,
+    "tekstiMajtas": 116,
+    "tekstiDjathtas": 1084,
+    "tekstiGjeresi": 968,
+    "trupPx": 12,
+    "titullPx": 24,
+    "madhesiTeNdryshme": 9,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 806
+     },
+     {
+      "px": 11,
+      "kar": 157
+     },
+     {
+      "px": 20,
+      "kar": 22
+     },
+     {
+      "px": 13,
+      "kar": 13
+     },
+     {
+      "px": 8,
+      "kar": 8
+     },
+     {
+      "px": 16,
+      "kar": 4
+     },
+     {
+      "px": 22,
+      "kar": 2
+     },
+     {
+      "px": 10,
+      "kar": 2
+     }
+    ],
+    "lhMesatar": 1.4,
+    "masa": {
+     "ch": 64,
+     "px": 336,
+     "fs": 11
+    },
+    "caqe": {
+     "n": 37,
+     "min": 17,
+     "p10": 22,
+     "mesi": 32,
+     "nen24": 4,
+     "nen44": 34
+    },
+    "rrezeTeNdryshme": 11,
+    "gjatesiaFaqes": 3871,
+    "titulli": "🏢 Të dhënat e biznesit",
+    "guaske": false,
+    "trupArcmin": 8.7,
+    "shfrytezimi": 75.6,
+    "caqeMm": 7.2
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 122,
+    "tekstiMajtas": 436,
+    "tekstiDjathtas": 1404,
+    "tekstiGjeresi": 968,
+    "trupPx": 12,
+    "titullPx": 24,
+    "madhesiTeNdryshme": 10,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 1032
+     },
+     {
+      "px": 11,
+      "kar": 178
+     },
+     {
+      "px": 13,
+      "kar": 29
+     },
+     {
+      "px": 20,
+      "kar": 22
+     },
+     {
+      "px": 15,
+      "kar": 17
+     },
+     {
+      "px": 8,
+      "kar": 8
+     },
+     {
+      "px": 16,
+      "kar": 6
+     },
+     {
+      "px": 22,
+      "kar": 2
+     }
+    ],
+    "lhMesatar": 1.4,
+    "masa": {
+     "ch": 64,
+     "px": 336,
+     "fs": 11
+    },
+    "caqe": {
+     "n": 45,
+     "min": 17,
+     "p10": 32,
+     "mesi": 32,
+     "nen24": 4,
+     "nen44": 42
+    },
+    "rrezeTeNdryshme": 11,
+    "gjatesiaFaqes": 3871,
+    "titulli": "🏢 Të dhënat e biznesit",
+    "guaske": false,
+    "trupArcmin": 9.9,
+    "shfrytezimi": 50.4,
+    "caqeMm": 8.9
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 129,
+    "tekstiMajtas": 756,
+    "tekstiDjathtas": 1724,
+    "tekstiGjeresi": 968,
+    "trupPx": 12,
+    "titullPx": 24,
+    "madhesiTeNdryshme": 11,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 1155
+     },
+     {
+      "px": 11,
+      "kar": 239
+     },
+     {
+      "px": 13,
+      "kar": 29
+     },
+     {
+      "px": 20,
+      "kar": 22
+     },
+     {
+      "px": 15,
+      "kar": 17
+     },
+     {
+      "px": 14,
+      "kar": 17
+     },
+     {
+      "px": 8,
+      "kar": 8
+     },
+     {
+      "px": 16,
+      "kar": 6
+     }
+    ],
+    "lhMesatar": 1.52,
+    "masa": {
+     "ch": 74,
+     "px": 408,
+     "fs": 12
+    },
+    "caqe": {
+     "n": 76,
+     "min": 13,
+     "p10": 13,
+     "mesi": 32,
+     "nen24": 12,
+     "nen44": 72
+    },
+    "rrezeTeNdryshme": 11,
+    "gjatesiaFaqes": 3871,
+    "titulli": "🏢 Të dhënat e biznesit",
+    "guaske": false,
+    "trupArcmin": 7.1,
+    "shfrytezimi": 37.8,
+    "caqeMm": 7.5
+   }
+  },
+  "profile": {
+   "telefon-390": {
+    "nyjeTeksti": 74,
+    "tekstiMajtas": 12,
+    "tekstiDjathtas": 372,
+    "tekstiGjeresi": 360,
+    "trupPx": 10,
+    "titullPx": 30,
+    "madhesiTeNdryshme": 10,
+    "shperndarjaFS": [
+     {
+      "px": 10,
+      "kar": 349
+     },
+     {
+      "px": 12,
+      "kar": 168
+     },
+     {
+      "px": 13,
+      "kar": 91
+     },
+     {
+      "px": 11,
+      "kar": 64
+     },
+     {
+      "px": 9.5,
+      "kar": 41
+     },
+     {
+      "px": 19,
+      "kar": 22
+     },
+     {
+      "px": 15,
+      "kar": 10
+     },
+     {
+      "px": 11.5,
+      "kar": 9
+     }
+    ],
+    "lhMesatar": 1.13,
+    "masa": {
+     "ch": 32,
+     "px": 271,
+     "fs": 10
+    },
+    "caqe": {
+     "n": 39,
+     "min": 16,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 2,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 11,
+    "gjatesiaFaqes": 1829,
+    "titulli": "Profili im",
+    "guaske": false,
+    "trupArcmin": 9.4,
+    "shfrytezimi": 92.3,
+    "caqeMm": 8.1
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 74,
+    "tekstiMajtas": 63,
+    "tekstiDjathtas": 1211,
+    "tekstiGjeresi": 1148,
+    "trupPx": 10,
+    "titullPx": 30,
+    "madhesiTeNdryshme": 10,
+    "shperndarjaFS": [
+     {
+      "px": 10,
+      "kar": 349
+     },
+     {
+      "px": 12,
+      "kar": 168
+     },
+     {
+      "px": 13,
+      "kar": 91
+     },
+     {
+      "px": 11,
+      "kar": 64
+     },
+     {
+      "px": 9.5,
+      "kar": 41
+     },
+     {
+      "px": 19,
+      "kar": 22
+     },
+     {
+      "px": 15,
+      "kar": 10
+     },
+     {
+      "px": 11.5,
+      "kar": 9
+     }
+    ],
+    "lhMesatar": 1.13,
+    "masa": {
+     "ch": 64,
+     "px": 301,
+     "fs": 10
+    },
+    "caqe": {
+     "n": 20,
+     "min": 16,
+     "p10": 44,
+     "mesi": 48,
+     "nen24": 2,
+     "nen44": 2
+    },
+    "rrezeTeNdryshme": 11,
+    "gjatesiaFaqes": 1982,
+    "titulli": "Profili im",
+    "guaske": false,
+    "trupArcmin": 7.3,
+    "shfrytezimi": 89.7,
+    "caqeMm": 10.7
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 74,
+    "tekstiMajtas": 84,
+    "tekstiDjathtas": 1830,
+    "tekstiGjeresi": 1746,
+    "trupPx": 10,
+    "titullPx": 30,
+    "madhesiTeNdryshme": 10,
+    "shperndarjaFS": [
+     {
+      "px": 10,
+      "kar": 349
+     },
+     {
+      "px": 12,
+      "kar": 168
+     },
+     {
+      "px": 13,
+      "kar": 91
+     },
+     {
+      "px": 11,
+      "kar": 64
+     },
+     {
+      "px": 9.5,
+      "kar": 41
+     },
+     {
+      "px": 19,
+      "kar": 22
+     },
+     {
+      "px": 15,
+      "kar": 10
+     },
+     {
+      "px": 11.5,
+      "kar": 9
+     }
+    ],
+    "lhMesatar": 1.13,
+    "masa": {
+     "ch": 64,
+     "px": 301,
+     "fs": 10
+    },
+    "caqe": {
+     "n": 39,
+     "min": 16,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 2,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 11,
+    "gjatesiaFaqes": 2207,
+    "titulli": "Profili im",
+    "guaske": false,
+    "trupArcmin": 8.2,
+    "shfrytezimi": 90.9,
+    "caqeMm": 12.2
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 74,
+    "tekstiMajtas": 84,
+    "tekstiDjathtas": 2470,
+    "tekstiGjeresi": 2386,
+    "trupPx": 10,
+    "titullPx": 30,
+    "madhesiTeNdryshme": 10,
+    "shperndarjaFS": [
+     {
+      "px": 10,
+      "kar": 349
+     },
+     {
+      "px": 12,
+      "kar": 168
+     },
+     {
+      "px": 13,
+      "kar": 91
+     },
+     {
+      "px": 11,
+      "kar": 64
+     },
+     {
+      "px": 9.5,
+      "kar": 41
+     },
+     {
+      "px": 19,
+      "kar": 22
+     },
+     {
+      "px": 15,
+      "kar": 10
+     },
+     {
+      "px": 11.5,
+      "kar": 9
+     }
+    ],
+    "lhMesatar": 1.13,
+    "masa": {
+     "ch": 64,
+     "px": 301,
+     "fs": 10
+    },
+    "caqe": {
+     "n": 39,
+     "min": 16,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 2,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 11,
+    "gjatesiaFaqes": 2447,
+    "titulli": "Profili im",
+    "guaske": false,
+    "trupArcmin": 6,
+    "shfrytezimi": 93.2,
+    "caqeMm": 10.3
+   }
+  },
+  "messages": {
+   "telefon-390": {
+    "nyjeTeksti": 5,
+    "tekstiMajtas": 65,
+    "tekstiDjathtas": 301,
+    "tekstiGjeresi": 236,
+    "trupPx": 12,
+    "titullPx": 62,
+    "madhesiTeNdryshme": 5,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 38
+     },
+     {
+      "px": 16,
+      "kar": 20
+     },
+     {
+      "px": 13,
+      "kar": 19
+     },
+     {
+      "px": 15,
+      "kar": 8
+     },
+     {
+      "px": 62,
+      "kar": 2
+     }
+    ],
+    "lhMesatar": 1.8,
+    "masa": null,
+    "caqe": {
+     "n": 26,
+     "min": 16,
+     "p10": 39,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 844,
+    "titulli": "Mesazhet",
+    "guaske": false,
+    "trupArcmin": 11.2,
+    "shfrytezimi": 60.5,
+    "caqeMm": 8.1
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 5,
+    "tekstiMajtas": 225,
+    "tekstiDjathtas": 746,
+    "tekstiGjeresi": 521,
+    "trupPx": 12,
+    "titullPx": 62,
+    "madhesiTeNdryshme": 5,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 38
+     },
+     {
+      "px": 16,
+      "kar": 20
+     },
+     {
+      "px": 13,
+      "kar": 19
+     },
+     {
+      "px": 15,
+      "kar": 8
+     },
+     {
+      "px": 62,
+      "kar": 2
+     }
+    ],
+    "lhMesatar": 1.8,
+    "masa": null,
+    "caqe": {
+     "n": 26,
+     "min": 16,
+     "p10": 39,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 800,
+    "titulli": "Mesazhet",
+    "guaske": false,
+    "trupArcmin": 8.7,
+    "shfrytezimi": 40.7,
+    "caqeMm": 9.8
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 5,
+    "tekstiMajtas": 545,
+    "tekstiDjathtas": 1066,
+    "tekstiGjeresi": 521,
+    "trupPx": 12,
+    "titullPx": 62,
+    "madhesiTeNdryshme": 5,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 38
+     },
+     {
+      "px": 16,
+      "kar": 20
+     },
+     {
+      "px": 13,
+      "kar": 19
+     },
+     {
+      "px": 15,
+      "kar": 8
+     },
+     {
+      "px": 62,
+      "kar": 2
+     }
+    ],
+    "lhMesatar": 1.8,
+    "masa": null,
+    "caqe": {
+     "n": 26,
+     "min": 16,
+     "p10": 39,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 1080,
+    "titulli": "Mesazhet",
+    "guaske": false,
+    "trupArcmin": 9.9,
+    "shfrytezimi": 27.1,
+    "caqeMm": 12.2
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 5,
+    "tekstiMajtas": 865,
+    "tekstiDjathtas": 1386,
+    "tekstiGjeresi": 521,
+    "trupPx": 12,
+    "titullPx": 62,
+    "madhesiTeNdryshme": 5,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 38
+     },
+     {
+      "px": 16,
+      "kar": 20
+     },
+     {
+      "px": 13,
+      "kar": 19
+     },
+     {
+      "px": 15,
+      "kar": 8
+     },
+     {
+      "px": 62,
+      "kar": 2
+     }
+    ],
+    "lhMesatar": 1.8,
+    "masa": null,
+    "caqe": {
+     "n": 26,
+     "min": 16,
+     "p10": 39,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 1440,
+    "titulli": "Mesazhet",
+    "guaske": false,
+    "trupArcmin": 7.1,
+    "shfrytezimi": 20.4,
+    "caqeMm": 10.3
+   }
+  },
+  "notifications": {
+   "telefon-390": {
+    "nyjeTeksti": 44,
+    "tekstiMajtas": 16,
+    "tekstiDjathtas": 360,
+    "tekstiGjeresi": 344,
+    "trupPx": 12,
+    "titullPx": 22,
+    "madhesiTeNdryshme": 7,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 561
+     },
+     {
+      "px": 13,
+      "kar": 274
+     },
+     {
+      "px": 10,
+      "kar": 68
+     },
+     {
+      "px": 22,
+      "kar": 20
+     },
+     {
+      "px": 16,
+      "kar": 9
+     },
+     {
+      "px": 12.5,
+      "kar": 8
+     },
+     {
+      "px": 20,
+      "kar": 2
+     }
+    ],
+    "lhMesatar": 1.37,
+    "masa": {
+     "ch": 33,
+     "px": 205,
+     "fs": 12
+    },
+    "caqe": {
+     "n": 43,
+     "min": 17,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 1399,
+    "titulli": "Njoftimet",
+    "guaske": false,
+    "trupArcmin": 11.2,
+    "shfrytezimi": 88.2,
+    "caqeMm": 8.1
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 44,
+    "tekstiMajtas": 16,
+    "tekstiDjathtas": 1250,
+    "tekstiGjeresi": 1234,
+    "trupPx": 12,
+    "titullPx": 22,
+    "madhesiTeNdryshme": 6,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 561
+     },
+     {
+      "px": 13,
+      "kar": 274
+     },
+     {
+      "px": 10,
+      "kar": 68
+     },
+     {
+      "px": 22,
+      "kar": 20
+     },
+     {
+      "px": 20,
+      "kar": 11
+     },
+     {
+      "px": 12.5,
+      "kar": 8
+     }
+    ],
+    "lhMesatar": 1.37,
+    "masa": {
+     "ch": 79,
+     "px": 437,
+     "fs": 12
+    },
+    "caqe": {
+     "n": 43,
+     "min": 17,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 1318,
+    "titulli": "Njoftimet",
+    "guaske": false,
+    "trupArcmin": 8.7,
+    "shfrytezimi": 96.4,
+    "caqeMm": 9.8
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 44,
+    "tekstiMajtas": 16,
+    "tekstiDjathtas": 1890,
+    "tekstiGjeresi": 1874,
+    "trupPx": 12,
+    "titullPx": 22,
+    "madhesiTeNdryshme": 6,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 561
+     },
+     {
+      "px": 13,
+      "kar": 274
+     },
+     {
+      "px": 10,
+      "kar": 68
+     },
+     {
+      "px": 22,
+      "kar": 20
+     },
+     {
+      "px": 20,
+      "kar": 11
+     },
+     {
+      "px": 12.5,
+      "kar": 8
+     }
+    ],
+    "lhMesatar": 1.37,
+    "masa": {
+     "ch": 79,
+     "px": 437,
+     "fs": 12
+    },
+    "caqe": {
+     "n": 43,
+     "min": 17,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 1487,
+    "titulli": "Njoftimet",
+    "guaske": false,
+    "trupArcmin": 9.9,
+    "shfrytezimi": 97.6,
+    "caqeMm": 12.2
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 44,
+    "tekstiMajtas": 16,
+    "tekstiDjathtas": 2530,
+    "tekstiGjeresi": 2514,
+    "trupPx": 12,
+    "titullPx": 22,
+    "madhesiTeNdryshme": 6,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 561
+     },
+     {
+      "px": 13,
+      "kar": 274
+     },
+     {
+      "px": 10,
+      "kar": 68
+     },
+     {
+      "px": 22,
+      "kar": 20
+     },
+     {
+      "px": 20,
+      "kar": 11
+     },
+     {
+      "px": 12.5,
+      "kar": 8
+     }
+    ],
+    "lhMesatar": 1.37,
+    "masa": {
+     "ch": 79,
+     "px": 437,
+     "fs": 12
+    },
+    "caqe": {
+     "n": 43,
+     "min": 17,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 1847,
+    "titulli": "Njoftimet",
+    "guaske": false,
+    "trupArcmin": 7.1,
+    "shfrytezimi": 98.2,
+    "caqeMm": 10.3
+   }
+  },
+  "favorites": {
+   "telefon-390": {
+    "nyjeTeksti": 7,
+    "tekstiMajtas": 63,
+    "tekstiDjathtas": 327,
+    "tekstiGjeresi": 264,
+    "trupPx": 13,
+    "titullPx": 48,
+    "madhesiTeNdryshme": 5,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 45
+     },
+     {
+      "px": 17,
+      "kar": 23
+     },
+     {
+      "px": 14,
+      "kar": 20
+     },
+     {
+      "px": 19,
+      "kar": 16
+     },
+     {
+      "px": 48,
+      "kar": 2
+     }
+    ],
+    "lhMesatar": null,
+    "masa": null,
+    "caqe": {
+     "n": 23,
+     "min": 17,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 2
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 855,
+    "titulli": "Të preferuarat ❤️",
+    "guaske": false,
+    "trupArcmin": 12.2,
+    "shfrytezimi": 67.7,
+    "caqeMm": 8.1
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 7,
+    "tekstiMajtas": 121,
+    "tekstiDjathtas": 772,
+    "tekstiGjeresi": 651,
+    "trupPx": 13,
+    "titullPx": 48,
+    "madhesiTeNdryshme": 5,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 45
+     },
+     {
+      "px": 17,
+      "kar": 23
+     },
+     {
+      "px": 14,
+      "kar": 20
+     },
+     {
+      "px": 24,
+      "kar": 16
+     },
+     {
+      "px": 48,
+      "kar": 2
+     }
+    ],
+    "lhMesatar": null,
+    "masa": null,
+    "caqe": {
+     "n": 23,
+     "min": 17,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 2
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 800,
+    "titulli": "Të preferuarat ❤️",
+    "guaske": false,
+    "trupArcmin": 9.4,
+    "shfrytezimi": 50.9,
+    "caqeMm": 9.8
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 7,
+    "tekstiMajtas": 142,
+    "tekstiDjathtas": 1092,
+    "tekstiGjeresi": 950,
+    "trupPx": 13,
+    "titullPx": 48,
+    "madhesiTeNdryshme": 5,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 45
+     },
+     {
+      "px": 17,
+      "kar": 23
+     },
+     {
+      "px": 14,
+      "kar": 20
+     },
+     {
+      "px": 24,
+      "kar": 16
+     },
+     {
+      "px": 48,
+      "kar": 2
+     }
+    ],
+    "lhMesatar": null,
+    "masa": null,
+    "caqe": {
+     "n": 23,
+     "min": 17,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 2
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 1080,
+    "titulli": "Të preferuarat ❤️",
+    "guaske": false,
+    "trupArcmin": 10.7,
+    "shfrytezimi": 49.5,
+    "caqeMm": 12.2
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 7,
+    "tekstiMajtas": 142,
+    "tekstiDjathtas": 1412,
+    "tekstiGjeresi": 1270,
+    "trupPx": 13,
+    "titullPx": 48,
+    "madhesiTeNdryshme": 5,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 45
+     },
+     {
+      "px": 17,
+      "kar": 23
+     },
+     {
+      "px": 14,
+      "kar": 20
+     },
+     {
+      "px": 24,
+      "kar": 16
+     },
+     {
+      "px": 48,
+      "kar": 2
+     }
+    ],
+    "lhMesatar": null,
+    "masa": null,
+    "caqe": {
+     "n": 23,
+     "min": 17,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 2
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 1440,
+    "titulli": "Të preferuarat ❤️",
+    "guaske": false,
+    "trupArcmin": 7.7,
+    "shfrytezimi": 49.6,
+    "caqeMm": 10.3
+   }
+  },
+  "oferta": {
+   "telefon-390": {
+    "nyjeTeksti": 8,
+    "tekstiMajtas": 43,
+    "tekstiDjathtas": 347,
+    "tekstiGjeresi": 303,
+    "trupPx": 13,
+    "titullPx": 48,
+    "madhesiTeNdryshme": 4,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 100
+     },
+     {
+      "px": 17,
+      "kar": 22
+     },
+     {
+      "px": 19,
+      "kar": 9
+     },
+     {
+      "px": 48,
+      "kar": 2
+     }
+    ],
+    "lhMesatar": null,
+    "masa": {
+     "ch": 33,
+     "px": 303,
+     "fs": 13
+    },
+    "caqe": {
+     "n": 25,
+     "min": 17,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 2
+    },
+    "rrezeTeNdryshme": 6,
+    "gjatesiaFaqes": 929,
+    "titulli": "Ofertat 🤝",
+    "guaske": false,
+    "trupArcmin": 12.2,
+    "shfrytezimi": 77.7,
+    "caqeMm": 8.1
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 8,
+    "tekstiMajtas": 121,
+    "tekstiDjathtas": 965,
+    "tekstiGjeresi": 844,
+    "trupPx": 13,
+    "titullPx": 48,
+    "madhesiTeNdryshme": 4,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 100
+     },
+     {
+      "px": 17,
+      "kar": 22
+     },
+     {
+      "px": 24,
+      "kar": 9
+     },
+     {
+      "px": 48,
+      "kar": 2
+     }
+    ],
+    "lhMesatar": null,
+    "masa": {
+     "ch": 66,
+     "px": 391,
+     "fs": 13
+    },
+    "caqe": {
+     "n": 25,
+     "min": 17,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 2
+    },
+    "rrezeTeNdryshme": 6,
+    "gjatesiaFaqes": 851,
+    "titulli": "Ofertat 🤝",
+    "guaske": false,
+    "trupArcmin": 9.4,
+    "shfrytezimi": 65.9,
+    "caqeMm": 9.8
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 8,
+    "tekstiMajtas": 142,
+    "tekstiDjathtas": 1435,
+    "tekstiGjeresi": 1293,
+    "trupPx": 13,
+    "titullPx": 48,
+    "madhesiTeNdryshme": 4,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 100
+     },
+     {
+      "px": 17,
+      "kar": 22
+     },
+     {
+      "px": 24,
+      "kar": 9
+     },
+     {
+      "px": 48,
+      "kar": 2
+     }
+    ],
+    "lhMesatar": null,
+    "masa": {
+     "ch": 66,
+     "px": 391,
+     "fs": 13
+    },
+    "caqe": {
+     "n": 25,
+     "min": 17,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 2
+    },
+    "rrezeTeNdryshme": 6,
+    "gjatesiaFaqes": 1080,
+    "titulli": "Ofertat 🤝",
+    "guaske": false,
+    "trupArcmin": 10.7,
+    "shfrytezimi": 67.3,
+    "caqeMm": 12.2
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 8,
+    "tekstiMajtas": 142,
+    "tekstiDjathtas": 1915,
+    "tekstiGjeresi": 1773,
+    "trupPx": 13,
+    "titullPx": 48,
+    "madhesiTeNdryshme": 4,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 100
+     },
+     {
+      "px": 17,
+      "kar": 22
+     },
+     {
+      "px": 24,
+      "kar": 9
+     },
+     {
+      "px": 48,
+      "kar": 2
+     }
+    ],
+    "lhMesatar": null,
+    "masa": {
+     "ch": 66,
+     "px": 391,
+     "fs": 13
+    },
+    "caqe": {
+     "n": 25,
+     "min": 17,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 2
+    },
+    "rrezeTeNdryshme": 6,
+    "gjatesiaFaqes": 1440,
+    "titulli": "Ofertat 🤝",
+    "guaske": false,
+    "trupArcmin": 7.7,
+    "shfrytezimi": 69.3,
+    "caqeMm": 10.3
+   }
+  },
+  "listing-new": {
+   "telefon-390": {
+    "nyjeTeksti": 74,
+    "tekstiMajtas": 18,
+    "tekstiDjathtas": 359,
+    "tekstiGjeresi": 341,
+    "trupPx": 10,
+    "titullPx": 16,
+    "madhesiTeNdryshme": 6,
+    "shperndarjaFS": [
+     {
+      "px": 10,
+      "kar": 256
+     },
+     {
+      "px": 11,
+      "kar": 237
+     },
+     {
+      "px": 12,
+      "kar": 104
+     },
+     {
+      "px": 13,
+      "kar": 51
+     },
+     {
+      "px": 16,
+      "kar": 25
+     },
+     {
+      "px": 15,
+      "kar": 14
+     }
+    ],
+    "lhMesatar": 1.3,
+    "masa": {
+     "ch": 32,
+     "px": 281,
+     "fs": 11
+    },
+    "caqe": {
+     "n": 34,
+     "min": 16,
+     "p10": 38,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 8
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 2366,
+    "titulli": "➕ Shto Shpallje",
+    "guaske": false,
+    "trupArcmin": 9.4,
+    "shfrytezimi": 87.4,
+    "caqeMm": 8.1
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 74,
+    "tekstiMajtas": 118,
+    "tekstiDjathtas": 1149,
+    "tekstiGjeresi": 1031,
+    "trupPx": 10,
+    "titullPx": 16,
+    "madhesiTeNdryshme": 6,
+    "shperndarjaFS": [
+     {
+      "px": 10,
+      "kar": 256
+     },
+     {
+      "px": 11,
+      "kar": 237
+     },
+     {
+      "px": 12,
+      "kar": 104
+     },
+     {
+      "px": 13,
+      "kar": 51
+     },
+     {
+      "px": 16,
+      "kar": 25
+     },
+     {
+      "px": 15,
+      "kar": 14
+     }
+    ],
+    "lhMesatar": 1.3,
+    "masa": {
+     "ch": 64,
+     "px": 336,
+     "fs": 11
+    },
+    "caqe": {
+     "n": 34,
+     "min": 16,
+     "p10": 38,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 8
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 2291,
+    "titulli": "➕ Shto Shpallje",
+    "guaske": false,
+    "trupArcmin": 7.3,
+    "shfrytezimi": 80.5,
+    "caqeMm": 9.8
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 74,
+    "tekstiMajtas": 438,
+    "tekstiDjathtas": 1469,
+    "tekstiGjeresi": 1031,
+    "trupPx": 10,
+    "titullPx": 16,
+    "madhesiTeNdryshme": 6,
+    "shperndarjaFS": [
+     {
+      "px": 10,
+      "kar": 256
+     },
+     {
+      "px": 11,
+      "kar": 237
+     },
+     {
+      "px": 12,
+      "kar": 104
+     },
+     {
+      "px": 13,
+      "kar": 51
+     },
+     {
+      "px": 16,
+      "kar": 25
+     },
+     {
+      "px": 15,
+      "kar": 14
+     }
+    ],
+    "lhMesatar": 1.3,
+    "masa": {
+     "ch": 64,
+     "px": 336,
+     "fs": 11
+    },
+    "caqe": {
+     "n": 54,
+     "min": 16,
+     "p10": 39,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 9
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 2291,
+    "titulli": "➕ Shto Shpallje",
+    "guaske": false,
+    "trupArcmin": 8.2,
+    "shfrytezimi": 53.7,
+    "caqeMm": 12.2
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 74,
+    "tekstiMajtas": 758,
+    "tekstiDjathtas": 1789,
+    "tekstiGjeresi": 1031,
+    "trupPx": 10,
+    "titullPx": 16,
+    "madhesiTeNdryshme": 6,
+    "shperndarjaFS": [
+     {
+      "px": 10,
+      "kar": 256
+     },
+     {
+      "px": 11,
+      "kar": 237
+     },
+     {
+      "px": 12,
+      "kar": 104
+     },
+     {
+      "px": 13,
+      "kar": 51
+     },
+     {
+      "px": 16,
+      "kar": 25
+     },
+     {
+      "px": 15,
+      "kar": 14
+     }
+    ],
+    "lhMesatar": 1.3,
+    "masa": {
+     "ch": 64,
+     "px": 336,
+     "fs": 11
+    },
+    "caqe": {
+     "n": 54,
+     "min": 16,
+     "p10": 39,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 9
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 2291,
+    "titulli": "➕ Shto Shpallje",
+    "guaske": false,
+    "trupArcmin": 6,
+    "shfrytezimi": 40.3,
+    "caqeMm": 10.3
+   }
+  },
+  "profile-analytics": {
+   "telefon-390": {
+    "nyjeTeksti": 180,
+    "tekstiMajtas": 17,
+    "tekstiDjathtas": 367,
+    "tekstiGjeresi": 350,
+    "trupPx": 11,
+    "titullPx": 28,
+    "madhesiTeNdryshme": 9,
+    "shperndarjaFS": [
+     {
+      "px": 11,
+      "kar": 236
+     },
+     {
+      "px": 13,
+      "kar": 210
+     },
+     {
+      "px": 10.5,
+      "kar": 91
+     },
+     {
+      "px": 9,
+      "kar": 91
+     },
+     {
+      "px": 12,
+      "kar": 90
+     },
+     {
+      "px": 10,
+      "kar": 62
+     },
+     {
+      "px": 16,
+      "kar": 24
+     },
+     {
+      "px": 24,
+      "kar": 22
+     }
+    ],
+    "lhMesatar": 1.5,
+    "masa": {
+     "ch": 46,
+     "px": 324,
+     "fs": 10.5
+    },
+    "caqe": {
+     "n": 6,
+     "min": 17,
+     "p10": 17,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 1
+    },
+    "rrezeTeNdryshme": 9,
+    "gjatesiaFaqes": 2374,
+    "titulli": "Statistikat e Shpalljeve",
+    "guaske": false,
+    "trupArcmin": 10.3,
+    "shfrytezimi": 89.7,
+    "caqeMm": 8.1
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 180,
+    "tekstiMajtas": 68,
+    "tekstiDjathtas": 1206,
+    "tekstiGjeresi": 1138,
+    "trupPx": 11,
+    "titullPx": 28,
+    "madhesiTeNdryshme": 9,
+    "shperndarjaFS": [
+     {
+      "px": 11,
+      "kar": 236
+     },
+     {
+      "px": 13,
+      "kar": 210
+     },
+     {
+      "px": 10.5,
+      "kar": 91
+     },
+     {
+      "px": 9,
+      "kar": 91
+     },
+     {
+      "px": 12,
+      "kar": 90
+     },
+     {
+      "px": 10,
+      "kar": 62
+     },
+     {
+      "px": 20,
+      "kar": 24
+     },
+     {
+      "px": 24,
+      "kar": 22
+     }
+    ],
+    "lhMesatar": 1.5,
+    "masa": {
+     "ch": 91,
+     "px": 403,
+     "fs": 10.5
+    },
+    "caqe": {
+     "n": 5,
+     "min": 17,
+     "p10": 17,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 1
+    },
+    "rrezeTeNdryshme": 9,
+    "gjatesiaFaqes": 2263,
+    "titulli": "Statistikat e Shpalljeve",
+    "guaske": false,
+    "trupArcmin": 8,
+    "shfrytezimi": 88.9,
+    "caqeMm": 9.8
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 180,
+    "tekstiMajtas": 89,
+    "tekstiDjathtas": 1825,
+    "tekstiGjeresi": 1736,
+    "trupPx": 11,
+    "titullPx": 28,
+    "madhesiTeNdryshme": 9,
+    "shperndarjaFS": [
+     {
+      "px": 11,
+      "kar": 236
+     },
+     {
+      "px": 13,
+      "kar": 210
+     },
+     {
+      "px": 10.5,
+      "kar": 91
+     },
+     {
+      "px": 9,
+      "kar": 91
+     },
+     {
+      "px": 12,
+      "kar": 90
+     },
+     {
+      "px": 10,
+      "kar": 62
+     },
+     {
+      "px": 20,
+      "kar": 24
+     },
+     {
+      "px": 24,
+      "kar": 22
+     }
+    ],
+    "lhMesatar": 1.5,
+    "masa": {
+     "ch": 91,
+     "px": 403,
+     "fs": 10.5
+    },
+    "caqe": {
+     "n": 27,
+     "min": 14,
+     "p10": 29,
+     "mesi": 44,
+     "nen24": 2,
+     "nen44": 4
+    },
+    "rrezeTeNdryshme": 9,
+    "gjatesiaFaqes": 2263,
+    "titulli": "Statistikat e Shpalljeve",
+    "guaske": false,
+    "trupArcmin": 9.1,
+    "shfrytezimi": 90.4,
+    "caqeMm": 12.2
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 180,
+    "tekstiMajtas": 89,
+    "tekstiDjathtas": 2465,
+    "tekstiGjeresi": 2376,
+    "trupPx": 11,
+    "titullPx": 28,
+    "madhesiTeNdryshme": 9,
+    "shperndarjaFS": [
+     {
+      "px": 11,
+      "kar": 236
+     },
+     {
+      "px": 13,
+      "kar": 210
+     },
+     {
+      "px": 10.5,
+      "kar": 91
+     },
+     {
+      "px": 9,
+      "kar": 91
+     },
+     {
+      "px": 12,
+      "kar": 90
+     },
+     {
+      "px": 10,
+      "kar": 62
+     },
+     {
+      "px": 20,
+      "kar": 24
+     },
+     {
+      "px": 24,
+      "kar": 22
+     }
+    ],
+    "lhMesatar": 1.5,
+    "masa": {
+     "ch": 91,
+     "px": 403,
+     "fs": 10.5
+    },
+    "caqe": {
+     "n": 27,
+     "min": 14,
+     "p10": 29,
+     "mesi": 44,
+     "nen24": 2,
+     "nen44": 4
+    },
+    "rrezeTeNdryshme": 9,
+    "gjatesiaFaqes": 2263,
+    "titulli": "Statistikat e Shpalljeve",
+    "guaske": false,
+    "trupArcmin": 6.6,
+    "shfrytezimi": 92.8,
+    "caqeMm": 10.3
+   }
+  },
+  "billing": {
+   "telefon-390": {
+    "nyjeTeksti": 50,
+    "tekstiMajtas": 31,
+    "tekstiDjathtas": 349,
+    "tekstiGjeresi": 318,
+    "trupPx": 11,
+    "titullPx": 17,
+    "madhesiTeNdryshme": 6,
+    "shperndarjaFS": [
+     {
+      "px": 11,
+      "kar": 264
+     },
+     {
+      "px": 12,
+      "kar": 194
+     },
+     {
+      "px": 11.5,
+      "kar": 118
+     },
+     {
+      "px": 13,
+      "kar": 65
+     },
+     {
+      "px": 15,
+      "kar": 33
+     },
+     {
+      "px": 17,
+      "kar": 14
+     }
+    ],
+    "lhMesatar": null,
+    "masa": {
+     "ch": 50,
+     "px": 316,
+     "fs": 11
+    },
+    "caqe": {
+     "n": 27,
+     "min": 13,
+     "p10": 39,
+     "mesi": 44,
+     "nen24": 2,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 1269,
+    "titulli": "Plani im",
+    "guaske": false,
+    "trupArcmin": 10.3,
+    "shfrytezimi": 81.5,
+    "caqeMm": 8.1
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 50,
+    "tekstiMajtas": 82,
+    "tekstiDjathtas": 1187,
+    "tekstiGjeresi": 1105,
+    "trupPx": 11,
+    "titullPx": 17,
+    "madhesiTeNdryshme": 6,
+    "shperndarjaFS": [
+     {
+      "px": 11,
+      "kar": 264
+     },
+     {
+      "px": 12,
+      "kar": 194
+     },
+     {
+      "px": 11.5,
+      "kar": 118
+     },
+     {
+      "px": 13,
+      "kar": 65
+     },
+     {
+      "px": 15,
+      "kar": 33
+     },
+     {
+      "px": 17,
+      "kar": 14
+     }
+    ],
+    "lhMesatar": null,
+    "masa": {
+     "ch": 150,
+     "px": 779,
+     "fs": 11
+    },
+    "caqe": {
+     "n": 27,
+     "min": 13,
+     "p10": 39,
+     "mesi": 44,
+     "nen24": 2,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 1127,
+    "titulli": "Plani im",
+    "guaske": false,
+    "trupArcmin": 8,
+    "shfrytezimi": 86.3,
+    "caqeMm": 9.8
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 50,
+    "tekstiMajtas": 103,
+    "tekstiDjathtas": 1806,
+    "tekstiGjeresi": 1703,
+    "trupPx": 11,
+    "titullPx": 17,
+    "madhesiTeNdryshme": 6,
+    "shperndarjaFS": [
+     {
+      "px": 11,
+      "kar": 264
+     },
+     {
+      "px": 12,
+      "kar": 194
+     },
+     {
+      "px": 11.5,
+      "kar": 118
+     },
+     {
+      "px": 13,
+      "kar": 65
+     },
+     {
+      "px": 15,
+      "kar": 33
+     },
+     {
+      "px": 17,
+      "kar": 14
+     }
+    ],
+    "lhMesatar": null,
+    "masa": {
+     "ch": 150,
+     "px": 779,
+     "fs": 11
+    },
+    "caqe": {
+     "n": 27,
+     "min": 13,
+     "p10": 39,
+     "mesi": 44,
+     "nen24": 2,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 1407,
+    "titulli": "Plani im",
+    "guaske": false,
+    "trupArcmin": 9.1,
+    "shfrytezimi": 88.7,
+    "caqeMm": 12.2
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 50,
+    "tekstiMajtas": 103,
+    "tekstiDjathtas": 2446,
+    "tekstiGjeresi": 2343,
+    "trupPx": 11,
+    "titullPx": 17,
+    "madhesiTeNdryshme": 6,
+    "shperndarjaFS": [
+     {
+      "px": 11,
+      "kar": 264
+     },
+     {
+      "px": 12,
+      "kar": 194
+     },
+     {
+      "px": 11.5,
+      "kar": 118
+     },
+     {
+      "px": 13,
+      "kar": 65
+     },
+     {
+      "px": 15,
+      "kar": 33
+     },
+     {
+      "px": 17,
+      "kar": 14
+     }
+    ],
+    "lhMesatar": null,
+    "masa": {
+     "ch": 150,
+     "px": 779,
+     "fs": 11
+    },
+    "caqe": {
+     "n": 27,
+     "min": 13,
+     "p10": 39,
+     "mesi": 44,
+     "nen24": 2,
+     "nen44": 3
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 1767,
+    "titulli": "Plani im",
+    "guaske": false,
+    "trupArcmin": 6.6,
+    "shfrytezimi": 91.5,
+    "caqeMm": 10.3
+   }
+  },
+  "saved-searches": {
+   "telefon-390": {
+    "nyjeTeksti": 7,
+    "tekstiMajtas": 42,
+    "tekstiDjathtas": 348,
+    "tekstiGjeresi": 305,
+    "trupPx": 13,
+    "titullPx": 48,
+    "madhesiTeNdryshme": 5,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 63
+     },
+     {
+      "px": 17,
+      "kar": 29
+     },
+     {
+      "px": 19,
+      "kar": 21
+     },
+     {
+      "px": 14,
+      "kar": 18
+     },
+     {
+      "px": 48,
+      "kar": 2
+     }
+    ],
+    "lhMesatar": null,
+    "masa": {
+     "ch": 32,
+     "px": 305,
+     "fs": 13
+    },
+    "caqe": {
+     "n": 23,
+     "min": 17,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 2
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 903,
+    "titulli": "Kërkimet e ruajtura 🔔",
+    "guaske": false,
+    "trupArcmin": 12.2,
+    "shfrytezimi": 78.2,
+    "caqeMm": 8.1
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 7,
+    "tekstiMajtas": 121,
+    "tekstiDjathtas": 813,
+    "tekstiGjeresi": 691,
+    "trupPx": 13,
+    "titullPx": 48,
+    "madhesiTeNdryshme": 5,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 63
+     },
+     {
+      "px": 17,
+      "kar": 29
+     },
+     {
+      "px": 24,
+      "kar": 21
+     },
+     {
+      "px": 14,
+      "kar": 18
+     },
+     {
+      "px": 48,
+      "kar": 2
+     }
+    ],
+    "lhMesatar": null,
+    "masa": {
+     "ch": 63,
+     "px": 345,
+     "fs": 13
+    },
+    "caqe": {
+     "n": 23,
+     "min": 17,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 2
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 825,
+    "titulli": "Kërkimet e ruajtura 🔔",
+    "guaske": false,
+    "trupArcmin": 9.4,
+    "shfrytezimi": 54,
+    "caqeMm": 9.8
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 7,
+    "tekstiMajtas": 142,
+    "tekstiDjathtas": 1133,
+    "tekstiGjeresi": 991,
+    "trupPx": 13,
+    "titullPx": 48,
+    "madhesiTeNdryshme": 5,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 63
+     },
+     {
+      "px": 17,
+      "kar": 29
+     },
+     {
+      "px": 24,
+      "kar": 21
+     },
+     {
+      "px": 14,
+      "kar": 18
+     },
+     {
+      "px": 48,
+      "kar": 2
+     }
+    ],
+    "lhMesatar": null,
+    "masa": {
+     "ch": 63,
+     "px": 345,
+     "fs": 13
+    },
+    "caqe": {
+     "n": 23,
+     "min": 17,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 2
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 1080,
+    "titulli": "Kërkimet e ruajtura 🔔",
+    "guaske": false,
+    "trupArcmin": 10.7,
+    "shfrytezimi": 51.6,
+    "caqeMm": 12.2
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 7,
+    "tekstiMajtas": 142,
+    "tekstiDjathtas": 1453,
+    "tekstiGjeresi": 1311,
+    "trupPx": 13,
+    "titullPx": 48,
+    "madhesiTeNdryshme": 5,
+    "shperndarjaFS": [
+     {
+      "px": 13,
+      "kar": 63
+     },
+     {
+      "px": 17,
+      "kar": 29
+     },
+     {
+      "px": 24,
+      "kar": 21
+     },
+     {
+      "px": 14,
+      "kar": 18
+     },
+     {
+      "px": 48,
+      "kar": 2
+     }
+    ],
+    "lhMesatar": null,
+    "masa": {
+     "ch": 63,
+     "px": 345,
+     "fs": 13
+    },
+    "caqe": {
+     "n": 23,
+     "min": 17,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 2
+    },
+    "rrezeTeNdryshme": 5,
+    "gjatesiaFaqes": 1440,
+    "titulli": "Kërkimet e ruajtura 🔔",
+    "guaske": false,
+    "trupArcmin": 7.7,
+    "shfrytezimi": 51.2,
+    "caqeMm": 10.3
+   }
+  },
+  "te-dhenat-mia": {
+   "telefon-390": {
+    "nyjeTeksti": 39,
+    "tekstiMajtas": 21,
+    "tekstiDjathtas": 369,
+    "tekstiGjeresi": 348,
+    "trupPx": 12,
+    "titullPx": 16,
+    "madhesiTeNdryshme": 4,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 398
+     },
+     {
+      "px": 11,
+      "kar": 292
+     },
+     {
+      "px": 13,
+      "kar": 130
+     },
+     {
+      "px": 16,
+      "kar": 24
+     }
+    ],
+    "lhMesatar": 1.68,
+    "masa": {
+     "ch": 45,
+     "px": 313,
+     "fs": 12
+    },
+    "caqe": {
+     "n": 26,
+     "min": 13,
+     "p10": 17,
+     "mesi": 44,
+     "nen24": 3,
+     "nen44": 4
+    },
+    "rrezeTeNdryshme": 6,
+    "gjatesiaFaqes": 1313,
+    "titulli": "🔒 Të dhënat e mia (GDPR)",
+    "guaske": false,
+    "trupArcmin": 11.2,
+    "shfrytezimi": 89.2,
+    "caqeMm": 8.1
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 39,
+    "tekstiMajtas": 83,
+    "tekstiDjathtas": 828,
+    "tekstiGjeresi": 744,
+    "trupPx": 12,
+    "titullPx": 20,
+    "madhesiTeNdryshme": 4,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 398
+     },
+     {
+      "px": 11,
+      "kar": 292
+     },
+     {
+      "px": 13,
+      "kar": 130
+     },
+     {
+      "px": 20,
+      "kar": 24
+     }
+    ],
+    "lhMesatar": 1.68,
+    "masa": {
+     "ch": 135,
+     "px": 743,
+     "fs": 12
+    },
+    "caqe": {
+     "n": 26,
+     "min": 13,
+     "p10": 18,
+     "mesi": 44,
+     "nen24": 3,
+     "nen44": 4
+    },
+    "rrezeTeNdryshme": 6,
+    "gjatesiaFaqes": 1207,
+    "titulli": "🔒 Të dhënat e mia (GDPR)",
+    "guaske": false,
+    "trupArcmin": 8.7,
+    "shfrytezimi": 58.1,
+    "caqeMm": 9.8
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 39,
+    "tekstiMajtas": 104,
+    "tekstiDjathtas": 1134,
+    "tekstiGjeresi": 1030,
+    "trupPx": 12,
+    "titullPx": 20,
+    "madhesiTeNdryshme": 4,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 398
+     },
+     {
+      "px": 11,
+      "kar": 292
+     },
+     {
+      "px": 13,
+      "kar": 130
+     },
+     {
+      "px": 20,
+      "kar": 24
+     }
+    ],
+    "lhMesatar": 1.68,
+    "masa": {
+     "ch": 135,
+     "px": 743,
+     "fs": 12
+    },
+    "caqe": {
+     "n": 26,
+     "min": 13,
+     "p10": 18,
+     "mesi": 44,
+     "nen24": 3,
+     "nen44": 4
+    },
+    "rrezeTeNdryshme": 6,
+    "gjatesiaFaqes": 1487,
+    "titulli": "🔒 Të dhënat e mia (GDPR)",
+    "guaske": false,
+    "trupArcmin": 9.9,
+    "shfrytezimi": 53.6,
+    "caqeMm": 12.2
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 39,
+    "tekstiMajtas": 104,
+    "tekstiDjathtas": 1454,
+    "tekstiGjeresi": 1350,
+    "trupPx": 12,
+    "titullPx": 20,
+    "madhesiTeNdryshme": 4,
+    "shperndarjaFS": [
+     {
+      "px": 12,
+      "kar": 398
+     },
+     {
+      "px": 11,
+      "kar": 292
+     },
+     {
+      "px": 13,
+      "kar": 130
+     },
+     {
+      "px": 20,
+      "kar": 24
+     }
+    ],
+    "lhMesatar": 1.68,
+    "masa": {
+     "ch": 135,
+     "px": 743,
+     "fs": 12
+    },
+    "caqe": {
+     "n": 26,
+     "min": 13,
+     "p10": 18,
+     "mesi": 44,
+     "nen24": 3,
+     "nen44": 4
+    },
+    "rrezeTeNdryshme": 6,
+    "gjatesiaFaqes": 1847,
+    "titulli": "🔒 Të dhënat e mia (GDPR)",
+    "guaske": false,
+    "trupArcmin": 7.1,
+    "shfrytezimi": 52.7,
+    "caqeMm": 10.3
+   }
+  },
+  "referral": {
+   "telefon-390": {
+    "nyjeTeksti": 95,
+    "tekstiMajtas": 29,
+    "tekstiDjathtas": 362,
+    "tekstiGjeresi": 333,
+    "trupPx": 11,
+    "titullPx": 52,
+    "madhesiTeNdryshme": 12,
+    "shperndarjaFS": [
+     {
+      "px": 11,
+      "kar": 459
+     },
+     {
+      "px": 12,
+      "kar": 204
+     },
+     {
+      "px": 10,
+      "kar": 195
+     },
+     {
+      "px": 13,
+      "kar": 120
+     },
+     {
+      "px": 9.5,
+      "kar": 76
+     },
+     {
+      "px": 8,
+      "kar": 40
+     },
+     {
+      "px": 22,
+      "kar": 34
+     },
+     {
+      "px": 15,
+      "kar": 22
+     }
+    ],
+    "lhMesatar": 1.41,
+    "masa": {
+     "ch": 37,
+     "px": 276,
+     "fs": 9.5
+    },
+    "caqe": {
+     "n": 15,
+     "min": 16,
+     "p10": 27,
+     "mesi": 52,
+     "nen24": 1,
+     "nen44": 5
+    },
+    "rrezeTeNdryshme": 10,
+    "gjatesiaFaqes": 2511,
+    "titulli": "Fto Miqtë, Fito Pikë!",
+    "guaske": false,
+    "trupArcmin": 10.3,
+    "shfrytezimi": 85.4,
+    "caqeMm": 9.5
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 95,
+    "tekstiMajtas": 80,
+    "tekstiDjathtas": 1201,
+    "tekstiGjeresi": 1121,
+    "trupPx": 11,
+    "titullPx": 52,
+    "madhesiTeNdryshme": 13,
+    "shperndarjaFS": [
+     {
+      "px": 11,
+      "kar": 459
+     },
+     {
+      "px": 12,
+      "kar": 204
+     },
+     {
+      "px": 10,
+      "kar": 195
+     },
+     {
+      "px": 13,
+      "kar": 120
+     },
+     {
+      "px": 9.5,
+      "kar": 76
+     },
+     {
+      "px": 8,
+      "kar": 40
+     },
+     {
+      "px": 15,
+      "kar": 22
+     },
+     {
+      "px": 32,
+      "kar": 21
+     }
+    ],
+    "lhMesatar": 1.41,
+    "masa": {
+     "ch": 74,
+     "px": 326,
+     "fs": 9.5
+    },
+    "caqe": {
+     "n": 15,
+     "min": 16,
+     "p10": 27,
+     "mesi": 61,
+     "nen24": 1,
+     "nen44": 5
+    },
+    "rrezeTeNdryshme": 10,
+    "gjatesiaFaqes": 2412,
+    "titulli": "Fto Miqtë, Fito Pikë!",
+    "guaske": false,
+    "trupArcmin": 8,
+    "shfrytezimi": 87.6,
+    "caqeMm": 13.6
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 95,
+    "tekstiMajtas": 101,
+    "tekstiDjathtas": 1820,
+    "tekstiGjeresi": 1719,
+    "trupPx": 11,
+    "titullPx": 52,
+    "madhesiTeNdryshme": 13,
+    "shperndarjaFS": [
+     {
+      "px": 11,
+      "kar": 459
+     },
+     {
+      "px": 12,
+      "kar": 204
+     },
+     {
+      "px": 10,
+      "kar": 195
+     },
+     {
+      "px": 13,
+      "kar": 120
+     },
+     {
+      "px": 9.5,
+      "kar": 76
+     },
+     {
+      "px": 8,
+      "kar": 40
+     },
+     {
+      "px": 15,
+      "kar": 22
+     },
+     {
+      "px": 32,
+      "kar": 21
+     }
+    ],
+    "lhMesatar": 1.41,
+    "masa": {
+     "ch": 74,
+     "px": 326,
+     "fs": 9.5
+    },
+    "caqe": {
+     "n": 16,
+     "min": 16,
+     "p10": 27,
+     "mesi": 61,
+     "nen24": 1,
+     "nen44": 5
+    },
+    "rrezeTeNdryshme": 10,
+    "gjatesiaFaqes": 2412,
+    "titulli": "Fto Miqtë, Fito Pikë!",
+    "guaske": false,
+    "trupArcmin": 9.1,
+    "shfrytezimi": 89.5,
+    "caqeMm": 16.9
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 95,
+    "tekstiMajtas": 101,
+    "tekstiDjathtas": 2460,
+    "tekstiGjeresi": 2359,
+    "trupPx": 11,
+    "titullPx": 52,
+    "madhesiTeNdryshme": 13,
+    "shperndarjaFS": [
+     {
+      "px": 11,
+      "kar": 459
+     },
+     {
+      "px": 12,
+      "kar": 204
+     },
+     {
+      "px": 10,
+      "kar": 195
+     },
+     {
+      "px": 13,
+      "kar": 120
+     },
+     {
+      "px": 9.5,
+      "kar": 76
+     },
+     {
+      "px": 8,
+      "kar": 40
+     },
+     {
+      "px": 15,
+      "kar": 22
+     },
+     {
+      "px": 32,
+      "kar": 21
+     }
+    ],
+    "lhMesatar": 1.41,
+    "masa": {
+     "ch": 74,
+     "px": 326,
+     "fs": 9.5
+    },
+    "caqe": {
+     "n": 34,
+     "min": 16,
+     "p10": 31,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 6
+    },
+    "rrezeTeNdryshme": 10,
+    "gjatesiaFaqes": 2412,
+    "titulli": "Fto Miqtë, Fito Pikë!",
+    "guaske": false,
+    "trupArcmin": 6.6,
+    "shfrytezimi": 92.1,
+    "caqeMm": 10.3
+   }
+  },
+  "u-id": {
+   "telefon-390": {
+    "nyjeTeksti": 50,
+    "tekstiMajtas": 16,
+    "tekstiDjathtas": 362,
+    "tekstiGjeresi": 346,
+    "trupPx": 14,
+    "titullPx": 36,
+    "madhesiTeNdryshme": 12,
+    "shperndarjaFS": [
+     {
+      "px": 14,
+      "kar": 100
+     },
+     {
+      "px": 12,
+      "kar": 65
+     },
+     {
+      "px": 12.5,
+      "kar": 62
+     },
+     {
+      "px": 10,
+      "kar": 51
+     },
+     {
+      "px": 13,
+      "kar": 43
+     },
+     {
+      "px": 11,
+      "kar": 25
+     },
+     {
+      "px": 22,
+      "kar": 22
+     },
+     {
+      "px": 18,
+      "kar": 10
+     }
+    ],
+    "lhMesatar": 1.11,
+    "masa": null,
+    "caqe": {
+     "n": 28,
+     "min": 17,
+     "p10": 39,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 7
+    },
+    "rrezeTeNdryshme": 9,
+    "gjatesiaFaqes": 1348,
+    "titulli": "Administratori Alpazar",
+    "guaske": false,
+    "trupArcmin": 13.1,
+    "shfrytezimi": 88.7,
+    "caqeMm": 8.1
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 50,
+    "tekstiMajtas": 22,
+    "tekstiDjathtas": 1201,
+    "tekstiGjeresi": 1179,
+    "trupPx": 14,
+    "titullPx": 36,
+    "madhesiTeNdryshme": 12,
+    "shperndarjaFS": [
+     {
+      "px": 14,
+      "kar": 100
+     },
+     {
+      "px": 12,
+      "kar": 65
+     },
+     {
+      "px": 12.5,
+      "kar": 62
+     },
+     {
+      "px": 10,
+      "kar": 51
+     },
+     {
+      "px": 13,
+      "kar": 43
+     },
+     {
+      "px": 11,
+      "kar": 25
+     },
+     {
+      "px": 32,
+      "kar": 22
+     },
+     {
+      "px": 18,
+      "kar": 10
+     }
+    ],
+    "lhMesatar": 1.11,
+    "masa": null,
+    "caqe": {
+     "n": 28,
+     "min": 17,
+     "p10": 39,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 7
+    },
+    "rrezeTeNdryshme": 9,
+    "gjatesiaFaqes": 1315,
+    "titulli": "Administratori Alpazar",
+    "guaske": false,
+    "trupArcmin": 10.2,
+    "shfrytezimi": 92.1,
+    "caqeMm": 9.8
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 50,
+    "tekstiMajtas": 22,
+    "tekstiDjathtas": 1820,
+    "tekstiGjeresi": 1798,
+    "trupPx": 14,
+    "titullPx": 36,
+    "madhesiTeNdryshme": 12,
+    "shperndarjaFS": [
+     {
+      "px": 14,
+      "kar": 100
+     },
+     {
+      "px": 12,
+      "kar": 65
+     },
+     {
+      "px": 12.5,
+      "kar": 62
+     },
+     {
+      "px": 10,
+      "kar": 51
+     },
+     {
+      "px": 13,
+      "kar": 43
+     },
+     {
+      "px": 11,
+      "kar": 25
+     },
+     {
+      "px": 32,
+      "kar": 22
+     },
+     {
+      "px": 18,
+      "kar": 10
+     }
+    ],
+    "lhMesatar": 1.11,
+    "masa": null,
+    "caqe": {
+     "n": 28,
+     "min": 17,
+     "p10": 39,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 7
+    },
+    "rrezeTeNdryshme": 9,
+    "gjatesiaFaqes": 1487,
+    "titulli": "Administratori Alpazar",
+    "guaske": false,
+    "trupArcmin": 11.5,
+    "shfrytezimi": 93.6,
+    "caqeMm": 12.2
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 50,
+    "tekstiMajtas": 22,
+    "tekstiDjathtas": 2460,
+    "tekstiGjeresi": 2438,
+    "trupPx": 14,
+    "titullPx": 36,
+    "madhesiTeNdryshme": 12,
+    "shperndarjaFS": [
+     {
+      "px": 14,
+      "kar": 100
+     },
+     {
+      "px": 12,
+      "kar": 65
+     },
+     {
+      "px": 12.5,
+      "kar": 62
+     },
+     {
+      "px": 10,
+      "kar": 51
+     },
+     {
+      "px": 13,
+      "kar": 43
+     },
+     {
+      "px": 11,
+      "kar": 25
+     },
+     {
+      "px": 32,
+      "kar": 22
+     },
+     {
+      "px": 18,
+      "kar": 10
+     }
+    ],
+    "lhMesatar": 1.11,
+    "masa": null,
+    "caqe": {
+     "n": 28,
+     "min": 17,
+     "p10": 39,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 7
+    },
+    "rrezeTeNdryshme": 9,
+    "gjatesiaFaqes": 1847,
+    "titulli": "Administratori Alpazar",
+    "guaske": false,
+    "trupArcmin": 8.3,
+    "shfrytezimi": 95.2,
+    "caqeMm": 10.3
+   }
+  },
+  "biznes-analytics": {
+   "telefon-390": {
+    "nyjeTeksti": 86,
+    "tekstiMajtas": 28,
+    "tekstiDjathtas": 362,
+    "tekstiGjeresi": 334,
+    "trupPx": 9,
+    "titullPx": 24,
+    "madhesiTeNdryshme": 6,
+    "shperndarjaFS": [
+     {
+      "px": 9,
+      "kar": 75
+     },
+     {
+      "px": 13,
+      "kar": 68
+     },
+     {
+      "px": 11,
+      "kar": 28
+     },
+     {
+      "px": 16,
+      "kar": 27
+     },
+     {
+      "px": 12,
+      "kar": 11
+     },
+     {
+      "px": 24,
+      "kar": 4
+     }
+    ],
+    "lhMesatar": null,
+    "masa": null,
+    "caqe": {
+     "n": 24,
+     "min": 17,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 2
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 1313,
+    "titulli": "Analitika e biznesit",
+    "guaske": false,
+    "trupArcmin": 8.4,
+    "shfrytezimi": 85.6,
+    "caqeMm": 8.1
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 86,
+    "tekstiMajtas": 79,
+    "tekstiDjathtas": 1201,
+    "tekstiGjeresi": 1122,
+    "trupPx": 9,
+    "titullPx": 24,
+    "madhesiTeNdryshme": 7,
+    "shperndarjaFS": [
+     {
+      "px": 9,
+      "kar": 75
+     },
+     {
+      "px": 13,
+      "kar": 68
+     },
+     {
+      "px": 11,
+      "kar": 28
+     },
+     {
+      "px": 20,
+      "kar": 20
+     },
+     {
+      "px": 12,
+      "kar": 11
+     },
+     {
+      "px": 16,
+      "kar": 7
+     },
+     {
+      "px": 24,
+      "kar": 4
+     }
+    ],
+    "lhMesatar": null,
+    "masa": null,
+    "caqe": {
+     "n": 24,
+     "min": 17,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 2
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 1207,
+    "titulli": "Analitika e biznesit",
+    "guaske": false,
+    "trupArcmin": 6.5,
+    "shfrytezimi": 87.7,
+    "caqeMm": 9.8
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 86,
+    "tekstiMajtas": 100,
+    "tekstiDjathtas": 1820,
+    "tekstiGjeresi": 1720,
+    "trupPx": 9,
+    "titullPx": 24,
+    "madhesiTeNdryshme": 7,
+    "shperndarjaFS": [
+     {
+      "px": 9,
+      "kar": 75
+     },
+     {
+      "px": 13,
+      "kar": 68
+     },
+     {
+      "px": 11,
+      "kar": 28
+     },
+     {
+      "px": 20,
+      "kar": 20
+     },
+     {
+      "px": 12,
+      "kar": 11
+     },
+     {
+      "px": 16,
+      "kar": 7
+     },
+     {
+      "px": 24,
+      "kar": 4
+     }
+    ],
+    "lhMesatar": null,
+    "masa": null,
+    "caqe": {
+     "n": 24,
+     "min": 17,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 2
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 1487,
+    "titulli": "Analitika e biznesit",
+    "guaske": false,
+    "trupArcmin": 7.4,
+    "shfrytezimi": 89.6,
+    "caqeMm": 12.2
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 86,
+    "tekstiMajtas": 100,
+    "tekstiDjathtas": 2460,
+    "tekstiGjeresi": 2360,
+    "trupPx": 9,
+    "titullPx": 24,
+    "madhesiTeNdryshme": 7,
+    "shperndarjaFS": [
+     {
+      "px": 9,
+      "kar": 75
+     },
+     {
+      "px": 13,
+      "kar": 68
+     },
+     {
+      "px": 11,
+      "kar": 28
+     },
+     {
+      "px": 20,
+      "kar": 20
+     },
+     {
+      "px": 12,
+      "kar": 11
+     },
+     {
+      "px": 16,
+      "kar": 7
+     },
+     {
+      "px": 24,
+      "kar": 4
+     }
+    ],
+    "lhMesatar": null,
+    "masa": null,
+    "caqe": {
+     "n": 24,
+     "min": 17,
+     "p10": 44,
+     "mesi": 44,
+     "nen24": 1,
+     "nen44": 2
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 1847,
+    "titulli": "Analitika e biznesit",
+    "guaske": false,
+    "trupArcmin": 5.4,
+    "shfrytezimi": 92.2,
+    "caqeMm": 10.3
+   }
+  },
+  "listing-edit": {
+   "telefon-390": {
+    "nyjeTeksti": 62,
+    "tekstiMajtas": 31,
+    "tekstiDjathtas": 359,
+    "tekstiGjeresi": 328,
+    "trupPx": 11,
+    "titullPx": 16,
+    "madhesiTeNdryshme": 8,
+    "shperndarjaFS": [
+     {
+      "px": 11,
+      "kar": 188
+     },
+     {
+      "px": 10,
+      "kar": 186
+     },
+     {
+      "px": 12,
+      "kar": 140
+     },
+     {
+      "px": 13,
+      "kar": 67
+     },
+     {
+      "px": 15,
+      "kar": 19
+     },
+     {
+      "px": 16,
+      "kar": 18
+     },
+     {
+      "px": 8,
+      "kar": 8
+     },
+     {
+      "px": 9,
+      "kar": 1
+     }
+    ],
+    "lhMesatar": 1.26,
+    "masa": {
+     "ch": 32,
+     "px": 281,
+     "fs": 11
+    },
+    "caqe": {
+     "n": 30,
+     "min": 16,
+     "p10": 33,
+     "mesi": 36,
+     "nen24": 2,
+     "nen44": 21
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 2384,
+    "titulli": "✏️ Ndrysho Shpalljen",
+    "guaske": false,
+    "trupArcmin": 10.3,
+    "shfrytezimi": 84.1,
+    "caqeMm": 6.6
+   },
+   "laptop-1280": {
+    "nyjeTeksti": 62,
+    "tekstiMajtas": 131,
+    "tekstiDjathtas": 1149,
+    "tekstiGjeresi": 1018,
+    "trupPx": 11,
+    "titullPx": 16,
+    "madhesiTeNdryshme": 8,
+    "shperndarjaFS": [
+     {
+      "px": 11,
+      "kar": 188
+     },
+     {
+      "px": 10,
+      "kar": 186
+     },
+     {
+      "px": 12,
+      "kar": 140
+     },
+     {
+      "px": 13,
+      "kar": 67
+     },
+     {
+      "px": 15,
+      "kar": 19
+     },
+     {
+      "px": 16,
+      "kar": 18
+     },
+     {
+      "px": 8,
+      "kar": 8
+     },
+     {
+      "px": 9,
+      "kar": 1
+     }
+    ],
+    "lhMesatar": 1.26,
+    "masa": {
+     "ch": 66,
+     "px": 379,
+     "fs": 12
+    },
+    "caqe": {
+     "n": 30,
+     "min": 16,
+     "p10": 33,
+     "mesi": 36,
+     "nen24": 2,
+     "nen44": 21
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 2294,
+    "titulli": "✏️ Ndrysho Shpalljen",
+    "guaske": false,
+    "trupArcmin": 8,
+    "shfrytezimi": 79.5,
+    "caqeMm": 8
+   },
+   "desktop-1920": {
+    "nyjeTeksti": 62,
+    "tekstiMajtas": 451,
+    "tekstiDjathtas": 1469,
+    "tekstiGjeresi": 1018,
+    "trupPx": 11,
+    "titullPx": 16,
+    "madhesiTeNdryshme": 8,
+    "shperndarjaFS": [
+     {
+      "px": 11,
+      "kar": 188
+     },
+     {
+      "px": 10,
+      "kar": 186
+     },
+     {
+      "px": 12,
+      "kar": 140
+     },
+     {
+      "px": 13,
+      "kar": 67
+     },
+     {
+      "px": 15,
+      "kar": 19
+     },
+     {
+      "px": 16,
+      "kar": 18
+     },
+     {
+      "px": 8,
+      "kar": 8
+     },
+     {
+      "px": 9,
+      "kar": 1
+     }
+    ],
+    "lhMesatar": 1.26,
+    "masa": {
+     "ch": 66,
+     "px": 379,
+     "fs": 12
+    },
+    "caqe": {
+     "n": 50,
+     "min": 16,
+     "p10": 33,
+     "mesi": 44,
+     "nen24": 2,
+     "nen44": 22
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 2294,
+    "titulli": "✏️ Ndrysho Shpalljen",
+    "guaske": false,
+    "trupArcmin": 9.1,
+    "shfrytezimi": 53,
+    "caqeMm": 12.2
+   },
+   "i-madh-2560": {
+    "nyjeTeksti": 62,
+    "tekstiMajtas": 771,
+    "tekstiDjathtas": 1789,
+    "tekstiGjeresi": 1018,
+    "trupPx": 11,
+    "titullPx": 16,
+    "madhesiTeNdryshme": 8,
+    "shperndarjaFS": [
+     {
+      "px": 11,
+      "kar": 188
+     },
+     {
+      "px": 10,
+      "kar": 186
+     },
+     {
+      "px": 12,
+      "kar": 140
+     },
+     {
+      "px": 13,
+      "kar": 67
+     },
+     {
+      "px": 15,
+      "kar": 19
+     },
+     {
+      "px": 16,
+      "kar": 18
+     },
+     {
+      "px": 8,
+      "kar": 8
+     },
+     {
+      "px": 9,
+      "kar": 1
+     }
+    ],
+    "lhMesatar": 1.26,
+    "masa": {
+     "ch": 66,
+     "px": 379,
+     "fs": 12
+    },
+    "caqe": {
+     "n": 50,
+     "min": 16,
+     "p10": 33,
+     "mesi": 44,
+     "nen24": 2,
+     "nen44": 22
+    },
+    "rrezeTeNdryshme": 7,
+    "gjatesiaFaqes": 2294,
+    "titulli": "✏️ Ndrysho Shpalljen",
+    "guaske": false,
+    "trupArcmin": 6.6,
+    "shfrytezimi": 39.8,
+    "caqeMm": 10.3
+   }
+  }
+ }
+}

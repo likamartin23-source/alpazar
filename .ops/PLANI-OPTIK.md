@@ -75,7 +75,7 @@ i ruajtur përdoret VETËM për rrugët pas hyrjes, dhe cache-i i tij pastrohet 
 
 ### 2.0 Verdikti në një rresht
 
-**52 matje (13 faqe × 4 ekrane). 43 prej tyre — 83% — janë NËN kufirin absolut 16′ të ISO 9241-303.
+**112 matje (28 faqe × 4 ekrane — publike DHE pas hyrjes). 94 prej tyre — 84% — janë NËN kufirin absolut 16′ të ISO 9241-303.
 NË BREZIN E REHATISË 20′+ NUK BIE ASNJË E VETME. Rritja e shkronjës nga 390px në 2560px është 0%
 në 10 nga 13 faqe.** Platforma nuk ka defekt tipografik të vogël — ajo thjesht nuk shkallëzohet fare.
 
@@ -195,7 +195,7 @@ Kontrolli: f(390)=16.0 ✓ · f(768)=17.7 · f(1280)=**20.1** ✓ · f(1920)=**2
 
   /* kontrolli */
   --kontroll-h: clamp(44px, 2.6vw, 56px);
-  --kolona-lexim: 66ch;
+  --kolona-lexim: 37em;   /* = 66 KARAKTERE REALE. Shih §11-A9: 66ch do te ishin 86 karaktere. */
 }
 ```
 
@@ -263,10 +263,11 @@ Xhiro `PROFIL=pa node scripts/autopsia-optike.mjs && node scripts/optika-analiza
 
 | Kriteri | Sot | Pranohet |
 |---|---|---|
-| Matje nën 16′ (ISO minimum) | shumica | **0** |
+| Matje nën 16′ (ISO minimum) | 94/112 (84%) | **0** |
 | Matje në brezin 20′+ | ~0 | **≥90%** |
-| Masa mbi 75ch | `/premium` 118, `/kushtet` 99 | **0 faqe** |
-| Caqe nën 24px | 5–8 në faqet ligjore | **0** |
+| Masa mbi 75 karaktere reale | `/billing` 150, `/te-dhenat-mia` 135, `/premium` 118, `/kushtet` 99, `/profile/analytics` 91, `/notifications` 79 | **0 faqe** (kolona `37em`, jo `66ch` — §11-A9) |
+| Caqe nën 24px | 12 te `/biznese/[id]/edit`, 8 te `/kushtet`, 7 te `/rreth-nesh` | **0** |
+| Zoom 200% pa prerje/mbivendosje | e paverifikuar | **çdo faqe kalon** (§11-A10) |
 | `fontSize` inline në `.tsx` | 931 | **≤ 100** (ratchet, jo big-bang) |
 | `clamp()` në CSS | 0 | shkalla e plotë |
 
@@ -305,7 +306,7 @@ Pas çdo hapi: `tsc` · roja · testet · `next build` · deploy · **rimatje li
 
 ---
 
-## SHTOJCA A — dalja e plotë e instrumentit (matje live, shfletues i pastër, korrigjuar me CAP=0.750)
+## SHTOJCA A — dalja e plotë e instrumentit (28 faqe, 112 matje: publike + pas hyrjes)
 
 ```
 ═══ 1. SA E MADHE DUHET TE JETE SHKRONJA (nga syri, jo nga moda) ═══
@@ -324,15 +325,30 @@ kategori-slug    13px   17.5'  kuf 13px   13.6'  DOB 13px   15.4'  DOB 13px   11
 kategori-qytet   14px   18.9'  kuf 14px   14.7'  DOB 14px   16.6'  kuf 14px   12.0'  DOB 
 search           10px   13.5'  DOB 10px   10.5'  DOB 10px   11.9'  DOB 10px    8.6'  DOB 
 search-results   10px   13.5'  DOB 10px   10.5'  DOB 10px   11.9'  DOB 10px    8.6'  DOB 
-listing          12.5px 16.9'  kuf 13px   13.6'  DOB 12.5px 14.9'  DOB 12.5px 10.7'  DOB 
+listing          11px   14.8'  DOB 11px   11.5'  DOB 11px   13.1'  DOB 11px    9.4'  DOB 
 biznese-lista    13px   17.5'  kuf 12px   12.6'  DOB 12px   14.3'  DOB 12px   10.3'  DOB 
-biznes-publik    11px   14.8'  DOB 12px   12.6'  DOB 12px   14.3'  DOB 12px   10.3'  DOB 
+biznes-publik    12px   16.2'  kuf 12px   12.6'  DOB 12px   14.3'  DOB 12px   10.3'  DOB 
 premium          11.5px 15.5'  DOB 11.5px 12.0'  DOB 11.5px 13.7'  DOB 11.5px  9.9'  DOB 
 asistent         13px   17.5'  kuf 13px   13.6'  DOB 13px   15.4'  DOB 13px   11.2'  DOB 
 kushtet          13px   17.5'  kuf 13px   13.6'  DOB 13px   15.4'  DOB 13px   11.2'  DOB 
 rreth-nesh       13px   17.5'  kuf 13px   13.6'  DOB 13px   15.4'  DOB 13px   11.2'  DOB 
+biznes-edit      12px   16.2'  kuf 12px   12.6'  DOB 12px   14.3'  DOB 12px   10.3'  DOB 
+profile          10px   13.5'  DOB 10px   10.5'  DOB 10px   11.9'  DOB 10px    8.6'  DOB 
+messages         12px   16.2'  kuf 12px   12.6'  DOB 12px   14.3'  DOB 12px   10.3'  DOB 
+notifications    12px   16.2'  kuf 12px   12.6'  DOB 12px   14.3'  DOB 12px   10.3'  DOB 
+favorites        13px   17.5'  kuf 13px   13.6'  DOB 13px   15.4'  DOB 13px   11.2'  DOB 
+oferta           13px   17.5'  kuf 13px   13.6'  DOB 13px   15.4'  DOB 13px   11.2'  DOB 
+listing-new      10px   13.5'  DOB 10px   10.5'  DOB 10px   11.9'  DOB 10px    8.6'  DOB 
+profile-analytics11px   14.8'  DOB 11px   11.5'  DOB 11px   13.1'  DOB 11px    9.4'  DOB 
+billing          11px   14.8'  DOB 11px   11.5'  DOB 11px   13.1'  DOB 11px    9.4'  DOB 
+saved-searches   13px   17.5'  kuf 13px   13.6'  DOB 13px   15.4'  DOB 13px   11.2'  DOB 
+te-dhenat-mia    12px   16.2'  kuf 12px   12.6'  DOB 12px   14.3'  DOB 12px   10.3'  DOB 
+referral         11px   14.8'  DOB 11px   11.5'  DOB 11px   13.1'  DOB 11px    9.4'  DOB 
+u-id             14px   18.9'  kuf 14px   14.7'  DOB 14px   16.6'  kuf 14px   12.0'  DOB 
+biznes-analytics 9px    12.1'  DOB 9px     9.4'  DOB 9px    10.7'  DOB 9px     7.7'  DOB 
+listing-edit     11px   14.8'  DOB 11px   11.5'  DOB 11px   13.1'  DOB 11px    9.4'  DOB 
 
-PERMBLEDHJE: 52 matje · nen kufirin ISO 16': 43 (83%) · ne brezin e rehatise 20'+: 0
+PERMBLEDHJE: 112 matje · nen kufirin ISO 16': 94 (84%) · ne brezin e rehatise 20'+: 0
 
 ═══ 3. A SHKALLEZOHET TIPOGRAFIA ME EKRANIN? (px @390 → @2560) ═══
 ballina              10    12    12    12   rritje 390→2560: 20%
@@ -341,23 +357,49 @@ kategori-slug        13    13    13    13   rritje 390→2560: 0%
 kategori-qytet       14    14    14    14   rritje 390→2560: 0%
 search               10    10    10    10   rritje 390→2560: 0%
 search-results       10    10    10    10   rritje 390→2560: 0%
-listing            12.5    13  12.5  12.5   rritje 390→2560: 0%
+listing              11    11    11    11   rritje 390→2560: 0%
 biznese-lista        13    12    12    12   rritje 390→2560: -8%
-biznes-publik        11    12    12    12   rritje 390→2560: 9%
+biznes-publik        12    12    12    12   rritje 390→2560: 0%
 premium            11.5  11.5  11.5  11.5   rritje 390→2560: 0%
 asistent             13    13    13    13   rritje 390→2560: 0%
 kushtet              13    13    13    13   rritje 390→2560: 0%
 rreth-nesh           13    13    13    13   rritje 390→2560: 0%
+biznes-edit          12    12    12    12   rritje 390→2560: 0%
+profile              10    10    10    10   rritje 390→2560: 0%
+messages             12    12    12    12   rritje 390→2560: 0%
+notifications        12    12    12    12   rritje 390→2560: 0%
+favorites            13    13    13    13   rritje 390→2560: 0%
+oferta               13    13    13    13   rritje 390→2560: 0%
+listing-new          10    10    10    10   rritje 390→2560: 0%
+profile-analytics    11    11    11    11   rritje 390→2560: 0%
+billing              11    11    11    11   rritje 390→2560: 0%
+saved-searches       13    13    13    13   rritje 390→2560: 0%
+te-dhenat-mia        12    12    12    12   rritje 390→2560: 0%
+referral             11    11    11    11   rritje 390→2560: 0%
+u-id                 14    14    14    14   rritje 390→2560: 0%
+biznes-analytics      9     9     9     9   rritje 390→2560: 0%
+listing-edit         11    11    11    11   rritje 390→2560: 0%
 
 ═══ 4. MASA (karaktere/rresht) — optimale 45–75 ═══
 kategori            37·   73    73    73    (! = mbi 75, · = nen 45)
 kategori-slug       34·   68    68    68    (! = mbi 75, · = nen 45)
 kategori-qytet      34·   68    68    68    (! = mbi 75, · = nen 45)
-listing             43·   58    44·   44·   (! = mbi 75, · = nen 45)
+listing             32·   58    58    58    (! = mbi 75, · = nen 45)
 premium             59   118!  118!  118!   (! = mbi 75, · = nen 45)
 asistent            41·   63    63    63    (! = mbi 75, · = nen 45)
 kushtet             41·   99!   99!   99!   (! = mbi 75, · = nen 45)
 rreth-nesh          45    65    65    65    (! = mbi 75, · = nen 45)
+biznes-edit         64    64    64    74    (! = mbi 75, · = nen 45)
+profile             32·   64    64    64    (! = mbi 75, · = nen 45)
+notifications       33·   79!   79!   79!   (! = mbi 75, · = nen 45)
+oferta              33·   66    66    66    (! = mbi 75, · = nen 45)
+listing-new         32·   64    64    64    (! = mbi 75, · = nen 45)
+profile-analytics   46    91!   91!   91!   (! = mbi 75, · = nen 45)
+billing             50   150!  150!  150!   (! = mbi 75, · = nen 45)
+saved-searches      32·   63    63    63    (! = mbi 75, · = nen 45)
+te-dhenat-mia       45   135!  135!  135!   (! = mbi 75, · = nen 45)
+referral            37·   74    74    74    (! = mbi 75, · = nen 45)
+listing-edit        32·   66    66    66    (! = mbi 75, · = nen 45)
 
 ═══ 5. CAQET E PREKJES — WCAG 2.5.8 AA kerkon 24px, AAA 44px ═══
 ballina               1/58     1/48     1/60     1/60   (nen24/gjithsej)
@@ -366,13 +408,28 @@ kategori-slug         3/44     3/44     3/44     3/44   (nen24/gjithsej)
 kategori-qytet        4/44     5/44     5/44     5/44   (nen24/gjithsej)
 search                1/42     1/42     1/42     1/42   (nen24/gjithsej)
 search-results        2/44     1/25     2/44     2/44   (nen24/gjithsej)
-listing               2/13     2/32     2/36     2/36   (nen24/gjithsej)
+listing               2/19     2/31     2/31     2/31   (nen24/gjithsej)
 biznese-lista         1/28     1/27     1/28     1/28   (nen24/gjithsej)
-biznes-publik         1/32     1/32     1/32     1/32   (nen24/gjithsej)
+biznes-publik         1/30     1/30     1/30     1/30   (nen24/gjithsej)
 premium               1/36     1/36     1/36     1/36   (nen24/gjithsej)
 asistent              2/30     2/30     2/30     2/30   (nen24/gjithsej)
 kushtet                1/3      2/4      5/7     8/10   (nen24/gjithsej)
 rreth-nesh             1/3      1/3     7/10     7/28   (nen24/gjithsej)
+biznes-edit           4/37     4/37     4/45    12/76   (nen24/gjithsej)
+profile               2/39     2/20     2/39     2/39   (nen24/gjithsej)
+messages              1/26     1/26     1/26     1/26   (nen24/gjithsej)
+notifications         1/43     1/43     1/43     1/43   (nen24/gjithsej)
+favorites             1/23     1/23     1/23     1/23   (nen24/gjithsej)
+oferta                1/25     1/25     1/25     1/25   (nen24/gjithsej)
+listing-new           1/34     1/34     1/54     1/54   (nen24/gjithsej)
+profile-analytics      1/6      1/5     2/27     2/27   (nen24/gjithsej)
+billing               2/27     2/27     2/27     2/27   (nen24/gjithsej)
+saved-searches        1/23     1/23     1/23     1/23   (nen24/gjithsej)
+te-dhenat-mia         3/26     3/26     3/26     3/26   (nen24/gjithsej)
+referral              1/15     1/15     1/16     1/34   (nen24/gjithsej)
+u-id                  1/28     1/28     1/28     1/28   (nen24/gjithsej)
+biznes-analytics      1/24     1/24     1/24     1/24   (nen24/gjithsej)
+listing-edit          2/30     2/30     2/50     2/50   (nen24/gjithsej)
 
 ═══ 6. SHFRYTEZIMI I GJERESISE — glifet kundrejt ekranit ═══
 (kujdes: >100% do te thote permbajtje qe rreshket horizontalisht, jo mbushje)
@@ -382,13 +439,28 @@ kategori-slug        90.3%    89.7%    84.7%    63.5%
 kategori-qytet       89.5%    83.5%    80.6%    60.4%
 search              307.9%    93.8%    89.8%    92.3%
 search-results        319%    10.4%      91%    93.3%
-listing               111%    78.2%    50.1%    37.6%
+listing               111%    78.2%    49.5%    37.1%
 biznese-lista        95.1%      29%    46.5%    47.3%
 biznes-publik        87.7%    80.9%    77.3%    76.8%
 premium              85.1%    87.5%    89.5%    92.1%
 asistent             90.3%    67.3%    44.9%    33.7%
 kushtet              89.7%    59.1%    39.4%    29.5%
 rreth-nesh           85.1%    57.2%    38.1%    28.6%
+biznes-edit          90.8%    75.6%    50.4%    37.8%
+profile              92.3%    89.7%    90.9%    93.2%
+messages             60.5%    40.7%    27.1%    20.4%
+notifications        88.2%    96.4%    97.6%    98.2%
+favorites            67.7%    50.9%    49.5%    49.6%
+oferta               77.7%    65.9%    67.3%    69.3%
+listing-new          87.4%    80.5%    53.7%    40.3%
+profile-analytics    89.7%    88.9%    90.4%    92.8%
+billing              81.5%    86.3%    88.7%    91.5%
+saved-searches       78.2%      54%    51.6%    51.2%
+te-dhenat-mia        89.2%    58.1%    53.6%    52.7%
+referral             85.4%    87.6%    89.5%    92.1%
+u-id                 88.7%    92.1%    93.6%    95.2%
+biznes-analytics     85.6%    87.7%    89.6%    92.2%
+listing-edit         84.1%    79.5%      53%    39.8%
 
 ═══ 7. KONI I REHATISE VIZUALE (±15° foveal, ±30° kufi) ═══
 telefon-390    ekrani=  71mm  koni ±15° =  188mm = 1025px  ±30° =  404mm = 2208px  → ekrani zë 12°
@@ -469,3 +541,105 @@ dukshëm**, i matur live — jo kur ndryshohet skedari.
 Doktrina e tri shtresave (§3), formula e shkallës (§4), kolona 66ch, dhe kriteret e pranimit (§6) qëndrojnë
 të pandryshuara. Gjetja qendrore — tipografi e ngrirë, 83% e matjeve nën minimumin ndërkombëtar, 0% rritje
 nga 390px në 2560px — mbeti e njëjtë edhe pas korrigjimit të konstantes.
+
+---
+
+## 10. REGJISTRI I DEFEKTEVE — çdo gjë e gjetur, me urdhër të pronarit
+
+Rregull: këtu hyn **çdo** defekt i gjetur gjatë punës, edhe ata që nuk kanë lidhje me optikën,
+edhe ata që dolën gabime të miat, edhe alarmet false — që të mos rihapen nga askush më vonë.
+Kolona "Kush" tregon kush e mban: PRODUKT (kodi i platformës), INSTRUMENT (mjetet e matjes),
+PROCES (mënyra si punojmë).
+
+| # | Kush | Defekti | Dëshmia | Gjendja |
+|---|---|---|---|---|
+| D-01 | PRODUKT | Ikonat e kategorive shtypeshin si TEKST (`device-mobile`, `car`…) në faqe publike SEO | HTML i shërbyer: `<span class="seo-cat-ico">device-mobile</span>`; shkaku `app/kategori/page.tsx:57` | Ndrequr nga cloud (`d144bc7`) — por shih D-02 |
+| D-02 | PRODUKT | **Regres i gjallë:** pas ndreqjes së D-01, **13 nga 16 ikona kanë përmasa 0×0px** — kartat mbetën bosh, më keq se para | Matje live @1280 mbi `ccaa5d5`: `.seo-cat-ico i` me `getBoundingClientRect()` 0×0 për car, home, shirt, armchair, paw, tools, briefcase, salad, plane, ball, book, device-gamepad, dots. Foto: `.ops/autopsi/kategori-pas-fixit.png` | HAPUR — U-08 hapi 2 (rigjenerimi i subset-it) |
+| D-03 | PRODUKT | Tipografi e ngrirë: 0% rritje nga 390px në 2560px; 83% e matjeve nën minimumin ISO 16′ | §2, 52 matje | HAPUR — Faza 0 + U-01 |
+| D-04 | PRODUKT | Masa shpërthen: `/billing` **150ch**, `/te-dhenat-mia` **135ch**, `/premium` 118ch, `/kushtet` 99ch, `/profile/analytics` 91ch, `/notifications` 79ch — të gjitha mbi kufirin 75 | Matje @1280 dhe @1920 | HAPUR — U-07 zgjerohet te faqet e kyçura |
+| D-05 | PRODUKT | Caqe prekjeje nën WCAG 2.2 AA (24px): `/kushtet` 8/10 @2560, `/rreth-nesh` 7/10 @1920, `/te-dhenat-mia` 3, `/listing/[id]/edit` cak mesatar 36px me 2 nën 24 | Matje live | HAPUR — U-05/U-07 |
+| D-06 | PRODUKT | Borxh strukturor: **931 `fontSize` inline**, **0 `clamp()`** — asgjë s'shkallëzohet dot qendrore | `grep -rno` | HAPUR — U-01 |
+| D-07 | PRODUKT | `/listing/[id]` kapet me `max-width:1140px !important` nga `ListingMediaContext.tsx:33`, duke mbishkruar rregullin 100% | Gjurmues DOM live (T-042) | HAPUR — U-03 |
+| D-08 | PRODUKT | `/biznese/[id]/analytics` ka trup teksti **9px** — teksti më i vogël i gjetur në faqe të plotë (≈6.8′ @1280, dy të tretat nën minimumin) | Matje live pas hyrjes | HAPUR — urdhër i ri U-09 |
+| D-09 | INSTRUMENT | Cache-i i profilit të auditit mbante një **404 të ruajtur për `/_next/static/chunks/webpack-*.js`** → faqet nuk hidratoheshin → matje krejt false | Konsola: "Refused to execute script … MIME type ('text/plain')"; me `curl` i njëjti chunk kthen 200 | NDREQUR — cache-i pastrohet te `hyrje-dritare.mjs` para çdo sesioni |
+| D-10 | PROCES | Sesioni i profilit skadon pa paralajmërim; 6 rrugë u matën si guaskë login-i pa u vënë re | Xhiroja e parë: `/profile`, `/messages`, `/favorites`, `/oferta`, `/listing/new` me numra identikë 17.5% | NDREQUR — hyrje e re + kontroll `location.pathname` |
+| D-11 | INSTRUMENT | Flamuri "GUASKË" me regex jepte **false-positive** (kapte tekste normale si "Hyr për të kontaktuar" te `/listing/[id]`) | Faqe me përmbajtje reale u shënuan GUASKË | NDREQUR — kontroll mbi `location.pathname` + `h1` |
+| D-12 | INSTRUMENT | `shfrytezimi > 100%` (ballina @390 = 385%) lexohej si "dalje nga ekrani", ndërsa janë çipa/karusele që rrëshqasin brenda kontejnerit | Krahasim me `scrollWidth` mungonte | NDREQUR — shtuar `dalje` + `scrollWidth` |
+| D-13 | INSTRUMENT | Instrumenti **mbishkruante** daljen e mëparshme; matja publike gati u fshi nga ajo e kyçur | Vënë re para se të ndodhte | NDREQUR — `DALJA=` + bashkim jo-shkatërrues |
+| D-14 | — | **ALARM FALS, mos e rihap:** `/biznese` dukej bosh (0 biznese) | Ishte pasojë e D-09. Me shfletues të pastër biznesi "Makina" rendërohet normalisht (8 karta); API-ja anonime e kthen rreshtin me 200 | MBYLLUR |
+| D-15 | PLAN | Konstantja cap-height 0.72 ishte huazuar nga Inter; fonti real është Plus Jakarta Sans | Matje live me canvas: cap **0.750**, x **0.540** | NDREQUR — §9-A1 |
+| D-16 | PLAN | Maksimumi i shkallës nuk mbulonte ultrawide 3440 | Kërkesa 26.7px kundrejt 26px | NDREQUR — §9-A3, tani 1.75rem |
+| D-17 | PLAN | Baza e rojës 930 ishte numër rreshtash, jo dukurish | `grep -rno` = 931 | NDREQUR — §9-A6 |
+| D-18 | PLAN | Rreziku i thyerjes nga zëvendësimi i menjëhershëm ishte i nënvlerësuar | +66% rritje në disa tekste | NDREQUR — Faza 0, §9-A4 |
+| D-19 | PLAN | **Zoom-i 200% i shfletuesit kundër `clamp()` me `vw`:** termi `vw` nuk rritet fizikisht me zoom-in, ndaj në 1280 zoom-i 200% jep vetëm ~1.71× rritje reale, jo 2× | Llogaritje mbi formulën e §4 | HAPUR — vendim te auditimi i dytë (§11) |
+| D-20 | PLAN | `66ch` matet me gjerësinë e shifrës "0", jo me gjerësinë mesatare të karakterit (0.5606em e matur) | Përkufizim CSS | HAPUR — matje e drejtpërdrejtë te §11 |
+| D-21 | PRODUKT | Nga fotot e pronarit: `/messages` në desktop shfaq shirit të errët me një "vrimë" drejtkëndore të bardhë — layout i thyer | Foto e pronarit, 5 shtator | PËR VERIFIKIM në matjen e kyçur |
+
+
+---
+
+## 11. AUDITIMI I DYTË (pas autopsisë së plotë, me urdhër të pronarit)
+
+Autopsia u plotësua me 15 rrugët pas hyrjes (pronari hyri me Google në dritaren e auditit,
+5 shtator). Baza tani: **28 faqe · 112 matje**. Verdikti: **94/112 (84%) nën 16′ · zero në 20′+**.
+Auditimi i dytë gjeti **një gabim që do ta kishte rrëzuar planin nga brenda**, plus katër defekte të reja.
+
+### A9 · GABIM I RËNDË I IMI: `66ch` NUK do të thotë 66 karaktere — E NDREQUR
+`ch` përkufizohet si gjerësia e shifrës **"0"**, jo si gjerësia mesatare e karakterit.
+E mata në shfletues mbi fontin real: **1ch = 0.7315em**, ndërsa karakteri mesatar është **0.5606em**.
+Pra `max-width:66ch` jep një rresht që nxë **66 × 0.7315 ÷ 0.5606 = 86 karaktere reale** — mbi kufirin 75.
+
+**Pasoja po të mos kapej:** code-i do të zbatonte `66ch`, instrumenti im do ta maste rreshtin si 86
+karaktere, dhe plani do të dështonte në kriterin e vet të pranimit (§6: "0 faqe mbi 75ch") — pa e
+kuptuar askush pse. Plani do ta kishte rrëzuar veten.
+
+**Ndreqja:** kolona e leximit bëhet **`37em`** (= 66 × 0.5606em). E matur në shfletues:
+744px @1280 · 853px @1920 · 962px @2560 — të gjitha brenda konit ±15°.
+Kush do ekuivalentin në `ch`: **50ch**, jo 66ch.
+
+### A10 · Zoom-i 200% kundër shkallës së lëngshme (D-19) — I VERIFIKUAR, PRANOHET
+E mata formulën e §4 drejtpërdrejt në shfletues, gjerësi për gjerësi:
+
+| Gjerësia | `--fs-baza` e matur | Kërkesa ISO 20′ |
+|---|---|---|
+| 390px | **16.00px** | 14.8 ✓ |
+| 640px (= 1280 me zoom 200%) | 17.15px | — |
+| 768px | 17.74px | — |
+| 1280px | **20.10px** | 19.1 ✓ |
+| 1920px | **23.05px** | 16.8 ✓ |
+| 2560px | **26.00px** | 23.3 ✓ |
+| 3440px | **28.00px** | 26.7 ✓ |
+
+Formula i plotëson të gjitha kërkesat në shfletues, jo vetëm në letër.
+
+Për zoom-in: në 1280 me zoom 200% viewport-i bëhet 640 CSS px → shkronja 17.15 CSS px, që fizikisht
+barazohet me 34.3px të pa-zoom-uara → **rritje reale 1.71×, jo 2×**. Termi `vw` nuk rritet fizikisht me
+zoom-in; vetëm termi `rem` rritet.
+**Vendimi: pranohet**, sepse WCAG 1.4.4 kërkon që teksti të mund të zmadhohet deri 200% **pa u prishur
+përmbajtja** — jo që raporti të jetë saktësisht 2×. Dhe në terma absolutë përdoruesi me shikim të dobët
+merr **35.9′** në atë gjendje, mbi dyfishin e brezit të rehatisë 20–22′.
+**Kusht i pranimit (i ri):** çdo faqe kontrollohet me zoom 200% për prerje/mbivendosje; nëse diçka
+thyhet, kthim mbrapa.
+
+### A11 · Defekte të reja nga faqet pas hyrjes (nuk ekzistonin në planin e parë)
+| # | Faqja | Gjetja e matur | Urdhri |
+|---|---|---|---|
+| D-22 | `/biznese/[id]/analytics` | trup **9px** → **7.7′ @2560** — teksti më i vogël në platformë në faqe të plotë | U-09 |
+| D-23 | `/billing` | masa **150ch** @1280 — dyfishi i kufirit | U-07 |
+| D-24 | `/te-dhenat-mia` | masa **135ch**; 3 caqe nën 24px | U-07 |
+| D-25 | `/biznese/[id]/edit` | **12 caqe nën 24px** @2560 — faqja më e keqe e platformës për prekjen | U-10 |
+| D-21 | `/messages` | **KONFIRMUAR** ai që fotografoi pronari: shirit i errët në gjithë gjerësinë me "vrimë" krem 960px në mes, që ndërpritet befas. Shkaku: `app/messages/page.tsx:750` → `@media(min-width:1024px){.page{max-width:960px}}` brenda një sfondi të errët full-bleed. Foto: `.ops/autopsi/messages-1920.png` | U-11 |
+
+### A12 · Urdhra të rinj pune
+- **U-09** `/biznese/[id]/analytics`: 9px → shkalla; kartat e statistikave në Shtresën A.
+- **U-10** `/biznese/[id]/edit` dhe formularët: caqet ≥44px; fushat me gjerësi sipas përmbajtjes.
+- **U-11** `/messages`: guaska e errët dhe kolona duhet të përputhen — ose sfondi ndjek kolonën
+  (960px→`37em` bisedë), ose kolona mbush guaskën. Sot janë dy gjerësi të ndryshme mbi njëra-tjetrën.
+- **U-07 zgjerohet** me `/billing`, `/te-dhenat-mia`, `/profile/analytics`, `/notifications`.
+
+### A13 · Çfarë kontrollova dhe DOLI E SAKTË
+- Formula e §4 — e verifikuar në shfletues në 7 gjerësi (tabela e A10).
+- Koni ±15° kundrejt kolonës 37em — kolona rri brenda tij në çdo gjerësi.
+- Doktrina e tri shtresave, Faza 0, kriteret e pranimit — të pandryshuara.
+- Verdikti qendror nuk lëvizi kur baza u zgjerua nga 52 në 112 matje: **83% → 84%**. Kampioni i parë
+  ishte përfaqësues; faqet pas hyrjes janë pak më të këqija se ato publike, jo më të mira.

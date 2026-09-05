@@ -15,15 +15,30 @@ kategori-slug    13px   17.5'  kuf 13px   13.6'  DOB 13px   15.4'  DOB 13px   11
 kategori-qytet   14px   18.9'  kuf 14px   14.7'  DOB 14px   16.6'  kuf 14px   12.0'  DOB 
 search           10px   13.5'  DOB 10px   10.5'  DOB 10px   11.9'  DOB 10px    8.6'  DOB 
 search-results   10px   13.5'  DOB 10px   10.5'  DOB 10px   11.9'  DOB 10px    8.6'  DOB 
-listing          12.5px 16.9'  kuf 13px   13.6'  DOB 12.5px 14.9'  DOB 12.5px 10.7'  DOB 
+listing          11px   14.8'  DOB 11px   11.5'  DOB 11px   13.1'  DOB 11px    9.4'  DOB 
 biznese-lista    13px   17.5'  kuf 12px   12.6'  DOB 12px   14.3'  DOB 12px   10.3'  DOB 
-biznes-publik    11px   14.8'  DOB 12px   12.6'  DOB 12px   14.3'  DOB 12px   10.3'  DOB 
+biznes-publik    12px   16.2'  kuf 12px   12.6'  DOB 12px   14.3'  DOB 12px   10.3'  DOB 
 premium          11.5px 15.5'  DOB 11.5px 12.0'  DOB 11.5px 13.7'  DOB 11.5px  9.9'  DOB 
 asistent         13px   17.5'  kuf 13px   13.6'  DOB 13px   15.4'  DOB 13px   11.2'  DOB 
 kushtet          13px   17.5'  kuf 13px   13.6'  DOB 13px   15.4'  DOB 13px   11.2'  DOB 
 rreth-nesh       13px   17.5'  kuf 13px   13.6'  DOB 13px   15.4'  DOB 13px   11.2'  DOB 
+biznes-edit      12px   16.2'  kuf 12px   12.6'  DOB 12px   14.3'  DOB 12px   10.3'  DOB 
+profile          10px   13.5'  DOB 10px   10.5'  DOB 10px   11.9'  DOB 10px    8.6'  DOB 
+messages         12px   16.2'  kuf 12px   12.6'  DOB 12px   14.3'  DOB 12px   10.3'  DOB 
+notifications    12px   16.2'  kuf 12px   12.6'  DOB 12px   14.3'  DOB 12px   10.3'  DOB 
+favorites        13px   17.5'  kuf 13px   13.6'  DOB 13px   15.4'  DOB 13px   11.2'  DOB 
+oferta           13px   17.5'  kuf 13px   13.6'  DOB 13px   15.4'  DOB 13px   11.2'  DOB 
+listing-new      10px   13.5'  DOB 10px   10.5'  DOB 10px   11.9'  DOB 10px    8.6'  DOB 
+profile-analytics11px   14.8'  DOB 11px   11.5'  DOB 11px   13.1'  DOB 11px    9.4'  DOB 
+billing          11px   14.8'  DOB 11px   11.5'  DOB 11px   13.1'  DOB 11px    9.4'  DOB 
+saved-searches   13px   17.5'  kuf 13px   13.6'  DOB 13px   15.4'  DOB 13px   11.2'  DOB 
+te-dhenat-mia    12px   16.2'  kuf 12px   12.6'  DOB 12px   14.3'  DOB 12px   10.3'  DOB 
+referral         11px   14.8'  DOB 11px   11.5'  DOB 11px   13.1'  DOB 11px    9.4'  DOB 
+u-id             14px   18.9'  kuf 14px   14.7'  DOB 14px   16.6'  kuf 14px   12.0'  DOB 
+biznes-analytics 9px    12.1'  DOB 9px     9.4'  DOB 9px    10.7'  DOB 9px     7.7'  DOB 
+listing-edit     11px   14.8'  DOB 11px   11.5'  DOB 11px   13.1'  DOB 11px    9.4'  DOB 
 
-PERMBLEDHJE: 52 matje · nen kufirin ISO 16': 43 (83%) · ne brezin e rehatise 20'+: 0
+PERMBLEDHJE: 112 matje · nen kufirin ISO 16': 94 (84%) · ne brezin e rehatise 20'+: 0
 
 ═══ 3. A SHKALLEZOHET TIPOGRAFIA ME EKRANIN? (px @390 → @2560) ═══
 ballina              10    12    12    12   rritje 390→2560: 20%
@@ -32,23 +47,49 @@ kategori-slug        13    13    13    13   rritje 390→2560: 0%
 kategori-qytet       14    14    14    14   rritje 390→2560: 0%
 search               10    10    10    10   rritje 390→2560: 0%
 search-results       10    10    10    10   rritje 390→2560: 0%
-listing            12.5    13  12.5  12.5   rritje 390→2560: 0%
+listing              11    11    11    11   rritje 390→2560: 0%
 biznese-lista        13    12    12    12   rritje 390→2560: -8%
-biznes-publik        11    12    12    12   rritje 390→2560: 9%
+biznes-publik        12    12    12    12   rritje 390→2560: 0%
 premium            11.5  11.5  11.5  11.5   rritje 390→2560: 0%
 asistent             13    13    13    13   rritje 390→2560: 0%
 kushtet              13    13    13    13   rritje 390→2560: 0%
 rreth-nesh           13    13    13    13   rritje 390→2560: 0%
+biznes-edit          12    12    12    12   rritje 390→2560: 0%
+profile              10    10    10    10   rritje 390→2560: 0%
+messages             12    12    12    12   rritje 390→2560: 0%
+notifications        12    12    12    12   rritje 390→2560: 0%
+favorites            13    13    13    13   rritje 390→2560: 0%
+oferta               13    13    13    13   rritje 390→2560: 0%
+listing-new          10    10    10    10   rritje 390→2560: 0%
+profile-analytics    11    11    11    11   rritje 390→2560: 0%
+billing              11    11    11    11   rritje 390→2560: 0%
+saved-searches       13    13    13    13   rritje 390→2560: 0%
+te-dhenat-mia        12    12    12    12   rritje 390→2560: 0%
+referral             11    11    11    11   rritje 390→2560: 0%
+u-id                 14    14    14    14   rritje 390→2560: 0%
+biznes-analytics      9     9     9     9   rritje 390→2560: 0%
+listing-edit         11    11    11    11   rritje 390→2560: 0%
 
 ═══ 4. MASA (karaktere/rresht) — optimale 45–75 ═══
 kategori            37·   73    73    73    (! = mbi 75, · = nen 45)
 kategori-slug       34·   68    68    68    (! = mbi 75, · = nen 45)
 kategori-qytet      34·   68    68    68    (! = mbi 75, · = nen 45)
-listing             43·   58    44·   44·   (! = mbi 75, · = nen 45)
+listing             32·   58    58    58    (! = mbi 75, · = nen 45)
 premium             59   118!  118!  118!   (! = mbi 75, · = nen 45)
 asistent            41·   63    63    63    (! = mbi 75, · = nen 45)
 kushtet             41·   99!   99!   99!   (! = mbi 75, · = nen 45)
 rreth-nesh          45    65    65    65    (! = mbi 75, · = nen 45)
+biznes-edit         64    64    64    74    (! = mbi 75, · = nen 45)
+profile             32·   64    64    64    (! = mbi 75, · = nen 45)
+notifications       33·   79!   79!   79!   (! = mbi 75, · = nen 45)
+oferta              33·   66    66    66    (! = mbi 75, · = nen 45)
+listing-new         32·   64    64    64    (! = mbi 75, · = nen 45)
+profile-analytics   46    91!   91!   91!   (! = mbi 75, · = nen 45)
+billing             50   150!  150!  150!   (! = mbi 75, · = nen 45)
+saved-searches      32·   63    63    63    (! = mbi 75, · = nen 45)
+te-dhenat-mia       45   135!  135!  135!   (! = mbi 75, · = nen 45)
+referral            37·   74    74    74    (! = mbi 75, · = nen 45)
+listing-edit        32·   66    66    66    (! = mbi 75, · = nen 45)
 
 ═══ 5. CAQET E PREKJES — WCAG 2.5.8 AA kerkon 24px, AAA 44px ═══
 ballina               1/58     1/48     1/60     1/60   (nen24/gjithsej)
@@ -57,13 +98,28 @@ kategori-slug         3/44     3/44     3/44     3/44   (nen24/gjithsej)
 kategori-qytet        4/44     5/44     5/44     5/44   (nen24/gjithsej)
 search                1/42     1/42     1/42     1/42   (nen24/gjithsej)
 search-results        2/44     1/25     2/44     2/44   (nen24/gjithsej)
-listing               2/13     2/32     2/36     2/36   (nen24/gjithsej)
+listing               2/19     2/31     2/31     2/31   (nen24/gjithsej)
 biznese-lista         1/28     1/27     1/28     1/28   (nen24/gjithsej)
-biznes-publik         1/32     1/32     1/32     1/32   (nen24/gjithsej)
+biznes-publik         1/30     1/30     1/30     1/30   (nen24/gjithsej)
 premium               1/36     1/36     1/36     1/36   (nen24/gjithsej)
 asistent              2/30     2/30     2/30     2/30   (nen24/gjithsej)
 kushtet                1/3      2/4      5/7     8/10   (nen24/gjithsej)
 rreth-nesh             1/3      1/3     7/10     7/28   (nen24/gjithsej)
+biznes-edit           4/37     4/37     4/45    12/76   (nen24/gjithsej)
+profile               2/39     2/20     2/39     2/39   (nen24/gjithsej)
+messages              1/26     1/26     1/26     1/26   (nen24/gjithsej)
+notifications         1/43     1/43     1/43     1/43   (nen24/gjithsej)
+favorites             1/23     1/23     1/23     1/23   (nen24/gjithsej)
+oferta                1/25     1/25     1/25     1/25   (nen24/gjithsej)
+listing-new           1/34     1/34     1/54     1/54   (nen24/gjithsej)
+profile-analytics      1/6      1/5     2/27     2/27   (nen24/gjithsej)
+billing               2/27     2/27     2/27     2/27   (nen24/gjithsej)
+saved-searches        1/23     1/23     1/23     1/23   (nen24/gjithsej)
+te-dhenat-mia         3/26     3/26     3/26     3/26   (nen24/gjithsej)
+referral              1/15     1/15     1/16     1/34   (nen24/gjithsej)
+u-id                  1/28     1/28     1/28     1/28   (nen24/gjithsej)
+biznes-analytics      1/24     1/24     1/24     1/24   (nen24/gjithsej)
+listing-edit          2/30     2/30     2/50     2/50   (nen24/gjithsej)
 
 ═══ 6. SHFRYTEZIMI I GJERESISE — glifet kundrejt ekranit ═══
 (kujdes: >100% do te thote permbajtje qe rreshket horizontalisht, jo mbushje)
@@ -73,13 +129,28 @@ kategori-slug        90.3%    89.7%    84.7%    63.5%
 kategori-qytet       89.5%    83.5%    80.6%    60.4%
 search              307.9%    93.8%    89.8%    92.3%
 search-results        319%    10.4%      91%    93.3%
-listing               111%    78.2%    50.1%    37.6%
+listing               111%    78.2%    49.5%    37.1%
 biznese-lista        95.1%      29%    46.5%    47.3%
 biznes-publik        87.7%    80.9%    77.3%    76.8%
 premium              85.1%    87.5%    89.5%    92.1%
 asistent             90.3%    67.3%    44.9%    33.7%
 kushtet              89.7%    59.1%    39.4%    29.5%
 rreth-nesh           85.1%    57.2%    38.1%    28.6%
+biznes-edit          90.8%    75.6%    50.4%    37.8%
+profile              92.3%    89.7%    90.9%    93.2%
+messages             60.5%    40.7%    27.1%    20.4%
+notifications        88.2%    96.4%    97.6%    98.2%
+favorites            67.7%    50.9%    49.5%    49.6%
+oferta               77.7%    65.9%    67.3%    69.3%
+listing-new          87.4%    80.5%    53.7%    40.3%
+profile-analytics    89.7%    88.9%    90.4%    92.8%
+billing              81.5%    86.3%    88.7%    91.5%
+saved-searches       78.2%      54%    51.6%    51.2%
+te-dhenat-mia        89.2%    58.1%    53.6%    52.7%
+referral             85.4%    87.6%    89.5%    92.1%
+u-id                 88.7%    92.1%    93.6%    95.2%
+biznes-analytics     85.6%    87.7%    89.6%    92.2%
+listing-edit         84.1%    79.5%      53%    39.8%
 
 ═══ 7. KONI I REHATISE VIZUALE (±15° foveal, ±30° kufi) ═══
 telefon-390    ekrani=  71mm  koni ±15° =  188mm = 1025px  ±30° =  404mm = 2208px  → ekrani zë 12°
