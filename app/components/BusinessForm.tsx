@@ -210,9 +210,9 @@ export default function BusinessForm({ mode, initial, onSaved }: {
   return (
     <div>
       <style dangerouslySetInnerHTML={{ __html: `
-        .bf-input{width:100%;border:1px solid #e5e5e5;border-radius:10px;padding:11px 13px;font-size:13px;font-family:inherit;background:#fff;outline:none;box-sizing:border-box;}
+        .bf-input{width:100%;border:1px solid #e5e5e5;border-radius:10px;padding:11px 13px;font-size:var(--fs-trup);min-height:44px;font-family:inherit;background:#fff;outline:none;box-sizing:border-box;}
         .bf-input:focus{border-color:var(--az-red);}
-        .bf-chip{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1.5px solid #ddd;border-radius:20px;padding:7px 13px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;}
+        .bf-chip{display:inline-flex;align-items:center;justify-content:center;gap:5px;background:#fff;border:1.5px solid #ddd;border-radius:20px;padding:9px 14px;font-size:var(--fs-meta);min-height:44px;font-weight:600;cursor:pointer;transition:all .15s;}
         .bf-chip.on{background:var(--az-yellow);border-color:var(--az-yellow);color:#111;}
         .bf-save{width:100%;background:linear-gradient(135deg,var(--az-red),#c42a0e);color:#fff;border:none;border-radius:13px;padding:15px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;margin-top:20px;}
         .bf-save:disabled{opacity:.5;cursor:not-allowed;}
@@ -247,7 +247,7 @@ export default function BusinessForm({ mode, initial, onSaved }: {
             <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const x = e.target.files?.[0]; if (x) { setLogoFile(x); setLogoPrev(URL.createObjectURL(x)) } }} />
           </label>
           {logoPrev && (
-            <button type="button" aria-label="Hiq logon" onClick={() => { setLogoFile(null); setLogoPrev('') }} style={{ position: 'absolute', top: -6, right: -6, width: 20, height: 20, borderRadius: '50%', background: 'var(--az-red)', color: '#fff', border: '2px solid #fff', cursor: 'pointer', fontSize: 'var(--fs-dysheme)', lineHeight: 1 }}>✕</button>
+            <button type="button" aria-label="Hiq logon" onClick={() => { setLogoFile(null); setLogoPrev('') }} style={{ position: 'absolute', top: -6, right: -6, width: 26, height: 26, borderRadius: '50%', background: 'var(--az-red)', color: '#fff', border: '2px solid #fff', cursor: 'pointer', fontSize: 'var(--fs-dysheme)', lineHeight: 1 }}>✕</button>
           )}
         </div>
       </div>
@@ -283,12 +283,12 @@ export default function BusinessForm({ mode, initial, onSaved }: {
               <img src={it.file ? it.prev : it.url} alt="" style={{ width: 72, height: 72, objectFit: 'cover', borderRadius: 8, border: i === 0 ? '2px solid var(--az-yellow)' : '1px solid #eee' }} />
               {i === 0 && <span style={{ position: 'absolute', top: 0, left: 0, background: 'var(--az-yellow)', color: '#111', fontSize: 'var(--fs-dysheme)', fontWeight: 800, padding: '1px 4px', borderRadius: '8px 0 6px 0' }} aria-hidden="true">KRYESORE</span>}
               {it.file && <span style={{ position: 'absolute', bottom: 0, right: 0, background: 'rgba(14,122,53,.9)', color: '#fff', fontSize: 'var(--fs-dysheme)', padding: '1px 4px', borderRadius: '6px 0 8px 0' }} aria-hidden="true">E re</span>}
-              <button type="button" aria-label="Fshi foton" onClick={() => removeGalleryItem(it.id)} style={{ position: 'absolute', top: -6, right: -6, width: 20, height: 20, borderRadius: '50%', background: 'var(--az-red)', color: '#fff', border: '2px solid #fff', cursor: 'pointer', fontSize: 'var(--fs-dysheme)', lineHeight: 1 }}>✕</button>
+              <button type="button" aria-label="Fshi foton" onClick={() => removeGalleryItem(it.id)} style={{ position: 'absolute', top: -6, right: -6, width: 26, height: 26, borderRadius: '50%', background: 'var(--az-red)', color: '#fff', border: '2px solid #fff', cursor: 'pointer', fontSize: 'var(--fs-dysheme)', lineHeight: 1 }}>✕</button>
             </div>
             {/* Rendit: ◀ ▶ (e para = kryesore) */}
             <div style={{ display: 'flex', gap: 4, marginTop: 3, justifyContent: 'center' }}>
-              <button type="button" aria-label="Zhvendos majtas" disabled={i === 0} onClick={() => moveGalleryItem(it.id, -1)} style={{ flex: 1, border: '1px solid #ddd', background: i === 0 ? '#f5f5f5' : '#fff', borderRadius: 6, fontSize: 'var(--fs-dysheme)', cursor: i === 0 ? 'default' : 'pointer', color: i === 0 ? '#ccc' : '#555', lineHeight: 1.6, fontFamily: 'inherit' }}>◀</button>
-              <button type="button" aria-label="Zhvendos djathtas" disabled={i === galleryItems.length - 1} onClick={() => moveGalleryItem(it.id, 1)} style={{ flex: 1, border: '1px solid #ddd', background: i === galleryItems.length - 1 ? '#f5f5f5' : '#fff', borderRadius: 6, fontSize: 'var(--fs-dysheme)', cursor: i === galleryItems.length - 1 ? 'default' : 'pointer', color: i === galleryItems.length - 1 ? '#ccc' : '#555', lineHeight: 1.6, fontFamily: 'inherit' }}>▶</button>
+              <button type="button" aria-label="Zhvendos majtas" disabled={i === 0} onClick={() => moveGalleryItem(it.id, -1)} style={{ flex: 1, minHeight: 36, border: '1px solid #ddd', background: i === 0 ? '#f5f5f5' : '#fff', borderRadius: 6, fontSize: 'var(--fs-dysheme)', cursor: i === 0 ? 'default' : 'pointer', color: i === 0 ? '#ccc' : '#555', lineHeight: 1.6, fontFamily: 'inherit' }}>◀</button>
+              <button type="button" aria-label="Zhvendos djathtas" disabled={i === galleryItems.length - 1} onClick={() => moveGalleryItem(it.id, 1)} style={{ flex: 1, minHeight: 36, border: '1px solid #ddd', background: i === galleryItems.length - 1 ? '#f5f5f5' : '#fff', borderRadius: 6, fontSize: 'var(--fs-dysheme)', cursor: i === galleryItems.length - 1 ? 'default' : 'pointer', color: i === galleryItems.length - 1 ? '#ccc' : '#555', lineHeight: 1.6, fontFamily: 'inherit' }}>▶</button>
             </div>
           </div>
         ))}

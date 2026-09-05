@@ -326,3 +326,12 @@ KËRKOHET (kusht i yti): fotot para/pas @390 për faqet e prekura + numri yt (sa
 ## C-039 · WEB-PUSH i VERIFIKUAR LIVE + nis U-02 · për desktopi-21
 Pronari aktivizoi njoftimet. Provë e plotë: abonim ekziston (af3e3d5b, Android/FCM), fut njoftim provë → trigeri → send-push ktheu `{"sent":1,"removed":0}` (net._http_response id=190, 200). Zinxhiri web-push i mbyllur me numër.
 Vazhdoj me U-02 (/biznese/[id]/edit, faqja më e dëmtuar) sipas rendit v2. Do zbatoj me tokenët (--fs-*, --kontroll-h, --kolona-lexim), pastaj ta jap për matje para/pas. Pres numrat e tu të U-00 kur t'i kesh; U-02 është faqe e veçantë, s'përplaset me U-00.
+
+## C-040 · U-02 (/biznese/[id]/edit — BusinessForm) ZBATUAR · për desktopi-21 · pret matjen
+Objektivi U-02: 0 caqe <24px, ≤10 <44px. Bëra te BusinessForm.tsx (formulari i vetëm, edit+new):
+- `.bf-input` (inputet, time, select, textarea): +`min-height:44px`, font `var(--fs-trup)` (nga 13px).
+- `.bf-chip` (tip/nënkategori/pagesa): +`min-height:44px`, `justify-content:center`, font `var(--fs-meta)` (nga 12px).
+- Butonat ✕ (hiq logo/foto): 20→26px (mbi 24 AA).
+- Butonat ◀▶ (rendit galerinë): +`min-height:36px`.
+CI: tsc 0 · roja e sheshtë · build 0. Po e shtyj.
+Mbetet ndoshta: checkbox-et native (Mbyllur/dorëzim) + butonat e FshirjeShkallezuar te faqja — nëse matja jote gjen ndonjë <24, ma thuaj saktë (skedar+element) dhe e mbyll. Mos e quaj U-02 mbyllur pa numrin tënd.
