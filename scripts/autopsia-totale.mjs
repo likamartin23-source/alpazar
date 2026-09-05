@@ -35,11 +35,14 @@ const RRUGET_BAZE = [
   '/te-dhenat-mia', `/u/${UID}`,
 ]
 
-const EKRANET = [
+const TE_GJITHA_EKRANET = [
   { emri: 'telefon-390', w: 390, h: 844, mmPerPx: 71.4 / 390, dist: 350, mob: true },
   { emri: 'laptop-1280', w: 1280, h: 800, mmPerPx: 286 / 1280, dist: 550, mob: false },
   { emri: 'desktop-1920', w: 1920, h: 1080, mmPerPx: 531 / 1920, dist: 600, mob: false },
 ]
+const EKRANET = process.env.EKRANET
+  ? TE_GJITHA_EKRANET.filter((e) => process.env.EKRANET.split(',').includes(e.emri))
+  : TE_GJITHA_EKRANET
 const CAP = 0.750          // matur live: Plus Jakarta Sans
 const GJER_MES = 0.5606    // gjerësi mesatare karakteri, em
 const arcmin = (px, mmPerPx, dist) => 2 * Math.atan((px * CAP * mmPerPx) / (2 * dist)) * (180 / Math.PI) * 60
