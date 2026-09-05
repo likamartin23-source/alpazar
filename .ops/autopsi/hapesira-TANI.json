@@ -1,0 +1,139 @@
+{
+ "baza": "https://alpazar.vercel.app",
+ "gjeresia": 1920,
+ "kur": "2026-09-05T13:24:15.381Z",
+ "faqet": {
+  "/kushtet": {
+   "vw": 1920,
+   "glifetMajtas": 474,
+   "glifetDjathtas": 1409,
+   "gjeresiaTekstit": 935,
+   "marzhiMajtas": 474,
+   "marzhiDjathtas": 511,
+   "shfrytezimi": 48.7,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 1920,
+    "la": 6173
+   },
+   "panel": {
+    "gj": 1014,
+    "x": 453,
+    "emri": "div.wrap"
+   },
+   "rruga": "/kushtet",
+   "guaske": false
+  },
+  "/privatesia": {
+   "vw": 1920,
+   "glifetMajtas": 684,
+   "glifetDjathtas": 1235,
+   "gjeresiaTekstit": 551,
+   "marzhiMajtas": 684,
+   "marzhiDjathtas": 685,
+   "shfrytezimi": 28.7,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 1920,
+    "la": 5441
+   },
+   "panel": {
+    "gj": 592,
+    "x": 664,
+    "emri": "div.wrap"
+   },
+   "rruga": "/privatesia",
+   "guaske": false
+  },
+  "/cookies": {
+   "vw": 1920,
+   "glifetMajtas": 684,
+   "glifetDjathtas": 1244,
+   "gjeresiaTekstit": 560,
+   "marzhiMajtas": 684,
+   "marzhiDjathtas": 677,
+   "shfrytezimi": 29.1,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 1920,
+    "la": 4506
+   },
+   "panel": {
+    "gj": 592,
+    "x": 664,
+    "emri": "div.wrap"
+   },
+   "rruga": "/cookies",
+   "guaske": false
+  },
+  "/siguria": {
+   "vw": 1920,
+   "glifetMajtas": 684,
+   "glifetDjathtas": 1221,
+   "gjeresiaTekstit": 537,
+   "marzhiMajtas": 684,
+   "marzhiDjathtas": 699,
+   "shfrytezimi": 28,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 1920,
+    "la": 2378
+   },
+   "panel": {
+    "gj": 592,
+    "x": 664,
+    "emri": "div.wrap"
+   },
+   "rruga": "/siguria",
+   "guaske": false
+  },
+  "/takedown": {
+   "vw": 1920,
+   "glifetMajtas": 670,
+   "glifetDjathtas": 1250,
+   "gjeresiaTekstit": 580,
+   "marzhiMajtas": 670,
+   "marzhiDjathtas": 670,
+   "shfrytezimi": 30.2,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 1920,
+    "la": 1577
+   },
+   "panel": {
+    "gj": 1920,
+    "x": 0,
+    "emri": "div"
+   },
+   "rruga": "/takedown",
+   "guaske": false
+  },
+  "/rreth-nesh": {
+   "vw": 1920,
+   "glifetMajtas": 684,
+   "glifetDjathtas": 1213,
+   "gjeresiaTekstit": 529,
+   "marzhiMajtas": 684,
+   "marzhiDjathtas": 707,
+   "shfrytezimi": 27.6,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 1920,
+    "la": 2824
+   },
+   "panel": {
+    "gj": 592,
+    "x": 664,
+    "emri": "div.wrap"
+   },
+   "rruga": "/rreth-nesh",
+   "guaske": false
+  }
+ }
+}

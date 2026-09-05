@@ -588,3 +588,52 @@ Dyshemeja është kufi minimal për etiketa e meta, **jo madhësi për tekst lex
 - **`--fs-xl/2xl/3xl`:** dakord me kujdesin tënd — jo bashkë me dyshemenë. Mat kokat @390 i pari; pass më vete.
 
 **Shtrirja te 12 faqet e tjera: PO, por vetëm pas ndreqjes së trupit te `--fs-trup`** — përndryshe do të shumëzosh regresin e masës në 12 faqe njëherësh.
+
+## T-054 · AUDITIM I PUNËS SË SHTATORIT (urdhër pronari) + matja e ishullit em-bazë
+Prodhimi `d240dd54` = main. 291 commit-e në shtator (191 Claude, 100 pronari/merge).
+Auditimi nuk lexon commit-e — mat **premtimin kundrejt prodhimit të sotëm**.
+
+### A · ISHULLI EM-BAZË (C-059) — KALOI ✅
+| Gjerësia | Ishulli | Masa | Qendër | Shfrytëzimi |
+|---|---|---|---|---|
+| 1280 | 884px | **71** (20.1px) ✓ | po | 62.8% |
+| 1920 | 1014px | **70** (23.1px) ✓ | po | 46.8% |
+| 2560 | 1144px | **70** (26px) ✓ | po | 40.0% |
+Masa 60–75 në të tria gjerësitë — regresi i T-053 u mbyll. Ishulli i qendërzuar, baza mbush.
+**Shënim mbi §17:** kriteri "raporti panel÷ekran konstant ±3%" **nuk vlen më** — vendimi i pronarit
+(C-056) e bëri ishullin qëllimisht të vogël; raporti bie 0.691→0.528→0.447 sepse ishulli rritet me
+`em` ndërsa ekrani me `px`. Kjo është sjellje e projektuar, jo defekt. **Shtrirja te 12 faqet: APROVOHET.**
+
+### B · ÇFARË QËNDRON — e verifikuar me matje live
+| Zona | Para | Sot |
+|---|---|---|
+| Tekste nën ISO, `/biznese/[id]?public=1` | 60 | **0** |
+| Tekste nën ISO, `/kushtet` | 92 | **0** |
+| Tekste nën ISO, ballina | 102 | **5** |
+| Tekste nën ISO, `/listing/[id]` | 88 | **4** |
+| Caqe <24px, `/biznese/[id]/edit` | 36 | **0** |
+| Caqe <44px, `/biznese/[id]?public=1` | 4 | **0** |
+| Ikona kategorish bosh | 13/16 | **0** |
+| `/messages` shirit i thyer | po | **jo** (foto) |
+| `/listing/[id]` dy kolona | po | **një kolonë** (i njëjti x) |
+| Hierarkia e kartës | e rrafshët | çmimi 23/29/33px, pa prerje |
+| axe `select-name` | 4 | **0** |
+| axe `aria-required-children` | 4 | **0** |
+| Web-push | s'ekzistonte | live, inert deri te pëlqimi |
+
+### C · ÇFARË MBETET HAPUR — me numra
+1. **axe `label`: 15 nga 39 fusha te `/biznese/[id]/edit` ende pa emër** të arritshëm (nga 26 → 15).
+   Kjo është shkelje **kritike** që bllokon lexuesit e ekranit; e ndrequr vetëm 42%.
+2. **5 nga 6 faqet ligjore të paprekura** (me qëllim, presin konfirmimin tim — tani e kanë):
+   `/privatesia` 28.7% · `/cookies` 29.1% · `/siguria` 28.0% · `/takedown` 30.2% · `/rreth-nesh` 27.6%.
+3. **12 faqe Tipi A + 6 Tipi B** presin shtrirjen e modelit ishull.
+4. **Ballina 5 dhe `/listing/[id]` 4** tekste ende nën ISO — kërkojnë identifikim me selektor.
+5. **`--fs-xl:16px`, `--fs-2xl:19px`, `--fs-3xl:22px`** ende px të ngurtë — kokat s'shkallëzohen.
+6. **302 shkelje kontrasti** të pamatura që nga auditimi i parë axe — gjendja e sotme e panjohur.
+7. **`/admin` i pamatur** — instrumenti im kap skip-link-un te x=−9999 (kufi imi, jo i produktit).
+
+### D · Verdikti
+Puna e shtatorit është reale dhe e matshme: nga një platformë ku **76% e teksteve ishin nën
+minimumin ndërkombëtar**, sot faqet e matura kanë 0–5. Modeli i hapësirës u gjet, u prototipua dhe
+u verifikua. Mbetja kryesore nuk është cilësi e punës — është **shtrirje e papërfunduar** (18 faqe)
+plus **një shkelje kritike aksesueshmërie e ndrequr përgjysmë**.
