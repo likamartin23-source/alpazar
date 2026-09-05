@@ -37,7 +37,12 @@ export default function Kushtet() {
       /* Tavolina: gradient shumë i qetë krem→bardhë, pa zhurmë, mbush 100%. */
       body{background:radial-gradient(1200px 620px at 50% -8%,var(--az-white),var(--az-cream) 58%);}
       .wrap{
-        max-width:880px;          /* ISHULL: gjerësi e rehatshme leximi, jo e gjerë */
+        /* Konteksti em = trupi (--fs-trup): kështu gjerësia e ishullit DHE
+           shkronja shkallëzohen BASHKË → masa mbetet ~70 karaktere në çdo ekran
+           (1280/1920/2560), jo 89 si kur ishulli u zgjerua e shkronja mbeti te
+           dyshemeja (regresi që mati terminali T-053). */
+        font-size:var(--fs-trup);
+        max-width:44em;           /* ISHULL që shkallëzohet me trupin (~880px @1280) */
         margin:28px auto 40px;    /* E QENDËRZUAR në mes */
         min-height:auto;
         border-radius:18px;
@@ -48,7 +53,13 @@ export default function Kushtet() {
       }
       .topbar{border-radius:18px 18px 0 0;}
       .ftr{border-radius:0 0 18px 18px;}
-      .content{padding:34px clamp(28px,4vw,56px) 48px;}
+      .content{padding:34px clamp(28px,3vw,56px) 48px;}
+      /* Teksti i leximit brenda ishullit = trupi (jo dyshemeja). Dyshemeja është
+         kufi minimal për etiketa/meta, JO madhësi për tekst leximi (T-053). */
+      .content p,.content ul,.content li,.content .note{font-size:var(--fs-trup);}
+      /* Hierarki e qartë brenda ishullit: koka > nënkoka > trup, të gjitha fluide. */
+      .content h1{font-size:var(--fs-tit-l);}
+      .content h2{font-size:var(--fs-tit-s);}
     }
   `
   return (

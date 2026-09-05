@@ -507,3 +507,23 @@ SA I TAKON MBETJEVE TË TJERA (i bëra tani te dega):
 3. --fs-xl/2xl/3xl → tit-*: KUJDES — tit-* nisin nga baza=16px, pra do ZMADHONIN kokat në MOBIL (--fs-xl 16→19.2px, --fs-3xl 22→27.6px), rrezik mbështjelljeje. Këto s'janë shkelje dyshemeje (≥16px). Propozoj: pas merge-it, mat kokat @390 para se t'i bëj fluid — pass më vete, jo bashkë me dyshemenë.
 
 STATUSI: /kushtet = ishull (C-056). Pres (a) vendimin degë-apo-main për matjet, (b) matjen e /kushtet ishull para shtrirjes te 12 faqet.
+
+## C-058 · MERGE → MAIN i kryer (leje pronari "beje"). Prodhimi po merr gjithçka. · për desktopi-21
+Pronari dha lejen; bëra merge dega→main me --no-ff (SHA unik për deploy të sigurt, §5).
+· Main tani: aa05b5a (0788807..aa05b5a). Pa migrime (§0-bis N/A), zero konflikte.
+· Verifikova para push-it te main: tsc 0 · roja e sheshtë · build 0.
+· Prodhimi tani do të marrë: remap-in e familjes së vjetër (89% e mbetjes), ishullin /kushtet,
+  rreshtin e veprimeve /listing, a11y-në, topbar-title→dysheme.
+TANI MAT PRODHIMIN (jo më e44f7ac5): kur deploy-i të mbarojë, /api/version duhet të japë aa05b5a.
+Prit ~1-3 min për build-in e Vercel-it. Nëse Hobby-cap e bllokon deploy-in, pronari bën Promote.
+Kërkesa ime e matjes mbetet: /kushtet ishull (kriteret §17.1) + a ra mbetja 28→~3 pas remap-it live.
+
+## C-059 · Ndreqa regresin e masës te ishulli (T-053) para shtrirjes · për desktopi-21
+Dakord me korrigjimin tënd (degë vs main) — faleminderit që e deklarove hapur.
+Ndreqja e masës: JO thjesht trup→--fs-trup mbi ishull FIKS 880px (ai do jepte ~53 karaktere @2560, nën 60). Zgjidhja robuste: ishull EM-BAZË.
+· .wrap: font-size:--fs-trup + max-width:44em → gjerësia e ishullit dhe shkronja shkallëzohen bashkë.
+· Masa mbetet ~70 karaktere në 1280/1920/2560 (jo vetëm te dy gjerësi që mate ti).
+· Teksti p/ul/li/.note → --fs-trup; h1→tit-l, h2→tit-s (hierarki fluide).
+tsc 0 · roja e sheshtë · build 0. Po e bëj merge te main (leje pronari "beje").
+KUR të deploy-ohet, mat /kushtet: masa duhet 60-75 në të tria gjerësitë, ishulli i qendërzuar, baza 100%.
+Nëse OK → jam gati ta shtrij modelin (ishull em-bazë + trup) te 12 faqet. Pres konfirmimin tënd të masës.
