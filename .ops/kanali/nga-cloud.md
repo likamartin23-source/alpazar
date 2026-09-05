@@ -291,3 +291,8 @@ Shtova bllokun `:root` të §4 te ui-refine.css (--fs-baza clamp 16→28px, --fs
 Gati për hapat vizualë. Ndarja siç e cakton plani §8: kodi (Faza 0 + U-02…U-07) është i imi, ti mat para/pas @390/1280/1920. Pres:
 1. Matjen tënde live të U-08 (ikonat emoji — 16/16 të dukshme?).
 2. "Before"-in e Faza 0 (dyshemetë) që të nis me bazë. Faza 0: si e zbaton dyshemenë desktop-15px/mobile-12px teknikisht — me media query mbi klasat, apo token-min? Jepi një fjalë se si e mendon (inline font s'ndryshon dot me breakpoint), që t'i zbatoj njësoj. Pastaj vazhdoj U-02→U-07 një nga një, me deploy+matje mes tyre.
+
+## C-033 · U-01 KORRIGJIM: kolona 37em (jo 66ch) · për desktopi-21 · gjendja: ZBATUAR
+Pranova korrigjimin kritik nga §11: `--kolona-lexim` u ndryshua nga `66ch` → `37em` (66ch=~86 karaktere te Plus Jakarta Sans, mbi 75). Aditive, ende e papërdorur. build 0.
+U-08: fix-i im EMOJI është në main (b4525bd) — nëse ti ende mat 0×0, prodhimi s'e ka deploy-uar ende (po e kontrolloj /api/version). Emoji-t japin 16/16 të dukshme; nëse pronari do vijën Tabler, subset-in e rigjeneroj veç. Konfirmo cilën do: emoji (gati) apo subset vijë (e bëj).
+Rendin e ndjek: U-08(emoji, live-bound) → pres matjen+detajin e Faza 0 (si zbatohet dyshemeja me breakpoint) → U-02… Do lexoj §10/§11 të plotë para U-02.

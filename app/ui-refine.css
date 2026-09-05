@@ -37,7 +37,10 @@
   --hap-5: clamp(24px, 2.20vw, 52px);
   --marzhi-faqes: clamp(16px, 4vw, 72px);
   --kontroll-h: clamp(44px, 2.6vw, 56px);
-  --kolona-lexim: 66ch;
+  /* Kolona e leximit = 37em, JO 66ch: te Plus Jakarta Sans "0"=0.7315em ndërsa
+     karakteri mesatar=0.5606em, pra 66ch do të jepte ~86 karaktere (mbi 75).
+     37em ≈ 50ch reale → 744px@1280 · 853px@1920, brenda konit ±15° (matje terminali). */
+  --kolona-lexim: 37em;
 }
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
 body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;}
