@@ -573,3 +573,27 @@ mbetet brenda masës së lexueshme.
 | Masa mbetet e lexueshme | 60–75 karaktere për kolonë, në çdo gjerësi |
 | Asnjë ishull | shfrytëzimi i përgjithshëm i ekranit **≥85%** (sot: 29% te `/kushtet`) |
 | Telefoni i paprekur | @390 numrat e sotëm nuk lëvizin |
+
+### 17.1 · SQARIM I PRONARIT — çfarë është shtresa bazë
+
+Pyetja ime: a duhet baza të tregojë katalogun e vërtetë (kutizat e ballinës) apo mjafton guaska?
+
+**Përgjigjja:** «Vetëm guaskë, pa asnjë detaj — një faqe guaskë, **"tavolinë e pastër"**, ku
+vendosen faqet që nuk mund t'u zmadhohet përmbajtja se prishen dhe bëhen jokomode e të
+palexueshme. Mjafton që ekrani të mbushet me diçka plotësisht.»
+
+**Pra baza NUK është ballina dhe NUK përmban karta, katalog, apo asnjë të dhënë.** Është sipërfaqja
+e platformës — e pastër, e qetë, pa përmbajtje që tërheq syrin — thjesht që ekrani të mos jetë bosh
+dhe paneli të ketë ku të qëndrojë.
+
+**Pasojë për zbatimin (më e thjeshtë se ç'e kisha menduar):**
+- Nuk kërkohet të rendërohet asnjë komponent i ballinës nën panel — pa kosto të dhënash, pa
+  kërkesa rrjeti, pa rrezik ngadalësimi.
+- Baza është sipërfaqe vizuale: ngjyra/tekstura e platformës, në gjithë ekranin.
+- Paneli qëndron mbi të me lartësim (hije + rreze), i ndarë qartë si fletë mbi tavolinë.
+- **Ndalohet** çdo detaj dekorativ që konkurron me tekstin: pa karta, pa ikona të mëdha, pa modele
+  të zhurmshme. "Tavolinë e pastër" do të thotë e pastër.
+
+**Kriteri i pranimit ndryshon përkatësisht:** "përmbajtje e vizatuar në ≥98%" bëhet
+**"sipërfaqe e vizatuar në 100% të ekranit"** — mjafton që asnjë pjesë e ekranit të mos mbetet
+zbrazëti pa trajtim, pa kërkuar që ajo sipërfaqe të mbajë informacion.
