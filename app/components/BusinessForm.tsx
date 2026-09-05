@@ -354,9 +354,9 @@ export default function BusinessForm({ mode, initial, onSaved }: {
             </label>
             {!hours[k].closed && (
               <>
-                <input type="time" className="bf-input" style={{ width: 110, padding: '7px 8px' }} value={hours[k].open} onChange={e => setHours(h => ({ ...h, [k]: { ...h[k], open: e.target.value } }))} />
+                <input type="time" aria-label={`${l} — ora e hapjes`} className="bf-input" style={{ width: 110, padding: '7px 8px' }} value={hours[k].open} onChange={e => setHours(h => ({ ...h, [k]: { ...h[k], open: e.target.value } }))} />
                 <span style={{ color: '#aaa' }}>–</span>
-                <input type="time" className="bf-input" style={{ width: 110, padding: '7px 8px' }} value={hours[k].close} onChange={e => setHours(h => ({ ...h, [k]: { ...h[k], close: e.target.value } }))} />
+                <input type="time" aria-label={`${l} — ora e mbylljes`} className="bf-input" style={{ width: 110, padding: '7px 8px' }} value={hours[k].close} onChange={e => setHours(h => ({ ...h, [k]: { ...h[k], close: e.target.value } }))} />
               </>
             )}
           </div>
@@ -368,7 +368,7 @@ export default function BusinessForm({ mode, initial, onSaved }: {
       <label style={lbl}>NIPT / Nr. TVSH</label>
       <input className="bf-input" value={f.nipt} onChange={e => setV('nipt', e.target.value.toUpperCase())} placeholder="p.sh. K12345678A" maxLength={20} />
       <label style={{ ...lbl, marginTop: 12 }}>Forma ligjore</label>
-      <select className="bf-input" value={f.legal_form} onChange={e => setV('legal_form', e.target.value)}>
+      <select aria-label="Forma ligjore" className="bf-input" value={f.legal_form} onChange={e => setV('legal_form', e.target.value)}>
         <option value="">— Zgjidh —</option>
         {LEGAL_FORMS.map(x => <option key={x} value={x}>{x}</option>)}
       </select>
