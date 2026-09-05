@@ -49,7 +49,9 @@ const gjithcka = []
 const shfletuesi = await chromium.launch()
 
 for (const gj of GJERESITE) {
+    // SESIONI=<skedar> -> gjendja e ruajtur e hyrjes; pa te, 15 rruge maten si guaske login-i (D-10).
   const kontekst = await shfletuesi.newContext({
+    ...(process.env.SESIONI ? { storageState: process.env.SESIONI } : {}),
     viewport: { width: gj.g, height: gj.l },
     isMobile: gj.mobile, hasTouch: gj.mobile, locale: 'sq-AL',
   })
