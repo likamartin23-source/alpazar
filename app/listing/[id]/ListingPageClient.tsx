@@ -649,7 +649,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
         @media(min-width:1024px){.wrap{max-width:100%;padding-left:clamp(32px,4vw,72px);padding-right:clamp(32px,4vw,72px);}}
         .topbar{background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%);padding:10px 12px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
         /* klasa e vjeter e back-butonit u zevendesua nga komponenti i perbashket BackButton (44px). */
-        .topbar-title{font-size:15px;font-weight:700;color:#111;flex:1;}
+        .topbar-title{font-size:var(--fs-dysheme);font-weight:700;color:#111;flex:1;}
         /* Butonat e sigurise (§7.4): terciar i vogel, gjithmone i arritshem,
            lartesi prekjeje 36px dhe kontrast qe kalon WCAG AA. */
         /* SHKALLË E VETME për butonat dytësorë (O24): kufi me kontrast ≥3:1 + mbushje e lehtë

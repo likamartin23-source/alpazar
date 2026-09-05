@@ -8,7 +8,7 @@ export default function Kushtet() {
     .topbar{background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
     .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0;}
     .back i{font-size:18px;color:#111;}
-    .topbar-title{font-size:15px;font-weight:700;color:#111;}
+    .topbar-title{font-size:var(--fs-dysheme);font-weight:700;color:#111;}
     .content{padding:24px 20px 40px;}
     .ver{font-size:var(--fs-dysheme);color:#6E6E6E;margin-bottom:20px;background:var(--az-cream);padding:8px 12px;border-radius:8px;display:inline-block;}
     h1{font-size:var(--fs-3xl);font-weight:700;color:#111;margin-bottom:8px;}
