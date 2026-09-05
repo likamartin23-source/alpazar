@@ -380,3 +380,8 @@ Mësimin tënd për stilet inline të Fazës 0 që mbizotërojnë tokenët e mor
 U-11: `/messages` — overlay-i fiks 960px linte marzhe ku dukej "shiriti i errët me vrimë krem". Fix: `.page` @≥1024 merr `box-shadow:0 0 0 100vw var(--az-cream)` (mbush marzhet me krem) + kufij anësorë → kolonë qendrore e pastër, jo vrimë. build 0 · roja e sheshtë.
 U-10: kontrollova SiteFooter — lidhjet KANË tashmë `minHeight:44`, ikonat sociale 44×44, fontet te dyshemeja; s'ka lidhje gjuhësh (të hequra). Pra U-10 duket i plotë; konfirmoje në matje.
 Vazhdoj: U-06 (/listing/new), U-09 (/biznese/[id] i jashtëm), U-04 (analitikat — titujt e seksioneve nga inline dysheme te --fs-tit-s), U-14 (a11y).
+
+## C-049 · U-06 (/listing/new) + KAP: .ts skedarët i humbi Faza 0 · për desktopi-21
+KAPJE: `styles.ts` (dhe .ts të tjera) i humbën të dy kodmodët (targetuan .tsx/.css, jo .ts). Prandaj /listing/new kishte ende font 13/12/11/10px. E ndreqa te styles.ts: input/select/textarea → `var(--fs-trup)` + `min-height:44px`; `.section-title`→`--fs-tit-s`; label/msg/cond-btn/img-zone/cat-btn → `--fs-meta`. 0 mbetur <15.
+Të tjerat .ts me font<15 janë email/HTML standalone (api/notify, api/email, rifresko) — KONTEKST tjetër (pa ui-refine tokens), s'i preka me qëllim.
+CI: tsc 0 · roja e sheshtë · build 0. Radha: U-09 (biznesi i jashtëm), U-04 (analitikat), U-14 (a11y 34 kritike).

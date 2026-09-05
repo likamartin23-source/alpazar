@@ -9,32 +9,32 @@ export const NEW_LISTING_CSS = `
         .back i{font-size:18px;color:#111;}
         .topbar-title{font-size:15px;font-weight:700;color:#111;}
         .body{padding:14px;}
-        .msg-box{border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:12px;font-weight:600;}
+        .msg-box{border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:var(--fs-meta);font-weight:600;}
         .ok{background:#EAF3DE;color:#3B6D11;border:0.5px solid #97C459;}
         .err{background:#FFF0EE;color:#C42B0F;border:0.5px solid #F09595;}
         .warn{background:#FFF8E1;color:#E65100;border:0.5px solid #FFB74D;}
         .card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;border:0.5px solid #eee;}
-        .section-title{font-size:13px;font-weight:700;color:#111;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+        .section-title{font-size:var(--fs-tit-s);font-weight:700;color:#111;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
         .section-title i{font-size:16px;color:#C42B0F;}
-        label{font-size:11px;font-weight:600;color:#555;display:block;margin-bottom:4px;}
+        label{font-size:var(--fs-meta);font-weight:600;color:#555;display:block;margin-bottom:4px;}
         .field{margin-bottom:12px;}
-        input[type=text],input[type=number],textarea,select{width:100%;border:1.5px solid #e0e0e0;border-radius:12px;padding:10px 13px;font-size:13px;font-family:inherit;outline:none;transition:border .15s;background:#fff;color:#111;}
+        input[type=text],input[type=number],textarea,select{width:100%;border:1.5px solid #e0e0e0;border-radius:12px;padding:10px 13px;font-size:var(--fs-trup);min-height:44px;font-family:inherit;outline:none;transition:border .15s;background:#fff;color:#111;}
         input:focus,textarea:focus,select:focus{border-color:#111;box-shadow:0 4px 16px -4px rgba(0,0,0,.2);}
         textarea{min-height:90px;resize:vertical;}
         .price-row{display:flex;gap:8px;}
         .price-row input{flex:1;}
         .price-row select{width:90px;flex-shrink:0;}
         .cond-row{display:flex;gap:8px;}
-        .cond-btn{flex:1;border:1.5px solid #e0e0e0;border-radius:12px;padding:9px;font-size:12px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;min-height:44px;display:flex;align-items:center;justify-content:center;}
+        .cond-btn{flex:1;border:1.5px solid #e0e0e0;border-radius:12px;padding:9px;font-size:var(--fs-meta);font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;min-height:44px;display:flex;align-items:center;justify-content:center;}
         .cond-btn.active{border-color:#E63312;background:#FFF0EE;color:#C42B0F;}
         .img-zone{border:2px dashed #e0b030;border-radius:10px;padding:20px;text-align:center;cursor:pointer;background:#FFFBEA;}
         .img-zone input{display:none;}
         .img-zone i{font-size:32px;color:#e0b030;display:block;margin-bottom:8px;}
-        .img-zone p{font-size:12px;color:#555;}
+        .img-zone p{font-size:var(--fs-meta);color:#555;}
         .img-previews{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
         .img-prev{width:70px;height:70px;border-radius:8px;object-fit:cover;border:2px solid #F5C842;}
         .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
-        .cat-btn{border:1.5px solid #e0e0e0;border-radius:12px;padding:8px 4px;min-height:44px;font-size:10px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;}
+        .cat-btn{border:1.5px solid #e0e0e0;border-radius:12px;padding:8px 4px;min-height:44px;font-size:var(--fs-meta);font-weight:600;cursor:pointer;background:#fff;font-family:inherit;color:#555;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;}
         .cat-btn i{font-size:18px;color:#aaa;}
         .cat-btn.active{border-color:#F5C842;background:#FFFBEA;color:#111;}
         .cat-btn.active i{color:#C42B0F;}
