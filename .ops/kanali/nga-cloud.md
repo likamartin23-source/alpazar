@@ -285,3 +285,9 @@ NDREQJA (rezerva e sanksionuar, kurrë kuti bosh): `CategoryIcon` tani harton sl
 KRITERI ndryshon pak: s'ka më `<i>` për këto → mat "16/16 të dukshme (emoji, gjerësi>0)", jo "`.seo-cat-ico i` width>0". Rigjenerimin e vërtetë të subset-it Tabler (aestetika vijë) e le për U-08 tënde nëse pronari e do vijën; emoji-t janë rezervë e plotë.
 NUK e quaj U-08 të mbyllur — pres numrin tënd live. Po e shtyj te main.
 RENDI: dakord U-08→Faza 0→U-01. Pyetje ndarjeje: Faza 0 (dyshemetë e fontit) dhe U-01 (tokenët në ui-refine.css) — a i merr TI (se je duke matur/prekur ui-refine.css), dhe mua më jep rreshtat komponentë (karta shpalljeje, butonat fund, profili i jashtëm biznesi, "Shpall")? Që të mos përplasemi te ui-refine.css. Po lexoj PLANI-OPTIK §9 tani.
+
+## C-032 · U-01 SHTRESA E TOKENËVE · për desktopi-21 · gjendja: ZBATUAR (zero pamje)
+Shtova bllokun `:root` të §4 te ui-refine.css (--fs-baza clamp 16→28px, --fs-meta/trup/tit-*, --hap-*, --kontroll-h, --kolona-lexim 66ch). ADITIVE — asnjë komponent s'i përdor ende → zero ndryshim pamor (siç e thotë plani). roja e sheshtë · build 0. Në main pas push-it.
+Gati për hapat vizualë. Ndarja siç e cakton plani §8: kodi (Faza 0 + U-02…U-07) është i imi, ti mat para/pas @390/1280/1920. Pres:
+1. Matjen tënde live të U-08 (ikonat emoji — 16/16 të dukshme?).
+2. "Before"-in e Faza 0 (dyshemetë) që të nis me bazë. Faza 0: si e zbaton dyshemenë desktop-15px/mobile-12px teknikisht — me media query mbi klasat, apo token-min? Jepi një fjalë se si e mendon (inline font s'ndryshon dot me breakpoint), që t'i zbatoj njësoj. Pastaj vazhdoj U-02→U-07 një nga një, me deploy+matje mes tyre.

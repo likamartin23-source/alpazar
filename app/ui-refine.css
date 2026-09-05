@@ -17,6 +17,28 @@
   --az-shadow-lg:0 10px 34px -14px rgba(0,0,0,.30);
   --az-radius:var(--r-card); /* [O60] dedup: e njëjta 14px si --r-card — një burim, jo dy vlera */
 }
+
+/* [U-01 · SHKALLA OPTIKE — PLANI-OPTIK §4] Shtresa e tokenëve. ADITIVE: përcakton
+   vetëm variablat; asnjë komponent s'i përdor ende → zero ndryshim pamor. Derivim
+   nga kërkesa 20′ (kënd vizual, ISO 9241-303), jo shije. cap-height i matur live
+   për Plus Jakarta Sans = 0.750. Rrënja mbetet rem → zoom-i i shfletuesit punon. */
+:root{
+  --fs-baza: clamp(1rem, 0.8875rem + 0.461vw, 1.75rem);   /* 16px telefon → 28px ultrawide */
+  --fs-meta:  calc(var(--fs-baza) / 1.2);
+  --fs-trup:  var(--fs-baza);
+  --fs-tit-s: calc(var(--fs-baza) * 1.2);
+  --fs-tit-m: calc(var(--fs-baza) * 1.44);
+  --fs-tit-l: calc(var(--fs-baza) * 1.728);
+  --fs-tit-xl:calc(var(--fs-baza) * 2.074);
+  --hap-1: clamp(4px,  0.30vw,  8px);
+  --hap-2: clamp(8px,  0.60vw, 14px);
+  --hap-3: clamp(12px, 0.90vw, 22px);
+  --hap-4: clamp(16px, 1.40vw, 34px);
+  --hap-5: clamp(24px, 2.20vw, 52px);
+  --marzhi-faqes: clamp(16px, 4vw, 72px);
+  --kontroll-h: clamp(44px, 2.6vw, 56px);
+  --kolona-lexim: 66ch;
+}
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
 body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;}
 ::selection{background:var(--az-yellow);color:var(--az-black);}
