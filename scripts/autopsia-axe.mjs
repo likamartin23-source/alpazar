@@ -38,8 +38,9 @@ const RRUGET = [
   '/biznese/' + BID + '/analytics', '/biznese/' + BID + '/edit',
   '/listing/' + LID + '/edit', '/admin',
 ]
+const RRUGET_FILTRUAR = process.env.RRUGET ? RRUGET.filter(u => process.env.RRUGET.split(',').some(x => u === x)) : RRUGET
 
-const GJERESITE = [
+const GJERESITE = (process.env.GJER ? [{ g: Number(process.env.GJER), l: 900, mobile: Number(process.env.GJER) < 500 }] : null) || [
   { g: 390, l: 844, mobile: true },
   { g: 1280, l: 900, mobile: false },
 ]
@@ -64,7 +65,7 @@ for (const gj of GJERESITE) {
     } catch {}
   })
 
-  for (const rruga of RRUGET) {
+  for (const rruga of RRUGET_FILTRUAR) {
     const faqja = await kontekst.newPage()
     const rez = { rruga, gjeresi: gj.g }
     try {

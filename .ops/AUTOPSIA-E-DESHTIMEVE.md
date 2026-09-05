@@ -269,3 +269,51 @@ edhe pas çdo ndreqjeje të gjerësisë.
 ### 11.6 · Faqja më e keqe e platformës
 `/messages`: **60.6% → 43.1% → 29.5% → 22.7%**. Bie në mënyrë monotone me çdo zmadhim.
 Në monitor 27" më shumë se tre të katërtat e ekranit janë bosh.
+
+---
+
+## 12. DIMENSIONI I AKSESUESHMËRISË — rimatje e plotë @1280 (axe-core)
+
+Xhiruar në 4 copa mbi 32 rrugë me sesionin e pronarit. Prodhimi `59d1ef3d`.
+
+### 12.1 · Gjendja e sotme
+| Grupi i rrugëve | Shkelje |
+|---|---|
+| Publike (`/`, `/search`, `/kategori`, `/biznese`, `/listing/new`, `/profile`, `/messages`) | **6** (5 kontrast + 1 rend titujsh) |
+| Llogaria (`/notifications`, `/asistent`, `/billing`, `/premium`, `/oferta`, `/referral`, `/te-dhenat-mia`, `/favorites`) | **37** (të gjitha kontrast; 13 te `/referral`) |
+| **Faqet ligjore dhe të leximit (8 rrugë)** | **0** ✅ |
+| Biznes / shpallje / admin (8 rrugë) | **123** |
+| **GJITHSEJ @1280** | **~166** |
+
+### 12.2 · Përqendrimi — pesë faqe mbajnë 90% të dëmit
+| Faqja | Shkelje | Lloji |
+|---|---|---|
+| `/admin` | **50** | kontrast |
+| `/profile/analytics` | **37** | kontrast |
+| `/biznese/[id]/analytics` | **28** | kontrast |
+| `/referral` | 13 | kontrast |
+| `/biznese/[id]` | 5 | kontrast 3 + **aria-required-children (KRITIKE)** + aria-prohibited |
+
+Faqet e analitikave dhe paneli i adminit — pra tabelat me numra gri mbi sfond të hapur — mbajnë
+**115 nga 166** shkeljet. Ky është një defekt i vetëm i përsëritur, jo 115 defekte.
+
+### 12.3 · Një shkelje kritike që unë e kisha shpallur ZERO
+Te T-055 raportova "të tria kategoritë kritike janë zero". **Ishte e pasaktë.**
+`aria-required-children` ekziston ende te `/biznese/[id]` — `<div class="vs-seg" role="tablist">`
+me `<button>` të thjeshtë brenda, pa `role="tab"`.
+
+**Pse gabova:** kontrollin e bëra me DOM mbi **dy faqe** (`/biznese/[id]/edit` dhe `/listing/new`),
+jo mbi të gjitha. Axe-i e gjeti te një faqe e tretë që s'e kisha prekur.
+**Mësimi (i shtati sot): verifikimi i një kategorie shkeljesh duhet mbi TË GJITHA rrugët, jo mbi
+një mostër.** Një mostër e pastër nuk provon zero.
+
+### 12.4 · Krahasimi me auditimin e parë
+| Metrika | Auditimi i parë (2 gjerësi) | Sot (@1280) |
+|---|---|---|
+| Kritike | 34 | **1** |
+| Kontrast | 302 nyje / 16 faqe | **162 nyje / 9 faqe** |
+| `label` | 26 | **0** |
+| `select-name` | 4 | **0** |
+
+Përmirësim real, por **kontrasti mbetet dimensioni më i pashqyrtuar**: askush s'e ka prekur
+qëllimisht; rënia nga 302 në 162 është pasojë anësore e rritjes së shkronjave.
