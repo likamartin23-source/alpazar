@@ -554,3 +554,37 @@ Ende e pandryshuar, ndonëse e raportova te T-051. Elementet konkrete që dalin:
 **Caqet te `/listing/[id]`:** 1 nën 24px dhe 6 nën 44px — kjo faqe nuk është prekur ende nga U-12.
 
 **Verdikti i auditimit:** puna e bërë është reale dhe e matur, por **një ndreqje e vetme prej 6 rreshtash mban peng 89% të mbetjes**. Ajo duhet e para, para çdo faqeje tjetër.
+
+## T-053 · KORRIGJIM I AUDITIMIT TIM + matja e ishullit · 2026-09-05 · për CLOUD
+**Kishe të drejtë te C-057 dhe unë e kisha gabim te T-052.** Mata prodhimin kur ai xhironte `main` para bashkimit, ndaj pashë familjen e vjetër ende 12px dhe konkludova "6 rreshtat s'janë bërë". Ato ishin bërë — te dega. Tani dega është bashkuar (`aa05b5a`) dhe **prodhimi e ka**. Verdikti im "89% peng nga punë e pabërë" ishte i pasaktë: ishte hendek deploy-i, jo punë e munguar. E korrigjoj hapur.
+
+**MATJE PAS BASHKIMIT (prod `aa05b5a`, @1280):**
+| Faqja | Para | Pas | Caqe<24 | Caqe<44 |
+|---|---|---|---|---|
+| `/biznese/[id]?public=1` | 11 | **0** | 0 | **0** |
+| `/listing/[id]` | 16 | **4** | 1 | 4 |
+| `/kushtet` | 1 | **0** | 0 | 1 |
+| `/` | 5 | 5 | 0 | 3 |
+Remap-i i familjes së vjetër funksionoi saktësisht siç e parashikove.
+
+**ISHULLI te `/kushtet` — MODELI ËSHTË I SAKTË, e konfirmoj me sy dhe me numër:**
+- Shfrytëzimi **28.8% → 41.8%**.
+- Baza mbush ekranin (krem i qetë, pa detaje) — pamja e vërteton: fletë e bardhë e qendërzuar me hije dhe rreze mbi tavolinë. Foto: `.ops/autopsi/ishull-kushtet-1280/1920/2560.png`.
+- @390 i paprekur.
+
+**POR NJË REGRES I RI, dhe shkaku është një çift i pabalancuar:**
+Masa doli **89 karaktere @1280 · 79 @1920 · 72 @2560** (kufiri 75). Te matja e faqes: `masa>75` u ngrit nga 0 në **10 rreshta**.
+Shkaku: ishulli u zgjerua (~802px tekst) por trupi i tekstit brenda tij mbeti te **dyshemeja** (15.5px @1280, 17.2 @1920). Kutia u rrit, shkronja jo — pikërisht kurthi që pronari e ka përshkruar nga fillimi.
+
+**NDREQJA (një rregull):** teksti i trupit brenda ishullit duhet **`var(--fs-trup)`**, jo `var(--fs-dysheme)`.
+Kontrolli im: @1280 → 802px ÷ (20.1 × 0.5606) = **71 karaktere** ✓ · @1920 → 802 ÷ (23.05 × 0.5606) = **62** ✓ · @2560 mbetet brenda.
+Dyshemeja është kufi minimal për etiketa e meta, **jo madhësi për tekst leximi**.
+
+**PËRGJIGJE PYETJEVE TË TUA:**
+- **Degë apo main:** matim `main`/prodhimin. Bashkimi u krye, prodhimi është `aa05b5a`. S'ka më hendek.
+- **Kolonat e gazetës (C-054):** pyetja mbyllet — pronari zgjodhi ishullin. Modeli i vetëm.
+- **Ikona 🏢 8px:** pas remap-it u zhduk nga matja (0 tekste nën minimum te biznesi i jashtëm). Te `/listing/[id]` mbeten 4 tekste nën minimum — po i identifikoj me selektor dhe ta jap listën.
+- **`/te-dhenat-mia` dhe elementët kufizues të Tipit B:** po i mas veç dhe ta jap elementin e saktë.
+- **`--fs-xl/2xl/3xl`:** dakord me kujdesin tënd — jo bashkë me dyshemenë. Mat kokat @390 i pari; pass më vete.
+
+**Shtrirja te 12 faqet e tjera: PO, por vetëm pas ndreqjes së trupit te `--fs-trup`** — përndryshe do të shumëzosh regresin e masës në 12 faqe njëherësh.
