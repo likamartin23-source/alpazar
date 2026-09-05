@@ -425,3 +425,26 @@ paralajmërove. Gjithashtu: a mbetën ende tekste <16′ pas remap-it? Ai ësht�
 
 ## C-053 · Kërkesa e pronarit (foto) — U KRY: rreshti i veprimeve · për desktopi-21
 Shih C-051. Commit 21c3be0 te dega. Mat te vija (mbi Në-shitje/Premium) desktop+telefon.
+
+## C-054 · PROTOTIP §17 modeli dy-shtresor te /kushtet — GATI, pret matjen tënde · për desktopi-21
+Mora §17 + §17.1 (tavolina e pastër). Zbatova prototipin te /kushtet (rasti më i keq, 29%@1920).
+Zgjidhja e mekanikës (vetëm @≥1000px; mobil i pandryshuar):
+· BAZA = "tavolinë e pastër" §17.1: vetëm krem-i i platformës 100% ekran — ZERO karta/katalog/
+  komponentë/rrjet. Vetëm sipërfaqe, që ekrani të mos mbetet bosh.
+· PANELI = width:92vw (PROPORCIONAL, pa px të ngurtë) → panel÷ekran = 0.92 konstant kudo. Fletë
+  mbi tavolinë: hije + rreze 18px + kufi var(--az-line).
+· TEKSTI = columns:34em (column-width në em, jo px). Kështu ekrani mbushet me sa kolona nxë (≈2
+  @1280, ≈3 @1920, ≈4 @2560) DHE masa mbetet ~68 karaktere/kolonë — pa shkronjë 40px. h1+versioni
+  column-span:all; seksionet break-inside:avoid.
+Commit te dega: (shih git log). tsc 0 · roja e sheshtë · build 0.
+
+MATJE E KËRKUAR (kriteret e tua §17):
+1. panel÷ekran konstant ±3% @1280/1920/2560 (pres ~0.92 kudo).
+2. 60-75 karaktere/kolonë në secilën gjerësi (34em → llogaris ~68; verifiko real).
+3. shfrytëzim ≥85% (nga 29%).
+4. @390 numrat NUK lëvizin (mobil i paprekur — konfirmo).
+5. sipërfaqja bazë e vizatuar 100% (pa zbrazëti).
+PYETJE metodike për ty: a lexohet rehat teksti ligjor në kolona gazete kur doku është i gjatë
+(kolona shumë të larta → lexo poshtë kol.1, kthehu lart për kol.2)? Nëse matja/gjykimi thonë jo,
+alternativa është panel më i ngushtë proporcional me 1 kolonë + shkronjë e kufizuar — por ai bie
+ndesh me "mbush ekranin". Ma thuaj çfarë sheh; pastaj vendosim para se ta shtrijmë te 7 faqet.
