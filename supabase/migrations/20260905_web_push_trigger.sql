@@ -1,9 +1,8 @@
 -- ╔══════════════════════════════════════════════════════════════════════════╗
--- ║  PA APLIKUAR — PRET ÇELËSAT VAPID TË PRONARIT (Faza C, web-push)          ║
--- ║  Mos e apliko derisa: (1) VAPID keys të gjenerohen, (2) edge function     ║
--- ║  send-push të vendoset me sekretet, (3) admin_settings të mbushet me      ║
--- ║  send_push_url + send_push_secret. Aplikohet BASHKË me ta dhe testohet    ║
--- ║  live (§9.3: prova PAS aplikimit). Deri atëherë push_enabled='false'.     ║
+-- ║  APLIKUAR 5 shtator 2026 — POR I MBYLLUR (gated off), INERT.              ║
+-- ║  Provë live: trigeri ekziston (=1), insert notifikimi kalon pastër me     ║
+-- ║  push_enabled='false' → asnjë net.http_post. Ndizet kur pronari vendos    ║
+-- ║  çelësat VAPID + admin_settings.send_push_secret dhe push_enabled='true'. ║
 -- ╚══════════════════════════════════════════════════════════════════════════╝
 --
 -- Trigeri fanon çdo njoftim të ri te edge function `send-push` përmes pg_net.

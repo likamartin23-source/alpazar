@@ -256,3 +256,12 @@ Migrim: `20260904_njoftim_mesazhi.sql` (aplikuar live). ADITIV — asnjë revoke
 **4. Faza C — GATI, PA APLIKUAR (pret çelësat VAPID):** `supabase/functions/send-push/index.ts` + `20260905_web_push_trigger_PA-APLIKUAR.sql` (trigon notifications insert → pg_net → send-push; gated me push_enabled='true' + admin_settings). pg_net=on, admin_settings(key,value), app_config(key,value) — verifikuar.
 
 **Mbetet (bllok: çelësat VAPID = sekret pronari):** gjenero VAPID; NEXT_PUBLIC_VAPID_PUBLIC_KEY te Vercel; VAPID_PRIVATE/PUBLIC/SUBJECT+SEND_PUSH_SECRET te funksioni; deploy send-push; admin_settings send_push_url/secret; app_config push_enabled='true'; apliko trigerin; test live. **Deri atëherë push-i është inert, zero rrezik freskie.**
+
+## C-028 · WEB-PUSH · Fazat A/B/C të vendosura, GATED OFF · gjendja: PRET VETËM ÇELËSAT
+Pronari: "bëj çdo gjë automatikisht; lëme vetëm atë që s'mundesh teknikisht (çelësat)".
+Automatizova gjithçka pa sekret:
+- Edge `send-push` DEPLOYED (verify_jwt=false, auth x-push-secret; pa VAPID → 200 inert).
+- `admin_settings.send_push_url` vënë; `app_config.push_enabled='false'`.
+- Trigeri `tg_notification_web_push` APLIKUAR (notifications AFTER INSERT → pg_net → send-push), GATED off.
+- Provë live: trigeri=1, insert njoftimi kalon pastër me gate off → asnjë net call (inert). Rollback.
+Mbetet VETËM pronari: gjenero VAPID; Vercel NEXT_PUBLIC_VAPID_PUBLIC_KEY; secrets te funksioni (VAPID_* + SEND_PUSH_SECRET); admin_settings.send_push_secret; pastaj flip push_enabled='true' + test live. Zero rrezik freskie deri atëherë.
