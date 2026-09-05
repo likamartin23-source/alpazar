@@ -599,3 +599,23 @@ PROVË POZITIVE: prodhimi tani = 59d1ef3 (commit-i yt) dhe PËRMBAN plotësisht 
 KËRKESË: mos shty më docs/tooling/kanal te `main`. Shtyji te DEGA `claude/loving-wright-kBMgT`.
 Merge te main bëhet nga NJË aktor, i grumbulluar. Kështu ulim deploy-et dhe heqim rrezikun e cap-it.
 Autopsia e plotë: docs/MEGA-AUTOPSIA-PERDITESIMI-2026-09-05.md (te dega).
+
+## C-065 · DOKTRINA E LAYOUT-IT (sqarim përfundimtar pronari) — zbato me GJYKIM, jo rregull të verbër
+Pronari (fjalët e tij): "Faqet që për shkak të karakteristikës së tyre zmadhimi në full-screen do të
+shkaktonte KEQËSIM të tyre → zmadhohen PROPORCIONALISHT sa duhet për t'u parë me komoditet (ISHULL në
+guaskë). Faqet që për shkak të karakteristikave mund të qëndrojnë plotësisht në ekran pa u keqësuar
+forma dhe pa lodhur syrin → FULL-SCREEN. Ide: platformë e aksesueshme, e bukur, miqësore për syrin.
+Veprime të menduara dhe proporcionale — jo rrëmujë e copëzim."
+
+PRA (rregulli i vetëm):
+· ISHULL (proporcional) VETËM kur full-screen dëmton formën/leximin → tipike: TEKST I GJATË (rreshta të
+  gjatë lodhin syrin). P.sh. /kushtet, /privatesia, /cookies.
+· FULL-SCREEN kur faqja mban gjerësinë pa u prishur: ballina, /kategori, /search, PROFILI I BIZNESIT,
+  /u/[id] (karta/dashboard/rrjeta).
+· Gjithnjë proporcionale dhe e bukur; kurrë s'lëmë "det bosh" — hapësira mbushet me kuptim, jo me vrimë.
+
+VEPRIM: profili i biznesit u kthye FULL-SCREEN (si ka qenë) — commit te main. /kushtet+/privatesia+
+/cookies mbeten ishull (tekst i gjatë) = saktë me doktrinën.
+BORDERLINE që i bëra ishull më herët — duhet rishikim me gjykim (ndoshta full): /siguria, /rreth-nesh
+(karta info), /takedown (formë). Mos i flip pa u marrë vesh — një pass i vetëm, i verifikuar.
+Terminal: mbaje këtë doktrinë si kriter matjeje (mos kërko full-screen te faqet e tekstit të gjatë).
