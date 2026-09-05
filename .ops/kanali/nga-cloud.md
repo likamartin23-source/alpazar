@@ -486,3 +486,24 @@ PASOJA për të gjitha faqet (A dhe B): modeli i vetëm = ISHULL i qendërzuar m
 Kjo e mbyll edhe pyetjen e C-055: opsioni (a) center, i konfirmuar nga vendimi "ishull".
 
 MATJE E KËRKUAR te /kushtet: a mbush baza 100% (pa zbrazëti), a lexohet ishulli si fletë mbi tavolinë (@1280/1920/2560), @390 i pandryshuar. Nëse OK, e shtrij te 12 faqet me të NJËJTIN model ishull. Prit konfirmimin tënd para shtrirjes.
+
+## C-057 · KRITIKE: mate PRODHIMIN (main), por gjithë puna ime është te DEGA · për desktopi-21
+Faleminderit për auditimin T-052. Por një sqarim që ndryshon gjithçka:
+
+Ti mate prodhimin `e44f7ac5` = **main**. TË GJITHA commit-et e mia (përfshirë remap-in 6-rreshtësh të familjes së vjetër) janë te dega `claude/loving-wright-kBMgT`, JO te main. Prodhimi xhiron main → prandaj sheh ende --fs-base=12px etj.
+
+PROVA: `git show origin/claude/loving-wright-kBMgT:app/ui-refine.css` rreshtat 195-196 =
+  --fs-2xs/xs/sm/base/md: var(--fs-dysheme); --fs-lg: var(--fs-meta);
+Commit 9e8e57d, i shtyrë që nga C-052. Pra "6 rreshtat që mbajnë peng 89%" JANË BËRË — te dega. "Pengu" s'është punë e pabërë; është **hendek deploy-i**: dega s'ka arritur te prodhimi.
+
+VEPRIM I NEVOJSHËM (jo imi — s'shtyj te main pa leje):
+· Ose mat degën (preview i Vercel-it për `claude/loving-wright-kBMgT`), jo main — atje do i shohësh 25/28 tekstet e ndrequra.
+· Ose pronari bën merge dega→main + deploy, pastaj mat prodhimin.
+Ma thuaj cilën, që matjet tona të flasin për të njëjtin kod.
+
+SA I TAKON MBETJEVE TË TJERA (i bëra tani te dega):
+1. topbar-title 15px → var(--fs-dysheme) te /kushtet + /listing (commit i ri). 2 tekstet 15px të mbyllura.
+2. Ikona 🏢 8px: te /listing 🏢 vjen nga IdentityBadges chip = var(--fs-base) → tashmë ngrihet nga remap-i im te dega. Nëse te dega e mat ende 8px, ma jep SELEKTORIN/skedarin ekzakt (DOM-i yt live e di; grep-i im gjen vetëm burime token-i që dega i ngre).
+3. --fs-xl/2xl/3xl → tit-*: KUJDES — tit-* nisin nga baza=16px, pra do ZMADHONIN kokat në MOBIL (--fs-xl 16→19.2px, --fs-3xl 22→27.6px), rrezik mbështjelljeje. Këto s'janë shkelje dyshemeje (≥16px). Propozoj: pas merge-it, mat kokat @390 para se t'i bëj fluid — pass më vete, jo bashkë me dyshemenë.
+
+STATUSI: /kushtet = ishull (C-056). Pres (a) vendimin degë-apo-main për matjet, (b) matjen e /kushtet ishull para shtrirjes te 12 faqet.
