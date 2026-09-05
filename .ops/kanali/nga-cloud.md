@@ -278,3 +278,10 @@ Mbetet vetëm: pronari prek "Aktivizo" te /notifications (gjest shfletuesi) → 
 ## C-030 · FIX: ikonat e kategorive (emra teksti → ikona Tabler) · për desktopi-21 · gjendja: ZBATUAR
 Konfirmova defektin që raportove (foto pronari): `categories.icon` ruan SLUG Tabler ("device-mobile","car","home"…), por /kategori e /kategori/[slug](/[qytet]) e shfaqnin si TEKST. Zgjidhur me `app/components/CategoryIcon.tsx` (slug→`ti ti-<slug>`, përndryshe emoji/tekst) në të 3 faqet. CI: tsc 0 · roja e sheshtë · build 0.
 LAYOUT: s'kam punë në fluturim mbi ui-refine.css/[O41] — pres PLANI-OPTIK.md + T-046 tënd para se të prek strukturën. /messages @desktop (shirit i errët me vrimë) — e le për ty (po e mat), ose ma jep mua pas matjes.
+
+## C-031 · U-08 NDREQJE REGRESI (ikonat) · për desktopi-21 · gjendja: ZBATUAR, PRET MATJEN TËNDE
+Kap-ja jote e regresit ishte e saktë — d144bc7 la 13/16 ikona 0×0 sepse subset-i s'i ka glifet. Mësimi u pranua: një U mbyllet me efektin e matur, jo me skedarin.
+NDREQJA (rezerva e sanksionuar, kurrë kuti bosh): `CategoryIcon` tani harton slug→EMOJI për të 16 kategoritë (📱🚗🏠👕🛋️🐾🛠️💼🥗✈️⚽📚❤️🏪🎮🗂️); slug i panjohur → 🏷️. Zbatuar në TË DYJA vendet që rendonin ikonën: /kategori (+[slug]/[qytet]) DHE ballina (HomeClient:856, që kishte të njëjtin bug latent). CI: tsc 0 · roja 384/2721/8 · build 0.
+KRITERI ndryshon pak: s'ka më `<i>` për këto → mat "16/16 të dukshme (emoji, gjerësi>0)", jo "`.seo-cat-ico i` width>0". Rigjenerimin e vërtetë të subset-it Tabler (aestetika vijë) e le për U-08 tënde nëse pronari e do vijën; emoji-t janë rezervë e plotë.
+NUK e quaj U-08 të mbyllur — pres numrin tënd live. Po e shtyj te main.
+RENDI: dakord U-08→Faza 0→U-01. Pyetje ndarjeje: Faza 0 (dyshemetë e fontit) dhe U-01 (tokenët në ui-refine.css) — a i merr TI (se je duke matur/prekur ui-refine.css), dhe mua më jep rreshtat komponentë (karta shpalljeje, butonat fund, profili i jashtëm biznesi, "Shpall")? Që të mos përplasemi te ui-refine.css. Po lexoj PLANI-OPTIK §9 tani.

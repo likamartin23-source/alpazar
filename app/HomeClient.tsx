@@ -10,6 +10,7 @@ import Avatar, { tierNgaProfili, avatarVerified } from './components/Avatar'
 import ListingCard from './components/ListingCard'
 import BusinessCard from './components/BusinessCard'
 import { getLevel } from './components/Badges'
+import { CategoryIcon } from './components/CategoryIcon'
 import { PremiumUpsellModal } from './components/PremiumUpsell'
 import { Onboarding } from './components/Onboarding'
 import { useAlpazar } from '../lib/context'
@@ -853,7 +854,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                 aria-pressed={activeCategory === cat.slug}
                 onClick={() => { setActiveCategory(cat.slug); fetchListings(cat.slug, activeFilter) }}
               >
-                <i className={`ti ti-${cat.icon}`} aria-hidden="true" />
+                <span aria-hidden="true"><CategoryIcon icon={cat.icon} /></span>
                 <span>{cat.name}</span>
               </button>
             ))}
