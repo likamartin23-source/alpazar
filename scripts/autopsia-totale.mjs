@@ -193,6 +193,12 @@ for (const ekrani of EKRANET) {
 }
 
 rez.hrefsTeZbuluara = [...teGjeturaHrefs].sort()
+// bashkim jo-shkaterrues: mban gjeresite/rruget e matura me pare qe s'jane ne kete xhiro (D-13)
+try {
+  const vjetra = JSON.parse(readFileSync(DALJA, 'utf8'))
+  for (const [u, v] of Object.entries(vjetra.faqet || {}))
+    rez.faqet[u] = { ...(v || {}), ...(rez.faqet[u] || {}) }
+} catch {}
 writeFileSync(DALJA, JSON.stringify(rez, null, 1))
 console.log('\n→ ' + DALJA + ' · rrugë të matura: ' + Object.keys(rez.faqet).length +
   ' · href të zbuluara gjithsej: ' + rez.hrefsTeZbuluara.length)
