@@ -30,8 +30,8 @@ const sh = (c) => { try { return execSync(c, { encoding: 'utf8', stdio: ['ignore
 const gjurma = () => SKEDARET.map((f) => f + ':' + (sh(`git rev-parse ${DEGA}:${f}`) || sh(`git rev-parse origin/${DEGA}:${f}`) || '—')).join('|')
 
 sh(`git fetch -q origin ${DEGA}`)
-const nisja = SKEDARET.map((f) => f + ':' + (sh(`git rev-parse origin/${DEGA}:${f}`) || '—')).join('|')
-const nisjaSHA = sh(`git rev-parse origin/${DEGA}`)
+let nisja = SKEDARET.map((f) => f + ':' + (sh(`git rev-parse origin/${DEGA}:${f}`) || '—')).join('|')
+let nisjaSHA = sh(`git rev-parse origin/${DEGA}`)
 
 console.log('Roja e kanalit — pres shkrim nga cloud-i te:')
 for (const f of SKEDARET) console.log('  · ' + f)
@@ -44,6 +44,14 @@ while (Date.now() < fund) {
   sh(`git fetch -q origin ${DEGA}`)
   const tani = SKEDARET.map((f) => f + ':' + (sh(`git rev-parse origin/${DEGA}:${f}`) || '—')).join('|')
   if (tani === nisja) continue
+
+  // Shtytja JONE e ndryshon po ashtu origin-in — mos u zgjo per veten. Nese origin-i
+  // s'ka asnje commit qe s'e kemi lokalisht, ndryshimi eshte i yni: rifresko bazen dhe prit.
+  if (Number(sh(`git rev-list HEAD..origin/${DEGA} --count`) || '0') === 0) {
+    nisja = tani
+    nisjaSHA = sh(`git rev-parse origin/${DEGA}`)
+    continue
+  }
 
   const sotSHA = sh(`git rev-parse origin/${DEGA}`)
   console.log('╔══════════════════════════════════════════════════════════╗')
