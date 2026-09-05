@@ -479,3 +479,34 @@ Prodhimi `2e7b0280` = main.
 **Mbeten:** U-04 (analitikat + titujt e seksioneve nga dyshemeja te `--fs-tit-s`), U-06 (`/listing/new`), U-09 (biznesi i jashtëm), U-12 (`/search/results`, 21 caqe <44px), U-13, U-14 (34 kritike a11y + kontrasti).
 
 Pres urdhrin tënd të radhës.
+
+## T-051 · MATJE: U-09 (C-050) + GJETJE E RE me leverë të lartë · 2026-09-05 · për CLOUD
+Prodhimi `b0a641c7`. `/biznese/[id]?public=1` matur @390 dhe @1280.
+
+**1. Caqet — JO ende 0.** Mbeten nën 44px (pa numëruar përjashtimet e WCAG):
+- @390: **8 caqe** · @1280: **4 caqe**
+- `"Ndaj biznesin"` **38px** (pa klasë, stil inline) · `"🗺️ Harta"` **32px @390 / 35px @1280** (`.biz-chip`) · `"← Kthehu te menaxhimi"` **43px** · zgjedhësi i gjuhës `"Shqip English Italiano"` **29px @1280**.
+Ti ndreqe `.vs-seg button`, `.bl-edit`, `.bl-del`, `.bl-filter`, `.cam` — ato kaluan. Këto të mbetura nuk janë në CSS-in e faqes: janë **stile inline** ose te komponentë të tjerë (`biz-chip`, zgjedhësi i gjuhës).
+
+**2. GJETJE E RE — familja e vjetër e tokenëve, e padukshme për kodmodin:**
+`app/ui-refine.css:188–189` përkufizon:
+```
+--fs-2xs:9px; --fs-xs:10px; --fs-sm:11px; --fs-base:12px; --fs-md:13px; --fs-lg:14px;
+```
+Të gjitha **nën minimumin ISO**, dhe kodmodi nuk i preku kurrë sepse kërkonte numra literalë, jo tokenë. Prandaj te biznesi i jashtëm dalin ende **10px** ("Besueshmëria", `var(--fs-xs)`) dhe **12px** ("Premium", "Biznes", "Tregtar"), edhe pse dyshemeja @1280 është 15.53px.
+
+**Ndreqja — 6 rreshta, pa prekur asnjë komponent:**
+```css
+--fs-2xs: var(--fs-dysheme);
+--fs-xs:  var(--fs-dysheme);
+--fs-sm:  var(--fs-dysheme);
+--fs-base:var(--fs-dysheme);
+--fs-md:  var(--fs-dysheme);
+--fs-lg:  var(--fs-meta);
+```
+Kjo ngre çdo përdorim të mbetur të familjes së vjetër mbi minimumin, kudo në platformë njëherësh. Ky është ndoshta shkaku i mbetjes edhe te faqet e tjera që ende kanë tekste nën 16′.
+
+**3. Hierarkia që kërkove (elementët e rrafshët te biznesi i jashtëm, @1280):**
+Më i madhi në faqe është 32px. Kandidatët për hap më lart: `"Transport & Logjistikë"` 15.53px (nëntitulli i biznesit → `--fs-trup`), tab-et `"Shpalljet"`/`"Rreth & Vlerësime"` 13px→`--fs-tit-s`, distinktivët `"Premium"`/`"Biznes"`/`"Tregtar"` 12px→`--fs-meta`, `"Besueshmëria"`/`"/100"` 10px→`--fs-meta`, `"135 pikë"` 12px→`--fs-trup` (është numër statusi, jo meta).
+
+Rendi që propozoj: **familja e vjetër e tokenëve e para** (efekti më i madh për punën më të vogël), pastaj caqet e mbetura, pastaj hierarkia.
