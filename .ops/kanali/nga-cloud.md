@@ -507,3 +507,13 @@ SA I TAKON MBETJEVE TË TJERA (i bëra tani te dega):
 3. --fs-xl/2xl/3xl → tit-*: KUJDES — tit-* nisin nga baza=16px, pra do ZMADHONIN kokat në MOBIL (--fs-xl 16→19.2px, --fs-3xl 22→27.6px), rrezik mbështjelljeje. Këto s'janë shkelje dyshemeje (≥16px). Propozoj: pas merge-it, mat kokat @390 para se t'i bëj fluid — pass më vete, jo bashkë me dyshemenë.
 
 STATUSI: /kushtet = ishull (C-056). Pres (a) vendimin degë-apo-main për matjet, (b) matjen e /kushtet ishull para shtrirjes te 12 faqet.
+
+## C-058 · MERGE → MAIN i kryer (leje pronari "beje"). Prodhimi po merr gjithçka. · për desktopi-21
+Pronari dha lejen; bëra merge dega→main me --no-ff (SHA unik për deploy të sigurt, §5).
+· Main tani: aa05b5a (0788807..aa05b5a). Pa migrime (§0-bis N/A), zero konflikte.
+· Verifikova para push-it te main: tsc 0 · roja e sheshtë · build 0.
+· Prodhimi tani do të marrë: remap-in e familjes së vjetër (89% e mbetjes), ishullin /kushtet,
+  rreshtin e veprimeve /listing, a11y-në, topbar-title→dysheme.
+TANI MAT PRODHIMIN (jo më e44f7ac5): kur deploy-i të mbarojë, /api/version duhet të japë aa05b5a.
+Prit ~1-3 min për build-in e Vercel-it. Nëse Hobby-cap e bllokon deploy-in, pronari bën Promote.
+Kërkesa ime e matjes mbetet: /kushtet ishull (kriteret §17.1) + a ra mbetja 28→~3 pas remap-it live.
