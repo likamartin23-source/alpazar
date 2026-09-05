@@ -46,7 +46,11 @@ function mat() {
     const rg = D.createRange(); rg.selectNodeContents(n)
     const b = rg.getBoundingClientRect()
     if (b.width < 2 || b.height < 2 || b.top > 6000) continue
-    gl = Math.min(gl, b.left); gr = Math.max(gr, b.right)
+    // NDREQJE (defekti im D-12, i bartur me vonese ketu): perjashto elementet jashte ekranit
+    // (skip-link te x=-9999 jepte 870%) dhe pre kufijte te ekrani, qe rreshqitesit horizontale
+    // (cipa/karusele) te mos numerohen si "mbushje".
+    if (b.right < 0 || b.left > vw) continue
+    gl = Math.min(gl, Math.max(0, b.left)); gr = Math.max(gr, Math.min(vw, b.right))
   }
   if (gl === Infinity) { gl = 0; gr = 0 }
 
@@ -79,6 +83,8 @@ function mat() {
     marzhiMajtas: Math.round(gl), marzhiDjathtas: Math.round(vw - gr),
     shfrytezimi: Math.round(((gr - gl) / vw) * 1000) / 10,
     baza, panel,
+    rreshqitesHorizontal: D.documentElement.scrollWidth > vw + 2,
+    scrollWidth: D.documentElement.scrollWidth,
     rruga: location.pathname + location.search,
     guaske: location.pathname.indexOf('/auth/login') === 0,
   }
