@@ -15,7 +15,7 @@
  *  6. HIGJENA — sa madhesi shkronjash dhe sa rreze te ndryshme ne te njejtin ekran.
  */
 import { chromium } from 'playwright'
-import { writeFileSync, mkdirSync } from 'node:fs'
+import { writeFileSync, readFileSync, mkdirSync } from 'node:fs'
 
 const BAZA = process.env.BAZA || 'https://alpazar.vercel.app'
 const L = 'dcc29dcc-ad56-4297-b299-5fb7e4ea6349'
@@ -42,6 +42,15 @@ const TE_GJITHA = [
   ['favorites', '/favorites'],
   ['oferta', '/oferta'],
   ['listing-new', '/listing/new'],
+  // —— rruget pas hyrjes (kerkojne PROFIL me sesion te gjalle)
+  ['profile-analytics', '/profile/analytics'],
+  ['billing', '/billing'],
+  ['saved-searches', '/saved-searches'],
+  ['te-dhenat-mia', '/te-dhenat-mia'],
+  ['referral', '/referral'],
+  ['u-id', '/u/af3e3d5b-0f49-4ad5-a83d-281733fed433'],
+  ['biznes-analytics', '/biznese/' + B + '/analytics'],
+  ['listing-edit', '/listing/' + L + '/edit'],
 ]
 const RRUGET = process.env.RRUGET
   ? TE_GJITHA.filter((r) => process.env.RRUGET.split(',').includes(r[0]))
@@ -136,7 +145,12 @@ function mat() {
     rrezeTeNdryshme: rrezet.size,
     gjatesiaFaqes: D.documentElement.scrollHeight,
     titulli: (D.querySelector('h1')?.innerText || '').slice(0, 60),
-    guaske: /Vazhdo me Google|Keni harruar fjal|Identifikohu me Google|Kyçu për të|Hyr për të/i.test(D.body.innerText),
+    // D-11: flamuri me regex jepte false-positive (kapte tekste normale si "Hyr për të kontaktuar").
+    guaske: location.pathname.indexOf('/auth/login') === 0 || /Autentikimi/i.test((D.querySelector('h1') || {}).innerText || ''),
+    rrugaReale: location.pathname,
+    // D-12: dalje e vertete horizontale kundrejt rreshqitesi te qellimshem
+    dalje: D.documentElement.scrollWidth > W.innerWidth + 2,
+    scrollWidth: D.documentElement.scrollWidth,
   }
 }
 
@@ -195,5 +209,11 @@ for (const ekrani of EKRANET) {
   await k.close()
   if (shfletuesi) await shfletuesi.close()
 }
-writeFileSync('.ops/autopsi/optika.json', JSON.stringify(rezultati, null, 1))
+const DALJA = process.env.DALJA || '.ops/autopsi/optika.json'
+try {
+  // bashkim jo-shkaterrues: mban faqet e matura me pare qe s'jane ne kete xhiro
+  const vjetra = JSON.parse(readFileSync(DALJA, 'utf8'))
+  for (const [f, v] of Object.entries(vjetra.faqet || {})) if (!rezultati.faqet[f]) rezultati.faqet[f] = v
+} catch {}
+writeFileSync(DALJA, JSON.stringify(rezultati, null, 1))
 console.log('\n→ .ops/autopsi/optika.json')

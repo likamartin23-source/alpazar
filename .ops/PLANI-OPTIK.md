@@ -469,3 +469,36 @@ dukshëm**, i matur live — jo kur ndryshohet skedari.
 Doktrina e tri shtresave (§3), formula e shkallës (§4), kolona 66ch, dhe kriteret e pranimit (§6) qëndrojnë
 të pandryshuara. Gjetja qendrore — tipografi e ngrirë, 83% e matjeve nën minimumin ndërkombëtar, 0% rritje
 nga 390px në 2560px — mbeti e njëjtë edhe pas korrigjimit të konstantes.
+
+---
+
+## 10. REGJISTRI I DEFEKTEVE — çdo gjë e gjetur, me urdhër të pronarit
+
+Rregull: këtu hyn **çdo** defekt i gjetur gjatë punës, edhe ata që nuk kanë lidhje me optikën,
+edhe ata që dolën gabime të miat, edhe alarmet false — që të mos rihapen nga askush më vonë.
+Kolona "Kush" tregon kush e mban: PRODUKT (kodi i platformës), INSTRUMENT (mjetet e matjes),
+PROCES (mënyra si punojmë).
+
+| # | Kush | Defekti | Dëshmia | Gjendja |
+|---|---|---|---|---|
+| D-01 | PRODUKT | Ikonat e kategorive shtypeshin si TEKST (`device-mobile`, `car`…) në faqe publike SEO | HTML i shërbyer: `<span class="seo-cat-ico">device-mobile</span>`; shkaku `app/kategori/page.tsx:57` | Ndrequr nga cloud (`d144bc7`) — por shih D-02 |
+| D-02 | PRODUKT | **Regres i gjallë:** pas ndreqjes së D-01, **13 nga 16 ikona kanë përmasa 0×0px** — kartat mbetën bosh, më keq se para | Matje live @1280 mbi `ccaa5d5`: `.seo-cat-ico i` me `getBoundingClientRect()` 0×0 për car, home, shirt, armchair, paw, tools, briefcase, salad, plane, ball, book, device-gamepad, dots. Foto: `.ops/autopsi/kategori-pas-fixit.png` | HAPUR — U-08 hapi 2 (rigjenerimi i subset-it) |
+| D-03 | PRODUKT | Tipografi e ngrirë: 0% rritje nga 390px në 2560px; 83% e matjeve nën minimumin ISO 16′ | §2, 52 matje | HAPUR — Faza 0 + U-01 |
+| D-04 | PRODUKT | Masa shpërthen: `/billing` **150ch**, `/te-dhenat-mia` **135ch**, `/premium` 118ch, `/kushtet` 99ch, `/profile/analytics` 91ch, `/notifications` 79ch — të gjitha mbi kufirin 75 | Matje @1280 dhe @1920 | HAPUR — U-07 zgjerohet te faqet e kyçura |
+| D-05 | PRODUKT | Caqe prekjeje nën WCAG 2.2 AA (24px): `/kushtet` 8/10 @2560, `/rreth-nesh` 7/10 @1920, `/te-dhenat-mia` 3, `/listing/[id]/edit` cak mesatar 36px me 2 nën 24 | Matje live | HAPUR — U-05/U-07 |
+| D-06 | PRODUKT | Borxh strukturor: **931 `fontSize` inline**, **0 `clamp()`** — asgjë s'shkallëzohet dot qendrore | `grep -rno` | HAPUR — U-01 |
+| D-07 | PRODUKT | `/listing/[id]` kapet me `max-width:1140px !important` nga `ListingMediaContext.tsx:33`, duke mbishkruar rregullin 100% | Gjurmues DOM live (T-042) | HAPUR — U-03 |
+| D-08 | PRODUKT | `/biznese/[id]/analytics` ka trup teksti **9px** — teksti më i vogël i gjetur në faqe të plotë (≈6.8′ @1280, dy të tretat nën minimumin) | Matje live pas hyrjes | HAPUR — urdhër i ri U-09 |
+| D-09 | INSTRUMENT | Cache-i i profilit të auditit mbante një **404 të ruajtur për `/_next/static/chunks/webpack-*.js`** → faqet nuk hidratoheshin → matje krejt false | Konsola: "Refused to execute script … MIME type ('text/plain')"; me `curl` i njëjti chunk kthen 200 | NDREQUR — cache-i pastrohet te `hyrje-dritare.mjs` para çdo sesioni |
+| D-10 | PROCES | Sesioni i profilit skadon pa paralajmërim; 6 rrugë u matën si guaskë login-i pa u vënë re | Xhiroja e parë: `/profile`, `/messages`, `/favorites`, `/oferta`, `/listing/new` me numra identikë 17.5% | NDREQUR — hyrje e re + kontroll `location.pathname` |
+| D-11 | INSTRUMENT | Flamuri "GUASKË" me regex jepte **false-positive** (kapte tekste normale si "Hyr për të kontaktuar" te `/listing/[id]`) | Faqe me përmbajtje reale u shënuan GUASKË | NDREQUR — kontroll mbi `location.pathname` + `h1` |
+| D-12 | INSTRUMENT | `shfrytezimi > 100%` (ballina @390 = 385%) lexohej si "dalje nga ekrani", ndërsa janë çipa/karusele që rrëshqasin brenda kontejnerit | Krahasim me `scrollWidth` mungonte | NDREQUR — shtuar `dalje` + `scrollWidth` |
+| D-13 | INSTRUMENT | Instrumenti **mbishkruante** daljen e mëparshme; matja publike gati u fshi nga ajo e kyçur | Vënë re para se të ndodhte | NDREQUR — `DALJA=` + bashkim jo-shkatërrues |
+| D-14 | — | **ALARM FALS, mos e rihap:** `/biznese` dukej bosh (0 biznese) | Ishte pasojë e D-09. Me shfletues të pastër biznesi "Makina" rendërohet normalisht (8 karta); API-ja anonime e kthen rreshtin me 200 | MBYLLUR |
+| D-15 | PLAN | Konstantja cap-height 0.72 ishte huazuar nga Inter; fonti real është Plus Jakarta Sans | Matje live me canvas: cap **0.750**, x **0.540** | NDREQUR — §9-A1 |
+| D-16 | PLAN | Maksimumi i shkallës nuk mbulonte ultrawide 3440 | Kërkesa 26.7px kundrejt 26px | NDREQUR — §9-A3, tani 1.75rem |
+| D-17 | PLAN | Baza e rojës 930 ishte numër rreshtash, jo dukurish | `grep -rno` = 931 | NDREQUR — §9-A6 |
+| D-18 | PLAN | Rreziku i thyerjes nga zëvendësimi i menjëhershëm ishte i nënvlerësuar | +66% rritje në disa tekste | NDREQUR — Faza 0, §9-A4 |
+| D-19 | PLAN | **Zoom-i 200% i shfletuesit kundër `clamp()` me `vw`:** termi `vw` nuk rritet fizikisht me zoom-in, ndaj në 1280 zoom-i 200% jep vetëm ~1.71× rritje reale, jo 2× | Llogaritje mbi formulën e §4 | HAPUR — vendim te auditimi i dytë (§11) |
+| D-20 | PLAN | `66ch` matet me gjerësinë e shifrës "0", jo me gjerësinë mesatare të karakterit (0.5606em e matur) | Përkufizim CSS | HAPUR — matje e drejtpërdrejtë te §11 |
+| D-21 | PRODUKT | Nga fotot e pronarit: `/messages` në desktop shfaq shirit të errët me një "vrimë" drejtkëndore të bardhë — layout i thyer | Foto e pronarit, 5 shtator | PËR VERIFIKIM në matjen e kyçur |
