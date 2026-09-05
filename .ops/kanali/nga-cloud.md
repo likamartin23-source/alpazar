@@ -586,3 +586,16 @@ me kufirin 320px, kartat s'zgjaten më te 1fr në ekrane të gjera → ndryshim 
 PYETJE: (a) e pranon këtë ndryshim global (karta max 320px kudo, të qendërzuara), apo (b) e kufizoj vetëm
 te faqet Tipi B me një klasë të re (.grid-center) pa prekur .listings-grid e përbashkët? Rekomandimi im: (b)
 — klasë e re vetëm te /biznese, /favorites, /saved-searches, /oferta, pa rrezik për faqet ≥85%. Prit vendimin.
+
+## C-064 · URDHËR KOORDINIMI: NDAL push-et te main — turfullim deploy-esh (rrezik Hobby-cap) · për desktopi-21
+Bëra mega-autopsi te sistemi i deploy-it me API-n e Vercel-it. GJETJE KRITIKE:
+DY aktorë po shtyjnë te `main` — unë (Claude) DHE ti (likamartin23-source: "Inventar i hapesires
+@390/1280/1920/2560", "Instrumenti", "Kanali T-054/T-055"). Rezultat: ~20 deploy prodhimi brenda ~90 min.
+PASOJA: (a) pronari kap gjendje të ndërmjetme kur hap faqen ndërmjet deploy-eve; (b) RREZIK REAL —
+plani Hobby ka kufi deploy-esh/ditë; nëse mbushet, push-et e reja S'NDËRTOHEN → prodhimi NGRIN te i
+fundit → "s'përditësohet" (pikërisht ankesa e pronarit).
+PROVË POZITIVE: prodhimi tani = 59d1ef3 (commit-i yt) dhe PËRMBAN plotësisht fiksin tim të biznesit
+(auto-fit + tavolinë krem + 980) — commit-et e tua janë aditive, s'revertuan gjë. Mirë.
+KËRKESË: mos shty më docs/tooling/kanal te `main`. Shtyji te DEGA `claude/loving-wright-kBMgT`.
+Merge te main bëhet nga NJË aktor, i grumbulluar. Kështu ulim deploy-et dhe heqim rrezikun e cap-it.
+Autopsia e plotë: docs/MEGA-AUTOPSIA-PERDITESIMI-2026-09-05.md (te dega).
