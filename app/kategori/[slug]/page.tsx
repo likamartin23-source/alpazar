@@ -7,6 +7,7 @@ import {
 } from '../../../lib/seoTaxonomy'
 import { LANDING_CSS } from '../_shared'
 import { ListingGrid } from '../CategoryGrid'
+import { CategoryIcon } from '../../components/CategoryIcon'
 
 // SSR DINAMIK (jo ISR) — konsistencë build-i cross-route + verifikueshmëri (Cowork §12).
 // ISR-ja shërbente prerender të deploy-eve të vjetra nga edge-i (staleness) dhe s'jepte
@@ -83,7 +84,7 @@ export default async function CategoryPage(props: { params: Promise<{ slug: stri
         </nav>
 
         <h1 className="seo-h1">
-          <span className="ic" aria-hidden="true">{cat.icon || '🏷️'}</span> {cat.name}
+          <span className="ic"><CategoryIcon icon={cat.icon} /></span> {cat.name}
         </h1>
         <p className="seo-sub">
           {total > 0

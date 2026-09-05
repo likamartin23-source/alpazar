@@ -6,6 +6,7 @@ import {
 } from '../../../../lib/seoTaxonomy'
 import { LANDING_CSS } from '../../_shared'
 import { ListingGrid } from '../../CategoryGrid'
+import { CategoryIcon } from '../../../components/CategoryIcon'
 
 // SSR DINAMIK (jo ISR) — konsistencë build-i cross-route + verifikueshmëri (Cowork §12).
 // Hapësira kombinatorike qytet×kategori s'para-ndërtohej gjithsesi; tani renderon me
@@ -90,7 +91,7 @@ export default async function CategoryCityPage(
         </nav>
 
         <h1 className="seo-h1">
-          <span className="ic" aria-hidden="true">{cat.icon || '🏷️'}</span> {cat.name} në {city}
+          <span className="ic"><CategoryIcon icon={cat.icon} /></span> {cat.name} në {city}
         </h1>
         <p className="seo-sub">
           {total > 0

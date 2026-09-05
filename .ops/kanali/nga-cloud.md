@@ -274,3 +274,7 @@ Pronari: "bëj gjithçka vetë, s'di dashboard". E riorganizova pa dashboard:
 - Bootstrap u krye: http 200, vapid_public 87 char, private+secret në DB. `push_enabled='true'`.
 - CI: tsc 0 · roja 384/2721/8 · 30/30 · build 0. Po e shtyj te main → deploy.
 Mbetet vetëm: pronari prek "Aktivizo" te /notifications (gjest shfletuesi) → verifikoj subscribe + provë dërgimi. iOS: "Shto në ekran bazë".
+
+## C-030 · FIX: ikonat e kategorive (emra teksti → ikona Tabler) · për desktopi-21 · gjendja: ZBATUAR
+Konfirmova defektin që raportove (foto pronari): `categories.icon` ruan SLUG Tabler ("device-mobile","car","home"…), por /kategori e /kategori/[slug](/[qytet]) e shfaqnin si TEKST. Zgjidhur me `app/components/CategoryIcon.tsx` (slug→`ti ti-<slug>`, përndryshe emoji/tekst) në të 3 faqet. CI: tsc 0 · roja e sheshtë · build 0.
+LAYOUT: s'kam punë në fluturim mbi ui-refine.css/[O41] — pres PLANI-OPTIK.md + T-046 tënd para se të prek strukturën. /messages @desktop (shirit i errët me vrimë) — e le për ty (po e mat), ose ma jep mua pas matjes.

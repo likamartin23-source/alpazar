@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { SITE_URL } from '../../lib/siteConfig'
 import { fetchCategories, FALLBACK_CATEGORIES, slugify, CITIES, citySlug } from '../../lib/seoTaxonomy'
+import { CategoryIcon } from '../components/CategoryIcon'
 
 // SSR DINAMIK (jo ISR). Prova (Cowork, verifikim anonim §12): rrugët ISR mund të
 // shërbejnë një prerender të një deploy-i të VJETËR nga edge-i (staleness cross-deploy)
@@ -54,7 +55,7 @@ export default async function KategoriIndexPage() {
         <div className="seo-cat-grid">
           {cats.map(c => (
             <a key={c.slug} className="seo-cat-card" href={`/kategori/${c.slug}`}>
-              <span className="seo-cat-ico">{c.icon || '🏷️'}</span>
+              <span className="seo-cat-ico"><CategoryIcon icon={c.icon} /></span>
               <span className="seo-cat-name">{c.name}</span>
             </a>
           ))}
