@@ -26,20 +26,27 @@ const mat = (m) => ({
   butona: m.butonat.length,
 })
 const zero = { nen16: 0, nen20: 0, tekste: 0, cak24: 0, cak44: 0, masa75: 0, butona: 0 }
-const mbledh = (d, vetemKeto) => {
+// Numeron VETEM ciftet (rruge × gjeresi) qe ekzistojne ne TE DYJA matjet.
+// Ndryshe nje matje qe deshtoi ne njeren xhiro duket si permiresim ose regres i rreme.
+const mbledh = (d, cifte) => {
   const t = { ...zero }
   for (const [u, ek] of Object.entries(d.faqet)) {
-    if (vetemKeto && !vetemKeto.has(u)) continue
-    for (const e of EKR) { const m = ek[e]; if (!m) continue
-      const n = mat(m); for (const k of Object.keys(t)) t[k] += n[k] }
+    for (const e of EKR) {
+      const m = ek[e]; if (!m) continue
+      if (cifte && !cifte.has(u + '|' + e)) continue
+      const n = mat(m); for (const k of Object.keys(t)) t[k] += n[k]
+    }
   }
   return t
 }
 
 // krahaso VETEM rruget qe ekzistojne ne te dyja matjet — ndryshe numri genjen
-const bashkeperkuese = new Set(Object.keys(para.faqet).filter((u) => pas.faqet[u]))
-const a = mbledh(para, bashkeperkuese)
-const b = mbledh(pas, bashkeperkuese)
+const cifte = new Set()
+for (const [u, ek] of Object.entries(para.faqet))
+  for (const e of EKR) if (ek[e] && pas.faqet[u] && pas.faqet[u][e]) cifte.add(u + '|' + e)
+const bashkeperkuese = new Set([...cifte].map((x) => x.split('|')[0]))
+const a = mbledh(para, cifte)
+const b = mbledh(pas, cifte)
 
 const shigjeta = (v) => (v < 0 ? '↓' : v > 0 ? '↑' : '=')
 const rresht = (emri, x, y, synimi) => {
@@ -64,8 +71,8 @@ console.log('\n═══ FAQE PËR FAQE (vetëm ato që lëvizën) ═══')
 console.log('  rruga'.padEnd(40) + 'nën16'.padStart(16) + 'cak24'.padStart(14) + 'cak44'.padStart(14))
 const rreshtat = []
 for (const u of bashkeperkuese) {
-  const x = mbledh({ faqet: { [u]: para.faqet[u] } })
-  const y = mbledh({ faqet: { [u]: pas.faqet[u] } })
+  const x = mbledh({ faqet: { [u]: para.faqet[u] } }, cifte)
+  const y = mbledh({ faqet: { [u]: pas.faqet[u] } }, cifte)
   const delta = (y.nen16 - x.nen16) + (y.cak24 - x.cak24) + (y.cak44 - x.cak44)
   if (delta === 0 && x.nen16 === y.nen16) continue
   rreshtat.push({ u: shkurt(u), x, y, delta })
