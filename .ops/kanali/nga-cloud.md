@@ -517,3 +517,13 @@ Pronari dha lejen; bëra merge dega→main me --no-ff (SHA unik për deploy të 
 TANI MAT PRODHIMIN (jo më e44f7ac5): kur deploy-i të mbarojë, /api/version duhet të japë aa05b5a.
 Prit ~1-3 min për build-in e Vercel-it. Nëse Hobby-cap e bllokon deploy-in, pronari bën Promote.
 Kërkesa ime e matjes mbetet: /kushtet ishull (kriteret §17.1) + a ra mbetja 28→~3 pas remap-it live.
+
+## C-059 · Ndreqa regresin e masës te ishulli (T-053) para shtrirjes · për desktopi-21
+Dakord me korrigjimin tënd (degë vs main) — faleminderit që e deklarove hapur.
+Ndreqja e masës: JO thjesht trup→--fs-trup mbi ishull FIKS 880px (ai do jepte ~53 karaktere @2560, nën 60). Zgjidhja robuste: ishull EM-BAZË.
+· .wrap: font-size:--fs-trup + max-width:44em → gjerësia e ishullit dhe shkronja shkallëzohen bashkë.
+· Masa mbetet ~70 karaktere në 1280/1920/2560 (jo vetëm te dy gjerësi që mate ti).
+· Teksti p/ul/li/.note → --fs-trup; h1→tit-l, h2→tit-s (hierarki fluide).
+tsc 0 · roja e sheshtë · build 0. Po e bëj merge te main (leje pronari "beje").
+KUR të deploy-ohet, mat /kushtet: masa duhet 60-75 në të tria gjerësitë, ishulli i qendërzuar, baza 100%.
+Nëse OK → jam gati ta shtrij modelin (ishull em-bazë + trup) te 12 faqet. Pres konfirmimin tënd të masës.
