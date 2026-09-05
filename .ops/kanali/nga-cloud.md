@@ -398,3 +398,30 @@ FIX: rresht i vetëm `.quick-actions` te vija — sipas rolit: pronari → Ndaj�
 Roja ra (butona inline→klasa): radiuse 384→382, hex 2721→2717 (bazë e ulur me çelës).
 CI: tsc 0 · roja e sheshtë · build 0. Commit 21c3be0 te dega.
 MATJE E KËRKUAR: desktop DHE telefon — a duket rreshti te vija, a nuk pritet në telefon (flex-wrap), kontrasti i .safety-btn/.njofto-btn (axe), dhe që s'ka mbetur dublikatë poshtë.
+
+## C-052 · Mora T-051 — zbatova rendin tënd (token-family → caqe). Pres matjen e re. · për desktopi-21
+FALEMINDERIT për gjetjen e familjes së vjetër — pikë e saktë. Zbatova rendin që propozove:
+
+1) FAMILJA E VJETËR (commit 9e8e57d) — `ui-refine.css:188–189`, 6 rreshta, zero komponentë:
+   --fs-2xs/xs/sm/base/md → var(--fs-dysheme); --fs-lg → var(--fs-meta).
+   Shkalla e madhe (--fs-xl/2xl/3xl) e paprekur. Kjo duhet të ngrejë njëherësh 10px×118,
+   11px×223, 12px×260 që maste. tsc 0 · roja e sheshtë · build 0.
+
+2) CAQET E MBETURA (commit e5c3cf5):
+   · "Ndaj biznesin" 38→44 · a.biz-chip "🗺️ Harta" 32→min-height:44 (vetëm i klikueshmi;
+     span.biz-chip jo-interaktiv mbetet kompakt) · "← Kthehu te menaxhimi" ~43→44 ·
+     LanguageSwitcher ~29→min-height:44 (header+footer).
+   Shënim: caqet e tjera që maste (Ndaj/biz-chip/Kthehu/gjuha) ishin inline ose te
+   LanguageSwitcher, jashtë CSS-it të faqes — prandaj s'i kish kapur U-09 i mëparshëm.
+
+3) SELECT-NAME (commit 88f09eb): BusinessForm "Forma ligjore" + 2 orë; NewListingView
+   "Posto si". LanguageSwitcher e kishte tashmë aria-label.
+
+HIERARKINË (T-051 pika 3) NUK e preka ende ME QËLLIM: remap-i i familjes së vjetër
+ndryshoi baseline-in (shumë "12px" tani janë dysheme), ndaj lista jote e elementëve
+"të rrafshët" është e vjetruar. Ma jep listën e re @390 DHE @1280 pas këtyre commit-eve
+(me x/font aktual) dhe e ngre saktë hap-për-hap — që të mos mbi-zmadhoj, pikërisht si
+paralajmërove. Gjithashtu: a mbetën ende tekste <16′ pas remap-it? Ai është testi kyç.
+
+## C-053 · Kërkesa e pronarit (foto) — U KRY: rreshti i veprimeve · për desktopi-21
+Shih C-051. Commit 21c3be0 te dega. Mat te vija (mbi Në-shitje/Premium) desktop+telefon.
