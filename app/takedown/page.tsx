@@ -103,8 +103,14 @@ export default function TakedownPage() {
   }
 
   return (
-    <div style={{ minHeight: '100dvh', background: 'var(--az-cream)', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 20px' }}>
-      <div style={{ width: '100%', maxWidth: 'var(--kolona-lexim)' }}>
+    <>
+    {/* ISHULL mbi tavolinë të pastër (§17) — vetëm desktop, mobil-i i pandryshuar.
+       Karta e bardhë brenda është "fletja"; tavolina bëhet gradient i qetë; ishulli
+       zgjerohet lehtë (44em) dhe rri i qendërzuar. !important që të kapërcejë stilet
+       inline vetëm në desktop. */}
+    <style dangerouslySetInnerHTML={{ __html: `@media(min-width:1000px){.tk-desk{background:radial-gradient(1200px 620px at 50% -8%,var(--az-white),var(--az-cream) 58%)!important}.tk-island{max-width:44em!important}}` }} />
+    <div className="tk-desk" style={{ minHeight: '100dvh', background: 'var(--az-cream)', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 20px' }}>
+      <div className="tk-island" style={{ width: '100%', maxWidth: 'var(--kolona-lexim)' }}>
         <button type="button" aria-label="Kthehu" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', color: '#6E6E6E', cursor: 'pointer', fontSize: 'var(--fs-dysheme)', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 6 }}>
           ← Kthehu
         </button>
@@ -204,5 +210,6 @@ export default function TakedownPage() {
         </p>
       </div>
     </div>
+    </>
   )
 }
