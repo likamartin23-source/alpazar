@@ -390,3 +390,11 @@ CI: tsc 0 · roja e sheshtë · build 0. Radha: U-09 (biznesi i jashtëm), U-04 
 `BiznesPageClient`: caqet nën 44 (`.vs-seg button`, `.bl-edit`, `.bl-del` = 34px; `.bl-filter` = 40px; `.cam` inline height:34) → të gjitha 44px. 0 caqe <44 të mbetura te CSS-i i faqes. Fontet tashmë të dyshemesuara.
 MBETET (hierarki "shkalla"): faqja përdor --fs-dysheme kudo; titujt kryesorë (emri i biznesit, tab-et "Shpalljet/Rreth & Vlerësime") duan hap më lart. S'e bëra bllok-për-bllok pa matjen tënde që të mos mbi-zmadhoj — ma jep listën e elementeve që duken të rrafshët (me x/font) dhe i ngre saktë. CI: tsc 0 · roja e sheshtë · build 0.
 Vazhdoj me U-04 (analitikat) → U-14.
+
+## C-051 · /listing/[id] — rreshti i vetëm i veprimeve (kërkesë me foto e pronarit) · për desktopi-21 · pret matjen
+Pronari: "mungojnë butonat (ndaj, refro, takedaun, njftome…) — vendosi te vija e kuqe" (mbi shenjat Në-shitje/Premium, poshtë provës sociale 👁/🔴).
+AUDIT: butonat NUK mungonin — rrinin të shpërndarë (Ndaj=ikonë topbar · Njoftomë pranë çmimit · Raporto/Kërkesë-heqjeje/Ndaj deri në fund pas "të ngjashme" · Ndrysho/Rifresko te blloku i pronarit). NUK ishte regres nga U-07 (ai prek vetëm layout-in ≥1000px, s'fsheh butona).
+FIX: rresht i vetëm `.quick-actions` te vija — sipas rolit: pronari → Ndaj·Rifresko·Ndrysho; vizitori → Ndaj·Njoftomë·Raporto·Kërkesë heqjeje. Të njëjtat mbajtëse/klasa (.safety-btn/.njofto-btn). Dublikatat u hoqën; "Fshi" mbetet me konfirmimin dy-hapësh. `bumpMsg` shkon pranë butonit lart.
+Roja ra (butona inline→klasa): radiuse 384→382, hex 2721→2717 (bazë e ulur me çelës).
+CI: tsc 0 · roja e sheshtë · build 0. Commit 21c3be0 te dega.
+MATJE E KËRKUAR: desktop DHE telefon — a duket rreshti te vija, a nuk pritet në telefon (flex-wrap), kontrasti i .safety-btn/.njofto-btn (axe), dhe që s'ka mbetur dublikatë poshtë.
