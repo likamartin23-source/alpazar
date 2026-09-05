@@ -90,7 +90,17 @@ function skano() {
       const b = { emri: emri(e), etiketa: etiketa(e), cak, gj: Math.round(r.width), la: Math.round(r.height), fs, dest }
       butonat.push(b)
       if (e.getAttribute('role') === 'tab') tabat.push({ etiketa: etiketa(e), zgjedhur: e.getAttribute('aria-selected') === 'true' })
-      if (cak < 24) shkeljet.push({ lloj: 'cak<24', ...b })
+      // WCAG 2.5.8 ka PERJASHTIME te shprehura: lidhje brenda nje fjalie (inline),
+      // dhe kontrolle jashte ekranit si skip-link. Numerimi pa to ishte kriter i rreme.
+      const klasa = String(e.className || '')
+      const prind = e.parentElement
+      let tekstPrind = ''
+      if (prind) for (const nn of prind.childNodes) if (nn.nodeType === 3) tekstPrind += nn.textContent.trim()
+      const inline = e.tagName === 'A' && tekstPrind.length > 0
+      const perjashtuar = /skip/i.test(klasa) || inline
+      b.perjashtuar = perjashtuar ? (inline ? 'lidhje-inline' : 'skip-link') : null
+      if (cak < 24 && !perjashtuar) shkeljet.push({ lloj: 'cak<24', ...b })
+      else if (cak < 24) shkeljet.push({ lloj: 'cak<24-perjashtuar', ...b })
       else if (cak < 44) shkeljet.push({ lloj: 'cak<44', ...b })
       if (fs && fs < 12 && etiketa(e)) shkeljet.push({ lloj: 'tekst-butoni', ...b })
     }

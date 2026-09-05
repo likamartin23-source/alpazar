@@ -477,3 +477,46 @@ Verifikuar: **0 `font-size` nën 15px të mbetura** në `.tsx` dhe në `.css`.
 ### Ç'mbetet e hapur në këto faqe
 - **26 caqe nën 24px**, të përqendruara te `/biznese/[id]/edit` (9) dhe `/kushtet` (8) → U-02 mbetje + U-03.
 - **15 rreshta mbi 75 karaktere**, të përqendruara te `/kushtet` (10) → U-03 nuk ka nisur ende.
+
+---
+
+## 16. VERIFIKIMI I U-02, U-03, U-05 — dhe një kriter i gabuar i imi
+
+Prodhimi `a942e81`.
+
+### U-02 — MBYLLUR ✅
+`/biznese/[id]/edit`: caqe nën 24px **9 → 0**. Checkbox-et native u ngritën te 24×24.
+
+### U-03 — MBYLLUR ✅
+Kolona e leximit `37em` u zbatua te faqet ligjore. `/kushtet`: rreshta mbi 75 karaktere **10 → 0**;
+`/privatesia` **2 → 0**; `/cookies` 0. Caqe nën 24px: **0** në të gjitha.
+
+### Kriteri im ishte i gabuar — I NDREQUR
+Raportova fillimisht "7 caqe nën 24px te `/kushtet`" dhe "1 te `/biznese/[id]/edit`". Të gjitha
+ishin **përjashtime të shprehura të WCAG 2.5.8**:
+- **lidhje inline brenda një fjalie** ("Politikën e Privatësisë", "faqja e kontaktit", "Plani im")
+  — teksti i vazhdueshëm është përjashtim i deklaruar i kriterit;
+- **`a.skip-link`** ("Kalo tek përmbajtja kryesore") — kontroll jashtë ekranit, i pranishëm në
+  ÇDO faqe nga layout-i, pra numërohej 42 herë në totalin origjinal prej 377.
+
+Instrumenti u ndreq: tani i njeh dhe i shënon si `cak<24-perjashtuar`, jo si shkelje.
+**Pasojë:** numri bazë 377 caqe nën 24px ishte i fryrë; pjesa e vërtetë është dukshëm më e vogël.
+
+### U-05 — PJESËRISHT ✅, dy të meta
+**Punon:** karta e shpalljes ka tani hierarki të vërtetë — çmimi **23.04px @390 · 28.95 @1280 ·
+33.19 @1920** (`--fs-tit-m`), mbi titullin (24.12 @1280, `--fs-tit-s`) dhe mbi metan (16.75, `--fs-meta`).
+
+**E metë 1 — PRERJE E ÇMIMIT (regres i ri):** çmimi "Me marrëveshje" pritet
+(`scrollWidth > clientWidth`) në **390px dhe 1920px**. Shkaku: `.card-price` ka
+`white-space:nowrap; overflow:hidden; text-overflow:ellipsis` dhe fonti u rrit ~2×.
+Anti-clip-i i shtuar preku lartësinë e `.card-body`, jo gjerësinë e çmimit.
+
+**E metë 2 — etiketa e kartës së biznesit mbetet te dyshemeja:**
+`app/components/BusinessCard.tsx:115` ka `className="card-price"` me **stil inline**
+`fontSize: 'var(--fs-dysheme)'`, që mbizotëron rregullin CSS `.card-price{font-size:var(--fs-tit-m)}`.
+Del 12px @390 / 15.53 @1280. Nuk është çmim (është etiketë tipi "🛠 Shërbime"), ndaj zgjidhja e
+saktë është klasë e vetën, jo çmim i rremë.
+
+**Mësim i përgjithshëm:** stilet inline të Fazës 0 mbizotërojnë çdo rregull CSS të U-orderave të
+mëpasëm. Kudo ku një klasë merr token të ri, stili inline mbi të njëjtin element duhet hequr.
+Sot preken: `card-price` (1), `badge-` (1), `section-title` (4).
