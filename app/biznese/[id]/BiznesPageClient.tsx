@@ -176,7 +176,8 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   // Ngarko vlerësimet edhe kur tab-i 'about' hapet nga URL-ja (bookmark/prapa), jo vetëm
   // nga klik — përndryshe ?tab=about do të tregonte seksionin bosh. Njëherë (reviewsLoaded).
   useEffect(() => {
-    if (activeTab === 'about' && biz && !reviewsLoaded) {
+    const isDesktop = typeof window !== 'undefined' && window.matchMedia('(min-width:1000px)').matches
+    if ((activeTab === 'about' || isDesktop) && biz && !reviewsLoaded) {
       setReviewsLoaded(true)
       supabase.rpc('business_reviews', { p_business: biz.id }).then(({ data }) => setReviews(data || []))
     }
@@ -776,11 +777,21 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
            djathtas, si te faqja e shpalljes (PR #72). */
         .biz-page{background:#f2f2f2;min-height:100vh;padding-bottom:60px;}
         .biz-shell{max-width:480px;margin:0 auto;}
+        /* Panelet: MOBIL → vetëm aktivi (tab); DESKTOP → të gjitha njëherësh, që faqja
+           FULL-SCREEN të mbushet me kuptim (shpallje + rreth + kontakt + hartë +
+           vlerësime) dhe të mos mbetet "det bosh" djathtas (doktrina e pronarit). */
+        .biz-panel{display:none;}
+        .biz-panel.is-active{display:block;}
         @media (min-width:1000px){
-          .biz-shell{max-width:100%;display:grid;grid-template-columns:minmax(320px,390px) 1fr;gap:24px;align-items:start;padding:0 clamp(20px,4vw,72px);}
+          /* FULL-SCREEN si ka qenë (guaskë e plotë), me 2 kolona. */
+          .biz-shell{max-width:100%;display:grid;grid-template-columns:minmax(320px,380px) minmax(0,1fr);gap:24px;align-items:start;padding:0 clamp(20px,4vw,72px);}
           .biz-left{position:sticky;top:12px;align-self:start;max-height:calc(100vh - 24px);overflow-y:auto;overscroll-behavior:contain;}
           .biz-left::-webkit-scrollbar{width:0;}
           .biz-right{min-width:0;}
+          .biz-tabs{display:none!important;}
+          .biz-panel{display:block!important;}
+          /* Rrjeta mbush gjerësinë me sa karta nxë. */
+          .biz-right .listings-grid{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));}
         }
         .biz-tab{flex:1;padding:13px 0;font-size:var(--fs-dysheme);font-weight:700;border:none;background:none;cursor:pointer;border-bottom:2.5px solid transparent;color:#888;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:4px;}
         .biz-tab.active{color:#C42B0F;border-bottom-color:var(--az-red);}
@@ -1055,7 +1066,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
 
       <div className="biz-right">
       {/* ── Sticky tabs ──────────────────────────────────────── */}
-      <div role="tablist" aria-label="Seksionet e biznesit" style={{ position: 'sticky', top: 0, zIndex: 10, background: '#fff', borderBottom: '1px solid #eee', display: 'flex', marginBottom: 2 }}>
+      <div className="biz-tabs" role="tablist" aria-label="Seksionet e biznesit" style={{ position: 'sticky', top: 0, zIndex: 10, background: '#fff', borderBottom: '1px solid #eee', display: 'flex', marginBottom: 2 }}>
         <button id="tab-grid" type="button" role="tab" aria-selected={activeTab === 'grid'} aria-controls="tabpanel-grid" className={`biz-tab ${activeTab === 'grid' ? 'active' : ''}`} onClick={() => setActiveTab('grid')}>
           <i className="ti ti-layout-grid" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" /> Shpalljet
         </button>
@@ -1066,8 +1077,8 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
       </div>
 
       {/* ── Instagram grid tab ───────────────────────────────── */}
-      {activeTab === 'grid' && (
-        <div id="tabpanel-grid" role="tabpanel" aria-labelledby="tab-grid">
+      {(
+        <div id="tabpanel-grid" role="tabpanel" aria-labelledby="tab-grid" className={`biz-panel ${activeTab === 'grid' ? 'is-active' : ''}`}>
           {listings.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '48px 16px', color: '#aaa', background: '#fff' }}>
               <div style={{ fontSize: 48, marginBottom: 12 }} aria-hidden="true">🛍️</div>
@@ -1094,8 +1105,8 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
       )}
 
       {/* ── Rreth & Vlerësime (info) ─────────────────────────── */}
-      {activeTab === 'about' && (
-        <div id="tabpanel-about" role="tabpanel" aria-labelledby="tab-about" style={{ padding: '8px 0' }}>
+      {(
+        <div id="tabpanel-about" role="tabpanel" aria-labelledby="tab-about" className={`biz-panel ${activeTab === 'about' ? 'is-active' : ''}`} style={{ padding: '8px 0' }}>
           <div className="card">
             <h2 className="section-title"><i className="ti ti-building-store" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Rreth biznesit</h2>
             {biz.tagline && (
@@ -1249,8 +1260,8 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
 
       {/* ── Reviews tab ──────────────────────────────────────── */}
       {/* ── Rreth & Vlerësime (vlerësimet) ───────────────────── */}
-      {activeTab === 'about' && (
-        <div style={{ margin: 8 }}>
+      {(
+        <div className={`biz-panel ${activeTab === 'about' ? 'is-active' : ''}`} style={{ margin: 8 }}>
           <BizReviews rating={rating} reviews={reviews} />
         </div>
       )}
