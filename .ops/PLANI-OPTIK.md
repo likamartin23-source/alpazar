@@ -444,3 +444,36 @@ Më të ngarkuarit: `app/admin/page.tsx` (22), `app/auth/login/page.tsx` (19),
 Këto shpjegojnë pjesën tjetër të mbetjes (13px ×309, 12px ×260, 11px ×223, 10px ×118).
 
 **U-00b:** i njëjti trajtim mbi blloqet CSS — `font-size: <15px` → `var(--fs-dysheme)`.
+
+---
+
+## 15. FAZA 0 E PLOTË + NDREQJA E DYSHEMESË — matje verifikuese
+
+Prodhimi `48c346b`. Kufi mjedisi i deklaruar: makina ka **4 GB RAM me ~460 MB të lira**, ndaj
+xhiroja e plotë (38 rrugë × 3 gjerësi) vritet nga sistemi. Matja u bë në copa të vogla, një
+gjerësi dhe 4 rrugë secila — **8 rrugët më të dëmtuara në laptop-1280**, ku ndodhej dhe problemi.
+
+| Rruga | Fillimi | Pas Fazës 0 | Tani | Caqe <24px | Masa >75 |
+|---|---|---|---|---|---|
+| `/kushtet` | 92 | 92 | **1** | 8 | 10 |
+| `/privatesia` | 133 | 133 | **1** | 1 | 2 |
+| `/profile/analytics` | 104 | 104 | **0** | 2 | 0 |
+| `/premium` | 52 | — | **3** | 2 | 2 |
+| `/biznese/[id]/edit` | 84 | 43 | **0** | 9 | 0 |
+| `/` (ballina) | 102 | 102 | **6** | 1 | 0 |
+| `/admin` | 65 | 65 | **0** | 2 | 1 |
+| `/referral` | 78 | 74 | **2** | 1 | 0 |
+| **TOTALI** | **710** | **613** | **13** | **26** | **15** |
+
+**Tekste nën minimumin ISO: 710 → 13, rënie 98%.**
+Në telefon, ballina ka tani **0**.
+
+### Atribuimi i saktë (kush e bëri ç'punë)
+Faza 0 me kodmodin inline i lëvizi këto faqe vetëm 710→613 (−14%), sepse madhësitë e tyre
+ndodheshin në blloqet CSS/styled-jsx, jo në stile inline. Rënia e madhe erdhi nga **dy hapa të
+tjerë bashkë**: ndreqja e dyshemesë (gabimi im i 0.3px) dhe **U-00b** (440 konvertime në CSS).
+Verifikuar: **0 `font-size` nën 15px të mbetura** në `.tsx` dhe në `.css`.
+
+### Ç'mbetet e hapur në këto faqe
+- **26 caqe nën 24px**, të përqendruara te `/biznese/[id]/edit` (9) dhe `/kushtet` (8) → U-02 mbetje + U-03.
+- **15 rreshta mbi 75 karaktere**, të përqendruara te `/kushtet` (10) → U-03 nuk ka nisur ende.
