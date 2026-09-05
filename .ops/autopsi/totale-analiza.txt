@@ -1,0 +1,301 @@
+═══ 1. VERDIKTI FAQE-PËR-FAQE ═══
+(nën16 = tekste nën minimumin ISO · cak24/44 = caqe prekjeje nën WCAG AA/AAA · masa = rreshta mbi 75 karaktere)
+
+rruga                                   telefon                     laptop                      desktop                     
+                                        nën16 cak24 cak44 masa      nën16 cak24 cak44 masa      nën16 cak24 cak44 masa      
+/                                          61     1     4    0          102     1     4    0           96     1     4    0        
+/admin                                     60     2    13    0           65     2    13    1           64     2    13    1        
+/asistent                                  30     2     1    0           36     2     1    1           34     2     1    1        
+/billing                                   25     2     1    0           44     2     1    1           40     2     1    1        
+/biznese                                   20     1     6    0           33     1     6    0           31     1     6    0        
+/biznese/:biznesi                          28     1     6    0           50     1     6    0           46     1     6    0        
+/biznese/:biznesi?public=1                 41     1     4    0           60     1     4    0           59     1     4    0        
+/biznese/:biznesi/analytics                46     1     1    0           54     1     1    0           54     1     1    0        
+/biznese/:biznesi/edit                      7    12    61    0           84    12    61    0          104    12    63    0        
+/cookies                                   14     1     1    0           98     6     2   10           90     6     2   10        
+/favorites                                 16     1     1    0           20     1     1    0           18     1     1    0        
+/kategori                                  16     2    20    0           55     2    20    0           54     2    20    0        
+/kategori/automjete                        27     3     1    0           53     3     1    0           50     3     1    0        
+/kategori/automjete/tirane                 16     4     2    0           43     5     1    0           39     5     1    0        
+/kontakt                                   25     7     6    0           55     7     6    4           52     7     6    4        
+/kushtet                                    7     7     1    0           92    14     1   13           87    14     2   13        
+/listing/:shpallja                         41     2     7    0           63     2     7    0           60     2     7    0        
+/listing/:shpallja/edit                    47     2    20    0           61     2    20    0           59     2    20    0        
+/listing/new                               51     1     8    0           70     1     8    0           69     1     8    0        
+/messages                                  16     1     2    0           20     1     2    0           19     1     2    0        
+/moderimi/:shpallja                        19     4     1    0           22     4     1    0           22     4     1    0        
+/notifications                             21     1     2    0           32     1     2    0           32     1     2    0        
+/oferta                                    16     1     1    0           21     1     1    0           21     1     1    0        
+/premium                                   31     2     1    0           52     2     1    2           49     2     1    2        
+/privatesia                                 3     1     1    0          133     8     1    4          134     8     2    4        
+/profile                                   48     2     1    0           76     2     1    0           75     2     1    0        
+/profile/analytics                         87     2     2    0          104     2     2    0          104     2     2    0        
+/referral                                  57     1     5    0           78     1     5    0           76     1     5    0        
+/rreth-nesh                                30     7     2    0           48     7     2    4           43     7     2    4        
+/saved-searches                            16     1     1    0                                       18     1     1    0        
+/search                                    35     1     2    0           37     1     2    0           37     1     2    0        
+/search/results?q=makina                   44     2    21    0           48     2    21    0           48     2    21    0        
+/siguria                                   30     7     2    0           52     7     2    4           49     7     2    4        
+/takedown                                  28     5     4    0           34     5     5    2           33     5     5    2        
+/te-dhenat-mia                             26     3     1    0           52     3     1    1           52     3     1    1        
+/u/:perdoruesi                             26     1     6    0           46     1     6    0           40     1     6    0        
+/kategori/prona                            16     4     1    0           43     4     1    0           39     4     1    0        
+/kategori/veshje/durres                    16     4     2    0           43     5     1    0           39     5     1    0        
+/kategori/pune                             16     4     1    0           43     4     1    0           39     4     1    0        
+/notifications/5741598e-417e-4c85-9f44-    17     1     1    0           20     1     1    0           20     1     1    0        
+/auth/login (pa sesion)                    20     2     5    0           30     2     5    0           26     2     5    0        
+/biznese/new (pa sesion)                   20     2     5    0           30     2     5    0           26     2     5    0        
+
+TOTALI: 42 rrugë · 4323 butona të matur · 7287 tekste të matura
+  tekste nën 16′ (ISO minimum): 5565
+  tekste nën 20′ (rehatia):     6821
+  caqe nën 24px (WCAG AA):      377
+  caqe nën 44px (WCAG AAA):     705
+  rreshta mbi 75 karaktere:     94
+  butona me tekst nën 16′:      2816 nga 4323
+  → pjesa e teksteve nën ISO:   76%
+
+═══ 2. RENDITJA E DËMIT (nën16 + 3×cak24 + cak44 + 2×masa) ═══
+    488  /biznese/:biznesi/edit
+    347  /kushtet
+    341  /privatesia
+    319  /profile/analytics
+    286  /cookies
+    280  /
+    250  /admin
+    245  /listing/:shpallja/edit
+    235  /referral
+    229  /kontakt
+    223  /listing/new
+    221  /search/results?q=makina
+
+═══ 3. CAQET MË TË VOGLA NË GJITHË PLATFORMËN (top 20) ═══
+   12px  telefon Kushtet                     a                         /takedown
+   12px  telefon Privatesine                 a                         /takedown
+   12px  laptop  Kushtet                     a                         /takedown
+   12px  laptop  Privatesine                 a                         /takedown
+   12px  desktop Kushtet                     a                         /takedown
+   12px  desktop Privatesine                 a                         /takedown
+   13px  telefon Kthehu                      a                         /admin
+   13px  laptop  Kthehu                      a                         /admin
+   13px  desktop Kthehu                      a                         /admin
+   13px  telefon VIP Ekstra Boost            a                         /billing
+   13px  laptop  VIP Ekstra Boost            a                         /billing
+   13px  desktop VIP Ekstra Boost            a                         /billing
+   13px  telefon on                          input                     /biznese/:biznesi/edit
+   13px  telefon on                          input                     /biznese/:biznesi/edit
+   13px  telefon on                          input                     /biznese/:biznesi/edit
+   13px  telefon on                          input                     /biznese/:biznesi/edit
+   13px  telefon on                          input                     /biznese/:biznesi/edit
+   13px  telefon on                          input                     /biznese/:biznesi/edit
+   13px  telefon on                          input                     /biznese/:biznesi/edit
+   13px  telefon on                          input                     /biznese/:biznesi/edit
+
+═══ 4. TEKSTET MË TË VOGLA (top 20 sipas arcmin) ═══
+      5px   5.2'  laptop  MA                              /
+      5px   5.2'  laptop  ML                              /
+      5px   5.2'  laptop  MA                              /kategori/automjete
+      5px   5.9'  desktop MA                              /
+      5px   5.9'  desktop ML                              /
+      5px   5.9'  desktop MA                              /kategori/automjete
+      5px   6.7'  telefon MA                              /
+      5px   6.7'  telefon ML                              /
+      5px   6.7'  telefon MA                              /kategori/automjete
+    7.5px   7.9'  laptop  Premium                         /search/results?q=makina
+      8px   8.4'  laptop  Premium                         /
+      8px   8.4'  laptop  KRYESORE                        /biznese/:biznesi/edit
+      8px   8.4'  laptop  🏢                              /listing/:shpallja
+      8px   8.4'  laptop  Kryesore                        /listing/:shpallja/edit
+      8px   8.4'  laptop  −17%                            /premium
+      8px   8.4'  laptop  Feed                            /referral
+      8px   8.4'  laptop  Postim                          /referral
+      8px   8.4'  laptop  Story                           /referral
+      8px   8.4'  laptop  📋                              /referral
+      8px   8.4'  laptop  Post                            /referral
+
+═══ 5. PESË ZONAT QË CITOI PRONARI ═══
+
+── Faqja e ngarkimit të shpalljes ──
+  /listing/new                        telefon-390   butona= 54 nën16= 51 nën20= 69 cak24= 1 cak44=  8
+  /listing/new                        laptop-1280   butona= 54 nën16= 70 nën20= 73 cak24= 1 cak44=  8
+  /listing/new                        desktop-1920  butona= 54 nën16= 69 nën20= 73 cak24= 1 cak44=  8
+
+── Karta e shpalljes (ballina/kërkimi) ──
+  /                                   telefon-390   butona= 62 nën16= 61 nën20=106 cak24= 1 cak44=  4
+  /                                   laptop-1280   butona= 62 nën16=102 nën20=110 cak24= 1 cak44=  4
+  /                                   desktop-1920  butona= 62 nën16= 96 nën20=104 cak24= 1 cak44=  4
+  /search                             telefon-390   butona= 42 nën16= 35 nën20= 37 cak24= 1 cak44=  2
+  /search                             laptop-1280   butona= 42 nën16= 37 nën20= 39 cak24= 1 cak44=  2
+  /search                             desktop-1920  butona= 42 nën16= 37 nën20= 39 cak24= 1 cak44=  2
+  /search/results?q=makina            telefon-390   butona= 44 nën16= 44 nën20= 48 cak24= 2 cak44= 21
+  /search/results?q=makina            laptop-1280   butona= 44 nën16= 48 nën20= 53 cak24= 2 cak44= 21
+  /search/results?q=makina            desktop-1920  butona= 44 nën16= 48 nën20= 52 cak24= 2 cak44= 21
+
+── Profili i JASHTËM i biznesit ──
+  /biznese/:biznesi?public=1          telefon-390   butona= 30 nën16= 41 nën20= 63 cak24= 1 cak44=  4
+  /biznese/:biznesi?public=1          laptop-1280   butona= 30 nën16= 60 nën20= 65 cak24= 1 cak44=  4
+  /biznese/:biznesi?public=1          desktop-1920  butona= 30 nën16= 59 nën20= 63 cak24= 1 cak44=  4
+
+── Nënfaqet e butonave të biznesit ──
+  /biznese/:biznesi/analytics         telefon-390   butona= 24 nën16= 46 nën20= 54 cak24= 1 cak44=  1
+  /biznese/:biznesi/analytics         laptop-1280   butona= 24 nën16= 54 nën20= 59 cak24= 1 cak44=  1
+  /biznese/:biznesi/analytics         desktop-1920  butona= 24 nën16= 54 nën20= 59 cak24= 1 cak44=  1
+  /biznese/:biznesi/edit              telefon-390   butona= 79 nën16=  7 nën20= 84 cak24=12 cak44= 61
+  /biznese/:biznesi/edit              laptop-1280   butona= 79 nën16= 84 nën20= 85 cak24=12 cak44= 61
+  /biznese/:biznesi/edit              desktop-1920  butona=100 nën16=104 nën20=108 cak24=12 cak44= 63
+
+── Butonat në fund të platformës ──
+     11px  13.1'  cak= 44px  Kushtet e Përdorimit
+     11px  13.1'  cak= 44px  Rreth Nesh
+     11px  13.1'  cak= 44px  Kontakt
+     11px  13.1'  cak= 44px  Siguria
+     11px  13.1'  cak= 44px  🔒 Siguria
+   13.3px  15.8'  cak= 52px  AnalitikaShikime, arritje, kontakt
+     13px  15.4'  cak= 44px  Rreth & Vlerësime
+     11px  13.1'  cak= 15px  Kushtet
+     13px  15.4'  cak= 40px  p.sh. Pyetje rreth Premium...
+     13px  15.4'  cak= 16px  faqja e kontaktit
+   10.5px  12.5'  cak= 13px  Kushtet
+     13px  15.4'  cak= 56px  Analitika Pamje, kontaktime (Whats
+     10px  11.9'  cak= 12px  Kushtet
+
+═══ 6. HARTA E BUTONAVE TË PROFILIT TË JASHTËM TË BIZNESIT (nënfaqet) ═══
+  Kalo tek përmbajtja kryesore    cak= 16px     16px    19'  → #main-content
+  Kthehu mbrapa                   cak= 44px   13.3px  15.8'  → (veprim në faqe)
+  Ndaj biznesin                   cak= 38px   13.3px  15.8'  → (veprim në faqe)
+  Ti je pronari — shiko profilin  cak= 44px   12.5px  14.9'  → /u/af3e3d5b-0f49-4ad5-a83d-281733fed433
+  Ndaj                            cak= 48px     13px  15.4'  → (veprim në faqe)
+  🗺️ Harta                       cak= 32px   11.5px  13.7'  → https://www.google.com/maps?q=41.7180432,19.6802225
+  ← Kthehu te menaxhimi           cak= 43px     12px  14.3'  → (veprim në faqe)
+  Shpalljet                       cak= 44px     13px  15.4'  → (tab)
+  Rreth & Vlerësime               cak= 44px     13px  15.4'  → (tab)
+  Ruaj në të preferuara           cak= 44px   13.3px  15.8'  → (veprim në faqe)
+  Albi — Asistenti Virtual        cak= 62px   13.3px  15.8'  → (veprim në faqe)
+  ALPAZAR — Kryefaqja             cak= 44px     13px  15.4'  → /
+  Facebook                        cak= 44px     19px  22.6'  → https://facebook.com/alpazaral
+  Instagram                       cak= 44px     19px  22.6'  → https://instagram.com/alpazaral
+  TikTok                          cak= 44px     19px  22.6'  → https://tiktok.com/@alpazaral
+  Telegram                        cak= 44px     19px  22.6'  → https://t.me/alpazaral
+  LinkedIn                        cak= 44px     19px  22.6'  → https://linkedin.com/company/alpazar
+  X / Twitter                     cak= 44px     19px  22.6'  → https://x.com/alpazaral
+  Kategoritë                      cak= 44px     11px  13.1'  → /kategori
+  Bizneset                        cak= 44px     11px  13.1'  → /biznese
+  Kërko                           cak= 39px     11px  13.1'  → /search
+  Kushtet e Përdorimit            cak= 44px     11px  13.1'  → /kushtet
+  Privatësia                      cak= 44px     11px  13.1'  → /privatesia
+  Cookie-t                        cak= 44px     11px  13.1'  → /cookies
+  Rreth Nesh                      cak= 44px     11px  13.1'  → /rreth-nesh
+  Kontakt                         cak= 44px     11px  13.1'  → /kontakt
+  Siguria                         cak= 44px     11px  13.1'  → /siguria
+  Të dhënat e mia                 cak= 44px     11px  13.1'  → /te-dhenat-mia
+  IP / Takedown                   cak= 44px     11px  13.1'  → /takedown
+  🎁 Referral                     cak= 44px     11px  13.1'  → /referral
+  TABAT: Shpalljet* · Rreth & Vlerësime
+
+═══ 7. RRUGË TË ZBULUARA QË S'U MATËN ═══
+  /kategori/arsim
+  /kategori/automjete/berat
+  /kategori/automjete/durres
+  /kategori/automjete/elbasan
+  /kategori/automjete/fier
+  /kategori/automjete/gjirokaster
+  /kategori/automjete/kavaje
+  /kategori/automjete/korce
+  /kategori/automjete/kukes
+  /kategori/automjete/lezhe
+  /kategori/automjete/lushnje
+  /kategori/automjete/permet
+  /kategori/automjete/peshkopi
+  /kategori/automjete/pogradec
+  /kategori/automjete/sarande
+  /kategori/automjete/shkoder
+  /kategori/automjete/tepelene
+  /kategori/automjete/tropoje
+  /kategori/automjete/vlore
+  /kategori/biznese
+  /kategori/elektronike
+  /kategori/elektronike/berat
+  /kategori/elektronike/durres
+  /kategori/elektronike/elbasan
+  /kategori/elektronike/fier
+  /kategori/elektronike/gjirokaster
+  /kategori/elektronike/kavaje
+  /kategori/elektronike/korce
+  /kategori/elektronike/kukes
+  /kategori/elektronike/lezhe
+  /kategori/elektronike/lushnje
+  /kategori/elektronike/permet
+  /kategori/elektronike/peshkopi
+  /kategori/elektronike/pogradec
+  /kategori/elektronike/sarande
+  /kategori/elektronike/shkoder
+  /kategori/elektronike/tepelene
+  /kategori/elektronike/tirane
+  /kategori/elektronike/tropoje
+  /kategori/elektronike/vlore
+  /kategori/gaming
+  /kategori/kafshë
+  /kategori/mobilje
+  /kategori/prona/berat
+  /kategori/prona/durres
+  /kategori/prona/elbasan
+  /kategori/prona/fier
+  /kategori/prona/gjirokaster
+  /kategori/prona/kavaje
+  /kategori/prona/korce
+  /kategori/prona/kukes
+  /kategori/prona/lezhe
+  /kategori/prona/lushnje
+  /kategori/prona/permet
+  /kategori/prona/peshkopi
+  /kategori/prona/pogradec
+  /kategori/prona/sarande
+  /kategori/prona/shkoder
+  /kategori/prona/tepelene
+  /kategori/prona/tirane
+  /kategori/prona/tropoje
+  /kategori/prona/vlore
+  /kategori/pune/berat
+  /kategori/pune/durres
+  /kategori/pune/elbasan
+  /kategori/pune/fier
+  /kategori/pune/gjirokaster
+  /kategori/pune/kavaje
+  /kategori/pune/korce
+  /kategori/pune/kukes
+  /kategori/pune/lezhe
+  /kategori/pune/lushnje
+  /kategori/pune/permet
+  /kategori/pune/peshkopi
+  /kategori/pune/pogradec
+  /kategori/pune/sarande
+  /kategori/pune/shkoder
+  /kategori/pune/tepelene
+  /kategori/pune/tirane
+  /kategori/pune/tropoje
+  /kategori/pune/vlore
+  /kategori/shendet
+  /kategori/sherbime
+  /kategori/sport
+  /kategori/te-tjera
+  /kategori/turizem
+  /kategori/ushqim
+  /kategori/veshje
+  /kategori/veshje/berat
+  /kategori/veshje/elbasan
+  /kategori/veshje/fier
+  /kategori/veshje/gjirokaster
+  /kategori/veshje/kavaje
+  /kategori/veshje/korce
+  /kategori/veshje/kukes
+  /kategori/veshje/lezhe
+  /kategori/veshje/lushnje
+  /kategori/veshje/permet
+  /kategori/veshje/peshkopi
+  /kategori/veshje/pogradec
+  /kategori/veshje/sarande
+  /kategori/veshje/shkoder
+  /kategori/veshje/tepelene
+  /kategori/veshje/tirane
+  /kategori/veshje/tropoje
+  /kategori/veshje/vlore
