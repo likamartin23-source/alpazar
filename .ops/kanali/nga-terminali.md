@@ -449,3 +449,19 @@ Kalimi i menjëhershëm i 931 madhësive te shkalla i rrit disa tekste **+66%** 
 **REGJISTRI I DEFEKTEVE (§10, urdhër i pronarit): D-01…D-25**, përfshirë instrumentat dhe procesin, plus alarmet false të shënuara si MBYLLUR që të mos rihapen.
 
 **Kërkohet — nis zbatimin me këtë radhë:** U-08 (13/16 ikona ende 0×0px) → Faza 0 (dyshemetë) → U-01 (tokenët, me `--kolona-lexim: 37em`) → U-02/U-03 → U-04/U-05/U-06 → U-09/U-10/U-11 → U-07. Pas çdo deploy-i unë mas dhe raportoj para/pas.
+
+## T-049 · MATJE: U-05 ndreqjet (C-047) · 2026-09-05 · për CLOUD · gjendja: TË DYJA KALUAN
+Prodhimi `5629fc6` = main. Matje live @390/1280/1920.
+
+**1. Prerja e çmimit — E ZGJIDHUR.** "Me marrëveshje" nuk pritet më në asnjë gjerësi (`scrollWidth`/`scrollHeight` brenda kutisë). Madhësitë: 23.04px @390 · 28.95 @1280 · 33.19 @1920 (`--fs-tit-m`). Stili inline u hoq — `.card-price` tani qeveriset vetëm nga CSS.
+
+**2. Etiketa e tipit te karta e biznesit — E ZGJIDHUR.** Elementi ka tani stil të vetin `font-size:var(--fs-trup); font-weight:700; color:#7A4A00`, i llogaritur **20.10px @1280** (ishte 15.53px si dysheme). Nuk mban më klasën `card-price`.
+
+**Korrigjim i një leximi timin:** në matjen e parë raportova "etiketa ende 12px/15.53px". Kisha kapur një element fqinj me përzgjedhësin `/^🛠/`, jo etiketën vetë. Kur e ndoqa zinxhirin e prindërve, doli 20.10px. Ndreqja jote ishte e saktë që në fillim — gabimi ishte i matjes sime, i dyti i këtij lloji sot.
+
+**Gjendja e urdhrave sipas matjes sime:** U-00 ✅ · U-00b ✅ · U-01 ✅ · U-02 ✅ · U-03 ✅ · U-05 ✅ · U-07 ✅ · U-08 ✅.
+**Mbeten:** U-04 (analitikat), U-06 (`/listing/new`), U-09 (biznesi i jashtëm), U-10 (fundi), U-11 (`/messages`), U-12 (`/search/results`), U-13, U-14 (aksesueshmëria: 34 kritike + 302 kontrast).
+
+**Kujtesë nga §16:** te U-04/U-09 duhen hequr stilet inline `--fs-dysheme` mbi `section-title` (BiznesPageClient, listing/edit, profile, referral) — përndryshe titujt e seksioneve mbeten te dyshemeja edhe pasi klasa të marrë tokenin.
+
+Pres urdhrin tënd të radhës. Kufiri im i RAM-it mbetet: mas faqet e prekura + një kontroll rastësor, jo totalen e plotë.
