@@ -55,7 +55,7 @@ export default function FshirjeShkallezuar({
   const reset = () => { setStage(0); setSekret(''); setErr('') }
 
   const btn: React.CSSProperties = {
-    flex: 1, borderRadius: 'var(--r-btn)', padding: '10px', fontSize: 13,
+    flex: 1, borderRadius: 'var(--r-btn)', padding: '10px', fontSize: 'var(--fs-dysheme)',
     fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
   }
   const btnAnulo: React.CSSProperties = { ...btn, background: 'var(--az-white)', border: '1px solid var(--az-line)', color: 'var(--az-black)' }
@@ -70,11 +70,11 @@ export default function FshirjeShkallezuar({
       )}
       {stage >= 1 && (
         <div style={{ border: '1.5px solid var(--az-red)', borderRadius: 'var(--r-panel)', padding: 14, background: 'rgba(230,51,18,.06)' }}>
-          <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--az-red-deep)', marginBottom: 6 }}>⚠️ {titull}</div>
+          <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 800, color: 'var(--az-red-deep)', marginBottom: 6 }}>⚠️ {titull}</div>
 
           {stage === 1 && (
             <>
-              <div style={{ fontSize: 12, color: 'var(--az-gray-1)', lineHeight: 1.6, marginBottom: 12 }}>{paralajmerim}</div>
+              <div style={{ fontSize: 'var(--fs-dysheme)', color: 'var(--az-gray-1)', lineHeight: 1.6, marginBottom: 12 }}>{paralajmerim}</div>
               <div style={{ display: 'flex', gap: 8 }}>
                 <button type="button" onClick={reset} style={btnAnulo}>Anulo</button>
                 <button type="button" onClick={() => setStage(2)} style={{ ...btn, background: 'var(--az-red-deep)', color: 'var(--az-white)', border: 'none' }}>Vazhdo</button>
@@ -84,7 +84,7 @@ export default function FshirjeShkallezuar({
 
           {stage === 2 && (
             <>
-              <p style={{ fontSize: 12, color: 'var(--az-gray-1)', marginBottom: 8 }}>
+              <p style={{ fontSize: 'var(--fs-dysheme)', color: 'var(--az-gray-1)', marginBottom: 8 }}>
                 {tip === 'emri'
                   ? <>Për të konfirmuar, shkruaj emrin: <b>{emriPritur}</b></>
                   : <>Për të konfirmuar, shkruaj <b>fjalëkalimin</b> tënd.</>}
@@ -97,9 +97,9 @@ export default function FshirjeShkallezuar({
                 placeholder={tip === 'emri' ? emriPritur : 'Fjalëkalimi'}
                 autoComplete={tip === 'fjalëkalimi' ? 'current-password' : 'off'}
                 aria-label={tip === 'fjalëkalimi' ? 'Fjalëkalimi për konfirmim fshirjeje' : 'Emri për konfirmim fshirjeje'}
-                style={{ width: '100%', border: '1.5px solid var(--az-red)', borderRadius: 'var(--r-btn)', padding: '9px 11px', fontSize: 13, fontFamily: 'inherit', marginBottom: 10, boxSizing: 'border-box', outline: 'none' }}
+                style={{ width: '100%', border: '1.5px solid var(--az-red)', borderRadius: 'var(--r-btn)', padding: '9px 11px', fontSize: 'var(--fs-dysheme)', fontFamily: 'inherit', marginBottom: 10, boxSizing: 'border-box', outline: 'none' }}
               />
-              {err && <div role="alert" style={{ fontSize: 12, color: 'var(--az-red-deep)', fontWeight: 700, marginBottom: 8 }}>{err}</div>}
+              {err && <div role="alert" style={{ fontSize: 'var(--fs-dysheme)', color: 'var(--az-red-deep)', fontWeight: 700, marginBottom: 8 }}>{err}</div>}
               <div style={{ display: 'flex', gap: 8 }}>
                 <button type="button" onClick={reset} style={btnAnulo}>Anulo</button>
                 <button type="button" disabled={!vlefshem} onClick={kryej}
@@ -110,7 +110,7 @@ export default function FshirjeShkallezuar({
             </>
           )}
 
-          {stage === 3 && <div style={{ fontSize: 13, color: 'var(--az-red-deep)', fontWeight: 700 }}>⏳ Duke fshirë...</div>}
+          {stage === 3 && <div style={{ fontSize: 'var(--fs-dysheme)', color: 'var(--az-red-deep)', fontWeight: 700 }}>⏳ Duke fshirë...</div>}
         </div>
       )}
     </div>

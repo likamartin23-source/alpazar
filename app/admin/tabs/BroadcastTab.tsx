@@ -59,7 +59,7 @@ export function BroadcastTab() {
 
       {err && (
         <div className="card" role="alert"
-          style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#C42B0F', fontSize: 12 }}>{err}</div>
+          style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#C42B0F', fontSize: 'var(--fs-dysheme)' }}>{err}</div>
       )}
 
       <div className="card">
@@ -108,7 +108,7 @@ export function BroadcastTab() {
           )}
         </div>
         {confirm && (
-          <div style={{ marginTop: 8, fontSize: 11, color: '#856404', background: '#FFF8E1',
+          <div style={{ marginTop: 8, fontSize: 'var(--fs-dysheme)', color: '#856404', background: '#FFF8E1',
                         border: '1px solid #FFE082', borderRadius: 8, padding: '8px 12px' }}>
             Ky veprim nuk kthehet mbrapsht. Njoftimi shkon menjëherë te {target} inbox-e.
           </div>
@@ -118,8 +118,8 @@ export function BroadcastTab() {
       <div className="card">
         <div className="ct">Parapamje</div>
         <div style={{ border: '1px solid #eee', borderRadius: 10, padding: '12px 14px', background: 'var(--az-cream)' }}>
-          <div style={{ fontSize: 12.5, fontWeight: 800, color: '#111' }}>{title || 'Titulli i njoftimit'}</div>
-          <div style={{ fontSize: 11.5, color: '#666', marginTop: 4, lineHeight: 1.6 }}>
+          <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 800, color: '#111' }}>{title || 'Titulli i njoftimit'}</div>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#666', marginTop: 4, lineHeight: 1.6 }}>
             {body || 'Teksti që do të lexojnë përdoruesit.'}
           </div>
         </div>

@@ -96,7 +96,7 @@ function BizReviews({ rating, reviews }: { rating: { count: number; avg: number 
           <div style={{ fontSize: 32, fontWeight: 800, color: '#111' }}>{rating.avg.toFixed(1)}</div>
           <div>
             <div style={{ color: 'var(--az-yellow)', fontSize: 16 }} aria-hidden="true">{'★'.repeat(Math.round(rating.avg))}{'☆'.repeat(5 - Math.round(rating.avg))}</div>
-            <div style={{ fontSize: 12, color: '#888' }}>{rating.count} vlerësim{rating.count !== 1 ? 'e' : ''}</div>
+            <div style={{ fontSize: 'var(--fs-dysheme)', color: '#888' }}>{rating.count} vlerësim{rating.count !== 1 ? 'e' : ''}</div>
           </div>
         </div>
       )}
@@ -107,12 +107,12 @@ function BizReviews({ rating, reviews }: { rating: { count: number; avg: number 
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
                 <Avatar src={rv.reviewer_avatar} name={rv.reviewer_name} type="person" size={30} />
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: '#111' }}>{rv.reviewer_name}</div>
-                  <div style={{ fontSize: 10, color: '#aaa' }}>{dateShort(rv.created_at)}{rv.purchase_verified ? ' · ✅ Blerje e verifikuar' : ''}</div>
+                  <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#111' }}>{rv.reviewer_name}</div>
+                  <div style={{ fontSize: 'var(--fs-dysheme)', color: '#aaa' }}>{dateShort(rv.created_at)}{rv.purchase_verified ? ' · ✅ Blerje e verifikuar' : ''}</div>
                 </div>
-                <div style={{ color: 'var(--az-yellow)', fontSize: 13 }} aria-label={`${rv.rating} nga 5`}>{'★'.repeat(rv.rating)}{'☆'.repeat(5 - rv.rating)}</div>
+                <div style={{ color: 'var(--az-yellow)', fontSize: 'var(--fs-dysheme)' }} aria-label={`${rv.rating} nga 5`}>{'★'.repeat(rv.rating)}{'☆'.repeat(5 - rv.rating)}</div>
               </div>
-              {rv.comment && <div style={{ fontSize: 13, color: '#444', lineHeight: 1.5 }}>{rv.comment}</div>}
+              {rv.comment && <div style={{ fontSize: 'var(--fs-dysheme)', color: '#444', lineHeight: 1.5 }}>{rv.comment}</div>}
             </div>
           ))}
         </div>
@@ -120,7 +120,7 @@ function BizReviews({ rating, reviews }: { rating: { count: number; avg: number 
         <div style={{ background: '#fff', borderRadius: 16, padding: '40px 16px', textAlign: 'center' }}>
           <div style={{ fontSize: 44, marginBottom: 14 }} aria-hidden="true">⭐</div>
           <div style={{ fontSize: 16, fontWeight: 800, color: '#111', marginBottom: 6 }}>Ende pa vlerësime</div>
-          <div style={{ fontSize: 12, color: '#555', lineHeight: 1.6 }}>Klientët që blejnë nga ky biznes do të mund të lënë vlerësimin këtu.</div>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', lineHeight: 1.6 }}>Klientët që blejnë nga ky biznes do të mund të lënë vlerësimin këtu.</div>
         </div>
       )}
     </>
@@ -472,8 +472,8 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
   if (loadError) return (
     <div style={{ maxWidth: 800, margin: '0 auto', background: 'var(--az-cream)', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
       <div style={{ fontSize: 32, marginBottom: 12 }} aria-hidden="true">⚠️</div>
-      <div style={{ fontSize: 14, color: '#C42B0F', marginBottom: 16, textAlign: 'center' }}>Nuk u ngarkua biznesi. Kontrollo lidhjen dhe provo sërish.</div>
-      <button type="button" onClick={() => window.location.reload()} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
+      <div style={{ fontSize: 'var(--fs-dysheme)', color: '#C42B0F', marginBottom: 16, textAlign: 'center' }}>Nuk u ngarkua biznesi. Kontrollo lidhjen dhe provo sërish.</div>
+      <button type="button" onClick={() => window.location.reload()} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
     </div>
   )
 
@@ -569,7 +569,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           {/* Kopertinë — ngarkim INLINE i menjëhershëm (harmonizuar me /profile) */}
           <div className="bizp-cover">
             {biz.cover_url && <img src={biz.cover_url} alt="" loading="lazy" onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />}
-            <label className="cam" aria-label="Ndrysho kopertinën" style={{ top: 12, right: 12, width: 'auto', padding: '0 12px', height: 34, gap: 6, fontSize: 12, fontWeight: 700 }}>
+            <label className="cam" aria-label="Ndrysho kopertinën" style={{ top: 12, right: 12, width: 'auto', padding: '0 12px', height: 34, gap: 6, fontSize: 'var(--fs-dysheme)', fontWeight: 700 }}>
               <span aria-hidden="true">{imgUp === 'cover' ? '⏳' : '📷'}</span> Kopertina
               <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) uploadBizImage(f, 'cover'); e.currentTarget.value = '' }} />
             </label>
@@ -583,11 +583,11 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
                   (djathtas-lart=vula e abonimit, djathtas-poshtë=🏢/✓, majtas-poshtë=pika online).
                   Më parë rrinte poshtë-djathtas dhe përplasej me vulën 🏢 (raporti terminal, H). */}
               <label className="cam" aria-label="Ndrysho logon" style={{ top: -4, left: -4, width: 30, height: 30 }}>
-                <span aria-hidden="true" style={{ fontSize: 13 }}>{imgUp === 'logo' ? '⏳' : '📷'}</span>
+                <span aria-hidden="true" style={{ fontSize: 'var(--fs-dysheme)' }}>{imgUp === 'logo' ? '⏳' : '📷'}</span>
                 <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) uploadBizImage(f, 'logo'); e.currentTarget.value = '' }} />
               </label>
             </div>
-            {imgErr && <div role="alert" style={{ fontSize: 11, color: 'var(--az-red-deep)', marginBottom: 6 }}>{imgErr}</div>}
+            {imgErr && <div role="alert" style={{ fontSize: 'var(--fs-dysheme)', color: 'var(--az-red-deep)', marginBottom: 6 }}>{imgErr}</div>}
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
               <h1 style={{ fontSize: 'var(--fs-2xl)', fontWeight: 800, color: '#111', lineHeight: 1.2 }}>{biz.name}</h1>
@@ -627,7 +627,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
 
             {/* [B1] Shiko faqen publike — NAVIGIM REAL (?public=1), jo simulim në vend (si /profile→/u). */}
             <button type="button" onClick={() => { window.location.href = `/biznese/${biz.id}?public=1` }}
-              style={{ width: '100%', marginTop: 14, minHeight: 44, background: '#fff', border: '1.5px solid #e5e5e5', borderRadius: 11, fontSize: 13, fontWeight: 800, color: '#111', cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              style={{ width: '100%', marginTop: 14, minHeight: 44, background: '#fff', border: '1.5px solid #e5e5e5', borderRadius: 11, fontSize: 'var(--fs-dysheme)', fontWeight: 800, color: '#111', cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
               <i className="ti ti-eye" aria-hidden="true" /> Shiko faqen publike
             </button>
           </div>
@@ -664,7 +664,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               {/* Plani (trashëgim) — reflektim i planit të llogarisë; menaxhimi mbetet te llogaria personale */}
               <div className="mrow" style={{ cursor: 'default' }}>
                 <i className="ti ti-crown lead" aria-hidden="true" />
-                <span className="mtxt"><span className="mtt">Plani: {tierLabel || 'Falas'} <span style={{ fontSize: 10, fontWeight: 700, color: '#888' }}>· trashëgim</span></span><span className="msub">Trashëguar nga llogaria — menaxhohet te “Vepro si: Unë”</span></span>
+                <span className="mtxt"><span className="mtt">Plani: {tierLabel || 'Falas'} <span style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#888' }}>· trashëgim</span></span><span className="msub">Trashëguar nga llogaria — menaxhohet te “Vepro si: Unë”</span></span>
               </div>
             </div>
           )}
@@ -675,21 +675,21 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               · 💰 shitur · 🗑 hiq(pauzo). */}
           {panelTab === 'listings' && (
             <div role="tabpanel" id="tabpanel-listings" aria-labelledby="tab-listings" style={{ background: '#fff', borderRadius: 14, margin: '8px 12px 0', padding: '14px 16px' }}>
-              {listErr && <div role="alert" style={{ background: '#FEECEC', color: '#B42318', border: '1px solid #F5C2C2', borderRadius: 8, padding: '8px 10px', fontSize: 12, marginBottom: 10 }}>{listErr}</div>}
-              {reactMsg && <div role="alert" style={{ background: reactMsg.startsWith('err:') ? '#FEECEC' : '#E7F6EC', color: reactMsg.startsWith('err:') ? '#B42318' : '#0E7A35', border: `1px solid ${reactMsg.startsWith('err:') ? '#F5C2C2' : '#8fd3a8'}`, borderRadius: 8, padding: '8px 10px', fontSize: 12, marginBottom: 10 }}>{reactMsg.split(/:(.+)/)[1]}</div>}
+              {listErr && <div role="alert" style={{ background: '#FEECEC', color: '#B42318', border: '1px solid #F5C2C2', borderRadius: 8, padding: '8px 10px', fontSize: 'var(--fs-dysheme)', marginBottom: 10 }}>{listErr}</div>}
+              {reactMsg && <div role="alert" style={{ background: reactMsg.startsWith('err:') ? '#FEECEC' : '#E7F6EC', color: reactMsg.startsWith('err:') ? '#B42318' : '#0E7A35', border: `1px solid ${reactMsg.startsWith('err:') ? '#F5C2C2' : '#8fd3a8'}`, borderRadius: 8, padding: '8px 10px', fontSize: 'var(--fs-dysheme)', marginBottom: 10 }}>{reactMsg.split(/:(.+)/)[1]}</div>}
               {mgmtListings === null ? (
-                <div style={{ textAlign: 'center', padding: '24px 0', color: '#555', fontSize: 12 }}>Duke ngarkuar…</div>
+                <div style={{ textAlign: 'center', padding: '24px 0', color: '#555', fontSize: 'var(--fs-dysheme)' }}>Duke ngarkuar…</div>
               ) : mgmtListings.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '32px 16px', color: '#aaa' }}>
                   <div style={{ fontSize: 44, marginBottom: 10 }} aria-hidden="true">🛍️</div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: '#666', marginBottom: 8 }}>Asnjë shpallje ende</div>
-                  <button type="button" onClick={() => { window.location.href = '/listing/new' }} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 24px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: 13 }}>+ Shto shpallje</button>
+                  <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#666', marginBottom: 8 }}>Asnjë shpallje ende</div>
+                  <button type="button" onClick={() => { window.location.href = '/listing/new' }} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 24px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: 'var(--fs-dysheme)' }}>+ Shto shpallje</button>
                 </div>
               ) : (
                 <>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                    <span style={{ fontSize: 13, fontWeight: 800, color: '#111' }}>Shpalljet e biznesit</span>
-                    <button type="button" onClick={() => { window.location.href = '/listing/new' }} style={{ background: 'var(--az-yellow)', border: 'none', borderRadius: 9, padding: '7px 14px', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', color: '#111' }}>+ Shto</button>
+                    <span style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 800, color: '#111' }}>Shpalljet e biznesit</span>
+                    <button type="button" onClick={() => { window.location.href = '/listing/new' }} style={{ background: 'var(--az-yellow)', border: 'none', borderRadius: 9, padding: '7px 14px', fontSize: 'var(--fs-dysheme)', fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', color: '#111' }}>+ Shto</button>
                   </div>
                   <div role="tablist" aria-label="Filtro shpalljet" style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
                     {([['active', 'Aktive'], ['paused', 'Të pauzuara'], ['sold', 'Të shitura']] as const).map(([k, etiketa]) => {
@@ -707,7 +707,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
                                 : mgmtListings.filter(l => !l.is_active && l.status !== 'sold')
                     const bosh = listFilter === 'active' ? 'Nuk ke shpallje aktive.' : listFilter === 'sold' ? 'Ende asnjë shpallje e shitur.' : 'Asnjë shpallje e pauzuar.'
                     return shown.length === 0 ? (
-                      <div style={{ textAlign: 'center', padding: '24px 0', color: '#555', fontSize: 12 }}>
+                      <div style={{ textAlign: 'center', padding: '24px 0', color: '#555', fontSize: 'var(--fs-dysheme)' }}>
                         <i className="ti ti-package" style={{ fontSize: 36, display: 'block', marginBottom: 10, color: 'var(--az-yellow)' }} aria-hidden="true" />{bosh}
                       </div>
                     ) : shown.map(l => (
@@ -721,26 +721,26 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
                           <div className="bl-meta"><span aria-hidden="true">👁</span> {l.views_count || 0} · <span aria-hidden="true">📍</span> {l.city || 'Shqipëri'}{l.is_premium ? ' · ⭐ Premium' : ''}</div>
                         </div>
                         {l.is_active && (canBump(l.last_bumped_at) ? (
-                          <button type="button" className="bl-edit" onClick={() => bizBump(l.id)} aria-label="Rifresko shpalljen" style={{ fontSize: 13 }}><span aria-hidden="true">⬆️</span></button>
+                          <button type="button" className="bl-edit" onClick={() => bizBump(l.id)} aria-label="Rifresko shpalljen" style={{ fontSize: 'var(--fs-dysheme)' }}><span aria-hidden="true">⬆️</span></button>
                         ) : (
-                          <span title={`Mund ta rifreskosh pas ${bumpDaysLeft(l.last_bumped_at)} ditësh`} style={{ fontSize: 10, color: '#aaa', padding: '0 4px' }}>{bumpDaysLeft(l.last_bumped_at)}d</span>
+                          <span title={`Mund ta rifreskosh pas ${bumpDaysLeft(l.last_bumped_at)} ditësh`} style={{ fontSize: 'var(--fs-dysheme)', color: '#aaa', padding: '0 4px' }}>{bumpDaysLeft(l.last_bumped_at)}d</span>
                         ))}
                         {!l.is_active && l.status !== 'sold' && (
-                          <button type="button" className="bl-edit" disabled={reactBusy === l.id} onClick={() => bizReactivate(l.id)} aria-label="Riaktivizo shpalljen" title="Riaktivizo" style={{ fontSize: 13 }}><span aria-hidden="true">{reactBusy === l.id ? '⏳' : '♻️'}</span></button>
+                          <button type="button" className="bl-edit" disabled={reactBusy === l.id} onClick={() => bizReactivate(l.id)} aria-label="Riaktivizo shpalljen" title="Riaktivizo" style={{ fontSize: 'var(--fs-dysheme)' }}><span aria-hidden="true">{reactBusy === l.id ? '⏳' : '♻️'}</span></button>
                         )}
                         <button type="button" className="bl-edit" onClick={() => { window.location.href = `/listing/${l.id}/edit` }} aria-label="Ndrysho">✏️</button>
                         {l.is_active && (pendingSold === l.id ? (
                           <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
-                            <button type="button" onClick={() => bizMarkSold(l.id)} style={{ background: 'linear-gradient(135deg,#0E7A35,#0b6a2e)', color: '#fff', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Shitur ✓</button>
-                            <button type="button" onClick={() => setPendingSold(null)} style={{ background: '#eee', color: '#555', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Jo</button>
+                            <button type="button" onClick={() => bizMarkSold(l.id)} style={{ background: 'linear-gradient(135deg,#0E7A35,#0b6a2e)', color: '#fff', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Shitur ✓</button>
+                            <button type="button" onClick={() => setPendingSold(null)} style={{ background: '#eee', color: '#555', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Jo</button>
                           </div>
                         ) : (
                           <button type="button" className="bl-edit" onClick={() => setPendingSold(l.id)} aria-label="Shëno si të shitur" title="Shëno si të shitur"><span aria-hidden="true">💰</span></button>
                         ))}
                         {pendingDelete === l.id ? (
                           <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
-                            <button type="button" onClick={() => bizDeactivate(l.id)} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Hiq</button>
-                            <button type="button" onClick={() => setPendingDelete(null)} style={{ background: '#eee', color: '#555', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Jo</button>
+                            <button type="button" onClick={() => bizDeactivate(l.id)} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Hiq</button>
+                            <button type="button" onClick={() => setPendingDelete(null)} style={{ background: '#eee', color: '#555', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Jo</button>
                           </div>
                         ) : (
                           <button type="button" className="bl-del" onClick={() => setPendingDelete(l.id)} aria-label="Hiq shpalljen (pauzo)"><span aria-hidden="true">🗑</span></button>
@@ -854,14 +854,14 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
             )}
           </div>
           {biz.is_verified && (
-            <span style={{ fontSize: 11, fontWeight: 700, color: '#16a34a', background: '#dcfce7', padding: '2px 8px', borderRadius: 6, display: 'inline-block', marginBottom: 10 }}>Biznes i verifikuar</span>
+            <span style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#16a34a', background: '#dcfce7', padding: '2px 8px', borderRadius: 6, display: 'inline-block', marginBottom: 10 }}>Biznes i verifikuar</span>
           )}
 
           {/* Category chips */}
           {subcats.length > 0 && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginBottom: 14 }}>
               {subcats.map((s, i) => (
-                <span key={i} style={{ fontSize: 11, background: '#FFF8E1', color: '#7B5000', padding: '3px 10px', borderRadius: 12, fontWeight: 700, border: '1px solid #F5C84233' }}>
+                <span key={i} style={{ fontSize: 'var(--fs-dysheme)', background: '#FFF8E1', color: '#7B5000', padding: '3px 10px', borderRadius: 12, fontWeight: 700, border: '1px solid #F5C84233' }}>
                   {s.icon} {s.name}
                 </span>
               ))}
@@ -909,7 +909,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           {/* "👁 N shikime · 🔴 M duke shikuar" (Imazhi 4) — shikimet reale nga baza,
               syte live nga presence reale (fail-soft: 0 → pjesa 🔴 s'shfaqet). */}
           {(totalViews > 0 || syteLive > 0 || respHrs != null) && (
-            <div style={{ fontSize: 12, color: '#6B6B6B', marginBottom: 14, display: 'flex', flexWrap: 'wrap', gap: 4, alignItems: 'center' }}>
+            <div style={{ fontSize: 'var(--fs-dysheme)', color: '#6B6B6B', marginBottom: 14, display: 'flex', flexWrap: 'wrap', gap: 4, alignItems: 'center' }}>
               {totalViews > 0 && <span><span aria-hidden="true">👁</span> {nf(totalViews)} shikime</span>}
               {syteLive > 0 && (
                 <span style={{ color: '#C4230F', fontWeight: 700 }}>
@@ -936,8 +936,8 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               <a
                 href={`/u/${biz.owner_id}`}
                 aria-label={isOwner ? 'Ti je pronari — shiko profilin tënd' : 'Pronari — shiko profilin'}
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12.5, color: '#111', textDecoration: 'none', minHeight: 44, padding: '6px 12px', border: '1px solid var(--az-yellow)', background: 'var(--az-cream)', borderRadius: 999, fontWeight: 600 }}>
-                <span aria-hidden="true" style={{ color: '#E6A200', fontSize: 14, lineHeight: 1 }}>★</span>
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 'var(--fs-dysheme)', color: '#111', textDecoration: 'none', minHeight: 44, padding: '6px 12px', border: '1px solid var(--az-yellow)', background: 'var(--az-cream)', borderRadius: 999, fontWeight: 600 }}>
+                <span aria-hidden="true" style={{ color: '#E6A200', fontSize: 'var(--fs-dysheme)', lineHeight: 1 }}>★</span>
                 {isOwner ? <>Ti je pronari <span style={{ color: 'var(--az-red-deep)', fontWeight: 700 }}>— profili yt →</span></> : <>Pronari <span style={{ color: 'var(--az-red-deep)', fontWeight: 700 }}>— shiko profilin →</span></>}
               </a>
             </div>
@@ -958,7 +958,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
                  (Telefono/Mesazh/Ndiq) s'kanë kuptim, ndaj s'shfaqen; shfaqet njohja + Ndaj. */
               <div className="action-btn" style={{ background: '#FFF8E1', color: '#7A4A00', boxShadow: 'none', border: '1px solid #F5C84255', cursor: 'default', flexDirection: 'column', gap: 0, lineHeight: 1.3 }}>
                 <span style={{ fontWeight: 800 }}><span aria-hidden="true">👁</span> Kështu e sheh vizitori</span>
-                <span style={{ fontSize: 10.5, fontWeight: 600 }}>Ti je pronari — veprimet janë për vizitorët</span>
+                <span style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 600 }}>Ti je pronari — veprimet janë për vizitorët</span>
               </div>
             ) : (
               <>
@@ -992,7 +992,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               <i className="ti ti-share-3" style={{ fontSize: 17 }} aria-hidden="true" />
             </button>
             {copied && (
-              <div role="status" style={{ position: 'fixed', left: '50%', bottom: 24, transform: 'translateX(-50%)', background: '#111', color: '#fff', padding: '10px 18px', borderRadius: 999, fontSize: 13, fontWeight: 700, zIndex: 100, boxShadow: '0 4px 16px rgba(0,0,0,.25)' }}>
+              <div role="status" style={{ position: 'fixed', left: '50%', bottom: 24, transform: 'translateX(-50%)', background: '#111', color: '#fff', padding: '10px 18px', borderRadius: 999, fontSize: 'var(--fs-dysheme)', fontWeight: 700, zIndex: 100, boxShadow: '0 4px 16px rgba(0,0,0,.25)' }}>
                 <i className="ti ti-check" aria-hidden="true" /> Kopjuar!
               </div>
             )}
@@ -1026,10 +1026,10 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           publike i shfaqet pronarit VETËM kur ka shtypur "Shiko faqen publike" → banderolë
           e qëndrueshme për t'u kthyer te menaxhimi ("Vepro si: Biznesi"). */}
       {isOwner && asVisitor && (
-        <div style={{ background: '#111', color: 'var(--az-yellow)', margin: '0 0 8px', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, fontSize: 12.5, fontWeight: 700 }}>
+        <div style={{ background: '#111', color: 'var(--az-yellow)', margin: '0 0 8px', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, fontSize: 'var(--fs-dysheme)', fontWeight: 700 }}>
           <span><i className="ti ti-eye" aria-hidden="true" /> Po e shikon faqen publike të biznesit</span>
           <button type="button" onClick={() => { window.location.href = `/biznese/${biz.id}` }}
-            style={{ background: 'var(--az-yellow)', color: '#111', border: 'none', borderRadius: 8, padding: '6px 12px', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' }}>
+            style={{ background: 'var(--az-yellow)', color: '#111', border: 'none', borderRadius: 8, padding: '6px 12px', fontSize: 'var(--fs-dysheme)', fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' }}>
             ← Kthehu te menaxhimi
           </button>
         </div>
@@ -1038,9 +1038,9 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
       {/* ── Description preview ──────────────────────────────── */}
       {biz.description && (
         <div style={{ background: '#fff', margin: '0 0 8px', padding: '14px 16px' }}>
-          <p style={{ fontSize: 13, color: '#444', lineHeight: 1.65, margin: 0 }}>{descText}</p>
+          <p style={{ fontSize: 'var(--fs-dysheme)', color: '#444', lineHeight: 1.65, margin: 0 }}>{descText}</p>
           {descShort && (
-            <button type="button" aria-expanded={descExpanded} onClick={() => setDescExpanded(e => !e)} style={{ marginTop: 6, background: 'none', border: 'none', color: '#C42B0F', fontSize: 12, fontWeight: 700, cursor: 'pointer', padding: 0, fontFamily: 'inherit' }}>
+            <button type="button" aria-expanded={descExpanded} onClick={() => setDescExpanded(e => !e)} style={{ marginTop: 6, background: 'none', border: 'none', color: '#C42B0F', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', padding: 0, fontFamily: 'inherit' }}>
               {descExpanded ? 'Shfaq më pak ↑' : 'Shfaq më shumë ↓'}
             </button>
           )}
@@ -1057,11 +1057,11 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
       {/* ── Sticky tabs ──────────────────────────────────────── */}
       <div role="tablist" aria-label="Seksionet e biznesit" style={{ position: 'sticky', top: 0, zIndex: 10, background: '#fff', borderBottom: '1px solid #eee', display: 'flex', marginBottom: 2 }}>
         <button id="tab-grid" type="button" role="tab" aria-selected={activeTab === 'grid'} aria-controls="tabpanel-grid" className={`biz-tab ${activeTab === 'grid' ? 'active' : ''}`} onClick={() => setActiveTab('grid')}>
-          <i className="ti ti-layout-grid" style={{ fontSize: 14 }} aria-hidden="true" /> Shpalljet
+          <i className="ti ti-layout-grid" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" /> Shpalljet
         </button>
         {/* FINAL §3.7: Info + Vlerësime të bashkuara në një tab "Rreth & Vlerësime". */}
         <button id="tab-about" type="button" role="tab" aria-selected={activeTab === 'about'} aria-controls="tabpanel-about" className={`biz-tab ${activeTab === 'about' ? 'active' : ''}`} onClick={() => { setActiveTab('about'); if (biz && !reviewsLoaded) { setReviewsLoaded(true); supabase.rpc('business_reviews', { p_business: biz.id }).then(({ data }) => setReviews(data || [])) } }}>
-          <i className="ti ti-info-circle" style={{ fontSize: 14 }} aria-hidden="true" /> Rreth &amp; Vlerësime{rating.count > 0 ? ` (${rating.count})` : ''}
+          <i className="ti ti-info-circle" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" /> Rreth &amp; Vlerësime{rating.count > 0 ? ` (${rating.count})` : ''}
         </button>
       </div>
 
@@ -1071,9 +1071,9 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           {listings.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '48px 16px', color: '#aaa', background: '#fff' }}>
               <div style={{ fontSize: 48, marginBottom: 12 }} aria-hidden="true">🛍️</div>
-              <div style={{ fontSize: 14, fontWeight: 600, color: '#666', marginBottom: 6 }}>Asnjë shpallje ende</div>
+              <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 600, color: '#666', marginBottom: 6 }}>Asnjë shpallje ende</div>
               {isOwner && (
-                <button type="button" onClick={() => window.location.href = '/listing/new'} style={{ marginTop: 8, background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 24px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: 13 }}>+ Shto shpallje</button>
+                <button type="button" onClick={() => window.location.href = '/listing/new'} style={{ marginTop: 8, background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 24px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: 'var(--fs-dysheme)' }}>+ Shto shpallje</button>
               )}
             </div>
           ) : (
@@ -1087,7 +1087,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               ))}
             </div>
           )}
-          <div style={{ textAlign: 'center', padding: '14px 0', fontSize: 11, color: '#bbb' }}>
+          <div style={{ textAlign: 'center', padding: '14px 0', fontSize: 'var(--fs-dysheme)', color: '#bbb' }}>
             <>{listings.length} shpallje aktive <span aria-hidden="true">♾️</span></>
           </div>
         </div>
@@ -1099,11 +1099,11 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           <div className="card">
             <h2 className="section-title"><i className="ti ti-building-store" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Rreth biznesit</h2>
             {biz.tagline && (
-              <p style={{ fontSize: 13.5, color: 'var(--az-red-deep)', fontWeight: 700, fontStyle: 'italic', marginBottom: 10 }}>“{biz.tagline}”</p>
+              <p style={{ fontSize: 'var(--fs-dysheme)', color: 'var(--az-red-deep)', fontWeight: 700, fontStyle: 'italic', marginBottom: 10 }}>“{biz.tagline}”</p>
             )}
             {biz.description
-              ? <p style={{ fontSize: 13, color: '#444', lineHeight: 1.7, marginBottom: 12 }}>{biz.description}</p>
-              : <p style={{ fontSize: 12, color: '#555', marginBottom: 12 }}>Nuk ka përshkrim.</p>
+              ? <p style={{ fontSize: 'var(--fs-dysheme)', color: '#444', lineHeight: 1.7, marginBottom: 12 }}>{biz.description}</p>
+              : <p style={{ fontSize: 'var(--fs-dysheme)', color: '#555', marginBottom: 12 }}>Nuk ka përshkrim.</p>
             }
             {biz.type && (
               <div className="info-row">
@@ -1170,7 +1170,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
               <h2 className="section-title"><i className="ti ti-tag" style={{ fontSize: 16, color: '#C42B0F' }} aria-hidden="true" /> Kategoritë</h2>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                 {subcats.map((s, i) => (
-                  <span key={i} style={{ fontSize: 12, background: '#FFF8E1', color: '#7B5000', padding: '5px 12px', borderRadius: 20, fontWeight: 700, border: '1px solid #F5C84244' }}>
+                  <span key={i} style={{ fontSize: 'var(--fs-dysheme)', background: '#FFF8E1', color: '#7B5000', padding: '5px 12px', borderRadius: 20, fontWeight: 700, border: '1px solid #F5C84244' }}>
                     {s.icon} {s.name}
                   </span>
                 ))}
@@ -1241,7 +1241,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
             </div>
           )}
 
-          <div style={{ textAlign: 'center', padding: '20px 0', fontSize: 11, color: '#bbb' }}>
+          <div style={{ textAlign: 'center', padding: '20px 0', fontSize: 'var(--fs-dysheme)', color: '#bbb' }}>
             Anëtar që nga {monthYear(biz.created_at)}
           </div>
         </div>

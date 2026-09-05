@@ -104,7 +104,7 @@ export default function BiznestPage() {
       <div style={{ background: 'linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%)', padding: '14px 16px 16px', boxShadow: '0 4px 16px -8px rgba(190,130,0,.4)' }}>
         <BackButton style={{ marginBottom: 6, marginLeft: -10 }} iconStyle={{ fontSize: 22, color: '#111' }} />
         <h1 style={{ fontSize: 'var(--fs-3xl)', fontWeight: 800, color: '#111', margin: '0 0 4px' }}><span aria-hidden="true">🏢</span> Bizneset</h1>
-        <p style={{ fontSize: 13, color: '#7B5000', margin: 0 }}>Zbulo bizneset shqiptare në Alpazar</p>
+        <p style={{ fontSize: 'var(--fs-dysheme)', color: '#7B5000', margin: 0 }}>Zbulo bizneset shqiptare në Alpazar</p>
       </div>
 
       {/* Search + filter */}
@@ -114,7 +114,7 @@ export default function BiznestPage() {
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Kërko biznes ose qytet..."
-          style={{ width: '100%', padding: '10px 14px', border: '1px solid #e5e5e5', borderRadius: 12, fontSize: 13, fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' }}
+          style={{ width: '100%', padding: '10px 14px', border: '1px solid #e5e5e5', borderRadius: 12, fontSize: 'var(--fs-dysheme)', fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' }}
         />
         <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 2 }}>
           {[
@@ -128,7 +128,7 @@ export default function BiznestPage() {
               type="button"
               aria-pressed={typeFilter === f.key}
               onClick={() => setTypeFilter(f.key)}
-              style={{ flexShrink: 0, padding: '6px 14px', background: typeFilter === f.key ? 'linear-gradient(135deg,var(--az-ink),#000)' : '#f0f0f0', color: typeFilter === f.key ? 'var(--az-yellow)' : '#555', border: 'none', borderRadius: 999, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', transition: 'background .15s ease,color .15s ease' }}
+              style={{ flexShrink: 0, padding: '6px 14px', background: typeFilter === f.key ? 'linear-gradient(135deg,var(--az-ink),#000)' : '#f0f0f0', color: typeFilter === f.key ? 'var(--az-yellow)' : '#555', border: 'none', borderRadius: 999, fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', transition: 'background .15s ease,color .15s ease' }}
             >
               {f.icon && <><span aria-hidden="true">{f.icon}</span>{' '}</>}{f.label}
             </button>
@@ -139,8 +139,8 @@ export default function BiznestPage() {
       {/* Create business CTA */}
       <div role="link" tabIndex={0} style={{ margin: '12px 16px 4px', background: 'linear-gradient(135deg,#151515,#1c1c1c 60%,#231a0a)', borderRadius: 12, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', boxShadow: '0 6px 18px -8px rgba(0,0,0,.4)' }} onClick={() => window.location.href = krijoDest} onKeyDown={e => { if (e.key === 'Enter') window.location.href = krijoDest }}>
         <div>
-          <div style={{ color: 'var(--az-yellow)', fontWeight: 800, fontSize: 14, marginBottom: 2 }}>{kaBiznes ? '🏢 Shiko biznesin tënd' : '+ Krijo Biznesin Tënd'}</div>
-          <div style={{ color: '#aaa', fontSize: 11 }}>{kaBiznes
+          <div style={{ color: 'var(--az-yellow)', fontWeight: 800, fontSize: 'var(--fs-dysheme)', marginBottom: 2 }}>{kaBiznes ? '🏢 Shiko biznesin tënd' : '+ Krijo Biznesin Tënd'}</div>
+          <div style={{ color: '#aaa', fontSize: 'var(--fs-dysheme)' }}>{kaBiznes
             ? <>Ke tashmë një biznes · hape për ta menaxhuar</>
             : ftesePremium
             ? <><span aria-hidden="true">⭐</span> Veçori Premium · Prezencë profesionale</>
@@ -154,8 +154,8 @@ export default function BiznestPage() {
         {loadError ? (
           <div style={{ textAlign: 'center', padding: '60px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
             <div style={{ fontSize: 40 }} aria-hidden="true">⚠️</div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
-            <button type="button" onClick={() => window.location.reload()} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 8, padding: '9px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
+            <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
+            <button type="button" onClick={() => window.location.reload()} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 8, padding: '9px 18px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
           </div>
         ) : loading ? (
           <div role="status" aria-label="Duke ngarkuar bizneset..." style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -172,9 +172,9 @@ export default function BiznestPage() {
         ) : filtered.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '48px 16px', color: '#555' }}>
             <div style={{ fontSize: 40, marginBottom: 10 }} aria-hidden="true">🏢</div>
-            <div style={{ fontSize: 14, fontWeight: 600 }}>{search || typeFilter ? 'Asnjë biznes nuk përputhet' : 'Asnjë biznes ende'}</div>
+            <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 600 }}>{search || typeFilter ? 'Asnjë biznes nuk përputhet' : 'Asnjë biznes ende'}</div>
             {(search || typeFilter) && (
-              <button type="button" onClick={() => { setSearch(''); setTypeFilter('') }} style={{ marginTop: 12, background: 'linear-gradient(135deg,var(--az-yellow-hi),var(--az-yellow))', color: '#111', border: 'none', borderRadius: 12, padding: '8px 20px', fontWeight: 700, fontSize: 13, cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 2px 8px -2px rgba(245,200,66,.5)' }}>
+              <button type="button" onClick={() => { setSearch(''); setTypeFilter('') }} style={{ marginTop: 12, background: 'linear-gradient(135deg,var(--az-yellow-hi),var(--az-yellow))', color: '#111', border: 'none', borderRadius: 12, padding: '8px 20px', fontWeight: 700, fontSize: 'var(--fs-dysheme)', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 2px 8px -2px rgba(245,200,66,.5)' }}>
                 Pastro filtrat
               </button>
             )}
@@ -188,7 +188,7 @@ export default function BiznestPage() {
                 <BusinessCard key={b.id} business={b as any} index={idx} />
               ))}
             </div>
-            <div style={{ textAlign: 'center', padding: '12px 0', fontSize: 11, color: '#6E6E6E' }}>
+            <div style={{ textAlign: 'center', padding: '12px 0', fontSize: 'var(--fs-dysheme)', color: '#6E6E6E' }}>
               {filtered.length} biznes{filtered.length !== 1 ? 'e' : ''}
             </div>
           </div>

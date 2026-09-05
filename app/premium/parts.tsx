@@ -97,7 +97,7 @@ export function PayBox({ methods, methodId, setMethodId, sel, busy, planId, owne
           style={{ opacity: .55, cursor: 'not-allowed', display: 'flex', alignItems: 'center', gap: 8 }}>
           <i className={`ti ti-${m.type === 'card' ? 'credit-card' : m.type === 'paypal' ? 'brand-paypal' : m.type === 'mobile' ? 'device-mobile' : m.type === 'bank' ? 'building-bank' : 'wallet'}`} aria-hidden="true" />
           {m.name}
-          <span style={{ marginLeft: 'auto', fontSize: 10.5, fontWeight: 800, color: '#9a6b00', background: '#FFF3D6', border: '1px solid #FFE082', borderRadius: 8, padding: '2px 8px', whiteSpace: 'nowrap' }}>Përkohësisht e padisponueshme</span>
+          <span style={{ marginLeft: 'auto', fontSize: 'var(--fs-dysheme)', fontWeight: 800, color: '#9a6b00', background: '#FFF3D6', border: '1px solid #FFE082', borderRadius: 8, padding: '2px 8px', whiteSpace: 'nowrap' }}>Përkohësisht e padisponueshme</span>
         </div>
       ) : (
         <button key={m.id} type="button" aria-pressed={methodId === m.id}

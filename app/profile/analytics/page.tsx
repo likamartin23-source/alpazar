@@ -51,11 +51,11 @@ function HeatmapChart({ data }: { data: { hour: number; count: number }[] }) {
             <div style={{
               height: 28, borderRadius: 5, background: bg,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 9, color: intensity > 0.5 ? '#fff' : '#888', fontWeight: 700,
+              fontSize: 'var(--fs-dysheme)', color: intensity > 0.5 ? '#fff' : '#888', fontWeight: 700,
             }}>
               {d.count > 0 ? d.count : ''}
             </div>
-            <div style={{ fontSize: 9, color: '#aaa', marginTop: 2 }}>{d.hour}h</div>
+            <div style={{ fontSize: 'var(--fs-dysheme)', color: '#aaa', marginTop: 2 }}>{d.hour}h</div>
           </div>
         )
       })}
@@ -109,7 +109,7 @@ const [loadError, setLoadError] = useState(false)
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: 12, fontFamily: "'Segoe UI',sans-serif" }}>
       <div style={{ fontSize: 36 }} aria-hidden="true">⚠️</div>
       <div style={{ fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
-      <button type="button" onClick={() => { setLoadError(false); changePeriod(period) }} style={{ background: 'var(--az-yellow)', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Rifresko</button>
+      <button type="button" onClick={() => { setLoadError(false); changePeriod(period) }} style={{ background: 'var(--az-yellow)', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 'var(--fs-dysheme)', cursor: 'pointer' }}>Rifresko</button>
     </div>
   )
 
@@ -117,7 +117,7 @@ const [loadError, setLoadError] = useState(false)
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: 12 }}>
       <div style={{ width: 36, height: 36, border: '3px solid var(--az-red)', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
       <style dangerouslySetInnerHTML={{ __html: `@keyframes spin{to{transform:rotate(360deg)}}` }} />
-      <span style={{ fontSize: 13, color: '#555' }}>Duke ngarkuar analytics...</span>
+      <span style={{ fontSize: 'var(--fs-dysheme)', color: '#555' }}>Duke ngarkuar analytics...</span>
     </div>
   )
 
@@ -173,7 +173,7 @@ const [loadError, setLoadError] = useState(false)
           <div className="empty-state">
             <div style={{ fontSize: 48, marginBottom: 12 }} aria-hidden="true">📊</div>
             <div style={{ fontWeight: 700, color: '#333', marginBottom: 8 }}>Ende nuk ka statistika</div>
-            <div style={{ fontSize: 13 }}>Publiko shpallje dhe prit të akumulohen pamjet.</div>
+            <div style={{ fontSize: 'var(--fs-dysheme)' }}>Publiko shpallje dhe prit të akumulohen pamjet.</div>
           </div>
         </div>
       ) : (
@@ -215,7 +215,7 @@ const [loadError, setLoadError] = useState(false)
                 <div className="stat-lbl"><span aria-hidden="true">🔎</span> Vizita</div>
               </div>
             </div>
-            <div style={{ fontSize: 10.5, color: '#555', marginTop: 8, lineHeight: 1.5 }}>
+            <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', marginTop: 8, lineHeight: 1.5 }}>
               Impresion = karta u pa në feed · Arritje = pajisje/persona unikë · Vizitë = shpallja u hap.
             </div>
           </div>
@@ -267,7 +267,7 @@ const [loadError, setLoadError] = useState(false)
             <div className="an-card">
               <div className="an-title">Pamjet për ditë</div>
               <BarChart data={data.views_by_day} />
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: '#aaa', marginTop: 4 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--fs-dysheme)', color: '#aaa', marginTop: 4 }}>
                 <span>{dayMonthShort(data.views_by_day[0]?.date)}</span>
                 <span>{dayMonthShort(data.views_by_day[data.views_by_day.length - 1]?.date)}</span>
               </div>
@@ -290,15 +290,15 @@ const [loadError, setLoadError] = useState(false)
                 <div className="listing-rank">{i + 1}</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="listing-name">{l.title}</div>
-                  <div style={{ fontSize: 11, color: '#C42B0F', fontWeight: 700 }}>{fmt(l.price, l.currency)}</div>
+                  <div style={{ fontSize: 'var(--fs-dysheme)', color: '#C42B0F', fontWeight: 700 }}>{fmt(l.price, l.currency)}</div>
                 </div>
                 <div className="listing-stats">
                   <div className="listing-stat">
-                    <i className="ti ti-eye" style={{ fontSize: 11 }} aria-hidden="true" />
+                    <i className="ti ti-eye" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />
                     {l.total_views}
                   </div>
                   <div className="listing-stat">
-                    <i className="ti ti-message" style={{ fontSize: 11 }} aria-hidden="true" />
+                    <i className="ti ti-message" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />
                     {l.contacts}
                   </div>
                   {l.ctr > 0 && <div className="ctr-pill">{l.ctr}%</div>}
@@ -311,7 +311,7 @@ const [loadError, setLoadError] = useState(false)
           <div className="an-card">
             <div className="an-title">Referral</div>
             <button type="button" onClick={() => { window.location.href = '/referral' }}
-              style={{ width: '100%', minHeight: 48, background: 'linear-gradient(135deg,var(--az-ink),#000)', color: 'var(--az-yellow)', border: 'none', borderRadius: 11, fontSize: 13, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              style={{ width: '100%', minHeight: 48, background: 'linear-gradient(135deg,var(--az-ink),#000)', color: 'var(--az-yellow)', border: 'none', borderRadius: 11, fontSize: 'var(--fs-dysheme)', fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
               <i className="ti ti-gift" aria-hidden="true" /> Fto miq — fito pikë & Premium →
             </button>
           </div>
@@ -321,7 +321,7 @@ const [loadError, setLoadError] = useState(false)
       {showUpsell && <SellerPremiumUpsell isPremium={false} />}
 
       {/* Link nga profili */}
-      <div style={{ textAlign: 'center', padding: '8px 0 20px', fontSize: 12, color: '#bbb' }}>
+      <div style={{ textAlign: 'center', padding: '8px 0 20px', fontSize: 'var(--fs-dysheme)', color: '#bbb' }}>
         Statistikat e Alpazar — {dateShort(new Date())}
       </div>
     </div>

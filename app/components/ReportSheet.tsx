@@ -139,7 +139,7 @@ export function ReportSheet({
             <div style={{ fontWeight: 700, marginTop: 6 }}>
               {mbaroi === 'ligjor' ? 'Njoftimi u regjistrua' : 'Faleminderit'}
             </div>
-            <div style={{ fontSize: 12, color: '#555', marginTop: 6, lineHeight: 1.6 }}>
+            <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', marginTop: 6, lineHeight: 1.6 }}>
               {mbaroi === 'ligjor'
                 ? 'Do të marrësh përgjigje me shkrim në email-in që dhe. Përmbajtja e paligjshme trajtohet menjëherë.'
                 : 'Raporti shkoi te moderimi. Nuk i tregohet shitësit se kush raportoi.'}
@@ -161,13 +161,13 @@ export function ReportSheet({
                   <span style={{ flex: 1 }}>
                     {a.etiketa}
                     {a.ndihme && (
-                      <span style={{ display: 'block', fontSize: 10.5, color: '#555', marginTop: 2 }}>
+                      <span style={{ display: 'block', fontSize: 'var(--fs-dysheme)', color: '#555', marginTop: 2 }}>
                         {a.ndihme}
                       </span>
                     )}
                   </span>
                   {a.prioriteti >= 5 && (
-                    <span style={{ fontSize: 9.5, color: '#C42B0F', fontWeight: 700 }}>URGJENTE</span>
+                    <span style={{ fontSize: 'var(--fs-dysheme)', color: '#C42B0F', fontWeight: 700 }}>URGJENTE</span>
                   )}
                 </button>
               ))}
@@ -175,7 +175,7 @@ export function ReportSheet({
 
             {ligjore.length > 0 && (
               <>
-                <div style={{ fontSize: 11, color: '#555', margin: '2px 0 7px', fontWeight: 600 }}>
+                <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', margin: '2px 0 7px', fontWeight: 600 }}>
                   Njoftim ligjor — për mbajtësit e një të drejte
                 </div>
                 <div className="reason-list">
@@ -185,7 +185,7 @@ export function ReportSheet({
                       aria-pressed={kodi === a.kodi}
                       onClick={() => { setKodi(a.kodi); setGabim('') }}>
                       <span style={{ flex: 1 }}>{a.etiketa}</span>
-                      <span style={{ fontSize: 9.5, color: '#888' }}>ligjor</span>
+                      <span style={{ fontSize: 'var(--fs-dysheme)', color: '#888' }}>ligjor</span>
                     </button>
                   ))}
                 </div>
@@ -204,7 +204,7 @@ export function ReportSheet({
                   rows={3}
                   style={{
                     width: '100%', border: '1.5px solid #eee', borderRadius: 10,
-                    padding: '10px 12px', fontSize: 13, fontFamily: 'inherit',
+                    padding: '10px 12px', fontSize: 'var(--fs-dysheme)', fontFamily: 'inherit',
                     resize: 'vertical', outline: 'none',
                   }} />
 
@@ -215,12 +215,12 @@ export function ReportSheet({
                       onChange={e => { setEmail(e.target.value); setGabim('') }}
                       style={{
                         width: '100%', marginTop: 8, border: '1.5px solid #eee',
-                        borderRadius: 10, padding: '10px 12px', fontSize: 13,
+                        borderRadius: 10, padding: '10px 12px', fontSize: 'var(--fs-dysheme)',
                         fontFamily: 'inherit', outline: 'none',
                       }} />
                     <label style={{
                       display: 'flex', gap: 8, alignItems: 'flex-start',
-                      marginTop: 10, fontSize: 11.5, color: '#666', lineHeight: 1.5,
+                      marginTop: 10, fontSize: 'var(--fs-dysheme)', color: '#666', lineHeight: 1.5,
                     }}>
                       <input type="checkbox" checked={mirebesim}
                         onChange={e => { setMirebesim(e.target.checked); setGabim('') }} />
@@ -236,7 +236,7 @@ export function ReportSheet({
 
             {gabim && (
               <div role="alert" style={{
-                fontSize: 11.5, color: '#C42B0F', background: '#FFF0EE',
+                fontSize: 'var(--fs-dysheme)', color: '#C42B0F', background: '#FFF0EE',
                 border: '1px solid #F09595', borderRadius: 9, padding: '8px 10px', marginBottom: 10,
               }}>{gabim}</div>
             )}
@@ -245,7 +245,7 @@ export function ReportSheet({
               {duke ? 'Duke dërguar…' : eshteLigjor ? 'Dërgo njoftimin ligjor' : 'Dërgo raportin'}
             </button>
 
-            <div style={{ fontSize: 10.5, color: '#555', textAlign: 'center', marginTop: 10, lineHeight: 1.6 }}>
+            <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', textAlign: 'center', marginTop: 10, lineHeight: 1.6 }}>
               {eshteLigjor
                 ? 'Njoftimet për përmbajtje të paligjshme trajtohen brenda një ore.'
                 : 'Raportet shqyrtohen sipas rëndësisë. Identiteti yt nuk i tregohet shitësit.'}

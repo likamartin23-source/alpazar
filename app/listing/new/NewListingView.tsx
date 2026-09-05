@@ -27,9 +27,9 @@ export function NewListingView({ p }: any) {
           <ListingTop p={p} />
           {p.myBusinesses?.length > 0 && (
             <div style={{ padding: '0 4px', marginBottom: 12 }}>
-              <label style={{ fontSize: 12, fontWeight: 700, color: '#555', display: 'block', marginBottom: 6 }}>Posto si</label>
+              <label style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#555', display: 'block', marginBottom: 6 }}>Posto si</label>
               <select value={p.form.business_id || ''} onChange={e => p.setForm((f: any) => ({ ...f, business_id: e.target.value }))}
-                style={{ width: '100%', border: '1.5px solid #ddd', borderRadius: 10, padding: '11px 12px', fontSize: 14, background: '#fff', fontFamily: 'inherit' }}>
+                style={{ width: '100%', border: '1.5px solid #ddd', borderRadius: 10, padding: '11px 12px', fontSize: 'var(--fs-dysheme)', background: '#fff', fontFamily: 'inherit' }}>
                 <option value="">Vetja ime (shpallje personale)</option>
                 {p.myBusinesses.map((b: any) => <option key={b.id} value={b.id}>Biznesi: {b.name}</option>)}
               </select>

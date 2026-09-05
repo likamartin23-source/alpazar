@@ -75,11 +75,11 @@ export function RolesTab() {
 
       {err && (
         <div className="card" role="alert"
-          style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#C42B0F', fontSize: 12 }}>{err}</div>
+          style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#C42B0F', fontSize: 'var(--fs-dysheme)' }}>{err}</div>
       )}
 
       {!mund && (
-        <div className="card" style={{ borderColor: 'var(--az-yellow)', background: '#FFFBEF', fontSize: 11.5, color: '#7A5B00' }}>
+        <div className="card" style={{ borderColor: 'var(--az-yellow)', background: '#FFFBEF', fontSize: 'var(--fs-dysheme)', color: '#7A5B00' }}>
           Ti mund t’i shohësh rolet, por vetëm një <strong>Pronar</strong> i ndryshon ato.
         </div>
       )}
@@ -97,15 +97,15 @@ export function RolesTab() {
               return (
                 <tr key={a.id}>
                   <td>
-                    <strong style={{ fontSize: 11.5 }}>{a.emri}</strong>
+                    <strong style={{ fontSize: 'var(--fs-dysheme)' }}>{a.emri}</strong>
                     {vetja && <> <span className="badge bp">ti</span></>}
                     {a.pezulluar && <> <span className="badge bd">pezulluar</span></>}
-                    <div style={{ color: '#999', fontSize: 10 }}>{a.email || (a.username ? '@' + a.username : '')}</div>
+                    <div style={{ color: '#999', fontSize: 'var(--fs-dysheme)' }}>{a.email || (a.username ? '@' + a.username : '')}</div>
                   </td>
                   <td>
                     <span className="badge" style={{ background: r?.ng || '#555', color: '#fff' }}>{r?.l || a.roli}</span>
                   </td>
-                  <td style={{ fontSize: 10, color: '#666', lineHeight: 1.7 }}>
+                  <td style={{ fontSize: 'var(--fs-dysheme)', color: '#666', lineHeight: 1.7 }}>
                     {(a.lejet || []).map((p: string) => EMRI[p] || p).join(' · ')}
                   </td>
                   <td>
@@ -157,7 +157,7 @@ export function RolesTab() {
             <button type="button" className="save-btn" disabled={!ri || !!busy}
               onClick={() => cakto(ri, rol, 'Roli u caktua')}>Cakto rolin</button>
           </div>
-          <div style={{ fontSize: 10.5, color: '#999', marginTop: 8 }}>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#999', marginTop: 8 }}>
             {ROLET.find(x => x.k === rol)?.d}
           </div>
         </div>
@@ -171,12 +171,12 @@ export function RolesTab() {
             {ROLET.map(r => (
               <tr key={r.k}>
                 <td><span className="badge" style={{ background: r.ng, color: '#fff' }}>{r.l}</span></td>
-                <td style={{ fontSize: 11, color: '#666' }}>{r.d}</td>
+                <td style={{ fontSize: 'var(--fs-dysheme)', color: '#666' }}>{r.d}</td>
               </tr>
             ))}
           </tbody>
         </table>
-        <div style={{ fontSize: 11, color: '#666', lineHeight: 1.8, marginTop: 10 }}>
+        <div style={{ fontSize: 'var(--fs-dysheme)', color: '#666', lineHeight: 1.8, marginTop: 10 }}>
           Lejet zbatohen në <strong>bazën e të dhënave</strong>, jo në pamje. Edhe nëse dikush e hap
           faqen me mjete të tjera, veprimi që s’i takon rolit të tij kthehet mbrapsht.
           <br />

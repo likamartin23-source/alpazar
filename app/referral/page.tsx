@@ -197,7 +197,7 @@ export default function ReferralPage() {
           ) : !user ? (
             <div className="card">
               <div className="section-title"><i className="ti ti-lock" aria-hidden="true" />Hyr për të parë referalet</div>
-              <p style={{ fontSize: 12, color: '#555', marginBottom: 14 }}>Krijo llogari falas dhe fillo të fitosh pikë duke ftuar miqtë.</p>
+              <p style={{ fontSize: 'var(--fs-dysheme)', color: '#555', marginBottom: 14 }}>Krijo llogari falas dhe fillo të fitosh pikë duke ftuar miqtë.</p>
               <button type="button" className="login-cta" onClick={() => window.location.href = '/auth/login'}>
                 <span aria-hidden="true">🔑</span> Hyr / Regjistrohu
               </button>
@@ -228,7 +228,7 @@ export default function ReferralPage() {
               {nextMilestone && (
                 <div className="milestone-card">
                   <div className="milestone-title">
-                    <i className="ti ti-crown" style={{ fontSize: 14 }} aria-hidden="true" />
+                    <i className="ti ti-crown" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />
                     Progresi drejt {nextMilestone.label}
                   </div>
                   <div className="milestone-bar-bg">
@@ -241,7 +241,7 @@ export default function ReferralPage() {
                     <span>{nextMilestone.at - referrals.length} mbetur</span>
                   </div>
                   {prevMilestone && (
-                    <div style={{ fontSize: 10, color: '#F5C84299', marginTop: 6, textAlign: 'center' }}>
+                    <div style={{ fontSize: 'var(--fs-dysheme)', color: '#F5C84299', marginTop: 6, textAlign: 'center' }}>
                       <><span aria-hidden="true">✅</span> Ke arritur: {prevMilestone.label}</>
                     </div>
                   )}
@@ -250,10 +250,10 @@ export default function ReferralPage() {
               {!nextMilestone && (
                 <div className="milestone-card">
                   <div className="milestone-title">
-                    <i className="ti ti-crown" style={{ fontSize: 14 }} aria-hidden="true" />
+                    <i className="ti ti-crown" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />
                     <span aria-hidden="true">🥇</span> Ke arritur të gjitha milestones!
                   </div>
-                  <div style={{ fontSize: 12, color: 'var(--az-yellow)', textAlign: 'center', padding: '8px 0' }}>
+                  <div style={{ fontSize: 'var(--fs-dysheme)', color: 'var(--az-yellow)', textAlign: 'center', padding: '8px 0' }}>
                     Urime! 50+ referalë & 1 muaj Premium FALAS fituar! <span aria-hidden="true">🎉</span>
                   </div>
                 </div>
@@ -290,7 +290,7 @@ export default function ReferralPage() {
                     type="button"
                     aria-label="Kopjo linkun e referimit"
                     onClick={() => { navigator.clipboard.writeText(refUrl); setCopied(true); setTimeout(() => setCopied(false), 2000) }}
-                    style={{ flexShrink: 0, background: copied ? '#1D9E75' : 'var(--az-yellow)', color: copied ? '#fff' : '#111', border: 'none', borderRadius: 10, padding: '8px 14px', minHeight: 44, fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: 'inherit', transition: 'all .2s', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                    style={{ flexShrink: 0, background: copied ? '#1D9E75' : 'var(--az-yellow)', color: copied ? '#fff' : '#111', border: 'none', borderRadius: 10, padding: '8px 14px', minHeight: 44, fontWeight: 700, fontSize: 'var(--fs-dysheme)', cursor: 'pointer', fontFamily: 'inherit', transition: 'all .2s', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: 4 }}
                   >
                     {copied ? <><span aria-hidden='true'>✓</span> Kopjuar!</> : <><span aria-hidden='true'>📋</span> Kopjo</>}
                   </button>

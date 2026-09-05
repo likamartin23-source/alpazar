@@ -94,7 +94,7 @@ function AudioPlayer({ url, mine }: { url: string; mine: boolean }) {
         <div role="slider" aria-label="Pozicioni i audios" aria-valuenow={Math.round(progress)} aria-valuemin={0} aria-valuemax={100} tabIndex={0} onClick={seek} onKeyDown={e => { if (e.key === 'ArrowRight') { /* handled by audio element */ } }} style={{ height:3, background:track, borderRadius:4, cursor:'pointer', overflow:'hidden' }}>
           <div style={{ width:`${progress}%`, height:'100%', background:accent, borderRadius:4 }} />
         </div>
-        <div style={{ fontSize:9, marginTop:3, color: mine ? 'rgba(245,200,66,.7)' : '#999' }}>
+        <div style={{ fontSize: 'var(--fs-dysheme)', marginTop:3, color: mine ? 'rgba(245,200,66,.7)' : '#999' }}>
           {playing ? fmtDur(cur) : (dur ? fmtDur(dur) : '0:00')}
         </div>
       </div>
@@ -1008,7 +1008,7 @@ export default function MessagesPage() {
           <div role="menu" aria-label="Veprimet e mesazhit" className="sheet" onClick={e => e.stopPropagation()}>
             <div className="handle" />
             {ctxMenu.msg.content && !ctxMenu.msg.deleted_at && (
-              <div style={{ padding:'0 20px 12px', fontSize:12.5, color:'#555', fontStyle:'italic', borderBottom:'0.5px solid #f0f0f0', marginBottom:4, lineHeight:1.5 }}>
+              <div style={{ padding:'0 20px 12px', fontSize: 'var(--fs-dysheme)', color:'#555', fontStyle:'italic', borderBottom:'0.5px solid #f0f0f0', marginBottom:4, lineHeight:1.5 }}>
                 "{ctxMenu.msg.content.slice(0,90)}{ctxMenu.msg.content.length>90?'…':''}"
               </div>
             )}
@@ -1070,7 +1070,7 @@ export default function MessagesPage() {
               <Avatar profile={selected.other} size={52} online={isOtherOnline} />
               <div>
                 <div style={{ fontWeight:700, fontSize:15, color:'#111' }}>{displayName(selected.other)}</div>
-                <div style={{ fontSize:11, color:isOtherOnline?'#22c55e':'#aaa', marginTop:2 }}>
+                <div style={{ fontSize: 'var(--fs-dysheme)', color:isOtherOnline?'#22c55e':'#aaa', marginTop:2 }}>
                   {isOtherOnline ? '● Online tani' : 'I fjetur'}
                 </div>
               </div>
@@ -1117,7 +1117,7 @@ export default function MessagesPage() {
             <div style={{ padding:'4px 20px 20px', textAlign:'center' }}>
               <div style={{ fontSize:52, marginBottom:10 }} aria-hidden="true">💬</div>
               <div style={{ fontWeight:700, fontSize:16, color:'#111', marginBottom:8 }}>Vazhdo në WhatsApp</div>
-              <div style={{ fontSize:13, color:'#555', lineHeight:1.7, marginBottom:20 }}>
+              <div style={{ fontSize: 'var(--fs-dysheme)', color:'#555', lineHeight:1.7, marginBottom:20 }}>
                 Do të hapësh WhatsApp me <strong>{displayName(selected.other)}</strong>.
               </div>
               {/*  Tri gjendje: numri po hapet · nuk u hap dot · gati.
@@ -1125,11 +1125,11 @@ export default function MessagesPage() {
                    dhe kjo eshte edhe zbulim i ndershem edhe rruge e dyte kur
                    aplikacioni nuk hapet dot.  */}
               {kontaktDuke ? (
-                <div role="status" style={{ padding:'14px', borderRadius:14, background:'#f5f5f0', fontSize:14, fontWeight:600, color:'#555', marginBottom:10 }}>
+                <div role="status" style={{ padding:'14px', borderRadius:14, background:'#f5f5f0', fontSize: 'var(--fs-dysheme)', fontWeight:600, color:'#555', marginBottom:10 }}>
                   Duke hapur kontaktin…
                 </div>
               ) : kontaktGabim ? (
-                <div role="alert" style={{ padding:'12px 14px', borderRadius:14, background:'#FFF0EE', border:'1px solid #F09595', fontSize:13, fontWeight:600, color:'var(--az-red-deep)', marginBottom:10, lineHeight:1.6 }}>
+                <div role="alert" style={{ padding:'12px 14px', borderRadius:14, background:'#FFF0EE', border:'1px solid #F09595', fontSize: 'var(--fs-dysheme)', fontWeight:600, color:'var(--az-red-deep)', marginBottom:10, lineHeight:1.6 }}>
                   {kontaktGabim}
                 </div>
               ) : waLink ? (
@@ -1142,7 +1142,7 @@ export default function MessagesPage() {
                   </a>
                 </>
               ) : null}
-              <button type="button" style={{ width:'100%', padding:'13px', background:'#f5f5f0', border:'none', borderRadius:14, fontWeight:600, fontSize:14, cursor:'pointer', color:'#555', fontFamily:'inherit' }}
+              <button type="button" style={{ width:'100%', padding:'13px', background:'#f5f5f0', border:'none', borderRadius:14, fontWeight:600, fontSize: 'var(--fs-dysheme)', cursor:'pointer', color:'#555', fontFamily:'inherit' }}
                 onClick={() => setShowWhatsApp(false)}>Anulo</button>
             </div>
           </div>
@@ -1157,17 +1157,17 @@ export default function MessagesPage() {
             <div style={{ padding:'4px 20px 20px', textAlign:'center' }}>
               <div style={{ fontSize:52, marginBottom:10 }} aria-hidden="true">📲</div>
               <div style={{ fontWeight:700, fontSize:16, color:'#111', marginBottom:8 }}>Vazhdo në Viber</div>
-              <div style={{ fontSize:13, color:'#555', lineHeight:1.7, marginBottom:20 }}>
+              <div style={{ fontSize: 'var(--fs-dysheme)', color:'#555', lineHeight:1.7, marginBottom:20 }}>
                 Do të hapësh Viber me <strong>{displayName(selected.other)}</strong>.
               </div>
               {/*  I njejti zinxhir tri-gjendjesh si te WhatsApp-i — i njejti
                    fjalor, qe fleta te mos duket si dy komponente te ndryshem.  */}
               {kontaktDuke ? (
-                <div role="status" style={{ padding:'14px', borderRadius:14, background:'#f5f5f0', fontSize:14, fontWeight:600, color:'#555', marginBottom:10 }}>
+                <div role="status" style={{ padding:'14px', borderRadius:14, background:'#f5f5f0', fontSize: 'var(--fs-dysheme)', fontWeight:600, color:'#555', marginBottom:10 }}>
                   Duke hapur kontaktin…
                 </div>
               ) : kontaktGabim ? (
-                <div role="alert" style={{ padding:'12px 14px', borderRadius:14, background:'#FFF0EE', border:'1px solid #F09595', fontSize:13, fontWeight:600, color:'var(--az-red-deep)', marginBottom:10, lineHeight:1.6 }}>
+                <div role="alert" style={{ padding:'12px 14px', borderRadius:14, background:'#FFF0EE', border:'1px solid #F09595', fontSize: 'var(--fs-dysheme)', fontWeight:600, color:'var(--az-red-deep)', marginBottom:10, lineHeight:1.6 }}>
                   {kontaktGabim}
                 </div>
               ) : viberLink ? (
@@ -1180,7 +1180,7 @@ export default function MessagesPage() {
                   </a>
                 </>
               ) : null}
-              <button type="button" style={{ width:'100%', padding:'13px', background:'#f5f5f0', border:'none', borderRadius:14, fontWeight:600, fontSize:14, cursor:'pointer', color:'#555', fontFamily:'inherit' }}
+              <button type="button" style={{ width:'100%', padding:'13px', background:'#f5f5f0', border:'none', borderRadius:14, fontWeight:600, fontSize: 'var(--fs-dysheme)', cursor:'pointer', color:'#555', fontFamily:'inherit' }}
                 onClick={() => setShowViber(false)}>Anulo</button>
             </div>
           </div>
@@ -1254,7 +1254,7 @@ export default function MessagesPage() {
             <div className="chat-wrap" style={{ position:'relative' }}>
               <div className="msgs-area" ref={attachScrollListener}>
                 {isBlocked && (
-                  <div style={{ background:'rgba(230,51,18,.08)', borderRadius:12, padding:'10px 14px', margin:'8px 0', textAlign:'center', fontSize:12, color: '#C42B0F', border:'1px solid rgba(230,51,18,.15)' }}>
+                  <div style={{ background:'rgba(230,51,18,.08)', borderRadius:12, padding:'10px 14px', margin:'8px 0', textAlign:'center', fontSize: 'var(--fs-dysheme)', color: '#C42B0F', border:'1px solid rgba(230,51,18,.15)' }}>
                     <><span aria-hidden="true">🚫</span> Ke bllokuar këtë përdorues</>
                   </div>
                 )}
@@ -1263,8 +1263,8 @@ export default function MessagesPage() {
                   <div style={{ textAlign:'center', padding:'40px 20px' }}>
                     <div style={{ background:'rgba(255,255,255,.8)', borderRadius:16, padding:'20px 24px', display:'inline-block', maxWidth:280 }}>
                       <Avatar profile={selected.other} size={60} online={isOtherOnline} />
-                      <div style={{ fontWeight:700, fontSize:14, color:'#111', marginTop:10 }}>{displayName(selected.other)}</div>
-                      <div style={{ fontSize:12, color:'#555', marginTop:4 }}>Mesazhet janë private dhe të sigurta <span aria-hidden="true">🔒</span></div>
+                      <div style={{ fontWeight:700, fontSize: 'var(--fs-dysheme)', color:'#111', marginTop:10 }}>{displayName(selected.other)}</div>
+                      <div style={{ fontSize: 'var(--fs-dysheme)', color:'#555', marginTop:4 }}>Mesazhet janë private dhe të sigurta <span aria-hidden="true">🔒</span></div>
                     </div>
                   </div>
                 )}
@@ -1330,8 +1330,8 @@ export default function MessagesPage() {
 
                               {/* Content */}
                               {isDeleted ? (
-                                <span style={{ fontStyle:'italic', opacity:.6, fontSize:12, display:'flex', alignItems:'center', gap:5 }}>
-                                  <i className="ti ti-ban" style={{ fontSize:12 }} aria-hidden="true" /> Mesazhi u fshi
+                                <span style={{ fontStyle:'italic', opacity:.6, fontSize: 'var(--fs-dysheme)', display:'flex', alignItems:'center', gap:5 }}>
+                                  <i className="ti ti-ban" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" /> Mesazhi u fshi
                                 </span>
                               ) : m.type === 'image' && m.attachment_url ? (
                                 <img
@@ -1427,9 +1427,9 @@ export default function MessagesPage() {
 
                   {/* Upload error toast */}
                   {uploadErr && (
-                    <div style={{ background:'#FFF0EE', border:'1px solid #f8c0b8', color: '#C42B0F', fontSize:11, fontWeight:600, padding:'6px 12px', display:'flex', alignItems:'center', gap:8 }}>
+                    <div style={{ background:'#FFF0EE', border:'1px solid #f8c0b8', color: '#C42B0F', fontSize: 'var(--fs-dysheme)', fontWeight:600, padding:'6px 12px', display:'flex', alignItems:'center', gap:8 }}>
                       <span style={{ flex:1 }}><span aria-hidden="true">⚠️</span> {uploadErr}</span>
-                      <button type="button" aria-label="Mbyll gabimin" onClick={() => setUploadErr('')} style={{ background:'none', border:'none', color: '#C42B0F', cursor:'pointer', padding:0, fontSize:14, lineHeight:1 }}>✕</button>
+                      <button type="button" aria-label="Mbyll gabimin" onClick={() => setUploadErr('')} style={{ background:'none', border:'none', color: '#C42B0F', cursor:'pointer', padding:0, fontSize: 'var(--fs-dysheme)', lineHeight:1 }}>✕</button>
                     </div>
                   )}
 
@@ -1438,12 +1438,12 @@ export default function MessagesPage() {
                     <div className="img-preview-bar">
                       <img className="img-preview-thumb" src={imgPreview.url} alt="Pamje e imazhit për të dërguar" />
                       <div style={{ flex:1 }}>
-                        <div style={{ fontSize:12, fontWeight:700, color:'#111', marginBottom:2 }}>Dërgo foton</div>
-                        <div style={{ fontSize:11, color:'#888' }}>{imgPreview.file.name}</div>
+                        <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight:700, color:'#111', marginBottom:2 }}>Dërgo foton</div>
+                        <div style={{ fontSize: 'var(--fs-dysheme)', color:'#888' }}>{imgPreview.file.name}</div>
                       </div>
                       <button aria-label="Anulo foton" type="button" onClick={() => { URL.revokeObjectURL(imgPreview.url); setImgPreview(null) }} style={{ background:'none', border:'none', color:'#bbb', fontSize:20, cursor:'pointer', flexShrink:0 }}>✕</button>
                       <button type="button" onClick={sendImage} disabled={uploading}
-                        style={{ background:'linear-gradient(135deg,var(--az-red),#c42a0e)', border:'none', borderRadius:10, color:'#fff', fontWeight:700, fontSize:13, padding:'9px 16px', cursor:'pointer', flexShrink:0 }}>
+                        style={{ background:'linear-gradient(135deg,var(--az-red),#c42a0e)', border:'none', borderRadius:10, color:'#fff', fontWeight:700, fontSize: 'var(--fs-dysheme)', padding:'9px 16px', cursor:'pointer', flexShrink:0 }}>
                         {uploading ? '...' : 'Dërgo'}
                       </button>
                     </div>
@@ -1534,7 +1534,7 @@ export default function MessagesPage() {
                 <h1 className="t-name" style={{ color:'var(--az-yellow)', margin: 0 }}>
                   Mesazhet
                   {totalUnread > 0 && (
-                    <span style={{ background:'var(--az-red)', color:'#fff', borderRadius:10, padding:'1px 8px', fontSize:10, fontWeight:800, marginLeft:8 }}>{totalUnread}</span>
+                    <span style={{ background:'var(--az-red)', color:'#fff', borderRadius:10, padding:'1px 8px', fontSize: 'var(--fs-dysheme)', fontWeight:800, marginLeft:8 }}>{totalUnread}</span>
                   )}
                 </h1>
               </div>
@@ -1554,7 +1554,7 @@ export default function MessagesPage() {
               <div className="spin-center">
                 <div style={{ fontSize: 32 }} aria-hidden="true">⚠️</div>
                 <div style={{ fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
-                <button type="button" onClick={() => window.location.reload()} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
+                <button type="button" onClick={() => window.location.reload()} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
               </div>
             ) : loading ? (
               <div className="spin-center"><span className="spinner" />Duke ngarkuar...</div>

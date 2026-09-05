@@ -37,6 +37,11 @@
   --hap-5: clamp(24px, 2.20vw, 52px);
   --marzhi-faqes: clamp(16px, 4vw, 72px);
   --kontroll-h: clamp(44px, 2.6vw, 56px);
+  /* [U-00 · FAZA 0 · dyshemeja e fontit] Një vlerë e vetme që mbulon të dy platformat
+     pa breakpoint: 12px @390 · 15px @1280 · 16px @1500+. Kodmodi zëvendëson çdo
+     `fontSize: N` me N<15 me këtë. Rrafshon përkohësisht hierarkinë <15px te dyshemeja;
+     hierarkia rikthehet te U-02…U-13 me --fs-meta/--fs-trup/--fs-tit-*. */
+  --fs-dysheme: clamp(12px, 10.69px + 0.337vw, 16px);
   /* Kolona e leximit = 37em, JO 66ch: te Plus Jakarta Sans "0"=0.7315em ndërsa
      karakteri mesatar=0.5606em, pra 66ch do të jepte ~86 karaktere (mbi 75).
      37em ≈ 50ch reale → 744px@1280 · 853px@1920, brenda konit ±15° (matje terminali). */

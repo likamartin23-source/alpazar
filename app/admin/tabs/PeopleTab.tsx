@@ -120,7 +120,7 @@ export function PeopleTab() {
 
       {err && (
         <div className="card" role="alert"
-          style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#C42B0F', fontSize: 12 }}>{err}</div>
+          style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#C42B0F', fontSize: 'var(--fs-dysheme)' }}>{err}</div>
       )}
 
       <div className="card">
@@ -144,7 +144,7 @@ export function PeopleTab() {
       <div className="card">
         <div className="ct">Personat</div>
         {rows.length === 0 ? (
-          <p style={{ color: '#aaa', fontSize: 12, padding: '12px 0' }}>Asnjë person në këtë filtër.</p>
+          <p style={{ color: '#aaa', fontSize: 'var(--fs-dysheme)', padding: '12px 0' }}>Asnjë person në këtë filtër.</p>
         ) : rows.map(u => {
           const [nl, nc] = NIVELI[u.niveli] || NIVELI[0]
           const hapur = hap === u.id
@@ -152,18 +152,18 @@ export function PeopleTab() {
             <div key={u.id} style={{ borderTop: '1px solid #f0f0f0', padding: '10px 0' }}>
               <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
                 <div style={{ flex: 1, minWidth: 180 }}>
-                  <strong style={{ fontSize: 12.5 }}>{u.full_name || u.username || '—'}</strong>
+                  <strong style={{ fontSize: 'var(--fs-dysheme)' }}>{u.full_name || u.username || '—'}</strong>
                   {u.is_admin && <span className="badge ba" style={{ marginLeft: 5 }}>admin</span>}
                   {u.is_suspended && <span className="badge bd" style={{ marginLeft: 5 }}>pezulluar</span>}
                   {u.is_verified && <span className="badge ba" style={{ marginLeft: 5 }}>verifikuar</span>}
-                  <div style={{ fontSize: 10, color: '#aaa', marginTop: 2 }}>
+                  <div style={{ fontSize: 'var(--fs-dysheme)', color: '#aaa', marginTop: 2 }}>
                     {u.phone || u.email || '—'} · anëtar {d(u.created_at)}
                   </div>
                 </div>
 
-                <span style={{ fontSize: 11, fontWeight: 700, color: nc }}>{nl}</span>
+                <span style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: nc }}>{nl}</span>
 
-                <div style={{ fontSize: 10.5, color: '#777', minWidth: 150 }}>
+                <div style={{ fontSize: 'var(--fs-dysheme)', color: '#777', minWidth: 150 }}>
                   {u.listings} shpallje
                   {u.biznese > 0 && <> · {u.biznese} biznes{u.biznese > 1 ? 'e' : ''}</>}
                   {u.raporte_te_hapura > 0 && (
@@ -181,46 +181,46 @@ export function PeopleTab() {
 
               {hapur && (
                 <div style={{ marginTop: 10, borderTop: '2px solid #eee', paddingTop: 10 }}>
-                  {duke && <div style={{ fontSize: 11, color: '#aaa' }}>Duke hapur dosjen…</div>}
+                  {duke && <div style={{ fontSize: 'var(--fs-dysheme)', color: '#aaa' }}>Duke hapur dosjen…</div>}
 
                   {dosja && (
                     <>
                       {/* ── Gjendja financiare dhe operative ─────────────── */}
-                      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', fontSize: 11, color: '#555' }}>
+                      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', fontSize: 'var(--fs-dysheme)', color: '#555' }}>
                         <div>
-                          <div style={{ color: '#999', fontSize: 10 }}>Abonimi</div>
+                          <div style={{ color: '#999', fontSize: 'var(--fs-dysheme)' }}>Abonimi</div>
                           {dosja.abonimi
                             ? <>{dosja.abonimi.tier} · deri {d(dosja.abonimi.deri)}
                                 {dosja.abonimi.anulohet_ne_fund && <span className="badge bd" style={{ marginLeft: 4 }}>anulohet</span>}</>
                             : 'pa abonim'}
                         </div>
                         <div>
-                          <div style={{ color: '#999', fontSize: 10 }}>Paguar</div>
+                          <div style={{ color: '#999', fontSize: 'var(--fs-dysheme)' }}>Paguar</div>
                           {L(dosja.faturimi?.paguar)} L
                           {Number(dosja.faturimi?.rimbursuar) > 0 &&
                             <span style={{ color: '#C42B0F' }}> · −{L(dosja.faturimi.rimbursuar)}</span>}
                         </div>
                         <div>
-                          <div style={{ color: '#999', fontSize: 10 }}>Shpallje</div>
+                          <div style={{ color: '#999', fontSize: 'var(--fs-dysheme)' }}>Shpallje</div>
                           {dosja.shpalljet?.aktive}/{dosja.shpalljet?.gjithsej} aktive
                           {dosja.shpalljet?.hequr > 0 &&
                             <span style={{ color: '#C42B0F' }}> · {dosja.shpalljet.hequr} hequr</span>}
                         </div>
                         <div>
-                          <div style={{ color: '#999', fontSize: 10 }}>Moderimi</div>
+                          <div style={{ color: '#999', fontSize: 'var(--fs-dysheme)' }}>Moderimi</div>
                           {dosja.moderimi?.raporte_kunder} raporte
                           {dosja.moderimi?.ne_radhe > 0 &&
                             <span style={{ color: '#C42B0F', fontWeight: 700 }}> · {dosja.moderimi.ne_radhe} në radhë</span>}
                         </div>
                         <div>
-                          <div style={{ color: '#999', fontSize: 10 }}>GDPR</div>
+                          <div style={{ color: '#999', fontSize: 'var(--fs-dysheme)' }}>GDPR</div>
                           {dosja.privatesia?.pelqim_gdpr ? 'pëlqim ✓' : 'pa pëlqim'}
                           {dosja.privatesia?.marketing && ' · marketing ✓'}
                         </div>
                       </div>
 
                       {dosja.faturimi?.pa_fature_tatimore > 0 && (
-                        <div style={{ marginTop: 8, fontSize: 11, color: '#BA7517', fontWeight: 600 }}>
+                        <div style={{ marginTop: 8, fontSize: 'var(--fs-dysheme)', color: '#BA7517', fontWeight: 600 }}>
                           {dosja.faturimi.pa_fature_tatimore} pagesa presin faturën tatimore — shko te Paratë.
                         </div>
                       )}
@@ -228,18 +228,18 @@ export function PeopleTab() {
                       {/* ── Bizneset e tij ───────────────────────────────── */}
                       {dosja.bizneset?.length > 0 && (
                         <div style={{ marginTop: 12 }}>
-                          <div style={{ fontSize: 10.5, color: '#999', marginBottom: 5 }}>Bizneset</div>
+                          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#999', marginBottom: 5 }}>Bizneset</div>
                           {dosja.bizneset.map((b: any) => (
                             <div key={b.id} style={{
                               display: 'flex', gap: 8, alignItems: 'center',
-                              flexWrap: 'wrap', padding: '5px 0', fontSize: 11.5,
+                              flexWrap: 'wrap', padding: '5px 0', fontSize: 'var(--fs-dysheme)',
                             }}>
                               <strong style={{ flex: 1, minWidth: 120 }}>{b.emri}</strong>
                               {b.i_verifikuar
                                 ? <span className="badge ba">verifikuar</span>
                                 : <span className="badge bp">pa verifikuar</span>}
                               {!b.i_dukshem && <span className="badge bd">i errësuar</span>}
-                              <span style={{ fontSize: 10, color: '#aaa' }}>{b.shpallje} shpallje</span>
+                              <span style={{ fontSize: 'var(--fs-dysheme)', color: '#aaa' }}>{b.shpallje} shpallje</span>
                               <button type="button" className="edit-btn" disabled={busy === b.id}
                                 onClick={() => thirr('admin_set_business_flag',
                                   { p_business_id: b.id, p_flag: 'is_verified', p_value: !b.i_verifikuar,
@@ -274,7 +274,7 @@ export function PeopleTab() {
                             </div>
                           ))}
                           {dosja.bizneset.some((b: any) => !b.i_dukshem) && (
-                            <div style={{ fontSize: 10, color: '#999', marginTop: 3 }}>
+                            <div style={{ fontSize: 'var(--fs-dysheme)', color: '#999', marginTop: 3 }}>
                               Errësimi ndodh vetvetiu kur Premium-i nuk është aktiv.
                             </div>
                           )}
@@ -356,7 +356,7 @@ export function PeopleTab() {
                           )}
                         </div>
 
-                        <div style={{ fontSize: 10, color: '#999', marginTop: 8, lineHeight: 1.6 }}>
+                        <div style={{ fontSize: 'var(--fs-dysheme)', color: '#999', marginTop: 8, lineHeight: 1.6 }}>
                           Fshirja e llogarisë nuk i heq faturat — ato ruhen sipas ligjit 87/2019.
                           Çdo veprim shkruhet në gjurmë me arsyen.
                         </div>

@@ -839,12 +839,12 @@ export default function Auth() {
         Kodi 6-shifror u dërgua te<br />
         <strong>{resolvedId}</strong><br />
         {detectType(resolvedId) === 'email' && (
-          <span style={{ fontSize: 10, color: '#555' }}>Nëse nuk e gjen, kontrollo Spam / Junk</span>
+          <span style={{ fontSize: 'var(--fs-dysheme)', color: '#555' }}>Nëse nuk e gjen, kontrollo Spam / Junk</span>
         )}
       </p>
 
       <div className="countdown">
-        <span style={{ fontSize: 12, color: '#555' }}>{expired ? 'Kodi skadoi' : 'Skadon në:'}</span>
+        <span style={{ fontSize: 'var(--fs-dysheme)', color: '#555' }}>{expired ? 'Kodi skadoi' : 'Skadon në:'}</span>
         <span className={`countdown-time ${expired ? 'err-c' : timeClass}`}>
           {expired ? '0:00' : `${mins}:${fmt2(secs)}`}
         </span>
@@ -887,11 +887,11 @@ export default function Auth() {
       {autoSubmitIn > 0 && (
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
           background:'#EEF4FF', border:'1px solid #85B7EB', borderRadius:8,
-          padding:'8px 12px', marginBottom:10, fontSize:12 }}>
+          padding:'8px 12px', marginBottom:10, fontSize: 'var(--fs-dysheme)' }}>
           <span style={{ color:'#185FA5' }}><span aria-hidden="true">⏳</span> Duke verifikuar automatikisht në <strong>{autoSubmitIn.toFixed(1)}s</strong>…</span>
           <button type="button" onClick={cancelAutoSubmit}
             style={{ background:'none', border:'none', color: '#C42B0F', cursor:'pointer',
-              fontWeight:700, fontSize:12, padding:'0 4px' }}><span aria-hidden="true">✕</span> Anulo</button>
+              fontWeight:700, fontSize: 'var(--fs-dysheme)', padding:'0 4px' }}><span aria-hidden="true">✕</span> Anulo</button>
         </div>
       )}
 
@@ -927,7 +927,7 @@ export default function Auth() {
             <h2 style={{ fontSize: 'var(--fs-2xl)', fontWeight: 800, color: '#111', marginBottom: 8, margin: '0 0 8px' }}>
               Konfirmo moshën tënde
             </h2>
-            <p style={{ fontSize: 13, color: '#555', lineHeight: 1.6, marginBottom: 24 }}>
+            <p style={{ fontSize: 'var(--fs-dysheme)', color: '#555', lineHeight: 1.6, marginBottom: 24 }}>
               Alpazar është vetëm për persona <strong>16 vjeç e lart</strong><br />
               (Ligji 124/2024, neni 8).
             </p>
@@ -941,7 +941,7 @@ export default function Auth() {
               style={{
                 width: '100%', background: 'linear-gradient(135deg,var(--az-yellow-hi),var(--az-yellow))', color: '#111',
                 border: 'none', borderRadius: 12, padding: '13px',
-                fontSize: 14, fontWeight: 700, cursor: 'pointer',
+                fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer',
                 marginBottom: 10, fontFamily: 'inherit', boxShadow: '0 2px 8px -2px rgba(245,200,66,.5)',
               }}
             >
@@ -960,7 +960,7 @@ export default function Auth() {
               style={{
                 width: '100%', background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff',
                 border: 'none', borderRadius: 12, padding: '13px',
-                fontSize: 14, fontWeight: 700, cursor: 'pointer',
+                fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer',
                 fontFamily: 'inherit', boxShadow: '0 4px 14px -3px rgba(230,51,18,.45)',
               }}
             >
@@ -1205,11 +1205,11 @@ export default function Auth() {
               <p className="sub">
                 Dërguam {mode === 'forgot' ? 'link rivendosjeje' : 'link konfirmimi'} te<br />
                 <strong>{resolvedId}</strong><br />
-                <span style={{ fontSize: 10, color: '#555' }}>Kontrollo Spam/Junk nëse nuk e gjen</span>
+                <span style={{ fontSize: 'var(--fs-dysheme)', color: '#555' }}>Kontrollo Spam/Junk nëse nuk e gjen</span>
               </p>
               <div style={{ background: '#EAF3DE', border: '0.5px solid #97C459', borderRadius: 10, padding: '14px 16px', marginBottom: 14, textAlign: 'center' }}>
                 <span aria-hidden="true" style={{ fontSize: 28, display: 'block', marginBottom: 6 }}>📬</span>
-                <p style={{ fontSize: 13, color: '#3B6D11', fontWeight: 600, margin: 0 }}>
+                <p style={{ fontSize: 'var(--fs-dysheme)', color: '#3B6D11', fontWeight: 600, margin: 0 }}>
                   Kliko linkun në email për {mode === 'forgot' ? 'të ndryshuar fjalëkalimin' : 'të aktivizuar llogarinë'}
                 </p>
               </div>

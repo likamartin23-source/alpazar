@@ -108,8 +108,8 @@ export default function AuthCallback() {
       {err ? (
         <>
           <div style={{ fontSize: 40 }} aria-hidden="true">⚠️</div>
-          <p style={{ color: '#C42B0F', fontSize: 13, fontWeight: 600, maxWidth: 320 }}>{err}</p>
-          <p style={{ color: '#555', fontSize: 11 }}>Duke të kthyer te hyrja...</p>
+          <p style={{ color: '#C42B0F', fontSize: 'var(--fs-dysheme)', fontWeight: 600, maxWidth: 320 }}>{err}</p>
+          <p style={{ color: '#555', fontSize: 'var(--fs-dysheme)' }}>Duke të kthyer te hyrja...</p>
         </>
       ) : (
         <>
@@ -118,7 +118,7 @@ export default function AuthCallback() {
             border: '3px solid var(--az-yellow)', borderTopColor: 'var(--az-red)',
             borderRadius: '50%', animation: 'spin .7s linear infinite'
           }} />
-          <p style={{ color: '#555', fontSize: 13 }}>Duke u autentikuar...</p>
+          <p style={{ color: '#555', fontSize: 'var(--fs-dysheme)' }}>Duke u autentikuar...</p>
         </>
       )}
     </div>

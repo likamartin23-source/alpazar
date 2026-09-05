@@ -70,8 +70,8 @@ export default function SavedSearchesPage() {
         {loadError ? (
           <div style={{ textAlign: 'center', padding: '40px 24px' }}>
             <div style={{ fontSize: 32, marginBottom: 12 }} aria-hidden="true">⚠️</div>
-            <div style={{ fontSize: 14, color: '#C42B0F', marginBottom: 16 }}>Nuk u ngarkuan të dhënat. Kontrollo lidhjen dhe provo sërish.</div>
-            <button type="button" onClick={() => { setLoadError(false); setLoading(true); window.location.reload() }} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', minHeight: 44, boxSizing: 'border-box', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
+            <div style={{ fontSize: 'var(--fs-dysheme)', color: '#C42B0F', marginBottom: 16 }}>Nuk u ngarkuan të dhënat. Kontrollo lidhjen dhe provo sërish.</div>
+            <button type="button" onClick={() => { setLoadError(false); setLoading(true); window.location.reload() }} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', minHeight: 44, boxSizing: 'border-box', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
           </div>
         ) : loading ? (
           <div style={{ color: '#555', textAlign: 'center', padding: 40 }}>Duke ngarkuar...</div>
@@ -79,11 +79,11 @@ export default function SavedSearchesPage() {
           <div style={{ textAlign: 'center', padding: '60px 24px' }}>
             <div style={{ fontSize: 48, marginBottom: 16 }} aria-hidden="true">🔔</div>
             <div style={{ fontSize: 17, fontWeight: 700, color: '#111', marginBottom: 8 }}>Ende s'ke kërkime të ruajtura</div>
-            <div style={{ fontSize: 13, color: '#555', marginBottom: 24 }}>Ruaj filtrat e kërkimit dhe njoftohu kur dalin shpallje të reja</div>
+            <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', marginBottom: 24 }}>Ruaj filtrat e kërkimit dhe njoftohu kur dalin shpallje të reja</div>
             <button
               type="button"
               onClick={() => { window.location.href = '/search' }}
-              style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 24px', minHeight: 44, boxSizing: 'border-box', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+              style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 24px', minHeight: 44, boxSizing: 'border-box', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
             >
               <><span aria-hidden="true">🔍</span> Fillo një kërkim</>
             </button>
@@ -104,13 +104,13 @@ export default function SavedSearchesPage() {
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginBottom: 8 }}>
                         {tags.map(t => (
-                          <span key={t} style={{ background: '#F5F5F5', color: '#444', fontSize: 11, fontWeight: 600, padding: '3px 8px', borderRadius: 6 }}>{t}</span>
+                          <span key={t} style={{ background: '#F5F5F5', color: '#444', fontSize: 'var(--fs-dysheme)', fontWeight: 600, padding: '3px 8px', borderRadius: 6 }}>{t}</span>
                         ))}
                       </div>
                       <button
                         type="button"
                         onClick={() => runSearch(s)}
-                        style={{ background: 'none', border: 'none', color: '#C42B0F', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', padding: 0, minHeight: 44, display: 'inline-flex', alignItems: 'center' }}
+                        style={{ background: 'none', border: 'none', color: '#C42B0F', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', padding: 0, minHeight: 44, display: 'inline-flex', alignItems: 'center' }}
                       >
                         <><span aria-hidden="true">🔍</span> Kërko tani →</>
                       </button>

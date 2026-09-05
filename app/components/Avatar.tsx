@@ -159,19 +159,27 @@ export default function Avatar({
 }: AvatarProps) {
   const [broken, setBroken] = useState(false)
   const showImage = src && !broken
-  const ring = Math.max(2, Math.round(size * 0.07))
+  /*  [U-00 · FAZA 0] Dyshemeja e fontit vlen edhe për inicialet: kurrë nën 12px.
+   *  Inicialet 5px (avataret e vegjël te ballina/kategoritë) ishin teksti më i
+   *  vogël i platformës. Por të rritësh vetëm tekstin do ta thyente rrethin, ndaj
+   *  kur do shfaqen iniciale nën dysheme, rritet edhe RRETHI te ≥2.4×12=29px
+   *  (spec-i i terminalit). Prek VETËM avataret pa foto nën këtë prag; ata me foto
+   *  ose të mëdhenj mbeten identikë. */
+  const provFont = Math.round((size - Math.max(2, Math.round(size * 0.07)) * 2 - Math.max(1, Math.round(size * 0.04)) * 2) * 0.4)
+  const sz = (!showImage && provFont < 12) ? Math.max(size, 29) : size
+  const ring = Math.max(2, Math.round(sz * 0.07))
   /*  PERHAPJA E PULSIT, PROPORCIONALE ME AVATARIN.
    *  Deri me 31 gusht 2026 ishte 6px FIKSE per cdo madhesi: mbi nje avatar 64px
    *  (profil, karte shitesi) dukej i zbete — 9% e diametrit — ndersa mbi nje
    *  avatar 20px brenda kartes ishte joproporcionalisht i madh. Matur ne
    *  shfletues, jo me sy. Tani 19% e diametrit, me nje dysheme prej 5px qe
    *  avataret e vegjel te mos e humbasin fare. */
-  const pulse = Math.max(5, Math.round(size * 0.19))
-  const white = Math.max(1, Math.round(size * 0.04))
-  const inner = size - ring * 2 - white * 2
-  const badge = Math.round(size * 0.34)
-  const dot = Math.max(8, Math.round(size * 0.26))
-  const initialsFont = Math.round(inner * 0.4)
+  const pulse = Math.max(5, Math.round(sz * 0.19))
+  const white = Math.max(1, Math.round(sz * 0.04))
+  const inner = sz - ring * 2 - white * 2
+  const badge = Math.round(sz * 0.34)
+  const dot = Math.max(8, Math.round(sz * 0.26))
+  const initialsFont = Math.max(12, Math.round(inner * 0.4))
 
   return (
     <div
@@ -179,11 +187,11 @@ export default function Avatar({
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
       onKeyDown={onClick ? (e => { if (e.key === 'Enter' || e.key === ' ') onClick() }) : undefined}
-      style={{ position: 'relative', width: size, height: size, flexShrink: 0, cursor: onClick ? 'pointer' : 'default', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}
+      style={{ position: 'relative', width: sz, height: sz, flexShrink: 0, cursor: onClick ? 'pointer' : 'default', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}
     >
       {tier === 'vip' && <style dangerouslySetInnerHTML={{ __html: VIP_PULSE_CSS }} />}
       {tier === 'premium' && <style dangerouslySetInnerHTML={{ __html: PREMIUM_PULSE_CSS }} />}
-      <div className={tier === 'vip' ? 'alpz-vip-ring' : tier === 'premium' ? 'alpz-premium-ring' : undefined} style={{ width: size, height: size, borderRadius: '50%', padding: ring, boxSizing: 'border-box', ...ringStyle(tier), transition: 'transform .15s ease', ['--alpz-pulse' as any]: `${pulse}px` }}>
+      <div className={tier === 'vip' ? 'alpz-vip-ring' : tier === 'premium' ? 'alpz-premium-ring' : undefined} style={{ width: sz, height: sz, borderRadius: '50%', padding: ring, boxSizing: 'border-box', ...ringStyle(tier), transition: 'transform .15s ease', ['--alpz-pulse' as any]: `${pulse}px` }}>
         <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: '#fff', padding: white, boxSizing: 'border-box' }}>
           {showImage ? (
             <img src={src as string} alt={name || 'avatar'} loading="lazy" onError={() => setBroken(true)} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', display: 'block' }} />

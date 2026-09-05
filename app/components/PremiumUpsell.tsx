@@ -194,10 +194,10 @@ export function SocialProofBar({ viewsCount, listingId }: { viewsCount: number; 
     }}>
       <div style={{
         width: 26, height: 26, borderRadius: '50%', background: 'var(--az-yellow)', flexShrink: 0,
-        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13,
+        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 'var(--fs-dysheme)',
       }} aria-hidden="true">👁</div>
       <div style={{ flex: 1 }}>
-        <span style={{ fontSize: 11, fontWeight: 700, color: '#111', display: 'block' }}>
+        <span style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#111', display: 'block' }}>
           {nf(viewsCount)} {viewsCount === 1 ? 'shikim' : 'shikime'}
           {syte > 0 && (
             <span style={{ marginLeft: 8, color: '#C4230F', fontWeight: 800 }}>
@@ -205,7 +205,7 @@ export function SocialProofBar({ viewsCount, listingId }: { viewsCount: number; 
             </span>
           )}
         </span>
-        <span style={{ fontSize: 10, color: '#6B6B6B', display: 'block' }}>
+        <span style={{ fontSize: 'var(--fs-dysheme)', color: '#6B6B6B', display: 'block' }}>
           Interes real për këtë shpallje
         </span>
       </div>
@@ -226,10 +226,10 @@ export function SellerPremiumUpsell({ isPremium, price }: { isPremium: boolean; 
     }}>
       <span style={{ fontSize: 28 }} aria-hidden="true">⚡</span>
       <div style={{ flex: 1 }}>
-        <div style={{ color: 'var(--az-yellow)', fontSize: 12, fontWeight: 800, marginBottom: 3 }}>
+        <div style={{ color: 'var(--az-yellow)', fontSize: 'var(--fs-dysheme)', fontWeight: 800, marginBottom: 3 }}>
           Shpallja jote shihet 5× më shumë me Premium
         </div>
-        <div style={{ color: '#555', fontSize: 10, lineHeight: 1.5 }}>
+        <div style={{ color: '#555', fontSize: 'var(--fs-dysheme)', lineHeight: 1.5 }}>
           Shfaqet e para · Badge verifikimi · Biznes online
         </div>
       </div>
@@ -239,13 +239,13 @@ export function SellerPremiumUpsell({ isPremium, price }: { isPremium: boolean; 
           onClick={() => window.location.href = '/premium'}
           style={{
             background: 'linear-gradient(135deg,var(--az-yellow-hi),var(--az-yellow))', color: '#111', border: 'none', borderRadius: 12,
-            padding: '7px 12px', fontSize: 11, fontWeight: 800, cursor: 'pointer', whiteSpace: 'nowrap',
+            padding: '7px 12px', fontSize: 'var(--fs-dysheme)', fontWeight: 800, cursor: 'pointer', whiteSpace: 'nowrap',
           }}
         >
           <span aria-hidden="true">⭐</span> {shownPrice}/muaj
         </button>
         <button type="button" aria-label="Mbyll ofertën" onClick={() => setVisible(false)} style={{
-          background: 'none', border: 'none', color: '#555', fontSize: 9, cursor: 'pointer',
+          background: 'none', border: 'none', color: '#555', fontSize: 'var(--fs-dysheme)', cursor: 'pointer',
         }}><><span aria-hidden="true">✕</span> Tani jo</></button>
       </div>
     </div>
@@ -274,10 +274,10 @@ export function FreeTierBanner({
       borderRadius: 12, padding: '12px 14px', marginBottom: 14,
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-        <span style={{ fontSize: 12, fontWeight: 700, color: remaining === 0 ? 'var(--az-red-deep)' : '#A05000' }}>
+        <span style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: remaining === 0 ? 'var(--az-red-deep)' : '#A05000' }}>
           {remaining === 0 ? <><span aria-hidden='true'>🚫</span> Ke arritur kufirin falas</> : <><span aria-hidden='true'>⚠️</span> {remaining} shpallje të mbetura falas</>}
         </span>
-        <span style={{ fontSize: 10, color: '#888' }}>{listingCount}/{freeLimit}</span>
+        <span style={{ fontSize: 'var(--fs-dysheme)', color: '#888' }}>{listingCount}/{freeLimit}</span>
       </div>
       <div style={{ background: '#eee', borderRadius: 4, height: 6, marginBottom: 10, overflow: 'hidden' }}>
         <div style={{
@@ -286,7 +286,7 @@ export function FreeTierBanner({
         }} />
       </div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: 10, color: '#555', lineHeight: 1.5 }}>
+        <span style={{ fontSize: 'var(--fs-dysheme)', color: '#555', lineHeight: 1.5 }}>
           Premium → shpallje të pakufizuara + biznes online
         </span>
         <button
@@ -294,7 +294,7 @@ export function FreeTierBanner({
           onClick={() => window.location.href = '/premium'}
           style={{
             background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 8,
-            padding: '7px 12px', fontSize: 11, fontWeight: 700, cursor: 'pointer', flexShrink: 0, marginLeft: 10,
+            padding: '7px 12px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', flexShrink: 0, marginLeft: 10,
           }}
         >
           <span aria-hidden="true">⭐</span> {shownPrice}/muaj

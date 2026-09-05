@@ -62,7 +62,7 @@ export function PlansTab() {
   const table = (list: any[], title: string, note: string) => (
     <div className="card">
       <div className="ct">{title}</div>
-      <div style={{ fontSize: 10.5, color: '#999', marginBottom: 10 }}>{note}</div>
+      <div style={{ fontSize: 'var(--fs-dysheme)', color: '#999', marginBottom: 10 }}>{note}</div>
       <table>
         <thead>
           <tr><th>Plani</th><th>Periudha</th><th>Çmimi</th><th>Zbritja</th><th>Statusi</th><th style={{ width: 150 }} /></tr>
@@ -70,9 +70,9 @@ export function PlansTab() {
         <tbody>
           {list.map(p => (
             <tr key={p.id}>
-              <td><strong style={{ fontSize: 11.5 }}>{p.name}</strong><div style={{ color: '#aaa', fontSize: 9.5 }}>{p.slug}</div></td>
-              <td>{PERIOD[p.billing_period] || p.billing_period}<div style={{ color: '#aaa', fontSize: 9.5 }}>{p.months} muaj</div></td>
-              <td><strong>{L(p.price_all)} L</strong><div style={{ color: '#aaa', fontSize: 9.5 }}>{p.price_eur} €</div></td>
+              <td><strong style={{ fontSize: 'var(--fs-dysheme)' }}>{p.name}</strong><div style={{ color: '#aaa', fontSize: 'var(--fs-dysheme)' }}>{p.slug}</div></td>
+              <td>{PERIOD[p.billing_period] || p.billing_period}<div style={{ color: '#aaa', fontSize: 'var(--fs-dysheme)' }}>{p.months} muaj</div></td>
+              <td><strong>{L(p.price_all)} L</strong><div style={{ color: '#aaa', fontSize: 'var(--fs-dysheme)' }}>{p.price_eur} €</div></td>
               <td>{Number(p.discount_pct) > 0 ? `−${p.discount_pct}%` : '—'}</td>
               <td><span className={`badge ${p.is_active ? 'ba' : 'bd'}`}>{p.is_active ? 'Aktiv' : 'Fshehur'}</span></td>
               <td>
@@ -98,7 +98,7 @@ export function PlansTab() {
 
       {err && (
         <div className="card" role="alert"
-          style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#C42B0F', fontSize: 12 }}>{err}</div>
+          style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#C42B0F', fontSize: 'var(--fs-dysheme)' }}>{err}</div>
       )}
 
       {edit && (
@@ -125,7 +125,7 @@ export function PlansTab() {
 
       <div className="card">
         <div className="ct">Sinkronizimi</div>
-        <div style={{ fontSize: 11, color: '#666', lineHeight: 1.8 }}>
+        <div style={{ fontSize: 'var(--fs-dysheme)', color: '#666', lineHeight: 1.8 }}>
           Sa herë ndryshon një çmim këtu, faqja kryesore, faqja e planeve dhe asistenti Albi e marrin
           vlerën e re menjëherë. Asnjë çmim nuk është i shkruar në kod.
         </div>

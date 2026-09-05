@@ -198,7 +198,7 @@ export function QueueTab() {
 
       {err && (
         <div className="card" role="alert"
-          style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#C42B0F', fontSize: 12 }}>{err}</div>
+          style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#C42B0F', fontSize: 'var(--fs-dysheme)' }}>{err}</div>
       )}
 
       <div className="card">
@@ -212,7 +212,7 @@ export function QueueTab() {
         </div>
 
         {shfaq.length === 0 ? (
-          <p style={{ color: '#1D9E75', fontSize: 12, fontWeight: 700, padding: '10px 0' }}>
+          <p style={{ color: '#1D9E75', fontSize: 'var(--fs-dysheme)', fontWeight: 700, padding: '10px 0' }}>
             <span aria-hidden="true">✓</span> Asgjë nuk pret në këtë filtër.
           </p>
         ) : shfaq.map(r => {
@@ -232,15 +232,15 @@ export function QueueTab() {
                 )}
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
-                    <span style={{ fontWeight: 700, fontSize: 12.5, color: uc }}>{ue}</span>
-                    <span style={{ fontSize: 10.5, color: r.vonuar ? '#C42B0F' : '#999', fontWeight: r.vonuar ? 700 : 400 }}>
+                    <span style={{ fontWeight: 700, fontSize: 'var(--fs-dysheme)', color: uc }}>{ue}</span>
+                    <span style={{ fontSize: 'var(--fs-dysheme)', color: r.vonuar ? '#C42B0F' : '#999', fontWeight: r.vonuar ? 700 : 400 }}>
                       {afati(r.due_at, r.vonuar)}
                     </span>
                     {ligjore && <span className="badge bd">ligjor</span>}
                     {l?.aktive === false && <span className="badge bd">hequr</span>}
                   </div>
 
-                  <div style={{ fontWeight: 700, fontSize: 12.5, marginTop: 3 }}>
+                  <div style={{ fontWeight: 700, fontSize: 'var(--fs-dysheme)', marginTop: 3 }}>
                     {l?.title || 'Shpallje e panjohur'}
                     {l?.cmimi != null && (
                       <span style={{ color: '#888', fontWeight: 400 }}>
@@ -251,26 +251,26 @@ export function QueueTab() {
                   </div>
 
                   {l?.pronari && (
-                    <div style={{ fontSize: 10.5, color: '#999', marginTop: 2 }}>
+                    <div style={{ fontSize: 'var(--fs-dysheme)', color: '#999', marginTop: 2 }}>
                       Pronari: {l.pronari.emri || '—'}
                       {l.pronari.pezulluar && <span className="badge bd" style={{ marginLeft: 4 }}>pezulluar</span>}
                     </div>
                   )}
 
-                  <div style={{ fontSize: 10.5, color: '#777', marginTop: 5 }}>
+                  <div style={{ fontSize: 'var(--fs-dysheme)', color: '#777', marginTop: 5 }}>
                     {(r.burime?.raporte || 0) > 0 && <>{r.burime.raporte} raporte</>}
                     {(r.burime?.raporte || 0) > 0 && (r.burime?.njoftime || 0) > 0 && ' · '}
                     {(r.burime?.njoftime || 0) > 0 && <>{r.burime.njoftime} njoftime ligjore</>}
                   </div>
 
                   {Array.isArray(r.arsyet) && r.arsyet.length > 0 && (
-                    <div style={{ fontSize: 10.5, color: '#555', marginTop: 4 }}>
+                    <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', marginTop: 4 }}>
                       {r.arsyet.join(' · ')}
                     </div>
                   )}
 
                   {Array.isArray(r.detajet) && r.detajet.length > 0 && (
-                    <ul style={{ margin: '5px 0 0 14px', padding: 0, fontSize: 11, color: '#666', lineHeight: 1.6 }}>
+                    <ul style={{ margin: '5px 0 0 14px', padding: 0, fontSize: 'var(--fs-dysheme)', color: '#666', lineHeight: 1.6 }}>
                       {r.detajet.map((d: string, i: number) => <li key={i}>„{d}"</li>)}
                     </ul>
                   )}
@@ -315,7 +315,7 @@ export function QueueTab() {
                           {busy === r.id ? '…' : 'Mbaj — pa shkelje'}
                         </button>
                       </div>
-                      <div style={{ fontSize: 10, color: '#999', marginTop: 6 }}>
+                      <div style={{ fontSize: 'var(--fs-dysheme)', color: '#999', marginTop: 6 }}>
                         Vendimi mbyll njëherësh raportet dhe njoftimet për këtë shpallje.
                       </div>
                     </div>
@@ -331,19 +331,19 @@ export function QueueTab() {
       {njoftime.filter(n => !n.shpallja).length > 0 && (
         <div className="card" style={{ borderColor: '#F0C36D', background: '#FFFDF6' }}>
           <div className="ct">Njoftime ligjore pa shpallje të lidhur</div>
-          <div style={{ fontSize: 10.5, color: '#8A6D1F', marginBottom: 8 }}>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#8A6D1F', marginBottom: 8 }}>
             URL-ja nuk u lidh dot me një shpallje. Verifikoje me dorë para se të vendosësh.
           </div>
           {njoftime.filter(n => !n.shpallja).map(n => (
             <div key={n.id} style={{ borderTop: '1px solid #f0e6c0', padding: '10px 0' }}>
               <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
-                <strong style={{ fontSize: 12 }}>{n.lloji}</strong>
-                <span style={{ fontSize: 10.5, color: n.vonuar ? '#C42B0F' : '#999' }}>
+                <strong style={{ fontSize: 'var(--fs-dysheme)' }}>{n.lloji}</strong>
+                <span style={{ fontSize: 'var(--fs-dysheme)', color: n.vonuar ? '#C42B0F' : '#999' }}>
                   {afati(n.afati, n.vonuar)}
                 </span>
               </div>
-              <div style={{ fontSize: 11, color: '#555', marginTop: 3 }}>„{n.pershkrimi}"</div>
-              <div style={{ fontSize: 10.5, color: '#999', marginTop: 2 }}>
+              <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', marginTop: 3 }}>„{n.pershkrimi}"</div>
+              <div style={{ fontSize: 'var(--fs-dysheme)', color: '#999', marginTop: 2 }}>
                 {n.email} · <a href={n.url} target="_blank" rel="noopener noreferrer"
                   style={{ color: '#185FA5' }}>{n.url}</a>
               </div>
@@ -377,21 +377,21 @@ export function QueueTab() {
       {verifikime.length > 0 && (
         <div className="card">
           <div className="ct"><span aria-hidden="true">✓</span> Verifikime ({verifikime.length})</div>
-          <div style={{ fontSize: 11, color: '#555', marginBottom: 8, lineHeight: 1.55 }}>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', marginBottom: 8, lineHeight: 1.55 }}>
             Verifikimi krahason të dhënat e deklaruara me <strong>regjistrin publik të QKB-së</strong>.
             Vendimi shoqërohet gjithmonë me arsye — ajo i shkon kërkuesit si njoftim.
           </div>
           {verifikime.map(v => (
             <div key={v.id} style={{ borderTop: '1px solid #f0e6c0', padding: '10px 0' }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: '#111' }}>
+              <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#111' }}>
                 {v.biznesi || v.kerkuesi}
               </div>
-              <div style={{ fontSize: 11, color: '#555', marginTop: 4 }}>
+              <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', marginTop: 4 }}>
                 Kërkuesi: {v.kerkuesi}
                 {v.nipt ? <> · NIPT <strong>{v.nipt}</strong></> : <> · <em>pa NIPT të deklaruar</em></>}
                 {' '}· bazë: {v.lloji}
               </div>
-              <div style={{ fontSize: 10.5, color: '#555', marginTop: 3 }}>
+              <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', marginTop: 3 }}>
                 Dërguar më {v.derguar_me ? dateShort(v.derguar_me) : '—'}
                 {v.ka_dokument ? ' · ka dokument të bashkëngjitur' : ''}
               </div>
@@ -422,23 +422,23 @@ export function QueueTab() {
       {ankime.length > 0 && (
         <div className="card">
           <div className="ct"><span aria-hidden="true">⚖️</span> Ankime ({ankime.length})</div>
-          <div style={{ fontSize: 11, color: '#555', marginBottom: 8, lineHeight: 1.55 }}>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', marginBottom: 8, lineHeight: 1.55 }}>
             Përdoruesi ka kundërshtuar një vendim moderimi. Ankimin <strong>nuk e shqyrton
             kush mori vendimin e parë</strong> — kufi i zbatuar edhe në bazë.
           </div>
           {ankime.map(a => (
             <div key={a.id} style={{ borderTop: '1px solid #f0e6c0', padding: '10px 0' }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: '#111' }}>
+              <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#111' }}>
                 {a.listing_titull || '(shpallje e fshirë)'}
               </div>
-              <div style={{ fontSize: 11, color: '#555', marginTop: 4 }}>
+              <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', marginTop: 4 }}>
                 <strong>Vendimi i parë:</strong> „{a.arsyetimi_fillestar || '—'}"
               </div>
-              <div style={{ fontSize: 11, color: '#111', marginTop: 4 }}>
+              <div style={{ fontSize: 'var(--fs-dysheme)', color: '#111', marginTop: 4 }}>
                 <strong>Ankimi:</strong> „{a.arsyeja}"
               </div>
               {a.konflikt ? (
-                <div role="note" style={{ marginTop: 8, background: '#FFF8E1', border: '1px solid #FFB74D', borderRadius: 8, padding: '8px 10px', fontSize: 11, color: '#E65100', lineHeight: 1.5 }}>
+                <div role="note" style={{ marginTop: 8, background: '#FFF8E1', border: '1px solid #FFB74D', borderRadius: 8, padding: '8px 10px', fontSize: 'var(--fs-dysheme)', color: '#E65100', lineHeight: 1.5 }}>
                   Vendimin e parë e more ti. Këtë ankim duhet ta shqyrtojë një moderator tjetër.
                 </div>
               ) : (
@@ -471,7 +471,7 @@ export function QueueTab() {
 
       <div className="card">
         <div className="ct">Si funksionon</div>
-        <div style={{ fontSize: 11, color: '#666', lineHeight: 1.8 }}>
+        <div style={{ fontSize: 'var(--fs-dysheme)', color: '#666', lineHeight: 1.8 }}>
           Raportet e përdoruesve dhe njoftimet ligjore hyjnë në <strong>një radhë të vetme</strong>.
           Renditja nuk ndjek datën por <strong>afatin</strong>: kritikja e sotme del para ankesës së
           javës së kaluar, sepse kostoja e vonesës nuk është e njëjtë për të gjitha.

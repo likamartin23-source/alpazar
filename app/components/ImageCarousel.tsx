@@ -203,8 +203,8 @@ export function ImageCarousel({ images, videos, poster, alt = '', aspectRatio = 
                     title={`Video ${i + 1}`}
                     style={{ position: 'relative', zIndex: 2, width: '100%', height: '100%', border: 'none', display: 'block', background: '#0e0e0e' }}
                   />
-                  <span aria-hidden="true" style={{ position: 'absolute', top: 10, left: 10, zIndex: 3, display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(230,51,18,.92)', color: '#fff', fontSize: 10, fontWeight: 800, padding: '3px 7px', borderRadius: 7, letterSpacing: '.4px', pointerEvents: 'none' }}>
-                    <i className="ti ti-player-play-filled" style={{ fontSize: 11 }} /> VIDEO
+                  <span aria-hidden="true" style={{ position: 'absolute', top: 10, left: 10, zIndex: 3, display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(230,51,18,.92)', color: '#fff', fontSize: 'var(--fs-dysheme)', fontWeight: 800, padding: '3px 7px', borderRadius: 7, letterSpacing: '.4px', pointerEvents: 'none' }}>
+                    <i className="ti ti-player-play-filled" style={{ fontSize: 'var(--fs-dysheme)' }} /> VIDEO
                   </span>
                 </>
               ) : (
@@ -219,8 +219,8 @@ export function ImageCarousel({ images, videos, poster, alt = '', aspectRatio = 
                     controlsList="nodownload"
                     style={{ position: 'relative', zIndex: 2, width: '100%', height: '100%', objectFit: 'contain', display: 'block', background: '#0e0e0e' }}
                   />
-                  <span aria-hidden="true" style={{ position: 'absolute', top: 10, left: 10, zIndex: 3, display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(230,51,18,.92)', color: '#fff', fontSize: 10, fontWeight: 800, padding: '3px 7px', borderRadius: 7, letterSpacing: '.4px', pointerEvents: 'none' }}>
-                    <i className="ti ti-player-play-filled" style={{ fontSize: 11 }} /> VIDEO
+                  <span aria-hidden="true" style={{ position: 'absolute', top: 10, left: 10, zIndex: 3, display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(230,51,18,.92)', color: '#fff', fontSize: 'var(--fs-dysheme)', fontWeight: 800, padding: '3px 7px', borderRadius: 7, letterSpacing: '.4px', pointerEvents: 'none' }}>
+                    <i className="ti ti-player-play-filled" style={{ fontSize: 'var(--fs-dysheme)' }} /> VIDEO
                   </span>
                 </>
               )}
@@ -232,7 +232,7 @@ export function ImageCarousel({ images, videos, poster, alt = '', aspectRatio = 
           <div aria-hidden="true" style={{
             position: 'absolute', top: 10, right: 10,
             background: 'rgba(0,0,0,.6)', color: '#fff',
-            fontSize: 11, fontWeight: 700, padding: '3px 8px', borderRadius: 10,
+            fontSize: 'var(--fs-dysheme)', fontWeight: 700, padding: '3px 8px', borderRadius: 10,
             pointerEvents: 'none',
           }}>
             {current + 1}/{count}
@@ -268,12 +268,12 @@ export function ImageCarousel({ images, videos, poster, alt = '', aspectRatio = 
       )}
 
       {count > 1 && (
-        <div style={{ fontSize: 13.2, fontWeight: 600, color: '#555', letterSpacing: .2, textAlign: 'center', marginTop: 8 }}>
+        <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 600, color: '#555', letterSpacing: .2, textAlign: 'center', marginTop: 8 }}>
           <span aria-hidden="true">↔</span> Rrëshkit për të parë të tjerat
         </div>
       )}
       {vidList.length > 0 && (
-        <div style={{ fontSize: 11.5, fontWeight: 600, color: '#555', textAlign: 'center', marginTop: 6 }}>
+        <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 600, color: '#555', textAlign: 'center', marginTop: 6 }}>
           <span aria-hidden="true">🎬</span> Videot ndihmojnë shpalljen të shitet deri në 3× më shpejt.
         </div>
       )}

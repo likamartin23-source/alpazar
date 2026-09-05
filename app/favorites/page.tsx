@@ -71,8 +71,8 @@ export default function FavoritesPage() {
       {loadError ? (
         <div style={{ textAlign: 'center', padding: '40px 24px' }}>
           <div style={{ fontSize: 32, marginBottom: 12 }} aria-hidden="true">⚠️</div>
-          <div style={{ fontSize: 14, color: '#C42B0F', marginBottom: 16 }}>Nuk u ngarkuan të dhënat. Kontrollo lidhjen dhe provo sërish.</div>
-          <button type="button" onClick={() => window.location.reload()} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', minHeight: 44 }}>Rifresko</button>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#C42B0F', marginBottom: 16 }}>Nuk u ngarkuan të dhënat. Kontrollo lidhjen dhe provo sërish.</div>
+          <button type="button" onClick={() => window.location.reload()} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', minHeight: 44 }}>Rifresko</button>
         </div>
       ) : loading ? (
         <div style={{ padding: '16px' }}><SkeletonGrid count={4} /></div>
@@ -80,11 +80,11 @@ export default function FavoritesPage() {
         <div style={{ textAlign: 'center', padding: '60px 24px' }}>
           <div style={{ fontSize: 48, marginBottom: 16 }} aria-hidden="true">❤️</div>
           <div style={{ fontSize: 17, fontWeight: 700, color: '#111', marginBottom: 8 }}>Ende s'ke ruajtur asgjë</div>
-          <div style={{ fontSize: 13, color: '#555', marginBottom: 24 }}>Shfleto shpalljet dhe ruaj ato që të pëlqejnë</div>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', marginBottom: 24 }}>Shfleto shpalljet dhe ruaj ato që të pëlqejnë</div>
           <button
             type="button"
             onClick={() => { window.location.href = '/search' }}
-            style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 24px', minHeight: 44, boxSizing: 'border-box', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+            style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 24px', minHeight: 44, boxSizing: 'border-box', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
           >
             <span aria-hidden="true">🔍</span> Eksploro shpalljet
           </button>

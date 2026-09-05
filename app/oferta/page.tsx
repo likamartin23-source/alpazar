@@ -105,7 +105,7 @@ export default function OfertatPage() {
             onClick={() => setDrejtimi(kod as any)}
             style={{
               flex: 1, padding: '10px 12px', borderRadius: 12, cursor: 'pointer', fontFamily: 'inherit',
-              fontSize: 13, fontWeight: 700, minHeight: 44,
+              fontSize: 'var(--fs-dysheme)', fontWeight: 700, minHeight: 44,
               background: drejtimi === kod ? '#111' : '#fff',
               color: drejtimi === kod ? '#fff' : '#555',
               border: `1.5px solid ${drejtimi === kod ? '#111' : '#e8e0c8'}`,
@@ -118,16 +118,16 @@ export default function OfertatPage() {
       {gabim && (
         <div role="alert" style={{
           margin: '12px 16px 0', background: '#FFF0EE', border: '1px solid #F09595',
-          borderRadius: 10, padding: '10px 14px', fontSize: 12.5, color: 'var(--az-red-deep)', fontWeight: 600,
+          borderRadius: 10, padding: '10px 14px', fontSize: 'var(--fs-dysheme)', color: 'var(--az-red-deep)', fontWeight: 600,
         }}>{gabim}</div>
       )}
 
       {gabimNgarkimi ? (
         <div style={{ textAlign: 'center', padding: '40px 24px' }}>
           <div style={{ fontSize: 32, marginBottom: 12 }} aria-hidden="true">⚠️</div>
-          <div style={{ fontSize: 14, color: '#C42B0F', marginBottom: 16 }}>Nuk u ngarkuan ofertat. Kontrollo lidhjen dhe provo sërish.</div>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#C42B0F', marginBottom: 16 }}>Nuk u ngarkuan ofertat. Kontrollo lidhjen dhe provo sërish.</div>
           <button type="button" onClick={() => window.location.reload()}
-            style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', minHeight: 44, boxSizing: 'border-box', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
+            style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', minHeight: 44, boxSizing: 'border-box', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
         </div>
       ) : duke ? (
         /*  Lartesia e skeletit NUK eshte e zgjedhur me sy: karta reale u mat
@@ -145,13 +145,13 @@ export default function OfertatPage() {
           <div style={{ fontSize: 17, fontWeight: 700, color: '#111', marginBottom: 8 }}>
             {drejtimi === 'marra' ? 'Ende s’ke marrë oferta' : 'Ende s’ke dërguar oferta'}
           </div>
-          <div style={{ fontSize: 13, color: '#555', marginBottom: 24 }}>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', marginBottom: 24 }}>
             {drejtimi === 'marra'
               ? 'Kur dikush ofron një çmim për shpalljet e tua, do ta shohësh këtu.'
               : 'Hap një shpallje që të pëlqen dhe propozo çmimin tënd.'}
           </div>
           <a href={drejtimi === 'marra' ? '/profile' : '/'}
-            style={{ display: 'inline-flex', alignItems: 'center', background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', textDecoration: 'none', borderRadius: 10, padding: '11px 24px', minHeight: 44, boxSizing: 'border-box', fontSize: 13, fontWeight: 700 }}>
+            style={{ display: 'inline-flex', alignItems: 'center', background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', textDecoration: 'none', borderRadius: 10, padding: '11px 24px', minHeight: 44, boxSizing: 'border-box', fontSize: 'var(--fs-dysheme)', fontWeight: 700 }}>
             {drejtimi === 'marra' ? 'Shpalljet e mia' : 'Shfleto shpalljet'}
           </a>
         </div>
@@ -168,13 +168,13 @@ export default function OfertatPage() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
                   <Avatar src={o.pala?.avatar} name={o.pala?.emri} size={34} />
                   <div style={{ minWidth: 0, flex: 1 }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {o.pala?.emri || 'Përdorues'}
                     </div>
-                    <div style={{ fontSize: 11, color: '#6B6B6B' }}>{dateShort(o.krijuar)}</div>
+                    <div style={{ fontSize: 'var(--fs-dysheme)', color: '#6B6B6B' }}>{dateShort(o.krijuar)}</div>
                   </div>
                   <span style={{
-                    fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 999,
+                    fontSize: 'var(--fs-dysheme)', fontWeight: 700, padding: '4px 10px', borderRadius: 999,
                     background: e.sfond, border: `1px solid ${e.kufi}`, color: e.ngjyre, whiteSpace: 'nowrap',
                   }}>{e.tekst}</span>
                 </div>
@@ -188,10 +188,10 @@ export default function OfertatPage() {
                         style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 8, flex: '0 0 auto' }} />
                     : <div aria-hidden="true" style={{ width: 40, height: 40, borderRadius: 8, background: '#e8e0c8', flex: '0 0 auto' }} />}
                   <div style={{ minWidth: 0 }}>
-                    <div style={{ fontSize: 12.5, fontWeight: 700, color: '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {o.shpallja?.titulli || 'Shpallje'}
                     </div>
-                    <div style={{ fontSize: 11, color: '#6B6B6B' }}>Kërkohet {priceLabel(o.shpallja?.cmimi, o.monedha)}</div>
+                    <div style={{ fontSize: 'var(--fs-dysheme)', color: '#6B6B6B' }}>Kërkohet {priceLabel(o.shpallja?.cmimi, o.monedha)}</div>
                   </div>
                 </a>
 
@@ -199,10 +199,10 @@ export default function OfertatPage() {
                   {priceLabel(o.shuma, o.monedha)}
                 </div>
                 {o.mesazhi && (
-                  <div style={{ fontSize: 12.5, color: '#555', lineHeight: 1.6, marginTop: 6 }}>„{o.mesazhi}"</div>
+                  <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', lineHeight: 1.6, marginTop: 6 }}>„{o.mesazhi}"</div>
                 )}
                 {iHapur && o.skadon && (
-                  <div style={{ fontSize: 11, color: '#6B6B6B', marginTop: 6 }}>Skadon më {dateShort(o.skadon)}</div>
+                  <div style={{ fontSize: 'var(--fs-dysheme)', color: '#6B6B6B', marginTop: 6 }}>Skadon më {dateShort(o.skadon)}</div>
                 )}
 
                 {iHapur && drejtimi === 'marra' && (
@@ -210,13 +210,13 @@ export default function OfertatPage() {
                     <button type="button" onClick={() => vendos(o.id, 'accepted')} disabled={pune === o.id}
                       style={{
                         flex: 1, minHeight: 44, background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff',
-                        border: 'none', borderRadius: 12, fontSize: 13, fontWeight: 700, fontFamily: 'inherit',
+                        border: 'none', borderRadius: 12, fontSize: 'var(--fs-dysheme)', fontWeight: 700, fontFamily: 'inherit',
                         cursor: pune === o.id ? 'not-allowed' : 'pointer', opacity: pune === o.id ? 0.55 : 1,
                       }}>Prano</button>
                     <button type="button" onClick={() => vendos(o.id, 'rejected')} disabled={pune === o.id}
                       style={{
                         flex: 1, minHeight: 44, background: '#fff', color: '#111', border: '1.5px solid #ddd',
-                        borderRadius: 12, fontSize: 13, fontWeight: 700, fontFamily: 'inherit',
+                        borderRadius: 12, fontSize: 'var(--fs-dysheme)', fontWeight: 700, fontFamily: 'inherit',
                         cursor: pune === o.id ? 'not-allowed' : 'pointer', opacity: pune === o.id ? 0.55 : 1,
                       }}>Refuzo</button>
                   </div>
@@ -226,7 +226,7 @@ export default function OfertatPage() {
                   <button type="button" onClick={() => vendos(o.id, 'withdrawn')} disabled={pune === o.id}
                     style={{
                       width: '100%', minHeight: 44, marginTop: 12, background: '#fff', color: '#111',
-                      border: '1.5px solid #ddd', borderRadius: 12, fontSize: 13, fontWeight: 700,
+                      border: '1.5px solid #ddd', borderRadius: 12, fontSize: 'var(--fs-dysheme)', fontWeight: 700,
                       fontFamily: 'inherit', cursor: pune === o.id ? 'not-allowed' : 'pointer',
                       opacity: pune === o.id ? 0.55 : 1,
                     }}>Tërhiq ofertën</button>
@@ -236,7 +236,7 @@ export default function OfertatPage() {
                   <a href="/messages" style={{
                     display: 'block', textAlign: 'center', marginTop: 12, minHeight: 44, lineHeight: '44px',
                     background: '#F0FFF4', border: '1px solid #86efac', borderRadius: 12,
-                    fontSize: 13, fontWeight: 700, color: '#166534', textDecoration: 'none',
+                    fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#166534', textDecoration: 'none',
                   }}>Vazhdo bisedën</a>
                 )}
               </div>

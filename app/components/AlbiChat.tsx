@@ -26,7 +26,7 @@ function renderContent(text: string, isStreaming = false): React.ReactNode {
     const line = lines[i]
 
     if (line.startsWith('## ')) {
-      nodes.push(<div key={i} style={{ fontWeight: 700, fontSize: 14, color: 'var(--az-yellow)', margin: '8px 0 3px' }}>{renderInline(line.slice(3))}</div>)
+      nodes.push(<div key={i} style={{ fontWeight: 700, fontSize: 'var(--fs-dysheme)', color: 'var(--az-yellow)', margin: '8px 0 3px' }}>{renderInline(line.slice(3))}</div>)
     } else if (line.startsWith('# ')) {
       nodes.push(<div key={i} style={{ fontWeight: 700, fontSize: 15, color: 'var(--az-yellow)', margin: '8px 0 3px' }}>{renderInline(line.slice(2))}</div>)
     } else if (/^[-*] /.test(line)) {
@@ -86,7 +86,7 @@ function renderInline(text: string): React.ReactNode {
       const end = remaining.indexOf('`', codeIdx + 1)
       if (end === -1) { parts.push(remaining); break }
       if (codeIdx > 0) parts.push(remaining.slice(0, codeIdx))
-      parts.push(<code key={key++} style={{ background: '#2a2a2a', padding: '1px 5px', borderRadius: 3, fontSize: 11, fontFamily: 'monospace', color: '#4ade80' }}>{remaining.slice(codeIdx + 1, end)}</code>)
+      parts.push(<code key={key++} style={{ background: '#2a2a2a', padding: '1px 5px', borderRadius: 3, fontSize: 'var(--fs-dysheme)', fontFamily: 'monospace', color: '#4ade80' }}>{remaining.slice(codeIdx + 1, end)}</code>)
       remaining = remaining.slice(end + 1)
     }
   }

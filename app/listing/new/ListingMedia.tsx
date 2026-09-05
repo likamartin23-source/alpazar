@@ -18,7 +18,7 @@ export function ListingMedia({ p }: any) {
       <div className="card">
         <div className="section-title">
           <i className="ti ti-photo" aria-hidden="true" />Fotot{' '}
-          <span style={{ fontWeight: 400, color: (maxImages >= 0 && imagePreviews.length >= maxImages) ? 'var(--az-red-deep)' : '#888', fontSize: 12 }}>
+          <span style={{ fontWeight: 400, color: (maxImages >= 0 && imagePreviews.length >= maxImages) ? 'var(--az-red-deep)' : '#888', fontSize: 'var(--fs-dysheme)' }}>
             ({imagePreviews.length}/{imgCap})
           </span>
         </div>
@@ -31,7 +31,7 @@ export function ListingMedia({ p }: any) {
             aria-label="Ngarko fotot e shpalljes" />
           <i className="ti ti-cloud-upload" aria-hidden="true" />
           <p>Kliko për të ngarkuar fotot</p>
-          <p style={{ fontSize: 10, marginTop: 4, color: '#555' }}>Çdo format · pa kufi madhësie · kompresim automatik</p>
+          <p style={{ fontSize: 'var(--fs-dysheme)', marginTop: 4, color: '#555' }}>Çdo format · pa kufi madhësie · kompresim automatik</p>
         </label>
         {imagePreviews.length > 0 && (
           <div className="img-previews">
@@ -39,7 +39,7 @@ export function ListingMedia({ p }: any) {
               <div key={i} style={{ position: 'relative', display: 'inline-block' }}>
                 <img src={src} className="img-prev" alt={`Foto ${i + 1}`} loading="lazy" />
                 {i === 0 && (
-                  <span style={{ position: 'absolute', top: 4, left: 4, background: 'var(--az-yellow)', color: '#111', fontSize: 8, fontWeight: 800, padding: '2px 5px', borderRadius: 4, lineHeight: 1.4, pointerEvents: 'none' }}>
+                  <span style={{ position: 'absolute', top: 4, left: 4, background: 'var(--az-yellow)', color: '#111', fontSize: 'var(--fs-dysheme)', fontWeight: 800, padding: '2px 5px', borderRadius: 4, lineHeight: 1.4, pointerEvents: 'none' }}>
                     Kryesore
                   </span>
                 )}
@@ -52,7 +52,7 @@ export function ListingMedia({ p }: any) {
       <div className="card">
         <div className="section-title">
           <i className="ti ti-video" aria-hidden="true" />Video{' '}
-          <span style={{ fontWeight: 400, color: full ? 'var(--az-red-deep)' : '#888', fontSize: 12 }}>
+          <span style={{ fontWeight: 400, color: full ? 'var(--az-red-deep)' : '#888', fontSize: 'var(--fs-dysheme)' }}>
             ({vid.count}/{vidCap})
           </span>
         </div>
@@ -63,14 +63,14 @@ export function ListingMedia({ p }: any) {
               aria-label="Ngarko videot e shpalljes" />
             <i className="ti ti-video" aria-hidden="true" />
             <p>Shto video të produktit</p>
-            <p style={{ fontSize: 10, marginTop: 4, color: '#555' }}>
+            <p style={{ fontSize: 'var(--fs-dysheme)', marginTop: 4, color: '#555' }}>
               Deri në {vid.maxMin} minuta secila · deri {vid.maxMb}MB secila · max {vidCap} video
             </p>
           </label>
         )}
 
         {full && (
-          <div style={{ background: '#FFF8E1', border: '1px solid #FFE082', borderRadius: 10, padding: '10px 12px', fontSize: 11.5, color: '#856404', lineHeight: 1.5 }}>
+          <div style={{ background: '#FFF8E1', border: '1px solid #FFE082', borderRadius: 10, padding: '10px 12px', fontSize: 'var(--fs-dysheme)', color: '#856404', lineHeight: 1.5 }}>
             Ke arritur kufirin prej {vid.maxVideos} videosh.
             {!vid.isPremium && <> Me <a href="/premium" style={{ color: '#C42B0F', fontWeight: 700 }}>Premium</a> ngarkon deri në 10 video për shpallje.</>}
           </div>
@@ -87,7 +87,7 @@ export function ListingMedia({ p }: any) {
                   ×
                 </button>
                 {!!dur(it.duration) && (
-                  <span style={{ position: 'absolute', bottom: 8, left: 8, background: 'rgba(0,0,0,.7)', color: '#fff', fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 6, lineHeight: 1.6 }}>
+                  <span style={{ position: 'absolute', bottom: 8, left: 8, background: 'rgba(0,0,0,.7)', color: '#fff', fontSize: 'var(--fs-dysheme)', fontWeight: 700, padding: '2px 7px', borderRadius: 6, lineHeight: 1.6 }}>
                     {dur(it.duration)}
                   </span>
                 )}
@@ -97,7 +97,7 @@ export function ListingMedia({ p }: any) {
         )}
 
         {vid.uploading && (
-          <div style={{ marginTop: 10, background: '#e8f4fd', border: '1px solid #90caf9', borderRadius: 10, padding: '9px 12px', fontSize: 12, color: '#1565c0' }}>
+          <div style={{ marginTop: 10, background: '#e8f4fd', border: '1px solid #90caf9', borderRadius: 10, padding: '9px 12px', fontSize: 'var(--fs-dysheme)', color: '#1565c0' }}>
             Duke ngarkuar videot… {vid.pct}%
             <div style={{ background: '#bbdefb', borderRadius: 4, height: 6, marginTop: 6, overflow: 'hidden' }}>
               <div style={{ background: '#1976d2', height: '100%', width: `${vid.pct}%`, transition: 'width .3s' }} />

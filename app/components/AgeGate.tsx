@@ -37,10 +37,10 @@ export function AgeGate({ children }: { children: React.ReactNode }) {
           }}>
           <div aria-hidden="true"><img src="/icons/eagle.svg" alt="" style={{ height: 44, display: 'inline-block' }} /></div>
           <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--az-yellow)', letterSpacing: 2 }}>ALPAZAR</div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: '#fff', textAlign: 'center' }}>
+          <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#fff', textAlign: 'center' }}>
             Para se të vazhdosh, konfirmo moshën tënde
           </div>
-          <div style={{ fontSize: 12, color: '#9A9A9A', textAlign: 'center', maxWidth: 280, lineHeight: 1.6 }}>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#9A9A9A', textAlign: 'center', maxWidth: 280, lineHeight: 1.6 }}>
             Kjo platformë lejon vetëm përdorues mbi moshën 16 vjeç sipas kushteve tona të shërbimit dhe kërkesave ligjore.
           </div>
           <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
@@ -62,13 +62,13 @@ export function AgeGate({ children }: { children: React.ReactNode }) {
               style={{
                 background: 'none', color: '#9A9A9A', border: '1px solid #333',
                 borderRadius: 12, padding: '14px 24px',
-                fontWeight: 600, fontSize: 14, cursor: 'pointer',
+                fontWeight: 600, fontSize: 'var(--fs-dysheme)', cursor: 'pointer',
               }}
             >
               Jo, largohem
             </button>
           </div>
-          <div style={{ fontSize: 12, color: '#9A9A9A', textAlign: 'center', maxWidth: 280, marginTop: 4, lineHeight: 1.5 }}>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#9A9A9A', textAlign: 'center', maxWidth: 280, marginTop: 4, lineHeight: 1.5 }}>
             Duke klikuar "Po", konfirmon se ke mbushur 16 vjeç dhe pranon{' '}
             <a href="/kushtet" style={{ color: 'var(--az-yellow)', textDecoration: 'underline' }}>Kushtet e Shërbimit</a>.
           </div>

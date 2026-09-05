@@ -39,7 +39,7 @@ export default function GlobalError({
             <h2 style={{ fontSize: 'var(--fs-2xl)', fontWeight: 700, color: '#111', margin: '0 0 8px' }}>
               Ndodhi një gabim
             </h2>
-            <p style={{ fontSize: 13, color: '#555', lineHeight: 1.6, margin: '0 0 24px' }}>
+            <p style={{ fontSize: 'var(--fs-dysheme)', color: '#555', lineHeight: 1.6, margin: '0 0 24px' }}>
               {error?.message
                 ? error.message.slice(0, 200)
                 : 'Diçka nuk shkoi siç duhet. Provo të rifreskosh faqen.'}
@@ -50,7 +50,7 @@ export default function GlobalError({
                 onClick={reset}
                 style={{
                   background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none',
-                  borderRadius: 10, padding: '13px 0', fontSize: 14,
+                  borderRadius: 10, padding: '13px 0', fontSize: 'var(--fs-dysheme)',
                   fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
                 }}
               >
@@ -61,14 +61,14 @@ export default function GlobalError({
                 style={{
                   display: 'block', background: 'var(--az-yellow)', color: '#111',
                   border: 'none', borderRadius: 10, padding: '12px 0',
-                  fontSize: 13, fontWeight: 700, textDecoration: 'none',
+                  fontSize: 'var(--fs-dysheme)', fontWeight: 700, textDecoration: 'none',
                 }}
               >
                 ← Kthehu në faqe kryesore
               </a>
             </div>
             {error?.digest && (
-              <p style={{ fontSize: 10, color: '#ccc', marginTop: 16 }}>
+              <p style={{ fontSize: 'var(--fs-dysheme)', color: '#ccc', marginTop: 16 }}>
                 ID: {error.digest}
               </p>
             )}

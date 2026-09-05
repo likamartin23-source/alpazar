@@ -89,7 +89,7 @@ export default function BusinessCard({ business, index = 0 }: { business: Busine
           : tier === 'premium' && <span className="badge-premium" role="img" aria-label="Premium"><span aria-hidden="true">★</span></span>}
         {/* 🏢 Biznes (poshtë-majtas) — identiteti; ✓ kur i verifikuar. */}
         <span className="card-seller-ov" style={{ cursor: 'default' }} aria-label={b.is_verified ? 'Biznes i verifikuar' : 'Biznes'}>
-          <span aria-hidden="true" style={{ fontSize: 13 }}>🏢</span>
+          <span aria-hidden="true" style={{ fontSize: 'var(--fs-dysheme)' }}>🏢</span>
           <span>{b.is_verified ? 'Biznes ✓' : 'Biznes'}</span>
         </span>
         {/* "Ruaj" = ndiq biznesin (poshtë-djathtas, si zemra e shpalljes). Biznesi ruhet. */}
@@ -109,10 +109,10 @@ export default function BusinessCard({ business, index = 0 }: { business: Busine
         <div className="card-title">{b.name}</div>
         {/* Slogani i biznesit (tagline) — identitet, si "përshkrimi" te karta e shpalljes. */}
         {b.tagline && (
-          <div style={{ fontSize: 11, color: '#6B6B6B', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>{b.tagline}</div>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#6B6B6B', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>{b.tagline}</div>
         )}
         {/* Në vend të çmimit → kategoria/tipi i biznesit. */}
-        <div className="card-price" style={{ fontSize: 12.5, color: '#7A4A00' }}>{tipLabel}</div>
+        <div className="card-price" style={{ fontSize: 'var(--fs-dysheme)', color: '#7A4A00' }}>{tipLabel}</div>
         <div className="card-meta">
           <span className="card-loc">
             <i className="ti ti-map-pin" aria-hidden="true" />

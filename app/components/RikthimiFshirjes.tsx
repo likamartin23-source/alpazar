@@ -45,10 +45,10 @@ export default function RikthimiFshirjes() {
   }
 
   return (
-    <div role="alert" style={{ position: 'sticky', top: 0, zIndex: 60, background: 'var(--az-red-deep)', color: 'var(--az-white)', padding: '10px 14px', display: 'flex', gap: 12, alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', fontSize: 13, fontWeight: 700, lineHeight: 1.4 }}>
+    <div role="alert" style={{ position: 'sticky', top: 0, zIndex: 60, background: 'var(--az-red-deep)', color: 'var(--az-white)', padding: '10px 14px', display: 'flex', gap: 12, alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', fontSize: 'var(--fs-dysheme)', fontWeight: 700, lineHeight: 1.4 }}>
       <span><span aria-hidden="true">⏳</span> Llogaria jote është në fshirje me afat — fshihet përfundimisht më <b>{dataTxt}</b>.</span>
       <button type="button" onClick={anulo} disabled={busy}
-        style={{ background: 'var(--az-white)', color: 'var(--az-red-deep)', border: 'none', borderRadius: 'var(--r-btn)', padding: '7px 14px', fontSize: 13, fontWeight: 800, cursor: busy ? 'default' : 'pointer', minHeight: 40, opacity: busy ? 0.6 : 1, fontFamily: 'inherit' }}>
+        style={{ background: 'var(--az-white)', color: 'var(--az-red-deep)', border: 'none', borderRadius: 'var(--r-btn)', padding: '7px 14px', fontSize: 'var(--fs-dysheme)', fontWeight: 800, cursor: busy ? 'default' : 'pointer', minHeight: 40, opacity: busy ? 0.6 : 1, fontFamily: 'inherit' }}>
         {busy ? 'Duke anuluar…' : 'Anulo fshirjen'}
       </button>
     </div>

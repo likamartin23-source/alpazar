@@ -32,10 +32,10 @@ function Heatmap({ data }: { data: { hour: number; count: number }[] }) {
         const bg = intensity === 0 ? '#f5f5f5' : `rgba(230,51,18,${0.15 + intensity * 0.85})`
         return (
           <div key={d.hour} style={{ textAlign: 'center', flex: '1 0 calc(100%/8 - 3px)' }}>
-            <div style={{ height: 28, borderRadius: 5, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, color: intensity > 0.5 ? '#fff' : '#888', fontWeight: 700 }}>
+            <div style={{ height: 28, borderRadius: 5, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 'var(--fs-dysheme)', color: intensity > 0.5 ? '#fff' : '#888', fontWeight: 700 }}>
               {d.count > 0 ? d.count : ''}
             </div>
-            <div style={{ fontSize: 9, color: '#aaa', marginTop: 2 }}>{d.hour}h</div>
+            <div style={{ fontSize: 'var(--fs-dysheme)', color: '#aaa', marginTop: 2 }}>{d.hour}h</div>
           </div>
         )
       })}
@@ -83,7 +83,7 @@ export default function BiznesAnalyticsPage() {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: 12 }}>
       <div style={{ fontSize: 36 }} aria-hidden="true">⚠️</div>
       <div style={{ fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
-      <button type="button" onClick={() => { setLoadError(false); changePeriod(period) }} style={{ background: 'var(--az-yellow)', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
+      <button type="button" onClick={() => { setLoadError(false); changePeriod(period) }} style={{ background: 'var(--az-yellow)', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 'var(--fs-dysheme)', cursor: 'pointer', fontFamily: 'inherit' }}>Rifresko</button>
     </div>
   )
 
@@ -91,7 +91,7 @@ export default function BiznesAnalyticsPage() {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: 12 }}>
       <div style={{ width: 36, height: 36, border: '3px solid var(--az-red)', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
       <style dangerouslySetInnerHTML={{ __html: `@keyframes spin{to{transform:rotate(360deg)}}` }} />
-      <span style={{ fontSize: 13, color: '#555' }}>Duke ngarkuar analitikën…</span>
+      <span style={{ fontSize: 'var(--fs-dysheme)', color: '#555' }}>Duke ngarkuar analitikën…</span>
     </div>
   )
 
@@ -138,8 +138,8 @@ export default function BiznesAnalyticsPage() {
       {!hasData ? (
         <div className="an-card" style={{ textAlign: 'center', padding: '40px 20px', color: '#555' }}>
           <div style={{ fontSize: 40, marginBottom: 10 }} aria-hidden="true">📊</div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: '#666', marginBottom: 4 }}>Ende pa të dhëna</div>
-          <div style={{ fontSize: 12 }}>Statistikat shfaqen kur shpalljet e biznesit të marrin pamje dhe kontakte.</div>
+          <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#666', marginBottom: 4 }}>Ende pa të dhëna</div>
+          <div style={{ fontSize: 'var(--fs-dysheme)' }}>Statistikat shfaqen kur shpalljet e biznesit të marrin pamje dhe kontakte.</div>
         </div>
       ) : (
         <>

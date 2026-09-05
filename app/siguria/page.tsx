@@ -1,4 +1,4 @@
-const LS = { color: '#666' as const, fontSize: 11, textDecoration: 'none' as const }
+const LS = { color: '#666' as const, fontSize: 'var(--fs-dysheme)', textDecoration: 'none' as const }
 
 export default function Siguria() {
   const css = `
@@ -101,7 +101,7 @@ export default function Siguria() {
 
           <div className="section">
             <h2 className="sec-title"><i className="ti ti-flag" aria-hidden="true" />Si të Raportoni</h2>
-            <p style={{ fontSize: 13, color: '#444', lineHeight: 1.7, marginBottom: 12 }}>
+            <p style={{ fontSize: 'var(--fs-dysheme)', color: '#444', lineHeight: 1.7, marginBottom: 12 }}>
               Nëse hasni një shpallje mashtruese ose sjellje abuzive, raportojeni menjëherë. Ekipi ynë shqyrton çdo raportim brenda 24 orësh.
             </p>
             <a href="mailto:likamartin23@gmail.com" className="red-btn">

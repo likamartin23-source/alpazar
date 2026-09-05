@@ -257,7 +257,7 @@ export default function EditListing() {
         <div className="body">
           {msg && <div className={`msg-box ${mt}`} role="alert">{mm}</div>}
           {uploadProgress && (
-            <div style={{ background:'#e8f4fd', border:'1px solid #90caf9', borderRadius:10, padding:'10px 14px', marginBottom:10, fontSize:13, color:'#1565c0', display:'flex', alignItems:'center', gap:8 }}>
+            <div style={{ background:'#e8f4fd', border:'1px solid #90caf9', borderRadius:10, padding:'10px 14px', marginBottom:10, fontSize: 'var(--fs-dysheme)', color:'#1565c0', display:'flex', alignItems:'center', gap:8 }}>
               <span style={{ fontSize:16 }} aria-hidden="true">⏳</span>
               <div style={{ flex:1 }}>
                 <div style={{ fontWeight:600 }}>Duke ngarkuar foto... {uploadProgress.done}/{uploadProgress.total}</div>
@@ -276,14 +276,14 @@ export default function EditListing() {
               <label htmlFor="listing-title">Titulli *</label>
               <input id="listing-title" type="text" placeholder="p.sh. iPhone 13 Pro Max 256GB..." value={form.title}
                 onChange={e => set('title', e.target.value)} maxLength={100} required />
-              <div style={{ textAlign: 'right', fontSize: 10, color: form.title.length > 85 ? 'var(--az-red-deep)' : '#aaa', marginTop: 2 }}>{form.title.length}/100</div>
+              <div style={{ textAlign: 'right', fontSize: 'var(--fs-dysheme)', color: form.title.length > 85 ? 'var(--az-red-deep)' : '#aaa', marginTop: 2 }}>{form.title.length}/100</div>
             </div>
 
             <div className="field">
               <label htmlFor="listing-description">Përshkrimi</label>
               <textarea id="listing-description" placeholder="Përshkruaj artikullin..." value={form.description}
                 onChange={e => set('description', e.target.value)} maxLength={2000} />
-              <div style={{ textAlign: 'right', fontSize: 10, color: form.description.length > 1800 ? 'var(--az-red-deep)' : '#aaa', marginTop: 2 }}>{form.description.length}/2000</div>
+              <div style={{ textAlign: 'right', fontSize: 'var(--fs-dysheme)', color: form.description.length > 1800 ? 'var(--az-red-deep)' : '#aaa', marginTop: 2 }}>{form.description.length}/2000</div>
             </div>
 
             <div className="field">
@@ -356,14 +356,14 @@ export default function EditListing() {
 
             {existingImages.length > 0 && (
               <div style={{ marginBottom: 12 }}>
-                <p style={{ fontSize: 11, color: '#555', marginBottom: 8 }}>Fotot aktuale (kliko <span aria-hidden="true">✕</span> për të hequr):</p>
+                <p style={{ fontSize: 'var(--fs-dysheme)', color: '#555', marginBottom: 8 }}>Fotot aktuale (kliko <span aria-hidden="true">✕</span> për të hequr):</p>
                 <div className="img-previews">
                   {existingImages.map((url, i) => (
                     <div key={i} className="img-prev-wrap">
                       <img src={url} className="img-prev" alt={`Foto ${i + 1}`} loading="lazy" />
                       <button className="img-remove" aria-label={`Hiq foton ${i + 1}`} type="button" onClick={() => removeExistingImage(url)}>✕</button>
                       {i === 0 && (
-                        <span style={{ position: 'absolute', top: 4, left: 4, background: 'var(--az-yellow)', color: '#111', fontSize: 8, fontWeight: 800, padding: '2px 5px', borderRadius: 4, lineHeight: 1.4, pointerEvents: 'none' }}>
+                        <span style={{ position: 'absolute', top: 4, left: 4, background: 'var(--az-yellow)', color: '#111', fontSize: 'var(--fs-dysheme)', fontWeight: 800, padding: '2px 5px', borderRadius: 4, lineHeight: 1.4, pointerEvents: 'none' }}>
                           Kryesore
                         </span>
                       )}
@@ -377,7 +377,7 @@ export default function EditListing() {
               <input id="img-input" type="file" accept="image/*" multiple onChange={handleImages} />
               <i className="ti ti-cloud-upload" aria-hidden="true" />
               <p>Kliko për të shtuar foto të reja</p>
-              <p style={{ fontSize: 10, marginTop: 4, color: '#555' }}>JPG, PNG, WebP · max 10MB secila</p>
+              <p style={{ fontSize: 'var(--fs-dysheme)', marginTop: 4, color: '#555' }}>JPG, PNG, WebP · max 10MB secila</p>
             </label>
 
             {imagePreviews.length > 0 && (
@@ -388,7 +388,7 @@ export default function EditListing() {
                     <div key={i} style={{ position: 'relative', display: 'inline-block' }}>
                       <img src={src} className="img-prev" alt={`Foto e re ${i + 1}`} loading="lazy" />
                       {isFirst && (
-                        <span style={{ position: 'absolute', top: 4, left: 4, background: 'var(--az-yellow)', color: '#111', fontSize: 8, fontWeight: 800, padding: '2px 5px', borderRadius: 4, lineHeight: 1.4, pointerEvents: 'none' }}>
+                        <span style={{ position: 'absolute', top: 4, left: 4, background: 'var(--az-yellow)', color: '#111', fontSize: 'var(--fs-dysheme)', fontWeight: 800, padding: '2px 5px', borderRadius: 4, lineHeight: 1.4, pointerEvents: 'none' }}>
                           Kryesore
                         </span>
                       )}
@@ -430,12 +430,12 @@ export default function EditListing() {
                 <input id="vid-input" type="file" accept="video/*" multiple onChange={vid.add} />
                 <i className="ti ti-video" aria-hidden="true" />
                 <p>Kliko për të shtuar video</p>
-                <p style={{ fontSize: 10, marginTop: 4, color: '#555' }}>
+                <p style={{ fontSize: 'var(--fs-dysheme)', marginTop: 4, color: '#555' }}>
                   Deri në {vid.maxMin} minuta secila · max {vid.maxVideos < 0 ? '∞' : vid.maxVideos} video
                 </p>
               </label>
             ) : (
-              <div style={{ background: '#FFF8E1', border: '1px solid #FFE082', borderRadius: 10, padding: '10px 12px', fontSize: 11.5, color: '#856404' }}>
+              <div style={{ background: '#FFF8E1', border: '1px solid #FFE082', borderRadius: 10, padding: '10px 12px', fontSize: 'var(--fs-dysheme)', color: '#856404' }}>
                 Ke arritur kufirin prej {vid.maxVideos} videosh.
               </div>
             )}
@@ -456,7 +456,7 @@ export default function EditListing() {
             )}
 
             {vid.uploading && (
-              <div style={{ marginTop: 10, fontSize: 12, color: '#1565c0' }}>Duke ngarkuar videot… {vid.pct}%</div>
+              <div style={{ marginTop: 10, fontSize: 'var(--fs-dysheme)', color: '#1565c0' }}>Duke ngarkuar videot… {vid.pct}%</div>
             )}
           </div>
 

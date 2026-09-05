@@ -33,8 +33,8 @@ function BizUpsellBanner({ userId, isPremium }: { userId?: string; isPremium?: b
     >
       <span style={{ fontSize: 28 }} aria-hidden="true">🏢</span>
       <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--az-yellow)', marginBottom: 3 }}>Krijo Biznes Online</div>
-        <div style={{ fontSize: 11, color: '#555', lineHeight: 1.5 }}>{isPremium
+        <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 800, color: 'var(--az-yellow)', marginBottom: 3 }}>Krijo Biznes Online</div>
+        <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', lineHeight: 1.5 }}>{isPremium
           ? <>Faqe e dedikuar · Shpallje pa limit · Vulë <span aria-hidden="true">✓</span> Biznes</>
           : <><span aria-hidden="true">⭐</span> Veçori Premium · Faqe e dedikuar · Vulë <span aria-hidden="true">✓</span> Biznes</>}</div>
       </div>
@@ -481,7 +481,7 @@ export default function ProfilePage() {
     <div style={{ maxWidth: 800, margin: '0 auto', background: 'var(--az-cream)', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
       <div style={{ fontSize: 40 }} aria-hidden="true">⚠️</div>
       <div style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>Gabim gjatë ngarkimit</div>
-      <button type="button" onClick={() => window.location.reload()} style={{ padding: '10px 24px', background: 'var(--az-yellow)', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer', minHeight: 44 }}>Rifresko</button>
+      <button type="button" onClick={() => window.location.reload()} style={{ padding: '10px 24px', background: 'var(--az-yellow)', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 'var(--fs-dysheme)', cursor: 'pointer', minHeight: 44 }}>Rifresko</button>
     </div>
   )
 
@@ -610,12 +610,12 @@ export default function ProfilePage() {
             Më parë kalimi Unë→Biznesi ishte i fshehur brenda tab-it "Biznes" (gjetje audit, BP2 §B3.1). */}
         {myBiz && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#FFF8E1', border: '1px solid #F5C84255', borderRadius: 12, padding: '6px 11px', marginBottom: 10 }}>
-            <span style={{ fontSize: 11.5, fontWeight: 800, color: '#7B5000' }}>Vepro si:</span>
+            <span style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 800, color: '#7B5000' }}>Vepro si:</span>
             <div role="tablist" aria-label="Vepro si" style={{ display: 'inline-flex', background: '#fff', border: '1px solid #e0c070', borderRadius: 999, overflow: 'hidden' }}>
-              <button type="button" role="tab" aria-current="true" style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: '#111', color: 'var(--az-yellow)', border: 'none', padding: '5px 12px', fontSize: 12, fontWeight: 800, cursor: 'default', fontFamily: 'inherit', minHeight: 44 }}>
+              <button type="button" role="tab" aria-current="true" style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: '#111', color: 'var(--az-yellow)', border: 'none', padding: '5px 12px', fontSize: 'var(--fs-dysheme)', fontWeight: 800, cursor: 'default', fontFamily: 'inherit', minHeight: 44 }}>
                 <i className="ti ti-user" aria-hidden="true" /> Unë
               </button>
-              <button type="button" role="tab" onClick={() => { window.location.href = `/biznese/${myBiz.id}` }} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'transparent', color: '#7B5000', border: 'none', padding: '5px 12px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', minHeight: 44 }}>
+              <button type="button" role="tab" onClick={() => { window.location.href = `/biznese/${myBiz.id}` }} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'transparent', color: '#7B5000', border: 'none', padding: '5px 12px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', minHeight: 44 }}>
                 <i className="ti ti-building-store" aria-hidden="true" /> Biznesi
               </button>
             </div>
@@ -629,7 +629,7 @@ export default function ProfilePage() {
             {profile?.cover_url && (
               <img src={profile.cover_url} alt="Kopertina" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
             )}
-            <label style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,.52)', color: '#fff', borderRadius: 8, padding: '5px 10px', fontSize: 11, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
+            <label style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,.52)', color: '#fff', borderRadius: 8, padding: '5px 10px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
               <span aria-hidden="true">{coverUploading ? '⏳' : '📷'}</span> Kopertina
               <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) uploadProfileImage(f, 'cover') }} />
             </label>
@@ -650,7 +650,7 @@ export default function ProfilePage() {
               online={isOnline}
               size={96}
             />
-            <label style={{ display: 'inline-flex', alignItems: 'center', gap: 5, minHeight: 40, padding: '0 12px', marginBottom: 4, background: 'var(--az-white,#fff)', color: 'var(--az-black,#111)', border: '1.5px solid var(--az-line,#e5e5e5)', borderRadius: 999, fontSize: 12, fontWeight: 700, cursor: 'pointer', boxShadow: '0 1px 4px rgba(0,0,0,.12)', whiteSpace: 'nowrap' }}>
+            <label style={{ display: 'inline-flex', alignItems: 'center', gap: 5, minHeight: 40, padding: '0 12px', marginBottom: 4, background: 'var(--az-white,#fff)', color: 'var(--az-black,#111)', border: '1.5px solid var(--az-line,#e5e5e5)', borderRadius: 999, fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', boxShadow: '0 1px 4px rgba(0,0,0,.12)', whiteSpace: 'nowrap' }}>
               <span aria-hidden="true">{avatarUploading ? '⏳' : '📷'}</span> Ndrysho foton
               <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) uploadProfileImage(f, 'avatar') }} />
             </label>
@@ -670,13 +670,13 @@ export default function ProfilePage() {
                 setProfileCopied(true)
                 setTimeout(() => setProfileCopied(false), 2000)
               }}
-              style={{ background: profileCopied ? '#EAF3DE' : '#f5f5f5', border: 'none', borderRadius: 6, padding: '3px 8px', fontSize: 10, fontWeight: 700, cursor: 'pointer', color: profileCopied ? '#3B6D11' : '#555', display: 'flex', alignItems: 'center', gap: 3, transition: 'all .15s' }}
+              style={{ background: profileCopied ? '#EAF3DE' : '#f5f5f5', border: 'none', borderRadius: 6, padding: '3px 8px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', color: profileCopied ? '#3B6D11' : '#555', display: 'flex', alignItems: 'center', gap: 3, transition: 'all .15s' }}
             >
-              <i className={`ti ti-${profileCopied ? 'check' : 'share-2'}`} aria-hidden="true" style={{ fontSize: 11 }} />
+              <i className={`ti ti-${profileCopied ? 'check' : 'share-2'}`} aria-hidden="true" style={{ fontSize: 'var(--fs-dysheme)' }} />
               {profileCopied ? 'Kopjuar!' : 'Ndaj'}
             </button>
           </div>
-          {profile?.city && <div style={{ fontSize: 11, color: '#555', marginBottom: 4 }}><span aria-hidden="true">📍</span> {profile.city}{profile?.created_at ? ` · Anëtar që nga ${monthYear(profile.created_at)}` : ''}</div>}
+          {profile?.city && <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', marginBottom: 4 }}><span aria-hidden="true">📍</span> {profile.city}{profile?.created_at ? ` · Anëtar që nga ${monthYear(profile.created_at)}` : ''}</div>}
           <div className="email-row" style={{ justifyContent: 'flex-start' }}><i className="ti ti-mail" aria-hidden="true" />{user?.email}</div>
           {/* Vulat e identitetit — komponenti i VETEM ([O43]/[O46]/[O55]). Te gjitha vlerat
               vijne nga TE DHENAT e ketij perdoruesi, jo nga roli: cdo perdorues merr ato qe i
@@ -711,7 +711,7 @@ export default function ProfilePage() {
             <div className="stat-l">Ndjekës</div>
           </div>
           <div className="stat">
-            <div className="stat-n" style={{ fontSize: 12 }}>{profile?.created_at ? monthYear(profile.created_at) : '—'}</div>
+            <div className="stat-n" style={{ fontSize: 'var(--fs-dysheme)' }}>{profile?.created_at ? monthYear(profile.created_at) : '—'}</div>
             <div className="stat-l">Anëtar</div>
           </div>
         </div>
@@ -817,11 +817,11 @@ export default function ProfilePage() {
                       key={b.titull}
                       type="button"
                       onClick={b.vepro}
-                      style={{ width: '100%', background: '#fff', border: '1px solid #eee', borderRadius: 13, padding: '12px 14px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 10, color: '#111', minHeight: 48, textAlign: 'left' }}>
+                      style={{ width: '100%', background: '#fff', border: '1px solid #eee', borderRadius: 13, padding: '12px 14px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 10, color: '#111', minHeight: 48, textAlign: 'left' }}>
                       <i className={`ti ${b.ike}`} style={{ fontSize: 20, color: '#C42B0F' }} aria-hidden="true" />
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div>{b.titull}</div>
-                        <div style={{ fontSize: 10, fontWeight: 500, color: '#767676', marginTop: 2 }}>{b.nen}</div>
+                        <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 500, color: '#767676', marginTop: 2 }}>{b.nen}</div>
                       </div>
                       <i className="ti ti-chevron-right" style={{ fontSize: 16, color: '#999' }} aria-hidden="true" />
                     </button>
@@ -834,7 +834,7 @@ export default function ProfilePage() {
                 <button
                   type="button"
                   onClick={() => setProfSub('menu')}
-                  style={{ background: 'none', border: 'none', color: 'var(--az-red-deep)', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', padding: '4px 0', marginBottom: 8, minHeight: 44, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  style={{ background: 'none', border: 'none', color: 'var(--az-red-deep)', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', padding: '4px 0', marginBottom: 8, minHeight: 44, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                   <i className="ti ti-arrow-left" style={{ fontSize: 16 }} aria-hidden="true" /> Kthehu te paneli
                 </button>
               )}
@@ -857,7 +857,7 @@ export default function ProfilePage() {
                 <div className="card-hdr">
                   <span className="section-title"><span aria-hidden="true">🔵</span> Trust Score — Privatësia</span>
                 </div>
-                <p style={{ fontSize: 12, color: '#555', lineHeight: 1.6, marginBottom: 12 }}>
+                <p style={{ fontSize: 'var(--fs-dysheme)', color: '#555', lineHeight: 1.6, marginBottom: 12 }}>
                   <strong>Ç'është Trust Score?</strong> Është një vlerë 0–100 që tregon besueshmërinë
                   e llogarisë bazuar në: moshën e llogarisë, numrin e shpalljeve aktive dhe pikët e
                   aktivitetit. <strong>Nuk lidhet me pagesa, gjini, racë apo karakteristika sensitive.</strong>
@@ -879,17 +879,17 @@ export default function ProfilePage() {
                     }}
                     style={{ width: 18, height: 18, accentColor: 'var(--az-red)', cursor: 'pointer' }}
                   />
-                  <span style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>
+                  <span style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 600, color: '#111' }}>
                     Shfaq Trust Score tim te profili publik
                   </span>
                 </label>
                 {profile?.trust_score_visible !== false && (
-                  <div style={{ background: '#F0FDF4', border: '1px solid #86EFAC', borderRadius: 8, padding: '8px 12px', fontSize: 11.5, color: '#166534', marginTop: 4 }}>
+                  <div style={{ background: '#F0FDF4', border: '1px solid #86EFAC', borderRadius: 8, padding: '8px 12px', fontSize: 'var(--fs-dysheme)', color: '#166534', marginTop: 4 }}>
                     <span aria-hidden="true">✅</span> Trust Score aktiv — vizitorët mund ta shohin besueshmërinë tuaj
                   </div>
                 )}
                 {profile?.trust_score_visible === false && (
-                  <div style={{ background: '#FEF9C3', border: '1px solid #FDE047', borderRadius: 8, padding: '8px 12px', fontSize: 11.5, color: '#713F12', marginTop: 4 }}>
+                  <div style={{ background: '#FEF9C3', border: '1px solid #FDE047', borderRadius: 8, padding: '8px 12px', fontSize: 'var(--fs-dysheme)', color: '#713F12', marginTop: 4 }}>
                     <span aria-hidden="true">⚠️</span> Trust Score i fshehur — profili publik nuk e shfaq
                   </div>
                 )}
@@ -900,7 +900,7 @@ export default function ProfilePage() {
                 <div className="card-hdr">
                   <span className="section-title"><span aria-hidden="true">📢</span> Komunikim Marketing</span>
                 </div>
-                <p style={{ fontSize: 12, color: '#666', marginBottom: 10, lineHeight: 1.6 }}>
+                <p style={{ fontSize: 'var(--fs-dysheme)', color: '#666', marginBottom: 10, lineHeight: 1.6 }}>
                   Zgjidhni nëse doni të merrni oferta speciale, lajme dhe këshilla nga Alpazar. Mund ta ndryshoni kurdo. (GDPR Art.7)
                 </p>
                 <label style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer', padding: '10px 0' }}>
@@ -918,12 +918,12 @@ export default function ProfilePage() {
                     }}
                     style={{ width: 18, height: 18, accentColor: 'var(--az-red)', cursor: 'pointer' }}
                   />
-                  <span style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>
+                  <span style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 600, color: '#111' }}>
                     Pranoj njoftime dhe oferta nga Alpazar
                   </span>
                 </label>
                 <div style={{ marginTop: 6 }}>
-                  <a href="/te-dhenat-mia" style={{ fontSize: 12, color: '#C42B0F', fontWeight: 600, textDecoration: 'none' }}>
+                  <a href="/te-dhenat-mia" style={{ fontSize: 'var(--fs-dysheme)', color: '#C42B0F', fontWeight: 600, textDecoration: 'none' }}>
                     <span aria-hidden="true">🔒</span> Menaxho të gjitha të dhënat e mia (GDPR) →
                   </a>
                 </div>
@@ -997,14 +997,14 @@ export default function ProfilePage() {
                 <div className="card-hdr">
                   <span className="section-title"><span aria-hidden="true">🛡️</span> Mbrojtja & ndihma</span>
                 </div>
-                <a href="/takedown" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 0', borderBottom: '1px solid #f0f0f0', textDecoration: 'none', color: '#111', fontSize: 13, fontWeight: 600, minHeight: 44 }}>
+                <a href="/takedown" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 0', borderBottom: '1px solid #f0f0f0', textDecoration: 'none', color: '#111', fontSize: 'var(--fs-dysheme)', fontWeight: 600, minHeight: 44 }}>
                   <i className="ti ti-flag" style={{ fontSize: 17, color: '#C42B0F' }} aria-hidden="true" />
-                  <span style={{ flex: 1 }}>Kërkesë heqjeje (Takedown)<br /><span style={{ fontSize: 10.5, fontWeight: 500, color: '#767676' }}>Raporto përmbajtje të paligjshme — shqyrtohet nga moderimi</span></span>
+                  <span style={{ flex: 1 }}>Kërkesë heqjeje (Takedown)<br /><span style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 500, color: '#767676' }}>Raporto përmbajtje të paligjshme — shqyrtohet nga moderimi</span></span>
                   <i className="ti ti-chevron-right" style={{ fontSize: 15, color: '#999' }} aria-hidden="true" />
                 </a>
-                <a href="/kontakt" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 0', textDecoration: 'none', color: '#111', fontSize: 13, fontWeight: 600, minHeight: 44 }}>
+                <a href="/kontakt" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 0', textDecoration: 'none', color: '#111', fontSize: 'var(--fs-dysheme)', fontWeight: 600, minHeight: 44 }}>
                   <i className="ti ti-headset" style={{ fontSize: 17, color: '#C42B0F' }} aria-hidden="true" />
-                  <span style={{ flex: 1 }}>Kujdesi ndaj klientit<br /><span style={{ fontSize: 10.5, fontWeight: 500, color: '#767676' }}>Na shkruaj për çdo pyetje a problem</span></span>
+                  <span style={{ flex: 1 }}>Kujdesi ndaj klientit<br /><span style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 500, color: '#767676' }}>Na shkruaj për çdo pyetje a problem</span></span>
                   <i className="ti ti-chevron-right" style={{ fontSize: 15, color: '#999' }} aria-hidden="true" />
                 </a>
               </div>
@@ -1045,26 +1045,26 @@ export default function ProfilePage() {
                   <span className="section-title">
                     Shpalljet e mia
                     {maxListings != null && maxListings >= 0
-                      ? <span style={{ marginLeft: 6, fontSize: 12, fontWeight: 700, color: myListings.filter(l => l.is_active).length >= maxListings ? 'var(--az-red-deep)' : '#0E7A35' }}>{myListings.filter(l => l.is_active).length}/{maxListings}</span>
-                      : <span style={{ marginLeft: 6, fontSize: 12, fontWeight: 700, color: '#7A4A00' }}>{myListings.filter(l => l.is_active).length} · <span aria-hidden="true">⭐</span> pa limit</span>}
+                      ? <span style={{ marginLeft: 6, fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: myListings.filter(l => l.is_active).length >= maxListings ? 'var(--az-red-deep)' : '#0E7A35' }}>{myListings.filter(l => l.is_active).length}/{maxListings}</span>
+                      : <span style={{ marginLeft: 6, fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#7A4A00' }}>{myListings.filter(l => l.is_active).length} · <span aria-hidden="true">⭐</span> pa limit</span>}
                   </span>
                   <button type="button" className="edit-btn" onClick={() => window.location.href = '/listing/new'}>+ Shto</button>
                 </div>
                 {listErr && (
-                  <div role="alert" style={{ background: '#FEECEC', color: '#B42318', border: '1px solid #F5C2C2', borderRadius: 8, padding: '8px 10px', fontSize: 12, marginBottom: 10 }}>{listErr}</div>
+                  <div role="alert" style={{ background: '#FEECEC', color: '#B42318', border: '1px solid #F5C2C2', borderRadius: 8, padding: '8px 10px', fontSize: 'var(--fs-dysheme)', marginBottom: 10 }}>{listErr}</div>
                 )}
                 {bumpMsg && (
                   /*  Mesazhi vjen nga trigeri i bazes dhe eshte tashme ne shqip
                       ("Provo perseri pas N ore"). Tregohet ashtu sic eshte: ai
                       di saktesisht sa mbetet, ndersa nje tekst i pergjithshem
                       ne klient do te ishte me pak i sakte.  */
-                  <div role="alert" style={{ background: '#FFF8E1', color: '#8A6D00', border: '1px solid #FFB74D', borderRadius: 10, padding: '9px 12px', fontSize: 12.5, fontWeight: 600, marginBottom: 10, lineHeight: 1.6 }}>{bumpMsg}</div>
+                  <div role="alert" style={{ background: '#FFF8E1', color: '#8A6D00', border: '1px solid #FFB74D', borderRadius: 10, padding: '9px 12px', fontSize: 'var(--fs-dysheme)', fontWeight: 600, marginBottom: 10, lineHeight: 1.6 }}>{bumpMsg}</div>
                 )}
                 {reactMsg && (
                   <div role="alert" className={`msg-box msg-sm ${reactMsg.split(':')[0]}`} style={{ marginBottom: 10 }}>{reactMsg.split(/:(.+)/)[1]}</div>
                 )}
                 {maxListings != null && maxListings >= 0 && myListings.filter(l => l.is_active).length >= maxListings && (
-                  <div style={{ background: '#FFF9C3', border: '1px solid #FDE047', borderRadius: 8, padding: '8px 12px', fontSize: 11.5, color: '#713F12', marginBottom: 10 }}>
+                  <div style={{ background: '#FFF9C3', border: '1px solid #FDE047', borderRadius: 8, padding: '8px 12px', fontSize: 'var(--fs-dysheme)', color: '#713F12', marginBottom: 10 }}>
                     <span aria-hidden="true">⚠️</span> Ke arritur kufirin falas ({maxListings} aktive). Pauzo një shpallje ose <a href="/premium" style={{ color: 'var(--az-red-deep)', fontWeight: 700 }}>kalo në Premium</a> për shpallje pa limit.
                   </div>
                 )}
@@ -1076,7 +1076,7 @@ export default function ProfilePage() {
                             : myListings.filter(eshtePauzuar).length
                     return (
                       <button key={k} type="button" role="tab" aria-selected={listFilter === k} onClick={() => setListFilter(k)}
-                        style={{ flex: 1, minHeight: 40, borderRadius: 9, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+                        style={{ flex: 1, minHeight: 40, borderRadius: 9, fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
                           border: listFilter === k ? '1.5px solid var(--az-red-deep)' : '1px solid #eee',
                           background: listFilter === k ? '#FFF1EE' : '#fff', color: listFilter === k ? 'var(--az-red-deep)' : '#666' }}>
                         {etiketa} ({n})
@@ -1092,7 +1092,7 @@ export default function ProfilePage() {
                              : listFilter === 'sold'   ? 'Ende asnjë shpallje e shitur.'
                              : 'Asnjë shpallje e pauzuar.'
                   return shown.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '24px 0', color: '#555', fontSize: 12 }}>
+                  <div style={{ textAlign: 'center', padding: '24px 0', color: '#555', fontSize: 'var(--fs-dysheme)' }}>
                     <i className="ti ti-package" style={{ fontSize: 36, display: 'block', marginBottom: 10, color: 'var(--az-yellow)' }} aria-hidden="true" />
                     {bosh}{listFilter === 'active' ? <><br />Shto tani falas!</> : null}
                   </div>
@@ -1113,32 +1113,32 @@ export default function ProfilePage() {
                           className="edit-listing-btn"
                           onClick={() => bumpListing(l.id)}
                           aria-label="Rifresko shpalljen"
-                          style={{ fontSize: 13 }}
+                          style={{ fontSize: 'var(--fs-dysheme)' }}
                         ><span aria-hidden="true">⬆️</span></button>
                       ) : (
                         (() => { const m = bumpMbetur(l.last_bumped_at); return (
                           <span title={`Mund ta rifreskosh pas ${m.n} ${m.njesia === 'ore' ? 'orësh' : 'ditësh'}`}
-                            style={{ fontSize: 10, color: '#6B6B6B', padding: '0 4px', cursor: 'default' }}>
+                            style={{ fontSize: 'var(--fs-dysheme)', color: '#6B6B6B', padding: '0 4px', cursor: 'default' }}>
                             {m.n}{m.njesia === 'ore' ? 'h' : 'd'}
                           </span>
                         ) })()
                       ))}
                       {!l.is_active && l.status !== 'sold' && (
-                        <button type="button" className="edit-listing-btn" disabled={reactBusy === l.id} onClick={() => reactivateListing(l.id)} aria-label="Riaktivizo shpalljen" title="Riaktivizo" style={{ fontSize: 13 }}><span aria-hidden="true">{reactBusy === l.id ? '⏳' : '♻️'}</span></button>
+                        <button type="button" className="edit-listing-btn" disabled={reactBusy === l.id} onClick={() => reactivateListing(l.id)} aria-label="Riaktivizo shpalljen" title="Riaktivizo" style={{ fontSize: 'var(--fs-dysheme)' }}><span aria-hidden="true">{reactBusy === l.id ? '⏳' : '♻️'}</span></button>
                       )}
                       <button type="button" className="edit-listing-btn" onClick={() => window.location.href = `/listing/${l.id}/edit`} aria-label="Ndrysho">✏️</button>
                       {l.is_active && (pendingSold === l.id ? (
                         <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
-                          <button type="button" onClick={() => markSold(l.id)} style={{ background: 'linear-gradient(135deg,#0E7A35,#0b6a2e)', color: '#fff', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Shitur ✓</button>
-                          <button type="button" onClick={() => setPendingSold(null)} style={{ background: '#eee', color: '#555', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Jo</button>
+                          <button type="button" onClick={() => markSold(l.id)} style={{ background: 'linear-gradient(135deg,#0E7A35,#0b6a2e)', color: '#fff', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Shitur ✓</button>
+                          <button type="button" onClick={() => setPendingSold(null)} style={{ background: '#eee', color: '#555', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Jo</button>
                         </div>
                       ) : (
                         <button type="button" className="edit-listing-btn" onClick={() => setPendingSold(l.id)} aria-label="Shëno si të shitur" title="Shëno si të shitur"><span aria-hidden="true">💰</span></button>
                       ))}
                       {pendingDelete === l.id ? (
                         <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
-                          <button type="button" onClick={() => deleteListing(l.id)} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Fshi</button>
-                          <button type="button" onClick={() => setPendingDelete(null)} style={{ background: '#eee', color: '#555', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Jo</button>
+                          <button type="button" onClick={() => deleteListing(l.id)} style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Fshi</button>
+                          <button type="button" onClick={() => setPendingDelete(null)} style={{ background: '#eee', color: '#555', border: 'none', borderRadius: 7, padding: '3px 9px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Jo</button>
                         </div>
                       ) : (
                         <button type="button" className="del-btn" onClick={() => setPendingDelete(l.id)} aria-label="Fshi shpalljen"><span aria-hidden="true">🗑</span></button>
@@ -1158,9 +1158,9 @@ export default function ProfilePage() {
                 <span className="section-title"><span aria-hidden="true">❤️</span> Shpalljet e ruajtura ({savedListings.length})</span>
               </div>
               {savedListings.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '24px 0', color: '#555', fontSize: 12 }}>
+                <div style={{ textAlign: 'center', padding: '24px 0', color: '#555', fontSize: 'var(--fs-dysheme)' }}>
                   <i className="ti ti-heart" style={{ fontSize: 36, display: 'block', marginBottom: 10, color: 'var(--az-yellow)' }} aria-hidden="true" />
-                  Nuk ke shpallje të ruajtura.<br />Hap zemrën <i className="ti ti-heart" style={{ fontSize: 11 }} aria-hidden="true" /> në çdo shpallje!
+                  Nuk ke shpallje të ruajtura.<br />Hap zemrën <i className="ti ti-heart" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" /> në çdo shpallje!
                 </div>
               ) : (
                 savedListings.map((l: any) => (
@@ -1196,7 +1196,7 @@ export default function ProfilePage() {
                 if (s.filters?.priceMax) urlParams.set('pmax', s.filters.priceMax)
                 return (
                   <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0', borderBottom: '1px solid #F6F6F6' }}>
-                    <div role="link" tabIndex={0} style={{ flex: 1, fontSize: 12, color: '#111', cursor: 'pointer', fontWeight: 600 }} onClick={() => { window.location.href = `/search/results?${urlParams.toString()}` }} onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/search/results?${urlParams.toString()}` }}>
+                    <div role="link" tabIndex={0} style={{ flex: 1, fontSize: 'var(--fs-dysheme)', color: '#111', cursor: 'pointer', fontWeight: 600 }} onClick={() => { window.location.href = `/search/results?${urlParams.toString()}` }} onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/search/results?${urlParams.toString()}` }}>
                       <><span aria-hidden="true">🔍</span> {parts.length > 0 ? parts.join(' · ') : 'Kërkim i ruajtur'}</>
                     </div>
                     <button type="button" aria-label="Fshi kërkimin e ruajtur" onClick={async () => { await supabase.from('saved_searches').delete().eq('id', s.id); setSavedSearches(prev => prev.filter(x => x.id !== s.id)) }} style={{ background: 'none', border: 'none', color: '#ccc', cursor: 'pointer', fontSize: 16, lineHeight: 1, padding: 0 }}>✕</button>
@@ -1297,12 +1297,12 @@ export default function ProfilePage() {
             const hasBiz = !!myBiz
             const g1 = !premium, g2 = premium && !hasBiz, g3 = premium && hasBiz
             const badge = (on: boolean, txtOn: string, txtOff: string) => (
-              <span style={{ fontSize: 10, fontWeight: 800, padding: '2px 8px', borderRadius: 6, background: on ? '#dcfce7' : '#f0f0f0', color: on ? '#16a34a' : '#999' }}>{on ? txtOn : txtOff}</span>
+              <span style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 800, padding: '2px 8px', borderRadius: 6, background: on ? '#dcfce7' : '#f0f0f0', color: on ? '#16a34a' : '#999' }}>{on ? txtOn : txtOff}</span>
             )
             const cardStyle = (on: boolean): React.CSSProperties => ({ borderLeft: `3px solid ${on ? 'var(--az-red-deep)' : '#ddd'}`, opacity: on ? 1 : 0.6 })
             return (
               <>
-                <div style={{ fontSize: 11.5, color: '#767676', margin: '2px 4px 10px', lineHeight: 1.5 }}>
+                <div style={{ fontSize: 'var(--fs-dysheme)', color: '#767676', margin: '2px 4px 10px', lineHeight: 1.5 }}>
                   Butoni <b>Biznes</b> — një hyrje, <b>tri gjendje</b>. Vetëm njëra është aktive; nën-butonat e menaxhimit rrinë te profili i biznesit.
                 </div>
 
@@ -1312,11 +1312,11 @@ export default function ProfilePage() {
                     <span className="section-title"><span aria-hidden="true">①</span> Gjendja 1 — Falas</span>
                     {badge(g1, 'aktive', 'ke Premium ✓')}
                   </div>
-                  <p style={{ fontSize: 11.5, color: '#767676', margin: '2px 0 12px', lineHeight: 1.5 }}>
+                  <p style={{ fontSize: 'var(--fs-dysheme)', color: '#767676', margin: '2px 0 12px', lineHeight: 1.5 }}>
                     S’ka biznes pa plan. Orientim automatik te <b>Planet</b> (gate në server/RLS).
                   </p>
                   <button type="button" disabled={!g1} onClick={() => { if (g1) window.location.href = '/premium' }}
-                    style={{ width: '100%', minHeight: 46, background: g1 ? 'linear-gradient(135deg,var(--az-yellow-hi),var(--az-yellow))' : '#f0f0f0', color: g1 ? '#111' : '#aaa', border: 'none', borderRadius: 11, fontSize: 13, fontWeight: 800, cursor: g1 ? 'pointer' : 'not-allowed', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                    style={{ width: '100%', minHeight: 46, background: g1 ? 'linear-gradient(135deg,var(--az-yellow-hi),var(--az-yellow))' : '#f0f0f0', color: g1 ? '#111' : '#aaa', border: 'none', borderRadius: 11, fontSize: 'var(--fs-dysheme)', fontWeight: 800, cursor: g1 ? 'pointer' : 'not-allowed', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                     <span aria-hidden="true">⭐</span> Bëhu Premium → Shiko Planet
                   </button>
                 </div>
@@ -1327,14 +1327,14 @@ export default function ProfilePage() {
                     <span className="section-title"><span aria-hidden="true">②</span> Gjendja 2 — Premium, pa biznes</span>
                     {badge(g2, 'aktive', hasBiz ? 'ke biznes' : 'kërkon Premium')}
                   </div>
-                  <p style={{ fontSize: 11.5, color: '#767676', margin: '2px 0 12px', lineHeight: 1.5 }}>
+                  <p style={{ fontSize: 'var(--fs-dysheme)', color: '#767676', margin: '2px 0 12px', lineHeight: 1.5 }}>
                     Regjistrimi për herë të parë — katalogu i plotë (Tipi → Nënkategoritë → Profili).
                   </p>
                   <button type="button" disabled={!g2} onClick={() => { if (g2) window.location.href = '/biznese/new' }}
-                    style={{ width: '100%', minHeight: 46, background: g2 ? 'linear-gradient(135deg,var(--az-red),#c42a0e)' : '#f0f0f0', color: g2 ? '#fff' : '#aaa', border: 'none', borderRadius: 11, fontSize: 13, fontWeight: 800, cursor: g2 ? 'pointer' : 'not-allowed', fontFamily: 'inherit' }}>
+                    style={{ width: '100%', minHeight: 46, background: g2 ? 'linear-gradient(135deg,var(--az-red),#c42a0e)' : '#f0f0f0', color: g2 ? '#fff' : '#aaa', border: 'none', borderRadius: 11, fontSize: 'var(--fs-dysheme)', fontWeight: 800, cursor: g2 ? 'pointer' : 'not-allowed', fontFamily: 'inherit' }}>
                     + Krijo faqen e biznesit
                   </button>
-                  {hasBiz && <p style={{ fontSize: 10.5, color: '#555', margin: '8px 0 0' }}>Ke tashmë një biznes → çaktivizohet (pa dublim).</p>}
+                  {hasBiz && <p style={{ fontSize: 'var(--fs-dysheme)', color: '#555', margin: '8px 0 0' }}>Ke tashmë një biznes → çaktivizohet (pa dublim).</p>}
                 </div>
 
                 {/* ── Gjendja 3 — Me biznes ─────────────────────────── */}
@@ -1345,21 +1345,21 @@ export default function ProfilePage() {
                   </div>
                   {g3 && myBiz ? (
                     <>
-                      <p style={{ fontSize: 11.5, color: '#767676', margin: '2px 0 12px', lineHeight: 1.5 }}>
+                      <p style={{ fontSize: 'var(--fs-dysheme)', color: '#767676', margin: '2px 0 12px', lineHeight: 1.5 }}>
                         <b>{myBiz.name}</b>{myBiz.is_verified ? ' · ✅ i verifikuar' : ''} — menaxhoje te profili i tij i brendshëm. Identiteti dhe abonimi mbeten te llogaria jote personale.
                       </p>
                       <button type="button" aria-label="Vepro si biznes — hap profilin e brendshëm të biznesit"
                         onClick={() => { window.location.href = `/biznese/${myBiz.id}` }}
-                        style={{ width: '100%', minHeight: 48, background: 'linear-gradient(135deg,var(--az-ink),#000)', color: 'var(--az-yellow)', border: 'none', borderRadius: 11, fontSize: 14, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                        style={{ width: '100%', minHeight: 48, background: 'linear-gradient(135deg,var(--az-ink),#000)', color: 'var(--az-yellow)', border: 'none', borderRadius: 11, fontSize: 'var(--fs-dysheme)', fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                         <i className="ti ti-briefcase" aria-hidden="true" /> Vepro si Biznes → hap profilin
                       </button>
                       <button type="button" onClick={() => { window.location.href = `/biznese/${myBiz.id}?public=1` }}
-                        style={{ width: '100%', marginTop: 8, minHeight: 40, background: 'none', border: 'none', color: 'var(--az-red-deep)', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
+                        style={{ width: '100%', marginTop: 8, minHeight: 40, background: 'none', border: 'none', color: 'var(--az-red-deep)', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
                         <i className="ti ti-eye" aria-hidden="true" /> Shiko faqen publike të biznesit
                       </button>
                     </>
                   ) : (
-                    <p style={{ fontSize: 11.5, color: '#555', margin: '2px 0 0', lineHeight: 1.5 }}>
+                    <p style={{ fontSize: 'var(--fs-dysheme)', color: '#555', margin: '2px 0 0', lineHeight: 1.5 }}>
                       Kur të krijosh biznesin, këtu do të veprosh si biznes (hyrja te paneli i biznesit).
                     </p>
                   )}

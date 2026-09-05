@@ -81,7 +81,7 @@ export class GlobalErrorBoundary extends Component<
           <h2 style={{ fontSize: 20, fontWeight: 700, color: '#C42B0F', margin: 0 }}>
             Ndodhi një gabim
           </h2>
-          <p style={{ color: '#666', textAlign: 'center', fontSize: 13, maxWidth: 320 }}>
+          <p style={{ color: '#666', textAlign: 'center', fontSize: 'var(--fs-dysheme)', maxWidth: 320 }}>
             {this.state.error?.message}
           </p>
           <button
@@ -89,7 +89,7 @@ export class GlobalErrorBoundary extends Component<
             style={{
               padding: '12px 24px', background: '#E63312', color: '#fff',
               border: 'none', borderRadius: 10, cursor: 'pointer',
-              fontWeight: 700, fontSize: 14, fontFamily: 'inherit',
+              fontWeight: 700, fontSize: 'var(--fs-dysheme)', fontFamily: 'inherit',
             }}
           >
             Provo sërish

@@ -191,12 +191,12 @@ rr('Dërguar më', dt(d.denoncimi?.derguar)) + rr('Shënim', d.denoncimi?.shenim
         }}>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 15, fontWeight: 800, letterSpacing: .2 }}>Dosja ligjore</div>
-            <div style={{ fontSize: 10.5, color: 'var(--az-yellow)', fontFamily: 'monospace', marginTop: 2 }}>
+            <div style={{ fontSize: 'var(--fs-dysheme)', color: 'var(--az-yellow)', fontFamily: 'monospace', marginTop: 2 }}>
               {d?.dosja_nr || '…'}
             </div>
           </div>
           <button type="button" onClick={shkarko} disabled={!d}
-            style={{ background: 'var(--az-yellow)', color: '#111', border: 'none', borderRadius: 9, padding: '8px 15px', fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>
+            style={{ background: 'var(--az-yellow)', color: '#111', border: 'none', borderRadius: 9, padding: '8px 15px', fontSize: 'var(--fs-dysheme)', fontWeight: 800, cursor: 'pointer' }}>
             Shkarko dosjen
           </button>
           <button type="button" onClick={onClose} aria-label="Mbyll"
@@ -204,27 +204,27 @@ rr('Dërguar më', dt(d.denoncimi?.derguar)) + rr('Shënim', d.denoncimi?.shenim
         </div>
 
         <div style={{ padding: '18px 20px 26px' }}>
-          {duke && <p style={{ color: '#999', fontSize: 12 }}>Duke hapur dosjen…</p>}
-          {gabim && <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', color: '#B4230C', borderRadius: 9, padding: '9px 12px', fontSize: 12, marginBottom: 12 }}>{gabim}</div>}
-          {mesazh && <div style={{ background: '#EAF3DE', border: '1px solid #B9D89A', color: '#2C6B18', borderRadius: 9, padding: '9px 12px', fontSize: 12, marginBottom: 12 }}>{mesazh}</div>}
+          {duke && <p style={{ color: '#999', fontSize: 'var(--fs-dysheme)' }}>Duke hapur dosjen…</p>}
+          {gabim && <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', color: '#B4230C', borderRadius: 9, padding: '9px 12px', fontSize: 'var(--fs-dysheme)', marginBottom: 12 }}>{gabim}</div>}
+          {mesazh && <div style={{ background: '#EAF3DE', border: '1px solid #B9D89A', color: '#2C6B18', borderRadius: 9, padding: '9px 12px', fontSize: 'var(--fs-dysheme)', marginBottom: 12 }}>{mesazh}</div>}
 
           {d && (
             <>
               {mungon.length > 0 ? (
                 <div style={{ background: '#FFF9E6', border: '1px solid #F0C36D', borderRadius: 10, padding: '11px 14px', marginBottom: 16 }}>
-                  <div style={{ fontSize: 12, fontWeight: 800, color: '#8A6D1F' }}>Dosja nuk është ende e plotë</div>
-                  <div style={{ fontSize: 11.5, color: '#7a6320', marginTop: 4 }}>
+                  <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 800, color: '#8A6D1F' }}>Dosja nuk është ende e plotë</div>
+                  <div style={{ fontSize: 'var(--fs-dysheme)', color: '#7a6320', marginTop: 4 }}>
                     Mungon: {mungon.join(' · ')}. Autoriteti mund ta kthejë të paplotë.
                   </div>
                 </div>
               ) : (
-                <div style={{ background: '#EAF3DE', border: '1px solid #B9D89A', borderRadius: 10, padding: '11px 14px', marginBottom: 16, fontSize: 12, color: '#2C6B18', fontWeight: 700 }}>
+                <div style={{ background: '#EAF3DE', border: '1px solid #B9D89A', borderRadius: 10, padding: '11px 14px', marginBottom: 16, fontSize: 'var(--fs-dysheme)', color: '#2C6B18', fontWeight: 700 }}>
                   Dosja është e plotë dhe gati për dorëzim.
                 </div>
               )}
 
               <Seksioni titull="Përmbajtja e ngrirë">
-                <div style={{ fontSize: 10.5, color: '#999', marginBottom: 8 }}>
+                <div style={{ fontSize: 'var(--fs-dysheme)', color: '#999', marginBottom: 8 }}>
                   Regjistruar {dt(d.prova_e_ngrire?.ngrire_me)} — para heqjes, e pandryshuar.
                 </div>
                 <Rresht e="Titulli" v={sh.title} />
@@ -232,7 +232,7 @@ rr('Dërguar më', dt(d.denoncimi?.derguar)) + rr('Shënim', d.denoncimi?.shenim
                 <Rresht e="Qyteti" v={sh.city} />
                 <Rresht e="Publikuar" v={dt(sh.created_at)} />
                 {sh.description && (
-                  <div style={{ background: '#FAF8F2', borderLeft: '3px solid #C9A227', padding: '9px 12px', margin: '8px 0 0', fontSize: 11.5, color: '#444', fontStyle: 'italic' }}>
+                  <div style={{ background: '#FAF8F2', borderLeft: '3px solid #C9A227', padding: '9px 12px', margin: '8px 0 0', fontSize: 'var(--fs-dysheme)', color: '#444', fontStyle: 'italic' }}>
                     {String(sh.description).slice(0, 400)}
                   </div>
                 )}
@@ -274,24 +274,24 @@ rr('Dërguar më', dt(d.denoncimi?.derguar)) + rr('Shënim', d.denoncimi?.shenim
                     <Rresht e="Autoriteti" v={d.denoncimi.autoriteti} />
                     <Rresht e="Referenca" v={d.denoncimi.referenca} />
                     <Rresht e="Dërguar" v={dt(d.denoncimi.derguar)} />
-                    <div style={{ fontSize: 10.5, color: '#999', marginTop: 8 }}>
+                    <div style={{ fontSize: 'var(--fs-dysheme)', color: '#999', marginTop: 8 }}>
                       Regjistruar në gjurmë. Për ta dërguar sërish, shkarko dosjen.
                     </div>
                   </>
                 ) : (
                   <>
-                    <div style={{ fontSize: 11.5, color: '#666', marginBottom: 10, lineHeight: 1.6 }}>
+                    <div style={{ fontSize: 'var(--fs-dysheme)', color: '#666', marginBottom: 10, lineHeight: 1.6 }}>
                       Denoncimin e bën ti. Këtu regjistrohet se ku shkoi dhe me çfarë reference,
                       që dosja të mbetet e plotë dhe e gjurmueshme.
                     </div>
-                    <label style={{ fontSize: 11, fontWeight: 700, color: '#444', display: 'block', marginBottom: 4 }}>Autoriteti</label>
+                    <label style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#444', display: 'block', marginBottom: 4 }}>Autoriteti</label>
                     <select className="finput" value={autoriteti} aria-label="Autoriteti"
                       onChange={e => { setAutoriteti(e.target.value); setGabim('') }}>
                       <option value="">— zgjidh —</option>
                       {AUTORITETET.map(a => <option key={a.v} value={a.v}>{a.v}</option>)}
                     </select>
                     {autoriteti && (
-                      <div style={{ fontSize: 10.5, color: '#8A6D1F', marginTop: 5 }}>
+                      <div style={{ fontSize: 'var(--fs-dysheme)', color: '#8A6D1F', marginTop: 5 }}>
                         {AUTORITETET.find(a => a.v === autoriteti)?.p}
                       </div>
                     )}
@@ -321,7 +321,7 @@ rr('Dërguar më', dt(d.denoncimi?.derguar)) + rr('Shënim', d.denoncimi?.shenim
 function Seksioni({ titull, children }: { titull: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 20 }}>
-      <div style={{ fontSize: 10.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, color: '#999', borderBottom: '1px solid #eee', paddingBottom: 5, marginBottom: 9 }}>
+      <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, color: '#999', borderBottom: '1px solid #eee', paddingBottom: 5, marginBottom: 9 }}>
         {titull}
       </div>
       {children}
@@ -331,7 +331,7 @@ function Seksioni({ titull, children }: { titull: string; children: React.ReactN
 
 function Rresht({ e, v }: { e: string; v: any }) {
   return (
-    <div style={{ display: 'flex', gap: 12, padding: '4px 0', fontSize: 12 }}>
+    <div style={{ display: 'flex', gap: 12, padding: '4px 0', fontSize: 'var(--fs-dysheme)' }}>
       <div style={{ width: 132, flexShrink: 0, color: '#888' }}>{e}</div>
       <div style={{ flex: 1, color: v ? '#111' : '#bbb', fontWeight: v ? 600 : 400, wordBreak: 'break-word' }}>
         {v || '—'}

@@ -92,15 +92,15 @@ export function TodayTab({ stats, trends }: { stats?: any; trends?: any }) {
 
       {err && (
         <div className="card" role="alert"
-          style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#C42B0F', fontSize: 12 }}>{err}</div>
+          style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#C42B0F', fontSize: 'var(--fs-dysheme)' }}>{err}</div>
       )}
 
       {gjithckaMire && (
         <div className="card" style={{ borderColor: '#97C459', background: '#F6FBEF' }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: '#3B6D11' }}>
+          <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#3B6D11' }}>
             <span aria-hidden="true">✓</span> Asgjë nuk pret veprim
           </div>
-          <div style={{ fontSize: 11, color: '#5C7A3A', marginTop: 4 }}>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#5C7A3A', marginTop: 4 }}>
             Asnjë afat i tejkaluar, asnjë sistem i shkëputur.
           </div>
         </div>
@@ -112,11 +112,11 @@ export function TodayTab({ stats, trends }: { stats?: any; trends?: any }) {
           {kritike.map(([k, etiketa, ku]) => (
             <div key={k} style={{
               display: 'flex', alignItems: 'center', gap: 10,
-              padding: '7px 0', borderTop: '1px solid #F7DEDA', fontSize: 12,
+              padding: '7px 0', borderTop: '1px solid #F7DEDA', fontSize: 'var(--fs-dysheme)',
             }}>
               <strong style={{ color: '#C42B0F', minWidth: 34, fontSize: 15 }}>{sh[k]}</strong>
               <span style={{ flex: 1 }}>{etiketa}</span>
-              <span style={{ fontSize: 10.5, color: '#999' }}>{ku}</span>
+              <span style={{ fontSize: 'var(--fs-dysheme)', color: '#999' }}>{ku}</span>
             </div>
           ))}
         </div>
@@ -128,11 +128,11 @@ export function TodayTab({ stats, trends }: { stats?: any; trends?: any }) {
           {paralajmerime.map(([k, etiketa, ku]) => (
             <div key={k} style={{
               display: 'flex', alignItems: 'center', gap: 10,
-              padding: '7px 0', borderTop: '1px solid #F5E9C8', fontSize: 12,
+              padding: '7px 0', borderTop: '1px solid #F5E9C8', fontSize: 'var(--fs-dysheme)',
             }}>
               <strong style={{ color: '#BA7517', minWidth: 34, fontSize: 15 }}>{sh[k]}</strong>
               <span style={{ flex: 1 }}>{etiketa}</span>
-              <span style={{ fontSize: 10.5, color: '#999' }}>{ku}</span>
+              <span style={{ fontSize: 'var(--fs-dysheme)', color: '#999' }}>{ku}</span>
             </div>
           ))}
         </div>
@@ -141,22 +141,22 @@ export function TodayTab({ stats, trends }: { stats?: any; trends?: any }) {
       {mungesat.length > 0 && (
         <div className="card" style={{ borderColor: '#F0C36D' }}>
           <div className="ct">Konfigurim ligjor i paplotësuar</div>
-          <ul style={{ margin: '4px 0 0 16px', padding: 0, fontSize: 11.5, color: '#8A6D1F', lineHeight: 1.9 }}>
+          <ul style={{ margin: '4px 0 0 16px', padding: 0, fontSize: 'var(--fs-dysheme)', color: '#8A6D1F', lineHeight: 1.9 }}>
             {mungesat.map(([k, teksti]) => <li key={k}>{teksti}</li>)}
           </ul>
-          <div style={{ fontSize: 10.5, color: '#999', marginTop: 6 }}>Zgjidhen te Konfigurime.</div>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#999', marginTop: 6 }}>Zgjidhen te Konfigurime.</div>
         </div>
       )}
 
       {shkeputje.length > 0 && (
         <div className="card" style={{ borderColor: '#F09595' }}>
           <div className="ct" style={{ color: '#C42B0F' }}>Numërues të shkëputur nga e vërteta</div>
-          <div style={{ fontSize: 11, color: '#666', marginBottom: 6 }}>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#666', marginBottom: 6 }}>
             Këta numra u shfaqen përdoruesve. Kur ndryshojnë nga numërimi real,
             do të thotë se dy pjesë kanë filluar të ndahen.
           </div>
           {shkeputje.map(([k, v]) => (
-            <div key={k} style={{ fontSize: 11.5, padding: '3px 0' }}>
+            <div key={k} style={{ fontSize: 'var(--fs-dysheme)', padding: '3px 0' }}>
               <strong style={{ color: '#C42B0F' }}>{String(v)}</strong> te <code>{k}</code>
             </div>
           ))}
@@ -176,7 +176,7 @@ export function TodayTab({ stats, trends }: { stats?: any; trends?: any }) {
       {trends?.totale && (
         <div className="card">
           <div className="ct">Periudha</div>
-          <div style={{ fontSize: 11.5, color: '#555', lineHeight: 1.9 }}>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', lineHeight: 1.9 }}>
             Rimbursuar: <strong style={{ color: Number(trends.totale.rimbursime) > 0 ? 'var(--az-red-deep)' : '#111' }}>
               {nf(trends.totale.rimbursime)}</strong>
           </div>
@@ -187,23 +187,23 @@ export function TodayTab({ stats, trends }: { stats?: any; trends?: any }) {
       <div className="card">
         <div className="ct">Veprimet e fundit të administratës</div>
         {gjurma.length === 0 ? (
-          <p style={{ fontSize: 11.5, color: '#aaa', padding: '8px 0' }}>Asnjë veprim i regjistruar.</p>
+          <p style={{ fontSize: 'var(--fs-dysheme)', color: '#aaa', padding: '8px 0' }}>Asnjë veprim i regjistruar.</p>
         ) : (
           <table>
             <thead><tr><th>Veprimi</th><th>Objekti</th><th>Kush</th><th>Kur</th></tr></thead>
             <tbody>
               {gjurma.slice(0, 25).map((a: any, i: number) => (
                 <tr key={a.id || i}>
-                  <td style={{ fontSize: 11, fontWeight: 600 }}>{a.action}</td>
-                  <td style={{ fontSize: 10.5, color: '#888' }}>{a.target_type || '—'}</td>
-                  <td style={{ fontSize: 10.5 }}>{a.admin_name || a.admin_id?.slice(0, 8) || '—'}</td>
-                  <td style={{ fontSize: 10, color: '#aaa' }}>{d(a.created_at)}</td>
+                  <td style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 600 }}>{a.action}</td>
+                  <td style={{ fontSize: 'var(--fs-dysheme)', color: '#888' }}>{a.target_type || '—'}</td>
+                  <td style={{ fontSize: 'var(--fs-dysheme)' }}>{a.admin_name || a.admin_id?.slice(0, 8) || '—'}</td>
+                  <td style={{ fontSize: 'var(--fs-dysheme)', color: '#aaa' }}>{d(a.created_at)}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
-        <div style={{ fontSize: 10.5, color: '#999', marginTop: 8, lineHeight: 1.7 }}>
+        <div style={{ fontSize: 'var(--fs-dysheme)', color: '#999', marginTop: 8, lineHeight: 1.7 }}>
           Çdo veprim i administratës shkruhet këtu me arsyen. Kjo është prova se platforma
           vepron në mënyrë të kujdesshme dhe jo arbitrare — kërkesë e nenit 28 të ligjit 124/2024.
         </div>

@@ -581,7 +581,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
     <div style={{ textAlign: 'center', padding: 60, fontFamily: "'Plus Jakarta Sans',system-ui" }}>
       <p style={{ fontSize: 40, marginBottom: 12 }} aria-hidden="true">⚠️</p>
       <h2 style={{ color: '#111', marginBottom: 8 }}>Gabim gjatë ngarkimit</h2>
-      <button type="button" onClick={() => window.location.reload()} style={{ background: 'var(--az-yellow)', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Rifresko</button>
+      <button type="button" onClick={() => window.location.reload()} style={{ background: 'var(--az-yellow)', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 'var(--fs-dysheme)', cursor: 'pointer' }}>Rifresko</button>
     </div>
   )
 
@@ -596,7 +596,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
     <div style={{ textAlign: 'center', padding: 60, fontFamily: "'Plus Jakarta Sans',system-ui" }}>
       <p style={{ fontSize: 40, marginBottom: 12 }} aria-hidden="true">🔍</p>
       <h2 style={{ color: '#111', marginBottom: 8 }}>Shpallja nuk u gjet</h2>
-      <a href="/" style={{ color: '#C42B0F', fontSize: 13 }}>← Kthehu</a>
+      <a href="/" style={{ color: '#C42B0F', fontSize: 'var(--fs-dysheme)' }}>← Kthehu</a>
     </div>
   )
 
@@ -890,7 +890,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                 aria-label={priceAlert ? 'Ndrysho alarmin e çmimit' : 'Vendos alarm çmimi'}
                 onClick={() => { trackEvent('notify', listing.id); setAlertOpen(true) }}
                 className={`njofto-btn${priceAlert ? ' on' : ''}`}>
-                <i className={`ti ti-bell${priceAlert ? '-ringing' : ''}`} style={{ fontSize: 14 }} aria-hidden="true" />
+                <i className={`ti ti-bell${priceAlert ? '-ringing' : ''}`} style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />
                 {priceAlert ? <><span aria-hidden="true">🔔</span> {priceAlert.target_price} ALL</> : 'Njoftomë'}
               </button>
             )}
@@ -1012,7 +1012,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                       <span>{seller.shop_name}</span>
                       <small>Shfleto të gjitha shpalljet e biznesit</small>
                     </div>
-                    <i className="ti ti-chevron-right" style={{ fontSize: 13, color: '#aaa', marginLeft: 'auto' }} aria-hidden="true" />
+                    <i className="ti ti-chevron-right" style={{ fontSize: 'var(--fs-dysheme)', color: '#aaa', marginLeft: 'auto' }} aria-hidden="true" />
                   </a>
                 )}
               </div>
@@ -1045,7 +1045,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                 />
               ) : (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: 13, color: '#555' }}><span aria-hidden="true">📍</span> {listing.city}</span>
+                  <span style={{ fontSize: 'var(--fs-dysheme)', color: '#555' }}><span aria-hidden="true">📍</span> {listing.city}</span>
                   <a
                     href={`https://www.google.com/maps/search/${encodeURIComponent(listing.city + ', Shqipëri')}`}
                     target="_blank"
@@ -1076,8 +1076,8 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                 <button
                   type="button"
                   onClick={() => window.location.href = `/listing/${params.id}/edit`}
-                  style={{ flex: 1, background: 'var(--az-yellow)', color: '#111', border: 'none', borderRadius: 10, padding: '10px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-                  <i className="ti ti-pencil" style={{ fontSize: 14 }} aria-hidden="true" />Ndrysho
+                  style={{ flex: 1, background: 'var(--az-yellow)', color: '#111', border: 'none', borderRadius: 10, padding: '10px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+                  <i className="ti ti-pencil" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />Ndrysho
                 </button>
                 <button
                   type="button"
@@ -1085,8 +1085,8 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                   disabled={bumpLoading || !canBump(listing.last_bumped_at)}
                   aria-label={canBump(listing.last_bumped_at) ? 'Ngrije shpalljen në krye' : 'Mund ta ngresh pas 7 ditësh'}
                   title="Rifresko dukshmërinë — një herë çdo 7 ditë"
-                  style={{ flex: 1, background: canBump(listing.last_bumped_at) ? 'var(--az-red)' : '#F0F0F0', color: canBump(listing.last_bumped_at) ? '#fff' : '#999', border: 'none', borderRadius: 10, padding: '10px', fontSize: 12, fontWeight: 700, cursor: canBump(listing.last_bumped_at) ? 'pointer' : 'not-allowed', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, opacity: bumpLoading ? 0.7 : 1 }}>
-                  <i className="ti ti-arrow-up" style={{ fontSize: 14 }} aria-hidden="true" />{canBump(listing.last_bumped_at) ? 'Ngrije në krye' : 'Ngritur'}
+                  style={{ flex: 1, background: canBump(listing.last_bumped_at) ? 'var(--az-red)' : '#F0F0F0', color: canBump(listing.last_bumped_at) ? '#fff' : '#999', border: 'none', borderRadius: 10, padding: '10px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: canBump(listing.last_bumped_at) ? 'pointer' : 'not-allowed', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, opacity: bumpLoading ? 0.7 : 1 }}>
+                  <i className="ti ti-arrow-up" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />{canBump(listing.last_bumped_at) ? 'Ngrije në krye' : 'Ngritur'}
                 </button>
               </div>
 
@@ -1099,42 +1099,42 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                     type="button"
                     onClick={() => { setDelConfirm(true); setDelMsg('') }}
                     aria-label="Fshi shpalljen"
-                    style={{ width: '100%', background: '#fff', color: 'var(--az-red-deep)', border: '1.5px solid var(--az-red-deep)', borderRadius: 12, minHeight: 44, padding: '10px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-                    <i className="ti ti-trash" style={{ fontSize: 14 }} aria-hidden="true" />Fshi shpalljen
+                    style={{ width: '100%', background: '#fff', color: 'var(--az-red-deep)', border: '1.5px solid var(--az-red-deep)', borderRadius: 12, minHeight: 44, padding: '10px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+                    <i className="ti ti-trash" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />Fshi shpalljen
                   </button>
                 ) : (
                   <div role="alertdialog" aria-label="Konfirmo fshirjen" style={{ background: '#FFF5F3', border: '1.5px solid #F0BDB2', borderRadius: 12, padding: '11px 12px' }}>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--az-red-deep)', marginBottom: 4 }}>
+                    <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: 'var(--az-red-deep)', marginBottom: 4 }}>
                       Ta fshijmë këtë shpallje?
                     </div>
-                    <div style={{ fontSize: 11.5, color: '#6b5a56', lineHeight: 1.5, marginBottom: 10 }}>
+                    <div style={{ fontSize: 'var(--fs-dysheme)', color: '#6b5a56', lineHeight: 1.5, marginBottom: 10 }}>
                       Hiqet nga faqja dhe nga kërkimi. Bisedat dhe historiku i pagesave nuk preken.
                     </div>
                     <div style={{ display: 'flex', gap: 8 }}>
                       <button
                         type="button"
                         onClick={() => setDelConfirm(false)}
-                        style={{ flex: 1, background: '#fff', color: '#555', border: '1px solid #ddd', borderRadius: 12, minHeight: 44, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
+                        style={{ flex: 1, background: '#fff', color: '#555', border: '1px solid #ddd', borderRadius: 12, minHeight: 44, fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
                         Jo, hiqe
                       </button>
                       <button
                         type="button"
                         onClick={doDelete}
                         disabled={delLoading}
-                        style={{ flex: 1, background: 'var(--az-red-deep)', color: '#fff', border: 'none', borderRadius: 12, minHeight: 44, fontSize: 12, fontWeight: 800, cursor: delLoading ? 'wait' : 'pointer', fontFamily: 'inherit', opacity: delLoading ? 0.7 : 1 }}>
+                        style={{ flex: 1, background: 'var(--az-red-deep)', color: '#fff', border: 'none', borderRadius: 12, minHeight: 44, fontSize: 'var(--fs-dysheme)', fontWeight: 800, cursor: delLoading ? 'wait' : 'pointer', fontFamily: 'inherit', opacity: delLoading ? 0.7 : 1 }}>
                         {delLoading ? 'Po fshihet…' : 'Po, fshije'}
                       </button>
                     </div>
                   </div>
                 )}
                 {delMsg && (
-                  <div role="alert" style={{ fontSize: 12, fontWeight: 600, color: 'var(--az-red-deep)', textAlign: 'center', padding: '6px 0 0' }}>
+                  <div role="alert" style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 600, color: 'var(--az-red-deep)', textAlign: 'center', padding: '6px 0 0' }}>
                     {delMsg}
                   </div>
                 )}
               </div>
               {bumpMsg && (
-                <div role="alert" style={{ fontSize: 12, fontWeight: 600, color: bumpMsg.startsWith('ok:') ? '#1D9E75' : 'var(--az-red-deep)', textAlign: 'center', padding: '4px 0' }}>
+                <div role="alert" style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 600, color: bumpMsg.startsWith('ok:') ? '#1D9E75' : 'var(--az-red-deep)', textAlign: 'center', padding: '4px 0' }}>
                   {bumpMsg.replace(/^(ok:|err:)/, '')}
                 </div>
               )}
@@ -1145,16 +1145,16 @@ export default function ListingPageClient({ params, initialListing, initialSelle
           {!isOwner && user && seller && (
             <div style={{ padding: '0 13px 14px' }}>
               <div className="divider" style={{ marginBottom: 12 }} />
-              <div style={{ fontSize: 11, fontWeight: 700, color: '#4A4A4A', textTransform: 'uppercase', letterSpacing: '.5px', marginBottom: 10 }}>
+              <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#4A4A4A', textTransform: 'uppercase', letterSpacing: '.5px', marginBottom: 10 }}>
                 Vlerëso shitësin
               </div>
 
               {myReview ? (
-                <div style={{ background: '#EAF3DE', border: '0.5px solid #97C459', borderRadius: 10, padding: '10px 13px', fontSize: 12 }}>
+                <div style={{ background: '#EAF3DE', border: '0.5px solid #97C459', borderRadius: 10, padding: '10px 13px', fontSize: 'var(--fs-dysheme)' }}>
                   <div style={{ color: '#3B6D11', fontWeight: 700, marginBottom: 4 }}>
                     <><span aria-hidden='true'>{'⭐'.repeat(myReview.rating)}</span> Vlerësimi yt u ruajt</>
                     {myReview.purchase_verified && (
-                      <span style={{ marginLeft: 6, background: '#0E7A35', color: '#fff', fontSize: 9.5, fontWeight: 700, padding: '1px 6px', borderRadius: 6 }}><span aria-hidden="true">✅</span> Blerje e verifikuar</span>
+                      <span style={{ marginLeft: 6, background: '#0E7A35', color: '#fff', fontSize: 'var(--fs-dysheme)', fontWeight: 700, padding: '1px 6px', borderRadius: 6 }}><span aria-hidden="true">✅</span> Blerje e verifikuar</span>
                     )}
                   </div>
                   {myReview.comment && <div style={{ color: '#555' }}>{myReview.comment}</div>}
@@ -1176,10 +1176,10 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                     value={reviewComment}
                     onChange={e => setReviewComment(e.target.value)}
                     maxLength={300}
-                    style={{ width: '100%', border: '1.5px solid #ddd', borderRadius: 9, padding: '8px 11px', fontSize: 12, fontFamily: 'inherit', outline: 'none', resize: 'none', minHeight: 60, color: '#111', background: '#fff', boxSizing: 'border-box' }}
+                    style={{ width: '100%', border: '1.5px solid #ddd', borderRadius: 9, padding: '8px 11px', fontSize: 'var(--fs-dysheme)', fontFamily: 'inherit', outline: 'none', resize: 'none', minHeight: 60, color: '#111', background: '#fff', boxSizing: 'border-box' }}
                   />
                   {reviewMsg && (
-                    <div style={{ fontSize: 11, marginTop: 6, color: reviewMsg.startsWith('ok:') ? '#3B6D11' : 'var(--az-red-deep)', fontWeight: 600 }}>
+                    <div style={{ fontSize: 'var(--fs-dysheme)', marginTop: 6, color: reviewMsg.startsWith('ok:') ? '#3B6D11' : 'var(--az-red-deep)', fontWeight: 600 }}>
                       {reviewMsg.split(/:(.+)/)[1]}
                     </div>
                   )}
@@ -1187,7 +1187,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                     type="button"
                     onClick={submitReview}
                     disabled={reviewStars === 0 || reviewSaving}
-                    style={{ marginTop: 8, width: '100%', background: reviewStars ? 'var(--az-red-deep)' : '#ccc', color: '#fff', border: 'none', borderRadius: 9, padding: '10px', fontSize: 12, fontWeight: 700, cursor: reviewStars ? 'pointer' : 'not-allowed', fontFamily: 'inherit' }}>
+                    style={{ marginTop: 8, width: '100%', background: reviewStars ? 'var(--az-red-deep)' : '#ccc', color: '#fff', border: 'none', borderRadius: 9, padding: '10px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: reviewStars ? 'pointer' : 'not-allowed', fontFamily: 'inherit' }}>
                     {reviewSaving ? <><span aria-hidden='true'>⏳</span> Duke ruajtur...</> : <><span aria-hidden='true'>⭐</span> Dërgo vlerësimin</>}
                   </button>
                 </div>
@@ -1198,7 +1198,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
           {/* Similar listings */}
           {similar.length > 0 && (
             <div style={{ padding: '0 13px 24px' }}>
-              <div style={{ fontWeight: 700, fontSize: 14, color: '#111', marginBottom: 12 }}>
+              <div style={{ fontWeight: 700, fontSize: 'var(--fs-dysheme)', color: '#111', marginBottom: 12 }}>
                 Shpallje të ngjashme
               </div>
               {/* I njejti ListingCard si kudo tjeter. showSeller={true}: tani te tria burimet
@@ -1226,13 +1226,13 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                   aria-haspopup="dialog"
                   onClick={() => setReportOpen(true)}
                   className="safety-btn">
-                  <i className="ti ti-flag" style={{ fontSize: 12 }} aria-hidden="true" />Raporto
+                  <i className="ti ti-flag" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />Raporto
                 </button>
                 <a
                   href="/takedown"
                   className="safety-btn"
                   title="Kërkesë ligjore për heqjen e përmbajtjes">
-                  <i className="ti ti-gavel" style={{ fontSize: 12 }} aria-hidden="true" />Kërkesë heqjeje
+                  <i className="ti ti-gavel" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />Kërkesë heqjeje
                 </a>
                 <button
                   type="button"
@@ -1250,7 +1250,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
                     }
                   }}
                   className="safety-btn">
-                  <i className="ti ti-share" style={{ fontSize: 12 }} aria-hidden="true" />{linkCopied ? 'U kopjua' : 'Ndaj'}
+                  <i className="ti ti-share" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />{linkCopied ? 'U kopjua' : 'Ndaj'}
                 </button>
               </div>
             </div>
@@ -1271,17 +1271,17 @@ export default function ListingPageClient({ params, initialListing, initialSelle
             <div className="alert-sub">
               Do të njoftohesh kur çmimi të bjerë poshtë kufirit që vendos.
               {priceAlert && !priceAlert.triggered && (
-                <span style={{ color: '#856404', background: '#FFF8E1', border: '1px solid #FFE082', borderRadius: 7, padding: '2px 8px', marginLeft: 6, fontSize: 11 }}>
+                <span style={{ color: '#856404', background: '#FFF8E1', border: '1px solid #FFE082', borderRadius: 7, padding: '2px 8px', marginLeft: 6, fontSize: 'var(--fs-dysheme)' }}>
                   Aktiv: {priceAlert.target_price} ALL
                 </span>
               )}
               {priceAlert?.triggered && (
-                <span style={{ color: '#2e7d32', background: '#E8F5E9', border: '1px solid #A5D6A7', borderRadius: 7, padding: '2px 8px', marginLeft: 6, fontSize: 11 }}>
+                <span style={{ color: '#2e7d32', background: '#E8F5E9', border: '1px solid #A5D6A7', borderRadius: 7, padding: '2px 8px', marginLeft: 6, fontSize: 'var(--fs-dysheme)' }}>
                   <><span aria-hidden="true">✅</span> U aktivizua</>
                 </span>
               )}
             </div>
-            <div style={{ fontSize: 12, color: '#555', marginBottom: 8 }}>
+            <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', marginBottom: 8 }}>
               Çmimi aktual: <strong style={{ color: '#111' }}>{fmt(listing?.price, listing?.currency)}</strong>
             </div>
             <input
@@ -1488,16 +1488,16 @@ export default function ListingPageClient({ params, initialListing, initialSelle
             <div style={{ fontWeight:700, fontSize:16, color:'#111', marginBottom:8 }}>
               {kontakti === 'wa' ? 'Vazhdo në WhatsApp' : 'Vazhdo në Viber'}
             </div>
-            <div style={{ fontSize:13, color:'#555', lineHeight:1.7, marginBottom:18 }}>
+            <div style={{ fontSize: 'var(--fs-dysheme)', color:'#555', lineHeight:1.7, marginBottom:18 }}>
               Do të kontaktosh <strong>{seller.shop_name || seller.full_name || seller.username || 'shitësin'}</strong> jashtë Alpazar-it.
             </div>
 
             {kontaktDuke ? (
-              <div role="status" style={{ padding:14, borderRadius:14, background:'#f5f3eb', fontSize:14, fontWeight:600, color:'#555', marginBottom:10 }}>
+              <div role="status" style={{ padding:14, borderRadius:14, background:'#f5f3eb', fontSize: 'var(--fs-dysheme)', fontWeight:600, color:'#555', marginBottom:10 }}>
                 Duke hapur kontaktin…
               </div>
             ) : kontaktGabim ? (
-              <div role="alert" style={{ padding:'12px 14px', borderRadius:14, background:'#FFF0EE', border:'1px solid #F09595', fontSize:13, fontWeight:600, color:'var(--az-red-deep)', marginBottom:10, lineHeight:1.6 }}>
+              <div role="alert" style={{ padding:'12px 14px', borderRadius:14, background:'#FFF0EE', border:'1px solid #F09595', fontSize: 'var(--fs-dysheme)', fontWeight:600, color:'var(--az-red-deep)', marginBottom:10, lineHeight:1.6 }}>
                 {kontaktGabim}
               </div>
             ) : sellerPhone ? (
@@ -1517,7 +1517,7 @@ export default function ListingPageClient({ params, initialListing, initialSelle
             ) : null}
 
             <button type="button" onClick={() => setKontakti(null)}
-              style={{ width:'100%', padding:13, background:'#f5f3eb', border:'none', borderRadius:14, fontWeight:600, fontSize:14, cursor:'pointer', color:'#555', fontFamily:'inherit' }}>
+              style={{ width:'100%', padding:13, background:'#f5f3eb', border:'none', borderRadius:14, fontWeight:600, fontSize: 'var(--fs-dysheme)', cursor:'pointer', color:'#555', fontFamily:'inherit' }}>
               Anulo
             </button>
           </div>

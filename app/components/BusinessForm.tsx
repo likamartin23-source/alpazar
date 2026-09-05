@@ -204,8 +204,8 @@ export default function BusinessForm({ mode, initial, onSaved }: {
     return null
   }
 
-  const lbl: React.CSSProperties = { fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }
-  const sec: React.CSSProperties = { fontSize: 12, fontWeight: 800, color: '#C42B0F', textTransform: 'uppercase', letterSpacing: 0.5, margin: '18px 0 10px' }
+  const lbl: React.CSSProperties = { fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }
+  const sec: React.CSSProperties = { fontSize: 'var(--fs-dysheme)', fontWeight: 800, color: '#C42B0F', textTransform: 'uppercase', letterSpacing: 0.5, margin: '18px 0 10px' }
 
   return (
     <div>
@@ -219,7 +219,7 @@ export default function BusinessForm({ mode, initial, onSaved }: {
       ` }} />
 
       {msg && (
-        <div role="alert" style={{ background: msg.startsWith('err:') ? '#FFF0EE' : '#F0FFF4', border: `1px solid ${msg.startsWith('err:') ? '#F09595' : '#86efac'}`, borderRadius: 10, padding: '10px 14px', marginBottom: 14, fontSize: 12, color: msg.startsWith('err:') ? 'var(--az-red-deep)' : '#166534', fontWeight: 600 }}>
+        <div role="alert" style={{ background: msg.startsWith('err:') ? '#FFF0EE' : '#F0FFF4', border: `1px solid ${msg.startsWith('err:') ? '#F09595' : '#86efac'}`, borderRadius: 10, padding: '10px 14px', marginBottom: 14, fontSize: 'var(--fs-dysheme)', color: msg.startsWith('err:') ? 'var(--az-red-deep)' : '#166534', fontWeight: 600 }}>
           {msg.replace(/^(err|warn):/, '')}
         </div>
       )}
@@ -230,11 +230,11 @@ export default function BusinessForm({ mode, initial, onSaved }: {
         <div style={{ position: 'relative', width: '100%', aspectRatio: '16/6', borderRadius: 12, overflow: 'hidden', background: coverPrev ? 'transparent' : 'linear-gradient(135deg,var(--az-yellow),var(--az-red))' }}>
           {coverPrev && <img src={coverPrev} alt="Kopertinë" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
           <label style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: coverPrev ? 'rgba(0,0,0,.25)' : 'none' }}>
-            <span style={{ background: 'rgba(0,0,0,.55)', color: '#fff', borderRadius: 10, padding: '8px 16px', fontSize: 12, fontWeight: 700 }}><span aria-hidden="true">📷</span> {coverPrev ? 'Ndrysho kopertinën' : 'Shto kopertinën'}</span>
+            <span style={{ background: 'rgba(0,0,0,.55)', color: '#fff', borderRadius: 10, padding: '8px 16px', fontSize: 'var(--fs-dysheme)', fontWeight: 700 }}><span aria-hidden="true">📷</span> {coverPrev ? 'Ndrysho kopertinën' : 'Shto kopertinën'}</span>
             <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const x = e.target.files?.[0]; if (x) { setCoverFile(x); setCoverPrev(URL.createObjectURL(x)) } }} />
           </label>
           {coverPrev && (
-            <button type="button" aria-label="Hiq kopertinën" onClick={() => { setCoverFile(null); setCoverPrev('') }} style={{ position: 'absolute', top: 8, right: 8, width: 30, height: 30, borderRadius: '50%', background: 'rgba(0,0,0,.55)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: 14, lineHeight: 1 }}>✕</button>
+            <button type="button" aria-label="Hiq kopertinën" onClick={() => { setCoverFile(null); setCoverPrev('') }} style={{ position: 'absolute', top: 8, right: 8, width: 30, height: 30, borderRadius: '50%', background: 'rgba(0,0,0,.55)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: 'var(--fs-dysheme)', lineHeight: 1 }}>✕</button>
           )}
         </div>
         {/* Logo/avatar — jashtë overflow-it, i tërë tappable (≥44px), me badge kamere + hiq */}
@@ -243,11 +243,11 @@ export default function BusinessForm({ mode, initial, onSaved }: {
             {logoPrev
               ? <img src={logoPrev} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               : <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }} aria-hidden="true">🏢</span>}
-            <span style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(0,0,0,.5)', color: '#fff', fontSize: 10, textAlign: 'center', padding: '1px 0' }} aria-hidden="true">📷</span>
+            <span style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(0,0,0,.5)', color: '#fff', fontSize: 'var(--fs-dysheme)', textAlign: 'center', padding: '1px 0' }} aria-hidden="true">📷</span>
             <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const x = e.target.files?.[0]; if (x) { setLogoFile(x); setLogoPrev(URL.createObjectURL(x)) } }} />
           </label>
           {logoPrev && (
-            <button type="button" aria-label="Hiq logon" onClick={() => { setLogoFile(null); setLogoPrev('') }} style={{ position: 'absolute', top: -6, right: -6, width: 20, height: 20, borderRadius: '50%', background: 'var(--az-red)', color: '#fff', border: '2px solid #fff', cursor: 'pointer', fontSize: 11, lineHeight: 1 }}>✕</button>
+            <button type="button" aria-label="Hiq logon" onClick={() => { setLogoFile(null); setLogoPrev('') }} style={{ position: 'absolute', top: -6, right: -6, width: 20, height: 20, borderRadius: '50%', background: 'var(--az-red)', color: '#fff', border: '2px solid #fff', cursor: 'pointer', fontSize: 'var(--fs-dysheme)', lineHeight: 1 }}>✕</button>
           )}
         </div>
       </div>
@@ -281,14 +281,14 @@ export default function BusinessForm({ mode, initial, onSaved }: {
           <div key={it.id} style={{ position: 'relative', width: 72 }}>
             <div style={{ position: 'relative', width: 72, height: 72 }}>
               <img src={it.file ? it.prev : it.url} alt="" style={{ width: 72, height: 72, objectFit: 'cover', borderRadius: 8, border: i === 0 ? '2px solid var(--az-yellow)' : '1px solid #eee' }} />
-              {i === 0 && <span style={{ position: 'absolute', top: 0, left: 0, background: 'var(--az-yellow)', color: '#111', fontSize: 8, fontWeight: 800, padding: '1px 4px', borderRadius: '8px 0 6px 0' }} aria-hidden="true">KRYESORE</span>}
-              {it.file && <span style={{ position: 'absolute', bottom: 0, right: 0, background: 'rgba(14,122,53,.9)', color: '#fff', fontSize: 8, padding: '1px 4px', borderRadius: '6px 0 8px 0' }} aria-hidden="true">E re</span>}
-              <button type="button" aria-label="Fshi foton" onClick={() => removeGalleryItem(it.id)} style={{ position: 'absolute', top: -6, right: -6, width: 20, height: 20, borderRadius: '50%', background: 'var(--az-red)', color: '#fff', border: '2px solid #fff', cursor: 'pointer', fontSize: 11, lineHeight: 1 }}>✕</button>
+              {i === 0 && <span style={{ position: 'absolute', top: 0, left: 0, background: 'var(--az-yellow)', color: '#111', fontSize: 'var(--fs-dysheme)', fontWeight: 800, padding: '1px 4px', borderRadius: '8px 0 6px 0' }} aria-hidden="true">KRYESORE</span>}
+              {it.file && <span style={{ position: 'absolute', bottom: 0, right: 0, background: 'rgba(14,122,53,.9)', color: '#fff', fontSize: 'var(--fs-dysheme)', padding: '1px 4px', borderRadius: '6px 0 8px 0' }} aria-hidden="true">E re</span>}
+              <button type="button" aria-label="Fshi foton" onClick={() => removeGalleryItem(it.id)} style={{ position: 'absolute', top: -6, right: -6, width: 20, height: 20, borderRadius: '50%', background: 'var(--az-red)', color: '#fff', border: '2px solid #fff', cursor: 'pointer', fontSize: 'var(--fs-dysheme)', lineHeight: 1 }}>✕</button>
             </div>
             {/* Rendit: ◀ ▶ (e para = kryesore) */}
             <div style={{ display: 'flex', gap: 4, marginTop: 3, justifyContent: 'center' }}>
-              <button type="button" aria-label="Zhvendos majtas" disabled={i === 0} onClick={() => moveGalleryItem(it.id, -1)} style={{ flex: 1, border: '1px solid #ddd', background: i === 0 ? '#f5f5f5' : '#fff', borderRadius: 6, fontSize: 11, cursor: i === 0 ? 'default' : 'pointer', color: i === 0 ? '#ccc' : '#555', lineHeight: 1.6, fontFamily: 'inherit' }}>◀</button>
-              <button type="button" aria-label="Zhvendos djathtas" disabled={i === galleryItems.length - 1} onClick={() => moveGalleryItem(it.id, 1)} style={{ flex: 1, border: '1px solid #ddd', background: i === galleryItems.length - 1 ? '#f5f5f5' : '#fff', borderRadius: 6, fontSize: 11, cursor: i === galleryItems.length - 1 ? 'default' : 'pointer', color: i === galleryItems.length - 1 ? '#ccc' : '#555', lineHeight: 1.6, fontFamily: 'inherit' }}>▶</button>
+              <button type="button" aria-label="Zhvendos majtas" disabled={i === 0} onClick={() => moveGalleryItem(it.id, -1)} style={{ flex: 1, border: '1px solid #ddd', background: i === 0 ? '#f5f5f5' : '#fff', borderRadius: 6, fontSize: 'var(--fs-dysheme)', cursor: i === 0 ? 'default' : 'pointer', color: i === 0 ? '#ccc' : '#555', lineHeight: 1.6, fontFamily: 'inherit' }}>◀</button>
+              <button type="button" aria-label="Zhvendos djathtas" disabled={i === galleryItems.length - 1} onClick={() => moveGalleryItem(it.id, 1)} style={{ flex: 1, border: '1px solid #ddd', background: i === galleryItems.length - 1 ? '#f5f5f5' : '#fff', borderRadius: 6, fontSize: 'var(--fs-dysheme)', cursor: i === galleryItems.length - 1 ? 'default' : 'pointer', color: i === galleryItems.length - 1 ? '#ccc' : '#555', lineHeight: 1.6, fontFamily: 'inherit' }}>▶</button>
             </div>
           </div>
         ))}
@@ -297,7 +297,7 @@ export default function BusinessForm({ mode, initial, onSaved }: {
           <input type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={e => { addGalleryFiles(Array.from(e.target.files || [])); e.target.value = '' }} />
         </label>
       </div>
-      <div style={{ fontSize: 11, color: '#555' }}>
+      <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555' }}>
         Shto (+) · fshi (✕) · rendit (◀ ▶). Foto e parë është <b>kryesore</b>.
         {galleryItems.some(it => it.file) && <span style={{ color: '#0E7A35', fontWeight: 600 }}> Ndryshimet ruhen te “Ruaj”.</span>}
       </div>
@@ -338,7 +338,7 @@ export default function BusinessForm({ mode, initial, onSaved }: {
       <MapPicker address={f.address} lat={f.latitude} lng={f.longitude} onChange={(lat, lng, address) => { setV('latitude', lat); setV('longitude', lng); setV('address', address) }} />
       <label style={{ ...lbl, marginTop: 12 }}>Zona e shërbimit</label>
       <input className="bf-input" value={f.service_area} onChange={e => setV('service_area', e.target.value)} placeholder="p.sh. Tiranë, Durrës dhe rrethina" />
-      <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12, fontSize: 13, cursor: 'pointer' }}>
+      <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12, fontSize: 'var(--fs-dysheme)', cursor: 'pointer' }}>
         <input type="checkbox" checked={f.delivery_ka} onChange={e => setV('delivery_ka', e.target.checked)} /> Ofron dorëzim
       </label>
       {f.delivery_ka && <input className="bf-input" style={{ marginTop: 8 }} value={f.delivery_detaje} onChange={e => setV('delivery_detaje', e.target.value)} placeholder="Detaje dorëzimi (tarifa, zona, afat)" />}
@@ -348,8 +348,8 @@ export default function BusinessForm({ mode, initial, onSaved }: {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
         {DAYS.map(([k, l]) => (
           <div key={k} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ width: 64, fontSize: 12, fontWeight: 600, color: '#555' }}>{l}</span>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: '#555', cursor: 'pointer' }}>
+            <span style={{ width: 64, fontSize: 'var(--fs-dysheme)', fontWeight: 600, color: '#555' }}>{l}</span>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 'var(--fs-dysheme)', color: '#555', cursor: 'pointer' }}>
               <input type="checkbox" checked={hours[k].closed} onChange={e => setHours(h => ({ ...h, [k]: { ...h[k], closed: e.target.checked } }))} /> Mbyllur
             </label>
             {!hours[k].closed && (

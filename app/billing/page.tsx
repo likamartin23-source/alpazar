@@ -149,7 +149,7 @@ export default function BillingPage() {
                             ? <> — pjesa në raport me ditët e shfrytëzuara mbahet, sipas pëlqimit që ke dhënë për nisje të menjëhershme.</>
                             : <> — e plotë.</>}
                         </div>
-                        <div style={{ fontSize: 11, marginTop: 6 }}>{heqja.shenim_rimbursimi}</div>
+                        <div style={{ fontSize: 'var(--fs-dysheme)', marginTop: 6 }}>{heqja.shenim_rimbursimi}</div>
                         {!konfirmoHeqjen ? (
                           <div className="btns" style={{ marginTop: 10 }}>
                             <button type="button" className="btn" disabled={!!busy}
@@ -157,13 +157,13 @@ export default function BillingPage() {
                           </div>
                         ) : (
                           <div style={{ marginTop: 10 }}>
-                            <label htmlFor="arsye-heqjeje" style={{ fontSize: 12, display: 'block', marginBottom: 4 }}>
+                            <label htmlFor="arsye-heqjeje" style={{ fontSize: 'var(--fs-dysheme)', display: 'block', marginBottom: 4 }}>
                               Arsyeja (jo e detyrueshme — ligji nuk të kërkon të japësh arsye)
                             </label>
                             <input id="arsye-heqjeje" type="text" value={arsyeHeqjeje}
                               onChange={e => setArsyeHeqjeje(e.target.value)}
                               placeholder="Nuk kërkohet arsye"
-                              style={{ width: '100%', padding: '9px 11px', borderRadius: 8, border: '1.5px solid #ddd', fontSize: 13, fontFamily: 'inherit', boxSizing: 'border-box' }} />
+                              style={{ width: '100%', padding: '9px 11px', borderRadius: 8, border: '1.5px solid #ddd', fontSize: 'var(--fs-dysheme)', fontFamily: 'inherit', boxSizing: 'border-box' }} />
                             <div className="btns" style={{ marginTop: 8 }}>
                               <button type="button" className="btn danger" disabled={!!busy}
                                 onClick={() => act('withdraw_from_subscription', { p_reason: arsyeHeqjeje.trim() || null })}>
@@ -175,7 +175,7 @@ export default function BillingPage() {
                         )}
                       </div>
                     ) : (
-                      <div className="note" style={{ marginTop: 12, fontSize: 11.5 }}>
+                      <div className="note" style={{ marginTop: 12, fontSize: 'var(--fs-dysheme)' }}>
                         Afati 14-ditor i heqjes dorë ka kaluar më {dataOse(heqja.afati_skadon)}.
                         Mund ta çaktivizosh rinovimin që abonimi të mos vazhdojë më tej.
                       </div>

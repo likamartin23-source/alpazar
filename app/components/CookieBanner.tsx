@@ -64,15 +64,15 @@ export function CookieBanner() {
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 12 }}>
         <span style={{ fontSize: 20, flexShrink: 0 }} aria-hidden="true">🍪</span>
         <div>
-          <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 4 }}>Alpazar përdor cookies</div>
-          <div style={{ fontSize: 11, color: '#bbb', lineHeight: 1.6 }}>
+          <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, marginBottom: 4 }}>Alpazar përdor cookies</div>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#bbb', lineHeight: 1.6 }}>
             Përdorim cookies thelbësore për funksionimin e platformës dhe analytics anonime për ta përmirësuar.{' '}
-            <button type="button" aria-expanded={detail} onClick={() => setDetail(d => !d)} style={{ background: 'none', border: 'none', color: 'var(--az-yellow)', cursor: 'pointer', fontSize: 11, fontWeight: 700, padding: 0, fontFamily: 'inherit' }}>
+            <button type="button" aria-expanded={detail} onClick={() => setDetail(d => !d)} style={{ background: 'none', border: 'none', color: 'var(--az-yellow)', cursor: 'pointer', fontSize: 'var(--fs-dysheme)', fontWeight: 700, padding: 0, fontFamily: 'inherit' }}>
               {detail ? 'Fshih detajet ↑' : 'Shfaq detajet ↓'}
             </button>
           </div>
           {detail && (
-            <div style={{ marginTop: 10, fontSize: 11, color: '#ccc', lineHeight: 1.7 }}>
+            <div style={{ marginTop: 10, fontSize: 'var(--fs-dysheme)', color: '#ccc', lineHeight: 1.7 }}>
               <div style={{ marginBottom: 4 }}><span aria-hidden="true">📌</span> <strong>Thelbësore</strong> — sesioni, autentifikimi, preferencat (gjithmonë aktiv)</div>
               <div style={{ marginBottom: 4 }}><span aria-hidden="true">📊</span> <strong>Analytics</strong> — Vercel Analytics (SHBA): të dhëna trafiku. Ngarkohet <strong>vetëm</strong> nëse pranon.</div>
               <div style={{ marginBottom: 4 }}><span aria-hidden="true">🎥</span> <strong>Diagnostikë</strong> — Sentry (BE): regjistrim sesioni me tekst të maskuar. Vetëm nëse pranon.</div>
@@ -85,24 +85,24 @@ export function CookieBanner() {
         <button
           type="button"
           onClick={accept}
-          style={{ flex: 1, background: 'linear-gradient(135deg,var(--az-yellow-hi),var(--az-yellow))', color: '#111', border: 'none', borderRadius: 12, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+          style={{ flex: 1, background: 'linear-gradient(135deg,var(--az-yellow-hi),var(--az-yellow))', color: '#111', border: 'none', borderRadius: 12, padding: '11px 0', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
         >
           <><span aria-hidden="true">✓</span> Prano të gjitha</>
         </button>
         <button
           type="button"
           onClick={decline}
-          style={{ flex: 1, background: 'rgba(255,255,255,.1)', color: '#fff', border: '1px solid rgba(255,255,255,.2)', borderRadius: 12, padding: '11px 0', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
+          style={{ flex: 1, background: 'rgba(255,255,255,.1)', color: '#fff', border: '1px solid rgba(255,255,255,.2)', borderRadius: 12, padding: '11px 0', fontSize: 'var(--fs-dysheme)', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
         >
           Vetëm thelbësoret
         </button>
       </div>
       <div style={{ textAlign: 'center', marginTop: 8 }}>
-        <a href="/cookies" style={{ color: '#888', fontSize: 10, textDecoration: 'none' }}>Politika e Cookies</a>
+        <a href="/cookies" style={{ color: '#888', fontSize: 'var(--fs-dysheme)', textDecoration: 'none' }}>Politika e Cookies</a>
         {' · '}
-        <a href="/privatesia" style={{ color: '#888', fontSize: 10, textDecoration: 'none' }}>Privatësia</a>
+        <a href="/privatesia" style={{ color: '#888', fontSize: 'var(--fs-dysheme)', textDecoration: 'none' }}>Privatësia</a>
         {' · '}
-        <a href="/te-dhenat-mia" style={{ color: '#888', fontSize: 10, textDecoration: 'none' }}>Të dhënat e mia</a>
+        <a href="/te-dhenat-mia" style={{ color: '#888', fontSize: 'var(--fs-dysheme)', textDecoration: 'none' }}>Të dhënat e mia</a>
       </div>
     </div>
     </>

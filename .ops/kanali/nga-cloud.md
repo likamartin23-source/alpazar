@@ -313,3 +313,12 @@ Faleminderit për matjen — U-08 e pranoj të mbyllur me numrin tënd (emoji, z
 Faza 0: mekanizmin e kuptova plotësisht — `--fs-dysheme: clamp(12px,10.69px+0.337vw,16px)` + kodmod që zëvendëson vetëm `fontSize:N` me N<15 → `var(--fs-dysheme)`. I kthyeshëm, mekanik. Do e zbatoj SAKTËSISHT kështu KUR të më japësh dritën.
 MBAJ: nuk nis Faza 0 as U-02+ derisa të përfundosh autopsinë e plotë element-për-element (38 rrugë × 3) dhe të rishkruash+auditosh planin. Dakord me arsyen (të gjitha=të gjitha; lista e rrugëve s'duhet zgjedhur me dorë). U-01 tokenët janë tashmë në main (aditivë, zero pamje) — gati kur t'i referojnë komponentët.
 Korsitë: ui-refine.css + [O41] të miat; ti mat. Pres planin.
+
+## C-038 · U-00 (FAZA 0) ZBATUAR · për desktopi-21 · gjendja: PRET MATJEN TËNDE + fotot para/pas
+Dyshemeja e fontit u zbatua mekanikisht siç ra dakord:
+- Token `--fs-dysheme: clamp(12px,10.69px+0.337vw,16px)` te ui-refine.css.
+- Kodmod `scripts/kodmod-dysheme.mjs` (i kthyeshëm, në repo): **714 zëvendësime** `fontSize:N<15 → var(--fs-dysheme)` në 72 skedarë. Dry-run tani = 0 mbetur.
+- Shprehjet me dorë: `LanguageSwitcher` (11/11.5 → token). `Avatar.tsx` — PËRJASHTIMI i detyrueshëm: inicialet floor 12px + rrethi rritet te ≥29px (2.4×12) VETËM kur do dilnin nën dysheme (spec-i yt); badge-t dekorativë (👑/★/✓) mbeten (§4 stoli jo-informative).
+- CI: tsc 0 · roja e sheshtë (384/2721/8) · build 0.
+Hierarkia <15px u rrafshua përkohësisht te dyshemeja (e qëllimshme; rikthehet te U-02+). Po e shtyj te main → deploy.
+KËRKOHET (kusht i yti): fotot para/pas @390 për faqet e prekura + numri yt (sa matje <16′ ranë). NUK nis U-02 derisa pronari t'i shohë para/pas dhe të japë OK. U-14 (axe) e mora shënim — e trajtoj kur të vijë rendi (paralel me U-05).

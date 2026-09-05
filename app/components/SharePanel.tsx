@@ -263,7 +263,7 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
       {refCode && (
         <div style={{
           background: 'var(--az-cream)', border: '1px dashed var(--az-yellow)', borderRadius: 9,
-          padding: '8px 12px', fontSize: 11, color: '#856404',
+          padding: '8px 12px', fontSize: 'var(--fs-dysheme)', color: '#856404',
           display: 'flex', alignItems: 'center', gap: 7,
         }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--az-red)" style={{ flexShrink: 0 }} aria-hidden="true">
@@ -284,7 +284,7 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
           }}
           style={{
             width: '100%', background: 'linear-gradient(135deg,var(--az-ink),#000)', color: 'var(--az-yellow)', border: 'none',
-            borderRadius: 10, padding: '11px 16px', fontWeight: 700, fontSize: 13,
+            borderRadius: 10, padding: '11px 16px', fontWeight: 700, fontSize: 'var(--fs-dysheme)',
             cursor: 'pointer', fontFamily: 'inherit', display: 'flex',
             alignItems: 'center', justifyContent: 'center', gap: 8,
           }}
@@ -304,7 +304,7 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
           onClick={() => setMode('feed')}
           style={{
             flex: 1, border: 'none', borderRadius: 8, padding: '8px 4px',
-            fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+            fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
             background: mode === 'feed' ? '#111' : 'transparent',
             color: mode === 'feed' ? 'var(--az-yellow)' : '#666',
             transition: 'all .15s',
@@ -318,7 +318,7 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
           onClick={() => setMode('msg')}
           style={{
             flex: 1, border: 'none', borderRadius: 8, padding: '8px 4px',
-            fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+            fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
             background: mode === 'msg' ? '#111' : 'transparent',
             color: mode === 'msg' ? 'var(--az-yellow)' : '#666',
             transition: 'all .15s',
@@ -344,7 +344,7 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
                 background: isCopying ? '#EAF3DE' : p.bg,
                 color: isCopying ? '#3B6D11' : '#fff',
                 border: 'none', borderRadius: 10,
-                padding: '10px 4px', fontSize: 10, fontWeight: 700,
+                padding: '10px 4px', fontSize: 'var(--fs-dysheme)', fontWeight: 700,
                 cursor: 'pointer', fontFamily: 'inherit',
                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
                 transition: 'opacity .15s', minHeight: 66,
@@ -356,7 +356,7 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
               }
               <span>{isCopying ? 'Kopjuar!' : p.label}</span>
               {!isCopying && (
-                <span style={{ fontSize: 8, opacity: 0.75, fontWeight: 400 }}>
+                <span style={{ fontSize: 'var(--fs-dysheme)', opacity: 0.75, fontWeight: 400 }}>
                   {noApi(p) ? <><span aria-hidden='true'>📋</span> {subLabel}</> : subLabel}
                 </span>
               )}
@@ -371,7 +371,7 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
         background: '#f4f4f4', borderRadius: 9, padding: '7px 10px',
       }}>
         <span style={{
-          flex: 1, fontSize: 11, color: '#666',
+          flex: 1, fontSize: 'var(--fs-dysheme)', color: '#666',
           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
         }}>{shareUrl}</span>
         <button
@@ -382,7 +382,7 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
             background: linkCopied ? '#EAF3DE' : '#111',
             color: linkCopied ? '#3B6D11' : 'var(--az-yellow)',
             border: 'none', borderRadius: 7,
-            padding: '6px 12px', fontSize: 11, fontWeight: 700,
+            padding: '6px 12px', fontSize: 'var(--fs-dysheme)', fontWeight: 700,
             cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0,
             transition: 'background .2s',
           }}
@@ -393,7 +393,7 @@ export function SharePanel({ shareUrl, shareText, refCode, listingId, userId }: 
 
       {/* Hint for copy-based platforms */}
       {PLATFORMS.some(p => noApi(p)) && (
-        <div style={{ fontSize: 9.5, color: '#555', textAlign: 'center', lineHeight: 1.5 }}>
+        <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', textAlign: 'center', lineHeight: 1.5 }}>
           <><span aria-hidden="true">📋</span> Instagram &amp; TikTok: linku kopjohet automatikisht, pastaj hapet aplikacioni</>
         </div>
       )}

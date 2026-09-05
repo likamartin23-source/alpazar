@@ -49,7 +49,7 @@ export function LanguageSwitcher({ tone = 'dark' }: { tone?: 'dark' | 'light' })
       }}>
       <Globi ngjyra={ngjyra} />
       <span aria-hidden="true" style={{
-        fontSize: light ? 11 : 11.5, fontWeight: 700, color: ngjyra,
+        fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: ngjyra,
         whiteSpace: 'nowrap', letterSpacing: .1,
       }}>
         {cur.label}

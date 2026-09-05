@@ -1,6 +1,6 @@
 import { CookieConsentControl } from '../components/CookieConsentControl'
 
-const LS = { color: '#666' as const, fontSize: 11, textDecoration: 'none' as const }
+const LS = { color: '#666' as const, fontSize: 'var(--fs-dysheme)', textDecoration: 'none' as const }
 
 export default function Cookies() {
   const css = `

@@ -178,7 +178,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
     <div style={{ minHeight: '100vh', background: 'var(--az-cream)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
       <div style={{ fontSize: 48 }} aria-hidden="true">👤</div>
       <div style={{ fontSize: 18, fontWeight: 700, color: '#111' }}>Profili nuk u gjet</div>
-      <button type="button" onClick={() => window.location.href = '/'} style={{ marginTop: 8, padding: '10px 24px', background: 'var(--az-yellow)', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>← Kthehu</button>
+      <button type="button" onClick={() => window.location.href = '/'} style={{ marginTop: 8, padding: '10px 24px', background: 'var(--az-yellow)', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 'var(--fs-dysheme)', cursor: 'pointer' }}>← Kthehu</button>
     </div>
   )
 
@@ -243,15 +243,15 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
             <h1 style={{ fontSize: 'var(--fs-3xl)', fontWeight: 800, color: '#111', margin: 0, lineHeight: 1.2 }}>{name}</h1>
             {(() => { const t = tierNgaProfili(profile); return t !== 'free' && <span title={t === 'vip' ? 'VIP Ekstra Boost' : 'Premium'} role="img" aria-label={t === 'vip' ? 'VIP Ekstra Boost' : 'Premium'} style={{ fontSize: 16 }}>{t === 'vip' ? '👑' : '⭐'}</span> })()}
             {profile.is_verified && <span title="Verifikuar" role="img" aria-label="Verifikuar" style={{ fontSize: 16 }}>✅</span>}
-            {isBusiness && <span style={{ background: '#111', color: 'var(--az-yellow)', fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 12 }}><span aria-hidden="true">🏢</span> BIZNES</span>}
+            {isBusiness && <span style={{ background: '#111', color: 'var(--az-yellow)', fontSize: 'var(--fs-dysheme)', fontWeight: 700, padding: '2px 8px', borderRadius: 12 }}><span aria-hidden="true">🏢</span> BIZNES</span>}
           </div>
 
           {profile.username && (
-            <div style={{ color: '#6b6b6b', fontSize: 13, marginBottom: 4 }}>@{profile.username}</div>
+            <div style={{ color: '#6b6b6b', fontSize: 'var(--fs-dysheme)', marginBottom: 4 }}>@{profile.username}</div>
           )}
 
           {profile.city && (
-            <div style={{ color: '#666', fontSize: 13, marginBottom: 6 }}><span aria-hidden="true">📍</span> {profile.city}</div>
+            <div style={{ color: '#666', fontSize: 'var(--fs-dysheme)', marginBottom: 6 }}><span aria-hidden="true">📍</span> {profile.city}</div>
           )}
 
           {/* KOHERENCË (urdhër pronari, sy live 2 shtator): vulat e identitetit rrinë SIPËR
@@ -315,7 +315,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
                   if (!user) { window.location.href = '/auth/login'; return }
                   window.location.href = `/messages?with=${profile.id}`
                 }}
-                style={{ flex: 1, minWidth: 120, minHeight: 44, boxSizing: 'border-box', padding: '10px 16px', background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+                style={{ flex: 1, minWidth: 120, minHeight: 44, boxSizing: 'border-box', padding: '10px 16px', background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 'var(--fs-dysheme)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
               >
                 <><span aria-hidden="true">💬</span> Dërgo Mesazh</>
               </button>
@@ -326,7 +326,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
                 onClick={toggleFollow}
                 disabled={followBusy}
                 aria-pressed={isFollowing}
-                style={{ padding: '10px 16px', minWidth: 110, background: isFollowing ? '#111' : '#fff', color: isFollowing ? 'var(--az-yellow)' : '#111', border: isFollowing ? 'none' : '1.5px solid #ddd', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: followBusy ? 'default' : 'pointer', opacity: followBusy ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+                style={{ padding: '10px 16px', minWidth: 110, background: isFollowing ? '#111' : '#fff', color: isFollowing ? 'var(--az-yellow)' : '#111', border: isFollowing ? 'none' : '1.5px solid #ddd', borderRadius: 24, fontWeight: 700, fontSize: 'var(--fs-dysheme)', cursor: followBusy ? 'default' : 'pointer', opacity: followBusy ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
               >
                 {isFollowing ? <><span aria-hidden="true">✓</span> Duke ndjekur</> : <><span aria-hidden="true">＋</span> Ndiq</>}
               </button>
@@ -335,7 +335,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
               <button
                 type="button"
                 onClick={() => window.location.href = '/profile'}
-                style={{ flex: 1, minWidth: 120, padding: '10px 16px', background: 'var(--az-yellow)', color: '#111', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}
+                style={{ flex: 1, minWidth: 120, padding: '10px 16px', background: 'var(--az-yellow)', color: '#111', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 'var(--fs-dysheme)', cursor: 'pointer' }}
               >
                 <><span aria-hidden="true">✏️</span> Edito Profilin</>
               </button>
@@ -347,7 +347,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
               <button
                 type="button"
                 onClick={() => window.location.href = `/biznese/${biz.id}`}
-                style={{ padding: '10px 16px', background: '#111', color: 'var(--az-yellow)', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}
+                style={{ padding: '10px 16px', background: '#111', color: 'var(--az-yellow)', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 'var(--fs-dysheme)', cursor: 'pointer' }}
               >
                 <><span aria-hidden="true">🏢</span> Shiko Biznesin</>
               </button>
@@ -361,13 +361,13 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
           faqja e biznesit), njihet qartë + i jepet rrugë kthimi. Simetrike me banderolën e
           biznesit (BiznesPageClient: "Po e shikon faqen publike ← Kthehu te menaxhimi"). */}
       {isOwnProfile && (
-        <div style={{ background: '#111', color: 'var(--az-yellow)', margin: '0 0 8px', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, fontSize: 12.5, fontWeight: 700 }}>
+        <div style={{ background: '#111', color: 'var(--az-yellow)', margin: '0 0 8px', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, fontSize: 'var(--fs-dysheme)', fontWeight: 700 }}>
           <span><span aria-hidden="true">👁</span> Po e shikon profilin tënd publik — kështu e shohin vizitorët</span>
           <button
             type="button"
             onClick={() => window.location.href = '/profile'}
             aria-label="Kthehu te profili im"
-            style={{ background: 'var(--az-yellow)', color: '#111', border: 'none', borderRadius: 8, padding: '6px 12px', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}
+            style={{ background: 'var(--az-yellow)', color: '#111', border: 'none', borderRadius: 8, padding: '6px 12px', fontSize: 'var(--fs-dysheme)', fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}
           >
             ← Kthehu te profili
           </button>
@@ -385,7 +385,7 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
             aria-selected={activeTab === t.key}
             aria-controls={`tabpanel-${t.key}`}
             onClick={() => setActiveTab(t.key as any)}
-            style={{ flex: 1, padding: '14px 8px', border: 'none', background: 'transparent', fontWeight: activeTab === t.key ? 800 : 500, fontSize: 13, color: activeTab === t.key ? 'var(--az-red-deep)' : '#666', borderBottom: activeTab === t.key ? '2px solid var(--az-red-deep)' : '2px solid transparent', cursor: 'pointer', transition: 'all .15s' }}
+            style={{ flex: 1, padding: '14px 8px', border: 'none', background: 'transparent', fontWeight: activeTab === t.key ? 800 : 500, fontSize: 'var(--fs-dysheme)', color: activeTab === t.key ? 'var(--az-red-deep)' : '#666', borderBottom: activeTab === t.key ? '2px solid var(--az-red-deep)' : '2px solid transparent', cursor: 'pointer', transition: 'all .15s' }}
           >
             {t.label}
           </button>
@@ -401,19 +401,19 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
               // biznesit (business_id != null, Vendimi 7), ndaj profili personal del bosh — teknikisht
               // korrekt por ngatërrues. Zgjidhja e ligjshme e paqartësisë: e themi qartë dhe japim rrugën
               // te faqja e biznesit, ku ndodhen shpalljet — pa i dyfishuar këtu.
-              <div style={{ textAlign: 'center', padding: '40px 16px', color: '#6b6b6b', fontSize: 14 }}>
+              <div style={{ textAlign: 'center', padding: '40px 16px', color: '#6b6b6b', fontSize: 'var(--fs-dysheme)' }}>
                 <div style={{ fontSize: 36, marginBottom: 8 }} aria-hidden="true">🏢</div>
                 <div style={{ marginBottom: 14 }}>Ky përdorues shet përmes biznesit të tij.</div>
                 <button
                   type="button"
                   onClick={() => window.location.href = `/biznese/${biz.id}`}
-                  style={{ padding: '10px 20px', background: '#111', color: 'var(--az-yellow)', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}
+                  style={{ padding: '10px 20px', background: '#111', color: 'var(--az-yellow)', border: 'none', borderRadius: 24, fontWeight: 700, fontSize: 'var(--fs-dysheme)', cursor: 'pointer' }}
                 >
                   <span aria-hidden="true">🏢</span> Shiko shpalljet te {biz.name || 'biznesi'} →
                 </button>
               </div>
             ) : (
-              <div style={{ textAlign: 'center', padding: '48px 16px', color: '#6b6b6b', fontSize: 14 }}>
+              <div style={{ textAlign: 'center', padding: '48px 16px', color: '#6b6b6b', fontSize: 'var(--fs-dysheme)' }}>
                 <div style={{ fontSize: 36, marginBottom: 8 }} aria-hidden="true">📭</div>
                 Nuk ka shpallje aktive
               </div>
@@ -437,29 +437,29 @@ export default function PublicProfilePage({ params, initialProfile, initialListi
         <div id="tabpanel-about" role="tabpanel" aria-labelledby="tab-about" style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
           {profile.bio && (
             <div style={{ background: '#fff', borderRadius: 14, padding: 16, boxShadow: '0 1px 6px rgba(0,0,0,.06)' }}>
-              <div style={{ fontWeight: 700, fontSize: 13, color: '#6b6b6b', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5 }}>Për Mua</div>
-              <div style={{ fontSize: 14, color: '#333', lineHeight: 1.6 }}>{profile.bio}</div>
+              <div style={{ fontWeight: 700, fontSize: 'var(--fs-dysheme)', color: '#6b6b6b', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5 }}>Për Mua</div>
+              <div style={{ fontSize: 'var(--fs-dysheme)', color: '#333', lineHeight: 1.6 }}>{profile.bio}</div>
             </div>
           )}
           <div style={{ background: '#fff', borderRadius: 14, padding: 16, boxShadow: '0 1px 6px rgba(0,0,0,.06)', display: 'flex', flexDirection: 'column', gap: 10 }}>
-            <div style={{ fontWeight: 700, fontSize: 13, color: '#6b6b6b', textTransform: 'uppercase', letterSpacing: 0.5 }}>Informacion</div>
+            <div style={{ fontWeight: 700, fontSize: 'var(--fs-dysheme)', color: '#6b6b6b', textTransform: 'uppercase', letterSpacing: 0.5 }}>Informacion</div>
             {profile.city && (
-              <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 14, color: '#333' }}>
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 'var(--fs-dysheme)', color: '#333' }}>
                 <span aria-hidden="true">📍</span><span>{profile.city}</span>
               </div>
             )}
-            <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 14, color: '#333' }}>
+            <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 'var(--fs-dysheme)', color: '#333' }}>
               <span aria-hidden="true">📅</span><span>Anëtar që nga {memberSince}</span>
             </div>
             {profile.reviews_count > 0 && (
-              <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 14, color: '#333' }}>
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 'var(--fs-dysheme)', color: '#333' }}>
                 <span aria-hidden="true">⭐</span><span>{profile.reviews_count} vlerësime · mesatare {Number(profile.seller_rating).toFixed(1)}</span>
               </div>
             )}
             {/* Besueshmëria u zhvendos ketu nga stats-row (matrica 4-kuti e bllokut);
                 respekton opt-out-in `trust_score_visible` (Ligji 124/2024). */}
             {(profile.trust_score_visible !== false) && (profile.trust_score ?? 0) > 0 && (
-              <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 14, color: '#333' }}>
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 'var(--fs-dysheme)', color: '#333' }}>
                 <span aria-hidden="true">🛡️</span><span>Besueshmëri {profile.trust_score}%</span>
               </div>
             )}

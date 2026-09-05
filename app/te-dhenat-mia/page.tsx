@@ -148,7 +148,7 @@ export default function TeDhenatMiaPage() {
 
       <div style={{ padding: '16px 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
         {msg && (
-          <div role="alert" style={{ background: msg.startsWith('err:') ? '#FFF0EE' : '#F0FFF4', border: `1px solid ${msg.startsWith('err:') ? '#F09595' : '#86efac'}`, borderRadius: 10, padding: '10px 14px', fontSize: 12, color: msg.startsWith('err:') ? 'var(--az-red-deep)' : '#166534', fontWeight: 600 }}>
+          <div role="alert" style={{ background: msg.startsWith('err:') ? '#FFF0EE' : '#F0FFF4', border: `1px solid ${msg.startsWith('err:') ? '#F09595' : '#86efac'}`, borderRadius: 10, padding: '10px 14px', fontSize: 'var(--fs-dysheme)', color: msg.startsWith('err:') ? 'var(--az-red-deep)' : '#166534', fontWeight: 600 }}>
             {msg.replace(/^(err:|ok:)/, '')}
           </div>
         )}
@@ -156,8 +156,8 @@ export default function TeDhenatMiaPage() {
         {/* Who am I */}
         {profile && (
           <div style={{ background: '#fff', borderRadius: 14, padding: 16, boxShadow: '0 1px 6px rgba(0,0,0,.06)' }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#4A4A4A', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>Identiteti juaj në Alpazar</div>
-            <div style={{ fontSize: 13, color: '#333', lineHeight: 2 }}>
+            <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#4A4A4A', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>Identiteti juaj në Alpazar</div>
+            <div style={{ fontSize: 'var(--fs-dysheme)', color: '#333', lineHeight: 2 }}>
               <div><span aria-hidden="true">👤</span> {profile.full_name || profile.username || 'Pa emër'}</div>
               {profile.city && <div><span aria-hidden="true">📍</span> {profile.city}</div>}
               <div><span aria-hidden="true">📅</span> Anëtar që nga {dateShort(profile.created_at)}</div>
@@ -167,8 +167,8 @@ export default function TeDhenatMiaPage() {
 
         {/* Data rights */}
         <div style={{ background: '#fff', borderRadius: 14, padding: 16, boxShadow: '0 1px 6px rgba(0,0,0,.06)' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#4A4A4A', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 }}><span aria-hidden="true">📋</span> Të drejtat tuaja (GDPR)</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 12, color: '#555', lineHeight: 1.6, marginBottom: 14 }}>
+          <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#4A4A4A', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 }}><span aria-hidden="true">📋</span> Të drejtat tuaja (GDPR)</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 'var(--fs-dysheme)', color: '#555', lineHeight: 1.6, marginBottom: 14 }}>
             <div><span aria-hidden="true">🔍</span> <strong>Art.15</strong> — E drejta e aksesit (shko tek profili yt)</div>
             <div><span aria-hidden="true">✏️</span> <strong>Art.16</strong> — E drejta e korrigjimit (edito profilin)</div>
             <div><span aria-hidden="true">🗑️</span> <strong>Art.17</strong> — E drejta e fshirjes ("E drejta e harresës")</div>
@@ -179,7 +179,7 @@ export default function TeDhenatMiaPage() {
             type="button"
             onClick={exportData}
             disabled={exporting}
-            style={{ width: '100%', background: '#111', color: 'var(--az-yellow)', border: 'none', borderRadius: 11, padding: '12px 0', minHeight: 44, boxSizing: 'border-box', fontSize: 13, fontWeight: 700, cursor: exporting ? 'not-allowed' : 'pointer', opacity: exporting ? 0.6 : 1, fontFamily: 'inherit' }}
+            style={{ width: '100%', background: '#111', color: 'var(--az-yellow)', border: 'none', borderRadius: 11, padding: '12px 0', minHeight: 44, boxSizing: 'border-box', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: exporting ? 'not-allowed' : 'pointer', opacity: exporting ? 0.6 : 1, fontFamily: 'inherit' }}
           >
             {exporting ? <><span aria-hidden='true'>⏳</span> Duke eksportuar...</> : <><span aria-hidden='true'>📥</span> Shkarko të dhënat e mia (JSON)</>}
           </button>
@@ -187,7 +187,7 @@ export default function TeDhenatMiaPage() {
 
         {/* Marketing opt-in */}
         <div style={{ background: '#fff', borderRadius: 14, padding: 16, boxShadow: '0 1px 6px rgba(0,0,0,.06)' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#4A4A4A', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}><span aria-hidden="true">📢</span> Komunikim marketing</div>
+          <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#4A4A4A', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}><span aria-hidden="true">📢</span> Komunikim marketing</div>
           <label style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer', padding: '4px 0', minHeight: 44 }}>
             <input
               type="checkbox"
@@ -197,29 +197,29 @@ export default function TeDhenatMiaPage() {
               style={{ width: 18, height: 18, accentColor: 'var(--az-red)', cursor: 'pointer' }}
             />
             <div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>Pranoj njoftime marketingu</div>
-              <div style={{ fontSize: 11, color: '#555', marginTop: 2, lineHeight: 1.5 }}>Oferta speciale, lajme, këshilla. Mund ta heqësh kurdo. (GDPR Art.7 — konsensum i lirë)</div>
+              <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 600, color: '#111' }}>Pranoj njoftime marketingu</div>
+              <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', marginTop: 2, lineHeight: 1.5 }}>Oferta speciale, lajme, këshilla. Mund ta heqësh kurdo. (GDPR Art.7 — konsensum i lirë)</div>
             </div>
           </label>
         </div>
 
         {/* Account deletion */}
         <div style={{ background: '#FFF0EE', borderRadius: 14, padding: 16, border: '1px solid #fca5a5' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#991b1b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}><span aria-hidden="true">⚠️</span> Zona e rrezikshme</div>
-          <div style={{ fontSize: 12, color: '#555', marginBottom: 12, lineHeight: 1.6 }}>
+          <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#991b1b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}><span aria-hidden="true">⚠️</span> Zona e rrezikshme</div>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', marginBottom: 12, lineHeight: 1.6 }}>
             Fshirja e llogarisë është e pakthyeshme. Do të fshihen të gjitha shpalljet, mesazhet dhe të dhënat personale nga sistemi (GDPR Art.17).
           </div>
           {!confirmDelete ? (
             <button
               type="button"
               onClick={() => setConfirmDelete(true)}
-              style={{ width: '100%', background: 'transparent', color: 'var(--az-red-deep)', border: '1.5px solid var(--az-red-deep)', borderRadius: 11, padding: '11px 0', minHeight: 44, boxSizing: 'border-box', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+              style={{ width: '100%', background: 'transparent', color: 'var(--az-red-deep)', border: '1.5px solid var(--az-red-deep)', borderRadius: 11, padding: '11px 0', minHeight: 44, boxSizing: 'border-box', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
             >
               <><span aria-hidden="true">🗑️</span> Fshi llogarinë time</>
             </button>
           ) : (
             <div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--az-red-deep)', marginBottom: 10 }}>Jeni i sigurt? Ky veprim NUK mund të kthehet!</div>
+              <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: 'var(--az-red-deep)', marginBottom: 10 }}>Jeni i sigurt? Ky veprim NUK mund të kthehet!</div>
               <input
                 id="delete-confirm-password"
                 type="password"
@@ -228,13 +228,13 @@ export default function TeDhenatMiaPage() {
                 placeholder="Shkruaj fjalëkalimin për të konfirmuar"
                 aria-label="Fjalëkalimi për konfirmim fshirjeje"
                 autoComplete="current-password"
-                style={{ width: '100%', border: '1.5px solid var(--az-red-deep)', borderRadius: 10, padding: '10px 12px', fontSize: 13, marginBottom: 10, fontFamily: 'inherit', boxSizing: 'border-box', outline: 'none' }}
+                style={{ width: '100%', border: '1.5px solid var(--az-red-deep)', borderRadius: 10, padding: '10px 12px', fontSize: 'var(--fs-dysheme)', marginBottom: 10, fontFamily: 'inherit', boxSizing: 'border-box', outline: 'none' }}
               />
               <div style={{ display: 'flex', gap: 8 }}>
                 <button
                   type="button"
                   onClick={() => setConfirmDelete(false)}
-                  style={{ flex: 1, background: '#f0f0f0', color: '#333', border: 'none', borderRadius: 10, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', minHeight: 44 }}
+                  style={{ flex: 1, background: '#f0f0f0', color: '#333', border: 'none', borderRadius: 10, padding: '11px 0', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', minHeight: 44 }}
                 >
                   Anulo
                 </button>
@@ -242,7 +242,7 @@ export default function TeDhenatMiaPage() {
                   type="button"
                   onClick={deleteAccount}
                   disabled={deleting}
-                  style={{ flex: 1, background: 'var(--az-red-deep)', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 0', fontSize: 13, fontWeight: 700, cursor: deleting ? 'not-allowed' : 'pointer', opacity: deleting ? 0.7 : 1, fontFamily: 'inherit', minHeight: 44 }}
+                  style={{ flex: 1, background: 'var(--az-red-deep)', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 0', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: deleting ? 'not-allowed' : 'pointer', opacity: deleting ? 0.7 : 1, fontFamily: 'inherit', minHeight: 44 }}
                 >
                   {deleting ? <><span aria-hidden='true'>⏳</span> Duke fshirë...</> : 'Po, fshi!'}
                 </button>
@@ -251,7 +251,7 @@ export default function TeDhenatMiaPage() {
           )}
         </div>
 
-        <div style={{ textAlign: 'center', fontSize: 11, color: '#555', lineHeight: 1.6, padding: '8px 0' }}>
+        <div style={{ textAlign: 'center', fontSize: 'var(--fs-dysheme)', color: '#555', lineHeight: 1.6, padding: '8px 0' }}>
           Për çdo kërkesë tjetër GDPR kontaktoni: <a href="mailto:alpazarsuport@gmail.com" style={{ color: '#C42B0F' }}>alpazarsuport@gmail.com</a>
           <br />
           Rregullorja (EU) 2016/679 · Ligj 124/2024 (Shqipëri)

@@ -18,7 +18,7 @@ export function AnnouncementBar() {
   return (
     <div role="status" aria-live="polite" style={{
       background: lv.bg, borderBottom: `1px solid ${lv.bd}`, color: lv.fg,
-      padding: '9px 14px', fontSize: 12.5, fontWeight: 600, textAlign: 'center',
+      padding: '9px 14px', fontSize: 'var(--fs-dysheme)', fontWeight: 600, textAlign: 'center',
       lineHeight: 1.5, fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
     }}>
       <span aria-hidden="true">{lv.icon}</span> {text}
@@ -47,10 +47,10 @@ export function MaintenanceBanner() {
       <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--az-yellow)', marginBottom: 10 }}>
         Mirëmbajtje
       </div>
-      <div style={{ fontSize: 14, color: '#aaa', maxWidth: 300, lineHeight: 1.6 }}>
+      <div style={{ fontSize: 'var(--fs-dysheme)', color: '#aaa', maxWidth: 300, lineHeight: 1.6 }}>
         {msg}
       </div>
-      <div style={{ marginTop: 24, fontSize: 11, color: '#444' }}>
+      <div style={{ marginTop: 24, fontSize: 'var(--fs-dysheme)', color: '#444' }}>
         alpazar.vercel.app
       </div>
     </div>

@@ -39,8 +39,8 @@ export default function VerificationBox({ businessId, nipt }: { businessId?: str
   const [dergon, setDergon]   = useState('')
 
   // I njëjti fjalor si BusinessForm — kopjuar me qëllim, jo i përafërt.
-  const sec: React.CSSProperties = { fontSize: 12, fontWeight: 800, color: '#C42B0F', textTransform: 'uppercase', letterSpacing: 0.5, margin: '18px 0 10px' }
-  const lbl: React.CSSProperties = { fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }
+  const sec: React.CSSProperties = { fontSize: 'var(--fs-dysheme)', fontWeight: 800, color: '#C42B0F', textTransform: 'uppercase', letterSpacing: 0.5, margin: '18px 0 10px' }
+  const lbl: React.CSSProperties = { fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }
 
   const ngarko = useCallback(async () => {
     const { data } = await supabase.rpc('my_verification_status', {
@@ -81,23 +81,23 @@ export default function VerificationBox({ businessId, nipt }: { businessId?: str
       <div style={sec}>Verifikimi</div>
 
       {gjendja?.i_verifikuar ? (
-        <div role="status" style={{ background: '#F0FFF4', border: '1px solid #86efac', borderRadius: 10, padding: '10px 14px', fontSize: 12, color: '#166534', fontWeight: 600 }}>
+        <div role="status" style={{ background: '#F0FFF4', border: '1px solid #86efac', borderRadius: 10, padding: '10px 14px', fontSize: 'var(--fs-dysheme)', color: '#166534', fontWeight: 600 }}>
           Ky profil është i verifikuar. Distinktivi shfaqet te shpalljet dhe te faqja e biznesit.
         </div>
       ) : k && k.status === 'pending' ? (
-        <div role="status" style={{ background: '#FFF8E1', border: '1px solid #FFB74D', borderRadius: 10, padding: '10px 14px', fontSize: 12, color: '#8A6D00', lineHeight: 1.6 }}>
+        <div role="status" style={{ background: '#FFF8E1', border: '1px solid #FFB74D', borderRadius: 10, padding: '10px 14px', fontSize: 'var(--fs-dysheme)', color: '#8A6D00', lineHeight: 1.6 }}>
           Kërkesa jote është <strong>në shqyrtim</strong> — dërguar më{' '}
           {dateShort(k.derguar_me)}. Do të marrësh njoftim me vendimin dhe arsyen.
         </div>
       ) : (
         <>
           {k?.status === 'rejected' && (
-            <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', borderRadius: 10, padding: '10px 14px', marginBottom: 12, fontSize: 12, color: 'var(--az-red-deep)', lineHeight: 1.6 }}>
+            <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', borderRadius: 10, padding: '10px 14px', marginBottom: 12, fontSize: 'var(--fs-dysheme)', color: 'var(--az-red-deep)', lineHeight: 1.6 }}>
               Kërkesa e mëparshme nuk u miratua.{k.shenimi ? ` „${k.shenimi}"` : ''} Mund të dërgosh një të re.
             </div>
           )}
 
-          <p style={{ fontSize: 12, color: '#555', lineHeight: 1.6, margin: '0 0 12px' }}>
+          <p style={{ fontSize: 'var(--fs-dysheme)', color: '#555', lineHeight: 1.6, margin: '0 0 12px' }}>
             Verifikimi krahason të dhënat e deklaruara me regjistrin publik të QKB-së.
             {businessId && (nipt
               ? <> NIPT-i i deklaruar: <strong style={{ color: '#111' }}>{nipt}</strong>.</>
@@ -110,7 +110,7 @@ export default function VerificationBox({ businessId, nipt }: { businessId?: str
           </select>
 
           {dergon && dergon !== 'duke' && (
-            <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', borderRadius: 10, padding: '10px 14px', marginTop: 12, fontSize: 12, color: 'var(--az-red-deep)', fontWeight: 600 }}>
+            <div role="alert" style={{ background: '#FFF0EE', border: '1px solid #F09595', borderRadius: 10, padding: '10px 14px', marginTop: 12, fontSize: 'var(--fs-dysheme)', color: 'var(--az-red-deep)', fontWeight: 600 }}>
               {dergon}
             </div>
           )}
@@ -123,14 +123,14 @@ export default function VerificationBox({ businessId, nipt }: { businessId?: str
             style={{
               width: '100%', marginTop: 16, background: '#fff', color: '#111',
               border: '1.5px solid #ddd', borderRadius: 13, padding: 14,
-              fontSize: 14, fontWeight: 700, fontFamily: 'inherit',
+              fontSize: 'var(--fs-dysheme)', fontWeight: 700, fontFamily: 'inherit',
               cursor: (dergon === 'duke' || pengesa) ? 'not-allowed' : 'pointer',
               opacity: (dergon === 'duke' || pengesa) ? 0.55 : 1,
             }}>
             {dergon === 'duke' ? 'Duke dërguar…' : 'Kërko verifikimin'}
           </button>
 
-          <div style={{ fontSize: 11, color: '#555', marginTop: 8, lineHeight: 1.55, textAlign: 'center' }}>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', marginTop: 8, lineHeight: 1.55, textAlign: 'center' }}>
             Vendimin e merr një person dhe shoqërohet gjithmonë me arsye.
           </div>
         </>

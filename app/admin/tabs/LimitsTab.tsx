@@ -114,7 +114,7 @@ export function LimitsTab() {
 
   if (err && !k) {
     return (
-      <div className="card" role="alert" style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#C42B0F', fontSize: 12 }}>
+      <div className="card" role="alert" style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#C42B0F', fontSize: 'var(--fs-dysheme)' }}>
         {err}
       </div>
     )
@@ -141,13 +141,13 @@ export function LimitsTab() {
       </div>
 
       {err && (
-        <div className="card" role="alert" style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#C42B0F', fontSize: 12 }}>{err}</div>
+        <div className="card" role="alert" style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#C42B0F', fontSize: 'var(--fs-dysheme)' }}>{err}</div>
       )}
 
       {mungojne.length > 0 && (
         <div className="card" style={{ borderColor: '#F0C36D', background: '#FFF8E8' }}>
           <div className="ct">Mungojnë të dhëna të detyrueshme</div>
-          <div style={{ fontSize: 11.5, color: '#8A6D1F', lineHeight: 1.8 }}>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#8A6D1F', lineHeight: 1.8 }}>
             Pa këto, fatura nuk e përmbush ligjin 87/2019 dhe fiskalizimi nuk ndizet dot:
             <b> {mungojne.join(' · ')}</b>
           </div>
@@ -157,7 +157,7 @@ export function LimitsTab() {
       {(perplasje.length > 0 || dublikate.length > 0) && (
         <div className="card" style={{ borderColor: '#F09595', background: '#FFF0EE' }}>
           <div className="ct">Përplasje mes dy depove</div>
-          <div style={{ fontSize: 11.5, color: '#C42B0F', lineHeight: 1.8 }}>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#C42B0F', lineHeight: 1.8 }}>
             I njëjti koncept ruhet në dy vende me vlera të ndryshme. Cila lexohet, vendos sjelljen:
             <ul style={{ margin: '8px 0 0 16px' }}>
               {perplasje.map(p => <li key={p.celesi}><code>{p.celesi}</code></li>)}
@@ -218,7 +218,7 @@ export function LimitsTab() {
 
       <div className="card">
         <div className="ct">Si funksionon</div>
-        <div style={{ fontSize: 11, color: '#666', lineHeight: 1.8 }}>
+        <div style={{ fontSize: 'var(--fs-dysheme)', color: '#666', lineHeight: 1.8 }}>
           Ekzistojnë dy tabela konfigurimi për arsye historike. Ky ekran i tregon si një të vetme
           dhe shkrimi kalon nga <code>admin_config_set()</code>, i cili zgjedh vetë depon e duhur.
           Kur i njëjti çelës ndodhet në të dyja, përditësohen të dyja — që të mos rilindë divergjenca.

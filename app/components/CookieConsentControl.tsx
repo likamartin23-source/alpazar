@@ -33,7 +33,7 @@ export function CookieConsentControl() {
   const sfond   = consent === 'accepted' ? '#EAF3DE' : consent === 'declined' ? '#FDECEA' : '#F1F1F1'
 
   const btn = (primar: boolean): React.CSSProperties => ({
-    minHeight: 44, padding: '0 16px', borderRadius: 'var(--r-btn)', fontSize: 13, fontWeight: 700,
+    minHeight: 44, padding: '0 16px', borderRadius: 'var(--r-btn)', fontSize: 'var(--fs-dysheme)', fontWeight: 700,
     fontFamily: 'inherit', cursor: 'pointer', border: primar ? 'none' : '1.5px solid var(--az-red-deep)',
     background: primar ? '#3B6D11' : '#fff', color: primar ? '#fff' : 'var(--az-red-deep)',
     display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
@@ -41,13 +41,13 @@ export function CookieConsentControl() {
 
   return (
     <div style={{ background: '#f9f9f9', border: '1px solid #eee', borderRadius: 'var(--r-btn)', padding: 16, margin: '12px 0' }}>
-      <div style={{ fontSize: 12, fontWeight: 700, color: '#111', marginBottom: 8 }}>
+      <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#111', marginBottom: 8 }}>
         Cookie-t opsionale (analitika){' '}
-        <span style={{ background: sfond, color: ngjyra, borderRadius: 'var(--r-btn)', padding: '2px 9px', fontSize: 11, fontWeight: 700 }}>
+        <span style={{ background: sfond, color: ngjyra, borderRadius: 'var(--r-btn)', padding: '2px 9px', fontSize: 'var(--fs-dysheme)', fontWeight: 700 }}>
           {etiketa}
         </span>
       </div>
-      <p style={{ fontSize: 12, color: '#555', lineHeight: 1.7, marginBottom: 12 }}>
+      <p style={{ fontSize: 'var(--fs-dysheme)', color: '#555', lineHeight: 1.7, marginBottom: 12 }}>
         Mund ta ndryshosh vendimin këtu në çdo çast — tërheqja është aq e lehtë sa dhënia.
       </p>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>

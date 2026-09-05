@@ -28,13 +28,13 @@ export function SiteFooter() {
   // tekst normal): #666666 jepte 3.29 — deshtim ne CDO faqe, sepse fundi
   // shfaqet kudo. #9A9A9A jep 6.71 dhe e ruan hierarkine ndaj rreshtit te
   // te drejtave (#8A8A8A, 5.47), qe mbetet me i zbehte se lidhjet.
-  const link: React.CSSProperties = { color: '#9A9A9A', fontSize: 11, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', minHeight: 44, padding: '0 4px' }
+  const link: React.CSSProperties = { color: '#9A9A9A', fontSize: 'var(--fs-dysheme)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', minHeight: 44, padding: '0 4px' }
   return (
     <footer style={{ background: '#111', padding: '22px 16px 28px', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
       <div style={{ maxWidth: 480, margin: '0 auto', textAlign: 'center' }}>
         {/* Logoja e fundit është BUTON drejt kryefaqes (urdhër pronari): e dukshme,
             e kuptueshme (aria), e prekshme (≥44px). */}
-        <a href="/" aria-label="ALPAZAR — Kryefaqja" style={{ color: 'var(--az-yellow)', fontWeight: 700, fontSize: 13, letterSpacing: 1, marginBottom: 14, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6, minHeight: 44, padding: '0 10px' }}><img src="/icons/eagle.svg" alt="" aria-hidden="true" style={{ height: '0.9em', verticalAlign: '-0.12em', display: 'inline-block' }} /> ALPAZAR</a>
+        <a href="/" aria-label="ALPAZAR — Kryefaqja" style={{ color: 'var(--az-yellow)', fontWeight: 700, fontSize: 'var(--fs-dysheme)', letterSpacing: 1, marginBottom: 14, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6, minHeight: 44, padding: '0 10px' }}><img src="/icons/eagle.svg" alt="" aria-hidden="true" style={{ height: '0.9em', verticalAlign: '-0.12em', display: 'inline-block' }} /> ALPAZAR</a>
         <div style={{ display: 'flex', justifyContent: 'center', gap: 4, marginBottom: 14 }}>
           {soc.map(s => (
             <a key={s.label} href={s.href} aria-label={s.label} target="_blank" rel="noopener noreferrer" style={{ color: '#555', fontSize: 19, textDecoration: 'none', width: 44, height: 44, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><i className={`ti ${s.icon}`} aria-hidden="true" /></a>
@@ -52,10 +52,10 @@ export function SiteFooter() {
           <a href="/siguria" style={link}>{t('nav_security')}</a>
           <a href="/te-dhenat-mia" style={link}>{t('nav_mydata')}</a>
           <a href="/takedown" style={link}>{t('nav_takedown')}</a>
-          <a href="/referral" style={{ color: 'var(--az-yellow)', fontSize: 11, textDecoration: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center', minHeight: 44, padding: '0 4px', gap: 4 }}><span aria-hidden="true">🎁</span> {t('nav_referral')}</a>
+          <a href="/referral" style={{ color: 'var(--az-yellow)', fontSize: 'var(--fs-dysheme)', textDecoration: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center', minHeight: 44, padding: '0 4px', gap: 4 }}><span aria-hidden="true">🎁</span> {t('nav_referral')}</a>
         </nav>
         <div style={{ marginBottom: 14 }}><LanguageSwitcher /></div>
-        <div style={{ fontSize: 10, color: '#8A8A8A' }}>© 2026 Alpazar · NIPT/QKB: {cfg('company_nipt') || '(në regjistrim)'} · {cfg('company_address') || 'Tiranë, Shqipëri'} · {t('rights')}</div>
+        <div style={{ fontSize: 'var(--fs-dysheme)', color: '#8A8A8A' }}>© 2026 Alpazar · NIPT/QKB: {cfg('company_nipt') || '(në regjistrim)'} · {cfg('company_address') || 'Tiranë, Shqipëri'} · {t('rights')}</div>
       </div>
     </footer>
   )

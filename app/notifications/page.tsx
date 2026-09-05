@@ -177,7 +177,7 @@ export default function NotificationsPage() {
         <h1 style={{ flex: 1, fontWeight: 700, fontSize: 'var(--fs-xl)', color: '#fff', display: 'flex', alignItems: 'center', gap: 8, margin: 0 }}>
           Njoftimet
           {unreadCount > 0 && (
-            <span style={{ background: 'var(--az-yellow)', color: '#111', borderRadius: 20, padding: '1px 8px', fontSize: 11, fontWeight: 800 }}>
+            <span style={{ background: 'var(--az-yellow)', color: '#111', borderRadius: 20, padding: '1px 8px', fontSize: 'var(--fs-dysheme)', fontWeight: 800 }}>
               {unreadCount > 99 ? '99+' : unreadCount}
             </span>
           )}
@@ -186,7 +186,7 @@ export default function NotificationsPage() {
           <button
             type="button"
             onClick={markAllRead}
-            style={{ background: 'none', border: '1px solid #333', borderRadius: 8, color: '#aaa', fontSize: 11, fontWeight: 600, padding: '5px 10px', cursor: 'pointer', whiteSpace: 'nowrap', minHeight: 44, display: 'inline-flex', alignItems: 'center', gap: 4 }}
+            style={{ background: 'none', border: '1px solid #333', borderRadius: 8, color: '#aaa', fontSize: 'var(--fs-dysheme)', fontWeight: 600, padding: '5px 10px', cursor: 'pointer', whiteSpace: 'nowrap', minHeight: 44, display: 'inline-flex', alignItems: 'center', gap: 4 }}
           >
             <><span aria-hidden="true">✓</span> Gjitha lexuar</>
           </button>
@@ -215,11 +215,11 @@ export default function NotificationsPage() {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 24px', gap: 16 }}>
           <div style={{ fontSize: 56 }} aria-hidden="true">🔕</div>
           <div style={{ fontSize: 16, fontWeight: 700, color: '#111', textAlign: 'center' }}>Nuk ke njoftime ende</div>
-          <div style={{ fontSize: 13, color: '#555', textAlign: 'center', maxWidth: 260 }}>Kur dikush të dërgojë mesazh ose lë koment, do të shfaqet këtu.</div>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', textAlign: 'center', maxWidth: 260 }}>Kur dikush të dërgojë mesazh ose lë koment, do të shfaqet këtu.</div>
           <button
             type="button"
             onClick={() => { window.location.href = '/' }}
-            style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 24px', minHeight: 44, boxSizing: 'border-box', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', marginTop: 4 }}
+            style={{ background: 'linear-gradient(135deg,var(--az-red),#c42a0e)', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 24px', minHeight: 44, boxSizing: 'border-box', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', marginTop: 4 }}
           >
             Shfleto shpalljet →
           </button>
@@ -298,7 +298,7 @@ function NotifRow({ n, onSeen, onDismiss, isLast }: { n: Notif; onSeen: (n: Noti
             width: 20, height: 20, borderRadius: '50%',
             background: '#111', border: '2px solid #fff',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 10,
+            fontSize: 'var(--fs-dysheme)',
           }}>
             {icon}
           </div>
@@ -309,19 +309,19 @@ function NotifRow({ n, onSeen, onDismiss, isLast }: { n: Notif; onSeen: (n: Noti
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
           <div style={{
-            fontSize: 13, fontWeight: n.is_read ? 500 : 700, color: '#111',
+            fontSize: 'var(--fs-dysheme)', fontWeight: n.is_read ? 500 : 700, color: '#111',
             overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
             flex: 1,
           }}>
             {n.title}
           </div>
-          <div style={{ fontSize: 10, color: '#aaa', whiteSpace: 'nowrap', flexShrink: 0, paddingTop: 1 }}>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#aaa', whiteSpace: 'nowrap', flexShrink: 0, paddingTop: 1 }}>
             {timeAgo(n.created_at)}
           </div>
         </div>
         {n.body && (
           <div style={{
-            fontSize: 12, color: n.is_read ? '#888' : '#555',
+            fontSize: 'var(--fs-dysheme)', color: n.is_read ? '#888' : '#555',
             marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis',
             display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
             lineHeight: 1.4,
@@ -341,10 +341,10 @@ function NotifRow({ n, onSeen, onDismiss, isLast }: { n: Notif; onSeen: (n: Noti
       <button
         type="button"
         onClick={() => onDismiss(n.id)}
-        style={{ background: 'none', border: 'none', color: '#ccc', cursor: 'pointer', padding: '0 8px', fontSize: 14, lineHeight: 1, display: 'flex', alignItems: 'center', minWidth: 44, minHeight: 44, justifyContent: 'center', flexShrink: 0 }}
+        style={{ background: 'none', border: 'none', color: '#ccc', cursor: 'pointer', padding: '0 8px', fontSize: 'var(--fs-dysheme)', lineHeight: 1, display: 'flex', alignItems: 'center', minWidth: 44, minHeight: 44, justifyContent: 'center', flexShrink: 0 }}
         aria-label="Fshij njoftimin"
       >
-        <i className="ti ti-x" style={{ fontSize: 14 }} aria-hidden="true" />
+        <i className="ti ti-x" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />
       </button>
     </div>
   )

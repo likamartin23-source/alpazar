@@ -228,7 +228,7 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
         )}
         {/* Distinktivi VIDEO kur karta është vetëm-video (sinjal i njohur, si te faqja e shpalljes). */}
         {hasVideo && (
-          <span aria-hidden="true" style={{ position: 'absolute', top: 6, left: 6, zIndex: 3, background: 'rgba(230,51,18,.92)', color: '#fff', fontSize: 8.5, fontWeight: 800, padding: '2px 6px', borderRadius: 6, letterSpacing: '.4px' }}>VIDEO</span>
+          <span aria-hidden="true" style={{ position: 'absolute', top: 6, left: 6, zIndex: 3, background: 'rgba(230,51,18,.92)', color: '#fff', fontSize: 'var(--fs-dysheme)', fontWeight: 800, padding: '2px 6px', borderRadius: 6, letterSpacing: '.4px' }}>VIDEO</span>
         )}
         {l.condition === 'i_ri' && <span className="badge-new">I ri</span>}
         {l.condition === 'i_perdorur' && <span className="badge-used">I përdorur</span>}
@@ -255,7 +255,7 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
               // (p.sh. showSeller=false), rri në cep (bottom 6). Matur: përplasje 68×14px më parë.
               position: 'absolute', bottom: (showSeller && (biz || author)) ? 32 : 6, left: 6, zIndex: 3,
               background: 'rgba(17,17,17,.82)', color: '#fff',
-              fontSize: 8.5, fontWeight: 700, padding: '2px 6px',
+              fontSize: 'var(--fs-dysheme)', fontWeight: 700, padding: '2px 6px',
               borderRadius: 6, letterSpacing: '.3px',
             }}
           >
@@ -313,7 +313,7 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
         {/* Shitur (Vendimi 3): social proof, jo fshehje — overlay mbi media. */}
         {l.status === 'sold' && (
           <div aria-label="Shitur" style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,.42)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>
-            <span style={{ background: '#0E7A35', color: '#fff', fontWeight: 800, fontSize: 12, letterSpacing: '.5px', padding: '5px 14px', borderRadius: 999, transform: 'rotate(-8deg)', boxShadow: '0 2px 8px rgba(0,0,0,.3)' }}>SHITUR</span>
+            <span style={{ background: '#0E7A35', color: '#fff', fontWeight: 800, fontSize: 'var(--fs-dysheme)', letterSpacing: '.5px', padding: '5px 14px', borderRadius: 999, transform: 'rotate(-8deg)', boxShadow: '0 2px 8px rgba(0,0,0,.3)' }}>SHITUR</span>
           </div>
         )}
       </div>
@@ -325,7 +325,7 @@ export default function ListingCard({ listing, index = 0, showSeller = true, mou
             <i className="ti ti-map-pin" aria-hidden="true" />
             {l.city || 'Shqipëri'}
           </span>
-          <span style={{ fontSize: 11, color: '#6B6B6B', flexShrink: 0 }}>
+          <span style={{ fontSize: 'var(--fs-dysheme)', color: '#6B6B6B', flexShrink: 0 }}>
             {mounted && l.created_at ? timeAgo(l.created_at) : ''}
           </span>
         </div>

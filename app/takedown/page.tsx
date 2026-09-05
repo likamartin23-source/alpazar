@@ -20,10 +20,10 @@ const TYPES = [
 
 const inputStyle = {
   width: '100%', border: '1.5px solid #ddd', borderRadius: 8, padding: '10px 12px',
-  fontSize: 13, fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' as const,
+  fontSize: 'var(--fs-dysheme)', fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' as const,
 }
 const labelStyle = {
-  fontSize: 11, fontWeight: 700, color: '#555', display: 'block', marginBottom: 4,
+  fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#555', display: 'block', marginBottom: 4,
 }
 
 export default function TakedownPage() {
@@ -105,12 +105,12 @@ export default function TakedownPage() {
   return (
     <div style={{ minHeight: '100dvh', background: 'var(--az-cream)', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 20px' }}>
       <div style={{ width: '100%', maxWidth: 800 }}>
-        <button type="button" aria-label="Kthehu" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', color: '#6E6E6E', cursor: 'pointer', fontSize: 13, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 6 }}>
+        <button type="button" aria-label="Kthehu" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', color: '#6E6E6E', cursor: 'pointer', fontSize: 'var(--fs-dysheme)', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 6 }}>
           ← Kthehu
         </button>
         <div style={{ background: '#fff', border: '1.5px solid #f0e6b0', borderRadius: 16, padding: 28 }}>
           <h1 style={{ fontSize: 'var(--fs-2xl)', fontWeight: 800, color: '#111', marginBottom: 6 }}><span aria-hidden="true">⚖️</span> Kerkese Heqje Permbajtjeje / IP</h1>
-          <p style={{ fontSize: 12, color: '#6E6E6E', lineHeight: 1.6, marginBottom: 20 }}>
+          <p style={{ fontSize: 'var(--fs-dysheme)', color: '#6E6E6E', lineHeight: 1.6, marginBottom: 20 }}>
             Nese beson se ndonje permbajtje ne Alpazar shkel te drejtat e tua ose ligjin, plotesoje kete formular.
             Nuk te duhet llogari. Permbajtja qartesisht e paligjshme shqyrtohet <strong>menjehere</strong>;
             rastet e pronesise intelektuale brenda <strong>72 oreve</strong>.
@@ -120,7 +120,7 @@ export default function TakedownPage() {
             <div style={{ background: '#EAF3DE', border: '1px solid #97C459', borderRadius: 10, padding: 20, textAlign: 'center' }}>
               <div style={{ fontSize: 32, marginBottom: 8 }} aria-hidden="true">✅</div>
               <div style={{ fontWeight: 700, color: '#3B6D11', fontSize: 15 }}>Njoftimi u regjistrua</div>
-              <div style={{ color: '#6E6E6E', fontSize: 12, marginTop: 6, lineHeight: 1.6 }}>
+              <div style={{ color: '#6E6E6E', fontSize: 'var(--fs-dysheme)', marginTop: 6, lineHeight: 1.6 }}>
                 Pergjigjen do ta marresh te <strong>{contactEmail.trim()}</strong>.
                 {isLegal
                   ? ' Rasti u shenua si prioritar dhe shqyrtohet menjehere.'
@@ -136,7 +136,7 @@ export default function TakedownPage() {
                   {TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
                 {isLegal && (
-                  <div style={{ fontSize: 11, color: '#B8260D', marginTop: 6, lineHeight: 1.5 }}>
+                  <div style={{ fontSize: 'var(--fs-dysheme)', color: '#B8260D', marginTop: 6, lineHeight: 1.5 }}>
                     Po pretendon permbajtje te paligjshme. Kur ligji e kerkon, njoftimi i percillet
                     edhe autoriteteve kompetente. Njoftimet e rreme te qellimshme kane pasoja.
                   </div>
@@ -163,7 +163,7 @@ export default function TakedownPage() {
               <div>
                 <label htmlFor="td-url" style={labelStyle}>Adresa e permbajtjes *</label>
                 <input id="td-url" type="url" required value={contentUrl} onChange={e => setContentUrl(e.target.value)} placeholder="https://alpazar.vercel.app/listing/..." style={inputStyle} />
-                <div style={{ fontSize: 10.5, color: '#6E6E6E', marginTop: 4, lineHeight: 1.5 }}>
+                <div style={{ fontSize: 'var(--fs-dysheme)', color: '#6E6E6E', marginTop: 4, lineHeight: 1.5 }}>
                   Kopjoje adresen e sakte te shpalljes. Pa te nuk e identifikojme dot permbajtjen.
                 </div>
               </div>
@@ -171,7 +171,7 @@ export default function TakedownPage() {
               <div>
                 <label htmlFor="td-desc" style={labelStyle}>Pershkrimi i ceshtjes *</label>
                 <textarea id="td-desc" value={description} onChange={e => setDescription(e.target.value)} required rows={4} placeholder="Shpjego cfare pe, ku, dhe pse mendon se eshte shkelje..." style={{ ...inputStyle, resize: 'vertical' }} />
-                <div style={{ fontSize: 10.5, color: description.trim().length >= 20 ? '#6E6E6E' : '#8A6400', marginTop: 4 }}>
+                <div style={{ fontSize: 'var(--fs-dysheme)', color: description.trim().length >= 20 ? '#6E6E6E' : '#8A6400', marginTop: 4 }}>
                   {description.trim().length}/20 shkronja minimumi
                 </div>
               </div>
@@ -179,25 +179,25 @@ export default function TakedownPage() {
               <div>
                 <label htmlFor="td-email" style={labelStyle}>Email kontakti *</label>
                 <input id="td-email" type="email" required value={contactEmail} onChange={e => setContactEmail(e.target.value)} placeholder="juaj@email.com" autoComplete="email" style={inputStyle} />
-                <div style={{ fontSize: 10.5, color: '#6E6E6E', marginTop: 4, lineHeight: 1.5 }}>
+                <div style={{ fontSize: 'var(--fs-dysheme)', color: '#6E6E6E', marginTop: 4, lineHeight: 1.5 }}>
                   Aty te dergojme rezultatin e shqyrtimit. Pergjigjja eshte pjese e procedures.
                 </div>
               </div>
 
-              <label style={{ display: 'flex', gap: 9, alignItems: 'flex-start', fontSize: 11.5, color: '#444', lineHeight: 1.55, cursor: 'pointer' }}>
+              <label style={{ display: 'flex', gap: 9, alignItems: 'flex-start', fontSize: 'var(--fs-dysheme)', color: '#444', lineHeight: 1.55, cursor: 'pointer' }}>
                 <input type="checkbox" checked={goodFaith} onChange={e => setGoodFaith(e.target.checked)} style={{ marginTop: 2, width: 15, height: 15, flexShrink: 0, accentColor: '#111' }} />
                 <span>Deklaroj me <strong>mirebesim</strong> se informacioni qe dhashe eshte i sakte dhe i plote sipas dijenise sime.</span>
               </label>
 
-              {error && <div role="alert" style={{ background: '#FFF0EE', color: '#C42B0F', border: '1px solid #F09595', borderRadius: 8, padding: '10px 12px', fontSize: 12 }}>{error}</div>}
+              {error && <div role="alert" style={{ background: '#FFF0EE', color: '#C42B0F', border: '1px solid #F09595', borderRadius: 8, padding: '10px 12px', fontSize: 'var(--fs-dysheme)' }}>{error}</div>}
 
-              <button type="submit" disabled={submitting} style={{ background: '#111', color: '#fff', border: 'none', borderRadius: 10, padding: '13px', fontSize: 14, fontWeight: 700, cursor: 'pointer', opacity: submitting ? 0.7 : 1 }}>
+              <button type="submit" disabled={submitting} style={{ background: '#111', color: '#fff', border: 'none', borderRadius: 10, padding: '13px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', opacity: submitting ? 0.7 : 1 }}>
                 {submitting ? 'Duke derguar...' : 'Dergo Njoftimin'}
               </button>
             </form>
           )}
         </div>
-        <p style={{ fontSize: 10, color: '#6E6E6E', textAlign: 'center', marginTop: 16, lineHeight: 1.6 }}>
+        <p style={{ fontSize: 'var(--fs-dysheme)', color: '#6E6E6E', textAlign: 'center', marginTop: 16, lineHeight: 1.6 }}>
           Te dhenat e njoftimit perpunohen per shqyrtimin e tij dhe per permbushjen e detyrimeve ligjore
           te platformes, sipas ligjit nr. 124/2024. Shih <a href="/kushtet" style={{ color: '#6E6E6E' }}>Kushtet</a> dhe{' '}
           <a href="/privatesia" style={{ color: '#6E6E6E' }}>Privatesine</a>.

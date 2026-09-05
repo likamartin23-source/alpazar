@@ -140,13 +140,13 @@ export default function UpdatePrompt() {
       }}
     >
       <span style={{ fontSize: 18 }} aria-hidden="true">✨</span>
-      <span style={{ flex: 1, fontSize: 13, fontWeight: 600, lineHeight: 1.4 }}>
+      <span style={{ flex: 1, fontSize: 'var(--fs-dysheme)', fontWeight: 600, lineHeight: 1.4 }}>
         Ka dalë një version i ri i Alpazar.
       </span>
       <button
         type="button"
         onClick={rifreskoTani}
-        style={{ background: 'var(--az-yellow)', color: '#111', border: 'none', borderRadius: 9, padding: '8px 14px', fontSize: 12.5, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', minHeight: 40 }}
+        style={{ background: 'var(--az-yellow)', color: '#111', border: 'none', borderRadius: 9, padding: '8px 14px', fontSize: 'var(--fs-dysheme)', fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', minHeight: 40 }}
       >
         Rifresko
       </button>

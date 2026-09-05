@@ -139,14 +139,14 @@ export default function PremiumPage() {
                   <input type="checkbox" checked={pranoiNisje}
                     onChange={e => setPranoiNisje(e.target.checked)}
                     style={{ marginTop: 3, width: 18, height: 18, flexShrink: 0 }} />
-                  <span style={{ fontSize: 12.5, lineHeight: 1.6 }}>
+                  <span style={{ fontSize: 'var(--fs-dysheme)', lineHeight: 1.6 }}>
                     Kërkoj që shërbimi të <strong>nisë menjëherë</strong>, para se të mbarojnë
                     14 ditët e heqjes dorë. E kuptoj se, nëse heq dorë brenda afatit, mbahet
                     vetëm pjesa në raport me ditët e shfrytëzuara{' '}
                     <span style={{ color: '#555' }}>(neni 37/8, ligji 9902/2008)</span>.
                   </span>
                 </label>
-                <div style={{ fontSize: 11, color: '#555', marginTop: 8, lineHeight: 1.55 }}>
+                <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', marginTop: 8, lineHeight: 1.55 }}>
                   Nëse nuk e shënon, shërbimi nis njësoj dhe rimbursimi mbetet{' '}
                   <strong>i plotë</strong> brenda 14 ditëve. Kjo kuti nuk është e detyrueshme.
                 </div>

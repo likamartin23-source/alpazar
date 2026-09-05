@@ -9,14 +9,14 @@ export function ListingTop({ p }: any) {
           {/* Marketing: banner kufiri falas */}
           <FreeTierBanner listingCount={myListingCount} freeLimit={freeLimit} />
           {draftRestored && (
-            <div style={{ background:'#F0FDF4', border:'1px solid #86EFAC', borderRadius:10, padding:'8px 14px', marginBottom:10, fontSize:12, color:'#166534', display:'flex', alignItems:'center', gap:8 }}>
+            <div style={{ background:'#F0FDF4', border:'1px solid #86EFAC', borderRadius:10, padding:'8px 14px', marginBottom:10, fontSize: 'var(--fs-dysheme)', color:'#166534', display:'flex', alignItems:'center', gap:8 }}>
               <span aria-hidden="true">💾</span> Draft-i u rikthye automatikisht.
-              <button type="button" onClick={() => { localStorage.removeItem('alpazar_listing_draft'); setForm({ title:'', description:'', price:'', currency:'ALL', condition:'', listing_type:'produkt', category_id:'', city:'', images:[], latitude:null, longitude:null, location_address:'' }); setDraftRestored(false) }} style={{ marginLeft:'auto', background:'none', border:'none', color:'#166534', cursor:'pointer', fontSize:11, textDecoration:'underline', fontFamily:'inherit' }}>Fshi draft-in</button>
+              <button type="button" onClick={() => { localStorage.removeItem('alpazar_listing_draft'); setForm({ title:'', description:'', price:'', currency:'ALL', condition:'', listing_type:'produkt', category_id:'', city:'', images:[], latitude:null, longitude:null, location_address:'' }); setDraftRestored(false) }} style={{ marginLeft:'auto', background:'none', border:'none', color:'#166534', cursor:'pointer', fontSize: 'var(--fs-dysheme)', textDecoration:'underline', fontFamily:'inherit' }}>Fshi draft-in</button>
             </div>
           )}
           {msg && <div className={`msg-box ${mt}`} role="alert">{mm}</div>}
           {uploadProgress && (
-            <div style={{ background:'#e8f4fd', border:'1px solid #90caf9', borderRadius:10, padding:'10px 14px', marginBottom:10, fontSize:13, color:'#1565c0', display:'flex', alignItems:'center', gap:8 }}>
+            <div style={{ background:'#e8f4fd', border:'1px solid #90caf9', borderRadius:10, padding:'10px 14px', marginBottom:10, fontSize: 'var(--fs-dysheme)', color:'#1565c0', display:'flex', alignItems:'center', gap:8 }}>
               <span style={{ fontSize:16 }} aria-hidden="true">⏳</span>
               <div style={{ flex:1 }}>
                 <div style={{ fontWeight:600 }}>Duke ngarkuar foto... {uploadProgress.done}/{uploadProgress.total}</div>
@@ -34,20 +34,20 @@ export function ListingTop({ p }: any) {
             <div className="field">
               <label htmlFor="listing-title">Titulli *</label>
               <input id="listing-title" type="text" placeholder="p.sh. iPhone 13 Pro Max 256GB..." value={form.title} onChange={e => set('title', e.target.value)} maxLength={100} required />
-              <div style={{ textAlign: 'right', fontSize: 10, color: form.title.length > 85 ? 'var(--az-red-deep)' : '#aaa', marginTop: 2 }}>{form.title.length}/100</div>
+              <div style={{ textAlign: 'right', fontSize: 'var(--fs-dysheme)', color: form.title.length > 85 ? 'var(--az-red-deep)' : '#aaa', marginTop: 2 }}>{form.title.length}/100</div>
             </div>
 
             <div className="field">
               <label htmlFor="listing-description">Përshkrimi</label>
               <textarea id="listing-description" placeholder="Përshkruaj artikullin — gjendje, veçori, arsye shitjeje..." value={form.description} onChange={e => set('description', e.target.value)} maxLength={2000} />
-              <div style={{ textAlign: 'right', fontSize: 10, color: form.description.length > 1800 ? 'var(--az-red-deep)' : '#aaa', marginTop: 2 }}>{form.description.length}/2000</div>
+              <div style={{ textAlign: 'right', fontSize: 'var(--fs-dysheme)', color: form.description.length > 1800 ? 'var(--az-red-deep)' : '#aaa', marginTop: 2 }}>{form.description.length}/2000</div>
               <button
                 type="button"
                 onClick={generateDescription}
                 disabled={descLoading}
                 style={{
                   marginTop: 6, background: '#111', color: 'var(--az-yellow)', border: 'none',
-                  borderRadius: 8, padding: '7px 12px', fontSize: 11, fontWeight: 700,
+                  borderRadius: 8, padding: '7px 12px', fontSize: 'var(--fs-dysheme)', fontWeight: 700,
                   cursor: descLoading ? 'not-allowed' : 'pointer', display: 'flex',
                   alignItems: 'center', gap: 5, opacity: descLoading ? 0.7 : 1, fontFamily: 'inherit',
                   minHeight: 44,
@@ -66,14 +66,14 @@ export function ListingTop({ p }: any) {
                   <option value="EUR">€ (Euro)</option>
                 </select>
               </div>
-              <p style={{ fontSize: 10, color: '#555', marginTop: 4 }}>Lër bosh për "Çmim me marrëveshje"</p>
+              <p style={{ fontSize: 'var(--fs-dysheme)', color: '#555', marginTop: 4 }}>Lër bosh për "Çmim me marrëveshje"</p>
               <button
                 type="button"
                 onClick={suggestPrice}
                 disabled={priceLoading}
                 style={{
                   marginTop: 8, background: '#111', color: 'var(--az-yellow)', border: 'none',
-                  borderRadius: 8, padding: '7px 12px', fontSize: 11, fontWeight: 700,
+                  borderRadius: 8, padding: '7px 12px', fontSize: 'var(--fs-dysheme)', fontWeight: 700,
                   cursor: priceLoading ? 'not-allowed' : 'pointer', display: 'flex',
                   alignItems: 'center', gap: 5, opacity: priceLoading ? 0.7 : 1, fontFamily: 'inherit',
                   minHeight: 44,
@@ -84,13 +84,13 @@ export function ListingTop({ p }: any) {
               {priceSuggestion && !priceSuggestion.startsWith('err:') && (
                 <div style={{
                   marginTop: 8, background: '#EAF3DE', border: '0.5px solid #97C459',
-                  borderRadius: 9, padding: '10px 13px', fontSize: 12, color: '#3B6D11', lineHeight: 1.6,
+                  borderRadius: 9, padding: '10px 13px', fontSize: 'var(--fs-dysheme)', color: '#3B6D11', lineHeight: 1.6,
                 }}>
                   <span aria-hidden="true">💡</span> <strong>Albi sugjeron:</strong> {priceSuggestion}
                 </div>
               )}
               {priceSuggestion?.startsWith('err:') && (
-                <div style={{ marginTop: 6, fontSize: 11, color: '#C42B0F' }}>{priceSuggestion.slice(4)}</div>
+                <div style={{ marginTop: 6, fontSize: 'var(--fs-dysheme)', color: '#C42B0F' }}>{priceSuggestion.slice(4)}</div>
               )}
             </div>
 

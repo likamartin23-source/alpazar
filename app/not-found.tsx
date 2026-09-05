@@ -35,7 +35,7 @@ export default function NotFound() {
             <h2 style={{ fontSize: 'var(--fs-2xl)', fontWeight: 700, color: '#111', margin: '0 0 8px' }}>
               Faqja nuk u gjet
             </h2>
-            <p style={{ fontSize: 13, color: '#555', lineHeight: 1.6, margin: '0 0 24px' }}>
+            <p style={{ fontSize: 'var(--fs-dysheme)', color: '#555', lineHeight: 1.6, margin: '0 0 24px' }}>
               Faqja që kërkove nuk ekziston ose është zhvendosur.
               Mund të jetë fshirë ose të kesh shtypur adresën gabim.
             </p>
@@ -44,7 +44,7 @@ export default function NotFound() {
                 href="/"
                 style={{
                   display: 'block', background: 'var(--az-red)', color: '#fff',
-                  borderRadius: 10, padding: '13px 0', fontSize: 14,
+                  borderRadius: 10, padding: '13px 0', fontSize: 'var(--fs-dysheme)',
                   fontWeight: 700, textDecoration: 'none',
                 }}
               >
@@ -54,7 +54,7 @@ export default function NotFound() {
                 href="/search"
                 style={{
                   display: 'block', background: 'var(--az-yellow)', color: '#111',
-                  borderRadius: 10, padding: '12px 0', fontSize: 13,
+                  borderRadius: 10, padding: '12px 0', fontSize: 'var(--fs-dysheme)',
                   fontWeight: 700, textDecoration: 'none',
                 }}
               >

@@ -66,10 +66,10 @@ function InstallBanner() {
             width: 236, maxWidth: '78vw',
             background: 'var(--az-ink,#111)', color: '#fff', borderRadius: '12px 12px 0 12px',
             padding: '12px 13px', boxShadow: '0 4px 16px rgba(0,0,0,.28)',
-            fontSize: 12, lineHeight: 1.5, zIndex: 5, cursor: 'default',
+            fontSize: 'var(--fs-dysheme)', lineHeight: 1.5, zIndex: 5, cursor: 'default',
           }}
         >
-          <strong style={{ display: 'block', color: 'var(--az-yellow)', fontSize: 13, marginBottom: 6 }}>
+          <strong style={{ display: 'block', color: 'var(--az-yellow)', fontSize: 'var(--fs-dysheme)', marginBottom: 6 }}>
             Instalo Alpazar-in
           </strong>
           <div style={{ marginBottom: 5 }}><b>Chrome/Edge:</b> menyja ⋮ → "Instalo aplikacionin".</div>
@@ -78,7 +78,7 @@ function InstallBanner() {
           <button
             type="button"
             onClick={() => setShowGuide(false)}
-            style={{ position: 'absolute', top: 6, right: 8, background: 'none', border: 'none', color: '#6b6b6b', cursor: 'pointer', fontSize: 13, lineHeight: 1, minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={{ position: 'absolute', top: 6, right: 8, background: 'none', border: 'none', color: '#6b6b6b', cursor: 'pointer', fontSize: 'var(--fs-dysheme)', lineHeight: 1, minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             aria-label="Mbyll udhëzimet"
           >✕</button>
         </div>
@@ -97,7 +97,7 @@ function InstallBanner() {
           type="button"
           aria-label="Mbyll"
           onClick={() => setDismissed(true)}
-          style={{ position: 'absolute', top: -5, right: -5, width: 24, height: 24, borderRadius: '50%', background: '#111', border: '2px solid var(--az-cream)', color: '#fff', cursor: 'pointer', fontSize: 11, lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+          style={{ position: 'absolute', top: -5, right: -5, width: 24, height: 24, borderRadius: '50%', background: '#111', border: '2px solid var(--az-cream)', color: '#fff', cursor: 'pointer', fontSize: 'var(--fs-dysheme)', lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
         >✕</button>
       </div>
     </div>
@@ -184,7 +184,7 @@ function ShareBox({ refCode }: { refCode?: string }) {
   }
 
   const BTN_BASE: React.CSSProperties = {
-    border: 'none', borderRadius: 8, padding: '7px 4px', fontSize: 7.5, fontWeight: 700,
+    border: 'none', borderRadius: 8, padding: '7px 4px', fontSize: 'var(--fs-dysheme)', fontWeight: 700,
     cursor: 'pointer', fontFamily: 'inherit', color: '#fff',
     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
   }
@@ -203,7 +203,7 @@ function ShareBox({ refCode }: { refCode?: string }) {
             {(['feed', 'msg'] as const).map(m => (
               <button key={m} type="button" onClick={() => setMode(m)} style={{
                 flex: 1, border: 'none', borderRadius: 6, padding: '5px 2px',
-                fontSize: 8, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+                fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
                 background: mode === m ? 'var(--az-yellow)' : 'transparent',
                 color: mode === m ? '#111' : '#888', transition: 'all .15s',
               }}>
@@ -221,11 +221,11 @@ function ShareBox({ refCode }: { refCode?: string }) {
                 <button key={p.id} type="button" onClick={() => handlePlatform(p)}
                   style={{ ...BTN_BASE, background: isCopying ? '#EAF3DE' : p.bg, color: isCopying ? '#3B6D11' : '#fff' }}>
                   {isCopying
-                    ? <span style={{ fontSize: 14 }} aria-hidden="true">✅</span>
-                    : <i className={`ti ${p.icon}`} style={{ fontSize: 14 }} />
+                    ? <span style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true">✅</span>
+                    : <i className={`ti ${p.icon}`} style={{ fontSize: 'var(--fs-dysheme)' }} />
                   }
                   <span>{p.label}</span>
-                  <span style={{ fontSize: 6.5, opacity: 0.8, fontWeight: 400 }}>
+                  <span style={{ fontSize: 'var(--fs-dysheme)', opacity: 0.8, fontWeight: 400 }}>
                     {isCopying ? 'Kopjuar!' : sub}
                   </span>
                 </button>
@@ -771,7 +771,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                 <button type="button" className="icon-btn" aria-label={unreadNotifications > 0 ? `Njoftime — ${unreadNotifications} të palexuara` : 'Njoftime'} onClick={() => go('/notifications')} style={{ position: 'relative' }}>
                   <i className={`ti ti-bell${unreadNotifications > 0 ? '-ringing' : ''}`} aria-hidden="true" />
                   {unreadNotifications > 0 && (
-                    <span aria-hidden="true" style={{ position: 'absolute', top: 2, right: 2, background: 'var(--az-red)', color: '#fff', fontSize: 7, fontWeight: 700, borderRadius: 8, padding: '1px 3px', minWidth: 12, textAlign: 'center', lineHeight: '12px' }}>{unreadNotifications > 9 ? '9+' : unreadNotifications}</span>
+                    <span aria-hidden="true" style={{ position: 'absolute', top: 2, right: 2, background: 'var(--az-red)', color: '#fff', fontSize: 'var(--fs-dysheme)', fontWeight: 700, borderRadius: 8, padding: '1px 3px', minWidth: 12, textAlign: 'center', lineHeight: '12px' }}>{unreadNotifications > 9 ? '9+' : unreadNotifications}</span>
                   )}
                 </button>
               )}
@@ -900,7 +900,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
               <span>Biznes · Badge · Shpallje ∞ · {cfg('premium_monthly_price_all','') ? `${nf(Number(cfg('premium_monthly_price_all','')))} L/muaj` : ''}</span>
               {/* VIP simbolizohet si HAP MBI premium: ⭐ → 👑 me Boost. Vetëm anëtari Premium
                   bëhet VIP (tierNgaProfili: vip = premium DHE boost), ndaj rrjedha e tregon. */}
-              <span style={{ display: 'block', marginTop: 2, fontSize: 10, opacity: .85 }}>
+              <span style={{ display: 'block', marginTop: 2, fontSize: 'var(--fs-dysheme)', opacity: .85 }}>
                 <span aria-hidden="true">⭐</span> Premium <span aria-hidden="true" style={{ opacity: .6 }}>→</span> <span aria-hidden="true">👑</span> VIP me Boost
               </span>
             </div>
@@ -939,7 +939,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
 
           {newListingBadge && (
             <div role="button" tabIndex={0} className="new-listing-toast" onClick={() => { fetchListings(); setNewListingBadge(false) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { fetchListings(); setNewListingBadge(false) } }}>
-              <i className="ti ti-sparkles" style={{ fontSize: 14, color: '#3B6D11' }} aria-hidden="true" />
+              <i className="ti ti-sparkles" style={{ fontSize: 'var(--fs-dysheme)', color: '#3B6D11' }} aria-hidden="true" />
               <span>Shpallje e re u shtua — klikoni për të rifreskuar</span>
             </div>
           )}
@@ -975,7 +975,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
             <div style={{ marginBottom: 12 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px', marginBottom: 10 }}>
                 <h3 style={{ margin: 0, fontSize: 'var(--fs-lg)', fontWeight: 700, color: '#111' }}><span aria-hidden="true">👁</span> Rishikimet e fundit</h3>
-                <button type="button" onClick={() => { localStorage.removeItem('_alpazar_rv'); setRecentlyViewed([]) }} style={{ background: 'none', border: 'none', fontSize: 10, color: '#6b6b6b', cursor: 'pointer', fontFamily: 'inherit' }}>Pastro</button>
+                <button type="button" onClick={() => { localStorage.removeItem('_alpazar_rv'); setRecentlyViewed([]) }} style={{ background: 'none', border: 'none', fontSize: 'var(--fs-dysheme)', color: '#6b6b6b', cursor: 'pointer', fontFamily: 'inherit' }}>Pastro</button>
               </div>
               <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, scrollbarWidth: 'none' }}>
                 {recentUnique.map(item => {
@@ -991,8 +991,8 @@ export default function HomeClient({ initialListings = [], initialCategories = [
                         }
                       </div>
                       <div style={{ padding: '6px 8px' }}>
-                        <div style={{ fontSize: 10, fontWeight: 600, color: '#111', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', lineHeight: 1.3, marginBottom: 2 }}>{item.title}</div>
-                        <div style={{ fontSize: 11, fontWeight: 800, color: '#C42B0F' }}>{price}</div>
+                        <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 600, color: '#111', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', lineHeight: 1.3, marginBottom: 2 }}>{item.title}</div>
+                        <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 800, color: '#C42B0F' }}>{price}</div>
                       </div>
                     </div>
                   )
@@ -1028,7 +1028,7 @@ export default function HomeClient({ initialListings = [], initialCategories = [
               <button
                 type="button"
                 onClick={() => go('/search')}
-                style={{ background: '#111', color: 'var(--az-yellow)', border: 'none', borderRadius: 12, padding: '12px 28px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+                style={{ background: '#111', color: 'var(--az-yellow)', border: 'none', borderRadius: 12, padding: '12px 28px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
               >
                 <><span aria-hidden="true">🔍</span> Eksploro të gjitha shpalljet →</>
               </button>

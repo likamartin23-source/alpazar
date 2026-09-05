@@ -52,7 +52,7 @@ function ShopCard({ shop }: { shop: any }) {
         <div className="shop-name">{shop.shop_name || shop.full_name}</div>
         {catLabel && <div className="shop-cat-tag">{catLabel}</div>}
         <div className="shop-meta">
-          <span className="shop-city"><i className="ti ti-map-pin" style={{ fontSize: 10 }} aria-hidden="true" /> {shop.city || 'Shqipëri'}</span>
+          <span className="shop-city"><i className="ti ti-map-pin" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" /> {shop.city || 'Shqipëri'}</span>
           <span className="shop-count">{shop.listing_count || 0} shpallje</span>
         </div>
       </div>
@@ -571,7 +571,7 @@ const [searchError, setSearchError] = useState(false)
         </div>
 
         {nearErr && (
-          <div role="alert" style={{ padding: '8px 12px', fontSize: 12, color: 'var(--az-red-deep)', background: '#FFF0EE', borderBottom: '1px solid #F5C5BC' }}>
+          <div role="alert" style={{ padding: '8px 12px', fontSize: 'var(--fs-dysheme)', color: 'var(--az-red-deep)', background: '#FFF0EE', borderBottom: '1px solid #F5C5BC' }}>
             {nearErr}
           </div>
         )}
@@ -597,7 +597,7 @@ const [searchError, setSearchError] = useState(false)
             <div style={{ textAlign: 'center', padding: '48px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
               <div style={{ fontSize: 36 }} aria-hidden="true">⚠️</div>
               <div style={{ fontWeight: 700, color: '#111' }}>Gabim gjatë kërkimit</div>
-              <button type="button" onClick={() => doSearch()} style={{ background: 'var(--az-yellow)', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Provo Përsëri</button>
+              <button type="button" onClick={() => doSearch()} style={{ background: 'var(--az-yellow)', border: 'none', borderRadius: 24, padding: '10px 24px', fontWeight: 700, fontSize: 'var(--fs-dysheme)', cursor: 'pointer' }}>Provo Përsëri</button>
             </div>
           ) : loading ? (
             <SkeletonGrid count={6} />
@@ -636,13 +636,13 @@ const [searchError, setSearchError] = useState(false)
                       background: savedOk ? '#10B981' : '#fff',
                       color: savedOk ? '#fff' : 'var(--az-red-deep)',
                       border: `1.5px solid ${savedOk ? '#10B981' : 'var(--az-red-deep)'}`,
-                      borderRadius: 20, padding: '3px 10px', fontSize: 10,
+                      borderRadius: 20, padding: '3px 10px', fontSize: 'var(--fs-dysheme)',
                       fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
                       display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0,
                       transition: 'all .2s',
                     }}
                   >
-                    <i className={`ti ti-bell${savedOk ? '-ringing' : ''}`} aria-hidden="true" style={{ fontSize: 11 }} />
+                    <i className={`ti ti-bell${savedOk ? '-ringing' : ''}`} aria-hidden="true" style={{ fontSize: 'var(--fs-dysheme)' }} />
                     {savedOk ? '✓ Ruajtur!' : saveErr ? '✕ Provo sërish' : 'Ruaj'}
                   </button>
                 )}
@@ -700,7 +700,7 @@ const [searchError, setSearchError] = useState(false)
                       type="button"
                       onClick={loadMore}
                       disabled={loadingMore}
-                      style={{ background: '#111', color: 'var(--az-yellow)', border: 'none', borderRadius: 24, padding: '11px 28px', fontWeight: 700, fontSize: 13, cursor: loadingMore ? 'not-allowed' : 'pointer', fontFamily: 'inherit', opacity: loadingMore ? 0.7 : 1 }}
+                      style={{ background: '#111', color: 'var(--az-yellow)', border: 'none', borderRadius: 24, padding: '11px 28px', fontWeight: 700, fontSize: 'var(--fs-dysheme)', cursor: loadingMore ? 'not-allowed' : 'pointer', fontFamily: 'inherit', opacity: loadingMore ? 0.7 : 1 }}
                     >
                       {loadingMore ? <><span aria-hidden='true'>⏳</span> Duke ngarkuar...</> : 'Shiko më shumë →'}
                     </button>
@@ -776,8 +776,8 @@ const [searchError, setSearchError] = useState(false)
               onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setPremiumOnly(v => !v) } }}
               onClick={() => setPremiumOnly(v => !v)}>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: '#111' }}>Vetëm Premium</div>
-                <div style={{ fontSize: 11, color: '#6B6B6B', marginTop: 2 }}>Shpallje të verifikuara</div>
+                <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#111' }}>Vetëm Premium</div>
+                <div style={{ fontSize: 'var(--fs-dysheme)', color: '#6B6B6B', marginTop: 2 }}>Shpallje të verifikuara</div>
               </div>
               <div style={{
                 width: 44, height: 24, borderRadius: 12, background: premiumOnly ? 'var(--az-yellow)' : '#ddd',

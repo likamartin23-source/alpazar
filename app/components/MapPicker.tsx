@@ -81,7 +81,7 @@ export function MapPicker({ lat, lng, address, onChange, onCityChange }: MapPick
           onChange={handleInput}
           style={{
             flex: 1, border: '1.5px solid #ddd', borderRadius: 9, padding: '9px 12px',
-            fontSize: 13, fontFamily: 'inherit', outline: 'none', background: '#fff', color: '#111',
+            fontSize: 'var(--fs-dysheme)', fontFamily: 'inherit', outline: 'none', background: '#fff', color: '#111',
           }}
           onFocus={e => (e.target.style.borderColor = 'var(--az-yellow)')}
           onBlur={e => (e.target.style.borderColor = '#ddd')}
@@ -112,10 +112,10 @@ export function MapPicker({ lat, lng, address, onChange, onCityChange }: MapPick
       </div>
 
       {error && (
-        <div style={{ marginTop: 6, fontSize: 11, color: '#C42B0F' }}>{error}</div>
+        <div style={{ marginTop: 6, fontSize: 'var(--fs-dysheme)', color: '#C42B0F' }}>{error}</div>
       )}
 
-      <div style={{ marginTop: 6, fontSize: 11, color: '#555', display: 'flex', alignItems: 'center', gap: 5 }}>
+      <div style={{ marginTop: 6, fontSize: 'var(--fs-dysheme)', color: '#555', display: 'flex', alignItems: 'center', gap: 5 }}>
         <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="#aaa" style={{ flexShrink: 0 }}>
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
         </svg>
@@ -123,7 +123,7 @@ export function MapPicker({ lat, lng, address, onChange, onCityChange }: MapPick
       </div>
 
       {input && (
-        <div style={{ marginTop: 8, background: '#EEF4FF', border: '1px solid #C3DAFB', borderRadius: 9, padding: '8px 12px', fontSize: 12, color: '#185FA5', display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+        <div style={{ marginTop: 8, background: '#EEF4FF', border: '1px solid #C3DAFB', borderRadius: 9, padding: '8px 12px', fontSize: 'var(--fs-dysheme)', color: '#185FA5', display: 'flex', alignItems: 'flex-start', gap: 6 }}>
           <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ flexShrink: 0, marginTop: 1 }}>
             <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
           </svg>

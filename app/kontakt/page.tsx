@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 import { useState } from 'react'
 import { useAlpazar } from '../../lib/context'
 
-const LS = { color: '#666' as const, fontSize: 11, textDecoration: 'none' as const }
+const LS = { color: '#666' as const, fontSize: 'var(--fs-dysheme)', textDecoration: 'none' as const }
 
 export default function Kontakt() {
   const { cfg } = useAlpazar()
@@ -186,17 +186,17 @@ export default function Kontakt() {
 
           <div className="section">
             <div className="sec-title"><i className="ti ti-map-pin" aria-hidden="true" />Adresa</div>
-            <p style={{ fontSize: 13, color: '#444', lineHeight: 1.7 }}>
+            <p style={{ fontSize: 'var(--fs-dysheme)', color: '#444', lineHeight: 1.7 }}>
               Alpazar<br />
               Tiranë, Shqipëri<br />
-              <span style={{ fontSize: 11, color: '#555' }}>NIPT/QKB: {cfg('company_nipt') || '(në regjistrim)'}</span>
+              <span style={{ fontSize: 'var(--fs-dysheme)', color: '#555' }}>NIPT/QKB: {cfg('company_nipt') || '(në regjistrim)'}</span>
             </p>
             <a
               href="https://www.google.com/maps/search/Tiranë,+Shqipëri"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 10, background: '#EEF4FF', color: '#185FA5', borderRadius: 8, padding: '7px 13px', fontSize: 12, fontWeight: 600, textDecoration: 'none', border: '1px solid #C3DAFB' }}>
-              <i className="ti ti-map" style={{ fontSize: 14 }} aria-hidden="true" />Hap në Google Maps
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 10, background: '#EEF4FF', color: '#185FA5', borderRadius: 8, padding: '7px 13px', fontSize: 'var(--fs-dysheme)', fontWeight: 600, textDecoration: 'none', border: '1px solid #C3DAFB' }}>
+              <i className="ti ti-map" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />Hap në Google Maps
             </a>
           </div>
         </div>

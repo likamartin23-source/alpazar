@@ -19,7 +19,7 @@ export function ListingMid({ p }: any) {
               disabled={catLoading}
               style={{
                 margin: '0 0 10px', background: '#111', color: 'var(--az-yellow)', border: 'none',
-                borderRadius: 8, padding: '7px 12px', fontSize: 11, fontWeight: 700,
+                borderRadius: 8, padding: '7px 12px', fontSize: 'var(--fs-dysheme)', fontWeight: 700,
                 cursor: catLoading ? 'not-allowed' : 'pointer', display: 'flex',
                 alignItems: 'center', gap: 5, opacity: catLoading ? 0.7 : 1, fontFamily: 'inherit',
               }}
@@ -27,7 +27,7 @@ export function ListingMid({ p }: any) {
               {catLoading ? <span aria-hidden='true'>⏳</span> : <span aria-hidden='true'>🤖</span>} {catLoading ? 'Duke menduar...' : 'Sugjero kategorinë me Albi'}
             </button>
             {catSuggested && (
-              <div style={{ margin: '0 0 10px', fontSize: 11, color: '#166534', background: '#F0FDF4', border: '.5px solid #BBF7D0', borderRadius: 8, padding: '6px 10px' }}>
+              <div style={{ margin: '0 0 10px', fontSize: 'var(--fs-dysheme)', color: '#166534', background: '#F0FDF4', border: '.5px solid #BBF7D0', borderRadius: 8, padding: '6px 10px' }}>
                 <span aria-hidden="true">💡</span> <strong>Albi zgjodhi:</strong> {catSuggested}
               </div>
             )}

@@ -214,14 +214,14 @@ export function InvoicesTab() {
 
       {err && (
         <div className="card" role="alert"
-          style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#C42B0F', fontSize: 12 }}>{err}</div>
+          style={{ borderColor: '#F09595', background: '#FFF0EE', color: '#C42B0F', fontSize: 'var(--fs-dysheme)' }}>{err}</div>
       )}
 
       {/* ── HAPI QE MUNGONTE: kush pret, dhe ne c'faze ───────────────────── */}
       <div className="card" style={pret.length ? { borderColor: '#F0C36D', background: '#FFFDF6' } : undefined}>
         <div className="ct">Presin veprim</div>
         {pret.length === 0 ? (
-          <div style={{ fontSize: 11.5, color: '#7A9A5B' }}>
+          <div style={{ fontSize: 'var(--fs-dysheme)', color: '#7A9A5B' }}>
             Asnjë pagesë nuk pret. Çdo faturë është ngarkuar dhe dërguar.
           </div>
         ) : (
@@ -233,16 +233,16 @@ export function InvoicesTab() {
                 const gati = p.ka_skedar && !p.derguar
                 return (
                   <tr key={p.invoice_id}>
-                    <td style={{ fontSize: 11 }}>
+                    <td style={{ fontSize: 'var(--fs-dysheme)' }}>
                       <strong>{p.perdoruesi.emri}</strong>
-                      <div style={{ color: '#aaa', fontSize: 9.5 }}>
+                      <div style={{ color: '#aaa', fontSize: 'var(--fs-dysheme)' }}>
                         {p.perdoruesi.telefon || p.perdoruesi.email || '—'} · {p.reference}
                       </div>
                     </td>
                     <td><strong>{L(p.shuma)} {p.monedha}</strong>
-                      <div style={{ color: '#aaa', fontSize: 9.5 }}>{d(p.paguar_me)}</div>
+                      <div style={{ color: '#aaa', fontSize: 'var(--fs-dysheme)' }}>{d(p.paguar_me)}</div>
                     </td>
-                    <td style={{ fontSize: 10.5, color: gati ? '#7A9A5B' : '#BA7517' }}>{p.gjendja}</td>
+                    <td style={{ fontSize: 'var(--fs-dysheme)', color: gati ? '#7A9A5B' : '#BA7517' }}>{p.gjendja}</td>
                     <td>
                       {gati ? (
                         <button type="button" className="btn btn-green"
@@ -296,36 +296,36 @@ export function InvoicesTab() {
               return (
                 <tr key={r.id} style={kredit ? { background: '#FFFAF9' } : undefined}>
                   <td>
-                    <strong style={{ fontSize: 11.5, color: kredit ? 'var(--az-red-deep)' : undefined }}>
+                    <strong style={{ fontSize: 'var(--fs-dysheme)', color: kredit ? 'var(--az-red-deep)' : undefined }}>
                       {r.fiscal_number || r.number}
                     </strong>
                     {kredit && <> <span className="badge bd">notë krediti</span></>}
                     {r.fiscal_number && <> <span className="badge ba">tatimore</span></>}
-                    <div style={{ color: '#aaa', fontSize: 9.5 }}>
+                    <div style={{ color: '#aaa', fontSize: 'var(--fs-dysheme)' }}>
                       {r.plan_name} · {d(r.issued_at)}
                       {r.fiscal_number && <> · ref. {r.number}</>}
                       {kredit && r.parent_number && <> · për {r.parent_number}</>}
                     </div>
-                    {r.nivf && <div style={{ color: '#999', fontSize: 9 }}>NIVF {r.nivf}</div>}
+                    {r.nivf && <div style={{ color: '#999', fontSize: 'var(--fs-dysheme)' }}>NIVF {r.nivf}</div>}
                     {r.refund_reason && (
-                      <div style={{ color: '#BA7517', fontSize: 9.5, marginTop: 2 }}>“{r.refund_reason}”</div>
+                      <div style={{ color: '#BA7517', fontSize: 'var(--fs-dysheme)', marginTop: 2 }}>“{r.refund_reason}”</div>
                     )}
                   </td>
-                  <td style={{ fontSize: 11 }}>
+                  <td style={{ fontSize: 'var(--fs-dysheme)' }}>
                     {r.full_name || '—'}
-                    <div style={{ color: '#aaa', fontSize: 9.5 }}>{r.email}</div>
+                    <div style={{ color: '#aaa', fontSize: 'var(--fs-dysheme)' }}>{r.email}</div>
                   </td>
                   <td>
                     <strong style={{ color: kredit ? 'var(--az-red-deep)' : undefined }}>{L(r.total)} {r.currency}</strong>
                     {!kredit && Number(r.refunded_total) > 0 && (
-                      <div style={{ color: '#C42B0F', fontSize: 9.5 }}>
+                      <div style={{ color: '#C42B0F', fontSize: 'var(--fs-dysheme)' }}>
                         −{L(r.refunded_total)} rimbursuar · mbetet {L(r.mbetja)}
                       </div>
                     )}
                   </td>
                   <td>
                     <span className={`badge ${sc}`}>{se}</span>
-                    {r.sent_at && <div style={{ color: '#aaa', fontSize: 9.5 }}>{d(r.sent_at)} · {r.send_count}×</div>}
+                    {r.sent_at && <div style={{ color: '#aaa', fontSize: 'var(--fs-dysheme)' }}>{d(r.sent_at)} · {r.send_count}×</div>}
                   </td>
                   <td>
                     {!kredit && !r.file_url && (
@@ -343,7 +343,7 @@ export function InvoicesTab() {
                     )}
 
                     {r.file_url && (
-                      <div style={{ marginTop: 4, fontSize: 10 }}>
+                      <div style={{ marginTop: 4, fontSize: 'var(--fs-dysheme)' }}>
                         <button type="button" className="edit-btn" style={{ color: '#C42B0F' }}
                           onClick={() => shihSkedarin(r.file_url)}>
                           {r.file_name || 'shiko faturën'}
@@ -363,11 +363,11 @@ export function InvoicesTab() {
                     {/* ── Dorëzimi i faturës tatimore ────────────────────── */}
                     {hap === r.id && (
                       <div style={{ marginTop: 8, borderTop: '2px solid #F0C36D', paddingTop: 8 }}>
-                        <div style={{ fontSize: 10, color: '#999', marginBottom: 6 }}>
+                        <div style={{ fontSize: 'var(--fs-dysheme)', color: '#999', marginBottom: 6 }}>
                           Ngarko PDF-në e lëshuar në aplikacionin e tatimeve.
                         </div>
                         <input ref={inputRef} type="file" accept="application/pdf,image/jpeg,image/png"
-                          aria-label="Fatura tatimore" style={{ fontSize: 10.5, width: '100%' }}
+                          aria-label="Fatura tatimore" style={{ fontSize: 'var(--fs-dysheme)', width: '100%' }}
                           onChange={e => setSkedari(e.target.files?.[0] || null)} />
                         <input className="finput" style={{ marginTop: 6 }} value={nrTatimor}
                           aria-label="Numri i faturës nga tatimet"
@@ -393,7 +393,7 @@ export function InvoicesTab() {
                     {/* ── Rimbursimi ─────────────────────────────────────── */}
                     {rimb === r.id && (
                       <div style={{ marginTop: 8, borderTop: '2px solid #F09595', paddingTop: 8 }}>
-                        <div style={{ fontSize: 10, color: '#999', marginBottom: 4 }}>
+                        <div style={{ fontSize: 'var(--fs-dysheme)', color: '#999', marginBottom: 4 }}>
                           Mbetet për rimbursim: <strong>{L(r.mbetja)} {r.currency}</strong>
                         </div>
                         <input className="finput" type="number" step="0.01" value={shuma}
@@ -402,7 +402,7 @@ export function InvoicesTab() {
                         <input className="finput" style={{ marginTop: 6 }} value={arsyeja}
                           aria-label="Arsyeja e rimbursimit" placeholder="Arsyeja (e detyrueshme)"
                           onChange={e => { setArsyeja(e.target.value); setKonfirmo(false) }} />
-                        <label style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 8, fontSize: 10.5, color: '#555' }}>
+                        <label style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 8, fontSize: 'var(--fs-dysheme)', color: '#555' }}>
                           <input type="checkbox" checked={hiqAbonimin}
                             onChange={e => { setHiqAbonimin(e.target.checked); setKonfirmo(false) }} />
                           Ndërprit edhe abonimin menjëherë
@@ -437,7 +437,7 @@ export function InvoicesTab() {
 
       <div className="card">
         <div className="ct">Si funksionon</div>
-        <div style={{ fontSize: 11, color: '#666', lineHeight: 1.8 }}>
+        <div style={{ fontSize: 'var(--fs-dysheme)', color: '#666', lineHeight: 1.8 }}>
           Kur aprovohet një pagesë, këtu krijohet një <strong>referencë e brendshme</strong>
           (ALP-…). Numri fiskal nuk gjenerohet nga platforma — ai vjen nga
           <strong> aplikacioni i tatimeve</strong>, ku lëshohet fatura e vërtetë.

@@ -120,7 +120,7 @@ function ReferralTab() {
       </div>
       <div className="card">
         <div className="ct">Top Referues</div>
-        {loading ? <p role="status" aria-live="polite" style={{ color: '#aaa', fontSize: 12, padding: '12px 0' }}>Duke ngarkuar...</p> :
+        {loading ? <p role="status" aria-live="polite" style={{ color: '#aaa', fontSize: 'var(--fs-dysheme)', padding: '12px 0' }}>Duke ngarkuar...</p> :
           <table>
             <thead><tr><th scope="col">#</th><th scope="col">Kodi</th><th scope="col">Të ftuar</th><th scope="col">Pikë</th></tr></thead>
             <tbody>{ranked.map((r: any, i) => (
@@ -227,9 +227,9 @@ function AIHealthTab() {
           {loading ? 'Duke ngarkuar…' : '↻ Rifresko'}
         </button>
       </div>
-      {err && <div role="alert" style={{ background: '#FEECEC', color: '#B42318', border: '1px solid #F5C2C2', borderRadius: 8, padding: '8px 10px', fontSize: 12, marginBottom: 10 }}>{err}</div>}
+      {err && <div role="alert" style={{ background: '#FEECEC', color: '#B42318', border: '1px solid #F5C2C2', borderRadius: 8, padding: '8px 10px', fontSize: 'var(--fs-dysheme)', marginBottom: 10 }}>{err}</div>}
       {!loading && events.length === 0 && !err && (
-        <div style={{ textAlign: 'center', padding: '28px 0', color: '#1D9E75', fontSize: 13 }}>
+        <div style={{ textAlign: 'center', padding: '28px 0', color: '#1D9E75', fontSize: 'var(--fs-dysheme)' }}>
           <div style={{ fontSize: 34, marginBottom: 8 }} aria-hidden="true">✅</div>
           Asnjë gabim i kapur. Platforma është e shëndetshme.
         </div>
@@ -238,16 +238,16 @@ function AIHealthTab() {
         {events.map(ev => (
           <div key={ev.id} className="card" style={{ padding: 12, borderLeft: `4px solid ${sevColor(ev.severity)}` }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
-              <span style={{ background: sevColor(ev.severity), color: '#fff', fontSize: 10, fontWeight: 800, padding: '2px 8px', borderRadius: 6, textTransform: 'uppercase' }}>{ev.severity || 'new'}</span>
-              {ev.category && <span style={{ fontSize: 11, color: '#555', fontWeight: 600 }}>{ev.category}</span>}
-              <span style={{ fontSize: 10, color: '#aaa' }}>×{ev.count} · {ev.source}</span>
-              {ev.is_actionable && <span style={{ fontSize: 10, color: '#1D9E75', fontWeight: 700 }}>● e rregullueshme</span>}
-              <span style={{ marginLeft: 'auto', fontSize: 10, color: '#bbb' }}>{ev.last_seen_at ? `${dateShort(ev.last_seen_at)} ${clockTime(ev.last_seen_at)}` : ''}</span>
+              <span style={{ background: sevColor(ev.severity), color: '#fff', fontSize: 'var(--fs-dysheme)', fontWeight: 800, padding: '2px 8px', borderRadius: 6, textTransform: 'uppercase' }}>{ev.severity || 'new'}</span>
+              {ev.category && <span style={{ fontSize: 'var(--fs-dysheme)', color: '#555', fontWeight: 600 }}>{ev.category}</span>}
+              <span style={{ fontSize: 'var(--fs-dysheme)', color: '#aaa' }}>×{ev.count} · {ev.source}</span>
+              {ev.is_actionable && <span style={{ fontSize: 'var(--fs-dysheme)', color: '#1D9E75', fontWeight: 700 }}>● e rregullueshme</span>}
+              <span style={{ marginLeft: 'auto', fontSize: 'var(--fs-dysheme)', color: '#bbb' }}>{ev.last_seen_at ? `${dateShort(ev.last_seen_at)} ${clockTime(ev.last_seen_at)}` : ''}</span>
             </div>
-            <div style={{ fontSize: 12, fontWeight: 700, color: '#111', wordBreak: 'break-word' }}>{ev.message}</div>
-            {ev.url && <div style={{ fontSize: 10, color: '#888', marginTop: 2 }}>{ev.url}</div>}
-            {ev.likely_cause && <div style={{ fontSize: 11, color: '#555', marginTop: 6 }}><strong>Shkaku:</strong> {ev.likely_cause}</div>}
-            {ev.suggested_fix && <div style={{ fontSize: 11, color: '#166534', marginTop: 4, background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 6, padding: '6px 8px' }}><strong>Rregullim i propozuar (AI):</strong> {ev.suggested_fix}</div>}
+            <div style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#111', wordBreak: 'break-word' }}>{ev.message}</div>
+            {ev.url && <div style={{ fontSize: 'var(--fs-dysheme)', color: '#888', marginTop: 2 }}>{ev.url}</div>}
+            {ev.likely_cause && <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555', marginTop: 6 }}><strong>Shkaku:</strong> {ev.likely_cause}</div>}
+            {ev.suggested_fix && <div style={{ fontSize: 'var(--fs-dysheme)', color: '#166534', marginTop: 4, background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 6, padding: '6px 8px' }}><strong>Rregullim i propozuar (AI):</strong> {ev.suggested_fix}</div>}
           </div>
         ))}
       </div>
@@ -580,10 +580,10 @@ export default function Admin() {
       <style dangerouslySetInnerHTML={{ __html: `input[type=text]{background:var(--az-ink);border:1px solid #333;color:#fff;border-radius:8px;padding:12px 16px;font-size:20px;letter-spacing:8px;text-align:center;width:180px;outline:none;font-family:monospace;}` }} />
       <div style={{ fontSize:32 }} aria-hidden="true">🔐</div>
       <div style={{ color:'var(--az-yellow)', fontWeight:800, fontSize:16 }}>Verifikimi 2FA i Adminit</div>
-      <div style={{ color:'#666', fontSize:12 }}>Fut kodin nga Google Authenticator / Authy</div>
+      <div style={{ color:'#666', fontSize: 'var(--fs-dysheme)' }}>Fut kodin nga Google Authenticator / Authy</div>
       <input type="text" aria-label="Kodi 2FA (6 shifra)" inputMode="numeric" pattern="[0-9]*" autoComplete="one-time-code" maxLength={6} value={totpCode} onChange={e => setTotpCode(e.target.value.replace(/\D/g,''))} placeholder="000000" onKeyDown={e => e.key === 'Enter' && verifyAdminMfa()} autoFocus />
-      {mfaError && <div role="alert" style={{ color: '#C42B0F', fontSize:12 }}>{mfaError}</div>}
-      <button type="button" onClick={verifyAdminMfa} style={{ background:'var(--az-yellow)', color:'#111', border:'none', borderRadius:8, padding:'10px 28px', fontWeight:800, fontSize:14, cursor:'pointer' }}>Konfirmo</button>
+      {mfaError && <div role="alert" style={{ color: '#C42B0F', fontSize: 'var(--fs-dysheme)' }}>{mfaError}</div>}
+      <button type="button" onClick={verifyAdminMfa} style={{ background:'var(--az-yellow)', color:'#111', border:'none', borderRadius:8, padding:'10px 28px', fontWeight:800, fontSize: 'var(--fs-dysheme)', cursor:'pointer' }}>Konfirmo</button>
     </div>
   )
 
@@ -599,7 +599,7 @@ export default function Admin() {
         <div style={{ background: '#fff', border: '1.5px solid #f0e6b0', borderRadius: 18, padding: 36, maxWidth: 340, width: '90%', textAlign: 'center' }}>
           <div style={{ fontSize: 40, marginBottom: 12 }} aria-hidden="true">🔐</div>
           <h2 style={{ fontSize: 'var(--fs-2xl)', fontWeight: 800, color: '#111', marginBottom: 6 }}>Admin PIN</h2>
-          <p style={{ fontSize: 12, color: '#888', marginBottom: 20 }}>Fut kodin 6-shifror për të hyrë në panel</p>
+          <p style={{ fontSize: 'var(--fs-dysheme)', color: '#888', marginBottom: 20 }}>Fut kodin 6-shifror për të hyrë në panel</p>
           <input
             type="password"
             aria-label="Admin PIN 6-shifror"
@@ -612,11 +612,11 @@ export default function Admin() {
             style={{ width: '100%', border: '2px solid var(--az-yellow)', borderRadius: 10, padding: '12px', fontSize: 22, textAlign: 'center', letterSpacing: 8, fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' as const, marginBottom: 12 }}
             autoFocus
           />
-          {pinError && <div role="alert" style={{ color: '#C42B0F', fontSize: 12, marginBottom: 10 }}>{pinError}</div>}
+          {pinError && <div role="alert" style={{ color: '#C42B0F', fontSize: 'var(--fs-dysheme)', marginBottom: 10 }}>{pinError}</div>}
           <button
             type="button"
             onClick={checkPin}
-            style={{ width: '100%', background: '#111', color: '#fff', border: 'none', borderRadius: 10, padding: '13px', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}
+            style={{ width: '100%', background: '#111', color: '#fff', border: 'none', borderRadius: 10, padding: '13px', fontSize: 'var(--fs-dysheme)', fontWeight: 700, cursor: 'pointer' }}
           >
             Hyr →
           </button>
@@ -639,14 +639,14 @@ export default function Admin() {
             <div className="r">Paneli i Administrimit</div>
             {myRole && (
               <div style={{ marginTop: 6, display: 'inline-block', background: 'var(--az-ink)',
-                color: 'var(--az-yellow)', borderRadius: 4, padding: '2px 7px', fontSize: 9, fontWeight: 800,
+                color: 'var(--az-yellow)', borderRadius: 4, padding: '2px 7px', fontSize: 'var(--fs-dysheme)', fontWeight: 800,
                 textTransform: 'uppercase', letterSpacing: .5 }}>
                 {myRole === 'owner' ? 'Pronar' : myRole === 'admin' ? 'Administrator'
                   : myRole === 'finance' ? 'Financa' : myRole === 'moderator' ? 'Moderator' : 'Mbështetje'}
               </div>
             )}
             {isMaint && (
-              <div style={{ marginTop: 8, background: 'var(--az-red)', color: '#fff', borderRadius: 4, padding: '2px 6px', fontSize: 9, fontWeight: 700 }}>
+              <div style={{ marginTop: 8, background: 'var(--az-red)', color: '#fff', borderRadius: 4, padding: '2px 6px', fontSize: 'var(--fs-dysheme)', fontWeight: 700 }}>
                 <><span aria-hidden="true">🔧</span> MIRËMBAJTJE</>
               </div>
             )}
@@ -670,12 +670,12 @@ export default function Admin() {
               <i className={`ti ti-${icon}`} aria-hidden="true" />
               <span>{label}</span>
               {id === 'radha' && stats.reports > 0 && (
-                <span style={{ marginLeft: 'auto', background: 'var(--az-red)', color: '#fff', borderRadius: 10, fontSize: 9, fontWeight: 800, padding: '1px 5px' }}>
+                <span style={{ marginLeft: 'auto', background: 'var(--az-red)', color: '#fff', borderRadius: 10, fontSize: 'var(--fs-dysheme)', fontWeight: 800, padding: '1px 5px' }}>
                   {stats.reports}
                 </span>
               )}
               {id === 'preq' && premiumRequests.filter(r => r.status === 'pending').length > 0 && (
-                <span style={{ marginLeft: 'auto', background: '#BA7517', color: '#fff', borderRadius: 10, fontSize: 9, fontWeight: 800, padding: '1px 5px' }}>
+                <span style={{ marginLeft: 'auto', background: '#BA7517', color: '#fff', borderRadius: 10, fontSize: 'var(--fs-dysheme)', fontWeight: 800, padding: '1px 5px' }}>
                   {premiumRequests.filter(r => r.status === 'pending').length}
                 </span>
               )}
@@ -685,8 +685,8 @@ export default function Admin() {
           ))}
 
           <div style={{ marginTop: 'auto', padding: '12px 14px', borderTop: '1px solid #1e1e1e', display: 'flex', flexDirection: 'column', gap: 10 }}>
-            <a href="/" style={{ color: '#666', fontSize: 11, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
-              <i className="ti ti-arrow-left" style={{ fontSize: 13 }} aria-hidden="true" />Kthehu
+            <a href="/" style={{ color: '#666', fontSize: 'var(--fs-dysheme)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <i className="ti ti-arrow-left" style={{ fontSize: 'var(--fs-dysheme)' }} aria-hidden="true" />Kthehu
             </a>
           </div>
         </div>
@@ -694,7 +694,7 @@ export default function Admin() {
         {/* ── Content ── */}
         <div className="content">
           {loading && tab !== 'config' ? (
-            <div role="status" aria-live="polite" style={{ textAlign: 'center', padding: 60, color: '#aaa', fontSize: 13 }}>Duke ngarkuar...</div>
+            <div role="status" aria-live="polite" style={{ textAlign: 'center', padding: 60, color: '#aaa', fontSize: 'var(--fs-dysheme)' }}>Duke ngarkuar...</div>
           ) : (
             <>
               {/* DASHBOARD */}
@@ -706,20 +706,20 @@ export default function Admin() {
                   <div className="ph">
                     <div className="pt"><span aria-hidden="true">💳</span> Pagesat Premium</div>
                     {premiumRequests.filter(r => r.status === 'pending').length > 0 && (
-                      <span style={{ background: 'var(--az-red)', color: '#fff', borderRadius: 10, fontSize: 10, fontWeight: 800, padding: '3px 9px' }}>
+                      <span style={{ background: 'var(--az-red)', color: '#fff', borderRadius: 10, fontSize: 'var(--fs-dysheme)', fontWeight: 800, padding: '3px 9px' }}>
                         {premiumRequests.filter(r => r.status === 'pending').length} të reja
                       </span>
                     )}
                   </div>
                   {payMsg && (
-                    <div style={{ background: payMsg.startsWith('Sukses') ? '#EAF3DE' : '#FFF0EE', border: payMsg.startsWith('Sukses') ? '0.5px solid #97C459' : '0.5px solid #F09595', color: payMsg.startsWith('Sukses') ? '#3B6D11' : 'var(--az-red-deep)', fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 8, margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{ background: payMsg.startsWith('Sukses') ? '#EAF3DE' : '#FFF0EE', border: payMsg.startsWith('Sukses') ? '0.5px solid #97C459' : '0.5px solid #F09595', color: payMsg.startsWith('Sukses') ? '#3B6D11' : 'var(--az-red-deep)', fontSize: 'var(--fs-dysheme)', fontWeight: 600, padding: '8px 14px', borderRadius: 8, margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span style={{ flex: 1 }}>{payMsg}</span>
-                      <button type="button" aria-label="Mbyll mesazhin" onClick={() => setPayMsg('')} style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', fontSize: 14 }}>✕</button>
+                      <button type="button" aria-label="Mbyll mesazhin" onClick={() => setPayMsg('')} style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', fontSize: 'var(--fs-dysheme)' }}>✕</button>
                     </div>
                   )}
                   <div className="card">
                     {premiumRequests.length === 0 ? (
-                      <p style={{ color: '#aaa', fontSize: 12, padding: '12px 0' }}>Asnjë kërkesë premium</p>
+                      <p style={{ color: '#aaa', fontSize: 'var(--fs-dysheme)', padding: '12px 0' }}>Asnjë kërkesë premium</p>
                     ) : (
                       <table>
                         <thead>
@@ -777,9 +777,9 @@ export default function Admin() {
                 <>
                   <div className="ph"><div className="pt"><span aria-hidden="true">💳</span> Abonimet</div></div>
                   {payMsg && (
-                    <div style={{ background: '#FFF0EE', border: '0.5px solid #F09595', color: '#C42B0F', fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 8, margin: '8px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{ background: '#FFF0EE', border: '0.5px solid #F09595', color: '#C42B0F', fontSize: 'var(--fs-dysheme)', fontWeight: 600, padding: '8px 14px', borderRadius: 8, margin: '8px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span style={{ flex: 1 }}><span aria-hidden="true">⚠️</span> {payMsg}</span>
-                      <button type="button" aria-label="Mbyll mesazhin" onClick={() => setPayMsg('')} style={{ background: 'none', border: 'none', color: '#C42B0F', cursor: 'pointer', fontSize: 14 }}>✕</button>
+                      <button type="button" aria-label="Mbyll mesazhin" onClick={() => setPayMsg('')} style={{ background: 'none', border: 'none', color: '#C42B0F', cursor: 'pointer', fontSize: 'var(--fs-dysheme)' }}>✕</button>
                     </div>
                   )}
 
@@ -818,7 +818,7 @@ export default function Admin() {
                       <div className="ph" style={{ marginTop: 18, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                         <div className="pt"><span aria-hidden="true">🛟</span> Pagesat automatike & shëndeti</div>
                         {payStatus && (
-                          <span style={{ fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: payStatus.configured ? '#E7F6EC' : '#FFF6E5', color: payStatus.configured ? '#0E7A35' : '#8A5A00', border: `1px solid ${payStatus.configured ? '#9BD9B5' : '#F0C97A'}` }}>
+                          <span style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: payStatus.configured ? '#E7F6EC' : '#FFF6E5', color: payStatus.configured ? '#0E7A35' : '#8A5A00', border: `1px solid ${payStatus.configured ? '#9BD9B5' : '#F0C97A'}` }}>
                             {payStatus.configured
                               ? '🔌 Webhook i lidhur (auto + manual)'
                               : '⚠️ Webhook i palidhur — aprovim manual aktiv'}
@@ -839,7 +839,7 @@ export default function Admin() {
                             {items.map(([lbl, n]) => (
                               <div key={lbl} style={{ flex: '1 1 140px', background: (n || 0) > 0 ? '#FFF0EE' : '#EAF7EF', border: `1px solid ${(n || 0) > 0 ? '#F09595' : '#9BD9B5'}`, borderRadius: 10, padding: '10px 12px' }}>
                                 <div style={{ fontSize: 20, fontWeight: 800, color: (n || 0) > 0 ? '#C42B0F' : '#0E7A35' }}>{n ?? 0}</div>
-                                <div style={{ fontSize: 11, color: '#555' }}>{lbl}</div>
+                                <div style={{ fontSize: 'var(--fs-dysheme)', color: '#555' }}>{lbl}</div>
                               </div>
                             ))}
                           </div>
@@ -858,7 +858,7 @@ export default function Admin() {
                                   <td style={{ fontWeight: 700 }}>{t.amount} {t.currency}</td>
                                   <td>{t.provider}</td>
                                   <td><span className={`badge ${t.status === 'completed' ? 'ba' : (t.status === 'review' || t.status === 'grant_failed') ? 'bd' : 'bp'}`}>{t.status}</span></td>
-                                  <td style={{ fontSize: 11, color: '#888' }}>{t.review_reason || (t.grant_error ? 'grant_error' : '—')}</td>
+                                  <td style={{ fontSize: 'var(--fs-dysheme)', color: '#888' }}>{t.review_reason || (t.grant_error ? 'grant_error' : '—')}</td>
                                   <td style={{ color: '#888' }}>{dateShort(t.created_at)}</td>
                                 </tr>
                               ))}
@@ -890,7 +890,7 @@ export default function Admin() {
                         </div>
                       </div>
                     ))}
-                    {methods.length === 0 && <p style={{ color:'#aaa', fontSize:12 }}>Nuk ka metoda pagese</p>}
+                    {methods.length === 0 && <p style={{ color:'#aaa', fontSize: 'var(--fs-dysheme)' }}>Nuk ka metoda pagese</p>}
                     <button type="button" className="btn" style={{ marginTop: 12 }} onClick={() => setPmForm({ name: '', type: 'bank', is_active: true, sort_order: methods.length, description: '', config: {} })}>
                       <span aria-hidden="true">+</span> Shto metodë
                     </button>
@@ -901,16 +901,16 @@ export default function Admin() {
                       <div style={{ background:'#fff', borderRadius:16, padding:24, width:'100%', maxWidth:360 }}>
                         <div style={{ fontWeight:700, marginBottom:16 }}>{pmForm.id ? 'Redakto metodën' : 'Shto metodë të re'}</div>
                         <div style={{ marginBottom:10 }}>
-                          <label style={{ fontSize:11, fontWeight:600, color:'#555', display:'block', marginBottom:4 }}>Emri</label>
-                          <input type="text" value={pmForm.name} onChange={e => setPmForm(f => f && ({ ...f, name: e.target.value }))} style={{ width:'100%', border:'1.5px solid #ddd', borderRadius:8, padding:'8px 10px', fontSize:13, boxSizing:'border-box' }} />
+                          <label style={{ fontSize: 'var(--fs-dysheme)', fontWeight:600, color:'#555', display:'block', marginBottom:4 }}>Emri</label>
+                          <input type="text" value={pmForm.name} onChange={e => setPmForm(f => f && ({ ...f, name: e.target.value }))} style={{ width:'100%', border:'1.5px solid #ddd', borderRadius:8, padding:'8px 10px', fontSize: 'var(--fs-dysheme)', boxSizing:'border-box' }} />
                         </div>
                         <div style={{ marginBottom:10 }}>
-                          <label style={{ fontSize:11, fontWeight:600, color:'#555', display:'block', marginBottom:4 }}>Përshkrim i shkurtër (opsional)</label>
-                          <input type="text" value={pmForm.description} onChange={e => setPmForm(f => f && ({ ...f, description: e.target.value }))} placeholder="p.sh. Transfertë brenda 24 orësh" style={{ width:'100%', border:'1.5px solid #ddd', borderRadius:8, padding:'8px 10px', fontSize:13, boxSizing:'border-box' }} />
+                          <label style={{ fontSize: 'var(--fs-dysheme)', fontWeight:600, color:'#555', display:'block', marginBottom:4 }}>Përshkrim i shkurtër (opsional)</label>
+                          <input type="text" value={pmForm.description} onChange={e => setPmForm(f => f && ({ ...f, description: e.target.value }))} placeholder="p.sh. Transfertë brenda 24 orësh" style={{ width:'100%', border:'1.5px solid #ddd', borderRadius:8, padding:'8px 10px', fontSize: 'var(--fs-dysheme)', boxSizing:'border-box' }} />
                         </div>
                         <div style={{ marginBottom:10 }}>
-                          <label style={{ fontSize:11, fontWeight:600, color:'#555', display:'block', marginBottom:4 }}>Tipi</label>
-                          <input type="text" list="pm-types" value={pmForm.type} onChange={e => setPmForm(f => f && ({ ...f, type: e.target.value }))} placeholder="paypal, epara, easypay, paysera, card, bank..." style={{ width:'100%', border:'1.5px solid #ddd', borderRadius:8, padding:'8px 10px', fontSize:13, boxSizing:'border-box' }} />
+                          <label style={{ fontSize: 'var(--fs-dysheme)', fontWeight:600, color:'#555', display:'block', marginBottom:4 }}>Tipi</label>
+                          <input type="text" list="pm-types" value={pmForm.type} onChange={e => setPmForm(f => f && ({ ...f, type: e.target.value }))} placeholder="paypal, epara, easypay, paysera, card, bank..." style={{ width:'100%', border:'1.5px solid #ddd', borderRadius:8, padding:'8px 10px', fontSize: 'var(--fs-dysheme)', boxSizing:'border-box' }} />
                           <datalist id="pm-types"><option value="paypal" /><option value="epara" /><option value="easypay" /><option value="paysera" /><option value="card" /><option value="bank" /><option value="mobile" /><option value="wallet" /></datalist>
                         </div>
                         {/* Koordinatat reale të pagesës (config_json) — që përdoruesi t'i shohë te faturimi. */}
@@ -923,18 +923,18 @@ export default function Admin() {
                             : [['instructions', 'Udhëzime / koordinata pagese']]
                           return fields.map(([k, lbl]) => (
                             <div key={k} style={{ marginBottom: 10 }}>
-                              <label style={{ fontSize: 11, fontWeight: 600, color: '#555', display: 'block', marginBottom: 4 }}>{lbl}</label>
-                              <input type="text" value={pmForm.config[k] || ''} onChange={e => setPmForm(f => f && ({ ...f, config: { ...f.config, [k]: e.target.value } }))} style={{ width: '100%', border: '1.5px solid #ddd', borderRadius: 8, padding: '8px 10px', fontSize: 13, boxSizing: 'border-box' }} />
+                              <label style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 600, color: '#555', display: 'block', marginBottom: 4 }}>{lbl}</label>
+                              <input type="text" value={pmForm.config[k] || ''} onChange={e => setPmForm(f => f && ({ ...f, config: { ...f.config, [k]: e.target.value } }))} style={{ width: '100%', border: '1.5px solid #ddd', borderRadius: 8, padding: '8px 10px', fontSize: 'var(--fs-dysheme)', boxSizing: 'border-box' }} />
                             </div>
                           ))
                         })()}
                         <div style={{ marginBottom:10 }}>
-                          <label style={{ fontSize:11, fontWeight:600, color:'#555', display:'block', marginBottom:4 }}>Rend ({pmForm.sort_order})</label>
-                          <input type="number" value={pmForm.sort_order} onChange={e => setPmForm(f => f && ({ ...f, sort_order: Number(e.target.value) }))} style={{ width:'100%', border:'1.5px solid #ddd', borderRadius:8, padding:'8px 10px', fontSize:13 }} />
+                          <label style={{ fontSize: 'var(--fs-dysheme)', fontWeight:600, color:'#555', display:'block', marginBottom:4 }}>Rend ({pmForm.sort_order})</label>
+                          <input type="number" value={pmForm.sort_order} onChange={e => setPmForm(f => f && ({ ...f, sort_order: Number(e.target.value) }))} style={{ width:'100%', border:'1.5px solid #ddd', borderRadius:8, padding:'8px 10px', fontSize: 'var(--fs-dysheme)' }} />
                         </div>
                         <label style={{ display:'flex', alignItems:'center', gap:8, marginBottom:16, cursor:'pointer' }}>
                           <input type="checkbox" checked={pmForm.is_active} onChange={e => setPmForm(f => f && ({ ...f, is_active: e.target.checked }))} />
-                          <span style={{ fontSize:13 }}>Aktiv</span>
+                          <span style={{ fontSize: 'var(--fs-dysheme)' }}>Aktiv</span>
                         </label>
                         <div style={{ display:'flex', gap:8 }}>
                           <button type="button" className="btn" style={{ flex:1 }} onClick={async () => {
@@ -950,7 +950,7 @@ export default function Admin() {
                           }}>Ruaj</button>
                           <button type="button" className="btn" style={{ flex:1, background:'#f5f5f5', color:'#111' }} onClick={() => setPmForm(null)}>Anulo</button>
                         </div>
-                        {payMsg && <div style={{ marginTop:8, fontSize:12, color: payMsg.startsWith('err') ? 'var(--az-red-deep)' : '#1D9E75' }}>{payMsg.replace(/^(err:|✅ )/, '')}</div>}
+                        {payMsg && <div style={{ marginTop:8, fontSize: 'var(--fs-dysheme)', color: payMsg.startsWith('err') ? 'var(--az-red-deep)' : '#1D9E75' }}>{payMsg.replace(/^(err:|✅ )/, '')}</div>}
                       </div>
                     </div>
                   )}

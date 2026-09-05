@@ -121,10 +121,10 @@ export default function OfferBox({ listingId, isOwner, initial }:
           display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none',
           background: '#FFF8E1', border: '1px solid #FFB74D', borderRadius: 12, padding: '11px 14px',
         }}>
-          <span style={{ fontSize: 13, fontWeight: 700, color: '#8A6D00' }}>
+          <span style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#8A6D00' }}>
             {gj.ne_pritje} ofertë{Number(gj.ne_pritje) === 1 ? '' : 'a'} në pritje të përgjigjes
           </span>
-          <i className="ti ti-chevron-right" aria-hidden="true" style={{ fontSize: 13, color: '#8A6D00', marginLeft: 'auto' }} />
+          <i className="ti ti-chevron-right" aria-hidden="true" style={{ fontSize: 'var(--fs-dysheme)', color: '#8A6D00', marginLeft: 'auto' }} />
         </a>
       </>
     )
@@ -147,7 +147,7 @@ export default function OfferBox({ listingId, isOwner, initial }:
           background: ETIKETA[o.status]?.sfond || '#F3F3F3',
           border: `1px solid ${ETIKETA[o.status]?.kufi || '#ddd'}`,
           borderRadius: 12, padding: '11px 14px', marginBottom: eHapur ? 10 : 12,
-          fontSize: 12.5, color: ETIKETA[o.status]?.ngjyre || '#555', lineHeight: 1.6,
+          fontSize: 'var(--fs-dysheme)', color: ETIKETA[o.status]?.ngjyre || '#555', lineHeight: 1.6,
         }}>
           Oferta jote: <strong>{priceLabel(o.shuma, gj.monedha)}</strong> — {ETIKETA[o.status]?.tekst || o.status}.
           {eHapur && o.skadon && <> Skadon më {dateShort(o.skadon)}.</>}
@@ -158,43 +158,43 @@ export default function OfferBox({ listingId, isOwner, initial }:
         <button type="button" onClick={() => terhiq(o.id)} disabled={pune === 'terheq'}
           style={{
             width: '100%', background: '#fff', color: '#111', border: '1.5px solid #ddd',
-            borderRadius: 12, padding: 12, fontSize: 13.5, fontWeight: 700, fontFamily: 'inherit',
+            borderRadius: 12, padding: 12, fontSize: 'var(--fs-dysheme)', fontWeight: 700, fontFamily: 'inherit',
             cursor: pune === 'terheq' ? 'not-allowed' : 'pointer', opacity: pune === 'terheq' ? 0.55 : 1,
           }}>
           {pune === 'terheq' ? 'Duke tërhequr…' : 'Tërhiq ofertën'}
         </button>
       ) : (
         <>
-          <p style={{ fontSize: 12.5, color: '#555', lineHeight: 1.65, margin: '0 0 10px' }}>
+          <p style={{ fontSize: 'var(--fs-dysheme)', color: '#555', lineHeight: 1.65, margin: '0 0 10px' }}>
             Shitësi merr njoftim dhe përgjigjet brenda afatit. Oferta nuk është pagesë dhe
             nuk e detyron asnjë palë — Alpazar mbetet ndërmjetës.
             {prag > 0 && <> Pranohen oferta nga <strong style={{ color: '#111' }}>{priceLabel(prag, gj.monedha)}</strong> e lart.</>}
           </p>
 
-          <label htmlFor="oferta-shuma" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>
+          <label htmlFor="oferta-shuma" style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>
             Shuma {gj.cmimi ? `(kërkohet ${priceLabel(gj.cmimi, gj.monedha)})` : ''}
           </label>
           <input id="oferta-shuma" inputMode="numeric" value={shuma}
             onChange={e => setShuma(e.target.value)} placeholder="p.sh. 12000"
             style={{
               width: '100%', border: '1.5px solid #e8e0c8', borderRadius: 12, padding: '11px 13px',
-              fontSize: 14, fontFamily: 'inherit', background: '#fff', color: '#111', marginBottom: 10,
+              fontSize: 'var(--fs-dysheme)', fontFamily: 'inherit', background: '#fff', color: '#111', marginBottom: 10,
             }} />
 
-          <label htmlFor="oferta-mesazhi" style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>
+          <label htmlFor="oferta-mesazhi" style={{ fontSize: 'var(--fs-dysheme)', fontWeight: 700, color: '#555', marginBottom: 5, display: 'block' }}>
             Mesazh për shitësin (opsional)
           </label>
           <textarea id="oferta-mesazhi" value={mesazhi} onChange={e => setMesazhi(e.target.value)}
             rows={2} maxLength={300} placeholder="p.sh. Mund ta marr sot në Tiranë."
             style={{
               width: '100%', border: '1.5px solid #e8e0c8', borderRadius: 12, padding: '11px 13px',
-              fontSize: 13.5, fontFamily: 'inherit', background: '#fff', color: '#111', resize: 'vertical',
+              fontSize: 'var(--fs-dysheme)', fontFamily: 'inherit', background: '#fff', color: '#111', resize: 'vertical',
             }} />
 
           {gabim && (
             <div role="alert" style={{
               background: '#FFF0EE', border: '1px solid #F09595', borderRadius: 10,
-              padding: '10px 13px', marginTop: 10, fontSize: 12, color: 'var(--az-red-deep)', fontWeight: 600,
+              padding: '10px 13px', marginTop: 10, fontSize: 'var(--fs-dysheme)', color: 'var(--az-red-deep)', fontWeight: 600,
             }}>{gabim}</div>
           )}
 
@@ -203,7 +203,7 @@ export default function OfferBox({ listingId, isOwner, initial }:
             style={{
               width: '100%', marginTop: 12, background: '#fff', color: '#111',
               border: '1.5px solid #ddd', borderRadius: 12, padding: 12,
-              fontSize: 13.5, fontWeight: 700, fontFamily: 'inherit',
+              fontSize: 'var(--fs-dysheme)', fontWeight: 700, fontFamily: 'inherit',
               cursor: pune === 'dergon' ? 'not-allowed' : 'pointer', opacity: pune === 'dergon' ? 0.55 : 1,
             }}>
             {pune === 'dergon' ? 'Duke dërguar…' : 'Dërgo ofertën'}
