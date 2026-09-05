@@ -77,18 +77,18 @@ export default async function KategoriIndexPage() {
 const SEO_CSS = `
 .seo-wrap{max-width:960px;margin:0 auto;padding:20px 16px 60px;font-family:inherit;}
 @media(min-width:1024px){.seo-wrap{max-width:100%;padding-left:clamp(32px,4vw,72px);padding-right:clamp(32px,4vw,72px);}}
-.seo-crumb{font-size:12px;color:#555;margin-bottom:14px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.seo-crumb{font-size:var(--fs-dysheme);color:#555;margin-bottom:14px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
 .seo-crumb a{color:#C42B0F;text-decoration:none;}
 .seo-crumb span[aria-current]{color:#555;}
 .seo-h1{font-size:var(--fs-3xl);font-weight:800;color:var(--az-ink);margin:0 0 6px;}
-.seo-sub{font-size:14px;color:#666;margin:0 0 22px;line-height:1.5;max-width:68ch;}
+.seo-sub{font-size:var(--fs-dysheme);color:#666;margin:0 0 22px;line-height:1.5;max-width:68ch;}
 .seo-h2{font-size:18px;font-weight:700;color:var(--az-ink);margin:34px 0 14px;}
 .seo-cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;}
 .seo-cat-card{display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 12px;background:#fff;border:1px solid #eee;border-radius:14px;text-decoration:none;color:var(--az-ink);transition:box-shadow .15s,transform .15s;}
 .seo-cat-card:hover{box-shadow:0 6px 18px rgba(0,0,0,.08);transform:translateY(-2px);}
 .seo-cat-ico{font-size:30px;line-height:1;}
-.seo-cat-name{font-size:13px;font-weight:600;text-align:center;}
+.seo-cat-name{font-size:var(--fs-dysheme);font-weight:600;text-align:center;}
 .seo-city-links{display:flex;flex-wrap:wrap;gap:8px;}
-.seo-city-chip{padding:8px 14px;background:#F7F7F7;border:1px solid #eee;border-radius:999px;font-size:13px;color:#333;text-decoration:none;transition:background .15s;}
+.seo-city-chip{padding:8px 14px;background:#F7F7F7;border:1px solid #eee;border-radius:999px;font-size:var(--fs-dysheme);color:#333;text-decoration:none;transition:background .15s;}
 .seo-city-chip:hover{background:#FDE9E4;color:#C42B0F;}
 `

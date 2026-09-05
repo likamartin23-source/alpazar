@@ -10,16 +10,16 @@ export default function Kushtet() {
     .back i{font-size:18px;color:#111;}
     .topbar-title{font-size:15px;font-weight:700;color:#111;}
     .content{padding:24px 20px 40px;}
-    .ver{font-size:11px;color:#6E6E6E;margin-bottom:20px;background:var(--az-cream);padding:8px 12px;border-radius:8px;display:inline-block;}
+    .ver{font-size:var(--fs-dysheme);color:#6E6E6E;margin-bottom:20px;background:var(--az-cream);padding:8px 12px;border-radius:8px;display:inline-block;}
     h1{font-size:var(--fs-3xl);font-weight:700;color:#111;margin-bottom:8px;}
-    h2{font-size:14px;font-weight:700;color:#111;margin:22px 0 8px;padding-bottom:5px;border-bottom:2px solid var(--az-yellow);}
-    p{font-size:13px;color:#444;line-height:1.85;margin-bottom:10px;}
-    ul{font-size:13px;color:#444;line-height:1.85;padding-left:18px;margin-bottom:10px;}
+    h2{font-size:var(--fs-dysheme);font-weight:700;color:#111;margin:22px 0 8px;padding-bottom:5px;border-bottom:2px solid var(--az-yellow);}
+    p{font-size:var(--fs-dysheme);color:#444;line-height:1.85;margin-bottom:10px;}
+    ul{font-size:var(--fs-dysheme);color:#444;line-height:1.85;padding-left:18px;margin-bottom:10px;}
     li{margin-bottom:5px;}
-    .note{background:var(--az-cream);border-left:3px solid var(--az-red);padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:12px;color:#555;line-height:1.7;}
-    .law{font-size:11px;color:#555;font-style:italic;}
+    .note{background:var(--az-cream);border-left:3px solid var(--az-red);padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:var(--fs-dysheme);color:#555;line-height:1.7;}
+    .law{font-size:var(--fs-dysheme);color:#555;font-style:italic;}
     .ftr{display:flex;flex-wrap:wrap;gap:8px 16px;padding:20px;background:#f9f9f9;border-top:1px solid #eee;margin-top:10px;}
-    .ftr a{color:#555;font-size:11px;text-decoration:none;}
+    .ftr a{color:#555;font-size:var(--fs-dysheme);text-decoration:none;}
   `
   return (
     <>

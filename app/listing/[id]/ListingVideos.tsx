@@ -32,21 +32,21 @@ function mmss(s?: number) {
 
 const VIDEO_CSS = `
 .alp-vid{background:#fff;border-top:8px solid #F6F1E1;padding:14px}
-.alp-vid-h{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:800;color:#111;margin-bottom:10px}
-.alp-vid-h .n{font-weight:600;color:#999;font-size:11px}
-.alp-vid-h .lv{background:var(--az-red);color:#fff;font-size:8px;font-weight:800;padding:2px 6px;border-radius:4px;letter-spacing:.5px}
+.alp-vid-h{display:flex;align-items:center;gap:7px;font-size:var(--fs-dysheme);font-weight:800;color:#111;margin-bottom:10px}
+.alp-vid-h .n{font-weight:600;color:#999;font-size:var(--fs-dysheme)}
+.alp-vid-h .lv{background:var(--az-red);color:#fff;font-size:var(--fs-dysheme);font-weight:800;padding:2px 6px;border-radius:4px;letter-spacing:.5px}
 .alp-vid-st{position:relative;border-radius:14px;overflow:hidden;background:#000;line-height:0}
 .alp-vid-st video{width:100%;max-height:70vh;display:block;background:#000}
 .alp-vid-st iframe{width:100%;height:70vh;max-height:70vh;border:none;display:block;background:#000}
-.alp-vid-dur{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.72);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;pointer-events:none;line-height:1.6}
+.alp-vid-dur{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.72);color:#fff;font-size:var(--fs-dysheme);font-weight:700;padding:2px 7px;border-radius:6px;pointer-events:none;line-height:1.6}
 .alp-vid-tabs{display:flex;gap:8px;overflow-x:auto;margin-top:10px;padding-bottom:2px;-webkit-overflow-scrolling:touch}
 .alp-vid-tabs::-webkit-scrollbar{display:none}
 .alp-vid-tb{flex:0 0 auto;position:relative;width:78px;height:52px;border-radius:9px;overflow:hidden;border:2px solid transparent;background:#111;cursor:pointer;padding:0}
 .alp-vid-tb.on{border-color:var(--az-red)}
 .alp-vid-tb img{width:100%;height:100%;object-fit:cover;display:block;opacity:.75}
 .alp-vid-tb.on img{opacity:1}
-.alp-vid-tb .ix{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:800;text-shadow:0 1px 3px rgba(0,0,0,.8)}
-.alp-vid-note{font-size:11px;font-weight:600;color:#555;margin-top:8px;text-align:center}
+.alp-vid-tb .ix{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:var(--fs-dysheme);font-weight:800;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.alp-vid-note{font-size:var(--fs-dysheme);font-weight:600;color:#555;margin-top:8px;text-align:center}
 `
 
 export default function ListingVideos({ videos, legacy, poster, images }: any) {

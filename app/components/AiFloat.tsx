@@ -97,7 +97,7 @@ export default function AiFloat() {
         /* Etiketa = pill i errët MAJTAS rrethit → e lexueshme mbi çdo sfond
            (kontrast i lartë), e kuptueshme, dhe s'e ngjesh pirgun vertikalisht. */
         .fab-label {
-          font-size: 11px;
+          font-size:var(--fs-dysheme);
           font-weight: 700;
           color: #fff;
           background: rgba(17,17,17,.82);

@@ -73,14 +73,14 @@ button:active{transform:scale(.97);}
 
 /*  HOMEPAGE  */
 .cat-item{padding:9px 14px !important;}
-.cat-item span{font-size:12px !important;}
-.stat-l{font-size:11px !important;}
+.cat-item span{font-size:var(--fs-dysheme) !important;}
+.stat-l{font-size:var(--fs-dysheme) !important;}
 
 .hero{padding:9px 13px !important;border-radius:14px !important;margin:0 0 8px !important;}
-.hero h2{font-size:13px !important;margin-bottom:2px !important;}
-.hero p{font-size:10px !important;line-height:1.4 !important;}
+.hero h2{font-size:var(--fs-dysheme) !important;margin-bottom:2px !important;}
+.hero p{font-size:var(--fs-dysheme) !important;line-height:1.4 !important;}
 .hero .stat-n{font-size:15px !important;}
-.hero .stat-l{font-size:9px !important;}
+.hero .stat-l{font-size:var(--fs-dysheme) !important;}
 
 .cat-item i{color:var(--az-gray-2) !important;}
 .cat-item.active i{color:var(--az-yellow) !important;}
@@ -225,8 +225,8 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
    Vetëm tokena/rgba, që roja të mbetet e sheshtë. */
 .push-optin{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--az-white);border-bottom:1px solid rgba(0,0,0,.06);font-family:inherit;}
 .push-optin .po-ico{font-size:20px;flex-shrink:0;line-height:1;}
-.push-optin .po-txt{flex:1;font-size:13px;color:var(--az-ink);line-height:1.4;}
-.push-optin .po-btn{border-radius:10px;padding:8px 14px;font-size:12.5px;font-weight:800;font-family:inherit;min-height:40px;white-space:nowrap;cursor:pointer;background:var(--az-yellow);color:var(--az-black);border:none;}
+.push-optin .po-txt{flex:1;font-size:var(--fs-dysheme);color:var(--az-ink);line-height:1.4;}
+.push-optin .po-btn{border-radius:10px;padding:8px 14px;font-size:var(--fs-dysheme);font-weight:800;font-family:inherit;min-height:40px;white-space:nowrap;cursor:pointer;background:var(--az-yellow);color:var(--az-black);border:none;}
 .push-optin .po-btn.on{background:transparent;color:var(--az-gray-1);border:1px solid rgba(0,0,0,.18);}
 .push-optin .po-btn:disabled{opacity:.6;cursor:default;}
 
@@ -251,38 +251,38 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
 .card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;transition:transform .35s cubic-bezier(.2,.8,.2,1);}
 .card-img i{font-size:28px;color:#d0c9a0;}
 .card-seller-ov{position:absolute;left:6px;bottom:6px;display:flex;align-items:center;gap:5px;min-height:24px;max-width:calc(100% - 48px);background:rgba(0,0,0,.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border-radius:var(--r-pill);padding:2px 9px 2px 2px;z-index:2;cursor:pointer;}
-.card-seller-ov span{font-size:10px;color:#fff;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.card-seller-ov span{font-size:var(--fs-dysheme);color:#fff;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 /* [O52] Teksti bardhë 9px kërkonte 4.5:1 (WCAG 1.4.3); #fff mbi var(--az-red) jepte vetëm 4.33.
    E kuqja a11y var(--az-red-deep) (5.85:1) → kalon, pa shpikur ngjyrë të tretë. */
-.badge-new{position:absolute;top:6px;left:6px;background:linear-gradient(135deg,var(--az-red-deep),#a81f04);color:#fff;font-size:9px;padding:3px 7px;border-radius:var(--r-pill);font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(196,35,5,.4);letter-spacing:.2px;}
-.badge-used{position:absolute;top:6px;left:6px;background:linear-gradient(135deg,var(--az-ink),#000);color:var(--az-yellow);font-size:9px;padding:3px 7px;border-radius:var(--r-pill);font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(0,0,0,.3);letter-spacing:.2px;}
-.badge-premium{position:absolute;top:6px;right:6px;background:linear-gradient(135deg,var(--az-yellow-hi),var(--az-yellow));color:#111;font-size:9px;padding:3px 7px;border-radius:var(--r-pill);font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(245,200,66,.5);}
+.badge-new{position:absolute;top:6px;left:6px;background:linear-gradient(135deg,var(--az-red-deep),#a81f04);color:#fff;font-size:var(--fs-dysheme);padding:3px 7px;border-radius:var(--r-pill);font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(196,35,5,.4);letter-spacing:.2px;}
+.badge-used{position:absolute;top:6px;left:6px;background:linear-gradient(135deg,var(--az-ink),#000);color:var(--az-yellow);font-size:var(--fs-dysheme);padding:3px 7px;border-radius:var(--r-pill);font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(0,0,0,.3);letter-spacing:.2px;}
+.badge-premium{position:absolute;top:6px;right:6px;background:linear-gradient(135deg,var(--az-yellow-hi),var(--az-yellow));color:#111;font-size:var(--fs-dysheme);padding:3px 7px;border-radius:var(--r-pill);font-weight:700;z-index:1;box-shadow:0 1px 4px rgba(245,200,66,.5);}
 /* `box-sizing:border-box` NUK eshte dekor: pa te, `flex-basis` matet mbi kutine
    e PERMBAJTJES dhe padding-u i shtohet siper. Matur: trupi dilte 117px per nje
    baze prej 98px (98+9+10) dhe 149px per 124px — raporti binte ne 65,8/33,7 ne
    vend te 70/30. Vlera nuk ishte gabim; njesia ishte. */
 .card-body{flex:0 0 var(--card-body-h);box-sizing:border-box;padding:9px 10px 10px;display:flex;flex-direction:column;gap:var(--sp-1);min-height:0;overflow:hidden;}
-.card-title{font-size:13px;line-height:1.3;font-weight:700;color:#222;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;min-height:1.3em;}
+.card-title{font-size:var(--fs-dysheme);line-height:1.3;font-weight:700;color:#222;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;min-height:1.3em;}
 /* [O41] KOKAT E SEKSIONEVE nuk jane tituj kartash. Me pare ndanin `.card-title`, ndaj clamp:1+
    overflow+min-height (te menduara per titullin 1-rreshtor te kartes ne grid) u imponoheshin 35
    kokave seksioni ne 7 skedare — koka e gjate pritej ne heshtje, dhe kush rregullonte karten
    deformonte kokat e anasjelltas (shkaku kryesor i 'planeve qe s'mbyllen'). Fjalori u nda:
    `.card-title` = 2 tituj kartash (ListingCard/BusinessCard); `.section-title` = kokat, PA clamp. */
-.section-title{font-size:13px;line-height:1.3;font-weight:700;color:#222;}
+.section-title{font-size:var(--fs-dysheme);line-height:1.3;font-weight:700;color:#222;}
 /* Cmimi perdor `--action-red-deep`: `var(--az-red)` mbi te bardhe nuk e kalon
    WCAG AA per tekst nen 18px (§7.1 i planit). */
 /* Nje rresht, gjithmone: trupi ka lartesi te caktuar (70/30) dhe nje cmim qe
    thyhet ne dy rreshta e prish raportin. Elipsa eshte rrjete sigurie per raste
    te paparashikuara (monedhe e gjate, shifra shume te medha), jo gjendja normale. */
-.card-price{font-size:14px;font-weight:800;color:var(--action-red-deep);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.card-price{font-size:var(--fs-dysheme);font-weight:800;color:var(--action-red-deep);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .card-meta{display:flex;align-items:center;justify-content:space-between;}
-.card-loc{font-size:11px;color:#6B6B6B;display:flex;align-items:center;gap:3px;}
-.card-loc i{font-size:11px;}
+.card-loc{font-size:var(--fs-dysheme);color:#6B6B6B;display:flex;align-items:center;gap:3px;}
+.card-loc i{font-size:var(--fs-dysheme);}
 /* Rreshti i syve (BLLOKU I PËRMIRËSUAR §2a): 👁 shikime · 🔴 live. Kompakt, nën meta-n. */
 .card-stats{display:flex;align-items:center;gap:10px;margin-top:4px;}
-.card-stats .cs-eye{font-size:11px;color:#6B6B6B;display:flex;align-items:center;gap:3px;font-weight:600;}
-.card-stats .cs-live{font-size:11px;color:#C42B0F;display:flex;align-items:center;gap:3px;font-weight:700;}
-@media(min-width:1024px){.card-stats .cs-eye,.card-stats .cs-live{font-size:12px;}}
+.card-stats .cs-eye{font-size:var(--fs-dysheme);color:#6B6B6B;display:flex;align-items:center;gap:3px;font-weight:600;}
+.card-stats .cs-live{font-size:var(--fs-dysheme);color:#C42B0F;display:flex;align-items:center;gap:3px;font-weight:700;}
+@media(min-width:1024px){.card-stats .cs-eye,.card-stats .cs-live{font-size:var(--fs-dysheme);}}
 @media (prefers-reduced-motion: reduce){
   .listing-card{animation:none;}
   .card-img img{transition:none;}
@@ -299,8 +299,8 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
   .card-body{padding:12px 13px 13px;}
   .card-title{font-size:15px;}
   .card-price{font-size:17px;}
-  .card-loc,.card-loc i{font-size:12px;}
-  .card-seller-ov span{font-size:11px;}
+  .card-loc,.card-loc i{font-size:var(--fs-dysheme);}
+  .card-seller-ov span{font-size:var(--fs-dysheme);}
   .card-img i{font-size:34px;}
 }
 @media(min-width:1440px){
@@ -372,7 +372,7 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
   background:linear-gradient(var(--az-ink),var(--az-ink)) padding-box,linear-gradient(135deg,var(--az-yellow),var(--az-red)) border-box;}
 .alpz-stats .stat,.alpz-stats .stat-pill{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
 .alpz-stats .stat-n{display:block;font-size:18px;font-weight:800;color:#FF4433;line-height:1.15;}
-.alpz-stats .stat-l{display:block;font-size:10px !important;font-weight:500;color:#A0A0A0 !important;margin-top:2px;}
+.alpz-stats .stat-l{display:block;font-size:var(--fs-dysheme) !important;font-weight:500;color:#A0A0A0 !important;margin-top:2px;}
 .alpz-stats .stat-div{width:1px;flex:0 0 1px;background:#333;align-self:stretch;}
 
 /* [O51] Rruga KARTE→SHITES (.card-seller-ov[role=link]) ishte 22px ne telefon — nen 44px (WCAG 2.5.5).

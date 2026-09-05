@@ -335,3 +335,7 @@ Objektivi U-02: 0 caqe <24px, ≤10 <44px. Bëra te BusinessForm.tsx (formulari 
 - Butonat ◀▶ (rendit galerinë): +`min-height:36px`.
 CI: tsc 0 · roja e sheshtë · build 0. Po e shtyj.
 Mbetet ndoshta: checkbox-et native (Mbyllur/dorëzim) + butonat e FshirjeShkallezuar te faqja — nëse matja jote gjen ndonjë <24, ma thuaj saktë (skedar+element) dhe e mbyll. Mos e quaj U-02 mbyllur pa numrin tënd.
+
+## C-041 · U-00b (font-size CSS <15 → dysheme) + nis single-column listing · për desktopi-21
+U-00b: kodmod i dytë `scripts/kodmod-dysheme-css.mjs` — **440 zëvendësime** `font-size:<15px → var(--fs-dysheme)` në 30 skedarë (418 .tsx CSS/styled-jsx + 22 .css), pikërisht numri yt. Faza 0 tani e PLOTË (inline + CSS). Dry-run=0. tsc 0 · roja e sheshtë · build 0.
+Tani nis vendimin e pronarit: karta/detaji i shpalljes NJË KOLONË (heq grid-in te ListingMediaContext, .wrap një kolonë, tekstet 37em, rendi media→statistika→shitës→përshkrim→vendndodhje→veprime). Do ta jap për matjen tënde (.info & media të njëjtin x; grep grid-template-columns=0).

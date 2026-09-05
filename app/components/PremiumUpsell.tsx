@@ -120,19 +120,19 @@ export function PremiumUpsellModal({
         .ups-close{position:absolute;top:14px;right:16px;width:30px;height:30px;background:#eee;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:#555;}
         .ups-crown{font-size:44px;display:block;text-align:center;margin-bottom:10px;}
         .ups-h{font-size:19px;font-weight:800;color:#111;text-align:center;margin-bottom:6px;}
-        .ups-sub{font-size:12px;color:#555;text-align:center;margin-bottom:14px;line-height:1.6;}
+        .ups-sub{font-size:var(--fs-dysheme);color:#555;text-align:center;margin-bottom:14px;line-height:1.6;}
         .ups-feats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
         .ups-feat{background:#fff;border:0.5px solid #eee;border-radius:10px;padding:10px 11px;display:flex;align-items:center;gap:7px;}
-        .ups-feat i{font-size:14px;color:#C42B0F;}
-        .ups-feat span{font-size:11px;font-weight:600;color:#333;}
+        .ups-feat i{font-size:var(--fs-dysheme);color:#C42B0F;}
+        .ups-feat span{font-size:var(--fs-dysheme);font-weight:600;color:#333;}
         .ups-offer{background:#111;border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
         .ups-price{color:var(--az-yellow);font-size:22px;font-weight:800;}
-        .ups-price span{font-size:11px;color:#888;font-weight:400;display:block;}
+        .ups-price span{font-size:var(--fs-dysheme);color:#888;font-weight:400;display:block;}
         .ups-timer{background:var(--az-red);border-radius:8px;padding:6px 10px;text-align:center;}
         .ups-timer-n{color:#fff;font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;}
-        .ups-timer-l{color:rgba(255,255,255,.7);font-size:9px;}
+        .ups-timer-l{color:rgba(255,255,255,.7);font-size:var(--fs-dysheme);}
         .ups-cta{width:100%;background:linear-gradient(135deg,var(--az-red),#c42a0e);color:#fff;border:none;border-radius:12px;padding:15px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:10px;box-shadow:0 4px 16px rgba(230,51,18,.4);}
-        .ups-skip{width:100%;background:none;border:none;color:#555;font-size:12px;cursor:pointer;font-family:inherit;padding:4px;}
+        .ups-skip{width:100%;background:none;border:none;color:#555;font-size:var(--fs-dysheme);cursor:pointer;font-family:inherit;padding:4px;}
       ` }} />
       <div className="ups-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative' }}>
         <button type="button" className="ups-close" aria-label="Mbyll" onClick={close}><span aria-hidden="true">✕</span></button>

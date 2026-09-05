@@ -96,22 +96,22 @@ export function DosjaLigjore({ id, onClose }: { id: string; onClose: () => void 
 '<!doctype html><html lang="sq"><meta charset="utf-8">' +
 '<title>Dosje ' + esc(d.dosja_nr) + '</title><style>' +
 '*{box-sizing:border-box}body{font:13px/1.65 Georgia,"Times New Roman",serif;color:#111;max-width:820px;margin:36px auto;padding:0 28px}' +
-'h1{font-size:19px;margin:0 0 2px;letter-spacing:.3px}h2{font-size:13px;text-transform:uppercase;letter-spacing:1.1px;color:#5a5a5a;border-bottom:1.5px solid #111;padding-bottom:5px;margin:26px 0 10px}' +
+'h1{font-size:19px;margin:0 0 2px;letter-spacing:.3px}h2{font-size:var(--fs-dysheme);text-transform:uppercase;letter-spacing:1.1px;color:#5a5a5a;border-bottom:1.5px solid #111;padding-bottom:5px;margin:26px 0 10px}' +
 '.krye{border-bottom:2.5px solid #111;padding-bottom:14px;margin-bottom:8px}' +
 '.nr{font:600 12px/1.4 monospace;color:#8a6a00;letter-spacing:.5px}' +
 'table{width:100%;border-collapse:collapse;margin:6px 0 4px}' +
 'th{text-align:left;width:31%;vertical-align:top;padding:6px 10px 6px 0;color:#444;font-weight:600}' +
 'td{padding:6px 0;vertical-align:top;border-bottom:1px solid #eee}' +
 '.cit{background:#faf8f2;border-left:3px solid #c9a227;padding:10px 14px;margin:8px 0;font-style:italic}' +
-'.fund{margin-top:34px;padding-top:12px;border-top:1px solid #ccc;font-size:10.5px;color:#666}' +
+'.fund{margin-top:34px;padding-top:12px;border-top:1px solid #ccc;font-size:var(--fs-dysheme);color:#666}' +
 '.nsh{margin-top:40px;display:flex;justify-content:space-between;gap:40px}' +
-'.nsh div{flex:1;border-top:1px solid #111;padding-top:6px;font-size:11px;text-align:center}' +
+'.nsh div{flex:1;border-top:1px solid #111;padding-top:6px;font-size:var(--fs-dysheme);text-align:center}' +
 'img{max-width:150px;max-height:150px;border:1px solid #ddd;margin:4px 6px 0 0;object-fit:cover}' +
 '@media print{body{margin:0;max-width:none}h2{page-break-after:avoid}}' +
 '</style><body>' +
 '<div class="krye"><div class="nr">DOSJE Nr. ' + esc(d.dosja_nr) + '</div>' +
 '<h1>Njoftim për përmbajtje të paligjshme</h1>' +
-'<div style="font-size:11px;color:#666">Nxjerrë më ' + esc(dt(new Date().toISOString())) + '</div></div>' +
+'<div style="font-size:var(--fs-dysheme);color:#666">Nxjerrë më ' + esc(dt(new Date().toISOString())) + '</div></div>' +
 
 '<h2>1 · Platforma njoftuese</h2><table>' +
 rr('Subjekti', d.platforma?.company_name) + rr('NIPT', d.platforma?.company_nipt) +
@@ -132,7 +132,7 @@ rr('Adresa e përmbajtjes', d.pretendimi?.adresa) +
   ? '<table>' + rr('Provat e paraqitura', d.pretendimi.provat.join('  ·  ')) + '</table>' : '') +
 
 '<h2>4 · Përmbajtja e njoftuar — gjendja e ngrirë</h2>' +
-'<div style="font-size:10.5px;color:#666;margin-bottom:6px">Regjistruar automatikisht ' +
+'<div style="font-size:var(--fs-dysheme);color:#666;margin-bottom:6px">Regjistruar automatikisht ' +
 esc(dt(d.prova_e_ngrire?.ngrire_me)) + ', para heqjes. Nuk është modifikuar.</div>' +
 '<table>' + rr('Titulli', sh.title) + rr('Çmimi', (sh.price ?? '—') + ' ' + (sh.currency || '')) +
 rr('Qyteti', sh.city) + rr('Publikuar', dt(sh.created_at)) +
