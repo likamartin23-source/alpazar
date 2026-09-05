@@ -24,32 +24,30 @@ function normalize(videos: any, legacy?: string): ListingVideoItem[] {
   return out.filter(v => { if (!v.url || seen[v.url]) return false; seen[v.url] = true; return true })
 }
 
-// Layout 2-kolonësh VETËM në desktop për faqen e shpalljes (model Instagram/FB/Temu):
-// media majtas, detajet djathtas (ngjitëse). Mobil-i mbetet i pandryshuar (< 1000px).
-// I kufizuar te kjo faqe sepse ky <style> renderohet vetëm brenda faqes së shpalljes.
+// NJË KOLONË në desktop (vendim pronari, 5 shtator) — pa grid 2-kolonësh.
+// Kolonë e vetme e qendërzuar; media mban gjerësinë e plotë të kolonës; blloqet e
+// TEKSTIT (përshkrimi) kufizohen te kolona e leximit (37em) që të mos i kalojnë 75
+// karaktere. `.info` ka të njëjtin `x` me median (të dyja fëmijë bllok të `.wrap`),
+// gjë që e provon një kolonë. Mobil-i (<1000px) i pandryshuar.
 const LISTING_DESKTOP_CSS = `
 @media (min-width:1000px){
   .wrap{
-    max-width:1140px !important;
-    display:grid !important;
-    grid-template-columns:minmax(0,1.15fr) minmax(0,0.85fr);
-    column-gap:34px;
-    align-items:start;
-    background:transparent !important;
+    max-width:min(100%,1140px) !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+    padding-left:clamp(32px,4vw,72px) !important;
+    padding-right:clamp(32px,4vw,72px) !important;
     padding-bottom:48px !important;
+    background:transparent !important;
   }
-  .wrap > .topbar{ grid-column:1 / -1; }
   .wrap > .info{
-    grid-column:2;
-    grid-row:2 / span 999;
-    align-self:start;
-    position:sticky;
-    top:78px;
     background:#fff;
     border-radius:16px;
     box-shadow:0 1px 4px rgba(0,0,0,.06);
     border:1px solid #f0ece0;
   }
+  /* Përshkrimi te kolona e leximit (≤75 karaktere), i lidhur me të njëjtin x majtas. */
+  .wrap .desc{ max-width:var(--kolona-lexim); }
 }
 `
 
