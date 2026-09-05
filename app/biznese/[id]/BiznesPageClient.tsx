@@ -802,7 +802,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
         .card{background:#fff;border-radius:16px;margin:8px 12px 0;padding:16px;}
         .section-title{font-size:var(--fs-dysheme);font-weight:800;color:#111;margin-bottom:14px;display:flex;align-items:center;gap:6px;}
         .biz-chip{display:inline-flex;align-items:center;gap:5px;font-size:var(--fs-dysheme);font-weight:700;color:#444;background:#f4f4f4;border:1px solid #e2e2e2;border-radius:999px;padding:6px 11px;min-height:32px;text-decoration:none;cursor:default;}
-        a.biz-chip{cursor:pointer;}
+        a.biz-chip{cursor:pointer;min-height:44px;}
         .biz-panel-btn{min-height:44px;background:#fff;border:1px solid #e5e5e5;border-radius:10px;font-size:var(--fs-dysheme);font-weight:700;cursor:pointer;font-family:inherit;color:#111;display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:0 6px;text-align:center;}
         .biz-panel-btn:hover{background:#fafafa;border-color:#d8d8d8;}
       ` }} />
@@ -821,7 +821,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
         {/* Floating buttons */}
         <BackButton style={{ position: 'absolute', top: 12, left: 12, background: 'rgba(0,0,0,.45)', borderRadius: '50%' }} iconStyle={{ fontSize: 18, color: '#fff' }} />
         <div style={{ position: 'absolute', top: 12, right: 12, display: 'flex', gap: 8 }}>
-          <button type="button" aria-label="Ndaj biznesin" onClick={share} style={{ background: 'rgba(0,0,0,.45)', border: 'none', borderRadius: '50%', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+          <button type="button" aria-label="Ndaj biznesin" onClick={share} style={{ background: 'rgba(0,0,0,.45)', border: 'none', borderRadius: '50%', width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
             <i className="ti ti-share" style={{ fontSize: 16, color: '#fff' }} aria-hidden="true" />
           </button>
           {/* Lapsi edit u hoq: pronari e sheh faqen si vizitor i veçantë (pamje e pastër);
@@ -1029,7 +1029,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
         <div style={{ background: '#111', color: 'var(--az-yellow)', margin: '0 0 8px', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, fontSize: 'var(--fs-dysheme)', fontWeight: 700 }}>
           <span><i className="ti ti-eye" aria-hidden="true" /> Po e shikon faqen publike të biznesit</span>
           <button type="button" onClick={() => { window.location.href = `/biznese/${biz.id}` }}
-            style={{ background: 'var(--az-yellow)', color: '#111', border: 'none', borderRadius: 8, padding: '6px 12px', fontSize: 'var(--fs-dysheme)', fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' }}>
+            style={{ background: 'var(--az-yellow)', color: '#111', border: 'none', borderRadius: 8, minHeight: 44, padding: '6px 14px', fontSize: 'var(--fs-dysheme)', fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0 }}>
             ← Kthehu te menaxhimi
           </button>
         </div>
