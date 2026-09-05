@@ -520,3 +520,56 @@ saktë është klasë e vetën, jo çmim i rremë.
 **Mësim i përgjithshëm:** stilet inline të Fazës 0 mbizotërojnë çdo rregull CSS të U-orderave të
 mëpasëm. Kudo ku një klasë merr token të ri, stili inline mbi të njëjtin element duhet hequr.
 Sot preken: `card-price` (1), `badge-` (1), `section-title` (4).
+
+---
+
+## 17. URDHËR PRONARI — RREGULLI MBIZOTËRUES I HAPËSIRËS (5 shtator, mbrëmje)
+
+> **1.** 100% e platformës në ekran.
+> **2.** Nëse faqja që zmadhohet nuk mundet 100%, atëherë në sfond kalon 100% **faqja bazë e
+> platformës**, ndërsa faqja që po zmadhohet **mbivendoset mbi të, proporcionalisht**, për të
+> plotësuar kushtet komode dhe kriteret shkencore. «Kështu bëjnë të gjithë web, kështu funksionon
+> edhe desktopi. Ju keni faqen bazë ku mbi të qëndrojnë kutizat e shpalljes dhe katalogu në homepage.»
+
+**Ky rregull ZËVENDËSON §4 Shtresën B.** Doktrina ime e mëparshme — kolonë leximi e ngurtë `37em`
+— e kundërshton urdhrin: kolona nuk rritet me ekranin, ndaj faqja mbetet ishull i vogël teksti mbi
+bosh. Matje që e provon (prodhimi i sotëm):
+
+| Faqja | Gjerësia e tekstit | Ekrani | Shfrytëzimi | Marzhe bosh |
+|---|---|---|---|---|
+| `/kushtet` @1920 | **552px** | 1920 | **29%** | 684px majtas + 684px djathtas |
+| `/kushtet` @1280 | 550px | 1280 | 43% | 364 + 366 |
+| `/listing/[id]` @1920 | 968px | 1920 | 50% | 475 + 477 |
+
+Instrumenti im e quajti "i qendruar ✓" sepse mati **simetrinë**, jo **mbushjen**. Kriteri ishte
+i gabuar: simetria e një ishulli të vogël nuk është ekuilibër, është zbrazëti e barabartë.
+
+### Modeli i saktë — dy shtresa, siç e përshkroi pronari
+1. **SHTRESA BAZË** — gjithnjë **100% e ekranit**. Është e njëjta guaskë ku sot rrinë kutizat e
+   shpalljeve dhe katalogu te ballina. Çdo faqe qëndron mbi të; asnjë ekran nuk mbetet bosh.
+2. **SHTRESA E PËRMBAJTJES** — mbivendoset mbi bazën, me gjerësi **proporcionale me ekranin**
+   (fraksion i `vw`, kurrë px të ngurtë), me lartësim (hije/kufi) që e ndan nga baza.
+
+### Derivimi (që "proporcionalisht" të ketë numër, jo ndjesi)
+Panel = **62vw** dhe shkronja e lidhur me panelin, që masa të mbetet konstante:
+
+| Ekrani | Paneli 62vw | Shkronja për 70 karaktere | Masa |
+|---|---|---|---|
+| 1280 | 794px | **20.2px** | 70 |
+| 1920 | 1190px | **30.3px** | 70 |
+| 2560 | 1587px | **40.4px** | 70 |
+
+Shkronja 40px në 2560 është zmadhim i vërtetë proporcional, por del mbi brezin e rehatisë 20–22′.
+**Zgjidhja profesionale që i plotëson të dyja:** kur paneli rritet aq sa një kolonë e vetme do të
+kalonte 75 karaktere me shkronjë të rehatshme, teksti ndahet në **dy kolona** (`columns`), si te
+gazetat dhe aplikacionet desktop. Ekrani mbushet 100%, gjithçka rritet proporcionalisht, dhe syri
+mbetet brenda masës së lexueshme.
+
+### Kriteret e pranimit (të matshme)
+| Kriteri | Si matet |
+|---|---|
+| Shtresa bazë mbush ekranin | përmbajtje e vizatuar (jo sfond bosh) në ≥98% të gjerësisë, në çdo rrugë |
+| Paneli është proporcional | raporti `gjerësi paneli ÷ gjerësi ekrani` **konstant ±3%** në 1280/1920/2560 |
+| Masa mbetet e lexueshme | 60–75 karaktere për kolonë, në çdo gjerësi |
+| Asnjë ishull | shfrytëzimi i përgjithshëm i ekranit **≥85%** (sot: 29% te `/kushtet`) |
+| Telefoni i paprekur | @390 numrat e sotëm nuk lëvizin |
