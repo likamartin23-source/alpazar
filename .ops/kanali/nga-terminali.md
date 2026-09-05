@@ -425,3 +425,27 @@ Kalimi i menjëhershëm i 931 madhësive te shkalla i rrit disa tekste **+66%** 
 **Çfarë NUK ndryshoi:** doktrina e tri shtresave (§3), formula `clamp(1rem, 0.8875rem + 0.461vw, 1.75rem)`, kolona `66ch`, kriteret e pranimit (§6).
 
 **Kërkohet:** (1) mbyll U-08 me të dy hapat dhe provë live; (2) pastaj Faza 0; (3) pastaj U-01 e tutje sipas §7. Unë mas para dhe pas çdo deploy-i me të njëjtin instrument dhe raportoj këtu.
+
+## T-048 · AUTOPSIA E PLOTË + AUDITIMI I DYTË · 2026-09-05 · për CLOUD · gjendja: PLANI PËRFUNDIMTAR, NIS ZBATIMIN
+**Lënda:** Pronari hyri me Google në dritaren e auditit → u matën edhe 15 rrugët pas hyrjes. Baza tani **28 faqe · 112 matje**. Pastaj e audituam planin për herë të dytë, siç urdhëroi.
+
+**Verdikti nuk lëvizi kur kampioni u dyfishua:** 83% → **84% nën 16′ (94/112)**, **zero në brezin 20′+**. Faqet pas hyrjes janë pak më të këqija se publiket, jo më të mira.
+
+**GABIM I RËNDË I IMI, i kapur në auditimin e dytë (§11-A9) — ky është kritik për ty:**
+`66ch` NUK do të thotë 66 karaktere. `ch` = gjerësia e shifrës "0" = **0.7315em** te Plus Jakarta Sans (matur në shfletues), ndërsa karakteri mesatar është 0.5606em. Pra `max-width:66ch` jep **86 karaktere reale** — mbi kufirin 75. Po ta kishe zbatuar, instrumenti im do ta shënonte si dështim dhe plani do të rrëzonte veten pa e kuptuar askush.
+**KOLONA E LEXIMIT ËSHTË `37em`, JO `66ch`.** (Ekuivalenti në ch: 50ch.) Matur: 744px @1280 · 853px @1920 · 962px @2560 — brenda konit ±15°.
+
+**Formula e §4 u verifikua në shfletues, jo në letër** (7 gjerësi): 16.00px @390 · 20.10 @1280 · 23.05 @1920 · 26.00 @2560 · 28.00 @3440 — të gjitha mbi kërkesën ISO 20′.
+
+**Zoom 200% (D-19): pranohet, me kusht.** Termi `vw` s'rritet fizikisht me zoom-in → rritja reale është 1.71×, jo 2×. WCAG 1.4.4 kërkon që teksti të zmadhohet pa u prishur, jo raport të saktë; dhe në terma absolutë përdoruesi merr 35.9′. **Kusht i ri pranimi: çdo faqe kontrollohet me zoom 200% për prerje/mbivendosje.**
+
+**PESË DEFEKTE TË REJA nga faqet e kyçura (urdhra U-09…U-11, §11-A11/A12):**
+- **D-22** `/biznese/[id]/analytics`: trup **9px** → 7.7′ @2560. Teksti më i vogël në platformë në faqe të plotë.
+- **D-23** `/billing`: masa **150ch** @1280 — dyfishi i kufirit.
+- **D-24** `/te-dhenat-mia`: masa **135ch** + 3 caqe nën 24px.
+- **D-25** `/biznese/[id]/edit`: **12 caqe nën 24px** @2560 — faqja më e keqe për prekjen.
+- **D-21 KONFIRMUAR** (ai që fotografoi pronari): `/messages` @1920 ka shirit të errët full-bleed me "vrimë" krem 960px në mes. Shkaku i saktë: `app/messages/page.tsx:750` → `@media(min-width:1024px){.page{max-width:960px}}` brenda sfondi të errët në gjithë gjerësinë. Foto: `.ops/autopsi/messages-1920.png`.
+
+**REGJISTRI I DEFEKTEVE (§10, urdhër i pronarit): D-01…D-25**, përfshirë instrumentat dhe procesin, plus alarmet false të shënuara si MBYLLUR që të mos rihapen.
+
+**Kërkohet — nis zbatimin me këtë radhë:** U-08 (13/16 ikona ende 0×0px) → Faza 0 (dyshemetë) → U-01 (tokenët, me `--kolona-lexim: 37em`) → U-02/U-03 → U-04/U-05/U-06 → U-09/U-10/U-11 → U-07. Pas çdo deploy-i unë mas dhe raportoj para/pas.
