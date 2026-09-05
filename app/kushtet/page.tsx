@@ -20,6 +20,46 @@ export default function Kushtet() {
     .law{font-size:var(--fs-dysheme);color:#555;font-style:italic;}
     .ftr{display:flex;flex-wrap:wrap;gap:8px 16px;padding:20px;background:#f9f9f9;border-top:1px solid #eee;margin-top:10px;}
     .ftr a{color:#555;font-size:var(--fs-dysheme);text-decoration:none;}
+
+    /* ── MODELI DY-SHTRESOR (urdhër pronari, 5 shtator; PLANI-OPTIK §17/§17.1) ──
+       PROTOTIP te /kushtet (rasti më i keq: më parë 29% shfrytëzim @1920, ishull
+       teksti 37em mbi krem bosh). Zëvendëson doktrinën e kolonës së ngurtë 37em.
+
+       · Shtresa BAZË = "tavolinë e pastër" (përgjigje e pronarit §17.1): vetëm
+         sipërfaqja vizuale e platformës në 100% të ekranit — pa karta, pa
+         katalog, pa asnjë të dhënë a komponent. Vetëm që ekrani të mos mbetet
+         zbrazëti. Këtu: krem-i i platformës.
+       · Shtresa e PËRMBAJTJES = panel me gjerësi proporcionale me vw (kurrë px
+         të ngurtë), fletë mbi tavolinë me lartësim (hije + rreze). Kur zgjerohet,
+         teksti ndahet në kolona gazete që ekrani të mbushet DHE masa të mbetet
+         60-75 karaktere/kolonë — jo shkronjë 40px.
+       Mobil-i (<1000px) i PANDRYSHUAR: 37em > çdo telefon, pra 100% si më parë. */
+    @media(min-width:1000px){
+      body{background:var(--az-cream);}
+      .wrap{
+        max-width:none;
+        width:92vw;              /* proporcional: panel÷ekran = 0.92 konstant */
+        margin:18px auto;
+        min-height:auto;
+        border-radius:18px;
+        border:1px solid var(--az-line);
+        box-shadow:0 2px 8px rgba(0,0,0,.06),0 22px 54px -26px rgba(0,0,0,.28);
+        overflow:hidden;         /* që këndet e rrumbullakosura t'i presin fëmijët */
+      }
+      /* Teksti mbush panelin në kolona; column-width në em → masa mbetet
+         ~68 karaktere pavarësisht sa kolona nxë ekrani (2 @1280 … 4 @2560). */
+      .content{
+        columns:34em;
+        column-gap:clamp(2rem,3.4vw,4.5rem);
+        padding:34px clamp(28px,3vw,60px) 52px;
+      }
+      /* Titulli e versioni shtrihen mbi të gjitha kolonat (hyrje e vetme). */
+      .content>h1,.content>.ver{column-span:all;}
+      /* Mos i ndaj seksionet shëmtuar mes dy kolonave. */
+      .content h2{break-inside:avoid;break-after:avoid;margin-top:0;}
+      .content h2:not(:first-of-type){margin-top:22px;}
+      .content p,.content ul,.content .note{break-inside:avoid;}
+    }
   `
   return (
     <>
