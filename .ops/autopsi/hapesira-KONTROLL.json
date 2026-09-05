@@ -1,0 +1,139 @@
+{
+ "baza": "https://alpazar.vercel.app",
+ "gjeresia": 1920,
+ "kur": "2026-09-05T14:31:30.130Z",
+ "faqet": {
+  "/admin": {
+   "vw": 1920,
+   "glifetMajtas": 14,
+   "glifetDjathtas": 1158,
+   "gjeresiaTekstit": 1144,
+   "marzhiMajtas": 14,
+   "marzhiDjathtas": 762,
+   "shfrytezimi": 59.6,
+   "shfrytezimiPermbajtjes": 59.6,
+   "permbajtjaMajtas": 14,
+   "permbajtjaDjathtas": 762,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 1920,
+    "la": 1479
+   },
+   "panel": {
+    "gj": 1920,
+    "x": 0,
+    "emri": "div.wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 1920,
+   "rruga": "/admin",
+   "guaske": false
+  },
+  "/messages": {
+   "vw": 1920,
+   "glifetMajtas": 546,
+   "glifetDjathtas": 1818,
+   "gjeresiaTekstit": 1272,
+   "marzhiMajtas": 546,
+   "marzhiDjathtas": 102,
+   "shfrytezimi": 66.3,
+   "shfrytezimiPermbajtjes": 29.5,
+   "permbajtjaMajtas": 546,
+   "permbajtjaDjathtas": 808,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 1920,
+    "la": 426
+   },
+   "panel": {
+    "gj": 960,
+    "x": 480,
+    "emri": "div.page"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 1920,
+   "rruga": "/messages",
+   "guaske": false
+  },
+  "/favorites": {
+   "vw": 1920,
+   "glifetMajtas": 142,
+   "glifetDjathtas": 1818,
+   "gjeresiaTekstit": 1676,
+   "marzhiMajtas": 142,
+   "marzhiDjathtas": 102,
+   "shfrytezimi": 87.3,
+   "shfrytezimiPermbajtjes": 51.7,
+   "permbajtjaMajtas": 142,
+   "permbajtjaDjathtas": 785,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 1920,
+    "la": 901
+   },
+   "panel": {
+    "gj": 1920,
+    "x": 0,
+    "emri": "div.az-wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 1920,
+   "rruga": "/favorites",
+   "guaske": false
+  },
+  "/kushtet": {
+   "vw": 1920,
+   "glifetMajtas": 474,
+   "glifetDjathtas": 1818,
+   "gjeresiaTekstit": 1344,
+   "marzhiMajtas": 474,
+   "marzhiDjathtas": 102,
+   "shfrytezimi": 70,
+   "shfrytezimiPermbajtjes": 48.7,
+   "permbajtjaMajtas": 474,
+   "permbajtjaDjathtas": 511,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 1920,
+    "la": 6173
+   },
+   "panel": {
+    "gj": 1014,
+    "x": 453,
+    "emri": "div.wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 1920,
+   "rruga": "/kushtet",
+   "guaske": false
+  },
+  "/oferta": {
+   "vw": 1920,
+   "glifetMajtas": 142,
+   "glifetDjathtas": 1818,
+   "gjeresiaTekstit": 1676,
+   "marzhiMajtas": 142,
+   "marzhiDjathtas": 102,
+   "shfrytezimi": 87.3,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 1920,
+    "la": 956
+   },
+   "panel": {
+    "gj": 1920,
+    "x": 0,
+    "emri": "div.az-wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 1920,
+   "rruga": "/oferta",
+   "guaske": false
+  }
+ }
+}

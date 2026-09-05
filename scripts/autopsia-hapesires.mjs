@@ -37,7 +37,11 @@ function mat() {
   }
 
   // 1. Ku bie vërtet boja: kufijtë e glifeve
-  const m = D.querySelector('main') || D.body
+  // NDREQJE (defekti i trete i imi): matja brenda <main> humbiste permbajtjen e faqeve qe
+  // nuk e perdorin (p.sh. /admin me shirit anesor jashte main → 11.3% ne vend te ~51%).
+  // Rrenja eshte BODY; chrome-i i platformes eshte pjese e asaj qe sheh syri.
+  const m = D.body
+  const mMain = D.querySelector('main')
   const ec = D.createTreeWalker(m, NodeFilter.SHOW_TEXT)
   let gl = Infinity, gr = -Infinity, n
   while ((n = ec.nextNode())) {
@@ -53,6 +57,23 @@ function mat() {
     gl = Math.min(gl, Math.max(0, b.left)); gr = Math.max(gr, Math.min(vw, b.right))
   }
   if (gl === Infinity) { gl = 0; gr = 0 }
+
+  // MATJA E DYTE: vetem permbajtja e faqes (<main>) — a eshte ishull brenda guaskes?
+  let pl = Infinity, pr = -Infinity
+  if (mMain) {
+    const ec2 = D.createTreeWalker(mMain, NodeFilter.SHOW_TEXT)
+    let n2
+    while ((n2 = ec2.nextNode())) {
+      const t = (n2.textContent || '').trim(); const p2 = n2.parentElement
+      if (t.length < 2 || !p2 || !duket(p2) || p2.closest('script,style,noscript')) continue
+      const rg2 = D.createRange(); rg2.selectNodeContents(n2)
+      const b2 = rg2.getBoundingClientRect()
+      if (b2.width < 2 || b2.height < 2 || b2.top > 6000) continue
+      if (b2.right < 0 || b2.left > vw) continue
+      pl = Math.min(pl, Math.max(0, b2.left)); pr = Math.max(pr, Math.min(vw, b2.right))
+    }
+  }
+  if (pl === Infinity) { pl = gl; pr = gr }
 
   // 2. A ekziston SHTRESË BAZË: element me sfond jo-transparent që mbulon ≥98% të gjerësisë
   let baza = null
@@ -82,6 +103,8 @@ function mat() {
     gjeresiaTekstit: Math.round(gr - gl),
     marzhiMajtas: Math.round(gl), marzhiDjathtas: Math.round(vw - gr),
     shfrytezimi: Math.round(((gr - gl) / vw) * 1000) / 10,
+    shfrytezimiPermbajtjes: Math.round(((pr - pl) / vw) * 1000) / 10,
+    permbajtjaMajtas: Math.round(pl), permbajtjaDjathtas: Math.round(vw - pr),
     baza, panel,
     rreshqitesHorizontal: D.documentElement.scrollWidth > vw + 2,
     scrollWidth: D.documentElement.scrollWidth,
@@ -122,7 +145,7 @@ for (const u of RRUGET) {
       u.slice(0, 40).padEnd(41) + 'shfryt=' + String(r.shfrytezimi).padStart(5) + '%' +
       '  tekst=' + String(r.gjeresiaTekstit).padStart(4) + 'px' +
       '  marzhe ' + String(r.marzhiMajtas).padStart(4) + '/' + String(r.marzhiDjathtas).padStart(4) +
-      '  bazë=' + (r.baza ? 'po' : 'JO') + flag + (r.guaske ? ' [GUASKË]' : '')
+      '  përmbajtja=' + String(r.shfrytezimiPermbajtjes).padStart(5) + '%' + flag + (r.guaske ? ' [GUASKË]' : '')
     )
   } catch (e) {
     console.log(u.slice(0, 40).padEnd(41) + 'GABIM ' + String(e.message).slice(0, 40))
