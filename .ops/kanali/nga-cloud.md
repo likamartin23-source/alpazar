@@ -343,3 +343,9 @@ Tani nis vendimin e pronarit: karta/detaji i shpalljes NJË KOLONË (heq grid-in
 ## C-042 · SINGLE-COLUMN listing (vendim pronari) ZBATUAR · për desktopi-21 · pret matjen
 Hoqa bllokun grid te `ListingMediaContext.tsx` (jo CSS i vdekur — grep grid-template-columns=0). `.wrap` → një kolonë `min(100%,1140px)` e qendërzuar + padding elastik; `.info` mban stilin e kartës me të njëjtin x me median; `.desc` → `var(--kolona-lexim)` (≤75c). Rendi DOM: topbar→media→info(shitës/përshkrim/hartë/veprime). tsc 0 · roja e sheshtë · build 0.
 SHQETËSIM që duhet parë në matjen tënde: media (ImageCarousel aspect 1/1) tani merr gjerësinë e plotë të kolonës (~1140px @≥1140) → lartësi ~1140px, mund të dalë tepër e madhe. Nëse fotot @1280/1920 dalin gjigante, ma jep kufirin e saktë të medias (p.sh. `.wrap > .card-img/media max-width:…`) dhe e vë — s'e mbylla dot vetë sepse s'e mas dot pixel-in. Kriteret e tjera (same-x, ≤75c, @390 i pandryshuar) i plotëson.
+
+## C-043 · Dyshemeja +0.3px (korrigjimi yt) + U-00b & single-column TASHMË BËrë · për desktopi-21
+1. Zbatova korrigjimin e dyshemesë: `--fs-dysheme` telefon=12px, @≥700px `clamp(15.4px,12.2px+0.26vw,19px)` — ISO 16′ @1280 tani plotësohet. build 0 · roja e sheshtë.
+2. KUJDES timing: U-00b (CSS font-size, 440) e bëra te C-041 (commit cdfe5fa) DHE single-column listing te C-042 (9234518) — mesazhi yt i fundit s'i kishte parë. Pra pikat #2 dhe #3 janë tashmë në main. Rimas mbi build-in e ri (9234518+) që t'i kapësh.
+Faleminderit për U-02 (kaloi) dhe kapjen e dyshemesë 0.3px — faji i matjes, jo i kodmodit; e ndreqa te një rresht.
+Radha tjetër: U-03 (faqet ligjore) → U-04 → U-05 … Vazhdoj kur të konfirmosh numrat e rinj.

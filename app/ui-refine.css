@@ -41,12 +41,16 @@
      pa breakpoint: 12px @390 · 15px @1280 · 16px @1500+. Kodmodi zëvendëson çdo
      `fontSize: N` me N<15 me këtë. Rrafshon përkohësisht hierarkinë <15px te dyshemeja;
      hierarkia rikthehet te U-02…U-13 me --fs-meta/--fs-trup/--fs-tit-*. */
-  --fs-dysheme: clamp(12px, 10.69px + 0.337vw, 16px);
+  --fs-dysheme: 12px; /* telefon: 12px = 16.2′ ✓ (desktop ngrihet te media query më poshtë) */
   /* Kolona e leximit = 37em, JO 66ch: te Plus Jakarta Sans "0"=0.7315em ndërsa
      karakteri mesatar=0.5606em, pra 66ch do të jepte ~86 karaktere (mbi 75).
      37em ≈ 50ch reale → 744px@1280 · 853px@1920, brenda konit ±15° (matje terminali). */
   --kolona-lexim: 37em;
 }
+/* [U-00 · korrigjim matjeje] Dyshemeja e desktopit u ngrit nga 15→15.4px sepse ISO
+   16′ @1280 kërkon 15.3px (matje terminali: 921 tekste ngecnin te 15.00px). Telefoni
+   (<700px) mbetet 12px i paprekur. Kontrolluar: 15.53px @1280=16.3′ · 17.19px @1920=19.6′. */
+@media (min-width:700px){ :root{ --fs-dysheme: clamp(15.4px, 12.2px + 0.26vw, 19px); } }
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
 body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;}
 ::selection{background:var(--az-yellow);color:var(--az-black);}
