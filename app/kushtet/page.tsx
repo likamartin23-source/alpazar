@@ -43,8 +43,11 @@ export default function Kushtet() {
         border-radius:18px;
         border:1px solid var(--az-line);
         box-shadow:0 2px 8px rgba(0,0,0,.06),0 22px 54px -26px rgba(0,0,0,.28);
-        overflow:hidden;          /* këndet e rrumbullakosura t'i presin fëmijët */
+        /* PA overflow:hidden — do të prishte position:sticky të .topbar. Këndet
+           rrumbullakosen te vetë topbar-i (lart) dhe footer-i (poshtë). */
       }
+      .topbar{border-radius:18px 18px 0 0;}
+      .ftr{border-radius:0 0 18px 18px;}
       .content{padding:34px clamp(28px,4vw,56px) 48px;}
     }
   `
