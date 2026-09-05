@@ -317,3 +317,42 @@ një mostër.** Një mostër e pastër nuk provon zero.
 
 Përmirësim real, por **kontrasti mbetet dimensioni më i pashqyrtuar**: askush s'e ka prekur
 qëllimisht; rënia nga 302 në 162 është pasojë anësore e rritjes së shkronjave.
+
+---
+
+## 13. SHKAKU RRËNJËSOR I KONTRASTIT — dhe gabimi im i tetë
+
+### 13.1 · Analiza e çifteve ngjyrë/sfond (4 faqet më të prekura)
+Nga **141 raste** të matura live, **24 çifte të ndryshme**. Por shpërndarja nuk është e sheshtë:
+
+| Çifti | Raste | Raporti | Verdikti |
+|---|---|---|---|
+| **`#AAAAAA` mbi të bardhë** | **66** | **2.32:1** | gjysma e pragut 4.5 |
+| **`#888888` mbi të bardhë** | **28** | **3.54:1** | nën pragun |
+| `#999999` mbi të bardhë/afër | 6 | ~3.9:1 | nën pragun |
+| `#9A9A9A` mbi krem | 3 | ~3.7:1 | nën pragun |
+
+**103 nga 141 raste (73%) janë tri nuanca gri mbi sfond të hapur.**
+Kjo NUK është 103 defekte — është **një vendim dizajni i përsëritur**: teksti dytësor u zgjodh
+shumë i çelët. Një ndreqje tokeni (gri-ja dytësore nga `#AAA`/`#888` te një vlerë ≥4.5:1, p.sh.
+`#6B6B6B` = 5.3:1 mbi të bardhë) i mbyll të tria njëherësh, në gjithë platformën.
+
+### 13.2 · GABIMI IM I TETË — "tekst i padukshëm" që s'ekziston
+Analiza ime nxori raste `rgb(255,255,255)` mbi `rgb(255,251,234)` dhe mbi `rgb(255,255,255)` —
+tekst i bardhë mbi krem dhe mbi të bardhë, pra teorikisht i padukshëm: "Fto Miqtë, Fito Pikë!",
+"Instagram", "Story" te `/referral`.
+
+**Ishte alarm i rremë.** Prindi `.hero` ka `linear-gradient(135deg, #E63312, #C4...)` — një gradient
+i kuq. Teksti i bardhë rri mbi të kuqe dhe **lexohet përsosmërisht**.
+
+**Shkaku i gabimit:** detektori im lexonte vetëm `backgroundColor` dhe injoronte `backgroundImage`.
+Kjo është saktësisht kategoria e gabimit që kisha shënuar më parë (DOM kundrejt pikselit të
+vizatuar) — dhe e përsërita në një instrument të ri.
+
+**E kapa para raportimit** vetëm sepse zbatova rregullin tim: çdo pohim që varet nga pikseli
+verifikohet me foto ose me zinxhirin e plotë të stileve.
+
+**Pasojë metodologjike:** analiza ime e çifteve është e vlefshme **vetëm për sfonde të plota**.
+Për gradientë dhe foto, autoriteti është axe-i — i cili pikërisht këto i shënon "të papërfunduara"
+(589 raste te auditimi i parë), jo shkelje. Numrat e §13.1 mbeten të vlefshëm sepse ato janë
+gri mbi sfonde të plota; pretendimi për tekst të padukshëm tërhiqet.
