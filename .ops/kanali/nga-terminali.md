@@ -510,3 +510,47 @@ Kjo ngre çdo përdorim të mbetur të familjes së vjetër mbi minimumin, kudo 
 Më i madhi në faqe është 32px. Kandidatët për hap më lart: `"Transport & Logjistikë"` 15.53px (nëntitulli i biznesit → `--fs-trup`), tab-et `"Shpalljet"`/`"Rreth & Vlerësime"` 13px→`--fs-tit-s`, distinktivët `"Premium"`/`"Biznes"`/`"Tregtar"` 12px→`--fs-meta`, `"Besueshmëria"`/`"/100"` 10px→`--fs-meta`, `"135 pikë"` 12px→`--fs-trup` (është numër statusi, jo meta).
 
 Rendi që propozoj: **familja e vjetër e tokenëve e para** (efekti më i madh për punën më të vogël), pastaj caqet e mbetura, pastaj hierarkia.
+
+## T-052 · AUDITIM I PUNËS SË CODE (urdhër pronari) · 2026-09-05 · për CLOUD
+Prodhimi `e44f7ac5` = main. Matje live @1280 mbi 4 rrugë përfaqësuese.
+
+**ÇFARË QËNDRON — punë e vërtetë, e verifikuar:**
+- Ballina: tekste nën minimumin ISO **102 → 5**. `/kushtet` **92 → 1**. `/biznese/[id]?public=1` **60 → 11**.
+- Caqe nën 24px: **0** te ballina, `/kushtet`, `/biznese/[id]?public=1`.
+- Masa mbi 75 karaktere: **0** në të katra.
+- CSS i vdekur nga U-07: **0** (`grid-template-columns` i hequr, jo i anashkaluar).
+- Madhësi nën 15px të mbetura në kod: **0 inline, 0 CSS**.
+
+**ÇFARË NUK ËSHTË BËRË — dhe është 89% e mbetjes:**
+Mbeten **28 tekste nën minimum** në këto 4 faqe. Shpërndarja sipas madhësisë:
+
+| Madhësia | Sa raste | Burimi |
+|---|---|---|
+| **12px** | 17 | `--fs-base:12px` |
+| **11px** | 4 | `--fs-sm:11px` |
+| **10px** | 3 | `--fs-xs:10px` |
+| **14px** | 1 | `--fs-lg:14px` |
+| 15px | 2 | tjetër (shih më poshtë) |
+| 8px | 1 | ikona `🏢` te `/listing/[id]` |
+
+**25 nga 28 (89%) janë familja e vjetër e tokenëve** — `app/ui-refine.css:188–189`:
+```
+--fs-2xs:9px; --fs-xs:10px; --fs-sm:11px; --fs-base:12px; --fs-md:13px;
+--fs-lg:14px; --fs-xl:16px; --fs-2xl:19px; --fs-3xl:22px;
+```
+Ende e pandryshuar, ndonëse e raportova te T-051. Elementet konkrete që dalin: "Premium", "Biznes", "Besim në rritje", "Besueshmëria 0/100" te biznesi i jashtëm; inicialet "AA"/"MA"/"ML" te ballina; "Premium"/"Biznes" te detaji i shpalljes.
+
+**Ndreqja mbetet 6 rreshta, pa prekur asnjë komponent:**
+```css
+--fs-2xs: var(--fs-dysheme);  --fs-xs: var(--fs-dysheme);  --fs-sm: var(--fs-dysheme);
+--fs-base:var(--fs-dysheme);  --fs-md: var(--fs-dysheme);  --fs-lg: var(--fs-meta);
+```
+(Edhe `--fs-xl:16px`, `--fs-2xl:19px`, `--fs-3xl:22px` janë px të ngurtë — nuk shkallëzohen me ekranin. Duan `--fs-tit-s/-m/-l`.)
+
+**Dy mbetje të tjera të vogla:**
+1. **Ikona `🏢` 8px** te `/listing/[id]` — teksti më i vogël që ka mbetur në platformë (8.4′, gjysma e minimumit).
+2. **15px ×2** — titujt "Kushtet e Përdorimit" dhe "Shpallja" dalin 15px, nën dyshemenë 15.53px. Nuk vijnë nga dyshemeja; kanë madhësi të vetën diku. Kërkojnë gjetje.
+
+**Caqet te `/listing/[id]`:** 1 nën 24px dhe 6 nën 44px — kjo faqe nuk është prekur ende nga U-12.
+
+**Verdikti i auditimit:** puna e bërë është reale dhe e matur, por **një ndreqje e vetme prej 6 rreshtash mban peng 89% të mbetjes**. Ajo duhet e para, para çdo faqeje tjetër.
