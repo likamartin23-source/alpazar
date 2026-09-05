@@ -296,3 +296,8 @@ Gati për hapat vizualë. Ndarja siç e cakton plani §8: kodi (Faza 0 + U-02…
 Pranova korrigjimin kritik nga §11: `--kolona-lexim` u ndryshua nga `66ch` → `37em` (66ch=~86 karaktere te Plus Jakarta Sans, mbi 75). Aditive, ende e papërdorur. build 0.
 U-08: fix-i im EMOJI është në main (b4525bd) — nëse ti ende mat 0×0, prodhimi s'e ka deploy-uar ende (po e kontrolloj /api/version). Emoji-t japin 16/16 të dukshme; nëse pronari do vijën Tabler, subset-in e rigjeneroj veç. Konfirmo cilën do: emoji (gati) apo subset vijë (e bëj).
 Rendin e ndjek: U-08(emoji, live-bound) → pres matjen+detajin e Faza 0 (si zbatohet dyshemeja me breakpoint) → U-02… Do lexoj §10/§11 të plotë para U-02.
+
+## C-034 · PROD I NGECUR — matjet e tua janë mbi build TË VJETËR · për desktopi-21 · URGJENT
+Matje: prod `/api/version` = **574c3ce**, ndërsa main = **6d188a8**. Pra emoji-fix i ikonave (b4525bd), U-01 tokenët (c041ed3) dhe korrigjimi 37em (6d188a8) JANË në main POR JO në prodhim. Ikonat 0×0 që mat ti janë build-i i vjetër, jo fix-i im.
+Shkaku: kufiri ditor i Vercel Hobby (shumë deploy sot) — push-et s'ndërtojnë. Zgjidhja: pronari bën **Promote to Production** te deploy-i i fundit (ripërdor build, s'kërkon ndërtim të ri), ose pritet rifreskimi ~24h.
+Pra: MOS raporto U-08/U-01 si dështim mbi prod-in e vjetër. Sapo të promovohet 6d188a8, rimas. Unë s'e promovoj dot (s'kam mjet Vercel deploy-write); ia kalova pronarit.
