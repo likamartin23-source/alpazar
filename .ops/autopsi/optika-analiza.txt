@@ -1,0 +1,88 @@
+
+═══ 1. SA E MADHE DUHET TE JETE SHKRONJA (nga syri, jo nga moda) ═══
+ekrani          mm/px   dist   px per 16'(min)   px per 20'(rehat)   px per 22'
+telefon-390    0.1831    350mm          11.9                14.8         16.3
+laptop-1280    0.2234    550mm          15.3                19.1         21.0
+desktop-1920   0.2766    600mm          13.5                16.8         18.5
+i-madh-2560    0.2332    700mm          18.6                23.3         25.6
+
+═══ 2. CFARE KA VERTET NE PLATFORME (matje live) ═══
+faqja            telefon-390      laptop-1280      desktop-1920     i-madh-2560      
+                 px    arcmin  vlerapx    arcmin  vlerapx    arcmin  vlerapx    arcmin  vlera
+ballina          10px   13.5'  DOB 12px   12.6'  DOB 12px   14.3'  DOB 12px   10.3'  DOB 
+kategori         13px   17.5'  kuf 13px   13.6'  DOB 13px   15.4'  DOB 13px   11.2'  DOB 
+kategori-slug    13px   17.5'  kuf 13px   13.6'  DOB 13px   15.4'  DOB 13px   11.2'  DOB 
+kategori-qytet   14px   18.9'  kuf 14px   14.7'  DOB 14px   16.6'  kuf 14px   12.0'  DOB 
+search           10px   13.5'  DOB 10px   10.5'  DOB 10px   11.9'  DOB 10px    8.6'  DOB 
+search-results   10px   13.5'  DOB 10px   10.5'  DOB 10px   11.9'  DOB 10px    8.6'  DOB 
+listing          12.5px 16.9'  kuf 13px   13.6'  DOB 12.5px 14.9'  DOB 12.5px 10.7'  DOB 
+biznese-lista    13px   17.5'  kuf 12px   12.6'  DOB 12px   14.3'  DOB 12px   10.3'  DOB 
+biznes-publik    11px   14.8'  DOB 12px   12.6'  DOB 12px   14.3'  DOB 12px   10.3'  DOB 
+premium          11.5px 15.5'  DOB 11.5px 12.0'  DOB 11.5px 13.7'  DOB 11.5px  9.9'  DOB 
+asistent         13px   17.5'  kuf 13px   13.6'  DOB 13px   15.4'  DOB 13px   11.2'  DOB 
+kushtet          13px   17.5'  kuf 13px   13.6'  DOB 13px   15.4'  DOB 13px   11.2'  DOB 
+rreth-nesh       13px   17.5'  kuf 13px   13.6'  DOB 13px   15.4'  DOB 13px   11.2'  DOB 
+
+PERMBLEDHJE: 52 matje · nen kufirin ISO 16': 43 (83%) · ne brezin e rehatise 20'+: 0
+
+═══ 3. A SHKALLEZOHET TIPOGRAFIA ME EKRANIN? (px @390 → @2560) ═══
+ballina              10    12    12    12   rritje 390→2560: 20%
+kategori             13    13    13    13   rritje 390→2560: 0%
+kategori-slug        13    13    13    13   rritje 390→2560: 0%
+kategori-qytet       14    14    14    14   rritje 390→2560: 0%
+search               10    10    10    10   rritje 390→2560: 0%
+search-results       10    10    10    10   rritje 390→2560: 0%
+listing            12.5    13  12.5  12.5   rritje 390→2560: 0%
+biznese-lista        13    12    12    12   rritje 390→2560: -8%
+biznes-publik        11    12    12    12   rritje 390→2560: 9%
+premium            11.5  11.5  11.5  11.5   rritje 390→2560: 0%
+asistent             13    13    13    13   rritje 390→2560: 0%
+kushtet              13    13    13    13   rritje 390→2560: 0%
+rreth-nesh           13    13    13    13   rritje 390→2560: 0%
+
+═══ 4. MASA (karaktere/rresht) — optimale 45–75 ═══
+kategori            37·   73    73    73    (! = mbi 75, · = nen 45)
+kategori-slug       34·   68    68    68    (! = mbi 75, · = nen 45)
+kategori-qytet      34·   68    68    68    (! = mbi 75, · = nen 45)
+listing             43·   58    44·   44·   (! = mbi 75, · = nen 45)
+premium             59   118!  118!  118!   (! = mbi 75, · = nen 45)
+asistent            41·   63    63    63    (! = mbi 75, · = nen 45)
+kushtet             41·   99!   99!   99!   (! = mbi 75, · = nen 45)
+rreth-nesh          45    65    65    65    (! = mbi 75, · = nen 45)
+
+═══ 5. CAQET E PREKJES — WCAG 2.5.8 AA kerkon 24px, AAA 44px ═══
+ballina               1/58     1/48     1/60     1/60   (nen24/gjithsej)
+kategori              2/57     2/57     2/57     2/57   (nen24/gjithsej)
+kategori-slug         3/44     3/44     3/44     3/44   (nen24/gjithsej)
+kategori-qytet        4/44     5/44     5/44     5/44   (nen24/gjithsej)
+search                1/42     1/42     1/42     1/42   (nen24/gjithsej)
+search-results        2/44     1/25     2/44     2/44   (nen24/gjithsej)
+listing               2/13     2/32     2/36     2/36   (nen24/gjithsej)
+biznese-lista         1/28     1/27     1/28     1/28   (nen24/gjithsej)
+biznes-publik         1/32     1/32     1/32     1/32   (nen24/gjithsej)
+premium               1/36     1/36     1/36     1/36   (nen24/gjithsej)
+asistent              2/30     2/30     2/30     2/30   (nen24/gjithsej)
+kushtet                1/3      2/4      5/7     8/10   (nen24/gjithsej)
+rreth-nesh             1/3      1/3     7/10     7/28   (nen24/gjithsej)
+
+═══ 6. SHFRYTEZIMI I GJERESISE — glifet kundrejt ekranit ═══
+(kujdes: >100% do te thote permbajtje qe rreshket horizontalisht, jo mbushje)
+ballina             385.1%    93.9%    93.6%    94.3%
+kategori             86.2%    88.2%    89.5%    92.4%
+kategori-slug        90.3%    89.7%    84.7%    63.5%
+kategori-qytet       89.5%    83.5%    80.6%    60.4%
+search              307.9%    93.8%    89.8%    92.3%
+search-results        319%    10.4%      91%    93.3%
+listing               111%    78.2%    50.1%    37.6%
+biznese-lista        95.1%      29%    46.5%    47.3%
+biznes-publik        87.7%    80.9%    77.3%    76.8%
+premium              85.1%    87.5%    89.5%    92.1%
+asistent             90.3%    67.3%    44.9%    33.7%
+kushtet              89.7%    59.1%    39.4%    29.5%
+rreth-nesh           85.1%    57.2%    38.1%    28.6%
+
+═══ 7. KONI I REHATISE VIZUALE (±15° foveal, ±30° kufi) ═══
+telefon-390    ekrani=  71mm  koni ±15° =  188mm = 1025px  ±30° =  404mm = 2208px  → ekrani zë 12°
+laptop-1280    ekrani= 286mm  koni ±15° =  295mm = 1319px  ±30° =  635mm = 2842px  → ekrani zë 29°
+desktop-1920   ekrani= 531mm  koni ±15° =  322mm = 1163px  ±30° =  693mm = 2505px  → ekrani zë 48°
+i-madh-2560    ekrani= 597mm  koni ±15° =  375mm = 1609px  ±30° =  808mm = 3466px  → ekrani zë 46°

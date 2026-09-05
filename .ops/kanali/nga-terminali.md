@@ -381,3 +381,47 @@ Kjo bie ndesh me "F4 — të tjerat i bëra 100% më parë" te C-019. `/listing/
 **Ç'NUK bëra me qëllim:** nuk shtypa "Aktivizo" nga profili i auditit. Do të krijonte një `push_subscription` të lidhur me një shfletues headless që s'do t'i shohë kurrë njoftimet — të dhëna prodhimi të ndotura, pa vlerë prove. Gjesti duhet të vijë nga pajisja e vërtetë e pronarit.
 
 **Kërkohet:** asgjë nga ti. Pas gjestit të pronarit, unë verifikoj nga terminali: rreshtin te `push_subscriptions`, `pg_net` → `send-push`, dhe mbërritjen e njoftimit me tab të mbyllur. Nëse pas gjestit del regjistrim SW me scope tjetër nga `/push-scope/`, e raportoj menjëherë si regres freskie.
+
+## T-046 · AUTOPSI OPTIKE + PLAN SHKENCOR · 2026-09-05 · për CLOUD · gjendja: PËR ZBATIM
+**Lënda:** Urdhri i ri i pronarit (transpozimi 100% web nuk u zbatua sipas orientimit). Bëra autopsinë totale me matje live dhe përgatita planin. **Plani i plotë: `.ops/PLANI-OPTIK.md`. Të dhënat: `.ops/autopsi/optika.json`. Instrumentet: `scripts/autopsia-optike.mjs` + `scripts/optika-analiza.mjs`.**
+
+**VERDIKTI (52 matje, 13 faqe × 4 ekrane, shfletues i pastër, prodhim):**
+- **44/52 (85%) nën kufirin absolut 16′ të ISO 9241-303.** Në brezin e rehatisë 20′+ **asnjë**.
+- **Rritja e shkronjës 390px→2560px = 0%** në 10/13 faqe. Faqja zgjerohet, shkronja jo. Kjo është fjalë për fjalë ankesa e pronarit, e matur.
+- Shkaku strukturor: **930 `fontSize` inline në `.tsx`, 0 `clamp()` në CSS** — s'ka shtresë tokenësh, ndaj asgjë s'shkallëzohet dot qendrore.
+- Katër zonat që ankoi pronari janë pikërisht komponentët me tekstin më të vogël: `ListingCard.tsx` (**8px ×2**), `SiteFooter.tsx` (10px), `BiznesPageClient.tsx` (10px ×4, 11 ×9, 12 ×15), `ListingPageClient.tsx` (10px ×2, 11 ×8).
+- Masa: `/premium` **118ch**, `/kushtet` **99ch** @1920+ (kufiri 75).
+- Caqe: `/kushtet` 8/10 dhe `/rreth-nesh` 7/10 nën 24px @2560 — nën WCAG 2.2 AA.
+- Koni i rehatisë: në 1920 ekrani zë **48°** (koni parësor ±15° = 1163px). Prandaj tekst skaj-më-skaj s'lexohet — ankesa e dytë e pronarit është anatomi, jo shije.
+
+**GABIM I IMI QË E KAPA VETË (shënoje te protokolli):** xhiroja e parë përdori profilin e ruajtur; ai kishte sesion të skaduar DHE një 404 të ruajtur në cache për `/_next/static/chunks/webpack-*.js` → faqet s'hidratoheshin, `/biznese` dukej bosh. Me shfletues të pastër është në rregull (biznesi "Makina" rendërohet, 8 karta). **Numrat referencë tani e tutje: `PROFIL=pa`.** Mos u nis nga asnjë numër i xhiros së parë.
+
+**ZGJIDHJA (derivim, jo shije) — §4 e planit:** shkallë e lëngshme e ankoruar te 20′:
+`--fs-baza: clamp(1rem, 0.8875rem + 0.461vw, 1.625rem)` → 16px@390 · 20.1@1280 · 23.0@1920 · 26.0@2560, të katër mbi kërkesën ISO. Shkallë modulare 1.2. Rregull i hekurt: asnjë tekst i vërtetë nën `--fs-baza/1.2`.
+
+**TRI SHTRESAT (§3):** A-SKANIM (rrjeta: guaskë 100% + qeliza që RRITEN — `minmax(clamp(260px,18vw,420px),1fr)`), B-LEXIM (`max-width:66ch`, jo px — rritet vetë me shkronjën), C-KONTROLL (`--kontroll-h: clamp(44px,2.6vw,56px)`).
+
+**URDHRAT E PUNËS (§5), të gjitha për ty se janë skedarë [O41]/kod:** U-01 tokenët te `ui-refine.css` → U-08 ikonat → U-02/U-03 karta+detaji → U-04/U-05/U-06 biznesi+fundi+butoni → U-07 faqet e leximit. Rendi është i qëllimshëm (§7).
+
+**DEFEKT I DUKSHËM PËR T'U NDREQUR I PARI (U-08):** te `/kategori` HTML-i i shërbyer ka `<span class="seo-cat-ico">device-mobile</span>` — emri i ikonës si tekst, në faqe publike SEO. Shkaku: `app/kategori/page.tsx:57` `{c.icon || '🏷️'}` ku `c.icon` është slug Tabler. **Kujdes hapi i dytë:** 12/16 glife mungojnë te `app/tabler-icons-subset.css` (car, home, shirt, armchair, paw, tools, briefcase, salad, plane, ball, book, device-gamepad, dots) — duhet rigjeneruar subset-i, përndryshe ndreqja jep kuti bosh.
+
+**KRITERET E PRANIMIT (§6):** 0 matje nën 16′ · ≥90% në 20′+ · 0 faqe mbi 75ch · 0 caqe nën 24px · `fontSize` inline 930 → ≤100. Shto te `roja-unifikimit.mjs` numëruesin `font_px_inline` me bazë 930 që vetëm zbret.
+
+**Kërkohet:** merri U-01…U-08 sipas rendit. Unë rimas pas çdo deploy-i dhe raportoj para/pas me të njëjtin instrument. Dy pyetje presin pronarin (§8): hyrja e re për 11 rrugët pas login-it, dhe a mbeten `/asistent` + `/listing/[id]` kolonë leximi (rekomandimi im: po).
+
+## T-047 · AUDITIMI I PLANIT (urdhër pronari) · 2026-09-05 · për CLOUD · gjendja: PLANI I MIRATUAR PËR ZBATIM
+**Lënda:** Pronari urdhëroi auditim të planit para se ti të nisësh. E audituam kundër vetes. **Versioni i korrigjuar është te `.ops/PLANI-OPTIK.md` §9 — nis nga ai, jo nga versioni i T-046.**
+
+**Tri gjetje që ndryshojnë numra:**
+- **A1:** cap-height 0.72 ishte i huazuar nga Inter. Fonti real është **Plus Jakarta Sans**; e mata live me canvas: **cap 0.750 · x 0.540 · gjerësi mesatare 0.5606em**. Instrumenti u korrigjua. Verdikti 85% → **83% nën 16′**; kërkesa 20′ tani **14.8 / 19.1 / 16.8 / 23.3px**. Formula e §4 i plotëson të katra me diferencë — përfundimi qëndron.
+- **A3:** maksimumi i shkallës 1.625rem → **1.75rem** (ultrawide 3440 kërkon 26.7px).
+- **A6:** baza e rojës 930 → **931** (dukuri, jo rreshta).
+
+**Një gjetje që ndryshon RENDIN — merre seriozisht (A4):**
+Kalimi i menjëhershëm i 931 madhësive te shkalla i rrit disa tekste **+66%** (8px→13.3 në telefon, 12→20.1 në laptop). Kjo thyen karta me lartësi fikse dhe — më keq — ndryshon pamjen e telefonit që pronari e ka konfirmuar si të mirë. Prandaj u shtua **FAZA 0: vetëm dyshemetë** (asnjë tekst <12px në telefon, <15px në desktop), me matje para/pas, dhe **çdo hap ka kthim mbrapa** nëse ndonjë kriter i §6 përkeqësohet. Faza 0 vjen PARA U-01.
+
+**Rregull i ri, i lindur nga një regres i sotëm (A8):** një urdhër pune mbyllet vetëm kur mbyllet **efekti i dukshëm**, i matur live — jo kur ndryshohet skedari. Dëshmia: `d144bc7` zbatoi hapin 1 të U-08 pa hapin 2 dhe la **13/16 ikona 0×0px** në prodhim. Ndreqe atë të parën.
+
+**Çfarë NUK ndryshoi:** doktrina e tri shtresave (§3), formula `clamp(1rem, 0.8875rem + 0.461vw, 1.75rem)`, kolona `66ch`, kriteret e pranimit (§6).
+
+**Kërkohet:** (1) mbyll U-08 me të dy hapat dhe provë live; (2) pastaj Faza 0; (3) pastaj U-01 e tutje sipas §7. Unë mas para dhe pas çdo deploy-i me të njëjtin instrument dhe raportoj këtu.
