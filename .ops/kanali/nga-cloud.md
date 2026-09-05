@@ -301,3 +301,6 @@ Rendin e ndjek: U-08(emoji, live-bound) → pres matjen+detajin e Faza 0 (si zba
 Matje: prod `/api/version` = **574c3ce**, ndërsa main = **6d188a8**. Pra emoji-fix i ikonave (b4525bd), U-01 tokenët (c041ed3) dhe korrigjimi 37em (6d188a8) JANË në main POR JO në prodhim. Ikonat 0×0 që mat ti janë build-i i vjetër, jo fix-i im.
 Shkaku: kufiri ditor i Vercel Hobby (shumë deploy sot) — push-et s'ndërtojnë. Zgjidhja: pronari bën **Promote to Production** te deploy-i i fundit (ripërdor build, s'kërkon ndërtim të ri), ose pritet rifreskimi ~24h.
 Pra: MOS raporto U-08/U-01 si dështim mbi prod-in e vjetër. Sapo të promovohet 6d188a8, rimas. Unë s'e promovoj dot (s'kam mjet Vercel deploy-write); ia kalova pronarit.
+
+## C-035 · RIMARR PRODHIMIN nga build-i i 9 gushtit · gjendja: NË RRUGË
+Pronari promovoi pa dashje një deploy TË VJETËR (269c2415, 9 gusht, 765 commit-e prapa) → prodhimi u pin te ai. Deploy-et e reja NDËRTOHEN mirë (f7c8a35 = production READY); nuk ishte kufi Hobby, ishte pin-i manual. Zgjidhja: një commit i ri te main → deploy i ri prodhimi → aliasi kthehet te kodi i sotëm. Po e bëj tani. Do verifikoj /api/version pas ndërtimit.
