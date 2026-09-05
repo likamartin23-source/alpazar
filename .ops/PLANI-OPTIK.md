@@ -75,7 +75,7 @@ i ruajtur përdoret VETËM për rrugët pas hyrjes, dhe cache-i i tij pastrohet 
 
 ### 2.0 Verdikti në një rresht
 
-**52 matje (13 faqe × 4 ekrane). 44 prej tyre — 85% — janë NËN kufirin absolut 16′ të ISO 9241-303.
+**52 matje (13 faqe × 4 ekrane). 43 prej tyre — 83% — janë NËN kufirin absolut 16′ të ISO 9241-303.
 NË BREZIN E REHATISË 20′+ NUK BIE ASNJË E VETME. Rritja e shkronjës nga 390px në 2560px është 0%
 në 10 nga 13 faqe.** Platforma nuk ka defekt tipografik të vogël — ajo thjesht nuk shkallëzohet fare.
 
@@ -84,7 +84,7 @@ në 10 nga 13 faqe.** Platforma nuk ka defekt tipografik të vogël — ajo thje
 Madhësia e trupit të tekstit është **e njëjtë në 390px dhe në 2560px**. Faqja zgjerohet, shkronja jo.
 Kjo është, saktësisht, ankesa e pronarit — e matur.
 
-Pasoja në kënd vizual (lartësi shkronje e madhe = 0.72 × font-size):
+Pasoja në kënd vizual (lartësia e shkronjës së madhe = **0.750 × font-size**, e MATUR live me canvas mbi fontin e vërtetë të aplikacionit — Plus Jakarta Sans: cap 0.750, x-height 0.540, gjerësi mesatare karakteri 0.5606em):
 
 | Ekrani | 12px real | Kërkesa ISO 16′ | Kërkesa ISO 20′ | Verdikti |
 |---|---|---|---|---|
@@ -93,13 +93,13 @@ Pasoja në kënd vizual (lartësi shkronje e madhe = 0.72 × font-size):
 | Desktop 1920 | **13.7′** | 14.0 px | 17.5 px | nën minimum |
 | Monitor 2560 | **9.9′** | 19.4 px | 24.2 px | **gjysma e minimumit** |
 
-Teksti më i vogël në platformë është **8px** (`ListingCard.tsx`, 2 vende) → **9.1′ në 1920**:
+Teksti më i vogël në platformë është **8px** (`ListingCard.tsx`, 2 vende) → **9.5′ në 1920**:
 më pak se gjysma e brezit të rehatisë. Për krahasim, 8px në desktop është si të lexoje
 një shkronjë 2mm nga 60cm larg.
 
 ### 2.2 Pse ndodhi: nuk ka shtresë tokenësh
 
-- **930 `fontSize` të ngurta inline** në `.tsx` (numëruar në kod).
+- **931 `fontSize` të ngurta inline** në `.tsx` (dukuri, jo rreshta — `grep -rno`; 930 është numri i rreshtave).
 - **0 përdorime të `clamp()`** në CSS-in e aplikacionit.
 - Prandaj asnjë ndryshim qendror nuk mund ta shkallëzojë platformën: çdo madhësi është e
   ngulitur në komponentin e vet.
@@ -175,7 +175,7 @@ Kontrolli: f(390)=16.0 ✓ · f(768)=17.7 · f(1280)=**20.1** ✓ · f(1920)=**2
 ```css
 :root{
   /* baza: 16px në telefon → 26px në monitor 27". Rrënja mbetet rem → zoom-i i shfletuesit punon (WCAG 1.4.4) */
-  --fs-baza: clamp(1rem, 0.8875rem + 0.461vw, 1.625rem);
+  --fs-baza: clamp(1rem, 0.8875rem + 0.461vw, 1.75rem);   /* maksimumi 28px — ultrawide 3440 kërkon 26.7px për 20′ */
 
   /* shkallë modulare 1.2 (Minor Third — e ngjeshur, e përshtatshme për UI me shumë të dhëna) */
   --fs-meta:  calc(var(--fs-baza) / 1.2);    /* etiketa, meta — një hap poshtë, ende ≥16′ */
@@ -267,16 +267,20 @@ Xhiro `PROFIL=pa node scripts/autopsia-optike.mjs && node scripts/optika-analiza
 | Matje në brezin 20′+ | ~0 | **≥90%** |
 | Masa mbi 75ch | `/premium` 118, `/kushtet` 99 | **0 faqe** |
 | Caqe nën 24px | 5–8 në faqet ligjore | **0** |
-| `fontSize` inline në `.tsx` | 930 | **≤ 100** (ratchet, jo big-bang) |
+| `fontSize` inline në `.tsx` | 931 | **≤ 100** (ratchet, jo big-bang) |
 | `clamp()` në CSS | 0 | shkalla e plotë |
 
-Shtoje te `scripts/roja-unifikimit.mjs` numëruesin `font_px_inline` me bazë **930** që vetëm
+Shtoje te `scripts/roja-unifikimit.mjs` numëruesin `font_px_inline` me bazë **931** që vetëm
 zbret — njësoj si `radiuse_inline 384` dhe `ngjyra_hex_inline 2721`.
 
 ---
 
 ## 7. RENDI I ZBATIMIT (që të mos prishet gjë)
 
+0. **FAZA 0 — DYSHEMETË, jo shkalla e plotë** (shtuar nga auditimi, §9-A4). Para se të preket
+   ndonjë madhësi tjetër: ngri vetëm dyshemetë — asnjë tekst nën 12px në telefon, asnjë nën 15px
+   në desktop. Kjo heq 100% të shkeljeve më të rënda me rrezikun më të vogël, dhe jep një pikë
+   kthimi të sigurt. Mat para/pas. Vetëm pastaj kalo te hapi 1.
 1. **U-01** tokenët (asnjë ndryshim pamor — vetëm shtresa).
 2. **U-08** ikonat (defekt i dukshëm, i pavarur, 20 minuta).
 3. **U-02 + U-03** karta dhe detaji (prek shumicën e trafikut).
@@ -301,34 +305,34 @@ Pas çdo hapi: `tsc` · roja · testet · `next build` · deploy · **rimatje li
 
 ---
 
-## SHTOJCA A — dalja e plotë e instrumentit (matje live, shfletues i pastër, 2026-09-05)
+## SHTOJCA A — dalja e plotë e instrumentit (matje live, shfletues i pastër, korrigjuar me CAP=0.750)
 
 ```
 ═══ 1. SA E MADHE DUHET TE JETE SHKRONJA (nga syri, jo nga moda) ═══
 ekrani          mm/px   dist   px per 16'(min)   px per 20'(rehat)   px per 22'
-telefon-390    0.1831    350mm          12.4                15.4         17.0
-laptop-1280    0.2234    550mm          15.9                19.9         21.9
-desktop-1920   0.2766    600mm          14.0                17.5         19.3
-i-madh-2560    0.2332    700mm          19.4                24.3         26.7
+telefon-390    0.1831    350mm          11.9                14.8         16.3
+laptop-1280    0.2234    550mm          15.3                19.1         21.0
+desktop-1920   0.2766    600mm          13.5                16.8         18.5
+i-madh-2560    0.2332    700mm          18.6                23.3         25.6
 
 ═══ 2. CFARE KA VERTET NE PLATFORME (matje live) ═══
 faqja            telefon-390      laptop-1280      desktop-1920     i-madh-2560      
                  px    arcmin  vlerapx    arcmin  vlerapx    arcmin  vlerapx    arcmin  vlera
-ballina          10px   12.9'  DOB 12px   12.1'  DOB 12px   13.7'  DOB 12px    9.9'  DOB 
-kategori         13px   16.8'  kuf 13px   13.1'  DOB 13px   14.8'  DOB 13px   10.7'  DOB 
-kategori-slug    13px   16.8'  kuf 13px   13.1'  DOB 13px   14.8'  DOB 13px   10.7'  DOB 
-kategori-qytet   14px   18.1'  kuf 14px   14.1'  DOB 14px   16.0'  DOB 14px   11.5'  DOB 
-search           10px   12.9'  DOB 10px   10.1'  DOB 10px   11.4'  DOB 10px    8.2'  DOB 
-search-results   10px   12.9'  DOB 10px   10.1'  DOB 10px   11.4'  DOB 10px    8.2'  DOB 
-listing          12.5px 16.2'  kuf 13px   13.1'  DOB 12.5px 14.3'  DOB 12.5px 10.3'  DOB 
-biznese-lista    13px   16.8'  kuf 12px   12.1'  DOB 12px   13.7'  DOB 12px    9.9'  DOB 
-biznes-publik    11px   14.2'  DOB 12px   12.1'  DOB 12px   13.7'  DOB 12px    9.9'  DOB 
-premium          11.5px 14.9'  DOB 11.5px 11.6'  DOB 11.5px 13.1'  DOB 11.5px  9.5'  DOB 
-asistent         13px   16.8'  kuf 13px   13.1'  DOB 13px   14.8'  DOB 13px   10.7'  DOB 
-kushtet          13px   16.8'  kuf 13px   13.1'  DOB 13px   14.8'  DOB 13px   10.7'  DOB 
-rreth-nesh       13px   16.8'  kuf 13px   13.1'  DOB 13px   14.8'  DOB 13px   10.7'  DOB 
+ballina          10px   13.5'  DOB 12px   12.6'  DOB 12px   14.3'  DOB 12px   10.3'  DOB 
+kategori         13px   17.5'  kuf 13px   13.6'  DOB 13px   15.4'  DOB 13px   11.2'  DOB 
+kategori-slug    13px   17.5'  kuf 13px   13.6'  DOB 13px   15.4'  DOB 13px   11.2'  DOB 
+kategori-qytet   14px   18.9'  kuf 14px   14.7'  DOB 14px   16.6'  kuf 14px   12.0'  DOB 
+search           10px   13.5'  DOB 10px   10.5'  DOB 10px   11.9'  DOB 10px    8.6'  DOB 
+search-results   10px   13.5'  DOB 10px   10.5'  DOB 10px   11.9'  DOB 10px    8.6'  DOB 
+listing          12.5px 16.9'  kuf 13px   13.6'  DOB 12.5px 14.9'  DOB 12.5px 10.7'  DOB 
+biznese-lista    13px   17.5'  kuf 12px   12.6'  DOB 12px   14.3'  DOB 12px   10.3'  DOB 
+biznes-publik    11px   14.8'  DOB 12px   12.6'  DOB 12px   14.3'  DOB 12px   10.3'  DOB 
+premium          11.5px 15.5'  DOB 11.5px 12.0'  DOB 11.5px 13.7'  DOB 11.5px  9.9'  DOB 
+asistent         13px   17.5'  kuf 13px   13.6'  DOB 13px   15.4'  DOB 13px   11.2'  DOB 
+kushtet          13px   17.5'  kuf 13px   13.6'  DOB 13px   15.4'  DOB 13px   11.2'  DOB 
+rreth-nesh       13px   17.5'  kuf 13px   13.6'  DOB 13px   15.4'  DOB 13px   11.2'  DOB 
 
-PERMBLEDHJE: 52 matje · nen kufirin ISO 16': 44 (85%) · ne brezin e rehatise 20'+: 0
+PERMBLEDHJE: 52 matje · nen kufirin ISO 16': 43 (83%) · ne brezin e rehatise 20'+: 0
 
 ═══ 3. A SHKALLEZOHET TIPOGRAFIA ME EKRANIN? (px @390 → @2560) ═══
 ballina              10    12    12    12   rritje 390→2560: 20%
@@ -406,3 +410,62 @@ Kjo e vërteton shkencërisht ankesën e dytë të pronarit: në 1920 ekrani zë
 parësor. Prandaj tekst i shtrirë skaj-më-skaj NUK lexohet: nuk është shije, është anatomi.
 Dhe njëkohësisht e vërteton kërkesën e parë: kartat dhe butonat (që skanohen me shikim
 periferik) BËJNË të mbushin ekranin — me kusht që të rriten, jo të shumohen të vegjël.
+
+
+---
+
+## 9. AUDITIMI I KËTIJ PLANI (me urdhër të pronarit, para se code të nisë)
+
+E audituam planin kundër vetes para zbatimit. Tetë gjetje; tri ndryshojnë numra, një ndryshon rendin e punës.
+
+### A1 · Konstantja e lartësisë së shkronjës ishte e huazuar — E NDREQUR
+Kisha marrë cap-height 0.72 (raport i Inter-it). Fonti i vërtetë i platformës është **Plus Jakarta Sans**.
+E mata live me canvas mbi faqen e prodhimit: **cap 0.750 · x-height 0.540 · gjerësi mesatare karakteri 0.5606em**.
+Instrumenti u korrigjua (`CAP=0.750`) dhe të gjitha tabelat u rillogaritën.
+**Efekti:** verdikti nga 85% → **83% nën 16′**; kërkesa për 20′ nga 15.4/19.9/17.5/24.2 → **14.8/19.1/16.8/23.3px**.
+Formula e §4 i plotëson të katra edhe pas korrigjimit, me diferencë. **Përfundimi nuk ndryshon.**
+
+### A2 · Modeli mm/px është OPTIMIST — pra gjetja qëndron edhe më fort
+Për 1920 modelova monitor 24" (0.2766 mm/px). Nëse i njëjti 1920 është laptop 15.6" (0.1797 mm/px, 550mm),
+12px bie në **~9.9′** në vend të 14.3′. Pra realiteti është më i keq se modeli, jo më i mirë.
+Askush të mos e kundërshtojë planin me "po ne modeluam ekranin e gabuar".
+
+### A3 · Kufiri i sipërm i shkallës ishte i shkurtër për ultrawide — E NDREQUR
+Në 3440px (34", ~800mm) kërkesa për 20′ është **26.7px**; maksimumi 1.625rem (26px) mbetej pak nën.
+U ngrit në **1.75rem (28px)**.
+
+### A4 · RREZIKU MË I MADH, që e kisha nënvlerësuar: zëvendësimi i menjëhershëm thyen faqe
+931 madhësi të ngurta të kaluara njëherësh te shkalla do të thoshte: 8px→13.3px në telefon (**+66%**),
+12px→20.1px në laptop (**+67%**). Karta me lartësi fikse, rreshta që priten, shirita që dalin nga ekrani,
+dhe — më e rëndësishmja — **pamja e telefonit që pronari e ka konfirmuar si të mirë do të ndryshonte më shumë
+se ç'ka kërkuar ai.** Prandaj u shtua **FAZA 0** (dyshemetë) para gjithçkaje, plus rregull i ri:
+asnjë komponent nuk kalon pa foto para/pas në 390/1280/1920, dhe **çdo hap ka kthim mbrapa** nëse ndonjë
+kriter i §6 përkeqësohet.
+
+### A5 · `--fs-meta` është në kufi, jo në rehati
+Një hap poshtë bazës jep 17.5′ @390 · 16.8′ @1280 · 17.9′ @2560 — mbi minimumin ISO, **nën brezin 20′**.
+Prandaj: `--fs-meta` lejohet vetëm për tekst vërtet dytësor (data, njësi, ndihmë).
+**Ndalohet** për çmimin, emrin e shitësit, titullin e kartës, ose çdo buton.
+
+### A6 · Numri bazë ishte i pasaktë — E NDREQUR
+930 është numri i **rreshtave** që përmbajnë `fontSize`; dukuritë e vërteta janë **931** (`grep -rno`).
+Roja duhet nisur me 931, përndryshe hapi i parë "kalon" pa bërë asgjë.
+
+### A7 · Një metrikë e imja mund të keqlexohet
+`shfrytezimi > 100%` (p.sh. ballina @390 = 385%) NUK është dalje nga ekrani — janë çipat/karuselet
+që rrëshqasin horizontalisht brenda një kontejneri të qëllimshëm. Para se kushdo ta trajtojë si defekt,
+duhet krahasuar me `document.scrollWidth` kundrejt `innerWidth`. Nuk e kam përdorur si dëshmi në §2, dhe
+askush tjetër të mos e përdorë pa këtë kontroll.
+
+### A8 · U-08 duhet nisur si NJË hap — provuar live sot, me kosto
+Ndërsa shkruhej ky plan, cloud-i zbatoi hapin 1 të U-08 (rendërimin `<i class="ti ti-…">`) pa hapin 2
+(rigjenerimin e subset-it). Rezultati në prodhim (`ccaa5d5`, matur @1280): **13 nga 16 ikonat e kategorive
+kanë përmasa 0×0 px** — kartat mbetën bosh. Para ndreqjes faqja tregonte emra ikonash; pas saj nuk tregon
+asgjë. **Rëndim, jo ndreqje.**
+Prandaj rregull i ri për të gjithë urdhrat: **një urdhër pune mbyllet vetëm kur mbyllet efekti i tij i
+dukshëm**, i matur live — jo kur ndryshohet skedari.
+
+### Çfarë NUK ndryshoi pas auditimit
+Doktrina e tri shtresave (§3), formula e shkallës (§4), kolona 66ch, dhe kriteret e pranimit (§6) qëndrojnë
+të pandryshuara. Gjetja qendrore — tipografi e ngrirë, 83% e matjeve nën minimumin ndërkombëtar, 0% rritje
+nga 390px në 2560px — mbeti e njëjtë edhe pas korrigjimit të konstantes.

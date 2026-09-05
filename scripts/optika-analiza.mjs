@@ -10,7 +10,9 @@
  */
 import { readFileSync } from 'node:fs'
 
-const CAP = 0.72   // lartesia e shkronjes se madhe si pjese e font-size (Inter-like)
+// MATUR LIVE me canvas mbi fontin e vertete te aplikacionit (Plus Jakarta Sans):
+// cap=0.750 · x-height=0.540 · gjeresi mesatare karakteri=0.5606em. Jo hamendje nga Inter.
+const CAP = Number(process.env.CAP || 0.750)
 const EKRANET = {
   'telefon-390': { mmPerPx: 71.4 / 390, dist: 350, w: 390 },
   'laptop-1280': { mmPerPx: 286 / 1280, dist: 550, w: 1280 },
