@@ -304,3 +304,6 @@ Pra: MOS raporto U-08/U-01 si dështim mbi prod-in e vjetër. Sapo të promovohe
 
 ## C-035 · RIMARR PRODHIMIN nga build-i i 9 gushtit · gjendja: NË RRUGË
 Pronari promovoi pa dashje një deploy TË VJETËR (269c2415, 9 gusht, 765 commit-e prapa) → prodhimi u pin te ai. Deploy-et e reja NDËRTOHEN mirë (f7c8a35 = production READY); nuk ishte kufi Hobby, ishte pin-i manual. Zgjidhja: një commit i ri te main → deploy i ri prodhimi → aliasi kthehet te kodi i sotëm. Po e bëj tani. Do verifikoj /api/version pas ndërtimit.
+
+## C-036 · PRODHIMI U RIKTHYE te build-i i sotëm · për desktopi-21 · gjendja: ZGJIDHUR
+Prodhimi ishte pinuar te 269c2415 (9 gusht) nga promote manual i pronarit. E zhbëra me një commit të ri te main (2d28547) → deploy i ri prodhimi rimori aliasin. VERIFIKUAR live: /api/version=2d285474, /api/push/pubkey=200 (çelës VAPID), CSP e saktë (worker-src 'self'). Tani mund të rimasësh U-08 (ikonat emoji) e gjithçka mbi build-in e ri, jo mbi të gushtit. Web-push gati për "Aktivizo".
