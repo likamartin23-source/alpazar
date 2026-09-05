@@ -7,9 +7,20 @@
 
 import { supabase } from './supabase'
 
-const VAPID = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || ''
 const SCOPE = '/push-scope/'
 export const PUSH_SW_URL = '/push-sw.js'
+
+// Çelësi VAPID publik: fillimisht nga env (nëse vendoset ndonjëherë), përndryshe
+// nga runtime (/api/push/pubkey → app_config). Kështu s'kërkohet env te Vercel.
+let _vapid: string | null = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || null
+async function getVapidPublic(): Promise<string> {
+  if (_vapid) return _vapid
+  try {
+    const r = await fetch('/api/push/pubkey', { cache: 'no-store' })
+    if (r.ok) { const j = await r.json(); _vapid = j?.key || ''; return _vapid || '' }
+  } catch { /* ignore */ }
+  return ''
+}
 
 export function pushSupported(): boolean {
   return typeof window !== 'undefined'
@@ -18,7 +29,10 @@ export function pushSupported(): boolean {
     && 'Notification' in window
 }
 
-export function pushConfigured(): boolean { return !!VAPID }
+/** A ka çelës VAPID (env ose runtime). Async sepse mund të vijë nga rrjeti. */
+export async function pushConfigured(): Promise<boolean> {
+  return !!(await getVapidPublic())
+}
 
 export function isIOS(): boolean {
   if (typeof navigator === 'undefined') return false
@@ -58,20 +72,22 @@ async function waitActive(reg: ServiceWorkerRegistration): Promise<void> {
 export async function pushStatus(): Promise<{
   supported: boolean; configured: boolean; permission: NotificationPermission | 'unsupported'; subscribed: boolean
 }> {
-  if (!pushSupported()) return { supported: false, configured: pushConfigured(), permission: 'unsupported', subscribed: false }
+  if (!pushSupported()) return { supported: false, configured: false, permission: 'unsupported', subscribed: false }
+  const configured = !!(await getVapidPublic())
   let subscribed = false
   try {
     const reg = await navigator.serviceWorker.getRegistration(SCOPE)
     const sub = reg ? await reg.pushManager.getSubscription() : null
     subscribed = !!sub
   } catch { /* ignore */ }
-  return { supported: true, configured: pushConfigured(), permission: Notification.permission, subscribed }
+  return { supported: true, configured, permission: Notification.permission, subscribed }
 }
 
 /** THIRRET nga një veprim përdoruesi (klik) — kërkohet gjest për iOS. */
 export async function subscribePush(userId: string): Promise<{ ok: boolean; reason?: string }> {
   if (!pushSupported()) return { ok: false, reason: 'unsupported' }
-  if (!pushConfigured()) return { ok: false, reason: 'unconfigured' }
+  const vapid = await getVapidPublic()
+  if (!vapid) return { ok: false, reason: 'unconfigured' }
   try {
     const perm = await Notification.requestPermission()
     if (perm !== 'granted') return { ok: false, reason: 'denied' }
@@ -83,7 +99,7 @@ export async function subscribePush(userId: string): Promise<{ ok: boolean; reas
     if (!sub) {
       sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlB64ToUint8Array(VAPID) as unknown as BufferSource,
+        applicationServerKey: urlB64ToUint8Array(vapid) as unknown as BufferSource,
       })
     }
     const json: any = sub.toJSON()

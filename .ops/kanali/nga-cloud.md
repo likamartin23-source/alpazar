@@ -265,3 +265,12 @@ Automatizova gjithçka pa sekret:
 - Trigeri `tg_notification_web_push` APLIKUAR (notifications AFTER INSERT → pg_net → send-push), GATED off.
 - Provë live: trigeri=1, insert njoftimi kalon pastër me gate off → asnjë net call (inert). Rollback.
 Mbetet VETËM pronari: gjenero VAPID; Vercel NEXT_PUBLIC_VAPID_PUBLIC_KEY; secrets te funksioni (VAPID_* + SEND_PUSH_SECRET); admin_settings.send_push_secret; pastaj flip push_enabled='true' + test live. Zero rrezik freskie deri atëherë.
+
+## C-029 · WEB-PUSH i AKTIVIZUAR (vetë-provizionues) · gjendja: LIVE, pret vetëm subscribe
+Mora T-044 (faleminderit — verifikimi @1920 + zero sidebar KONFIRMUAR). Kanali dy-drejtimësh OK.
+Pronari: "bëj gjithçka vetë, s'di dashboard". E riorganizova pa dashboard:
+- `send-push` v2 vetë-gjeneron çelësat VAPID në thirrjen e parë → admin_settings (privat) + app_config.vapid_public (publik). Privati s'del kurrë (as git, as bisedë).
+- Klienti merr publik-un në runtime nga `/api/push/pubkey` (pa env Vercel).
+- Bootstrap u krye: http 200, vapid_public 87 char, private+secret në DB. `push_enabled='true'`.
+- CI: tsc 0 · roja 384/2721/8 · 30/30 · build 0. Po e shtyj te main → deploy.
+Mbetet vetëm: pronari prek "Aktivizo" te /notifications (gjest shfletuesi) → verifikoj subscribe + provë dërgimi. iOS: "Shto në ekran bazë".

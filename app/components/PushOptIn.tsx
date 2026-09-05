@@ -22,8 +22,10 @@ export default function PushOptIn() {
     let alive = true
     ;(async () => {
       if (!user) return
-      if (!pushSupported() || !pushConfigured()) return
+      const configured = await pushConfigured()
+      if (!alive || !configured) return
       if (isIOS() && !isStandalone()) { if (alive) { setIosHint(true); setShow(true) } return }
+      if (!pushSupported()) return
       try {
         const s = await pushStatus()
         if (!alive) return
