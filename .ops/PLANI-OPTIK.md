@@ -235,6 +235,8 @@ tekstin (`width: 2.4em; height: 2.4em`), përndryshe teksti thyen rrethin.
 | Rreshta mbi 75 karaktere | 94 | **0** |
 | `fontSize` inline | 931 | **≤100** |
 | Zoom 200% pa prerje | e paverifikuar | çdo faqe kalon |
+| Shkelje axe KRITIKE | 34 | **0** |
+| Shkelje axe kontrasti | 302 | **≤30** |
 
 Provohet duke rixhiruar `node scripts/autopsia-totale.mjs && node scripts/totale-analiza.mjs`
 dhe krahasuar totalet. **Asnjë urdhër nuk mbyllet pa numrin e ri.**
@@ -284,3 +286,49 @@ inicialet 5px (§2), pra i njëjti skedar është edhe përjashtimi i §6 edhe r
 Kontrastin e ngjyrave dhe strukturën ARIA — ato maten me **axe-core** (PARIMET §1), me
 `scripts/autopsia-axe.mjs`, jo me këtë instrument. Duhet një xhiro e veçantë mbi të 42 rrugët.
 Është punë e mbetur, e shënuar, jo e harruar.
+
+---
+
+## 10. AKSESUESHMËRIA — matje me axe-core (mjeti standard, PARIMET §1)
+
+Boshllëku që plani im e deklaroi te §9-A7 u mbyll: xhirova `scripts/autopsia-axe.mjs` mbi
+**36 rrugë × 2 gjerësi = 72 matje**, me sesionin e pronarit (skripti u ndreq të pranojë
+`SESIONI=` — pa të, 15 rrugë do të matnin guaskën e login-it, kurthi D-10).
+
+```
+72 matje · 345 shkelje · 38 matje pa asnjë shkelje
+589 kontrolle të papërfunduara — axe nuk vendos dot vetë, kërkojnë sy njeriu
+```
+
+### Shkeljet sipas rëndësisë
+| Rëndësia | Rregulli | Nyje | Faqe | Kuptimi |
+|---|---|---|---|---|
+| **KRITIKE** | `label` | 26 | 1 | Fusha formulari pa etiketë (p.sh. `<input type="time">`) |
+| **KRITIKE** | `select-name` | 4 | 2 | Lista zgjedhëse pa emër të arritshëm |
+| **KRITIKE** | `aria-required-children` | 4 | 2 | `role="tablist"` me fëmijë që nuk janë `role="tab"` |
+| SERIOZE | **`color-contrast`** | **302** | **16** | Kontrast nën pragun minimal |
+| SERIOZE | `aria-prohibited-attr` | 6 | 3 | `aria-label` mbi elemente që nuk e lejojnë |
+| SERIOZE | `scrollable-region-focusable` | 1 | 1 | Zonë rrëshqitëse pa qasje me tastierë |
+| MODERATE | `heading-order` | 2 | 1 | `<h3>` pa `<h2>` para |
+
+### Faqet me më shumë shkelje
+| Shkelje | Faqja |
+|---|---|
+| **50** | `/admin` @1280 |
+| 36 | `/profile/analytics` (të dyja gjerësitë) |
+| 28 | `/biznese/[id]/analytics` (të dyja) |
+| 20 | `/notifications` (të dyja) |
+| 15 | `/biznese/[id]/edit` (të dyja) |
+| 13 | `/referral` (të dyja) |
+
+### Urdhër i ri
+**U-14 · Aksesueshmëria:** 34 shkelje kritike (label, select-name, aria-required-children) dhe
+302 kontrasti. Fillo nga kritiket — ato bllokojnë përdorimin me lexues ekrani, nuk janë estetikë.
+Kontrasti trajtohet bashkë me U-00/U-05, sepse shumë raste janë tekst i imët gri mbi krem: kur
+teksti rritet dhe ngjyra shkon te tokenët, një pjesë e mirë bie vetvetiu. **Rimatje e detyrueshme
+pas çdo hapi** — jo supozim se u zgjidh.
+
+### Kufi i deklaruar
+589 kontrolle mbetën **të papërfunduara**: axe nuk e llogarit dot kontrastin mbi gradient,
+foto ose tekst me shtresa. Ato kërkojnë sy njeriu ose matje me mostër pikselësh — punë e
+mbetur, e shënuar, jo e harruar.
