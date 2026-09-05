@@ -281,7 +281,10 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
 /* Nje rresht, gjithmone: trupi ka lartesi te caktuar (70/30) dhe nje cmim qe
    thyhet ne dy rreshta e prish raportin. Elipsa eshte rrjete sigurie per raste
    te paparashikuara (monedhe e gjate, shifra shume te medha), jo gjendja normale. */
-.card-price{font-size:var(--fs-tit-m);font-weight:800;color:var(--action-red-deep);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* [U-05 ndreqje] Çmimi u rrit ~2× (--fs-tit-m); me `nowrap` çmimet me tekst
+   ("Me marrëveshje","I diskutueshëm") priteshin. Tani mbështillet deri në 2 rreshta
+   (clamp), numrat e shkurtër mbeten 1 rresht; trupi min-height e nxë pa prerje. */
+.card-price{font-size:var(--fs-tit-m);font-weight:800;color:var(--action-red-deep);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.15;}
 .card-meta{display:flex;align-items:center;justify-content:space-between;}
 .card-loc{font-size:var(--fs-meta);color:#6B6B6B;display:flex;align-items:center;gap:3px;}
 .card-loc i{font-size:var(--fs-meta);}

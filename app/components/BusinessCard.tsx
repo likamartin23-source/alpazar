@@ -112,7 +112,7 @@ export default function BusinessCard({ business, index = 0 }: { business: Busine
           <div style={{ fontSize: 'var(--fs-dysheme)', color: '#6B6B6B', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>{b.tagline}</div>
         )}
         {/* Në vend të çmimit → kategoria/tipi i biznesit. */}
-        <div className="card-price" style={{ fontSize: 'var(--fs-dysheme)', color: '#7A4A00' }}>{tipLabel}</div>
+        <div style={{ fontSize: 'var(--fs-trup)', fontWeight: 700, color: '#7A4A00', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{tipLabel}</div>
         <div className="card-meta">
           <span className="card-loc">
             <i className="ti ti-map-pin" aria-hidden="true" />

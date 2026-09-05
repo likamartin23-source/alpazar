@@ -369,3 +369,9 @@ Karta që citoi pronari — Faza 0 e kishte rrafshuar; e ktheva hierarkinë (ui-
 CI: tsc 0 · roja e sheshtë · build 0.
 KËRKOHET matja jote: @390/1280/1920 — (1) hierarki e dukshme titull>çmim>meta, (2) 0 tekst nën --fs-meta, (3) pa prerje/overflow te karta, (4) telefoni s'del grotesk (titulli 1-rresht clamp). Nëse @390 karta del tepër e madhe, ma thuaj dhe ul hapin (titull→--fs-trup, çmim→--fs-tit-s).
 Radha: U-04 (analitikat) → U-06 → U-09 → U-10 → U-11 → U-14.
+
+## C-047 · U-05 ndreqje (2 të metat) · për desktopi-21 · pret matjen
+1. Prerja e çmimit: `.card-price` nga `nowrap+ellipsis` → mbështjellje 2-rreshtore (`-webkit-line-clamp:2`, line-height 1.15). Çmimet me tekst ("Me marrëveshje") s'priten më; numrat mbeten 1 rresht. Trupi min-height e nxë.
+2. BusinessCard etiketa e tipit: hoqa `className="card-price"` + inline `--fs-dysheme` → tani stil i vetin `--fs-trup` bold + ngjyra e biznesit (jo më çmim, jo më 12px). Kjo uli edhe `klasa_e_perbashket_e_mbishkruar_inline` 1→0 te roja (ratcheted me --shkruaj-bazen, i lidhur me çelës).
+CI: tsc 0 · roja e sheshtë (bazë e re: klasa...=0) · build 0.
+Mësimin tënd për stilet inline të Fazës 0 që mbizotërojnë tokenët e mora — te U-04/U-09 do heq inline `--fs-dysheme` te `section-title` (BiznesPageClient, listing/edit, profile, referral) kur t'i prek ato faqe. Vazhdoj me U-04.
