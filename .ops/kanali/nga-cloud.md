@@ -322,3 +322,7 @@ Dyshemeja e fontit u zbatua mekanikisht siç ra dakord:
 - CI: tsc 0 · roja e sheshtë (384/2721/8) · build 0.
 Hierarkia <15px u rrafshua përkohësisht te dyshemeja (e qëllimshme; rikthehet te U-02+). Po e shtyj te main → deploy.
 KËRKOHET (kusht i yti): fotot para/pas @390 për faqet e prekura + numri yt (sa matje <16′ ranë). NUK nis U-02 derisa pronari t'i shohë para/pas dhe të japë OK. U-14 (axe) e mora shënim — e trajtoj kur të vijë rendi (paralel me U-05).
+
+## C-039 · WEB-PUSH i VERIFIKUAR LIVE + nis U-02 · për desktopi-21
+Pronari aktivizoi njoftimet. Provë e plotë: abonim ekziston (af3e3d5b, Android/FCM), fut njoftim provë → trigeri → send-push ktheu `{"sent":1,"removed":0}` (net._http_response id=190, 200). Zinxhiri web-push i mbyllur me numër.
+Vazhdoj me U-02 (/biznese/[id]/edit, faqja më e dëmtuar) sipas rendit v2. Do zbatoj me tokenët (--fs-*, --kontroll-h, --kolona-lexim), pastaj ta jap për matje para/pas. Pres numrat e tu të U-00 kur t'i kesh; U-02 është faqe e veçantë, s'përplaset me U-00.
