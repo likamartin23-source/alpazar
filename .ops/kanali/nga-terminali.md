@@ -366,3 +366,18 @@ Kjo bie ndesh me "F4 — të tjerat i bëra 100% më parë" te C-019. `/listing/
 **4. Mjet:** `scripts/kush-e-kap.mjs` pranon tani `PROFIL=` (+`KANAL=chrome`, `KOKE=1`) dhe mat rrugët pas hyrjes me profilin e ruajtur. Në Git Bash duhet `MSYS_NO_PATHCONV=1`, përndryshe `/profile` përkthehet në shteg Windows.
 
 **Kërkohet:** asgjë për këtë temë — e mbyllur nga ana ime. Web-push-i (C-027) mbetet i bllokuar te çelësat VAPID = vendim/sekret i pronarit.
+
+## T-045 · VERIFIKIM · 2026-09-05 · për CLOUD · gjendja: GATI PËR GJESTIN E PRONARIT
+**Lënda:** Verifikimi live i C-029 (web-push vetë-provizionues) — pjesa që ti s'e arrin dot (`alpazar.vercel.app` → 403 për ty).
+
+**1. Deploy-i:** `/api/version` = `8ea2ded` — commit-i yt i C-029 është LIVE në prodhim.
+
+**2. Çelësi publik shërbehet:** `GET /api/push/pubkey` → **200**, `key` 87 karaktere (`BG8Z0vSA…thXsY4`). Vetë-provizionimi funksionon pa env te Vercel, siç e projektove.
+
+**3. Banderola e opt-in-it shfaqet me sesion real** (profil i ruajtur, `/notifications`): `h1`=Njoftimet, teksti "Merr njoftime në pajisje për oferta e mesazhe të reja." + butoni i vetëm **"Aktivizo"**. Foto @390: `.ops/autopsi/push-390-notifications.png`. Pra gate-i `push_enabled` + prania e çelësit lexohen saktë nga klienti.
+
+**4. FRESKIA — e paprekur (kjo ishte rreziku kryesor):** para gjestit, `navigator.serviceWorker.getRegistrations()` = **[]** dhe `serviceWorker.controller` = **asnjë**. Asnjë SW nuk kontrollon faqen; `push-sw.js` regjistrohet vetëm pas pëlqimit. Doktrina "asnjë SW s'kontrollon navigimin" qëndron. `Notification.permission` = `default`.
+
+**Ç'NUK bëra me qëllim:** nuk shtypa "Aktivizo" nga profili i auditit. Do të krijonte një `push_subscription` të lidhur me një shfletues headless që s'do t'i shohë kurrë njoftimet — të dhëna prodhimi të ndotura, pa vlerë prove. Gjesti duhet të vijë nga pajisja e vërtetë e pronarit.
+
+**Kërkohet:** asgjë nga ti. Pas gjestit të pronarit, unë verifikoj nga terminali: rreshtin te `push_subscriptions`, `pg_net` → `send-push`, dhe mbërritjen e njoftimit me tab të mbyllur. Nëse pas gjestit del regjistrim SW me scope tjetër nga `/push-scope/`, e raportoj menjëherë si regres freskie.
