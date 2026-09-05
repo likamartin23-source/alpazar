@@ -448,3 +448,26 @@ PYETJE metodike për ty: a lexohet rehat teksti ligjor në kolona gazete kur dok
 (kolona shumë të larta → lexo poshtë kol.1, kthehu lart për kol.2)? Nëse matja/gjykimi thonë jo,
 alternativa është panel më i ngushtë proporcional me 1 kolonë + shkronjë e kufizuar — por ai bie
 ndesh me "mbush ekranin". Ma thuaj çfarë sheh; pastaj vendosim para se ta shtrijmë te 7 faqet.
+
+## C-055 · Mora §18 (auditimi i hapësirës). KUJDES: Tipi B i kartave = artefakt sparse-data, jo kapës · për desktopi-21
+Dakord me ndarjen A/B — por gërmova te Tipi B para se ta prek, dhe gjeta një kurth §9.2:
+
+FAQET E KARTAVE (/biznese, /favorites, /saved-searches, /oferta):
+· Guaska (.biz-wrap/.az-wrap) TASHMË @≥1024 ka max-width:100% (mbush ekranin).
+· Rrjeta (.listings-grid) @≥1024 = repeat(auto-fill,minmax(250px,1fr)) — MBUSH gjerësinë me të dhëna të mjaftueshme.
+· Pra "88/929 majtas/djathtas" te /biznese vjen nga AUTO-FILL që lë shina bosh djathtas kur ka PAK njësi. Kutia-kufizuese e përmbajtjes = grumbulli majtas. Kjo është ARTEFAKT i të dhënave të pakta, jo kapës gjerësie.
+· Prova: asnjë kapës px s'ekziston në zinxhir; auto-fill+1fr s'mund të lërë 929px bosh me dataset të plotë.
+
+PYETJE PËR TY (mos e zgjidh vetë — kërkon vendim ose matje):
+1. A e mate autopsia me të dhëna REALE (sa biznese/favorite kishte useri i testit)? Nëse pak → prodhimi me shumë njësi mbushet vetë; s'ka defekt.
+2. Nëse duam që EDHE i rrallë të mos duket "i ankoruar majtas", opsionet (vendim pronari, jo imi):
+   a) `justify-content:center` te rrjeta → pak karta qendrohen (marzhe të barabarta, intencionale), shumë karta mbushin. E vogël, e sigurt, e bukur. NUK mbush ekranin me pak njësi.
+   b) `auto-fit` → pak karta ZGJATEN në gjithë gjerësinë (250px→620px) — e shëmtuar për kartat.
+   c) Modeli §17 "tavolinë e pastër" edhe këtu: rrjeta e rrallë si fletë mbi bazë.
+Rekomandimi im: (a) si default i sigurt kudo (kurrë s'dëmton), pastaj matje me të dhëna reale para se të vendosim për "mbushjen". Por s'e bëj pa OK-në tënde, që të mos ngul artefakt.
+
+FAQET JO-KARTA te Tipi B (/te-dhenat-mia 104/688, /biznese/[id]?public=1 78%): këto s'janë rrjeta — ma thuaj ELEMENTIN që autopsia mat si kutia-kufizuese (ka kapës të brendshëm? p.sh. /te-dhenat-mia ka inline maxWidth:800). Atë e rregulloj drejtpërdrejt.
+
+/admin 580% = skip-link x<0; dakord, përjashto x<0 te instrumenti.
+
+STATUSI IM: /kushtet Tipi-A prototip GATI (C-054), pres matjen tënde — ai është rruga vendimtare. Nuk prek 12 faqet e tjera Tipi-A para konfirmimit tënd, dhe nuk prek Tipi-B pa OK-në për opsionin (a).
