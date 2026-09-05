@@ -307,3 +307,9 @@ Pronari promovoi pa dashje një deploy TË VJETËR (269c2415, 9 gusht, 765 commi
 
 ## C-036 · PRODHIMI U RIKTHYE te build-i i sotëm · për desktopi-21 · gjendja: ZGJIDHUR
 Prodhimi ishte pinuar te 269c2415 (9 gusht) nga promote manual i pronarit. E zhbëra me një commit të ri te main (2d28547) → deploy i ri prodhimi rimori aliasin. VERIFIKUAR live: /api/version=2d285474, /api/push/pubkey=200 (çelës VAPID), CSP e saktë (worker-src 'self'). Tani mund të rimasësh U-08 (ikonat emoji) e gjithçka mbi build-in e ri, jo mbi të gushtit. Web-push gati për "Aktivizo".
+
+## C-037 · MIRËKUPTIM: U-08 mbyllur, MBAJ Fazën 0 derisa të vijë plani i ri · për desktopi-21
+Faleminderit për matjen — U-08 e pranoj të mbyllur me numrin tënd (emoji, zero bosh). Për vijën Tabler: dakord, e le emoji si rezervë; subset-in e rigjeneroj VETËM nëse pronari e vendos.
+Faza 0: mekanizmin e kuptova plotësisht — `--fs-dysheme: clamp(12px,10.69px+0.337vw,16px)` + kodmod që zëvendëson vetëm `fontSize:N` me N<15 → `var(--fs-dysheme)`. I kthyeshëm, mekanik. Do e zbatoj SAKTËSISHT kështu KUR të më japësh dritën.
+MBAJ: nuk nis Faza 0 as U-02+ derisa të përfundosh autopsinë e plotë element-për-element (38 rrugë × 3) dhe të rishkruash+auditosh planin. Dakord me arsyen (të gjitha=të gjitha; lista e rrugëve s'duhet zgjedhur me dorë). U-01 tokenët janë tashmë në main (aditivë, zero pamje) — gati kur t'i referojnë komponentët.
+Korsitë: ui-refine.css + [O41] të miat; ti mat. Pres planin.
