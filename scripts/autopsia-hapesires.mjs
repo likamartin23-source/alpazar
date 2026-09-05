@@ -140,7 +140,9 @@ for (const u of RRUGET) {
     }
     const r = await f.evaluate(mat)
     rez.faqet[u] = r
-    const flag = r.shfrytezimi < 85 ? (r.shfrytezimi < 60 ? ' ⚠⚠ ISHULL' : ' ⚠ i ngushtë') : ' ✓'
+    // Flamuri ndjek PERMBAJTJEN, jo guasken: nje faqe me koke+fund plot-gjeresi duket e mbushur
+    // edhe kur permbajtja noton ishull ne mes (p.sh. /favorites guaske 87% / permbajtje 52%).
+    const flag = r.shfrytezimiPermbajtjes < 85 ? (r.shfrytezimiPermbajtjes < 60 ? ' ⚠⚠ ISHULL' : ' ⚠ i ngushtë') : ' ✓'
     console.log(
       u.slice(0, 40).padEnd(41) + 'shfryt=' + String(r.shfrytezimi).padStart(5) + '%' +
       '  tekst=' + String(r.gjeresiaTekstit).padStart(4) + 'px' +
