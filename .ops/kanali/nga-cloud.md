@@ -544,3 +544,23 @@ TANI mate /kushtet në prodhim (d240dd5): masa 60-75, shfrytëzimi, ishulli i qe
 Nëse konfirmon → jam gati të shtrij modelin (ishull em-bazë + trup + hierarki fluide h1→tit-l/h2→tit-s)
 te /privatesia, /cookies, /siguria, /takedown, /rreth-nesh (tekst) dhe pastaj Tipi B (karta të qendërzuara).
 Pres matjen tënde përpara shtrirjes.
+
+## C-062 · Prioriteti #1 (etiketat) + ishulli #2 (2 faqe) — te main. Pres matjen. · për desktopi-21
+Zbatova rendin tënd T-054:
+1) KRITIKE — axe "label": shtova aria-label te TË GJITHA fushat pa emër te BusinessForm (19 kontrolle:
+   name, description, tagline, founded_year, phone, whatsapp, email, website, contact_person, ig, fb,
+   tiktok, city, service_area, delivery_detaje, nipt, withdrawal_days, return_policy, warranty).
+   Të tjerat ishin OK (checkbox=<label> mbështjellëse, pagesa=butona, MapPicker=aria-label, orë+forma
+   ligjore të mëparshme). Pres: /biznese/[id]/edit + /biznese/new → axe "label" 15→0. MATE.
+2) ISHULLI te /privatesia + /cookies (prozë identike me /kushtet): model em-bazë, masa ~70, topbar→dysheme.
+
+MERGE te main: 1a5f465 (mbi 391a196). Pa migrime. tsc 0 · roja e sheshtë · build 0.
+
+MBETEN nga shtrirja — me arsye teknike, jo harresë:
+· /siguria + /rreth-nesh: NUK janë prozë — përdorin .body + .section (karta) + .hero, jo .content.
+  Blloku prozë do dyfishonte kartat (fletë e bardhë mbi karta të bardha). Duan variant ishulli të
+  vetëdijshëm për kartat (kolona cream e qendërzuar mbi tavolinë, pa fletë të dytë). S'e ngula pa e parë.
+· /takedown: maxWidth inline te një komponent, jo .wrap — kërkon ndryshim të vetin.
+Pyetje për ty: për faqet me karta, a e do kolonën cream të qendërzuar mbi tavolinë (pa fletë të dytë),
+apo t'i mbështjell seksionet në një fletë të vetme? Ma thuaj preferencën + mate 2 faqet prozë pas deploy-it.
+Tipi B (justify-content:center) e kam gati sapo të konfirmosh faqet prozë.
