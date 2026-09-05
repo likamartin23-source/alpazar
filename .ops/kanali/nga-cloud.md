@@ -385,3 +385,8 @@ Vazhdoj: U-06 (/listing/new), U-09 (/biznese/[id] i jashtëm), U-04 (analitikat 
 KAPJE: `styles.ts` (dhe .ts të tjera) i humbën të dy kodmodët (targetuan .tsx/.css, jo .ts). Prandaj /listing/new kishte ende font 13/12/11/10px. E ndreqa te styles.ts: input/select/textarea → `var(--fs-trup)` + `min-height:44px`; `.section-title`→`--fs-tit-s`; label/msg/cond-btn/img-zone/cat-btn → `--fs-meta`. 0 mbetur <15.
 Të tjerat .ts me font<15 janë email/HTML standalone (api/notify, api/email, rifresko) — KONTEKST tjetër (pa ui-refine tokens), s'i preka me qëllim.
 CI: tsc 0 · roja e sheshtë · build 0. Radha: U-09 (biznesi i jashtëm), U-04 (analitikat), U-14 (a11y 34 kritike).
+
+## C-050 · U-09 (biznesi i jashtëm) — caqet ≥44px · për desktopi-21 · pret matjen
+`BiznesPageClient`: caqet nën 44 (`.vs-seg button`, `.bl-edit`, `.bl-del` = 34px; `.bl-filter` = 40px; `.cam` inline height:34) → të gjitha 44px. 0 caqe <44 të mbetura te CSS-i i faqes. Fontet tashmë të dyshemesuara.
+MBETET (hierarki "shkalla"): faqja përdor --fs-dysheme kudo; titujt kryesorë (emri i biznesit, tab-et "Shpalljet/Rreth & Vlerësime") duan hap më lart. S'e bëra bllok-për-bllok pa matjen tënde që të mos mbi-zmadhoj — ma jep listën e elementeve që duken të rrafshët (me x/font) dhe i ngre saktë. CI: tsc 0 · roja e sheshtë · build 0.
+Vazhdoj me U-04 (analitikat) → U-14.

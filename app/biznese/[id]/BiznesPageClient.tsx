@@ -518,7 +518,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           .vs-bar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:8px;background:#111;color:#fff;padding:8px 12px;font-size:var(--fs-dysheme);font-weight:700;}
           .vs-bar .vs-lbl{color:#bbb;}
           .vs-seg{display:inline-flex;background:#000;border-radius:999px;padding:3px;gap:2px;margin-left:auto;}
-          .vs-seg button{border:none;background:none;color:#ccc;font-weight:800;font-size:var(--fs-dysheme);padding:6px 12px;border-radius:999px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;min-height:34px;}
+          .vs-seg button{border:none;background:none;color:#ccc;font-weight:800;font-size:var(--fs-dysheme);padding:6px 12px;border-radius:999px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;min-height:44px;}
           .vs-seg button.on{background:var(--az-yellow);color:#111;}
           .bizp-cover{position:relative;aspect-ratio:16/7;overflow:hidden;background:linear-gradient(135deg,var(--az-yellow),var(--az-red));}
           .bizp-cover img{width:100%;height:100%;object-fit:cover;}
@@ -545,10 +545,10 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           .bl-title{font-size:var(--fs-dysheme);font-weight:700;color:var(--az-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
           .bl-price{font-size:var(--fs-dysheme);font-weight:800;color:#C42B0F;margin-top:2px;}
           .bl-meta{font-size:var(--fs-dysheme);color:#aaa;margin-top:2px;}
-          .bl-edit{background:var(--az-cream);border:1px solid #e0b030;border-radius:10px;padding:6px 10px;font-size:var(--fs-dysheme);cursor:pointer;color:#856404;font-family:inherit;min-height:34px;}
+          .bl-edit{background:var(--az-cream);border:1px solid #e0b030;border-radius:10px;padding:6px 10px;font-size:var(--fs-dysheme);cursor:pointer;color:#856404;font-family:inherit;min-height:44px;}
           .bl-edit:disabled{opacity:.6;cursor:not-allowed;}
-          .bl-del{background:#FFF0EE;border:none;border-radius:10px;padding:6px 10px;font-size:var(--fs-dysheme);cursor:pointer;color:#C42B0F;font-family:inherit;min-height:34px;}
-          .bl-filter{flex:1;min-height:40px;border-radius:9px;font-size:var(--fs-dysheme);font-weight:700;cursor:pointer;font-family:inherit;border:1px solid #eee;background:#fff;color:#666;}
+          .bl-del{background:#FFF0EE;border:none;border-radius:10px;padding:6px 10px;font-size:var(--fs-dysheme);cursor:pointer;color:#C42B0F;font-family:inherit;min-height:44px;}
+          .bl-filter{flex:1;min-height:44px;border-radius:9px;font-size:var(--fs-dysheme);font-weight:700;cursor:pointer;font-family:inherit;border:1px solid #eee;background:#fff;color:#666;}
           .bl-filter.on{border:1.5px solid var(--az-red-deep);background:#FFF1EE;color:var(--az-red-deep);}
           .mrow i.lead{font-size:19px;color:#C42B0F;width:24px;text-align:center;}
           .mrow .mtxt{flex:1;min-width:0;}
@@ -569,7 +569,7 @@ export default function BiznesPageClient({ params, initialBiz, initialListings, 
           {/* Kopertinë — ngarkim INLINE i menjëhershëm (harmonizuar me /profile) */}
           <div className="bizp-cover">
             {biz.cover_url && <img src={biz.cover_url} alt="" loading="lazy" onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />}
-            <label className="cam" aria-label="Ndrysho kopertinën" style={{ top: 12, right: 12, width: 'auto', padding: '0 12px', height: 34, gap: 6, fontSize: 'var(--fs-dysheme)', fontWeight: 700 }}>
+            <label className="cam" aria-label="Ndrysho kopertinën" style={{ top: 12, right: 12, width: 'auto', padding: '0 12px', height: 44, gap: 6, fontSize: 'var(--fs-dysheme)', fontWeight: 700 }}>
               <span aria-hidden="true">{imgUp === 'cover' ? '⏳' : '📷'}</span> Kopertina
               <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) uploadBizImage(f, 'cover'); e.currentTarget.value = '' }} />
             </label>
