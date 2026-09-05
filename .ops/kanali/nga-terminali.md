@@ -637,3 +637,33 @@ Puna e shtatorit është reale dhe e matshme: nga një platformë ku **76% e tek
 minimumin ndërkombëtar**, sot faqet e matura kanë 0–5. Modeli i hapësirës u gjet, u prototipua dhe
 u verifikua. Mbetja kryesore nuk është cilësi e punës — është **shtrirje e papërfunduar** (18 faqe)
 plus **një shkelje kritike aksesueshmërie e ndrequr përgjysmë**.
+
+## T-055 · MATJE: etiketat (kritike) + ishulli te /privatesia dhe /cookies · prod `1a5f4657`
+**1. SHKELJA KRITIKE E ETIKETAVE — E MBYLLUR ✅**
+`/biznese/[id]/edit`: **0 fusha pa emër të arritshëm nga 45** (rrugëtimi: 26 → 15 → **0**).
+Kontrolluar me `labels`, `aria-label`, `title` dhe `label[for]`. Kjo ishte e vetmja shkelje kritike
+axe që kishte mbetur hapur; tani të tria kategoritë kritike (`label`, `select-name`,
+`aria-required-children`) janë **zero**.
+
+**2. ISHULLI te `/privatesia` dhe `/cookies` — KALUAN ✅**
+| Faqja | Gjerësia | Ishulli | Masa | Qendër | Shfrytëzimi |
+|---|---|---|---|---|---|
+| `/privatesia` | 1280 | 884px | **70** (20.1px) | po | — |
+| `/privatesia` | 1920 | 1014px | **69** (23.1px) | po | **48.5%** (nga 28.7%) |
+| `/cookies` | 1280 | 884px | **71** (20.1px) | po | — |
+| `/cookies` | 1920 | 1014px | **70** (23.1px) | po | **48.8%** (nga 29.1%) |
+
+Modeli riprodhohet identik me `/kushtet` (884/1014px, masa 69–71). Shtrirja punon.
+
+**3. Gjendja e faqeve të leximit tani:**
+| Faqja | Para | Tani |
+|---|---|---|
+| `/kushtet` | 28.8% | **48.7%** ✅ |
+| `/privatesia` | 28.7% | **48.5%** ✅ |
+| `/cookies` | 29.1% | **48.8%** ✅ |
+| `/siguria` | 28.0% | 28.0% ⏳ |
+| `/takedown` | 30.2% | 30.2% ⏳ |
+| `/rreth-nesh` | 27.6% | 27.6% ⏳ |
+
+**Vazhdo me tri të mbeturat** — modeli është i provuar në tri faqe radhazi me numra identikë.
+Pastaj Tipi B (kartat e qendërzuara).

@@ -1,8 +1,52 @@
 {
  "baza": "https://alpazar.vercel.app",
  "gjeresia": 1920,
- "kur": "2026-09-05T13:24:15.381Z",
+ "kur": "2026-09-05T13:48:13.675Z",
  "faqet": {
+  "/privatesia": {
+   "vw": 1920,
+   "glifetMajtas": 474,
+   "glifetDjathtas": 1406,
+   "gjeresiaTekstit": 932,
+   "marzhiMajtas": 474,
+   "marzhiDjathtas": 514,
+   "shfrytezimi": 48.5,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 1920,
+    "la": 5719
+   },
+   "panel": {
+    "gj": 1014,
+    "x": 453,
+    "emri": "div.wrap"
+   },
+   "rruga": "/privatesia",
+   "guaske": false
+  },
+  "/cookies": {
+   "vw": 1920,
+   "glifetMajtas": 474,
+   "glifetDjathtas": 1410,
+   "gjeresiaTekstit": 936,
+   "marzhiMajtas": 474,
+   "marzhiDjathtas": 510,
+   "shfrytezimi": 48.8,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 1920,
+    "la": 4636
+   },
+   "panel": {
+    "gj": 1014,
+    "x": 453,
+    "emri": "div.wrap"
+   },
+   "rruga": "/cookies",
+   "guaske": false
+  },
   "/kushtet": {
    "vw": 1920,
    "glifetMajtas": 474,
@@ -23,50 +67,6 @@
     "emri": "div.wrap"
    },
    "rruga": "/kushtet",
-   "guaske": false
-  },
-  "/privatesia": {
-   "vw": 1920,
-   "glifetMajtas": 684,
-   "glifetDjathtas": 1235,
-   "gjeresiaTekstit": 551,
-   "marzhiMajtas": 684,
-   "marzhiDjathtas": 685,
-   "shfrytezimi": 28.7,
-   "baza": {
-    "emri": "body",
-    "bg": "rgb(255, 251, 234)",
-    "gj": 1920,
-    "la": 5441
-   },
-   "panel": {
-    "gj": 592,
-    "x": 664,
-    "emri": "div.wrap"
-   },
-   "rruga": "/privatesia",
-   "guaske": false
-  },
-  "/cookies": {
-   "vw": 1920,
-   "glifetMajtas": 684,
-   "glifetDjathtas": 1244,
-   "gjeresiaTekstit": 560,
-   "marzhiMajtas": 684,
-   "marzhiDjathtas": 677,
-   "shfrytezimi": 29.1,
-   "baza": {
-    "emri": "body",
-    "bg": "rgb(255, 251, 234)",
-    "gj": 1920,
-    "la": 4506
-   },
-   "panel": {
-    "gj": 592,
-    "x": 664,
-    "emri": "div.wrap"
-   },
-   "rruga": "/cookies",
    "guaske": false
   },
   "/siguria": {
