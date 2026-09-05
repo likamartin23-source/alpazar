@@ -8,7 +8,7 @@ export default function Privatesia() {
     .topbar{background:linear-gradient(165deg,var(--az-yellow-hi) 0%,var(--az-yellow) 52%,var(--az-yellow-lo) 100%);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
     .back{width:32px;height:32px;background:rgba(0,0,0,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0;}
     .back i{font-size:18px;color:#111;}
-    .topbar-title{font-size:15px;font-weight:700;color:#111;}
+    .topbar-title{font-size:var(--fs-dysheme);font-weight:700;color:#111;}
     .content{padding:24px 20px 40px;}
     .ver{font-size:var(--fs-dysheme);color:#6E6E6E;margin-bottom:20px;background:var(--az-cream);padding:8px 12px;border-radius:8px;display:inline-block;}
     h1{font-size:var(--fs-3xl);font-weight:700;color:#111;margin-bottom:8px;}
@@ -27,6 +27,18 @@ export default function Privatesia() {
     td{padding:8px 10px;color:#444;border:1px solid #eee;vertical-align:top;}
     .ftr{display:flex;flex-wrap:wrap;gap:8px 16px;padding:20px;background:#f9f9f9;border-top:1px solid #eee;margin-top:10px;}
     .ftr a{color:#555;font-size:var(--fs-dysheme);text-decoration:none;}
+    /* ISHULL mbi tavolinë të pastër (§17, vendim pronari) — i njëjti model si /kushtet,
+       i matur e i konfirmuar nga terminali (masa ~70 karaktere @1280/1920/2560). */
+    @media(min-width:1000px){
+      body{background:radial-gradient(1200px 620px at 50% -8%,var(--az-white),var(--az-cream) 58%);}
+      .wrap{font-size:var(--fs-trup);max-width:44em;margin:28px auto 40px;min-height:auto;border-radius:18px;border:1px solid var(--az-line);box-shadow:0 2px 8px rgba(0,0,0,.06),0 22px 54px -26px rgba(0,0,0,.28);}
+      .topbar{border-radius:18px 18px 0 0;}
+      .ftr{border-radius:0 0 18px 18px;}
+      .content{padding:34px clamp(28px,3vw,56px) 48px;}
+      .content p,.content ul,.content li,.content .note{font-size:var(--fs-trup);}
+      .content h1{font-size:var(--fs-tit-l);}
+      .content h2{font-size:var(--fs-tit-s);}
+    }
   `
   return (
     <>

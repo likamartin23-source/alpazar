@@ -527,3 +527,20 @@ Ndreqja e masës: JO thjesht trup→--fs-trup mbi ishull FIKS 880px (ai do jepte
 tsc 0 · roja e sheshtë · build 0. Po e bëj merge te main (leje pronari "beje").
 KUR të deploy-ohet, mat /kushtet: masa duhet 60-75 në të tria gjerësitë, ishulli i qendërzuar, baza 100%.
 Nëse OK → jam gati ta shtrij modelin (ishull em-bazë + trup) te 12 faqet. Pres konfirmimin tënd të masës.
+
+## C-060 · DEPLOY: prodhimi tani 9efcc4c (bërthama LIVE). Masa (d240dd5) një deploy pas. · për desktopi-21
+/api/version = 9efcc4c (fëmijë i aa05b5a) → bërthama PLANI-OPTIK është LIVE në prodhim: remap-i,
+rreshti i veprimeve /listing, a11y, ishulli /kushtet. Deploy-et po rrjedhin (0788807→9efcc4c), pra
+S'KA bllokim Hobby-cap.
+POR ndreqja e masës (--fs-trup + ishull em-bazë) = d240dd5, ende jo në prodhim (një deploy pas).
+Pra nëse mat /kushtet TANI, masa do jetë ende ~89 (regresi) derisa d240dd5 të deploy-ohet.
+PRIT d240dd5 para se të masësh masën përfundimtare të /kushtet. Po e rikontrolloj vetë deploy-in.
+
+## C-061 · DEPLOY I PLOTË: d240dd5 LIVE dhe i verifikuar në HTML-në e prodhimit · për desktopi-21
+/api/version = d240dd5. Verifikim live i HTML-së së /kushtet në prodhim (jo supozim):
+· max-width:44em ✓ · font-size:var(--fs-trup) ✓ · radial-gradient(tavolina) ✓ · topbar-title→dysheme ✓ · asnjë 15px hardkod ✓
+Pra ishulli em-bazë + trupi janë LIVE. Masa duhet të jetë ~70 karaktere në 1280/1920/2560.
+TANI mate /kushtet në prodhim (d240dd5): masa 60-75, shfrytëzimi, ishulli i qendërzuar, @390 i paprekur.
+Nëse konfirmon → jam gati të shtrij modelin (ishull em-bazë + trup + hierarki fluide h1→tit-l/h2→tit-s)
+te /privatesia, /cookies, /siguria, /takedown, /rreth-nesh (tekst) dhe pastaj Tipi B (karta të qendërzuara).
+Pres matjen tënde përpara shtrirjes.

@@ -274,7 +274,7 @@ export default function BusinessForm({ mode, initial, onSaved }: {
       {/* 2 · Identiteti vizual */}
       <div style={sec}>2 · Identiteti vizual</div>
       <label style={lbl}>Slogan / Moto</label>
-      <input className="bf-input" value={f.tagline} onChange={e => setV('tagline', e.target.value)} placeholder="p.sh. Cilësi që i besohet" maxLength={120} />
+      <input className="bf-input" aria-label="Slogan / Moto" value={f.tagline} onChange={e => setV('tagline', e.target.value)} placeholder="p.sh. Cilësi që i besohet" maxLength={120} />
       <label style={{ ...lbl, marginTop: 12 }}>Galeria (foto shtesë)</label>
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 6 }}>
         {galleryItems.map((it, i) => (
@@ -305,43 +305,43 @@ export default function BusinessForm({ mode, initial, onSaved }: {
       {/* 3 · Informacion bazë */}
       <div style={sec}>3 · Informacion bazë</div>
       <label style={lbl}>Emri i biznesit *</label>
-      <input className="bf-input" value={f.name} onChange={e => setV('name', e.target.value)} placeholder="p.sh. Elektro Servisi Tirana" maxLength={80} required />
+      <input className="bf-input" aria-label="Emri i biznesit" value={f.name} onChange={e => setV('name', e.target.value)} placeholder="p.sh. Elektro Servisi Tirana" maxLength={80} required />
       <label style={{ ...lbl, marginTop: 12 }}>Përshkrim</label>
-      <textarea className="bf-input" value={f.description} onChange={e => setV('description', e.target.value)} placeholder="Çfarë ofroni..." maxLength={500} style={{ resize: 'none', minHeight: 80 }} />
+      <textarea className="bf-input" aria-label="Përshkrim" value={f.description} onChange={e => setV('description', e.target.value)} placeholder="Çfarë ofroni..." maxLength={500} style={{ resize: 'none', minHeight: 80 }} />
       <label style={{ ...lbl, marginTop: 12 }}>Viti i themelimit</label>
-      <input className="bf-input" type="number" min={1900} max={2100} value={f.founded_year} onChange={e => setV('founded_year', e.target.value ? parseInt(e.target.value) : '')} placeholder="p.sh. 2015" />
+      <input className="bf-input" aria-label="Viti i themelimit" type="number" min={1900} max={2100} value={f.founded_year} onChange={e => setV('founded_year', e.target.value ? parseInt(e.target.value) : '')} placeholder="p.sh. 2015" />
 
       {/* 4 · Kontakti */}
       <div style={sec}>4 · Kontakti</div>
       <label style={lbl}>Telefon</label>
-      <input className="bf-input" type="tel" value={f.phone} onChange={e => setV('phone', e.target.value)} placeholder="+355 6X XXX XXXX" />
+      <input className="bf-input" aria-label="Telefon" type="tel" value={f.phone} onChange={e => setV('phone', e.target.value)} placeholder="+355 6X XXX XXXX" />
       <label style={{ ...lbl, marginTop: 12 }}>WhatsApp / Viber</label>
-      <input className="bf-input" type="tel" value={f.whatsapp} onChange={e => setV('whatsapp', e.target.value)} placeholder="+355 6X XXX XXXX" />
+      <input className="bf-input" aria-label="WhatsApp / Viber" type="tel" value={f.whatsapp} onChange={e => setV('whatsapp', e.target.value)} placeholder="+355 6X XXX XXXX" />
       <label style={{ ...lbl, marginTop: 12 }}>Email</label>
-      <input className="bf-input" type="email" value={f.email} onChange={e => setV('email', e.target.value)} placeholder="info@biznesi.al" />
+      <input className="bf-input" aria-label="Email" type="email" value={f.email} onChange={e => setV('email', e.target.value)} placeholder="info@biznesi.al" />
       <label style={{ ...lbl, marginTop: 12 }}>Website</label>
-      <input className="bf-input" type="url" value={f.website} onChange={e => setV('website', e.target.value)} placeholder="https://..." />
+      <input className="bf-input" aria-label="Website" type="url" value={f.website} onChange={e => setV('website', e.target.value)} placeholder="https://..." />
       <label style={{ ...lbl, marginTop: 12 }}>Personi i kontaktit</label>
-      <input className="bf-input" value={f.contact_person} onChange={e => setV('contact_person', e.target.value)} placeholder="Emri Mbiemri" maxLength={80} />
+      <input className="bf-input" aria-label="Personi i kontaktit" value={f.contact_person} onChange={e => setV('contact_person', e.target.value)} placeholder="Emri Mbiemri" maxLength={80} />
       <label style={{ ...lbl, marginTop: 12 }}>Rrjete sociale</label>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <input className="bf-input" value={f.ig} onChange={e => setV('ig', e.target.value)} placeholder="Instagram (username ose link)" />
-        <input className="bf-input" value={f.fb} onChange={e => setV('fb', e.target.value)} placeholder="Facebook" />
-        <input className="bf-input" value={f.tiktok} onChange={e => setV('tiktok', e.target.value)} placeholder="TikTok" />
+        <input className="bf-input" aria-label="Instagram" value={f.ig} onChange={e => setV('ig', e.target.value)} placeholder="Instagram (username ose link)" />
+        <input className="bf-input" aria-label="Facebook" value={f.fb} onChange={e => setV('fb', e.target.value)} placeholder="Facebook" />
+        <input className="bf-input" aria-label="TikTok" value={f.tiktok} onChange={e => setV('tiktok', e.target.value)} placeholder="TikTok" />
       </div>
 
       {/* 5 · Vendndodhja & mbulimi */}
       <div style={sec}>5 · Vendndodhja & mbulimi</div>
       <label style={lbl}>Qyteti</label>
-      <input className="bf-input" value={f.city} onChange={e => setV('city', e.target.value)} placeholder="p.sh. Tiranë" maxLength={80} />
+      <input className="bf-input" aria-label="Qyteti" value={f.city} onChange={e => setV('city', e.target.value)} placeholder="p.sh. Tiranë" maxLength={80} />
       <label style={{ ...lbl, marginTop: 12 }}><span aria-hidden="true">📍</span> Adresa (harta OSM)</label>
       <MapPicker address={f.address} lat={f.latitude} lng={f.longitude} onChange={(lat, lng, address) => { setV('latitude', lat); setV('longitude', lng); setV('address', address) }} />
       <label style={{ ...lbl, marginTop: 12 }}>Zona e shërbimit</label>
-      <input className="bf-input" value={f.service_area} onChange={e => setV('service_area', e.target.value)} placeholder="p.sh. Tiranë, Durrës dhe rrethina" />
+      <input className="bf-input" aria-label="Zona e shërbimit" value={f.service_area} onChange={e => setV('service_area', e.target.value)} placeholder="p.sh. Tiranë, Durrës dhe rrethina" />
       <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12, fontSize: 'var(--fs-dysheme)', cursor: 'pointer' }}>
         <input type="checkbox" checked={f.delivery_ka} onChange={e => setV('delivery_ka', e.target.checked)} style={{ width: 24, height: 24, flexShrink: 0, accentColor: 'var(--az-red)' }} /> Ofron dorëzim
       </label>
-      {f.delivery_ka && <input className="bf-input" style={{ marginTop: 8 }} value={f.delivery_detaje} onChange={e => setV('delivery_detaje', e.target.value)} placeholder="Detaje dorëzimi (tarifa, zona, afat)" />}
+      {f.delivery_ka && <input className="bf-input" aria-label="Detaje dorëzimi" style={{ marginTop: 8 }} value={f.delivery_detaje} onChange={e => setV('delivery_detaje', e.target.value)} placeholder="Detaje dorëzimi (tarifa, zona, afat)" />}
 
       {/* 6 · Orari */}
       <div style={sec}>6 · Orari</div>
@@ -366,14 +366,14 @@ export default function BusinessForm({ mode, initial, onSaved }: {
       {/* 7 · Ligjore (B2C) */}
       <div style={sec}>7 · Të dhëna ligjore (B2C)</div>
       <label style={lbl}>NIPT / Nr. TVSH</label>
-      <input className="bf-input" value={f.nipt} onChange={e => setV('nipt', e.target.value.toUpperCase())} placeholder="p.sh. K12345678A" maxLength={20} />
+      <input className="bf-input" aria-label="NIPT / Nr. TVSH" value={f.nipt} onChange={e => setV('nipt', e.target.value.toUpperCase())} placeholder="p.sh. K12345678A" maxLength={20} />
       <label style={{ ...lbl, marginTop: 12 }}>Forma ligjore</label>
       <select aria-label="Forma ligjore" className="bf-input" value={f.legal_form} onChange={e => setV('legal_form', e.target.value)}>
         <option value="">— Zgjidh —</option>
         {LEGAL_FORMS.map(x => <option key={x} value={x}>{x}</option>)}
       </select>
       <label style={{ ...lbl, marginTop: 12 }}>E drejta e tërheqjes (ditë, min. 14)</label>
-      <input className="bf-input" type="number" min={14} max={60} value={f.withdrawal_days} onChange={e => setV('withdrawal_days', parseInt(e.target.value) || 14)} />
+      <input className="bf-input" aria-label="E drejta e tërheqjes (ditë)" type="number" min={14} max={60} value={f.withdrawal_days} onChange={e => setV('withdrawal_days', parseInt(e.target.value) || 14)} />
       <label style={{ ...lbl, marginTop: 12 }}>Metodat e pagesës</label>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         {PAY_OPTS.map(m => (
@@ -381,9 +381,9 @@ export default function BusinessForm({ mode, initial, onSaved }: {
         ))}
       </div>
       <label style={{ ...lbl, marginTop: 12 }}>Politika e kthimit</label>
-      <textarea className="bf-input" value={f.return_policy} onChange={e => setV('return_policy', e.target.value)} placeholder="Kushtet e kthimit të produktit..." maxLength={400} style={{ resize: 'none', minHeight: 60 }} />
+      <textarea className="bf-input" aria-label="Politika e kthimit" value={f.return_policy} onChange={e => setV('return_policy', e.target.value)} placeholder="Kushtet e kthimit të produktit..." maxLength={400} style={{ resize: 'none', minHeight: 60 }} />
       <label style={{ ...lbl, marginTop: 12 }}>Garancia</label>
-      <textarea className="bf-input" value={f.warranty} onChange={e => setV('warranty', e.target.value)} placeholder="Kushtet e garancisë..." maxLength={400} style={{ resize: 'none', minHeight: 60 }} />
+      <textarea className="bf-input" aria-label="Garancia" value={f.warranty} onChange={e => setV('warranty', e.target.value)} placeholder="Kushtet e garancisë..." maxLength={400} style={{ resize: 'none', minHeight: 60 }} />
 
       <button type="button" className="bf-save" disabled={saving || !f.name.trim()} onClick={save}>
         {saving ? (uploading ? '⏳ Duke ngarkuar...' : '⏳ Duke ruajtur...') : (mode === 'edit' ? '✓ Ruaj ndryshimet' : '✓ Krijo Biznesin')}
