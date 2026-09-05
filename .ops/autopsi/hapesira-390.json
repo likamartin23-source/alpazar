@@ -1,0 +1,847 @@
+{
+ "baza": "https://alpazar.vercel.app",
+ "gjeresia": 390,
+ "kur": "2026-09-05T14:17:46.471Z",
+ "faqet": {
+  "/": {
+   "vw": 390,
+   "glifetMajtas": 12,
+   "glifetDjathtas": 390,
+   "gjeresiaTekstit": 378,
+   "marzhiMajtas": 12,
+   "marzhiDjathtas": 0,
+   "shfrytezimi": 96.9,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 1987
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/",
+   "guaske": false
+  },
+  "/admin": {
+   "vw": 390,
+   "glifetMajtas": 14,
+   "glifetDjathtas": 390,
+   "gjeresiaTekstit": 376,
+   "marzhiMajtas": 14,
+   "marzhiDjathtas": 0,
+   "shfrytezimi": 96.4,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 2793
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/admin",
+   "guaske": false
+  },
+  "/asistent": {
+   "vw": 390,
+   "glifetMajtas": 12,
+   "glifetDjathtas": 364,
+   "gjeresiaTekstit": 352,
+   "marzhiMajtas": 12,
+   "marzhiDjathtas": 26,
+   "shfrytezimi": 90.3,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 1412
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.albi-page"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/asistent",
+   "guaske": false
+  },
+  "/billing": {
+   "vw": 390,
+   "glifetMajtas": 31,
+   "glifetDjathtas": 348,
+   "gjeresiaTekstit": 317,
+   "marzhiMajtas": 31,
+   "marzhiDjathtas": 42,
+   "shfrytezimi": 81.3,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 1412
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/billing",
+   "guaske": false
+  },
+  "/biznese": {
+   "vw": 390,
+   "glifetMajtas": 16,
+   "glifetDjathtas": 387,
+   "gjeresiaTekstit": 371,
+   "marzhiMajtas": 16,
+   "marzhiDjathtas": 3,
+   "shfrytezimi": 95.2,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 1492
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.biz-wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/biznese",
+   "guaske": false
+  },
+  "/biznese/49745b08-ba0a-488e-b731-7fd19ee6a0bb": {
+   "vw": 390,
+   "glifetMajtas": 12,
+   "glifetDjathtas": 366,
+   "gjeresiaTekstit": 354,
+   "marzhiMajtas": 12,
+   "marzhiDjathtas": 24,
+   "shfrytezimi": 90.8,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 1423
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.bizp"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/biznese/49745b08-ba0a-488e-b731-7fd19ee6a0bb",
+   "guaske": false
+  },
+  "/biznese/49745b08-ba0a-488e-b731-7fd19ee6a0bb?public=1": {
+   "vw": 390,
+   "glifetMajtas": 16,
+   "glifetDjathtas": 360,
+   "gjeresiaTekstit": 344,
+   "marzhiMajtas": 16,
+   "marzhiDjathtas": 30,
+   "shfrytezimi": 88.2,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 1733
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.biz-page"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/biznese/49745b08-ba0a-488e-b731-7fd19ee6a0bb?public=1",
+   "guaske": false
+  },
+  "/biznese/49745b08-ba0a-488e-b731-7fd19ee6a0bb/analytics": {
+   "vw": 390,
+   "glifetMajtas": 28,
+   "glifetDjathtas": 346,
+   "gjeresiaTekstit": 318,
+   "marzhiMajtas": 28,
+   "marzhiDjathtas": 44,
+   "shfrytezimi": 81.6,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 1492
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.an-wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/biznese/49745b08-ba0a-488e-b731-7fd19ee6a0bb/analytics",
+   "guaske": false
+  },
+  "/biznese/49745b08-ba0a-488e-b731-7fd19ee6a0bb/edit": {
+   "vw": 390,
+   "glifetMajtas": 16,
+   "glifetDjathtas": 356,
+   "gjeresiaTekstit": 340,
+   "marzhiMajtas": 16,
+   "marzhiDjathtas": 34,
+   "shfrytezimi": 87.2,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 4684
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.biz-edit-wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/biznese/49745b08-ba0a-488e-b731-7fd19ee6a0bb/edit",
+   "guaske": false
+  },
+  "/cookies": {
+   "vw": 390,
+   "glifetMajtas": 20,
+   "glifetDjathtas": 390,
+   "gjeresiaTekstit": 370,
+   "marzhiMajtas": 20,
+   "marzhiDjathtas": 0,
+   "shfrytezimi": 94.9,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 3793
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/cookies",
+   "guaske": false
+  },
+  "/favorites": {
+   "vw": 390,
+   "glifetMajtas": 70,
+   "glifetDjathtas": 317,
+   "gjeresiaTekstit": 247,
+   "marzhiMajtas": 70,
+   "marzhiDjathtas": 73,
+   "shfrytezimi": 63.3,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 877
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.az-wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/favorites",
+   "guaske": false
+  },
+  "/kategori": {
+   "vw": 390,
+   "glifetMajtas": 16,
+   "glifetDjathtas": 357,
+   "gjeresiaTekstit": 341,
+   "marzhiMajtas": 16,
+   "marzhiDjathtas": 33,
+   "shfrytezimi": 87.6,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 1725
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.seo-wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/kategori",
+   "guaske": false
+  },
+  "/kategori/automjete": {
+   "vw": 390,
+   "glifetMajtas": 16,
+   "glifetDjathtas": 350,
+   "gjeresiaTekstit": 334,
+   "marzhiMajtas": 16,
+   "marzhiDjathtas": 40,
+   "shfrytezimi": 85.6,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 1525
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.seo-wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/kategori/automjete",
+   "guaske": false
+  },
+  "/kategori/automjete/tirane": {
+   "vw": 390,
+   "glifetMajtas": 16,
+   "glifetDjathtas": 347,
+   "gjeresiaTekstit": 331,
+   "marzhiMajtas": 16,
+   "marzhiDjathtas": 43,
+   "shfrytezimi": 84.8,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 1204
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.seo-wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/kategori/automjete/tirane",
+   "guaske": false
+  },
+  "/kontakt": {
+   "vw": 390,
+   "glifetMajtas": 20,
+   "glifetDjathtas": 368,
+   "gjeresiaTekstit": 348,
+   "marzhiMajtas": 20,
+   "marzhiDjathtas": 22,
+   "shfrytezimi": 89.1,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 2352
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/kontakt",
+   "guaske": false
+  },
+  "/kushtet": {
+   "vw": 390,
+   "glifetMajtas": 20,
+   "glifetDjathtas": 370,
+   "gjeresiaTekstit": 350,
+   "marzhiMajtas": 20,
+   "marzhiDjathtas": 20,
+   "shfrytezimi": 89.7,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 4714
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/kushtet",
+   "guaske": false
+  },
+  "/listing/dcc29dcc-ad56-4297-b299-5fb7e4ea6349": {
+   "vw": 390,
+   "glifetMajtas": 12,
+   "glifetDjathtas": 378,
+   "gjeresiaTekstit": 366,
+   "marzhiMajtas": 12,
+   "marzhiDjathtas": 12,
+   "shfrytezimi": 93.8,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 1985
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/listing/dcc29dcc-ad56-4297-b299-5fb7e4ea6349",
+   "guaske": false
+  },
+  "/listing/dcc29dcc-ad56-4297-b299-5fb7e4ea6349/edit": {
+   "vw": 390,
+   "glifetMajtas": 31,
+   "glifetDjathtas": 359,
+   "gjeresiaTekstit": 328,
+   "marzhiMajtas": 31,
+   "marzhiDjathtas": 31,
+   "shfrytezimi": 84.1,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 2447
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/listing/dcc29dcc-ad56-4297-b299-5fb7e4ea6349/edit",
+   "guaske": false
+  },
+  "/listing/new": {
+   "vw": 390,
+   "glifetMajtas": 18,
+   "glifetDjathtas": 359,
+   "gjeresiaTekstit": 341,
+   "marzhiMajtas": 18,
+   "marzhiDjathtas": 31,
+   "shfrytezimi": 87.4,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 2558
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/listing/new",
+   "guaske": false
+  },
+  "/messages": {
+   "vw": 390,
+   "glifetMajtas": 65,
+   "glifetDjathtas": 301,
+   "gjeresiaTekstit": 236,
+   "marzhiMajtas": 65,
+   "marzhiDjathtas": 89,
+   "shfrytezimi": 60.6,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 412
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.page"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/messages",
+   "guaske": false
+  },
+  "/notifications": {
+   "vw": 390,
+   "glifetMajtas": 16,
+   "glifetDjathtas": 360,
+   "gjeresiaTekstit": 344,
+   "marzhiMajtas": 16,
+   "marzhiDjathtas": 30,
+   "shfrytezimi": 88.2,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 1496
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/notifications",
+   "guaske": false
+  },
+  "/oferta": {
+   "vw": 390,
+   "glifetMajtas": 30,
+   "glifetDjathtas": 360,
+   "gjeresiaTekstit": 330,
+   "marzhiMajtas": 30,
+   "marzhiDjathtas": 30,
+   "shfrytezimi": 84.6,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 950
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.az-wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/oferta",
+   "guaske": false
+  },
+  "/premium": {
+   "vw": 390,
+   "glifetMajtas": 27,
+   "glifetDjathtas": 358,
+   "gjeresiaTekstit": 331,
+   "marzhiMajtas": 27,
+   "marzhiDjathtas": 32,
+   "shfrytezimi": 84.9,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 1700
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/premium",
+   "guaske": false
+  },
+  "/privatesia": {
+   "vw": 390,
+   "glifetMajtas": 20,
+   "glifetDjathtas": 385,
+   "gjeresiaTekstit": 365,
+   "marzhiMajtas": 20,
+   "marzhiDjathtas": 5,
+   "shfrytezimi": 93.7,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 4533
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/privatesia",
+   "guaske": false
+  },
+  "/profile": {
+   "vw": 390,
+   "glifetMajtas": 12,
+   "glifetDjathtas": 372,
+   "gjeresiaTekstit": 360,
+   "marzhiMajtas": 12,
+   "marzhiDjathtas": 18,
+   "shfrytezimi": 92.3,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 1914
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/profile",
+   "guaske": false
+  },
+  "/profile/analytics": {
+   "vw": 390,
+   "glifetMajtas": 28,
+   "glifetDjathtas": 367,
+   "gjeresiaTekstit": 339,
+   "marzhiMajtas": 28,
+   "marzhiDjathtas": 23,
+   "shfrytezimi": 86.9,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 2418
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.an-wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/profile/analytics",
+   "guaske": false
+  },
+  "/referral": {
+   "vw": 390,
+   "glifetMajtas": 38,
+   "glifetDjathtas": 362,
+   "gjeresiaTekstit": 324,
+   "marzhiMajtas": 38,
+   "marzhiDjathtas": 28,
+   "shfrytezimi": 83.2,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 2606
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/referral",
+   "guaske": false
+  },
+  "/rreth-nesh": {
+   "vw": 390,
+   "glifetMajtas": 20,
+   "glifetDjathtas": 353,
+   "gjeresiaTekstit": 333,
+   "marzhiMajtas": 20,
+   "marzhiDjathtas": 37,
+   "shfrytezimi": 85.3,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 2420
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/rreth-nesh",
+   "guaske": false
+  },
+  "/saved-searches": {
+   "vw": 390,
+   "glifetMajtas": 47,
+   "glifetDjathtas": 343,
+   "gjeresiaTekstit": 296,
+   "marzhiMajtas": 47,
+   "marzhiDjathtas": 47,
+   "shfrytezimi": 75.8,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 924
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.az-wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/saved-searches",
+   "guaske": false
+  },
+  "/search": {
+   "vw": 390,
+   "glifetMajtas": 26,
+   "glifetDjathtas": 390,
+   "gjeresiaTekstit": 364,
+   "marzhiMajtas": 26,
+   "marzhiDjathtas": 0,
+   "shfrytezimi": 93.3,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 1412
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/search",
+   "guaske": false
+  },
+  "/search/results?q=makina": {
+   "vw": 390,
+   "glifetMajtas": 10,
+   "glifetDjathtas": 369,
+   "gjeresiaTekstit": 359,
+   "marzhiMajtas": 10,
+   "marzhiDjathtas": 21,
+   "shfrytezimi": 92.1,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 1412
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/search/results?q=makina",
+   "guaske": false
+  },
+  "/siguria": {
+   "vw": 390,
+   "glifetMajtas": 20,
+   "glifetDjathtas": 355,
+   "gjeresiaTekstit": 335,
+   "marzhiMajtas": 20,
+   "marzhiDjathtas": 35,
+   "shfrytezimi": 85.9,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 2124
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/siguria",
+   "guaske": false
+  },
+  "/takedown": {
+   "vw": 390,
+   "glifetMajtas": 23,
+   "glifetDjathtas": 367,
+   "gjeresiaTekstit": 344,
+   "marzhiMajtas": 23,
+   "marzhiDjathtas": 23,
+   "shfrytezimi": 88.3,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 1492
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.tk-desk"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/takedown",
+   "guaske": false
+  },
+  "/te-dhenat-mia": {
+   "vw": 390,
+   "glifetMajtas": 32,
+   "glifetDjathtas": 348,
+   "gjeresiaTekstit": 316,
+   "marzhiMajtas": 32,
+   "marzhiDjathtas": 42,
+   "shfrytezimi": 81,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 1492
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div.gdpr-wrap"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/te-dhenat-mia",
+   "guaske": false
+  },
+  "/u/af3e3d5b-0f49-4ad5-a83d-281733fed433": {
+   "vw": 390,
+   "glifetMajtas": 16,
+   "glifetDjathtas": 362,
+   "gjeresiaTekstit": 346,
+   "marzhiMajtas": 16,
+   "marzhiDjathtas": 28,
+   "shfrytezimi": 88.7,
+   "baza": {
+    "emri": "body",
+    "bg": "rgb(255, 251, 234)",
+    "gj": 390,
+    "la": 1492
+   },
+   "panel": {
+    "gj": 390,
+    "x": 0,
+    "emri": "div"
+   },
+   "rreshqitesHorizontal": false,
+   "scrollWidth": 390,
+   "rruga": "/u/af3e3d5b-0f49-4ad5-a83d-281733fed433",
+   "guaske": false
+  }
+ }
+}
