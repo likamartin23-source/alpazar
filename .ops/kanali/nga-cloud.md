@@ -625,3 +625,17 @@ Pronari: "gjithmonë kudo sistem 1-kolonësh, përveç homepage me kartat." Faqe
 NJË kolonë aq sa e lejon përmbajtja; për aq sa s'e lejon (tekst i gjatë) → proporcionalisht (kolonë
 leximi brenda). Profili i biznesit u bë 1-kolonësh (display:block, max-width min(94vw,1120px), të gjitha
 seksionet të stivuara). Ballina/kategori/search me karta = grid (përjashtim). Mbaje këtë si kriter matjeje.
+
+## C-067 · KODI 1-KOLONËSH ËSHTË NË MAIN POR NUK U DEPLOY — KUFIRI HOBBY (§5) · desktopi-21
+Verifikuar 5 shtator me git + Vercel API. Gjendja reale:
+- origin/main HEAD = fb73f36 → c69d21f → 201aed1 (kodi 1-kolonësh). BiznesPageClient byte-identik
+  në 9e3dc88/c69d21f/fb73f36 (sha256[16]=990eeaffdb69be0a): biz-shell{display:block},
+  max-width:min(94vw,1120px), biz-tabs{display:none}.
+- POR prodhimi (alpazar.vercel.app) ende te 4aff14a (display:grid, 2-kolonësh full-screen).
+- Vercel s'krijoi deploy për c69d21f as fb73f36. Deploy më i ri = 9e3dc88 (preview, READY).
+  ~20+ deploy/90min → KUFIRI DITOR HOBBY U MBUSH (§5): push-et e reja japin 0 ndërtime.
+- Preview 9e3dc88 (dpl_J9DDrvUFQKcGHK1aifLUu1p6PyVy, READY) PËRMBAN pikërisht kodin 1-kolonësh.
+ZGJIDHJA (pronari, §5): Vercel dashboard → deploy 9e3dc88 → "Promote to Production" (ripërdor
+build-in ekzistues, s'kërkon ndërtim të ri, anashkalon kufirin). OSE prit rivendosjen ditore.
+MËSIM: ndalojmë çdo push jothelbësor te main derisa kufiri të rivendoset — çdo push i kotë
+tani vjedh një slot ndërtimi që i duhet kodit real. Një aktor, grumbullim.

@@ -258,7 +258,11 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
 .listing-card:hover .card-img img{transform:scale(1.05);}
 .listing-card:focus-visible{outline:2px solid var(--action-red);outline-offset:2px;}
 .listing-card:active{transform:scale(.97);}
-.card-img{flex:0 0 calc(var(--card-body-h) / 3 * 7);width:100%;position:relative;background:linear-gradient(135deg,#FBF7E8,#F2EAD0);overflow:hidden;display:flex;align-items:center;justify-content:center;}
+/* [Karta · aspekt i qëndrueshëm 4/3 · vendim pronari 6 shtator, matje shkencore]
+   Më parë imazhi kishte LARTËSI FIKSE (calc(--card-body-h/3*7)≈289px): sa më e ngushtë
+   karta (më shumë kolona në ekran të gjerë), aq më portret/"foto pasaporte" dukej imazhi.
+   Aspekt 4/3 e lidh lartësinë me gjerësinë → imazh profesional e i qëndrueshëm në çdo gjerësi. */
+.card-img{aspect-ratio:4 / 3;flex:0 0 auto;width:100%;position:relative;background:linear-gradient(135deg,#FBF7E8,#F2EAD0);overflow:hidden;display:flex;align-items:center;justify-content:center;}
 .card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;transition:transform .35s cubic-bezier(.2,.8,.2,1);}
 .card-img i{font-size:28px;color:#d0c9a0;}
 .card-seller-ov{position:absolute;left:6px;bottom:6px;display:flex;align-items:center;gap:5px;min-height:24px;max-width:calc(100% - 48px);background:rgba(0,0,0,.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border-radius:var(--r-pill);padding:2px 9px 2px 2px;z-index:2;cursor:pointer;}
@@ -319,6 +323,12 @@ a:focus-visible, button:focus-visible, [role="link"]:focus-visible, [role="butto
 @media(min-width:1440px){
   .listings-grid{grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:24px;}
   .listing-card{--card-body-h:124px;}
+}
+/* [Karta · ekran i gjerë ≥1600px · vendim pronari 6 shtator] Rrit minimumin e kartës
+   që të mos ngushtohet/shumzohet tepër (variantit C: vetëm sa duhet). Karta mbetet
+   profesionale ~300px+ në vend që të bjerë ~269px me 8 kolona. */
+@media(min-width:1600px){
+  .listings-grid{grid-template-columns:repeat(auto-fill,minmax(300px,1fr));}
 }
 
 
